@@ -12,6 +12,10 @@ class APIService {
         this.date = new Date();
     }
 
+    getPokemonGoIcon(icon) {
+        return `${POGO_ASSET_API_URL}App Icons/${icon}.png`;
+    }
+
     getPokeInfo(value) {
         return axios.get(`${POKE_API_URL}pokemon/${value}`);
     }

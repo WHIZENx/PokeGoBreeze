@@ -9,7 +9,7 @@ const NavbarComponent = () => {
         <Navbar bg="dark" expand="lg" variant="dark">
             <Link className="navbar-brand" to="/">
                 <img src={logo} width="30" height="30" className="d-inline-block align-top" alt=""></img>
-                Bootstrap
+                PokeGoBreeze
             </Link>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">

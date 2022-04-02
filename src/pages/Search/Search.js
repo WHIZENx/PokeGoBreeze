@@ -7,6 +7,8 @@ import APIService from '../../services/API.service'
 import TypeEffective from '../../components/Effective/TypeEffective';
 import Type from '../../components/Sprits/Type';
 import Form from '../../components/Info/Gender/Form';
+import Effect from '../Weather/Effect';
+import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 
 const Search = () => {
 
@@ -19,6 +21,7 @@ const Search = () => {
     const initialize = useRef(null);
     const pokeList = useMemo(() => {return []}, []);
 
+    const [weatherEffective, setWeatherEffective] = useState('');
     const [typeEffective, setTypeEffective] = useState('');
 
     const [data, setData] = useState(null);
@@ -44,7 +47,7 @@ const Search = () => {
             resist: [],
             neutral: []
         };
-        Object.entries(initialize.current.type_effective).forEach(([key, value]) => {
+        Object.entries(initialize.current.typeEffective).forEach(([key, value]) => {
             let value_effective = 1;
             types.forEach((type) => {
                 value_effective *= value[capitalize(type.type.name)];
@@ -59,6 +62,16 @@ const Search = () => {
         setTypeEffective(data);
     }, []);
 
+    const getWeatherEffective = useCallback((types) => {
+        let data = [];
+        Object.entries(initialize.current.weatherBoosts).forEach(([key, value]) => {
+            types.forEach((type) => {
+                if (value.includes(capitalize(type.type.name)) && !data.includes(key)) data.push(key);
+            });
+        });
+        setWeatherEffective(data);
+    }, []);
+
     useEffect(() => {
         const fetchMyAPI = async () => {
             if(!initialize.current) {
@@ -71,12 +84,18 @@ const Search = () => {
                 initialize.current.release = released_poke.data;
 
                 const poke_gender = await APIService.getPokeJSON('pokemon_genders.json');
-                initialize.current.poke_gender = poke_gender.data;
+                initialize.current.pokeGender = poke_gender.data;
 
-                const type_effective = await APIService.getPokeJSON('type_effectiveness.json');
-                initialize.current.type_effective = type_effective.data;
+                const typeEffective = await APIService.getPokeJSON('type_effectiveness.json');
+                initialize.current.typeEffective = typeEffective.data;
 
                 getTypeEffective(poke_default.data.types);
+
+                const weatherBoosts = await APIService.getPokeJSON('weather_boosts.json');
+                initialize.current.weatherBoosts = weatherBoosts.data;
+
+                getWeatherEffective(poke_default.data.types)
+
                 getRatioGender(poke_default.data.id);
             }
 
@@ -95,7 +114,7 @@ const Search = () => {
         const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
         currentPokemonListFilter.current = results;
         setPokemonListFilter(currentPokemonListFilter.current.slice(0, 20));
-    }, [searchTerm, getTypeEffective, pokemonList, pokeList, currentPokemonListFilter]);
+    }, [searchTerm, getTypeEffective, getWeatherEffective, pokemonList, pokeList, currentPokemonListFilter]);
 
     const listenScrollEvent = (ele) => {
         let idScroll = Math.floor((ele.currentTarget.offsetHeight + ele.currentTarget.scrollTop) / (cardHeight*pageCardScroll));
@@ -113,6 +132,7 @@ const Search = () => {
             setData(res.data);
             getReleasePoke(res.data.id);
             getTypeEffective(res.data.types);
+            getWeatherEffective(res.data.types);
             getRatioGender(res.data.id);
         })
         .catch(err => {
@@ -130,7 +150,7 @@ const Search = () => {
     }
 
     const getRatioGender = (id) => {
-        Object.entries(initialize.current.poke_gender).forEach(([key, value]) => {
+        Object.entries(initialize.current.pokeGender).forEach(([key, value]) => {
             if (new Set(value.map(v => v.pokemon_id)).has(id)) {
                 return setPokemonRaito(key);
             }
@@ -162,13 +182,19 @@ const Search = () => {
             </div>
             {data &&
                 <div className='element-top'>
-                    {!release && <h5 className='element-top text-danger'>* This pokémon not release in Pokémon GO</h5>}
+                    {!release && 
+                    <Fragment>
+                        <h5 className='element-top text-danger'>* {capitalize(data.name)} not release in Pokémon go   
+                        <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
+                        </h5>
+                    </Fragment>
+                    }
                     <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
                     <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
                     <div className='row'>
                         {initialize.current && pokemonRaito &&
                         <div className='col img-form-group'>
-                            {!(new Set(initialize.current.poke_gender.Genderless.map(value => value.pokemon_id)).has(data.id)) ?
+                            {!(new Set(initialize.current.pokeGender.Genderless.map(value => value.pokemon_id)).has(data.id)) ?
                                 <Fragment>
                                     {pokemonRaito.charAt(0) !== '0' && <Fragment><Form ratio={pokemonRaito} sex='Male' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/></Fragment>}
                                     {pokemonRaito.charAt(0) !== '0' && pokemonRaito.charAt(3) !== '0' && <hr></hr>}
@@ -180,7 +206,7 @@ const Search = () => {
                         }
                         {initialize.current &&
                         <div className='col img-form-group'>
-                            {/* {!(new Set(initialize.current.poke_gender.Genderless.map(value => value.pokemon_id)).has(data.id)) ?
+                            {/* {!(new Set(initialize.current.pokeGender.Genderless.map(value => value.pokemon_id)).has(data.id)) ?
                                 <Fragment>
                                     <Form ratio={pokemonRaito} sex='Male' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
                                     <hr></hr>
@@ -194,6 +220,7 @@ const Search = () => {
                     <h4 className='element-top'>Infomation</h4>
                     <h5 className='element-top'>- Pokémon Type:</h5>
                     <Type arr={data.types.map(ele => ele.type.name)}/>
+                    <WeatherTypeEffective weatherEffective={weatherEffective}/>
                     <TypeEffective typeEffective={typeEffective}/>
                     <h5 className='element-top'>- Pokémon height: {data.height}, weight: {data.weight}</h5>
                 </div>
