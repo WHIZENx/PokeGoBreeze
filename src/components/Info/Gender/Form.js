@@ -14,9 +14,15 @@ const Form = (props) => {
 
     return (
         <div className='element-top'>
-            <img width='40' height='40' className='gender-img' alt='img-pokemon-sex' src={APIService.getGenderSprite(props.sex)}></img>
+            <div className='img-gender'>
+                <img width='40' height='40' alt='img-pokemon-sex' src={APIService.getGenderSprite(props.sex)}></img>
+            </div>
+            <div className='ratio-gender'>
+                { props.ratio ? <h6>{props.sex} ratio: {calculateRatio(props.sex, props.ratio)}%</h6>
+            :   <h6>{props.sex} ratio: 100%</h6>}
+            </div>
             <ul>
-                <li className='img-group'>
+                <li className='img-form-gender-group'>
                     <img alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ? 
                         (props.default_m) ? props.default_m : props.default_f :
                         (props.default_f) ? props.default_f : props.default_m}></img> 
@@ -29,7 +35,7 @@ const Form = (props) => {
                     <span className="caption">Shiny form</span>
                 </li>
             </ul>
-            { props.ratio && <h6>{props.sex} ratio: {calculateRatio(props.sex, props.ratio)}%</h6>}
+            
         </div>
     );
 }

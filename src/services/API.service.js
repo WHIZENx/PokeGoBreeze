@@ -20,6 +20,10 @@ class APIService {
         return axios.get(`${POGO_API_URL}${path}`);
     }
 
+    getIconSprite(icon) {
+        return `${POGO_ASSET_API_URL}Menu Icons/${icon}.png`;
+    }
+
     getItemSprite(item) {
         return `${POGO_ASSET_API_URL}Items/${item}.png`;
     }

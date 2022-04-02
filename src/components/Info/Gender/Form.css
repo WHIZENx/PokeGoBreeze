@@ -1,4 +1,17 @@
-.gender-img {
+.img-gender {
+    float: left;
+    margin-right: 15px;
+}
+
+.img-gender img {
+    display: block;
     -webkit-filter: drop-shadow(3px 3px 3px #222);
     filter: drop-shadow(3px 3px 3px #222);
+}
+
+.img-form-gender-group {
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+    margin-right: 5%;
 }

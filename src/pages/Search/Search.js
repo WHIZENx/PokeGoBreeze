@@ -62,7 +62,7 @@ const Search = () => {
     useEffect(() => {
         const fetchMyAPI = async () => {
             if(!initialize.current) {
-                const poke_default = await APIService.getPokeInfo('1');
+                const poke_default = await APIService.getPokeInfo(1);
                 setData(poke_default.data);
 
                 initialize.current = {};
@@ -163,28 +163,34 @@ const Search = () => {
             {data &&
                 <div className='element-top'>
                     {!release && <h5 className='element-top text-danger'>* This pokémon not release in Pokémon GO</h5>}
+                    <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
+                    <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
                     <div className='row'>
-                        <div className='col'>
-                            <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
-                            <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
+                        {initialize.current && pokemonRaito &&
+                        <div className='col img-form-group'>
+                            {!(new Set(initialize.current.poke_gender.Genderless.map(value => value.pokemon_id)).has(data.id)) ?
+                                <Fragment>
+                                    {pokemonRaito.charAt(0) !== '0' && <Fragment><Form ratio={pokemonRaito} sex='Male' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/></Fragment>}
+                                    {pokemonRaito.charAt(0) !== '0' && pokemonRaito.charAt(3) !== '0' && <hr></hr>}
+                                    {pokemonRaito.charAt(3) !== '0' && <Fragment><Form ratio={pokemonRaito} sex='Female' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/></Fragment>}
+                                </Fragment>
+                            : <Form sex='Genderless' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
+                            }
                         </div>
-                        <div className='col'>
-                            <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
-                            <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
+                        }
+                        {initialize.current &&
+                        <div className='col img-form-group'>
+                            {/* {!(new Set(initialize.current.poke_gender.Genderless.map(value => value.pokemon_id)).has(data.id)) ?
+                                <Fragment>
+                                    <Form ratio={pokemonRaito} sex='Male' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
+                                    <hr></hr>
+                                    <Form ratio={pokemonRaito} sex='Female' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
+                                </Fragment>
+                            : <Form sex='Genderless' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
+                            } */}
                         </div>
-                    </div>
-                    {initialize.current &&
-                    <div className='img-form-group'>
-                        {!(new Set(initialize.current.poke_gender.Genderless.map(value => value.pokemon_id)).has(data.id)) ?
-                            <Fragment>
-                                <Form ratio={pokemonRaito} sex='Male' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
-                                <hr></hr>
-                                <Form ratio={pokemonRaito} sex='Female' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
-                            </Fragment>
-                        : <Form sex='Genderless' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
                         }
                     </div>
-                    }
                     <h4 className='element-top'>Infomation</h4>
                     <h5 className='element-top'>- Pokémon Type:</h5>
                     <Type arr={data.types.map(ele => ele.type.name)}/>
