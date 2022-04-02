@@ -16,7 +16,7 @@ const NavbarComponent = () => {
                 <Nav className="me-auto">
                     <Link className="nav-link" to="/">Home</Link>
                     <Link className="nav-link" to="/search">Search Pokémon</Link>
-                    <Link className="nav-link" to="/type_effective">Type Effective</Link>
+                    <Link className="nav-link" to="/type-effective">Type Effective</Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

@@ -1,4 +1,5 @@
 import React from 'react';
+import {Row, Col} from 'react-bootstrap'
 
 import Attacker from './Attacker';
 import Defender from './Defender';
@@ -7,10 +8,10 @@ const Type = () => {
 
     return (
         <div className="container element-top">
-            <div className='row'>
-                <div className='col'><Attacker/></div>
-                <div className='col'><Defender/></div>
-            </div>
+            <Row>
+                <Col><Attacker/></Col>
+                <Col><Defender/></Col>
+            </Row>
         </div>
     )
 }

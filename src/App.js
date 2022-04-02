@@ -23,7 +23,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />}></Route>
               <Route path="/search" element={<Search />}></Route>
-              <Route path="/type_effective" element={<Type />}></Route>
+              <Route path="/type-effective" element={<Type />}></Route>
             </Routes>
             <FooterComponent />
           </div>

@@ -41,6 +41,10 @@ ul {
     text-align: center;
 }
 
+.img-form-group {
+    width: 280px;
+}
+
 .img-search {
     margin: 0 5px 0 5px;
     width: 36px;
