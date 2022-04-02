@@ -4,8 +4,8 @@ import { useSnackbar } from 'notistack';
 import './Search.css';
 
 import APIService from '../../services/API.service'
-import Effective from '../../components/Effective/Effective';
-import Type from '../../components/Type/Type';
+import TypeEffective from '../../components/Effective/TypeEffective';
+import Type from '../../components/Sprits/Type';
 import Form from '../../components/Gender/Form';
 
 const Search = () => {
@@ -25,7 +25,7 @@ const Search = () => {
     
     const [searchTerm, setsearchTerm] = useState('');
     const [release, setRelease] = useState(true);
-    const [showResult, setShowResult] = useState(true);
+    const [showResult, setShowResult] = useState(false);
 
     const [pokemonList, setPokemonList] = useState([]);
     const currentPokemonListFilter = useRef([]);
@@ -57,8 +57,6 @@ const Search = () => {
         setTypeEffective(data);
     }, []);
 
-    
-
     useEffect(() => {
         const fetchMyAPI = async () => {
             if(!initialize.current) {
@@ -86,6 +84,7 @@ const Search = () => {
         }
         fetchMyAPI();
 
+        if (searchResult.current.scrollTop > (cardHeight*pageCardScroll)) searchResult.current.scrollTop = (cardHeight*pageCardScroll)-cardHeight;
         searchResultID.current = 1;
         const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
         currentPokemonListFilter.current = results;
@@ -133,21 +132,19 @@ const Search = () => {
                 <input type="text" className="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="Enter name or ID"
                 value={searchTerm} onInput={e => setsearchTerm(e.target.value)} onFocus={() => setShowResult(true)} onBlur={() => setShowResult(false)}></input>
             </div>
-            {searchTerm !== '' && showResult &&
-                <div className="result">
-                    <ul ref={searchResult}
-                        onScroll={listenScrollEvent.bind(this)}
-                        style={pokemonListFilter.length < pageCardScroll ? {height: pokemonListFilter.length*cardHeight, overflowY: 'hidden'} : {height: cardHeight*pageCardScroll, overflowY: 'scroll'}}>
-                        {pokemonListFilter.map((value, index) => (
-                            <li style={{height: cardHeight}} className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
-                                <b>#{value.id}</b>
-                                <img className='img-search' alt='img-pokemon' src={value.sprites}></img>
-                                {capitalize(value.name)}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            }
+            <div className="result" style={showResult ? {display: 'block'} : {display: 'none'}}>
+                <ul ref={searchResult}
+                    onScroll={listenScrollEvent.bind(this)}
+                    style={pokemonListFilter.length < pageCardScroll ? {height: pokemonListFilter.length*cardHeight, overflowY: 'hidden'} : {height: cardHeight*pageCardScroll, overflowY: 'scroll'}}>
+                    {pokemonListFilter.map((value, index) => (
+                        <li style={{height: cardHeight}} className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
+                            <b>#{value.id}</b>
+                            <img className='img-search' alt='img-pokemon' src={value.sprites}></img>
+                            {capitalize(value.name)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
             {data &&
                 <div className='element-top'>
                     {!release && <h5 className='element-top text-danger'>* This pokémon not release in Pokémon GO</h5>}
@@ -161,7 +158,7 @@ const Search = () => {
                     <h4 className='element-top'>Infomation</h4>
                     <h5 className='element-top'>- Pokémon Type:</h5>
                     <Type arr={data.types.map(ele => ele.type.name)}/>
-                    <Effective typeEffective={typeEffective}/>
+                    <TypeEffective typeEffective={typeEffective}/>
                     <h5 className='element-top'>- Pokémon height: {data.height}, weight: {data.weight}</h5>
                 </div>
             }

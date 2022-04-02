@@ -8,7 +8,9 @@ const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/
 
 class APIService {
 
-    constructor() {}
+    constructor() {
+        this.date = new Date();
+    }
 
     getPokeInfo(value) {
         return axios.get(`${POKE_API_URL}pokemon/${value}`);
@@ -24,6 +26,15 @@ class APIService {
 
     getTypeSprite(type) {
         return `${POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
+    }
+
+    getWeatherSprite(weather) {
+        weather = weather.replaceAll(' ', '').replaceAll('Rainy', 'Rain');
+        weather = weather.charAt(0).toLowerCase() + weather.slice(1);
+
+        const timeOfSun = this.date.getHours() > 6 && this.date.getHours() < 18 ? 'Day' : 'Night';
+
+        return `${POGO_ASSET_API_URL}Weather/weatherIcon_large_${weather}${timeOfSun}.png`;
     }
 
     getPokeSprite(id) {

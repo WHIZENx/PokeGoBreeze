@@ -1,12 +1,10 @@
-import React, {useEffect, useState, useCallback} from 'react';
-import TypeEffective from '../../components/Effective/TypeEffective';
+import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
+import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 
-const Defender = (prop) => {
+const Effect = (prop) => {
 
     const [types, setTypes] = useState([]);
-
-    const [typeEffective, setTypeEffective] = useState([]);
 
     const [currentTypePri, setCurrentTypePri] = useState('Bug');
     const [currentTypeSec, setCurrentTypeSec] = useState('');
@@ -14,45 +12,33 @@ const Defender = (prop) => {
     const [showTypePri, setShowTypePri] = useState(false);
     const [showTypeSec, setShowTypeSec] = useState(false);
 
-    const getTypeEffective = useCallback(() => {
-        let data = {
-            very_weak: [],
-            weak: [],
-            super_resist: [],
-            very_resist: [],
-            resist: [],
-            neutral: []
-        }
-        Object.entries(prop.types).forEach(([key, value]) => {
-            let value_effective = 1;
-            value_effective *= value[currentTypePri];
-            value_effective *= (currentTypeSec === '') ? 1 : value[currentTypeSec];
-            if (value_effective >= 2.56) data.very_weak.push(key);
-            else if (value_effective >= 1.6) data.weak.push(key);
-            else if (value_effective >= 1) data.neutral.push(key);
-            else if (value_effective >= 0.625) data.resist.push(key);
-            else if (value_effective >= 0.39) data.very_resist.push(key);
-            else data.super_resist.push(key);
+    const [weatherEffective, setWeatherEffective] = useState([]);
+
+    const getWeatherEffective = useCallback(() => {
+        let data = [];
+        Object.entries(prop.weathers).forEach(([key, value]) => {
+            if (value.includes(currentTypePri) && !data.includes(key)) data.push(key);
+            if (currentTypeSec !== '' && value.includes(currentTypeSec) && !data.includes(key)) data.push(key);
         });
-        setTypeEffective(data);
-    }, [currentTypePri, currentTypeSec, prop.types]);
-    
+        setWeatherEffective(data);
+    }, [currentTypePri, currentTypeSec, prop.weathers]);
+
     useEffect(() => {
         const results = Object.keys(prop.types).filter(item => item !== currentTypePri && item !== currentTypeSec);
         setTypes(results);
-        getTypeEffective();
-    }, [currentTypePri, currentTypeSec, getTypeEffective, prop.types]);
+        getWeatherEffective();
+    }, [currentTypePri, currentTypeSec, getWeatherEffective, prop.types]);
 
     const changeTypePri = (value) => {
         setShowTypePri(false)
         setCurrentTypePri(value.currentTarget.dataset.id);
-        getTypeEffective();
+        getWeatherEffective();
     }
 
     const changeTypeSec = (value) => {
         setShowTypeSec(false)
         setCurrentTypeSec(value.currentTarget.dataset.id);
-        getTypeEffective();
+        getWeatherEffective();
     }
 
     const closeTypeSec = () => {
@@ -62,7 +48,7 @@ const Defender = (prop) => {
 
     return (
         <div className="element-top">
-            <h5 className='text-center'><b>As Defender</b></h5>
+            <h5 className='text-center'><b>As Pokémon Types</b></h5>
             <div className="row">
                 <div className="col d-flex justify-content-center">
                     <div>
@@ -115,9 +101,9 @@ const Defender = (prop) => {
                     </div>
                 </div>
             </div>
-            <TypeEffective typeEffective={typeEffective}/>
-        </div>  
+            <WeatherTypeEffective weatherEffective={weatherEffective}/>
+        </div>
     );
 }
 
-export default Defender;
+export default Effect;

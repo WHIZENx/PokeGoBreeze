@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import Effective from '../../components/Effective/Effective';
-import APIService from '../../services/API.service'
+import TypeEffective from '../../components/Effective/TypeEffective';
+import CardType from '../../components/Card/CardType';
 
 const Attacker = (prop) => {
 
@@ -46,16 +46,14 @@ const Attacker = (prop) => {
             <div className=' d-flex justify-content-center'>
                 <div className='card-input' tabIndex={ 0 } onClick={() => setShowType(true)} onBlur={() => setShowType(false)}>
                     <div className='card-select'>
-                        <img alt='type-logo' className='img-type' src={APIService.getTypeSprite(currentType)}></img>
-                        <b>{currentType}</b>
+                        <CardType value={currentType}/>
                     </div>
                     {showType &&
                         <div className="result-type">
                             <ul>
                                 {types.map((value, index) => (
                                     <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeType.bind(this)}>
-                                        <img alt='type-logo' className='img-type' src={APIService.getTypeSprite(value)}></img>
-                                        <b>{value}</b>
+                                        <CardType value={value}/>
                                     </li>
                                 ))}
                             </ul>
@@ -63,7 +61,7 @@ const Attacker = (prop) => {
                     }
                 </div>
             </div>
-            <Effective typeEffective={typeEffective}/>
+            <TypeEffective typeEffective={typeEffective}/>
         </div>
     );
 }

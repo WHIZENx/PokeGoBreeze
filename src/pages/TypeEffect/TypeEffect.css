@@ -28,15 +28,13 @@
     justify-content: center;
 }
 
-.close {
-    color: red;
-    font-size: 30px;
+.remove-close {
+    filter: invert(19%) sepia(82%) saturate(7008%) hue-rotate(357deg) brightness(102%) contrast(114%);
     float: right;
-    margin-top: 6px;
+    margin-top: 20px;
 }
 
 .result-type {
-    /* top: 184px; */
     position: absolute;
     z-index: 1;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -60,8 +58,4 @@
 .card-pokemon:hover {
     background-color: lightgray;
     cursor: pointer;
-}
-
-.img-type {
-    margin-right: 10px;
 }

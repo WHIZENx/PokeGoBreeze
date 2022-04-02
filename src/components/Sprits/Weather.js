@@ -1,7 +1,7 @@
 import React from 'react';
 import APIService from '../../services/API.service'
 
-const Type = (props) => {
+const Weather = (props) => {
 
     if (!props.arr || props.arr.length === 0) return false;
 
@@ -14,7 +14,7 @@ const Type = (props) => {
             {props.text && <p>{props.text}</p>}
             {props.arr.map((value, index) => (
                 <li className='img-group' key={ index }>
-                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
+                    <img height={50} alt='img-pokemon' src={APIService.getWeatherSprite(value)}></img>
                     <span className='caption text-black'>{capitalize(value)}</span>
                 </li>
             ))
@@ -23,4 +23,4 @@ const Type = (props) => {
     );
 }
 
-export default Type;
+export default Weather;

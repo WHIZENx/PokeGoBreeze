@@ -8,6 +8,7 @@ import FooterComponent from './components/Footer'
 import Home from './pages/Home/Home'
 import Search from './pages/Search/Search'
 import TypeEffect from './pages/TypeEffect/TypeEffect'
+import Weather from './pages/Weather/Weather';
 
 function App() {
     return (
@@ -24,6 +25,7 @@ function App() {
               <Route path="/" element={<Home />}></Route>
               <Route path="/search" element={<Search />}></Route>
               <Route path="/type-effective" element={<TypeEffect />}></Route>
+              <Route path="/weather-boosts" element={<Weather />}></Route>
             </Routes>
             <FooterComponent />
           </div>
