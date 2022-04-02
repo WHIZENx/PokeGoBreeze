@@ -20,6 +20,10 @@ class APIService {
         return axios.get(`${POGO_API_URL}${path}`);
     }
 
+    getItemSprite(item) {
+        return `${POGO_ASSET_API_URL}Items/${item}.png`;
+    }
+
     getGenderSprite(sex) {
         return `${POGO_ASSET_API_URL}Pokedex/${sex.toLowerCase()}_l.png`;
     }

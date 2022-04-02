@@ -1,7 +1,25 @@
-import React from 'react';
-import APIService from '../../services/API.service'
+import React, { useState } from 'react';
+import APIService from '../../services/API.service';
 
-const Form = (props) => {
+const Catch = (props) => {
+
+    const [catchPoke, setCatchPoke] = useState(null);
+
+    // useEffect(() => {
+    //     const fetchMyAPI = async () => {
+    //         const res = await APIService.getPokeJSON('shiny_pokemon.json')
+    //     }
+    //     fetchMyAPI()
+    //     if (!typeEffective) {
+    //         APIService.getPokeJSON('type_effectiveness.json')
+    //         .then(res => {
+    //             setTypeEffective(res.data);
+    //         })
+    //         .catch(err => {
+    //             enqueueSnackbar(err, { variant: 'error' })
+    //         })
+    //     }
+    // }, [typeEffective, enqueueSnackbar]);
 
     return (
         <div className='element-top'>
@@ -24,4 +42,4 @@ const Form = (props) => {
     );
 }
 
-export default Form;
+export default Catch;

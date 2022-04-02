@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef, createRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, createRef, Fragment } from 'react';
 import { useSnackbar } from 'notistack';
 
 import './Search.css';
@@ -6,7 +6,7 @@ import './Search.css';
 import APIService from '../../services/API.service'
 import TypeEffective from '../../components/Effective/TypeEffective';
 import Type from '../../components/Sprits/Type';
-import Form from '../../components/Gender/Form';
+import Form from '../../components/Info/Gender/Form';
 
 const Search = () => {
 
@@ -30,6 +30,8 @@ const Search = () => {
     const [pokemonList, setPokemonList] = useState([]);
     const currentPokemonListFilter = useRef([]);
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
+
+    const [pokemonRaito, setPokemonRaito] = useState(0);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -68,10 +70,14 @@ const Search = () => {
                 const released_poke = await APIService.getPokeJSON('released_pokemon.json');
                 initialize.current.release = released_poke.data;
 
+                const poke_gender = await APIService.getPokeJSON('pokemon_genders.json');
+                initialize.current.poke_gender = poke_gender.data;
+
                 const type_effective = await APIService.getPokeJSON('type_effectiveness.json');
                 initialize.current.type_effective = type_effective.data;
 
                 getTypeEffective(poke_default.data.types);
+                getRatioGender(poke_default.data.id);
             }
 
             if (pokeList.length === 0) {
@@ -107,6 +113,7 @@ const Search = () => {
             setData(res.data);
             getReleasePoke(res.data.id);
             getTypeEffective(res.data.types);
+            getRatioGender(res.data.id);
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + value + ' Not found!', { variant: 'error' });
@@ -120,6 +127,14 @@ const Search = () => {
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    const getRatioGender = (id) => {
+        Object.entries(initialize.current.poke_gender).forEach(([key, value]) => {
+            if (new Set(value.map(v => v.pokemon_id)).has(id)) {
+                return setPokemonRaito(key);
+            }
+        });
     }
 
     return (
@@ -148,13 +163,28 @@ const Search = () => {
             {data &&
                 <div className='element-top'>
                     {!release && <h5 className='element-top text-danger'>* This pokémon not release in Pokémon GO</h5>}
-                    <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
-                    <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
-                    <div className='img-form-group'>
-                        <Form sex='male' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
-                        <hr></hr>
-                        <Form sex='female' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
+                    <div className='row'>
+                        <div className='col'>
+                            <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
+                            <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
+                        </div>
+                        <div className='col'>
+                            <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
+                            <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
+                        </div>
                     </div>
+                    {initialize.current &&
+                    <div className='img-form-group'>
+                        {!(new Set(initialize.current.poke_gender.Genderless.map(value => value.pokemon_id)).has(data.id)) ?
+                            <Fragment>
+                                <Form ratio={pokemonRaito} sex='Male' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
+                                <hr></hr>
+                                <Form ratio={pokemonRaito} sex='Female' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
+                            </Fragment>
+                        : <Form sex='Genderless' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
+                        }
+                    </div>
+                    }
                     <h4 className='element-top'>Infomation</h4>
                     <h5 className='element-top'>- Pokémon Type:</h5>
                     <Type arr={data.types.map(ele => ele.type.name)}/>
