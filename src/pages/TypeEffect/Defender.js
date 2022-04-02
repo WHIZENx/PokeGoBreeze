@@ -1,11 +1,9 @@
-import React, {useEffect, useRef, useState, useCallback} from 'react';
-import APIService from '../../components/API.service'
+import React, {useEffect, useState, useCallback} from 'react';
+import Effective from '../../components/Effective/Effective';
+import APIService from '../../services/API.service';
 
-import './Type.css';
+const Defender = (prop) => {
 
-const Defender = () => {
-
-    var resRef = useRef([]);
     const [types, setTypes] = useState([]);
 
     const [typeEffective, setTypeEffective] = useState([]);
@@ -25,7 +23,7 @@ const Defender = () => {
             resist: [],
             neutral: []
         }
-        Object.entries(resRef.current.data).forEach(([key, value]) => {
+        Object.entries(prop.types).forEach(([key, value]) => {
             let value_effective = 1;
             value_effective *= value[currentTypePri];
             value_effective *= (currentTypeSec === '') ? 1 : value[currentTypeSec];
@@ -37,18 +35,17 @@ const Defender = () => {
             else data.super_resist.push(key);
         });
         setTypeEffective(data);
-    }, [currentTypePri, currentTypeSec]);
+    }, [currentTypePri, currentTypeSec, prop.types]);
     
     useEffect(() => {
         const fetchMyAPI = async () => {
-            resRef.current = await APIService.getPokeJSON('type_effectiveness.json');
-            const results = Object.keys(resRef.current.data).filter(item => item !== currentTypePri && item !== currentTypeSec);
+            const results = Object.keys(prop.types).filter(item => item !== currentTypePri && item !== currentTypeSec);
             setTypes(results);
             getTypeEffective();
         }
         fetchMyAPI()
         
-    }, [currentTypePri, currentTypeSec, getTypeEffective]);
+    }, [currentTypePri, currentTypeSec, getTypeEffective, prop.types]);
 
     const changeTypePri = (value) => {
         setShowTypePri(false)
@@ -126,82 +123,7 @@ const Defender = () => {
                     </div>
                 </div>
             </div>
-            {typeEffective.length !== 0 &&
-                <div className='element-top'>
-                    <h5 className='element-top'>- Pokémon Type Effective:</h5>
-                    <h6 className='element-top'><b>Weakness</b></h6>
-                    {typeEffective.very_weak.length !== 0 &&
-                        <ul className='element-top'>
-                            <p>2.56x damage from</p>
-                            {typeEffective.very_weak.map((value, index) => (
-                                <li className='img-group' key={ index }>
-                                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                    <span className='caption text-black'>{value}</span>
-                                </li>
-                            ))
-                            }
-                        </ul>
-                    }
-                    <ul className='element-top'>
-                        <p>1.6x damage from</p>
-                        {typeEffective.weak.map((value, index) => (
-                            <li className='img-group' key={ index }>
-                                <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                <span className='caption text-black'>{value}</span>
-                            </li>
-                        ))
-                        }
-                    </ul>
-                    <h6 className='element-top'><b>Resistance</b></h6>
-                    {typeEffective.super_resist.length !== 0 &&
-                        <ul className='element-top'>
-                            <p>0.244x damage from</p>
-                            {typeEffective.super_resist.map((value, index) => (
-                                <li className='img-group' key={ index }>
-                                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                    <span className='caption text-black'>{value}</span>
-                                </li>
-                            ))
-                            }
-                        </ul>
-                    }
-                    {typeEffective.very_resist.length !== 0 &&
-                        <ul className='element-top'>
-                            <p>0.391x damage from</p>
-                            {typeEffective.very_resist.map((value, index) => (
-                                <li className='img-group' key={ index }>
-                                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                    <span className='caption text-black'>{value}</span>
-                                </li>
-                            ))
-                            }
-                        </ul>
-                    }
-                    {typeEffective.resist.length !== 0 &&
-                        <ul className='element-top'>
-                            <p>0.625x damage from</p>
-                            {typeEffective.resist.map((value, index) => (
-                                <li className='img-group' key={ index }>
-                                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                    <span className='caption text-black'>{value}</span>
-                                </li>
-                            ))
-                            }
-                        </ul>
-                    }
-                    <h6 className='element-top'><b>Neutral</b></h6>
-                    <ul className='element-top'>
-                        <p>1x damage from</p>
-                        {typeEffective.neutral.map((value, index) => (
-                            <li className='img-group' key={ index }>
-                                <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                <span className='caption text-black'>{value}</span>
-                            </li>
-                        ))
-                        }
-                    </ul>
-                </div>
-            }
+            <Effective typeEffective={typeEffective}/>
         </div>  
     );
 }

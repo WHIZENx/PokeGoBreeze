@@ -3,14 +3,17 @@ import { useSnackbar } from 'notistack';
 
 import './Search.css';
 
-import APIService from '../../components/API.service'
+import APIService from '../../services/API.service'
+import Effective from '../../components/Effective/Effective';
+import Type from '../../components/Type/Type';
+import Form from '../../components/Gender/Form';
 
 const Search = () => {
 
     const initialize = useRef(null);
     const pokeList = useMemo(() => {return []}, []);
 
-    const [type_effective, setType_effective] = useState('');
+    const [typeEffective, setTypeEffective] = useState('');
 
     const [data, setData] = useState(null);
     
@@ -44,7 +47,7 @@ const Search = () => {
             else if (value_effective >= 0.39) data.very_resist.push(key);
             else data.super_resist.push(key);
         });
-        setType_effective(data);
+        setTypeEffective(data);
     }, []);
 
     useEffect(() => {
@@ -126,119 +129,20 @@ const Search = () => {
                     </ul>
                 </div>
             }
-            {type_effective !== '' && typeof data === 'object' &&
+            {data &&
                 <div className='element-top'>
                     {!release && <h5 className='element-top text-danger'>* This pokémon not release in Pokémon GO</h5>}
                     <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
                     <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
                     <div className='img-form-group'>
-                        <img width='40' height='40' alt='img-pokemon-sex' src={APIService.getGenderSprite('male')}></img>
-                        <ul>
-                            <li className='img-group'>
-                                <img alt='img-pokemon' src={data.sprites.front_default}></img>
-                                <span className="caption">Original form</span>
-                            </li>
-                            <li className='img-group'>
-                                <img alt='img-pokemon' src={data.sprites.front_shiny}></img>
-                                <span className="caption">Shiny form</span>
-                            </li>
-                        </ul>
+                        <Form sex='male' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
                         <hr></hr>
-                        <img width='40' height='40' alt='img-pokemon-sex' src={APIService.getGenderSprite('female')}></img>
-                        <ul>
-                            <li className='img-group'>
-                                {data.sprites.front_female ? <img alt='img-pokemon' src={data.sprites.front_female}></img> : <img alt='img-pokemon' src={data.sprites.front_default}></img>}
-                                <span className="caption">Original form</span>
-                            </li>
-                            <li className='img-group'>
-                                {data.sprites.front_shiny_female ? <img alt='img-pokemon' src={data.sprites.front_shiny_female}></img> : <img alt='img-pokemon' src={data.sprites.front_shiny}></img>}
-                                <span className="caption">Shiny form</span>
-                            </li>
-                        </ul>
+                        <Form sex='female' default_m={data.sprites.front_default} shiny_m={data.sprites.front_shiny} default_f={data.sprites.front_female} shiny_f={data.sprites.front_shiny_female}/>
                     </div>
                     <h4 className='element-top'>Infomation</h4>
                     <h5 className='element-top'>- Pokémon Type:</h5>
-                    <ul className='element-top'>
-                        {data.types.map((value, index) => (
-                            <li key={ index } className='img-group'>
-                                <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value.type.name)}></img>
-                                <span className='caption text-black'>{capitalize(value.type.name)}</span>
-                            </li>
-                        ))
-                        }
-                    </ul>
-                    <h5 className='element-top'>- Pokémon Type Effective:</h5>
-                    <h6 className='element-top'><b>Weakness</b></h6>
-                    {type_effective.very_weak.length !== 0 &&
-                        <ul className='element-top'>
-                            <p>2.56x damage from</p>
-                            {type_effective.very_weak.map((value, index) => (
-                                <li className='img-group' key={ index }>
-                                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                    <span className='caption text-black'>{value}</span>
-                                </li>
-                            ))
-                            }
-                        </ul>
-                    }
-                    <ul className='element-top'>
-                        <p>1.6x damage from</p>
-                        {type_effective.weak.map((value, index) => (
-                            <li className='img-group' key={ index }>
-                                <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                <span className='caption text-black'>{value}</span>
-                            </li>
-                        ))
-                        }
-                    </ul>
-                    <h6 className='element-top'><b>Resistance</b></h6>
-                    {type_effective.super_resist.length !== 0 &&
-                        <ul className='element-top'>
-                            <p>0.244x damage from</p>
-                            {type_effective.super_resist.map((value, index) => (
-                                <li className='img-group' key={ index }>
-                                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                    <span className='caption text-black'>{value}</span>
-                                </li>
-                            ))
-                            }
-                        </ul>
-                    }
-                    {type_effective.very_resist.length !== 0 &&
-                        <ul className='element-top'>
-                            <p>0.391x damage from</p>
-                            {type_effective.very_resist.map((value, index) => (
-                                <li className='img-group' key={ index }>
-                                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                    <span className='caption text-black'>{value}</span>
-                                </li>
-                            ))
-                            }
-                        </ul>
-                    }
-                    {type_effective.resist.length !== 0 &&
-                        <ul className='element-top'>
-                            <p>0.625x damage from</p>
-                            {type_effective.resist.map((value, index) => (
-                                <li className='img-group' key={ index }>
-                                    <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                    <span className='caption text-black'>{value}</span>
-                                </li>
-                            ))
-                            }
-                        </ul>
-                    }
-                    <h6 className='element-top'><b>Neutral</b></h6>
-                    <ul className='element-top'>
-                        <p>1x damage from</p>
-                        {type_effective.neutral.map((value, index) => (
-                            <li className='img-group' key={ index }>
-                                <img className='type-logo' alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                                <span className='caption text-black'>{value}</span>
-                            </li>
-                        ))
-                        }
-                    </ul>
+                    <Type arr={data.types.map(ele => ele.type.name)}/>
+                    <Effective typeEffective={typeEffective}/>
                     <h5 className='element-top'>- Pokémon height: {data.height}, weight: {data.weight}</h5>
                 </div>
             }

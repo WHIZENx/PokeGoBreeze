@@ -7,7 +7,7 @@ import FooterComponent from './components/Footer'
 
 import Home from './pages/Home/Home'
 import Search from './pages/Search/Search'
-import Type from './pages/Type/Type'
+import TypeEffect from './pages/TypeEffect/TypeEffect'
 
 function App() {
     return (
@@ -23,7 +23,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />}></Route>
               <Route path="/search" element={<Search />}></Route>
-              <Route path="/type-effective" element={<Type />}></Route>
+              <Route path="/type-effective" element={<TypeEffect />}></Route>
             </Routes>
             <FooterComponent />
           </div>
