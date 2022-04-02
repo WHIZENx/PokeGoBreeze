@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, createRef } from 'react';
 import { useSnackbar } from 'notistack';
 
 import './Search.css';
@@ -9,6 +9,12 @@ import Type from '../../components/Type/Type';
 import Form from '../../components/Gender/Form';
 
 const Search = () => {
+
+    const cardHeight = 57;
+    const pageCardScroll = 10;
+
+    const searchResult = createRef();
+    const searchResultID = useRef(0);
 
     const initialize = useRef(null);
     const pokeList = useMemo(() => {return []}, []);
@@ -22,6 +28,7 @@ const Search = () => {
     const [showResult, setShowResult] = useState(true);
 
     const [pokemonList, setPokemonList] = useState([]);
+    const currentPokemonListFilter = useRef([]);
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
 
     const { enqueueSnackbar } = useSnackbar();
@@ -50,6 +57,8 @@ const Search = () => {
         setTypeEffective(data);
     }, []);
 
+    
+
     useEffect(() => {
         const fetchMyAPI = async () => {
             if(!initialize.current) {
@@ -77,10 +86,18 @@ const Search = () => {
         }
         fetchMyAPI();
 
-        const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)).slice(0, 10);
-        setPokemonListFilter(results);
+        searchResultID.current = 1;
+        const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
+        currentPokemonListFilter.current = results;
+        setPokemonListFilter(currentPokemonListFilter.current.slice(0, 20));
+    }, [searchTerm, getTypeEffective, pokemonList, pokeList, currentPokemonListFilter]);
 
-    }, [searchTerm, getTypeEffective, pokemonList, pokeList]);
+    const listenScrollEvent = (ele) => {
+        let idScroll = Math.floor((ele.currentTarget.offsetHeight + ele.currentTarget.scrollTop) / (cardHeight*pageCardScroll));
+        if (idScroll <= searchResultID.current) return;
+        searchResultID.current = idScroll;
+        setPokemonListFilter([...pokemonListFilter, ...currentPokemonListFilter.current.slice(idScroll*pageCardScroll, idScroll*pageCardScroll+pageCardScroll)])
+    }
 
     const getInfoPoke = (value) => {
         let id = value.currentTarget.dataset.id;
@@ -118,9 +135,11 @@ const Search = () => {
             </div>
             {searchTerm !== '' && showResult &&
                 <div className="result">
-                    <ul>
+                    <ul ref={searchResult}
+                        onScroll={listenScrollEvent.bind(this)}
+                        style={pokemonListFilter.length < pageCardScroll ? {height: pokemonListFilter.length*cardHeight, overflowY: 'hidden'} : {height: cardHeight*pageCardScroll, overflowY: 'scroll'}}>
                         {pokemonListFilter.map((value, index) => (
-                            <li className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
+                            <li style={{height: cardHeight}} className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
                                 <b>#{value.id}</b>
                                 <img className='img-search' alt='img-pokemon' src={value.sprites}></img>
                                 {capitalize(value.name)}
@@ -148,7 +167,6 @@ const Search = () => {
             }
         </div>
     );
-
 }
 
 export default Search;
