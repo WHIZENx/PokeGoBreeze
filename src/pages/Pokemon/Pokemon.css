@@ -1,0 +1,20 @@
+.poke-container {
+    overflow-x: hidden;
+}
+
+.img-form-group hr {
+    width: 350px;
+}
+
+.img-group {
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.caption {
+    font-size: 12px;
+    color: gray;
+    display: block;
+}

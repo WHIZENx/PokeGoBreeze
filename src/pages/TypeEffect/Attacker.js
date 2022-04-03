@@ -4,12 +4,12 @@ import CardType from '../../components/Card/CardType';
 
 const Attacker = (prop) => {
 
-    const [types, setTypes] = useState([]);
+    const [types, setTypes] = useState(null);
 
     const [currentType, setCurrentType] = useState('Bug');
     const [showType, setShowType] = useState(false);
 
-    const [typeEffective, setTypeEffective] = useState([]);
+    const [typeEffective, setTypeEffective] = useState(null);
 
     const getTypeEffective = useCallback(() => {
         let data = {

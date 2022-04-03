@@ -3,7 +3,7 @@ import Type from '../Sprits/Type';
 
 const TypeEffective = (props) => {
 
-    if (props.typeEffective.length === 0) return false;
+    if (!props.typeEffective) return false;
 
     return (
         <div className="element-top">

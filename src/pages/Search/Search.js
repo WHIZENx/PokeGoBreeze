@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useRef, createRef, Fragment } from 'react';
-import { useSnackbar } from 'notistack';
 
 import './Search.css';
 
@@ -16,7 +15,7 @@ const Search = () => {
 
     const pokeList = useMemo(() => {return []}, []);
 
-    const [data, setData] = useState({id: 1});
+    const [id, setId] = useState(1);
     
     const [searchTerm, setsearchTerm] = useState('');
     const [showResult, setShowResult] = useState(false);
@@ -24,8 +23,6 @@ const Search = () => {
     const [pokemonList, setPokemonList] = useState([]);
     const currentPokemonListFilter = useRef([]);
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
-
-    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         const fetchMyAPI = async () => {
@@ -54,16 +51,9 @@ const Search = () => {
     }
 
     const getInfoPoke = (value) => {
-        let id = value.currentTarget.dataset.id;
+        const id = value.currentTarget.dataset.id;
         setShowResult(false);
-
-        APIService.getPokeInfo(id)
-        .then(res => {
-            setData(res.data);
-        })
-        .catch(err => {
-            enqueueSnackbar('Pokémon ID or name: ' + value + ' Not found!', { variant: 'error' });
-        });
+        setId(id);
     };
 
     const capitalize = (string) => {
@@ -71,6 +61,19 @@ const Search = () => {
     }
 
     return (
+        <Fragment>
+            <div className='group-prev-next'>
+                { id  > 1 &&
+                <div className='btn-prev'>
+                    <span className="carousel-control-prev-icon previous" onClick={() => setId(id-1)}></span>
+                </div>
+                }
+                { id  < pokeList.length &&
+                    <div className='btn-next'>
+                        <span className="carousel-control-next-icon next" onClick={() => setId(id+1)}></span>
+                    </div>
+                }
+            </div>
         <div className="container element-top">
             <h1 id ="main" className='center'>Pokémon Info Search</h1>
             <div className="input-group mb-12 element-top">
@@ -87,16 +90,15 @@ const Search = () => {
                     {pokemonListFilter.map((value, index) => (
                         <li style={{height: cardHeight}} className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
                             <b>#{value.id}</b>
-                            <img className='img-search' alt='img-pokemon' src={value.sprites}></img>
+                            <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}></img>
                             {capitalize(value.name)}
                         </li>
                     ))}
                 </ul>
             </div>
-            {data &&
-                <Fragment><Pokemon id={data.id}/></Fragment>
-            }
+            <Pokemon id={id}/>
         </div>
+        </Fragment>
     );
 }
 

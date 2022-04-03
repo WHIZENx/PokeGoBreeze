@@ -34,25 +34,61 @@ ul {
     text-align: center;
 }
 
-.img-form-group hr {
-    width: 350px;
-}
-
 .img-search {
     margin: 0 5px 0 5px;
-    width: 36px;
-    height: 36px;
 }
 
-.img-group {
-    vertical-align: top;
-    display: inline-block;
-    text-align: center;
-    margin-right: 10px;
+.group-prev-next {
+    position: -webkit-absolute;
+    position: absolute;
+    height: 100%;
 }
 
-.caption {
-    font-size: 12px;
-    color: gray;
-    display: block;
+.btn-prev {
+    position: -webkit-sticky;
+    position: fixed;
+    z-index: 1;
+    top: 50%;
+    left: 0;
+    margin-left: 4%;
+}
+
+.btn-next {
+    position: -webkit-fixed;
+    position: fixed;
+    z-index: 1;
+    top: 50%;
+    right: 0;
+    margin-right: 4%
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  height: 100%;
+  width: 100%;
+  background-size: 100%, 100%;
+  background-image: none;
+  color: rgba(255, 0, 0, 0.5);
+}
+
+.carousel-control-next-icon:after {
+  content: '>';
+  font-size: 55px;
+  font-weight: bold;
+}
+
+.carousel-control-prev-icon:after {
+  content: '<';
+  font-size: 55px;
+  font-weight: bold;
+}
+
+.carousel-control-next-icon:hover {
+    color: red;
+    cursor: pointer;
+  }
+  
+.carousel-control-prev-icon:hover {
+    color: red;
+    cursor: pointer;
 }

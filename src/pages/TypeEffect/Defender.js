@@ -4,9 +4,9 @@ import CardType from '../../components/Card/CardType';
 
 const Defender = (prop) => {
 
-    const [types, setTypes] = useState([]);
+    const [types, setTypes] = useState(null);
 
-    const [typeEffective, setTypeEffective] = useState([]);
+    const [typeEffective, setTypeEffective] = useState(null);
 
     const [currentTypePri, setCurrentTypePri] = useState('Bug');
     const [currentTypeSec, setCurrentTypeSec] = useState('');

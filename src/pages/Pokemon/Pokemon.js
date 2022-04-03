@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef, Fragment } from 'react
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
+import './Pokemon.css'
+
 import APIService from '../../services/API.service';
 import Form from '../../components/Info/Gender/Form';
 import Type from '../../components/Sprits/Type';
@@ -14,13 +16,13 @@ const Pokemon = (props) => {
 
     const initialize = useRef(null);
 
-    const [weatherEffective, setWeatherEffective] = useState('');
-    const [typeEffective, setTypeEffective] = useState('');
+    const [weatherEffective, setWeatherEffective] = useState(null);
+    const [typeEffective, setTypeEffective] = useState(null);
 
     const [data, setData] = useState(null);
-    const [release, setRelease] = useState(false);
+    const [release, setRelease] = useState(true);
 
-    const [pokemonRaito, setPokemonRaito] = useState(0);
+    const [pokemonRaito, setPokemonRaito] = useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -58,13 +60,26 @@ const Pokemon = (props) => {
         setWeatherEffective(data);
     }, []);
 
+    const queryPokemon = useCallback((id) => {
+        APIService.getPokeInfo(id)
+        .then(res => {
+            setData(res.data);
+            getReleasePoke(res.data.id);
+            getTypeEffective(res.data.types);
+            getWeatherEffective(res.data.types);
+            getRatioGender(res.data.id);
+        })
+        .catch(err => {
+            enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
+        });
+    }, [enqueueSnackbar, getTypeEffective, getWeatherEffective]);
+
     useEffect(() => {
         const fetchMyAPI = async () => {
             if(!initialize.current) {
                 try {
                     const poke_default = await APIService.getPokeInfo(params.id ? params.id : props.id);
                     setData(poke_default.data);
-                    
     
                     initialize.current = {};
     
@@ -94,21 +109,8 @@ const Pokemon = (props) => {
         }
         fetchMyAPI();
 
-        if (!params.id && initialize.current) {
-            APIService.getPokeInfo(props.id)
-            .then(res => {
-                setData(res.data);
-                getReleasePoke(res.data.id);
-                getTypeEffective(res.data.types);
-                getWeatherEffective(res.data.types);
-                getRatioGender(res.data.id);
-            })
-            .catch(err => {
-                enqueueSnackbar('Pokémon ID or name: ' + props.id + ' Not found!', { variant: 'error' });
-            });
-        }
-        
-    }, [getTypeEffective, getWeatherEffective, enqueueSnackbar, params.id, props.id]);
+        if (!params.id && initialize.current) queryPokemon(props.id)
+    }, [getTypeEffective, getWeatherEffective, enqueueSnackbar, params.id, props.id, queryPokemon]);
 
     const getReleasePoke = (value) => {
         const id = initialize.current.release[value];
@@ -130,7 +132,8 @@ const Pokemon = (props) => {
     return (
         <Fragment>
         {data &&
-            <div className='element-top'>
+            <Fragment>
+            <div className='element-top poke-container'>
             {!release && 
             <Fragment>
                 <h5 className='element-top text-danger'>* {capitalize(data.name)} not release in Pokémon go   
@@ -173,6 +176,7 @@ const Pokemon = (props) => {
             <TypeEffective typeEffective={typeEffective}/>
             <h5 className='element-top'>- Pokémon height: {data.height}, weight: {data.weight}</h5>
             </div>
+            </Fragment>
         }
         </Fragment>
     )
