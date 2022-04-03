@@ -9,6 +9,7 @@ import Home from './pages/Home/Home'
 import Search from './pages/Search/Search'
 import TypeEffect from './pages/TypeEffect/TypeEffect'
 import Weather from './pages/Weather/Weather';
+import Pokemon from './pages/Pokemon/Pokemon';
 
 function App() {
     return (
@@ -26,8 +27,9 @@ function App() {
               <Route path="/search" element={<Search />}></Route>
               <Route path="/type-effective" element={<TypeEffect />}></Route>
               <Route path="/weather-boosts" element={<Weather />}></Route>
+              <Route path="/pokemon/:id" element={<Pokemon />}></Route>
             </Routes>
-            <FooterComponent />
+            {/* <FooterComponent /> */}
           </div>
         </BrowserRouter>
       </SnackbarProvider>
