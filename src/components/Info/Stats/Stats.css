@@ -1,0 +1,24 @@
+.progress {
+    width: 70%;
+    height: 30px;
+    margin: 10px 0 10px 0;
+}
+
+.stats-text {
+    align-items: center;
+    height: 30px;
+    margin-left: 1%;
+}
+
+.box-text span {
+    padding: 3px;
+    background-color: rgba(211, 211, 211, 0.8);
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.rank-text {
+    align-items: center;
+    height: 30px;
+    width: 99% !important;
+}

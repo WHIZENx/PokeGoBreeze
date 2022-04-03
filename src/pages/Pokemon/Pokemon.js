@@ -9,12 +9,17 @@ import Form from '../../components/Info/Gender/Form';
 import Type from '../../components/Sprits/Type';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import TypeEffective from '../../components/Effective/TypeEffective';
+import Stats from '../../components/Info/Stats/Stats';
 
 const Pokemon = (props) => {
 
     const params = useParams();
 
     const initialize = useRef(null);
+
+    const [statATK, setStatATK] = useState(null);
+    const [statDEF, setStatDEF] = useState(null);
+    const [statSTA, setStatSTA] = useState(null);
 
     const [weatherEffective, setWeatherEffective] = useState(null);
     const [typeEffective, setTypeEffective] = useState(null);
@@ -38,7 +43,7 @@ const Pokemon = (props) => {
         Object.entries(initialize.current.typeEffective).forEach(([key, value]) => {
             let value_effective = 1;
             types.forEach((type) => {
-                value_effective *= value[capitalize(type.type.name)];
+                value_effective *= value[splitAndCapitalize(type.type.name)];
             });
             if (value_effective >= 2.56) data.very_weak.push(key);
             else if (value_effective >= 1.6) data.weak.push(key);
@@ -54,7 +59,7 @@ const Pokemon = (props) => {
         let data = [];
         Object.entries(initialize.current.weatherBoosts).forEach(([key, value]) => {
             types.forEach((type) => {
-                if (value.includes(capitalize(type.type.name)) && !data.includes(key)) data.push(key);
+                if (value.includes(splitAndCapitalize(type.type.name)) && !data.includes(key)) data.push(key);
             });
         });
         setWeatherEffective(data);
@@ -63,24 +68,33 @@ const Pokemon = (props) => {
     const queryPokemon = useCallback((id) => {
         APIService.getPokeInfo(id)
         .then(res => {
-            setData(res.data);
             getReleasePoke(res.data.id);
             getTypeEffective(res.data.types);
             getWeatherEffective(res.data.types);
             getRatioGender(res.data.id);
+
+            setStatATK(props.stats.attack.ranking.filter(item => item.id === res.data.id)[0]);
+            setStatDEF(props.stats.defense.ranking.filter(item => item.id === res.data.id)[0]);
+            setStatSTA(props.stats.stamina.ranking.filter(item => item.id === res.data.id)[0]);
+            setData(res.data);
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
         });
-    }, [enqueueSnackbar, getTypeEffective, getWeatherEffective]);
+    }, [enqueueSnackbar, getTypeEffective, getWeatherEffective, props.stats]);
 
     useEffect(() => {
         const fetchMyAPI = async () => {
             if(!initialize.current) {
                 try {
-                    const poke_default = await APIService.getPokeInfo(params.id ? params.id : props.id);
-                    setData(poke_default.data);
+                    const poke_default = await APIService.getPokeInfo(params.id ? params.id.toLowerCase() : props.id);
+
+                    setStatATK(props.stats.attack.ranking.filter(item => item.id === poke_default.data.id)[0]);
+                    setStatDEF(props.stats.defense.ranking.filter(item => item.id === poke_default.data.id)[0]);
+                    setStatSTA(props.stats.stamina.ranking.filter(item => item.id === poke_default.data.id)[0]);
     
+                    setData(poke_default.data);
+
                     initialize.current = {};
     
                     const released_poke = await APIService.getPokeJSON('released_pokemon.json');
@@ -103,14 +117,14 @@ const Pokemon = (props) => {
     
                     getRatioGender(poke_default.data.id);
                 } catch {
-                    enqueueSnackbar('Pokémon ID or name: ' + params.id + ' Not found!', { variant: 'error' });
+                    enqueueSnackbar('Pokémon ID or Name: ' + params.id + ' Not found!', { variant: 'error' });
                 }
             }
         }
         fetchMyAPI();
 
-        if (!params.id && initialize.current) queryPokemon(props.id)
-    }, [getTypeEffective, getWeatherEffective, enqueueSnackbar, params.id, props.id, queryPokemon]);
+        if (!params.id && initialize.current) queryPokemon(props.id);
+    }, [getTypeEffective, getWeatherEffective, enqueueSnackbar, params.id, props.id, props.stats, queryPokemon]);
 
     const getReleasePoke = (value) => {
         const id = initialize.current.release[value];
@@ -125,8 +139,8 @@ const Pokemon = (props) => {
         });
     }
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+    const splitAndCapitalize = (string) => {
+        return string.split("-").map(text => text.charAt(0).toUpperCase() + text.slice(1)).join(" ");
     }
 
     return (
@@ -136,13 +150,14 @@ const Pokemon = (props) => {
             <div className='element-top poke-container'>
             {!release && 
             <Fragment>
-                <h5 className='element-top text-danger'>* {capitalize(data.name)} not release in Pokémon go   
+                <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go   
                 <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
                 </h5>
             </Fragment>
             }
             <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
-            <h4>Pokémon Name: <b>{capitalize(data.name)}</b></h4>
+            <h4>Pokémon Name: <b>{splitAndCapitalize(data.name)}</b></h4>
+            <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} attack_max_rank={props.stats.attack.max_rank}  defense_max_rank={props.stats.defense.max_rank}  stamina_max_rank={props.stats.stamina.max_rank}/>
             <div className='row'>
                 {initialize.current && pokemonRaito &&
                 <div className='col img-form-group'>

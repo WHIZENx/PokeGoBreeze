@@ -5,7 +5,7 @@ import './Search.css';
 import APIService from '../../services/API.service';
 import Pokemon from '../Pokemon/Pokemon';
 
-const Search = () => {
+const Search = (props) => {
 
     const cardHeight = 57;
     const pageCardScroll = 10;
@@ -51,7 +51,7 @@ const Search = () => {
     }
 
     const getInfoPoke = (value) => {
-        const id = value.currentTarget.dataset.id;
+        const id = parseInt(value.currentTarget.dataset.id);
         setShowResult(false);
         setId(id);
     };
@@ -96,7 +96,7 @@ const Search = () => {
                     ))}
                 </ul>
             </div>
-            <Pokemon id={id}/>
+            <Pokemon stats={props.stats} id={id}/>
         </div>
         </Fragment>
     );

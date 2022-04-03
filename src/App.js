@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack'
 import './App.css';
@@ -10,8 +11,24 @@ import Search from './pages/Search/Search'
 import TypeEffect from './pages/TypeEffect/TypeEffect'
 import Weather from './pages/Weather/Weather';
 import Pokemon from './pages/Pokemon/Pokemon';
+import APIService from './services/API.service';
+import { sortStatsPoke } from './components/Calculate/Calculate';
 
-function App() {
+const App = () => {
+
+    const [stats, setStats] = useState(null);
+
+    useEffect(() => {
+      const fetchMyAPI = async () => {
+          if (!stats) {
+              const res = await APIService.getPokeJSON('pokemon_stats.json');
+              setStats(sortStatsPoke(res.data));
+          }
+      }
+      fetchMyAPI();
+
+    }, [stats]);
+
     return (
       <SnackbarProvider
       anchorOrigin={{
@@ -24,10 +41,10 @@ function App() {
             <NavbarComponent />
             <Routes>
               <Route path="/" element={<Home />}></Route>
-              <Route path="/search" element={<Search />}></Route>
               <Route path="/type-effective" element={<TypeEffect />}></Route>
               <Route path="/weather-boosts" element={<Weather />}></Route>
-              <Route path="/pokemon/:id" element={<Pokemon />}></Route>
+              <Route path="/search" element={stats && <Search stats={stats}/>}></Route>
+              <Route path="/pokemon/:id" element={stats && <Pokemon stats={stats}/>}></Route>
             </Routes>
             {/* <FooterComponent /> */}
           </div>
