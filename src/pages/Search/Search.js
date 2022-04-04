@@ -13,9 +13,12 @@ const Search = () => {
     const searchResult = createRef();
     const searchResultID = useRef(0);
 
+    const [prev, setPrev] = useState(true);
+    const [next, setNext] = useState(true);
+
     const pokeList = useMemo(() => {return []}, []);
 
-    const [id, setId] = useState(1);
+    const [id, setId] = useState(3);
     
     const [searchTerm, setsearchTerm] = useState('');
     const [showResult, setShowResult] = useState(false);
@@ -53,24 +56,46 @@ const Search = () => {
     const getInfoPoke = (value) => {
         const id = parseInt(value.currentTarget.dataset.id);
         setShowResult(false);
+        setPrev(false);
+        setNext(false);
         setId(id);
+        setTimeout(() => {
+            setPrev(true);
+            setNext(true);
+        }, 800);
     };
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    const decId = () => {
+        setPrev(false);
+        setId(id-1);
+        setTimeout(() => {
+            setPrev(true);
+        }, 800);
+    }
+
+    const incId = () => {
+        setNext(false);
+        setId(id+1);
+        setTimeout(() => {
+            setNext(true);
+        }, 800);
+    }
+
     return (
         <Fragment>
             <div className='group-prev-next'>
-                { id  > 1 &&
+                { id  > 1 && prev &&
                 <div className='btn-prev'>
-                    <span className="carousel-control-prev-icon previous" onClick={() => setId(id-1)}></span>
+                    <span className="carousel-control-prev-icon previous" onClick={decId}></span>
                 </div>
                 }
-                { id  < pokeList.length &&
+                { id  < pokeList.length && next &&
                     <div className='btn-next'>
-                        <span className="carousel-control-next-icon next" onClick={() => setId(id+1)}></span>
+                        <span className="carousel-control-next-icon next" onClick={incId}></span>
                     </div>
                 }
             </div>

@@ -1,11 +1,11 @@
-import { Fragment, useCallback } from "react";
+import { Fragment, useEffect } from "react";
 import TypeEffective from "../Effective/TypeEffective";
 import WeatherTypeEffective from "../Effective/WeatherTypeEffective";
 import Type from "../Sprits/Type";
 
 const Info = (props) => {
 
-    const getWeatherEffective =(types) => {
+    const getWeatherEffective = (types) => {
         let data = [];
         Object.entries(props.weatherEffective).forEach(([key, value]) => {
             types.forEach((type) => {

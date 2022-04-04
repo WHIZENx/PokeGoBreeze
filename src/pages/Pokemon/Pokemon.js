@@ -246,12 +246,22 @@ const Pokemon = (props) => {
     const fetchMap = useCallback(async (data) => {
         setFormList([]);
         setPokeData([]);
-        return await Promise.all(data.varieties.map(async (value, index) => {
+        let dataPokeList = [];
+        let dataFromList = [];
+        await Promise.all(data.varieties.map(async (value, index) => {
             const poke_info = await APIService.getFetchUrl(value.pokemon.url);
             const poke_form = await APIService.getFetchUrl(poke_info.data.forms[0].url);
-            setPokeData(oldList => [...oldList, poke_info.data]);
-            setFormList(oldList => [...oldList, poke_form.data]);
+            // setPokeData(oldList => [...oldList, poke_info.data]);
+            // setFormList(oldList => [...oldList, poke_form.data]);
+            dataPokeList.push(poke_info.data);
+            dataFromList.push(poke_form.data);
         }));
+        // console.log(dataFromList.map(item => ({form: item, name: data.varieties.find(v => v.pokemon.name === item.name).pokemon.name})))
+        setPokeData(dataPokeList);
+        // console.log(dataFromList.map(item => ({form: item, name: data.varieties.find(v => v.pokemon.name === item.name)}))
+        // .sort((a,b) => (a.form.id > b.form.id) ? 1 : ((b.form.id > a.form.id) ? -1 : 0)));
+        setFormList(dataFromList.map(item => ({form: item, name: data.varieties.find(v => v.pokemon.name === item.pokemon.name).pokemon.name}))
+        .sort((a,b) => (a.form.id > b.form.id) ? 1 : ((b.form.id > a.form.id) ? -1 : 0)));
     }, []);
 
     const queryPokemon = useCallback((id) => {
@@ -285,7 +295,7 @@ const Pokemon = (props) => {
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
         });
-    }, [enqueueSnackbar, getRatioGender, fetchMap]);
+    }, [enqueueSnackbar, getRatioGender, fetchMap, props.data]);
 
     useEffect(() => {
         if (!initialize.current) {
@@ -338,23 +348,23 @@ const Pokemon = (props) => {
                         test
                     </div>
                 </div>
-                {initialize.current && pokeData.length === data.varieties.length && formList.length > 0 &&
-                    <div className='img-form-group'>
+                <div className='img-form-group'>
+                {initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
                         <FormGroup 
                                 id_default={data.id}
                                 pokeData={pokeData}
                                 pokemonRaito={pokeRatio}
-                                formList={formList.map(item => ({form: item, name: data.varieties.find(v => v.pokemon.name === item.name).pokemon.name}))}
+                                formList={formList}
                                 genderless={genderList.Genderless}
                                 typeEffective={typeEffective}
                                 weatherEffective={weatherEffective}
                                 released={released}/>
-                    </div> 
-                    // :
-                    // <div className="spinner-border text-info" role="status">
-                    //     <span className="visually-hidden">Loading...</span>
-                    // </div>
+                    :
+                    <div className="spinner-border text-info" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
                 }
+                </div> 
             </Fragment>
             }
         </Fragment>

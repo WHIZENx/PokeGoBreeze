@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useReducer, useRef } from 'react';
 import Info from '../Info';
 import Form from './Form';
 
@@ -6,8 +6,12 @@ import './Form.css';
 
 const FormGroup = (props) => {
 
-    const [currForm, setCurrForm] = useState(props.formList.find(item => item.form.is_default));
-    const [dataPoke, setDataPoke] = useState(props.id_default === currForm.form.id ? props.pokeData.find(item => item.id === props.id_default) : null);
+    const reducer = (_, newState) => {
+        return newState;
+    }
+
+    const [currForm, setCurrForm] = useReducer(reducer, props.formList.find(item => item.name === props.pokeData.find(item => item.is_default).name));
+    const [dataPoke, setDataPoke] = useReducer(reducer, props.pokeData.find(item => item.id === props.id_default));
 
     const pokeID = useRef(props.pokeData.find(item => item.is_default))
 
@@ -23,10 +27,22 @@ const FormGroup = (props) => {
     return (
         <Fragment>
             {props.formList.map((value, index) =>(
-                <button value={value.form.name} key={index} className="btn btn-primary btn-form" onClick={(e) => changeForm(e)}>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name)}</button>
+                <button value={value.form.name} key={index} className="btn btn-primary btn-form" onClick={(e) => changeForm(e)}>
+                    {value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name)}
+                    
+                </button>
             ))
             }
-            {dataPoke &&
+            <div>
+                <div className='form-border'>
+                    <h5>Form: <b>{currForm.form.form_name === "" ? "Normal" : splitAndCapitalize(currForm.form.form_name)}</b>
+                    {currForm.form.id === pokeID.current.id && 
+                        <small className='text-danger'> (Default form)</small>
+                    }
+                    </h5>
+                </div>
+            </div>
+            {dataPoke && currForm &&
             <Fragment>
             {!(new Set(props.genderless.map(value => value.pokemon_id)).has(pokeID.current.id)) ?
             <Fragment>
@@ -42,7 +58,6 @@ const FormGroup = (props) => {
                   released={props.released}/>
             </Fragment>
             }
-            
         </Fragment>
     )
 }

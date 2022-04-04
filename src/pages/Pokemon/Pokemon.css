@@ -2,6 +2,10 @@
     overflow-x: hidden;
 }
 
+.img-form-group {
+    height: 1500px;
+}
+
 .img-form-group hr {
     width: 350px;
 }

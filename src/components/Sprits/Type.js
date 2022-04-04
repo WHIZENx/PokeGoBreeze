@@ -3,7 +3,7 @@ import APIService from '../../services/API.service'
 
 const Type = (props) => {
 
-    if (!props.arr || props.arr.length === 0) return false;
+    if (!props.arr) return false;
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
