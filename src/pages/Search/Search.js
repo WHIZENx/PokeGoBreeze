@@ -18,7 +18,7 @@ const Search = () => {
 
     const pokeList = useMemo(() => {return []}, []);
 
-    const [id, setId] = useState(3);
+    const [id, setId] = useState(1);
     
     const [searchTerm, setsearchTerm] = useState('');
     const [showResult, setShowResult] = useState(false);

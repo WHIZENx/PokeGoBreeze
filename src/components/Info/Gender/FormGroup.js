@@ -1,5 +1,6 @@
 import React, { Fragment, useReducer, useRef } from 'react';
 import Info from '../Info';
+import Stats from '../Stats/Stats';
 import Form from './Form';
 
 import './Form.css';
@@ -29,7 +30,6 @@ const FormGroup = (props) => {
             {props.formList.map((value, index) =>(
                 <button value={value.form.name} key={index} className="btn btn-primary btn-form" onClick={(e) => changeForm(e)}>
                     {value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name)}
-                    
                 </button>
             ))
             }
@@ -52,6 +52,10 @@ const FormGroup = (props) => {
             </Fragment>
             : <Form sex='Genderless' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/>
             }
+            {/* <Stats statATK={statATK}
+                statDEF={statDEF}
+                statSTA={statSTA}
+                pokemonStats={props.pokemonStats}/> */}
             <Info data={dataPoke}
                   typeEffective={props.typeEffective}
                   weatherEffective={props.weatherEffective}
