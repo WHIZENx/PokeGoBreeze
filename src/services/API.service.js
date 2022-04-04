@@ -12,12 +12,24 @@ class APIService {
         this.date = new Date();
     }
 
+    getFetchUrl(url) {
+        return axios.get(url);
+    }
+
     getPokemonGoIcon(icon) {
         return `${POGO_ASSET_API_URL}App Icons/${icon}.png`;
     }
 
     getPokeInfo(value) {
         return axios.get(`${POKE_API_URL}pokemon/${value}`);
+    }
+
+    getPokeSpicies(value) {
+        return axios.get(`${POKE_API_URL}pokemon-species/${value}`);
+    }
+
+    getPokeForm(value) {
+        return axios.get(`${POKE_API_URL}pokemon-form/${value}`);
     }
 
     getPokeJSON(path) {

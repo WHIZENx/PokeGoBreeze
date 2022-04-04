@@ -1,0 +1,50 @@
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Info from '../Info';
+import Form from './Form';
+
+import './Form.css';
+
+const FormGroup = (props) => {
+
+    const [currForm, setCurrForm] = useState(props.formList.find(item => item.form.is_default));
+    const [dataPoke, setDataPoke] = useState(props.id_default === currForm.form.id ? props.pokeData.find(item => item.id === props.id_default) : null);
+
+    const pokeID = useRef(props.pokeData.find(item => item.is_default))
+
+    const splitAndCapitalize = (string) => {
+        return string.split("-").map(text => text.charAt(0).toUpperCase() + text.slice(1)).join(" ");
+    }
+
+    const changeForm = (e) => {
+        setCurrForm(props.formList.find(item => item.name === e.target.value));
+        setDataPoke(props.pokeData.find(item => item.name === e.target.value));
+    }
+
+    return (
+        <Fragment>
+            {props.formList.map((value, index) =>(
+                <button value={value.form.name} key={index} className="btn btn-primary btn-form" onClick={(e) => changeForm(e)}>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name)}</button>
+            ))
+            }
+            {dataPoke &&
+            <Fragment>
+            {!(new Set(props.genderless.map(value => value.pokemon_id)).has(pokeID.current.id)) ?
+            <Fragment>
+                {props.pokemonRaito.charAt(0) !== '0' && <Fragment><Form ratio={props.pokemonRaito} sex='Male' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+                {props.pokemonRaito.charAt(0) !== '0' && props.pokemonRaito.charAt(3) !== '0' && <hr></hr>}
+                {props.pokemonRaito.charAt(3) !== '0' && <Fragment><Form ratio={props.pokemonRaito} sex='Female' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+            </Fragment>
+            : <Form sex='Genderless' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/>
+            }
+            <Info data={dataPoke}
+                  typeEffective={props.typeEffective}
+                  weatherEffective={props.weatherEffective}
+                  released={props.released}/>
+            </Fragment>
+            }
+            
+        </Fragment>
+    )
+}
+
+export default FormGroup;
