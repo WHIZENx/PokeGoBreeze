@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack'
 import './App.css';
