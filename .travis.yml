@@ -3,7 +3,7 @@ cache:
   - node_modules # cache node_module
 language: node_js # set language to node_js
 node_js:
-  7 # use node version 7
+  16.14.2 # use node version 16
 branches:
   only: 
   - master # auto build and deploy in only master branch
