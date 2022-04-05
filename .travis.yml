@@ -8,7 +8,7 @@ branches:
   only: 
   - master # auto build and deploy in only master branch
 before_install:
-  - npm i -g npm@version-number
+  - npm i -g npm@2
 script: # run after installed
 - npm install # install node module
 - npm run build # build project
