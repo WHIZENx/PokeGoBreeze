@@ -345,7 +345,7 @@ const Pokemon = (props) => {
                         } */}
                     </div>
                     <div className='col element-top'>
-                        test
+                        Deploy!
                     </div>
                 </div>
                 <div className='img-form-group'>
