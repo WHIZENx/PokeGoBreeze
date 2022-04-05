@@ -8,7 +8,7 @@ branches:
   only: 
   - master # auto build and deploy in only master branch
 script: # run after installed
-- npm install -g serve # install node module
+# - npm install # install node module
 - npm run build # build project
 install:
   npm install -g firebase-tools # install firebase-cli
