@@ -1,4 +1,12 @@
-export const sortStatsPoke = (states) => {
+export const sortStatsPoke = (states, megaStats) => {
+    states.push(...megaStats.map(item => {return {
+        base_attack: item.stats.base_attack,
+        base_defense: item.stats.base_defense,
+        base_stamina: item.stats.base_stamina,
+        form: "Mega" + ((item.form === "Normal") ? "" : "-"+item.form),
+        pokemon_id: item.pokemon_id,
+        pokemon_name: item.pokemon_name
+    }}));
     const attackRanking = Array.from(new Set(states.sort((a,b) => (a.base_attack > b.base_attack) ? 1 : ((b.base_attack > a.base_attack) ? -1 : 0))
     .map((item) => {
         return item.base_attack;
@@ -34,21 +42,21 @@ export const sortStatsPoke = (states) => {
         "attack": {
             "ranking": attackStats,
             "min_rank": 1,
-            "max_rank": attackRanking.length,
+            "max_rank": attackRanking.length+1,
             "min_stats": minATK,
             "max_stats": maxATK
         },
         "defense": {
             "ranking": defenseStats,
             "min_rank": 1,
-            "max_rank": defenseRanking.length,
+            "max_rank": defenseRanking.length+1,
             "min_stats": minDEF,
             "max_stats": maxDEF
         },
         "stamina": {
             "ranking": staminaStats,
             "min_rank": 1,
-            "max_rank": staminaRanking.length,
+            "max_rank": staminaRanking.length+1,
             "min_stats": minSTA,
             "max_stats": maxSTA
         }
