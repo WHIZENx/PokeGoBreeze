@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, Fragment } from 'react';
+import React, { useState, useEffect, useMemo, useRef, Fragment, useCallback } from 'react';
 
 import './Search.css';
 
@@ -13,8 +13,8 @@ const Search = () => {
     const searchResult = useRef(null);
     const searchResultID = useRef(0);
 
-    const [prev, setPrev] = useState(true);
-    const [next, setNext] = useState(true);
+    const [prev, setPrev] = useState(false);
+    const [next, setNext] = useState(false);
 
     const pokeList = useMemo(() => {return []}, []);
 
@@ -32,7 +32,7 @@ const Search = () => {
             if (pokeList.length === 0) {
                 const res = await APIService.getPokeJSON('pokemon_names.json');
                 Object.entries(res.data).forEach(([key, value]) => {
-                    pokeList.push({id: value.id, name: value.name.toLowerCase(), sprites: APIService.getPokeSprite(value.id)});
+                    pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeIconSprite(value.id)});
                 });
                 setPokemonList(pokeList);
             }
@@ -44,7 +44,7 @@ const Search = () => {
         const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
         currentPokemonListFilter.current = results;
         setPokemonListFilter(currentPokemonListFilter.current.slice(0, 20));
-    }, [searchTerm, pokemonList, pokeList, searchResult]);
+    }, [searchTerm, pokemonList, pokeList, searchResult, id]);
 
     const listenScrollEvent = (ele) => {
         let idScroll = Math.floor((ele.currentTarget.offsetHeight + ele.currentTarget.scrollTop) / (cardHeight*pageCardScroll));
@@ -65,25 +65,29 @@ const Search = () => {
         }, 800);
     };
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+    const setIDPoke = (id) => {
+        setId(id);
     }
 
     const decId = () => {
         setPrev(false);
         setId(id-1);
-        setTimeout(() => {
-            setPrev(true);
-        }, 800);
     }
 
     const incId = () => {
         setNext(false);
         setId(id+1);
-        setTimeout(() => {
-            setNext(true);
-        }, 800);
     }
+
+    const handleSetPrev = useCallback((bool) => {
+        if (bool) setTimeout(() => {setPrev(bool);}, 500);
+        else setPrev(bool);
+    }, []);
+
+    const handleSetNext = useCallback((bool) => {
+        if (bool) setTimeout(() => {setNext(bool);}, 500);
+        else setNext(bool);
+    }, []);
 
     return (
         <Fragment>
@@ -116,12 +120,12 @@ const Search = () => {
                         <li style={{height: cardHeight}} className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
                             <b>#{value.id}</b>
                             <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}></img>
-                            {capitalize(value.name)}
+                            {value.name}
                         </li>
                     ))}
                 </ul>
             </div>
-            <Pokemon id={id}/>
+            <Pokemon id={id} onSetIDPoke={setIDPoke} onSetPrev={handleSetPrev} onSetNext={handleSetNext}/>
         </div>
         </Fragment>
     );

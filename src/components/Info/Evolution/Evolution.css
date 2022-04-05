@@ -1,0 +1,21 @@
+.ul-evo {
+    margin: 0;
+    padding: 0;
+}
+
+.li-evo {
+    margin-bottom: 30px;
+}
+
+.select-evo {
+    margin-bottom: 10px;
+}
+
+.select-evo:hover {
+    cursor: pointer;
+}
+
+.select-evo b {
+    color: #0d6efd;
+    text-decoration: underline;
+}

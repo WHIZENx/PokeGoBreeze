@@ -14,6 +14,8 @@
     display: inline-block;
     text-align: center;
     margin-right: 5%;
+    width: 96px;
+    height: 114px;
 }
 
 .btn-form {

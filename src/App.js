@@ -3,7 +3,7 @@ import { SnackbarProvider } from 'notistack'
 import './App.css';
 
 import NavbarComponent from './components/Navbar'
-import FooterComponent from './components/Footer'
+// import FooterComponent from './components/Footer'
 
 import Home from './pages/Home/Home'
 import Search from './pages/Search/Search'
@@ -30,7 +30,7 @@ const App = () => {
               <Route path="/search" element={<Search/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
             </Routes>
-            <FooterComponent />
+            {/* <FooterComponent /> */}
           </div>
         </BrowserRouter>
       </SnackbarProvider>

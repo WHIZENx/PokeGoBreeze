@@ -17,15 +17,16 @@ const FormGroup = (props) => {
     const [statDEF, setStatDEF] = useState(null);
     const [statSTA, setStatSTA] = useState(null);
 
-    const splitAndCapitalize = useCallback((string, join) => {
+    const splitAndCapitalize = (string, join) => {
         return string.split("-").map(text => capitalize(text)).join(join);
-    }, []);
+    };
 
     const filterFormName = useCallback((form, formStats) => {
-        form = form === "" ? "Normal" : form.includes("mega") ? splitAndCapitalize(form, "-") : splitAndCapitalize(form, " ").replaceAll("-", "_");
+        form = form === "" ? "Normal" : form.includes("mega") ? form.toLowerCase() : capitalize(form);
+        formStats = formStats.includes("Mega") ? formStats.toLowerCase() : formStats.replaceAll("_", "-");
         formStats = formStats === "Hero" ? "Normal" : formStats;
         return formStats.includes(form);
-    }, [splitAndCapitalize]);
+    }, []);
 
     const filterFormList = useCallback((stats, id) => {
         const filterId = stats.filter(item => item.id === id);
@@ -39,7 +40,11 @@ const FormGroup = (props) => {
         setStatATK(filterFormList(props.stats.attack.ranking, props.id_default));
         setStatDEF(filterFormList(props.stats.defense.ranking, props.id_default));
         setStatSTA(filterFormList(props.stats.stamina.ranking, props.id_default));
-    }, [filterFormList, props.id_default, props.stats.attack.ranking, props.stats.defense.ranking, props.stats.stamina.ranking])
+        if (currForm && dataPoke && props.onSetPrev != null && props.onSetNext != null) {
+            props.onSetPrev(true);
+            props.onSetNext(true);
+        }
+    }, [filterFormList, props, currForm, dataPoke])
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -80,7 +85,8 @@ const FormGroup = (props) => {
             <Stats statATK={statATK}
                 statDEF={statDEF}
                 statSTA={statSTA}
-                pokemonStats={props.stats}/>
+                pokemonStats={props.stats}
+                stats={dataPoke.stats}/>
             <Info data={dataPoke}
                   typeEffective={props.typeEffective}
                   weatherEffective={props.weatherEffective}

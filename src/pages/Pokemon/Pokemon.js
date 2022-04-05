@@ -8,6 +8,7 @@ import APIService from '../../services/API.service';
 import { sortStatsPoke } from '../../components/Calculate/Calculate'
 
 import FormGroup from '../../components/Info/Gender/FormGroup';
+import Evolution from '../../components/Info/Evolution/Evolution';
 
 const Pokemon = (props) => {
 
@@ -108,8 +109,9 @@ const Pokemon = (props) => {
         <Fragment>
             {data &&
             <Fragment>
-                <div className='row poke-container'>
-                    <div className='col element-top'>
+            <div className='container poke-container'>
+                <div className='row'>
+                    <div className='col-5 element-top'>
                         {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go   
                         <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
                         </h5> */}
@@ -117,12 +119,15 @@ const Pokemon = (props) => {
                         <h4>Pokémon Name: <b>{splitAndCapitalize(data.name)}</b></h4>
                     </div>
                     <div className='col element-top'>
-                        Deploy!
+                        <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={data.evolution_chain.url} id={data.id}/>
                     </div>
                 </div>
                 <div className='img-form-group'>
                 {initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
-                        <FormGroup 
+                        <Fragment>
+                            <FormGroup
+                                onSetPrev={props.onSetPrev}
+                                onSetNext={props.onSetNext}
                                 id_default={data.id}
                                 pokeData={pokeData}
                                 pokemonRaito={pokeRatio}
@@ -131,13 +136,16 @@ const Pokemon = (props) => {
                                 typeEffective={typeEffective}
                                 weatherEffective={weatherEffective}
                                 stats={stats}
-                                released={released}/>
+                                released={released}
+                                species={data}/>
+                        </Fragment>
                     :
                     <div className="spinner-border text-info" role="status">
                         <span className="visually-hidden">Loading...</span>
                     </div>
                 }
-                </div> 
+                </div>
+            </div>
             </Fragment>
             }
         </Fragment>

@@ -1,9 +1,6 @@
 .poke-container {
+    margin-bottom: 15px;
     overflow-x: hidden;
-}
-
-.img-form-group {
-    height: 1500px;
 }
 
 .img-form-group hr {

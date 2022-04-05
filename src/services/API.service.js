@@ -6,6 +6,8 @@ const POGO_API_URL = 'https://pogoapi.net/api/v1/';
 const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/'
 const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'
 
+const SEREBII_SPRITES_API_URL = 'https://www.serebii.net/pokedex-swsh/icon/'
+
 class APIService {
 
     constructor() {
@@ -63,6 +65,11 @@ class APIService {
 
     getPokeSprite(id) {
         return `${POKE_SPRITES_API_URL}${id}.png`;
+    }
+
+    getPokeIconSprite(id) {
+        let paddingID = id.toString().padStart(3, '0');
+        return `${SEREBII_SPRITES_API_URL}${paddingID}.png`;
     }
 }
 
