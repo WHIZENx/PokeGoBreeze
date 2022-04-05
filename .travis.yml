@@ -1,0 +1,18 @@
+cache:
+  directories:
+  - node_modules # cache node_module
+language: node_js # set language to node_js
+node_js:
+  7 # use node version 7
+branches:
+  only: 
+  - master # auto build and deploy in only master branch
+script: # run after installed
+- npm install # install node module
+- npm run build # build project
+install:
+  npm install -g firebase-tools # install firebase-cli
+after_success:
+- firebase use --token ${FIREBASE_TOKEN} # set firebase token
+- firebase use --add ${PROJECT_ID} # set current project
+- firebase deploy --non-interactive --token "${FIREBASE_TOKEN}" # deploy project
