@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, createRef, Fragment } from 'react';
+import React, { useState, useEffect, useMemo, useRef, Fragment } from 'react';
 
 import './Search.css';
 
@@ -10,7 +10,7 @@ const Search = () => {
     const cardHeight = 57;
     const pageCardScroll = 10;
 
-    const searchResult = createRef();
+    const searchResult = useRef(null);
     const searchResultID = useRef(0);
 
     const [prev, setPrev] = useState(true);
@@ -44,7 +44,7 @@ const Search = () => {
         const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
         currentPokemonListFilter.current = results;
         setPokemonListFilter(currentPokemonListFilter.current.slice(0, 20));
-    }, [searchTerm, pokemonList, pokeList]);
+    }, [searchTerm, pokemonList, pokeList, searchResult]);
 
     const listenScrollEvent = (ele) => {
         let idScroll = Math.floor((ele.currentTarget.offsetHeight + ele.currentTarget.scrollTop) / (cardHeight*pageCardScroll));

@@ -30,7 +30,7 @@ const App = () => {
               <Route path="/search" element={<Search/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
             </Routes>
-            {/* <FooterComponent /> */}
+            <FooterComponent />
           </div>
         </BrowserRouter>
       </SnackbarProvider>

@@ -6,7 +6,7 @@ const FooterComponent = () => {
         <footer className="bg-light text-center text-lg-start">
             <div className="text-center p-3">
                 © 2022 Copyright: 
-                <Link className="text-dark">PokeGoBreeze</Link>
+                <Link className="text-dark" to="/">PokeGoBreeze</Link>
             </div>
         </footer>
     )

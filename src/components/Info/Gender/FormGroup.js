@@ -1,6 +1,5 @@
 import React, { Fragment, useReducer, useRef } from 'react';
 import Info from '../Info';
-import Stats from '../Stats/Stats';
 import Form from './Form';
 
 import './Form.css';

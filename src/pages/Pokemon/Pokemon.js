@@ -5,8 +5,6 @@ import { useSnackbar } from 'notistack';
 import './Pokemon.css'
 
 import APIService from '../../services/API.service';
-import Stats from '../../components/Info/Stats/Stats';
-import { sortStatsPoke } from '../../components/Calculate/Calculate';
 import FormGroup from '../../components/Info/Gender/FormGroup';
 
 // const Pokemon = (props) => {
@@ -295,7 +293,7 @@ const Pokemon = (props) => {
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
         });
-    }, [enqueueSnackbar, getRatioGender, fetchMap, props.data]);
+    }, [enqueueSnackbar, getRatioGender, fetchMap]);
 
     useEffect(() => {
         if (!initialize.current) {
