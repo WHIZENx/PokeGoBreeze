@@ -65,10 +65,15 @@ export const sortStatsPoke = (states, megaStats) => {
 
 // Thank calculate algorithm from pokemongohub.net
 export const calBaseATK = (stats) => {
-    const lower = stats.find(item => item.stat.name === "attack").base_stat;
-    const higher = stats.find(item => item.stat.name === "special-attack").base_stat;
+    // const lower = stats.find(item => item.stat.name === "attack").base_stat;
+    // const higher = stats.find(item => item.stat.name === "special-attack").base_stat;
 
-    const speed = stats.find(item => item.stat.name === "speed").base_stat;
+    // const speed = stats.find(item => item.stat.name === "speed").base_stat;
+
+    const lower = stats.atk !== undefined ? stats.atk : stats.find(item => item.stat.name === "attack").base_stat;
+    const higher = stats.spa !== undefined ? stats.spa : stats.find(item => item.stat.name === "special-attack").base_stat;
+
+    const speed = stats.spe !== undefined ? stats.spe : stats.find(item => item.stat.name === "speed").base_stat;
 
     const scaleATK = Math.round(2*((7/8)*higher+(1/8)*lower));
     const speedMod = 1+(speed-75)/500;
@@ -76,10 +81,15 @@ export const calBaseATK = (stats) => {
 }
 
 export const calBaseDEF = (stats) => {
-    const lower = stats.find(item => item.stat.name === "defense").base_stat;
-    const higher = stats.find(item => item.stat.name === "special-defense").base_stat;
+    // const lower = stats.find(item => item.stat.name === "defense").base_stat;
+    // const higher = stats.find(item => item.stat.name === "special-defense").base_stat;
 
-    const speed = stats.find(item => item.stat.name === "speed").base_stat;
+    // const speed = stats.find(item => item.stat.name === "speed").base_stat;
+
+    const lower = stats.def !== undefined ? stats.def : stats.find(item => item.stat.name === "defense").base_stat;
+    const higher = stats.spd !== undefined ? stats.spd : stats.find(item => item.stat.name === "special-defense").base_stat;
+
+    const speed = stats.spe !== undefined ? stats.spe : stats.find(item => item.stat.name === "speed").base_stat;
 
     const scaleDEF = Math.round(2*((5/8)*higher+(3/8)*lower));
     const speedMod = 1+(speed-75)/500;
@@ -87,7 +97,68 @@ export const calBaseDEF = (stats) => {
 }
 
 export const calBaseSTA = (stats) => {
-    const hp = stats.find(item => item.stat.name === "hp").base_stat;
+    // const hp = stats.find(item => item.stat.name === "hp").base_stat;
+
+    const hp = stats.hp !== undefined ? stats.hp : stats.find(item => item.stat.name === "hp").base_stat;
 
     return Math.floor(hp * 1.75 + 50);
+}
+
+export const sortStatsPokemon = (states) => {
+    const attackRanking = Array.from(new Set(states.sort((a,b) => (a.baseStatsPokeGo.attack > b.baseStatsPokeGo.attack) ? 1 : ((b.baseStatsPokeGo.attack > a.baseStatsPokeGo.attack) ? -1 : 0))
+    .map(item => {
+        return item.baseStatsPokeGo.attack;
+    })));
+
+    const minATK = Math.min(...attackRanking);
+    const maxATK = Math.max(...attackRanking);
+    const attackStats = states.map((item) => {
+        return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", attack: item.baseStatsPokeGo.attack, rank: attackRanking.length-attackRanking.indexOf(item.baseStatsPokeGo.attack)};
+    });
+
+    const defenseRanking = Array.from(new Set(states.sort((a,b) => (a.baseStatsPokeGo.defense > b.baseStatsPokeGo.defense) ? 1 : ((b.baseStatsPokeGo.defense > a.baseStatsPokeGo.defense) ? -1 : 0))
+    .map(item => {
+        return item.baseStatsPokeGo.defense;
+    })));
+
+    const minDEF = Math.min(...defenseRanking);
+    const maxDEF = Math.max(...defenseRanking);
+    const defenseStats = states.map((item) => {
+        return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", defense: item.baseStatsPokeGo.defense, rank: defenseRanking.length-defenseRanking.indexOf(item.baseStatsPokeGo.defense)};
+    });
+
+    const staminaRanking = Array.from(new Set(states.sort((a,b) => (a.baseStatsPokeGo.stamina > b.baseStatsPokeGo.stamina) ? 1 : ((b.baseStatsPokeGo.stamina > a.baseStatsPokeGo.stamina) ? -1 : 0))
+    .map(item => {
+        return item.baseStatsPokeGo.stamina;
+    })));
+
+    const minSTA = Math.min(...staminaRanking);
+    const maxSTA = Math.max(...staminaRanking);
+    const staminaStats = states.map((item) => {
+        return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", stamina: item.baseStatsPokeGo.stamina, rank: staminaRanking.length-staminaRanking.indexOf(item.baseStatsPokeGo.stamina)};
+    });
+
+    return {
+        "attack": {
+            "ranking": attackStats,
+            "min_rank": 1,
+            "max_rank": attackRanking.length,
+            "min_stats": minATK,
+            "max_stats": maxATK
+        },
+        "defense": {
+            "ranking": defenseStats,
+            "min_rank": 1,
+            "max_rank": defenseRanking.length,
+            "min_stats": minDEF,
+            "max_stats": maxDEF
+        },
+        "stamina": {
+            "ranking": staminaStats,
+            "min_rank": 1,
+            "max_rank": staminaRanking.length,
+            "min_stats": minSTA,
+            "max_stats": maxSTA
+        }
+    };
 }

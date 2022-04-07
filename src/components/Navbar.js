@@ -2,7 +2,7 @@ import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import logo from '../logo.svg';
+import logo from '../assets/pokedex.png';
 
 import "./Navbar.css"
 
@@ -10,7 +10,7 @@ const NavbarComponent = () => {
     return (
         <Navbar collapseOnSelect bg="dark" expand="lg" variant="dark">
             <Link className="navbar-brand" to="/">
-                <img src={logo} width="30" height="30" className="d-inline-block align-top" alt=""></img>
+                <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{marginLeft: 10, marginRight: 10}}></img>
                 PokeGoBreeze
             </Link>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />

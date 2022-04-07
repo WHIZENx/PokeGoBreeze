@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "PokeGo Breeze",
+  "name": "Pokemon & Pokemon Go Tools Web",
   "icons": [
     {
       "src": "favicon.ico",

@@ -5,11 +5,17 @@ import './Form.css';
 
 const Form = (props) => {
 
+    // const calculateRatio = (sex, ratio) => {
+    //     let maleRatio = parseInt(ratio.charAt(0));
+    //     let femaleRatio = parseInt(ratio.charAt(3));
+    //     let sumAll = maleRatio+femaleRatio
+    //     return (sex.toLowerCase() === 'male') ? maleRatio*100/sumAll : femaleRatio*100/sumAll;
+    // }
+
     const calculateRatio = (sex, ratio) => {
-        let maleRatio = parseInt(ratio.charAt(0));
-        let femaleRatio = parseInt(ratio.charAt(3));
-        let sumAll = maleRatio+femaleRatio
-        return (sex.toLowerCase() === 'male') ? maleRatio*100/sumAll : femaleRatio*100/sumAll;
+        let maleRatio = ratio.M;
+        let femaleRatio = ratio.F;
+        return (sex.toLowerCase() === 'male') ? maleRatio*100 : femaleRatio*100;
     }
 
     return (
@@ -24,14 +30,14 @@ const Form = (props) => {
             <ul>
                 <li className='img-form-gender-group'>
                     <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ? 
-                        (props.default_m) ? props.default_m : props.default_f :
-                        (props.default_f) ? props.default_f : props.default_m}></img> 
+                        (props.default_m) ? props.default_m : props.default_f ? props.default_f : APIService.getPokeSprite(0) :
+                        (props.default_f) ? props.default_f : props.default_m ? props.default_m : APIService.getPokeSprite(0)}></img> 
                     <span className="caption">Original form</span>
                 </li>
                 <li className='img-group'>
                     <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ? 
-                        (props.shiny_m) ? props.shiny_m : props.shiny_f :
-                        (props.shiny_f) ? props.shiny_f : props.shiny_m}></img> 
+                        (props.shiny_m) ? props.shiny_m : props.shiny_f ? props.shiny_f : APIService.getPokeSprite(0) :
+                        (props.shiny_f) ? props.shiny_f : props.shiny_m ? props.shiny_m : APIService.getPokeSprite(0) }></img> 
                     <span className="caption">Shiny form</span>
                 </li>
             </ul>

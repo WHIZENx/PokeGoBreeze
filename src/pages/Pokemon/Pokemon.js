@@ -8,7 +8,7 @@ import APIService from '../../services/API.service';
 import { sortStatsPoke } from '../../components/Calculate/Calculate'
 
 import FormGroup from '../../components/Info/Gender/FormGroup';
-import Evolution from '../../components/Info/Evolution/Evolution';
+// import Evolution from '../../components/Info/Evolution/Evolution';
 
 const Pokemon = (props) => {
 
@@ -109,17 +109,19 @@ const Pokemon = (props) => {
         <Fragment>
             {data &&
             <Fragment>
-            <div className='container poke-container'>
-                <div className='row'>
-                    <div className='col-5 element-top'>
-                        {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go   
-                        <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
-                        </h5> */}
-                        <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
-                        <h4>Pokémon Name: <b>{splitAndCapitalize(data.name)}</b></h4>
-                    </div>
-                    <div className='col element-top'>
-                        <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={data.evolution_chain.url} id={data.id}/>
+            <div className='container poke-container poke-parent'>
+                <div className='poke-parent'>
+                    <div className='row'>
+                        <div className='col-5 element-top'>
+                            {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go   
+                            <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
+                            </h5> */}
+                            <h4 className='element-top'>Pokémon ID: <b>#{data.id}</b></h4>
+                            <h4>Pokémon Name: <b>{splitAndCapitalize(data.name)}</b></h4>
+                        </div>
+                        <div className='col element-top'>
+                            
+                        </div>
                     </div>
                 </div>
                 <div className='img-form-group'>
@@ -145,6 +147,7 @@ const Pokemon = (props) => {
                     </div>
                 }
                 </div>
+                {/* <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={data.evolution_chain.url} id={data.id}/> */}
             </div>
             </Fragment>
             }

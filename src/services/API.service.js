@@ -3,10 +3,11 @@ import axios from 'axios';
 const POKE_API_URL = 'https://pokeapi.co/api/v2/';
 const POGO_API_URL = 'https://pogoapi.net/api/v1/';
 
-const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/'
-const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'
+const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/';
+const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
-const SEREBII_SPRITES_API_URL = 'https://www.serebii.net/pokedex-swsh/icon/'
+const POKE_ICON_SPRITES_API_URL = 'https://raw.githubusercontent.com/itsjavi/pokemon-assets/main/assets/img/pokemon/';
+const POKE_SPRITES_FULL_API_URL = 'https://assets.pokemon.com/assets/cms2/img/pokedex/detail/';
 
 class APIService {
 
@@ -67,9 +68,15 @@ class APIService {
         return `${POKE_SPRITES_API_URL}${id}.png`;
     }
 
-    getPokeIconSprite(id) {
+    getPokeFullSprite(id) {
         let paddingID = id.toString().padStart(3, '0');
-        return `${SEREBII_SPRITES_API_URL}${paddingID}.png`;
+        return `${POKE_SPRITES_FULL_API_URL}${paddingID}.png`;
+    }
+
+    getPokeIconSprite(name) {
+        if (name.includes("necrozma-dawn")) name += "-wings"
+        else if (name.includes("necrozma-dusk")) name += "-mane"
+        return `${POKE_ICON_SPRITES_API_URL}${name}.png`;
     }
 }
 

@@ -5,10 +5,14 @@ import Form from './Form';
 import Stats from '../Stats/Stats'
 
 import './Form.css';
+import APIService from '../../../services/API.service';
+import Evolution from '../Evolution/Evolution';
 
 const FormGroup = (props) => {
 
-    const [currForm, setCurrForm] = useState(props.formList.find(item => item.name === props.pokeData.find(item => item.is_default).name));
+    const [currForm, setCurrForm] = useState(props.formList.map(item => {
+        return item.find(item => item.form.is_default && item.form.id === props.id_default)
+    })[0]);
     const [dataPoke, setDataPoke] = useState(props.pokeData.find(item => item.id === props.id_default));
 
     const pokeID = useRef(props.pokeData.find(item => item.is_default));
@@ -25,7 +29,7 @@ const FormGroup = (props) => {
         form = form === "" ? "Normal" : form.includes("mega") ? form.toLowerCase() : capitalize(form);
         formStats = formStats.includes("Mega") ? formStats.toLowerCase() : formStats.replaceAll("_", "-");
         formStats = formStats === "Hero" ? "Normal" : formStats;
-        return formStats.includes(form);
+        return form.toLowerCase().includes(formStats.toLowerCase());
     }, []);
 
     const filterFormList = useCallback((stats, id) => {
@@ -33,8 +37,9 @@ const FormGroup = (props) => {
         const filterForm = stats.find(item => item.id === id && 
             filterFormName(currForm.form.form_name, item.form));
         if (filterId.length === 1 && props.formList.length === 1 && !filterForm) return filterId[0];
+        else if (filterId.length === props.formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
         else return filterForm;
-    }, [currForm.form.form_name, props.formList, filterFormName]);
+    }, [currForm, props.formList, filterFormName]);
 
     useEffect(() => {
         setStatATK(filterFormList(props.stats.attack.ranking, props.id_default));
@@ -51,48 +56,55 @@ const FormGroup = (props) => {
     }
 
     const changeForm = (e) => {
-        setCurrForm(props.formList.find(item => item.name === e.target.value));
-        setDataPoke(props.pokeData.find(item => item.name === e.target.value));
+        const findData = props.pokeData.find(item => item.name === e.currentTarget.value);
+        const findForm = props.formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
+        setCurrForm(findForm);
+        if (findData) setDataPoke(findData)
+        else setDataPoke(props.pokeData[0]);
+        props.setVersion(findForm.form.version_group.name);
     }
 
     return (
         <Fragment>
-            {props.formList.map((value, index) =>(
-                <button value={value.form.name} key={index} className="btn btn-primary btn-form" onClick={(e) => changeForm(e)}>
-                    {value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}
-                </button>
+            <div className='form-container'>
+            {props.formList.map((value, index) => (
+                <Fragment key={index}>
+                    {value.map((value, index) => (
+                        <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
+                            <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
+                            <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
+                            {value.form.id === pokeID.current.id && 
+                                <b><small className=''> (Default)</small></b>
+                            }
+                        </button>
+                    ))
+                    }
+                </Fragment>
             ))
             }
-            <div>
-                <div className='form-border'>
-                    <h5>Form: <b>{currForm.form.form_name === "" ? "Normal" : splitAndCapitalize(currForm.form.form_name, " ")}</b>
-                    {currForm.form.id === pokeID.current.id && 
-                        <small className='text-danger'> (Default)</small>
-                    }
-                    </h5>
-                </div>
-            </div>
             {dataPoke && currForm &&
             <Fragment>
-            {!(new Set(props.genderless.map(value => value.pokemon_id)).has(pokeID.current.id)) ?
-            <Fragment>
-                {props.pokemonRaito.charAt(0) !== '0' && <Fragment><Form ratio={props.pokemonRaito} sex='Male' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
-                {props.pokemonRaito.charAt(0) !== '0' && props.pokemonRaito.charAt(3) !== '0' && <hr></hr>}
-                {props.pokemonRaito.charAt(3) !== '0' && <Fragment><Form ratio={props.pokemonRaito} sex='Female' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+                {props.ratio.M !== 0 && props.ratio.F !== 0 ?
+                <Fragment>
+                {props.ratio.M !== 0 && <Fragment><Form ratio={props.ratio} sex='Male' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+                {props.ratio.M !== 0 && props.ratio.F !== 0 && <hr></hr>}
+                {props.ratio.F !== 0 && <Fragment><Form ratio={props.ratio} sex='Female' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+                </Fragment>
+                : <Form sex='Genderless' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/>
+                }
+                <Stats statATK={statATK}
+                    statDEF={statDEF}
+                    statSTA={statSTA}
+                    pokemonStats={props.stats}
+                    stats={dataPoke.stats}/>
+                <Info data={dataPoke}
+                    typeEffective={props.typeEffective}
+                    weatherEffective={props.weatherEffective} />
+                <hr className="w-100"></hr>
+                <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>
             </Fragment>
-            : <Form sex='Genderless' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/>
             }
-            <Stats statATK={statATK}
-                statDEF={statDEF}
-                statSTA={statSTA}
-                pokemonStats={props.stats}
-                stats={dataPoke.stats}/>
-            <Info data={dataPoke}
-                  typeEffective={props.typeEffective}
-                  weatherEffective={props.weatherEffective}
-                  released={props.released}/>
-            </Fragment>
-            }
+            </div>             
         </Fragment>
     )
 }

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useRef, Fragment, useCallback } fr
 import './Search.css';
 
 import APIService from '../../services/API.service';
-import Pokemon from '../Pokemon/Pokemon';
+import Pokemon from '../Pokemon/Pokemon-test';
 
 const Search = () => {
 
@@ -32,7 +32,7 @@ const Search = () => {
             if (pokeList.length === 0) {
                 const res = await APIService.getPokeJSON('pokemon_names.json');
                 Object.entries(res.data).forEach(([key, value]) => {
-                    pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeIconSprite(value.id)});
+                    pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
                 });
                 setPokemonList(pokeList);
             }
@@ -80,12 +80,12 @@ const Search = () => {
     }
 
     const handleSetPrev = useCallback((bool) => {
-        if (bool) setTimeout(() => {setPrev(bool);}, 500);
+        if (bool) setTimeout(() => {setPrev(bool);}, 800);
         else setPrev(bool);
     }, []);
 
     const handleSetNext = useCallback((bool) => {
-        if (bool) setTimeout(() => {setNext(bool);}, 500);
+        if (bool) setTimeout(() => {setNext(bool);}, 800);
         else setNext(bool);
     }, []);
 

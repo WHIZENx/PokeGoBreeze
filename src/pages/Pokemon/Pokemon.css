@@ -1,6 +1,34 @@
 .poke-container {
     margin-bottom: 15px;
-    overflow-x: hidden;
+    overflow: hidden;
+}
+
+.poke-parent {
+    margin-bottom: 15px;
+}
+
+.group-desc {
+    margin: 15px 5px;
+    overflow-y: hidden;
+}
+
+.img-desc {
+    min-width: 200px !important;
+    margin-right: 15px;
+}
+
+.img-desc img {
+    border: 2px solid lightgray;
+    padding: 10px;
+}
+
+.text-desc {
+    min-width: 200px !important;
+}
+
+.text-gen {
+    font-size: 16px;
+    color: gray;
 }
 
 .img-form-group hr {

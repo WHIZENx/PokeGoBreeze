@@ -50,7 +50,7 @@ const Info = (props) => {
             <Type arr={props.data.types.map(ele => ele.type.name)}/>
             <WeatherTypeEffective weatherEffective={getWeatherEffective(props.data.types)}/>
             <TypeEffective typeEffective={getTypeEffective(props.data.types)}/>
-            <h5 className='element-top'>- Pokémon height: {props.data.height}, weight: {props.data.weight}</h5>
+            <h5 className='element-top'>- Pokémon height: {props.data.height/10} m, weight: {props.data.weight/10} kg</h5>
         </Fragment>
     )
 }
