@@ -18,6 +18,7 @@
 }
 
 .img-desc img {
+    min-width: 200px;
     border: 2px solid lightgray;
     padding: 10px;
 }

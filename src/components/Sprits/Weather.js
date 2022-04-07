@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import APIService from '../../services/API.service'
 
 const Weather = (props) => {
 
-    if (!props.arr || props.arr.length === 0) return false;
+    if (!props.arr || props.arr.length === 0) return (
+        <Fragment>
+            <ul className='element-top'>
+                <li className='img-group' key={ 0 }>
+                    <img height={50} alt='img-pokemon' src={APIService.getPokeSprite(0)}></img>
+                    <span className='caption text-black'>None</span>
+                </li>
+            </ul>
+        </Fragment>
+    );
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);

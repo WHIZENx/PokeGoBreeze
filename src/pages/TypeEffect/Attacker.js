@@ -13,11 +13,13 @@ const Attacker = (prop) => {
 
     const getTypeEffective = useCallback(() => {
         let data = {
+            very_weak: [],
             weak: [],
+            super_resist: [],
             very_resist: [],
             resist: [],
             neutral: []
-        }
+        };
         Object.entries(prop.types[currentType]).forEach(([key, value]) => {
             if (value === 1.6) data.weak.push(key);
             else if (value === 1) data.neutral.push(key);

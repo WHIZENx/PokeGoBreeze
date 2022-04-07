@@ -98,6 +98,7 @@ const FormGroup = (props) => {
                     pokemonStats={props.stats}
                     stats={dataPoke.stats}/>
                 <Info data={dataPoke}
+                    currForm={currForm}
                     typeEffective={props.typeEffective}
                     weatherEffective={props.weatherEffective} />
             </Fragment>

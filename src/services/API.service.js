@@ -52,6 +52,7 @@ class APIService {
     }
 
     getTypeSprite(type) {
+        if (type.toLowerCase() === "unknown") return this.getPokeSprite(0);
         return `${POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
     }
 

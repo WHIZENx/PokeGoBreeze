@@ -34,7 +34,8 @@ const Info = (props) => {
             else if (value_effective >= 1) data.neutral.push(key);
             else if (value_effective >= 0.625) data.resist.push(key);
             else if (value_effective >= 0.39) data.very_resist.push(key);
-            else data.super_resist.push(key);
+            else if (value_effective >= 0.2) data.super_resist.push(key);
+            else data.neutral.push(key);
         });
         return data;
     };
@@ -47,9 +48,9 @@ const Info = (props) => {
         <Fragment>
             <h4 className='element-top'>Infomation</h4>
             <h5 className='element-top'>- Pokémon Type:</h5>
-            <Type arr={props.data.types.map(ele => ele.type.name)}/>
-            <WeatherTypeEffective weatherEffective={getWeatherEffective(props.data.types)}/>
-            <TypeEffective typeEffective={getTypeEffective(props.data.types)}/>
+            <Type arr={props.currForm.form.types.map(ele => ele.type.name)}/>
+            <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm.form.types)}/>
+            <TypeEffective typeEffective={getTypeEffective(props.currForm.form.types)}/>
             <h5 className='element-top'>- Pokémon height: {props.data.height/10} m, weight: {props.data.weight/10} kg</h5>
         </Fragment>
     )
