@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
 
@@ -6,20 +6,19 @@ import "./Evolution.css"
 
 const Evolution = (props) => {
 
-    const arrEvo = useRef([]);
+    const [arrEvoList, setArrEvoList] = useState([]);
 
     const getEvoChain = useCallback((data) => {
         if (data.length === 0) return false;
-        arrEvo.current.push(data.map(item => {
+        setArrEvoList(oldArr => [...oldArr, data.map(item => {
             return {name: item.species.name, id: item.species.url.split("/")[6], baby: item.is_baby}
-        }));
+        })])
         return data.map(item => getEvoChain(item.evolves_to))
-    }, [arrEvo]);
+    }, []);
 
     useEffect(() => {
         APIService.getFetchUrl(props.evolution_url)
         .then(res => {
-            arrEvo.current = [];
             getEvoChain([res.data.chain]);
         })
     }, [props.evolution_url, getEvoChain]);
@@ -41,17 +40,17 @@ const Evolution = (props) => {
     };
 
     const setHeightEvo = () => {
-        return 160 * Math.max(...arrEvo.current.map(item => item.length));
+        return 160 * Math.max(...arrEvoList.map(item => item.length));
     }
 
     return (
         <Fragment>
-            { arrEvo.current.length > 0 &&
+            { arrEvoList.length > 0 &&
             <Fragment>
             <h4 className="title-evo">Pokemon Evolution:</h4>
             <div className="evo-container">
                 <ul className="ul-evo" style={{height:setHeightEvo()}}>
-                    {arrEvo.current.map((value, index) => (
+                    {arrEvoList.map((value, index) => (
                         <li key={index} className='img-form-gender-group li-evo'>
                             <ul className="ul-evo">
                                 {value.map((value, index) => (

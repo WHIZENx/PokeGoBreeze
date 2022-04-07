@@ -82,7 +82,7 @@ const FormGroup = (props) => {
                 </Fragment>
             ))
             }
-            {dataPoke && currForm &&
+            {dataPoke && currForm && props.typeEffective && props.weatherEffective &&
             <Fragment>
                 {props.ratio.M !== 0 && props.ratio.F !== 0 ?
                 <Fragment>
@@ -100,11 +100,11 @@ const FormGroup = (props) => {
                 <Info data={dataPoke}
                     typeEffective={props.typeEffective}
                     weatherEffective={props.weatherEffective} />
-                <hr className="w-100"></hr>
-                <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>
             </Fragment>
             }
-            </div>             
+            </div>
+            <hr className="w-100"></hr>
+            <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>          
         </Fragment>
     )
 }

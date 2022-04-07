@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback, useRef, Fragment } from 'react
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
-import './Pokemon.css'
+import './Pokemon.css';
 
 import APIService from '../../services/API.service';
-import { sortStatsPoke } from '../../components/Calculate/Calculate'
+import { sortStatsPoke } from '../../components/Calculate/Calculate';
 
 import FormGroup from '../../components/Info/Gender/FormGroup';
 // import Evolution from '../../components/Info/Evolution/Evolution';

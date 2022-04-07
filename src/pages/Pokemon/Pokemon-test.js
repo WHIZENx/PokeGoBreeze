@@ -1,6 +1,8 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import APIService from "../../services/API.service";
 
+import './Pokemon.css';
+
 import { calBaseATK, calBaseDEF, calBaseSTA, sortStatsPokemon } from '../../components/Calculate/Calculate';
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
