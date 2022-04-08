@@ -10,12 +10,14 @@ import Evolution from '../Evolution/Evolution';
 
 const FormGroup = (props) => {
 
-    const [currForm, setCurrForm] = useState(props.formList.map(item => {
-        return item.find(item => item.form.is_default && item.form.id === props.id_default)
-    })[0]);
+    const formDefault = useRef(props.formList.map(item => {
+        return item.find(item => item.form.is_default)
+    }));
+    
+    const [currForm, setCurrForm] = useState(formDefault.current.find(item => item.id === props.id_default));
     const [dataPoke, setDataPoke] = useState(props.pokeData.find(item => item.id === props.id_default));
 
-    const pokeID = useRef(props.pokeData.find(item => item.is_default));
+    const pokeID = useRef(null);
 
     const [statATK, setStatATK] = useState(null);
     const [statDEF, setStatDEF] = useState(null);
@@ -42,14 +44,22 @@ const FormGroup = (props) => {
     }, [currForm, props.formList, filterFormName]);
 
     useEffect(() => {
-        setStatATK(filterFormList(props.stats.attack.ranking, props.id_default));
-        setStatDEF(filterFormList(props.stats.defense.ranking, props.id_default));
-        setStatSTA(filterFormList(props.stats.stamina.ranking, props.id_default));
+        if (!currForm) {
+            setCurrForm(formDefault.current[0]);
+            pokeID.current = formDefault.current[0].form.id;
+        } else {
+            setStatATK(filterFormList(props.stats.attack.ranking, props.id_default));
+            setStatDEF(filterFormList(props.stats.defense.ranking, props.id_default));
+            setStatSTA(filterFormList(props.stats.stamina.ranking, props.id_default));
+            if (!pokeID.current) {
+                pokeID.current = currForm.form.id;
+            }
+        }
         if (currForm && dataPoke && props.onSetPrev != null && props.onSetNext != null) {
             props.onSetPrev(true);
             props.onSetNext(true);
         }
-    }, [filterFormList, props, currForm, dataPoke])
+    }, [filterFormList, props, currForm, dataPoke, formDefault])
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -67,20 +77,24 @@ const FormGroup = (props) => {
     return (
         <Fragment>
             <div className='form-container'>
-            {props.formList.map((value, index) => (
-                <Fragment key={index}>
-                    {value.map((value, index) => (
-                        <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
-                            <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
-                            <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
-                            {value.form.id === pokeID.current.id && 
-                                <b><small className=''> (Default)</small></b>
-                            }
-                        </button>
-                    ))
-                    }
+            {currForm && pokeID.current &&
+                <Fragment>
+                {props.formList.map((value, index) => (
+                    <Fragment key={index}>
+                        {value.map((value, index) => (
+                            <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
+                                <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
+                                <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
+                                {value.form.id === pokeID.current && 
+                                    <b><small className=''> (Default)</small></b>
+                                }
+                            </button>
+                        ))
+                        }
+                    </Fragment>
+                ))
+                }
                 </Fragment>
-            ))
             }
             {dataPoke && currForm && props.typeEffective && props.weatherEffective &&
             <Fragment>

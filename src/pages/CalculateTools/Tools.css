@@ -1,0 +1,64 @@
+ul {
+    list-style-type: none;
+}
+
+input {
+    width: 300px !important;
+}
+
+btn-search {
+    height: 38px !important;
+}
+
+.result-tools {
+    position: absolute;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0);
+    margin-top: 38px;
+}
+
+.result-tools ul {
+    margin: 0;
+    padding: 0;
+}
+
+.card-pokemon {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    width: 100%;
+}
+
+.selected {
+    background-color: rgb(170, 170, 170);
+}
+
+.card-pokemon:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.select-pokemon {
+    height: 650px;
+}
+
+.element-top {
+    margin-top: 10px;
+}
+
+.search-container {
+    margin-bottom: 15px;
+}
+
+.center {
+    text-align: center;
+}
+
+.img-search {
+    margin: 0 5px 0 5px;
+}
+
+.scroll-card {
+    width: 350px;
+    white-space: nowrap;
+}

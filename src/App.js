@@ -10,6 +10,7 @@ import Search from './pages/Search/Search'
 import TypeEffect from './pages/TypeEffect/TypeEffect'
 import Weather from './pages/Weather/Weather';
 import Pokemon from './pages/Pokemon/Pokemon-test';
+import CalculateTools from './pages/CalculateTools/CalculateTools';
 
 const App = () => {
 
@@ -28,6 +29,7 @@ const App = () => {
               <Route path="/type-effective" element={<TypeEffect />}></Route>
               <Route path="/weather-boosts" element={<Weather />}></Route>
               <Route path="/search" element={<Search/>}></Route>
+              <Route path="/calculate" element={<CalculateTools/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
             </Routes>
             {/* <FooterComponent /> */}

@@ -74,7 +74,10 @@ const Pokemon = (props) => {
             .sort((a,b) => (a.form.id > b.form.id) ? 1 : ((b.form.id > a.form.id) ? -1 : 0));
         }).sort((a,b) => (a[0].form.id > b[0].form.id) ? 1 : ((b[0].form.id > a[0].form.id) ? -1 : 0));
         setFormList(dataFromList);
-        setVersion(splitAndCapitalize(dataFromList.find(item => item.find(item => item.form.is_default && item.form.id === data.id))[0].form.version_group.name))
+        const defaultFrom = dataFromList.map(item => item.find(item => item.form.is_default));
+        const isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
+        if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name));
+        else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name));
     }, [splitAndCapitalize]);
 
     const queryPokemon = useCallback((id) => {

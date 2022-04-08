@@ -20,7 +20,7 @@ const Search = () => {
 
     const [id, setId] = useState(1);
     
-    const [searchTerm, setsearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [showResult, setShowResult] = useState(false);
 
     const [pokemonList, setPokemonList] = useState([]);
@@ -110,7 +110,7 @@ const Search = () => {
                     <span className="input-group-text" id="inputGroup-sizing-default">Search</span>
                 </div>
                 <input type="text" className="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="Enter name or ID"
-                value={searchTerm} onInput={e => setsearchTerm(e.target.value)} onFocus={() => setShowResult(true)} onBlur={() => setShowResult(false)}></input>
+                value={searchTerm} onInput={e => setSearchTerm(e.target.value)} onFocus={() => setShowResult(true)} onBlur={() => setShowResult(false)}></input>
             </div>
             <div className="result" style={showResult ? {display: 'block'} : {display: 'none'}}>
                 <ul ref={searchResult}
