@@ -1,9 +1,9 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import Stats from "../../components/Info/Stats/Stats";
 
 const FormTools = (props) => {
 
-    const [dataPoke, setDataPoke] = useState(props.dataPoke.find(item => item.id === props.id));
+    const dataPoke = useRef(props.dataPoke.find(item => item.id === props.id));
 
     const [statATK, setStatATK] = useState(null);
     const [statDEF, setStatDEF] = useState(null);
@@ -46,12 +46,12 @@ const FormTools = (props) => {
 
     return (
         <Fragment>
-            {dataPoke &&
+            {dataPoke.current &&
                 <Stats statATK={statATK}
                         statDEF={statDEF}
                         statSTA={statSTA}
                         pokemonStats={props.stats}
-                        stats={dataPoke.stats}/>
+                        stats={dataPoke.current.stats}/>
             }
         </Fragment>
     )
