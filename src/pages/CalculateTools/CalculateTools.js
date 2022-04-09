@@ -338,8 +338,59 @@ const CalculateTools = () => {
                     </div>
                 </div>
                 <h1 id ="main" className='center'>CP&IV Calculate Tools</h1>
-                <div className="row element-top">
-                    <div className="col-6 col-cal">
+                <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
+                            <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">CP</span>
+                        </div>
+                    <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
+                    onInput={e => setSearchCP(e.target.value)}></input>
+                    </div>
+                    <div className="btn-search">
+                        <button type="submit" className="btn btn-primary">Search</button>
+                    </div>
+                </form>
+                {preIvArr ?
+                    <Fragment>
+                    {showResultTableIV()}
+                    </Fragment>
+                    : <p>None</p>
+                }
+                <hr></hr>
+                <form id="formCP" className="d-flex justify-content-center element-top" onSubmit={onFindCP.bind(this)}>
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">ATK</span>
+                        </div>
+                    <input required value={searchATKIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="atkIv" aria-describedby="input-atkIv" placeholder="Enter IV"
+                    onInput={e => setSearchATKIv(e.target.value)}></input>
+                    </div>
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">DEF</span>
+                        </div>
+                    <input required value={searchDEFIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="defIv" aria-describedby="input-defIv" placeholder="Enter IV"
+                    onInput={e => setSearchDEFIv(e.target.value)}></input>
+                    </div>
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">STA</span>
+                        </div>
+                    <input required value={searchSTAIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="staIv" aria-describedby="input-staIv" placeholder="Enter IV"
+                    onInput={e => setSearchSTAIv(e.target.value)}></input>
+                    </div>
+                    <div className="btn-search">
+                        <button type="submit" className="btn btn-primary">Search</button>
+                    </div>
+                </form>
+                {preCpArr ?
+                    <Fragment>
+                    {showResultTableCP()}
+                    </Fragment>
+                    : <p>None</p>
+                }
+                {/* <div className="row element-top">
+                    <div className="col col-cal">
                         <form className="d-flex justify-content-center" onSubmit={onFindStats.bind(this)}>
                             <div className="input-group mb-3">
                                 <div className="input-group-prepend">
@@ -359,7 +410,7 @@ const CalculateTools = () => {
                             : <p>None</p>
                         }
                     </div>
-                    <div className="col-6 col-cal">
+                    <div className="col col-cal">
                         <form id="formCP" className="d-flex justify-content-center" onSubmit={onFindCP.bind(this)}>
                             <div className="input-group mb-3">
                                 <div className="input-group-prepend">
@@ -393,7 +444,7 @@ const CalculateTools = () => {
                             : <p>None</p>
                         }
                     </div>
-                </div>
+                </div> */}
                 <hr></hr>
                 <div className="element-top">
                     {findMinMax()}
