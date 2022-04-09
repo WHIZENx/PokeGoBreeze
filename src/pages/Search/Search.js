@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useRef, Fragment, useCallback } fr
 import './Search.css';
 
 import APIService from '../../services/API.service';
-import Pokemon from '../Pokemon/Pokemon-test';
+import Pokemon from '../Pokemon/Pokemon';
 
 const Search = () => {
 
@@ -19,7 +19,7 @@ const Search = () => {
     const pokeList = useMemo(() => {return []}, []);
 
     const [id, setId] = useState(1);
-    
+
     const [searchTerm, setSearchTerm] = useState('');
     const [showResult, setShowResult] = useState(false);
 
@@ -44,7 +44,7 @@ const Search = () => {
         const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
         currentPokemonListFilter.current = results;
         setPokemonListFilter(currentPokemonListFilter.current.slice(0, 20));
-    }, [searchTerm, pokemonList, pokeList, searchResult, id]);
+    }, [searchTerm, pokemonList, pokeList, searchResult]);
 
     const listenScrollEvent = (ele) => {
         let idScroll = Math.floor((ele.currentTarget.offsetHeight + ele.currentTarget.scrollTop) / (cardHeight*pageCardScroll));

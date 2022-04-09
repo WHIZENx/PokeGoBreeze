@@ -1,77 +1,7 @@
 import data from "../../data/cp_multiplier.json";
 
-export const sortStatsPoke = (states, megaStats) => {
-    states.push(...megaStats.map(item => {return {
-        base_attack: item.stats.base_attack,
-        base_defense: item.stats.base_defense,
-        base_stamina: item.stats.base_stamina,
-        form: "Mega" + ((item.form === "Normal") ? "" : "-"+item.form),
-        pokemon_id: item.pokemon_id,
-        pokemon_name: item.pokemon_name
-    }}));
-    const attackRanking = Array.from(new Set(states.sort((a,b) => (a.base_attack > b.base_attack) ? 1 : ((b.base_attack > a.base_attack) ? -1 : 0))
-    .map((item) => {
-        return item.base_attack;
-    })));
-    const minATK = Math.min(...attackRanking);
-    const maxATK = Math.max(...attackRanking);
-    const attackStats = states.map((item) => {
-        return {id: item.pokemon_id, form: item.form, attack: item.base_attack, rank: attackRanking.length-attackRanking.indexOf(item.base_attack)};
-    });
-
-    const defenseRanking = Array.from(new Set(states.sort((a,b) => (a.base_defense > b.base_defense) ? 1 : ((b.base_defense > a.base_defense) ? -1 : 0))
-    .map((item) => {
-        return item.base_defense;
-    })));
-    const minDEF = Math.min(...defenseRanking);
-    const maxDEF = Math.max(...defenseRanking);
-    const defenseStats = states.map((item) => {
-        return {id: item.pokemon_id, form: item.form, defense: item.base_defense, rank: defenseRanking.length-defenseRanking.indexOf(item.base_defense)};
-    });
-
-    const staminaRanking = Array.from(new Set(states.sort((a,b) => (a.base_stamina > b.base_stamina) ? 1 : ((b.base_stamina > a.base_stamina) ? -1 : 0))
-    .map((item) => {
-        return item.base_stamina;
-    })));
-    const minSTA = Math.min(...staminaRanking);
-    const maxSTA = Math.max(...staminaRanking);
-
-    const staminaStats = states.map((item) => {
-        return {id: item.pokemon_id, form: item.form, stamina: item.base_stamina, rank: staminaRanking.length-staminaRanking.indexOf(item.base_stamina)};
-    });
-    
-    return {
-        "attack": {
-            "ranking": attackStats,
-            "min_rank": 1,
-            "max_rank": attackRanking.length,
-            "min_stats": minATK,
-            "max_stats": maxATK
-        },
-        "defense": {
-            "ranking": defenseStats,
-            "min_rank": 1,
-            "max_rank": defenseRanking.length,
-            "min_stats": minDEF,
-            "max_stats": maxDEF
-        },
-        "stamina": {
-            "ranking": staminaStats,
-            "min_rank": 1,
-            "max_rank": staminaRanking.length,
-            "min_stats": minSTA,
-            "max_stats": maxSTA
-        }
-    };
-}
-
 // Thank calculate algorithm from pokemongohub.net
 export const calBaseATK = (stats, nerf) => {
-    // const lower = stats.find(item => item.stat.name === "attack").base_stat;
-    // const higher = stats.find(item => item.stat.name === "special-attack").base_stat;
-
-    // const speed = stats.find(item => item.stat.name === "speed").base_stat;
-
     const atk = stats.atk !== undefined ? stats.atk : stats.find(item => item.stat.name === "attack").base_stat;
     const spa = stats.spa !== undefined ? stats.spa : stats.find(item => item.stat.name === "special-attack").base_stat;
 
@@ -89,11 +19,6 @@ export const calBaseATK = (stats, nerf) => {
 }
 
 export const calBaseDEF = (stats, nerf) => {
-    // const lower = stats.find(item => item.stat.name === "defense").base_stat;
-    // const higher = stats.find(item => item.stat.name === "special-defense").base_stat;
-
-    // const speed = stats.find(item => item.stat.name === "speed").base_stat;
-
     const def = stats.def !== undefined ? stats.def : stats.find(item => item.stat.name === "defense").base_stat;
     const spd = stats.spd !== undefined ? stats.spd : stats.find(item => item.stat.name === "special-defense").base_stat;
 
@@ -111,8 +36,6 @@ export const calBaseDEF = (stats, nerf) => {
 }
 
 export const calBaseSTA = (stats, nerf) => {
-    // const hp = stats.find(item => item.stat.name === "hp").base_stat;
-
     const hp = stats.hp !== undefined ? stats.hp : stats.find(item => item.stat.name === "hp").base_stat;
 
     const baseSTA = Math.floor(hp * 1.75 + 50);
@@ -191,7 +114,7 @@ export const calculateCP = (atk, def, sta, level) => {
 }
 
 export const predictCP = (atk, def, sta) => {
-    
+
 }
 
 export const predictStat = (atk, def, sta, cp) => {
@@ -203,7 +126,7 @@ export const predictStat = (atk, def, sta, cp) => {
         if (cp <= calculateCP(atk+15, def+15, sta+15, i)) {
             minLevel = i
             break;
-        } 
+        }
     }
     for (let i = minLevel; i <= max_level; i+=0.5) {
         if (calculateCP(atk, def, sta, i) >= cp) {
@@ -211,6 +134,7 @@ export const predictStat = (atk, def, sta, cp) => {
             break;
         }
     }
+    data["cp"] = cp;
     data["minLevel"] = minLevel;
     data["maxLevel"] = maxLevel;
 
@@ -219,10 +143,26 @@ export const predictStat = (atk, def, sta, cp) => {
         for (let i = min_iv; i <= max_iv; i++) {
             for (let j = min_iv; j <= max_iv; j++) {
                 for (let k = min_iv; k <= max_iv; k++) {
-                    if (calculateCP(atk+i, def+j, sta+k, l) === cp) predictArr.push({atk: i, def: j, hp: k, level: l})
+                    if (calculateCP(atk+i, def+j, sta+k, l) === cp) predictArr.push({atk: i, def: j, hp: k, level: l, percent: parseFloat(((i+j+k)*100/45).toFixed(2))})
                 }
             }
         }
+    }
+    data["result"] = predictArr;
+    return data;
+}
+
+export const predictCPList = (atk, def, sta, IVatk, IVdef, IVsta) => {
+    IVatk = parseInt(IVatk);
+    IVdef = parseInt(IVdef);
+    IVsta = parseInt(IVsta);
+
+    let data = {};
+    data["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
+
+    let predictArr = [];
+    for (let i = min_level; i <= max_level; i+=0.5) {
+        predictArr.push({level: i, cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i)})
     }
     data["result"] = predictArr;
     return data;

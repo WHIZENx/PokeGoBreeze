@@ -73,6 +73,7 @@ const Tools = (props) => {
     const changeForm = (e) => {
         const findForm = formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
         setCurrForm(findForm);
+        props.onClearArrStats();
     }
 
     return (

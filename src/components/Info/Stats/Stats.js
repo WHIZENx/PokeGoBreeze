@@ -29,11 +29,11 @@ const Stats = (props) => {
         <div className='element-top'>
             <div className="progress position-relative">
                 <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-                    <span>ATK {props.statATK ? props.statATK.attack : calBaseATK(props.stats)}</span>
+                    <span>ATK {props.statATK ? props.statATK.attack : calBaseATK(props.stats, true)}</span>
                 </div>
                 {props.statATK ?
                 <div className="progress-bar bg-danger" style={{width: calRank("attack", props.statATK.rank)+'%'}} role="progressbar" aria-valuenow={calRank("attack", props.statATK.rank)} aria-valuemin="0" aria-valuemax="100"></div>
-                : <div className="progress-bar bg-danger" style={{width: filterRank("attack", calBaseATK(props.stats))+'%'}} role="progressbar" aria-valuenow={filterRank("attack", calBaseATK(props.stats))} aria-valuemin="0" aria-valuemax="100"></div>
+                : <div className="progress-bar bg-danger" style={{width: filterRank("attack", calBaseATK(props.stats, true))+'%'}} role="progressbar" aria-valuenow={filterRank("attack", calBaseATK(props.stats, true))} aria-valuemin="0" aria-valuemax="100"></div>
                 }
                 <div className="box-text rank-text justify-content-end d-flex position-absolute">
                     <span>Rank: {props.statATK ? props.statATK.rank : isAvailable.current["attack"].bool ? isAvailable.current["attack"].rank : "Unavailable"} / {props.pokemonStats.attack.max_rank}</span>
@@ -41,11 +41,11 @@ const Stats = (props) => {
             </div>
             <div className="progress position-relative">
                 <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-                    <span>DEF {props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats)}</span>
+                    <span>DEF {props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats, true)}</span>
                 </div>
                 {props.statDEF ?
                 <div className="progress-bar bg-success" style={{width: calRank("defense", props.statDEF.rank)+'%'}} role="progressbar" aria-valuenow={calRank("defense", props.statDEF.rank)} aria-valuemin="0" aria-valuemax="100"></div>
-                : <div className="progress-bar bg-success" style={{width: filterRank("defense", calBaseDEF(props.stats))+'%'}} role="progressbar" aria-valuenow={filterRank("defense", calBaseDEF(props.stats))} aria-valuemin="0" aria-valuemax="100"></div>
+                : <div className="progress-bar bg-success" style={{width: filterRank("defense", calBaseDEF(props.stats, true))+'%'}} role="progressbar" aria-valuenow={filterRank("defense", calBaseDEF(props.stats, true))} aria-valuemin="0" aria-valuemax="100"></div>
                 }
                 <div className="box-text rank-text justify-content-end d-flex position-absolute">
                     <span>Rank: {props.statDEF ? props.statDEF.rank : isAvailable.current["defense"].bool ? isAvailable.current["defense"].rank : "Unavailable"} / {props.pokemonStats.defense.max_rank}</span>
@@ -53,11 +53,11 @@ const Stats = (props) => {
             </div>
             <div className="progress position-relative">
                 <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-                    <span>STA {props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats)}</span>
+                    <span>STA {props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats, true)}</span>
                 </div>
                 {props.statSTA ?
                 <div className="progress-bar bg-info" style={{width: calRank("stamina", props.statSTA.rank)+'%'}} role="progressbar" aria-valuenow={calRank("stamina", props.statSTA.rank)} aria-valuemin="0" aria-valuemax="100"></div>
-                : <div className="progress-bar bg-info" style={{width: filterRank("stamina", calBaseSTA(props.stats))+'%'}} role="progressbar" aria-valuenow={filterRank("stamina", calBaseSTA(props.stats))} aria-valuemin="0" aria-valuemax="100"></div>
+                : <div className="progress-bar bg-info" style={{width: filterRank("stamina", calBaseSTA(props.stats, true))+'%'}} role="progressbar" aria-valuenow={filterRank("stamina", calBaseSTA(props.stats, true))} aria-valuemin="0" aria-valuemax="100"></div>
                 }
                 <div className="box-text rank-text justify-content-end d-flex position-absolute">
                     <span>Rank: {props.statSTA ? props.statSTA.rank : isAvailable.current["stamina"].bool ? isAvailable.current["stamina"].rank : "Unavailable"} / {props.pokemonStats.stamina.max_rank}</span>

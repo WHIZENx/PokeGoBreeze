@@ -2,12 +2,8 @@ ul {
     list-style-type: none;
 }
 
-input {
+.btn-group-search input {
     width: 300px !important;
-}
-
-btn-search {
-    height: 38px !important;
 }
 
 .result-tools {
@@ -61,4 +57,8 @@ btn-search {
 .scroll-card {
     width: 350px;
     white-space: nowrap;
+}
+
+.col-cal {
+    margin-bottom: 15px;
 }

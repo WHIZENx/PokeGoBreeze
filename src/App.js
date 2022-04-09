@@ -9,7 +9,7 @@ import Home from './pages/Home/Home'
 import Search from './pages/Search/Search'
 import TypeEffect from './pages/TypeEffect/TypeEffect'
 import Weather from './pages/Weather/Weather';
-import Pokemon from './pages/Pokemon/Pokemon-test';
+import Pokemon from './pages/Pokemon/Pokemon';
 import CalculateTools from './pages/CalculateTools/CalculateTools';
 
 const App = () => {

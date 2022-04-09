@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { calBaseATK, calBaseDEF, calBaseSTA, calculateCP, predictStat, sortStatsPokemon } from "../../components/Calculate/Calculate";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { calBaseATK, calBaseDEF, calBaseSTA, calculateCP, predictCPList, predictStat, sortStatsPokemon } from "../../components/Calculate/Calculate";
 import DataTable from 'react-data-table-component';
 import APIService from "../../services/API.service";
 import data from "../../data/cp_multiplier.json";
@@ -9,7 +9,7 @@ import Tools from "./Tools";
 import './Tools.css';
 import { useSnackbar } from "notistack";
 
-const columns = [
+const columnsIV = [
     {
         name: 'Level',
         selector: row => row.level,
@@ -30,7 +30,52 @@ const columns = [
         selector: row => row.hp,
         sortable: true,
     },
+    {
+        name: 'Percent',
+        selector: row => row.percent,
+        sortable: true,
+    },
 ];
+
+const columnsCP = [
+    {
+        name: 'Level',
+        selector: row => row.level,
+        sortable: true,
+    },
+    {
+        name: 'CP',
+        selector: row => row.cp,
+        sortable: true,
+    },
+];
+
+const conditionalRowStyles = [
+    {
+        when: row => row.percent === 100,
+        style: {
+          backgroundColor: 'rgb(236, 200, 200)',
+        },
+    },
+    {
+      when: row => row.percent > 80 && row.percent < 100,
+      style: {
+        backgroundColor: 'rgb(236, 200, 236)',
+      },
+    },
+    {
+        when: row => row.percent > 64 && row.percent <= 80,
+        style: {
+          backgroundColor: 'rgb(200, 236, 200)',
+        },
+    },
+    {
+        when: row => row.percent > 51 && row.percent <= 64,
+        style: {
+          backgroundColor: 'rgb(236, 236, 200)',
+        },
+    },
+  ];
 
 const CalculateTools = () => {
 
@@ -50,7 +95,12 @@ const CalculateTools = () => {
     const [id, setId] = useState(1);
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchCP, setSearchCP] = useState(10);
+    const [searchCP, setSearchCP] = useState('');
+
+    const [searchATKIv, setSearchATKIv] = useState('');
+    const [searchDEFIv, setSearchDEFIv] = useState('');
+    const [searchSTAIv, setSearchSTAIv] = useState('');
+
     const currentPokemonListFilter = useRef([]);
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
 
@@ -58,13 +108,14 @@ const CalculateTools = () => {
     const [statDEF, setStatDEF] = useState(0);
     const [statSTA, setStatSTA] = useState(0);
 
-    const [preArr, setPreArr] = useState([]);
+    const [preIvArr, setPreIvArr] = useState(null);
+    const [preCpArr, setPreCpArr] = useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
 
     const convertArrStats = (data) => {
         return Object.entries(data).map(([key, value]) => {
-            return {id: value.num, name: value.slug, base_stats: value.baseStats, 
+            return {id: value.num, name: value.slug, base_stats: value.baseStats,
             baseStatsPokeGo: {attack: calBaseATK(value.baseStats, true), defense: calBaseDEF(value.baseStats, true), stamina: calBaseSTA(value.baseStats, true)}}
         })
     };
@@ -104,6 +155,7 @@ const CalculateTools = () => {
     const getInfoPoke = (value) => {
         const id = parseInt(value.currentTarget.dataset.id);
         setId(id);
+        clearArrStats();
     };
 
     const handleSetStats = (type, value) => {
@@ -112,10 +164,92 @@ const CalculateTools = () => {
         else if (type === "sta") setStatSTA(value)
     }
 
-    const findStats = () => {
+    const findStatsIv = useCallback(() => {
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = predictStat(statATK, statDEF, statSTA, searchCP);
-        setPreArr(result.result)
+        setPreIvArr(result);
+    }, [enqueueSnackbar, searchCP, statATK, statDEF, statSTA]);
+
+    const onFindStats = useCallback((e) => {
+        findStatsIv()
+        e.preventDefault();
+    }, [findStatsIv]);
+
+    const clearArrStats = () => {
+        setPreIvArr(null);
+        setPreCpArr(null);
+        setSearchCP('');
+        setSearchATKIv('');
+        setSearchDEFIv('');
+        setSearchSTAIv('');
+    }
+
+    const findStatsCP = useCallback(() => {
+        if (searchATKIv < 0 || searchATKIv > 15 || searchDEFIv < 0 || searchDEFIv > 15 || searchSTAIv < 0 || searchSTAIv > 15) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+        const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
+        setPreCpArr(result);
+    }, [enqueueSnackbar, statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv]);
+
+    const onFindCP = useCallback((e) => {
+        findStatsCP()
+        e.preventDefault();
+    }, [findStatsCP]);
+
+    const showResultTableIV = () => {
+        const avgPercent = Object.values(preIvArr.result).reduce((a, b) => a + b.percent, 0) / preIvArr.result.length
+        const fourStar = preIvArr.result.filter(item => item.percent === 100).length
+        const threeStar = preIvArr.result.filter(item => item.percent > 80).length
+        const twoStar = preIvArr.result.filter(item => item.percent > 64 && item.percent <= 80).length
+        const oneStar = preIvArr.result.filter(item => item.percent > 51 && item.percent <= 64).length
+        const zeroStar = preIvArr.result.filter(item => item.percent <= 51).length
+        return (
+            <Fragment>
+                {preIvArr.result.length > 0 &&
+                    <Fragment>
+                    <p className="element-top">All of result: <b>{preIvArr.result.length}</b></p>
+                    <p className="element-top">Average of percent: <b>{parseFloat(avgPercent.toFixed(2))}</b></p>
+                    <p className="element-top">
+                        <span style={{color: 'red'}}>Best IVs: <b>{fourStar} </b></span>
+                        <span style={{color: 'rgb(236, 50, 236)'}}>Excellent IVs: <b>{threeStar} </b></span>
+                        <span style={{color: 'rgb(50, 236, 50)'}}>Great IVs: <b>{twoStar} </b></span>
+                        <span style={{color: 'orange'}}>Nice IVs: <b>{oneStar} </b></span>
+                        <span>Bad IVs: <b>{zeroStar}</b> </span>
+                    </p>
+                    </Fragment>
+                }
+                {preIvArr.result.length > 0 ?
+                <DataTable
+                    title={"Levels/IV for CP: "+preIvArr.cp}
+                    columns={columnsIV}
+                    data={preIvArr.result}
+                    pagination
+                    defaultSortFieldId={1}
+                    conditionalRowStyles={conditionalRowStyles}
+                />
+                : <p className="element-top text-danger center">At CP: <b>{preIvArr.cp}</b> impossible found in pokémon <b>{pokeList.find(item => item.id === id).name}</b></p>
+                }
+            </Fragment>
+        )
+    }
+
+    const showResultTableCP = () => {
+        const avgCp = Object.values(preCpArr.result).reduce((a, b) => a + b.cp, 0) / preCpArr.result.length
+        return (
+            <Fragment>
+                {preCpArr.result.length > 0 &&
+                <Fragment>
+                    <p className="element-top">Average of CP: <b>{Math.round(avgCp)}</b></p>
+                    <DataTable
+                        title={"Levels/CP for IV: "+preCpArr.IV.atk+"/"+preCpArr.IV.def+"/"+preCpArr.IV.sta}
+                        columns={columnsCP}
+                        data={preCpArr.result}
+                        pagination
+                        defaultSortFieldId={1}
+                    />
+                </Fragment>
+                }
+            </Fragment>
+        )
     }
 
     const findMinMax = () => {
@@ -143,7 +277,7 @@ const CalculateTools = () => {
                 maxCP: calculateCP(statATK+15, statDEF+15, statSTA+15, item.level)
             }
         });
-        
+
         return (
             <DataTable
                 title="Pokémon MIN/MAX CP"
@@ -161,7 +295,7 @@ const CalculateTools = () => {
                 <h1 id ="main" className='center'>Pokémon GO Tools</h1>
                 <div className="row search-container">
                     <div className="col d-flex justify-content-center select-pokemon">
-                        <div className="">
+                        <div className="btn-group-search">
                             <input type="text" className="form-control" aria-label="search" aria-describedby="input-search" placeholder="Enter name or ID"
                             value={searchTerm} onInput={e => setSearchTerm(e.target.value)}></input>
                         </div>
@@ -183,33 +317,69 @@ const CalculateTools = () => {
                         <div>
                         { pokeList.length > 0 && dataPri && stats &&
                             <Fragment>
-                                <Tools id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats}/>
+                                <Tools id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={clearArrStats}/>
                             </Fragment>
                         }
                         </div>
                     </div>
                 </div>
                 <h1 id ="main" className='center'>CP&IV Calculate Tools</h1>
-                <div className="row">
-                    <div className="col d-flex justify-content-center">
-                        <input value={searchCP} style={{height: 38}} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
-                        onInput={e => setSearchCP(e.target.value)}></input>
-                        <button type="button" className="btn btn-primary btn-search" onClick={findStats}>Search</button>
+                <div className="row element-top">
+                    <div className="col col-cal">
+                        <form className="d-flex justify-content-center" onSubmit={onFindStats.bind(this)}>
+                            <div className="input-group mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">CP</span>
+                                </div>
+                            <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
+                            onInput={e => setSearchCP(e.target.value)}></input>
+                            </div>
+                            <div className="btn-search">
+                                <button type="submit" className="btn btn-primary">Search</button>
+                            </div>
+                        </form>
+                        {preIvArr ?
+                            <Fragment>
+                            {showResultTableIV()}
+                            </Fragment>
+                            : <p>None</p>
+                        }
                     </div>
-                    <div className="col">
-                        
+                    <div className="col col-cal">
+                        <form id="formCP" className="d-flex justify-content-center" onSubmit={onFindCP.bind(this)}>
+                            <div className="input-group mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">ATK</span>
+                                </div>
+                            <input required value={searchATKIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="atkIv" aria-describedby="input-atkIv" placeholder="IV"
+                            onInput={e => setSearchATKIv(e.target.value)}></input>
+                            </div>
+                            <div className="input-group mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">DEF</span>
+                                </div>
+                            <input required value={searchDEFIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="defIv" aria-describedby="input-defIv" placeholder="IV"
+                            onInput={e => setSearchDEFIv(e.target.value)}></input>
+                            </div>
+                            <div className="input-group mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">STA</span>
+                                </div>
+                            <input required value={searchSTAIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="staIv" aria-describedby="input-staIv" placeholder="IV"
+                            onInput={e => setSearchSTAIv(e.target.value)}></input>
+                            </div>
+                            <div className="btn-search">
+                                <button type="submit" className="btn btn-primary">Search</button>
+                            </div>
+                        </form>
+                        {preCpArr ?
+                            <Fragment>
+                            {showResultTableCP()}
+                            </Fragment>
+                            : <p>None</p>
+                        }
                     </div>
                 </div>
-                { preArr.length > 0 &&
-                    <DataTable
-                        title={"Levels/IV for CP: "+searchCP}
-                        columns={columns}
-                        data={preArr}
-                        pagination
-                        noDataComponent={"At CP: "+searchCP+" impossible found in pokémon "+pokeList.find(item => item.id === id).name}
-                        defaultSortFieldId={1}
-                    />
-                }
                 <hr></hr>
                 <div className="element-top">
                     {findMinMax()}
