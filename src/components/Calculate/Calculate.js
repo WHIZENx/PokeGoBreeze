@@ -119,7 +119,7 @@ export const predictCP = (atk, def, sta) => {
 
 export const predictStat = (atk, def, sta, cp) => {
     cp = parseInt(cp)
-    let data = {}
+    let dataStat = {}
     let minLevel = 1;
     let maxLevel = 1;
     for (let i = min_level; i <= max_level; i+=0.5) {
@@ -134,22 +134,27 @@ export const predictStat = (atk, def, sta, cp) => {
             break;
         }
     }
-    data["cp"] = cp;
-    data["minLevel"] = minLevel;
-    data["maxLevel"] = maxLevel;
+    dataStat["cp"] = cp;
+    dataStat["minLevel"] = minLevel;
+    dataStat["maxLevel"] = maxLevel;
 
     let predictArr = [];
     for (let l = minLevel; l <= maxLevel; l+=0.5) {
         for (let i = min_iv; i <= max_iv; i++) {
             for (let j = min_iv; j <= max_iv; j++) {
                 for (let k = min_iv; k <= max_iv; k++) {
-                    if (calculateCP(atk+i, def+j, sta+k, l) === cp) predictArr.push({atk: i, def: j, hp: k, level: l, percent: parseFloat(((i+j+k)*100/45).toFixed(2))})
+                    if (calculateCP(atk+i, def+j, sta+k, l) === cp) predictArr.push({atk: i,
+                        def: j,
+                        sta: k,
+                        level: l,
+                        percent: parseFloat(((i+j+k)*100/45).toFixed(2)),
+                        hp: Math.floor((sta+k)*data.find(item => item.level === l).multiplier)})
                 }
             }
         }
     }
-    data["result"] = predictArr;
-    return data;
+    dataStat["result"] = predictArr;
+    return dataStat;
 }
 
 export const predictCPList = (atk, def, sta, IVatk, IVdef, IVsta) => {
@@ -157,13 +162,15 @@ export const predictCPList = (atk, def, sta, IVatk, IVdef, IVsta) => {
     IVdef = parseInt(IVdef);
     IVsta = parseInt(IVsta);
 
-    let data = {};
-    data["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
+    let dataStat = {};
+    dataStat["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
 
     let predictArr = [];
     for (let i = min_level; i <= max_level; i+=0.5) {
-        predictArr.push({level: i, cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i)})
+        predictArr.push({level: i,
+            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i),
+            hp: Math.floor((sta+IVsta)*data.find(item => item.level === i).multiplier)})
     }
-    data["result"] = predictArr;
-    return data;
+    dataStat["result"] = predictArr;
+    return dataStat;
 }

@@ -26,6 +26,11 @@ const columnsIV = [
         sortable: true,
     },
     {
+        name: 'STA',
+        selector: row => row.sta,
+        sortable: true,
+    },
+    {
         name: 'HP',
         selector: row => row.hp,
         sortable: true,
@@ -46,6 +51,11 @@ const columnsCP = [
     {
         name: 'CP',
         selector: row => row.cp,
+        sortable: true,
+    },
+    {
+        name: 'HP',
+        selector: row => row.hp,
         sortable: true,
     },
 ];
@@ -197,6 +207,7 @@ const CalculateTools = () => {
 
     const showResultTableIV = () => {
         const avgPercent = Object.values(preIvArr.result).reduce((a, b) => a + b.percent, 0) / preIvArr.result.length
+        const avgHP = Object.values(preIvArr.result).reduce((a, b) => a + b.hp, 0) / preIvArr.result.length
         const fourStar = preIvArr.result.filter(item => item.percent === 100).length
         const threeStar = preIvArr.result.filter(item => item.percent > 80).length
         const twoStar = preIvArr.result.filter(item => item.percent > 64 && item.percent <= 80).length
@@ -208,6 +219,7 @@ const CalculateTools = () => {
                     <Fragment>
                     <p className="element-top">All of result: <b>{preIvArr.result.length}</b></p>
                     <p className="element-top">Average of percent: <b>{parseFloat(avgPercent.toFixed(2))}</b></p>
+                    <p className="element-top">Average of HP: <b>{Math.round(avgHP)}</b></p>
                     <p className="element-top">
                         <span style={{color: 'red'}}>Best IVs: <b>{fourStar} </b></span>
                         <span style={{color: 'rgb(236, 50, 236)'}}>Excellent IVs: <b>{threeStar} </b></span>
@@ -234,11 +246,13 @@ const CalculateTools = () => {
 
     const showResultTableCP = () => {
         const avgCp = Object.values(preCpArr.result).reduce((a, b) => a + b.cp, 0) / preCpArr.result.length
+        const avgHP = Object.values(preCpArr.result).reduce((a, b) => a + b.hp, 0) / preCpArr.result.length
         return (
             <Fragment>
                 {preCpArr.result.length > 0 &&
                 <Fragment>
                     <p className="element-top">Average of CP: <b>{Math.round(avgCp)}</b></p>
+                    <p className="element-top">Average of HP: <b>{Math.round(avgHP)}</b></p>
                     <DataTable
                         title={"Levels/CP for IV: "+preCpArr.IV.atk+"/"+preCpArr.IV.def+"/"+preCpArr.IV.sta}
                         columns={columnsCP}
@@ -325,7 +339,7 @@ const CalculateTools = () => {
                 </div>
                 <h1 id ="main" className='center'>CP&IV Calculate Tools</h1>
                 <div className="row element-top">
-                    <div className="col col-cal">
+                    <div className="col-6 col-cal">
                         <form className="d-flex justify-content-center" onSubmit={onFindStats.bind(this)}>
                             <div className="input-group mb-3">
                                 <div className="input-group-prepend">
@@ -345,7 +359,7 @@ const CalculateTools = () => {
                             : <p>None</p>
                         }
                     </div>
-                    <div className="col col-cal">
+                    <div className="col-6 col-cal">
                         <form id="formCP" className="d-flex justify-content-center" onSubmit={onFindCP.bind(this)}>
                             <div className="input-group mb-3">
                                 <div className="input-group-prepend">
