@@ -55,6 +55,8 @@ ul {
 }
 
 .scroll-card {
+    position: relative;
+    height: 180px !important;
     width: 350px;
     white-space: nowrap;
 }
@@ -62,4 +64,33 @@ ul {
 .col-cal {
     margin-bottom: 15px;
     /* max-width: 50%; */
+}
+
+.loading-group {
+    display: inline-block;
+    text-align: center;
+}
+
+.vertical-center {
+    margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.loading {
+    animation: loading-spin 1s linear infinite;
+}
+
+@keyframes loading-spin {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(1turn);
+        transform: rotate(1turn);
+    }
 }

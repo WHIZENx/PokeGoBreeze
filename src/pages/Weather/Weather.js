@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
-import {Row, Col} from 'react-bootstrap'
 
 import APIService from '../../services/API.service'
 import Affect from './Affect';
@@ -35,14 +34,15 @@ const Weather = () => {
             })
         };
     }, [weatherBoosts, typeEffective, enqueueSnackbar]);
-        
+
     return (
         <div className="container element-top">
             {weatherBoosts && typeEffective &&
-            <Row>
-                <Col><Affect weathers={weatherBoosts}/></Col>
-                <Col><Effect weathers={weatherBoosts} types={typeEffective}/></Col>
-            </Row>
+            <Fragment>
+                <div className="container-fluid w-50"><Affect weathers={weatherBoosts}/></div>
+                <hr style={{marginTop: 15, marginBottom: 15}}></hr>
+                <div className="container-fluid w-50"><Effect weathers={weatherBoosts} types={typeEffective}/></div>
+            </Fragment>
             }
         </div>
     )

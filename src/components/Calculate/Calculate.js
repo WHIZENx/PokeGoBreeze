@@ -40,7 +40,7 @@ export const calBaseSTA = (stats, nerf) => {
 
     const baseSTA = Math.floor(hp * 1.75 + 50);
     if (!nerf) return baseSTA;
-    if (calculateCP(calBaseATK(stats, false), calBaseDEF(stats, false), baseSTA, 40) >= 4000) return Math.floor((hp * 1.75 + 50) * 0.91);
+    if (calculateCP(calBaseATK(stats, false), calBaseDEF(stats, false), baseSTA, 40) >= 4000) return Math.round((hp * 1.75 + 50) * 0.91);
     else return baseSTA;
 }
 

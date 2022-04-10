@@ -3,13 +3,15 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import APIService from "../../services/API.service";
 import FormTools from "./FormTools";
 
+import loading from '../../assets/loading.png';
+
 const Tools = (props) => {
 
     const [pokeData, setPokeData] = useState([]);
     const [formList, setFormList] = useState([]);
 
     const [data, setData] = useState(null);
-    
+
     const [currForm, setCurrForm] = useState(null);
 
     const pokeID = useRef(null);
@@ -78,30 +80,56 @@ const Tools = (props) => {
 
     return (
         <Fragment>
+            <div style={{display: 'inline-block', width: 60, height: 60}}>
+                {props.id > 1 &&
+                    <div style={{cursor: 'pointer'}} onClick={() => props.onSetPrev()}>
+                        <div>
+                            <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id-1)}></img>
+                        </div>
+                        <span><b><span style={{color: 'red', fontSize: 20}}>{"<"}</span> #{props.id-1}</b></span>
+                    </div>
+                }
+            </div>
             <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id)}></img>
+            <div style={{display: 'inline-block', width: 60, height: 60}}>
+                {props.id < props.count &&
+                    <div style={{cursor: 'pointer'}} onClick={() => props.onSetNext()}>
+                        <div>
+                            <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id+1)}></img>
+                        </div>
+                        <span><b>#{props.id+1} <span style={{color: 'red', fontSize: 20}}>{">"}</span></b></span>
+                    </div>
+                }
+            </div>
             <h4><b>#{props.id} {props.name}</b></h4>
-            {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length &&
-                <Fragment>
-                <div className="scroll-card" style={{overflowX: (formList.reduce((a,e) => a+e.length, 0) > 3)? "scroll" : "hidden"}}>
-                    {formList.map((value, index) => (
-                        <Fragment key={index}>
-                            {value.map((value, index) => (
-                                <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
-                                    <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
-                                    <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
-                                    {value.form.id === pokeID.current && 
-                                        <b><small className=''> (Default)</small></b>
-                                    }
-                                </button>
-                            ))
-                            }
-                        </Fragment>
-                    ))
-                    }
-                </div>
-                <FormTools id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
-                </Fragment>
-            }
+            <div className="scroll-card">
+                {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
+                    <Fragment>
+                    <div style={{overflowX: (formList.reduce((a,e) => a+e.length, 0) > 3)? "scroll" : "hidden"}}>
+                        {formList.map((value, index) => (
+                            <Fragment key={index}>
+                                {value.map((value, index) => (
+                                    <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
+                                        <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
+                                        <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
+                                        {value.form.id === pokeID.current &&
+                                            <b><small className=''> (Default)</small></b>
+                                        }
+                                    </button>
+                                ))
+                                }
+                            </Fragment>
+                        ))
+                        }
+                    </div>
+                    </Fragment>
+                :   <div className='loading-group vertical-center'>
+                        <img className="loading" width={40} height={40} alt='img-pokemon' src={loading}></img>
+                        <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
+                    </div>
+                }
+            </div>
+            <FormTools id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
         </Fragment>
     )
 }

@@ -26,7 +26,7 @@ const TypeEffect = () => {
             })
         }
     }, [typeEffective, enqueueSnackbar]);
-        
+
     return (
         <div className="container element-top">
             {typeEffective &&

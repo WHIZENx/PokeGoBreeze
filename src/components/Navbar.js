@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import logo from '../assets/pokedex.png';
@@ -18,9 +18,14 @@ const NavbarComponent = () => {
                 <Nav className="me-auto">
                     <Link className="nav-link" to="/">Home</Link>
                     <Link className="nav-link" to="/search">Search Pokémon</Link>
-                    <Link className="nav-link" to="/type-effective">Type Effective</Link>
-                    <Link className="nav-link" to="/weather-boosts">Weather Boosts</Link>
-                    <Link className="nav-link" to="/calculate">Tools</Link>
+                    <NavDropdown title="Effective" id="basic-nav-dropdown">
+                        <Link className="dropdown-item" to="/type-effective">Type Effective</Link>
+                        <Link className="dropdown-item" to="/weather-boosts">Weather Boosts</Link>
+                    </NavDropdown>
+                    <NavDropdown title="Tools" id="basic-nav-dropdown">
+                        <Link className="dropdown-item" to="/find-cp-iv">Find IV&CP</Link>
+                        <Link className="dropdown-item" to="/calculate-cp-iv">Calculate IV&CP</Link>
+                    </NavDropdown>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

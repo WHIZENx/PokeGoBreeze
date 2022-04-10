@@ -5,6 +5,10 @@
     width: 300px;
 }
 
+.result-weather {
+    height: 350px;
+}
+
 .result-weather ul {
     margin: 0;
     padding: 0;

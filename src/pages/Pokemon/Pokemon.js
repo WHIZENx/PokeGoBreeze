@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import APIService from "../../services/API.service";
 
+import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
 import { calBaseATK, calBaseDEF, calBaseSTA, sortStatsPokemon } from '../../components/Calculate/Calculate';
@@ -32,12 +33,12 @@ const Pokemon = (props) => {
 
     const convertArrStats = (data) => {
         return Object.entries(data).map(([key, value]) => {
-            return {id: value.num, name: value.slug, base_stats: value.baseStats, 
-            baseStatsPokeGo: {attack: calBaseATK(value.baseStats), defense: calBaseDEF(value.baseStats), stamina: calBaseSTA(value.baseStats)}}
+            return {id: value.num, name: value.slug, base_stats: value.baseStats,
+            baseStatsPokeGo: {attack: calBaseATK(value.baseStats, true), defense: calBaseDEF(value.baseStats, true), stamina: calBaseSTA(value.baseStats, true)}}
         })
     };
 
-    const getRatioGender = useCallback((data, id) => { 
+    const getRatioGender = useCallback((data, id) => {
         let genderRatio;
         Object.entries(data).forEach(([key, value]) => {
             if (id === value.num) {
@@ -131,7 +132,7 @@ const Pokemon = (props) => {
         <Fragment>
             {data && released &&
                 <Fragment>
-                    {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go   
+                    {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go
                             <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
                             </h5> */}
                 <div className='poke-container'>
@@ -146,7 +147,7 @@ const Pokemon = (props) => {
                             <h4>Version: {version}<b></b></h4>
                         </div>
                     </div>
-                    <div className='img-form-group'>
+                    <div className='img-form-group' style={{textAlign: (initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length) ? null : 'center'}}>
                     {initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
                             <Fragment>
                                 <FormGroup
@@ -165,8 +166,9 @@ const Pokemon = (props) => {
                                     onSetIDPoke={props.onSetIDPoke}/>
                             </Fragment>
                         :
-                        <div className="spinner-border text-info" role="status">
-                            <span className="visually-hidden">Loading...</span>
+                        <div className='loading-group'>
+                            <img className="loading" width={40} height={40} alt='img-pokemon' src={loading}></img>
+                            <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                         </div>
                     }
                     </div>

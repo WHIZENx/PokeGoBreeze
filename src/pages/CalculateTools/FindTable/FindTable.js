@@ -1,12 +1,12 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { calBaseATK, calBaseDEF, calBaseSTA, calculateCP, predictCPList, predictStat, sortStatsPokemon } from "../../components/Calculate/Calculate";
+import { calBaseATK, calBaseDEF, calBaseSTA, calculateCP, predictCPList, predictStat, sortStatsPokemon } from "../../../components/Calculate/Calculate";
 import DataTable from 'react-data-table-component';
-import APIService from "../../services/API.service";
-import data from "../../data/cp_multiplier.json";
+import APIService from "../../../services/API.service";
+import data from "../../../data/cp_multiplier.json";
 
-import Tools from "./Tools";
+import Tools from "../Tools";
 
-import './Tools.css';
+import '../Tools.css';
 import { useSnackbar } from "notistack";
 
 const columnsIV = [
@@ -87,7 +87,7 @@ const conditionalRowStyles = [
     },
   ];
 
-const CalculateTools = () => {
+const FindTable = () => {
 
     const cardHeight = 57;
     const pageCardScroll = 10;
@@ -209,7 +209,7 @@ const CalculateTools = () => {
         const avgPercent = Object.values(preIvArr.result).reduce((a, b) => a + b.percent, 0) / preIvArr.result.length
         const avgHP = Object.values(preIvArr.result).reduce((a, b) => a + b.hp, 0) / preIvArr.result.length
         const fourStar = preIvArr.result.filter(item => item.percent === 100).length
-        const threeStar = preIvArr.result.filter(item => item.percent > 80).length
+        const threeStar = preIvArr.result.filter(item => item.percent > 80 && item.percent < 100).length
         const twoStar = preIvArr.result.filter(item => item.percent > 64 && item.percent <= 80).length
         const oneStar = preIvArr.result.filter(item => item.percent > 51 && item.percent <= 64).length
         const zeroStar = preIvArr.result.filter(item => item.percent <= 51).length
@@ -235,7 +235,8 @@ const CalculateTools = () => {
                     columns={columnsIV}
                     data={preIvArr.result}
                     pagination
-                    defaultSortFieldId={1}
+                    defaultSortFieldId={6}
+                    defaultSortAsc={false}
                     conditionalRowStyles={conditionalRowStyles}
                 />
                 : <p className="element-top text-danger center">At CP: <b>{preIvArr.cp}</b> impossible found in pokémon <b>{pokeList.find(item => item.id === id).name}</b></p>
@@ -303,12 +304,20 @@ const CalculateTools = () => {
         )
     }
 
+    const decId = () => {
+        setTimeout(() => {setId(id-1);}, 300);
+    }
+
+    const incId = () => {
+        setTimeout(() => {setId(id+1);}, 300);
+    }
+
     return (
         <Fragment>
             <div className="container element-top">
                 <h1 id ="main" className='center'>Pokémon GO Tools</h1>
                 <div className="row search-container">
-                    <div className="col d-flex justify-content-center select-pokemon">
+                    <div className="col d-flex justify-content-center" style={{height: pokemonListFilter.length*cardHeight+80, maxHeight: cardHeight*pageCardScroll+80}}>
                         <div className="btn-group-search">
                             <input type="text" className="form-control" aria-label="search" aria-describedby="input-search" placeholder="Enter name or ID"
                             value={searchTerm} onInput={e => setSearchTerm(e.target.value)}></input>
@@ -331,13 +340,13 @@ const CalculateTools = () => {
                         <div>
                         { pokeList.length > 0 && dataPri && stats &&
                             <Fragment>
-                                <Tools id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={clearArrStats}/>
+                                <Tools count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={clearArrStats} onSetPrev={decId} onSetNext={incId}/>
                             </Fragment>
                         }
                         </div>
                     </div>
                 </div>
-                <h1 id ="main" className='center'>CP&IV Calculate Tools</h1>
+                <h1 id ="main" className='center'>Find IV&CP</h1>
                 <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
                             <div className="input-group mb-3">
                         <div className="input-group-prepend">
@@ -389,62 +398,6 @@ const CalculateTools = () => {
                     </Fragment>
                     : <p>None</p>
                 }
-                {/* <div className="row element-top">
-                    <div className="col col-cal">
-                        <form className="d-flex justify-content-center" onSubmit={onFindStats.bind(this)}>
-                            <div className="input-group mb-3">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text">CP</span>
-                                </div>
-                            <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
-                            onInput={e => setSearchCP(e.target.value)}></input>
-                            </div>
-                            <div className="btn-search">
-                                <button type="submit" className="btn btn-primary">Search</button>
-                            </div>
-                        </form>
-                        {preIvArr ?
-                            <Fragment>
-                            {showResultTableIV()}
-                            </Fragment>
-                            : <p>None</p>
-                        }
-                    </div>
-                    <div className="col col-cal">
-                        <form id="formCP" className="d-flex justify-content-center" onSubmit={onFindCP.bind(this)}>
-                            <div className="input-group mb-3">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text">ATK</span>
-                                </div>
-                            <input required value={searchATKIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="atkIv" aria-describedby="input-atkIv" placeholder="IV"
-                            onInput={e => setSearchATKIv(e.target.value)}></input>
-                            </div>
-                            <div className="input-group mb-3">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text">DEF</span>
-                                </div>
-                            <input required value={searchDEFIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="defIv" aria-describedby="input-defIv" placeholder="IV"
-                            onInput={e => setSearchDEFIv(e.target.value)}></input>
-                            </div>
-                            <div className="input-group mb-3">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text">STA</span>
-                                </div>
-                            <input required value={searchSTAIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="staIv" aria-describedby="input-staIv" placeholder="IV"
-                            onInput={e => setSearchSTAIv(e.target.value)}></input>
-                            </div>
-                            <div className="btn-search">
-                                <button type="submit" className="btn btn-primary">Search</button>
-                            </div>
-                        </form>
-                        {preCpArr ?
-                            <Fragment>
-                            {showResultTableCP()}
-                            </Fragment>
-                            : <p>None</p>
-                        }
-                    </div>
-                </div> */}
                 <hr></hr>
                 <div className="element-top">
                     {findMinMax()}
@@ -454,4 +407,4 @@ const CalculateTools = () => {
     )
 }
 
-export default CalculateTools;
+export default FindTable;

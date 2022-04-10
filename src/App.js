@@ -10,7 +10,8 @@ import Search from './pages/Search/Search'
 import TypeEffect from './pages/TypeEffect/TypeEffect'
 import Weather from './pages/Weather/Weather';
 import Pokemon from './pages/Pokemon/Pokemon';
-import CalculateTools from './pages/CalculateTools/CalculateTools';
+import FindTable from './pages/CalculateTools/FindTable/FindTable';
+import Calculate from './pages/CalculateTools/Calculate/Calculate';
 
 const App = () => {
 
@@ -29,7 +30,8 @@ const App = () => {
               <Route path="/type-effective" element={<TypeEffect />}></Route>
               <Route path="/weather-boosts" element={<Weather />}></Route>
               <Route path="/search" element={<Search/>}></Route>
-              <Route path="/calculate" element={<CalculateTools/>}></Route>
+              <Route path="/find-cp-iv" element={<FindTable/>}></Route>
+              <Route path="/calculate-cp-iv" element={<Calculate/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
             </Routes>
             {/* <FooterComponent /> */}

@@ -13,7 +13,7 @@ const FormGroup = (props) => {
     const formDefault = useRef(props.formList.map(item => {
         return item.find(item => item.form.is_default)
     }));
-    
+
     const [currForm, setCurrForm] = useState(formDefault.current.find(item => item.id === props.id_default));
     const [dataPoke, setDataPoke] = useState(props.pokeData.find(item => item.id === props.id_default));
 
@@ -36,7 +36,7 @@ const FormGroup = (props) => {
 
     const filterFormList = useCallback((stats, id) => {
         const filterId = stats.filter(item => item.id === id);
-        const filterForm = stats.find(item => item.id === id && 
+        const filterForm = stats.find(item => item.id === id &&
             filterFormName(currForm.form.form_name, item.form));
         if (filterId.length === 1 && props.formList.length === 1 && !filterForm) return filterId[0];
         else if (filterId.length === props.formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
@@ -85,7 +85,7 @@ const FormGroup = (props) => {
                             <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
                                 <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
                                 <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
-                                {value.form.id === pokeID.current && 
+                                {value.form.id === pokeID.current &&
                                     <b><small className=''> (Default)</small></b>
                                 }
                             </button>
@@ -110,7 +110,7 @@ const FormGroup = (props) => {
                     statDEF={statDEF}
                     statSTA={statSTA}
                     pokemonStats={props.stats}
-                    stats={dataPoke.stats}/>
+                    stats={dataPoke}/>
                 <Info data={dataPoke}
                     currForm={currForm}
                     typeEffective={props.typeEffective}
@@ -119,7 +119,7 @@ const FormGroup = (props) => {
             }
             </div>
             <hr className="w-100"></hr>
-            <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>          
+            <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>
         </Fragment>
     )
 }
