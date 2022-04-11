@@ -174,3 +174,67 @@ export const predictCPList = (atk, def, sta, IVatk, IVdef, IVsta) => {
     dataStat["result"] = predictArr;
     return dataStat;
 }
+
+export const calculateStats = (atk, def, sta, IVatk, IVdef, IVsta, cp) => {
+    cp = parseInt(cp)
+
+    let dataStat = {};
+    dataStat["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
+    dataStat["CP"] = cp;
+    dataStat["level"] = null;
+
+    for (let i = min_level; i <= max_level; i+=0.5) {
+        if (cp === calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i)) {
+            dataStat.level = i;
+            break;
+        }
+    }
+    return dataStat;
+}
+
+export const calculateBetweenLevel = (from_lv, to_lv) => {
+    let from_sum_stadust = data.find(e => e.level === from_lv).sum_stadust ? data.find(e => e.level === from_lv).sum_stadust : 0;
+    let from_sum_candy = data.find(e => e.level === from_lv).sum_candy ? data.find(e => e.level === from_lv).sum_candy : 0;
+    let from_sum_xl_candy = data.find(e => e.level === from_lv).sum_xl_candy ? data.find(e => e.level === from_lv).sum_xl_candy : 0;
+
+    let power_up_stardust = data.find(e => e.level === to_lv).stadust ? data.find(e => e.level === to_lv).stadust : 0;
+    let power_up_candy = data.find(e => e.level === to_lv).candy ? data.find(e => e.level === to_lv).candy : 0;
+    let power_up_xl_candy = data.find(e => e.level === to_lv).xl_candy ? data.find(e => e.level === to_lv).xl_candy : 0;
+
+    if (to_lv > 50) {
+        return {
+            result_between_stadust: null,
+            result_between_candy: null,
+            result_between_xl_candy: null,
+            power_up_stardust: null,
+            power_up_candy: null,
+            power_up_xl_candy: null
+        }
+    } else if (from_lv > to_lv) {
+        return {
+            result_between_stadust: from_sum_stadust,
+            result_between_candy: from_sum_candy,
+            result_between_xl_candy: from_sum_xl_candy,
+            power_up_stardust: power_up_stardust,
+            power_up_candy: power_up_candy,
+            power_up_xl_candy
+        }
+    } else {
+        let to_sum_stadust = data.find(e => e.level === to_lv).sum_stadust ? data.find(e => e.level === to_lv).sum_stadust : 0;
+        let to_sum_candy = data.find(e => e.level === to_lv).sum_candy ? data.find(e => e.level === to_lv).sum_candy : 0;
+        let to_sum_xl_candy = data.find(e => e.level === to_lv).sum_xl_candy ? data.find(e => e.level === to_lv).sum_xl_candy : 0;
+
+        return {
+            result_between_stadust: to_sum_stadust-from_sum_stadust,
+            result_between_candy: to_sum_candy-from_sum_candy,
+            result_between_xl_candy: to_sum_xl_candy-from_sum_xl_candy,
+            power_up_stardust: power_up_stardust,
+            power_up_candy: power_up_candy,
+            power_up_xl_candy
+        }
+    }
+}
+
+export const calculateStatsBettle = (base, iv, level) => {
+    return Math.floor((base+iv)*data.find(item => item.level === level).multiplier)
+}

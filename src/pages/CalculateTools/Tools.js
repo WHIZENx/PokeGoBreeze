@@ -1,5 +1,5 @@
 import { useSnackbar } from "notistack";
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import APIService from "../../services/API.service";
 import FormTools from "./FormTools";
 
@@ -14,7 +14,7 @@ const Tools = (props) => {
 
     const [currForm, setCurrForm] = useState(null);
 
-    const pokeID = useRef(null);
+    const [pokeID, setPokeID] = useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -39,13 +39,14 @@ const Tools = (props) => {
             return item.find(item => item.form.is_default);
         });
         const isDefault = formDefault.find(item => item.form.id === data.id);
-        if (formDefault) {
+        if (isDefault) {
             setCurrForm(isDefault);
-            pokeID.current = isDefault.form.id;
+            setPokeID(isDefault.form.id);
+
         }
         else {
             setCurrForm(formDefault[0]);
-            pokeID.current = formDefault[0].form.id;
+            setPokeID(formDefault[0].form.id);
         }
     }, []);
 
@@ -112,7 +113,7 @@ const Tools = (props) => {
                                     <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
                                         <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
                                         <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
-                                        {value.form.id === pokeID.current &&
+                                        {value.form.id === pokeID &&
                                             <b><small className=''> (Default)</small></b>
                                         }
                                     </button>

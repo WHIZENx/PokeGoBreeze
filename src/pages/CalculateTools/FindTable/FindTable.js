@@ -239,7 +239,7 @@ const FindTable = () => {
                     defaultSortAsc={false}
                     conditionalRowStyles={conditionalRowStyles}
                 />
-                : <p className="element-top text-danger center">At CP: <b>{preIvArr.cp}</b> impossible found in pokémon <b>{pokeList.find(item => item.id === id).name}</b></p>
+                : <p className="element-top text-danger center">At CP: <b>{preIvArr.cp}</b> impossible found in <b>{pokeList.find(item => item.id === id).name}</b></p>
                 }
             </Fragment>
         )
@@ -306,10 +306,12 @@ const FindTable = () => {
 
     const decId = () => {
         setTimeout(() => {setId(id-1);}, 300);
+        clearArrStats();
     }
 
     const incId = () => {
         setTimeout(() => {setId(id+1);}, 300);
+        clearArrStats();
     }
 
     return (
@@ -346,7 +348,7 @@ const FindTable = () => {
                         </div>
                     </div>
                 </div>
-                <h1 id ="main" className='center'>Find IV&CP</h1>
+                <h1 id ="main" className='center'>Find IV</h1>
                 <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
                             <div className="input-group mb-3">
                         <div className="input-group-prepend">
@@ -366,6 +368,7 @@ const FindTable = () => {
                     : <p>None</p>
                 }
                 <hr></hr>
+                <h1 id ="main" className='center'>Find CP</h1>
                 <form id="formCP" className="d-flex justify-content-center element-top" onSubmit={onFindCP.bind(this)}>
                     <div className="input-group mb-3">
                         <div className="input-group-prepend">

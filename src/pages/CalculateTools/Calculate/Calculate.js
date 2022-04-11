@@ -1,12 +1,83 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { calBaseATK, calBaseDEF, calBaseSTA, predictCPList, predictStat, sortStatsPokemon } from "../../../components/Calculate/Calculate";
+import { calBaseATK, calBaseDEF, calBaseSTA, calculateBetweenLevel, calculateStats, calculateStatsBettle, sortStatsPokemon } from "../../../components/Calculate/Calculate";
+import { Box, Slider, styled } from '@mui/material';
+import { useSnackbar } from "notistack";
+
 import APIService from "../../../services/API.service";
-// import data from "../../../data/cp_multiplier.json";
 
 import Tools from "../Tools";
 
-import '../Tools.css';
-import { useSnackbar } from "notistack";
+import './Calculate.css';
+
+const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
+
+const PokeGoSlider = styled(Slider)(() => ({
+    color: '#ee9219',
+    height: 18,
+    padding: '13px 0',
+    '& .MuiSlider-thumb': {
+      height: 18,
+      width: 18,
+      backgroundColor: '#ee9219',
+      borderTopLeftRadius: '1px',
+      borderBottomLeftRadius: '1px',
+      '&:hover, &.Mui-focusVisible, &.Mui-active': {
+        boxShadow: 'none',
+      },
+      '&:before': {
+        boxShadow: 'none',
+      },
+      '& .airbnb-bar': {
+        height: 12,
+        width: 1,
+        backgroundColor: 'currentColor',
+        marginLeft: 1,
+        marginRight: 1,
+      },
+    },
+    '& .MuiSlider-track': {
+      height: 18,
+      borderTopLeftRadius: '1px',
+      borderBottomLeftRadius: '1px',
+      border: 'none',
+    },
+    '& .MuiSlider-rail': {
+      color: 'lightgray',
+      opacity: 0.5,
+      height: 18,
+      borderTopLeftRadius: '1px',
+      borderBottomLeftRadius: '1px',
+    },
+    '& .MuiSlider-valueLabel': {
+        lineHeight: 1.2,
+        fontSize: 12,
+        background: 'unset',
+        padding: 0,
+        width: 32,
+        height: 32,
+        borderRadius: '50% 50% 50% 0',
+        backgroundColor: '#ee9219',
+        transformOrigin: 'bottom left',
+        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+        '&:before': { display: 'none' },
+        '&.MuiSlider-valueLabelOpen': {
+          transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
+        },
+        '& > *': {
+          transform: 'rotate(45deg)',
+        },
+    },
+    '& .MuiSlider-mark': {
+        backgroundColor: '#bfbfbf',
+        height: 13,
+        width: 1,
+        '&.MuiSlider-markActive': {
+          opacity: 1,
+          backgroundColor: '#fff',
+          height: 13
+        },
+    },
+  }));
 
 const Calculate = () => {
 
@@ -28,9 +99,9 @@ const Calculate = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchCP, setSearchCP] = useState('');
 
-    const [searchATKIv, setSearchATKIv] = useState('');
-    const [searchDEFIv, setSearchDEFIv] = useState('');
-    const [searchSTAIv, setSearchSTAIv] = useState('');
+    const [ATKIv, setATKIv] = useState(0);
+    const [DEFIv, setDEFIv] = useState(0);
+    const [STAIv, setSTAIv] = useState(0);
 
     const currentPokemonListFilter = useRef([]);
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
@@ -38,6 +109,10 @@ const Calculate = () => {
     const [statATK, setStatATK] = useState(0);
     const [statDEF, setStatDEF] = useState(0);
     const [statSTA, setStatSTA] = useState(0);
+
+    const [pokeStats, setPokeStats] = useState(null);
+    const [statLevel, setStatLevel] = useState(1);
+    const [statData, setStatData] = useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -92,42 +167,41 @@ const Calculate = () => {
         else if (type === "sta") setStatSTA(value)
     }
 
-    const findStatsIv = useCallback(() => {
-        if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
-        const result = predictStat(statATK, statDEF, statSTA, searchCP);
-        return result;
-    }, [enqueueSnackbar, searchCP, statATK, statDEF, statSTA]);
-
-    const onFindStats = useCallback((e) => {
-        findStatsIv()
-        e.preventDefault();
-    }, [findStatsIv]);
-
     const clearArrStats = () => {
         setSearchCP('');
-        setSearchATKIv('');
-        setSearchDEFIv('');
-        setSearchSTAIv('');
+        setPokeStats(null);
+        setStatLevel(1)
+        setStatData(null)
     }
 
-    const findStatsCP = useCallback(() => {
-        if (searchATKIv < 0 || searchATKIv > 15 || searchDEFIv < 0 || searchDEFIv > 15 || searchSTAIv < 0 || searchSTAIv > 15) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
-        const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
-        return result;
-    }, [enqueueSnackbar, statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv]);
+    const calculateStatsPoke = useCallback(() => {
+        if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+        const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
+        if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+pokeList.find(item => item.id === id).name, { variant: 'error' });
+        setPokeStats(result);
+        setStatLevel(result.level)
+        setStatData(calculateBetweenLevel(result.level, result.level))
+    }, [enqueueSnackbar, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, id, pokeList]);
 
-    const onFindCP = useCallback((e) => {
-        findStatsCP()
+    const onCalculateStatsPoke = useCallback((e) => {
+        calculateStatsPoke();
         e.preventDefault();
-    }, [findStatsCP]);
+    }, [calculateStatsPoke]);
 
     const decId = () => {
         setTimeout(() => {setId(id-1);}, 300);
+        clearArrStats();
     }
 
     const incId = () => {
         setTimeout(() => {setId(id+1);}, 300);
+        clearArrStats();
     }
+
+    const onHandleLevel = useCallback((e, v) => {
+        setStatLevel(v);
+        setStatData(calculateBetweenLevel(pokeStats.level, v));
+    }, [pokeStats]);
 
     return (
         <Fragment>
@@ -164,46 +238,186 @@ const Calculate = () => {
                     </div>
                 </div>
                 <h1 id ="main" className='center'>Calculate IV&CP</h1>
-                <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
+                <form className="element-top" onSubmit={onCalculateStatsPoke.bind(this)}>
+                    <div className="form-group d-flex justify-content-center center">
+                        <Box sx={{ width: '50%', minWidth: 350 }}>
                             <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">CP</span>
-                        </div>
-                    <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
-                    onInput={e => setSearchCP(e.target.value)}></input>
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">CP</span>
+                                </div>
+                            <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
+                            onInput={e => setSearchCP(e.target.value)}></input>
+                            </div>
+                        </Box>
                     </div>
-                    <div className="btn-search">
-                        <button type="submit" className="btn btn-primary">Search</button>
+                    <div className="form-group d-flex justify-content-center center">
+                        <Box sx={{ width: '50%', minWidth: 300 }}>
+                            <div className="d-flex justify-content-between">
+                                <b>ATK</b>
+                                <b>{ATKIv}</b>
+                            </div>
+                            <PokeGoSlider
+                                aria-label="ATK marks"
+                                defaultValue={0}
+                                min={0}
+                                max={15}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                marks={marks}
+                                onChange={(e,v) => setATKIv(v)}
+                            />
+                            <div className="d-flex justify-content-between">
+                                <b>DEF</b>
+                                <b>{DEFIv}</b>
+                            </div>
+                            <PokeGoSlider
+                                aria-label="DEF marks"
+                                defaultValue={0}
+                                min={0}
+                                max={15}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                marks={marks}
+                                onChange={(e,v) => setDEFIv(v)}
+                            />
+                            <div className="d-flex justify-content-between">
+                                <b>STA</b>
+                                <b>{STAIv}</b>
+                            </div>
+                            <PokeGoSlider
+                                aria-label="STA marks"
+                                defaultValue={0}
+                                min={0}
+                                max={15}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                marks={marks}
+                                onChange={(e,v) => setSTAIv(v)}
+                            />
+                        </Box>
+                    </div>
+                    <div className="form-group d-flex justify-content-center center">
+                        <button type="submit" className="btn btn-primary">Calculate</button>
                     </div>
                 </form>
-                <form id="formCP" className="d-flex justify-content-center element-top" onSubmit={onFindCP.bind(this)}>
-                    <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">ATK</span>
+                <div>
+                <div className="d-flex justify-content-center center" style={{height: 80}}>
+                    <Box sx={{ width: '60%', minWidth: 350 }}>
+                        <div className="d-flex justify-content-between">
+                                <b>Level</b>
+                                <b>{statLevel}</b>
                         </div>
-                    <input required value={searchATKIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="atkIv" aria-describedby="input-atkIv" placeholder="Enter IV"
-                    onInput={e => setSearchATKIv(e.target.value)}></input>
+                        <Slider
+                            aria-label="Temperature"
+                            value={statLevel}
+                            defaultValue={1}
+                            valueLabelDisplay="auto"
+                            step={0.5}
+                            min={1}
+                            max={51}
+                            marks={pokeStats ? [{value: pokeStats.level, label: 'Result LV '+pokeStats.level}] : false}
+                            disabled={pokeStats ? false : true}
+                            onChange={pokeStats ? onHandleLevel : null}
+                        />
+                    </Box>
+                </div>
+                <div className="d-flex justify-content-center" style={{marginTop: 15}}>
+                        <Box sx={{ width: '80%', minWidth: 320 }}>
+                            <div className="row">
+                            <div className="col" style={{padding: 0}}>
+                                    <table className="table-info">
+                                        <thead>
+                                            <tr className="center"><th colSpan="2">Result of resource in Level {pokeStats ? statLevel : "None"}</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Stadust Required LV {pokeStats ? pokeStats.level+"-"+statLevel : ""}</td>
+                                                <td>{statData ? statData.result_between_stadust != null ? statData.result_between_stadust : "Unavailable" : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stadust Power-Up Required</td>
+                                                <td>{statData ? statData.power_up_stardust != null ? statData.power_up_stardust : "Unavailable" : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Candy Required LV {pokeStats ? pokeStats.level+"-"+statLevel : ""}</td>
+                                                <td>{statData ? statData.result_between_candy != null ? statData.result_between_candy : "Unavailable" : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Candy Power-Up Required</td>
+                                                <td>{statData ? statData.power_up_candy != null ? statData.power_up_candy : "Unavailable" : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>XL Candy Required LV {pokeStats ? pokeStats.level+"-"+statLevel : ""}</td>
+                                                <td>{statData ? statData.result_between_xl_candy != null ? statData.result_between_xl_candy : "Unavailable" : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>XL Candy Power-Up Required</td>
+                                                <td>{statData ? statData.power_up_xl_candy != null ? statData.power_up_xl_candy : "Unavailable" : "-"}</td>
+                                            </tr>
+                                            <tr className="center"><td colSpan="2">Stats</td></tr>
+                                            <tr>
+                                                <td>ATK</td>
+                                                <td>{statData ? calculateStatsBettle(statATK, pokeStats.IV.atk, statLevel) : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>DEF</td>
+                                                <td>{statData ? calculateStatsBettle(statDEF, pokeStats.IV.def, statLevel) : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>HP</td>
+                                                <td>{statData ? calculateStatsBettle(statSTA, pokeStats.IV.sta, statLevel) : "-"}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="col" style={{padding: 0}}>
+                                    <table className="table-info">
+                                        <thead className="center">
+                                            <tr><th colSpan="2">Recommend in Bettle League</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr className="center"><td colSpan="2">Little Cup</td></tr>
+                                            <tr>
+                                                <td>Level</td>
+                                                <td>555</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stadust Required</td>
+                                                <td>555</td>
+                                            </tr>
+                                            <tr className="center"><td colSpan="2">Great League</td></tr>
+                                            <tr>
+                                                <td>Level</td>
+                                                <td>555</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stadust Required</td>
+                                                <td>555</td>
+                                            </tr>
+                                            <tr className="center"><td colSpan="2">Ultra League</td></tr>
+                                            <tr>
+                                                <td>Level</td>
+                                                <td>555</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stadust Required</td>
+                                                <td>555</td>
+                                            </tr>
+                                            <tr className="center"><td colSpan="2">Master League</td></tr>
+                                            <tr>
+                                                <td>Level</td>
+                                                <td>555</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stadust Required</td>
+                                                <td>555</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </Box>
                     </div>
-                    <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">DEF</span>
-                        </div>
-                    <input required value={searchDEFIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="defIv" aria-describedby="input-defIv" placeholder="Enter IV"
-                    onInput={e => setSearchDEFIv(e.target.value)}></input>
-                    </div>
-                    <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">STA</span>
-                        </div>
-                    <input required value={searchSTAIv} style={{height: 38}} type="number" min={0} max={15} className="form-control" aria-label="staIv" aria-describedby="input-staIv" placeholder="Enter IV"
-                    onInput={e => setSearchSTAIv(e.target.value)}></input>
-                    </div>
-                    <div className="btn-search">
-                        <button type="submit" className="btn btn-primary">Search</button>
-                    </div>
-                </form>
-                <div style={{height: 500}}>
-
                 </div>
                 <hr></hr>
             </div>

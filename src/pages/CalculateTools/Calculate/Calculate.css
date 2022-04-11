@@ -1,0 +1,38 @@
+.table-info {
+    width: 100%;
+    min-width: 250px;
+}
+
+th {
+    font-size: 18px;
+    padding: 15px 0 15px 0;
+}
+
+table:nth-child(1) td:nth-child(1) {
+    width: 50%;
+}
+
+table:nth-child(2) td {
+    width: 50%;
+}
+
+td {
+    padding: 5px 0 5px 10px;
+}
+
+.table-info, th, td {
+    border: 1px solid #b8d4da;
+
+}
+
+.table-info thead tr {
+    background-color: rgb(64, 159, 241);
+    color: #f1ffff;
+    font-weight: bolder;
+}
+
+.table-info tbody tr td:nth-child(1) {
+   background-color: #f1ffff;
+   color: #0571c2;
+   font-weight: bolder;
+}
