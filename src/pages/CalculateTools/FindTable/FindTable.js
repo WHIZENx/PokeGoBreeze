@@ -8,6 +8,13 @@ import Tools from "../Tools";
 
 import '../Tools.css';
 import { useSnackbar } from "notistack";
+import { Rating, styled } from "@mui/material";
+
+const HundoRate = styled(Rating)(() => ({
+    '& .MuiRating-icon': {
+        color: 'red',
+    },
+}));
 
 const columnsIV = [
     {
@@ -85,7 +92,7 @@ const conditionalRowStyles = [
           backgroundColor: 'rgb(236, 236, 200)',
         },
     },
-  ];
+];
 
 const FindTable = () => {
 
@@ -220,13 +227,31 @@ const FindTable = () => {
                     <p className="element-top">All of result: <b>{preIvArr.result.length}</b></p>
                     <p className="element-top">Average of percent: <b>{parseFloat(avgPercent.toFixed(2))}</b></p>
                     <p className="element-top">Average of HP: <b>{Math.round(avgHP)}</b></p>
-                    <p className="element-top">
-                        <span style={{color: 'red'}}>Best IVs: <b>{fourStar} </b></span>
-                        <span style={{color: 'rgb(236, 50, 236)'}}>Excellent IVs: <b>{threeStar} </b></span>
-                        <span style={{color: 'rgb(50, 236, 50)'}}>Great IVs: <b>{twoStar} </b></span>
-                        <span style={{color: 'orange'}}>Nice IVs: <b>{oneStar} </b></span>
-                        <span>Bad IVs: <b>{zeroStar}</b> </span>
-                    </p>
+                    <div className="center four-star" style={{display: 'inline-block'}}>
+                        <HundoRate name="hundo-rate" value={3} max={3} readOnly />
+                        <hr style={{margin: 0}}></hr>
+                        <div><b>{fourStar}</b></div>
+                    </div>
+                    <div className="center three-star" style={{display: 'inline-block'}}>
+                        <Rating name="three-rate" value={3} max={3} readOnly />
+                        <hr style={{margin: 0}}></hr>
+                        <div><b>{threeStar}</b></div>
+                    </div>
+                    <div className="center two-star" style={{display: 'inline-block'}}>
+                        <Rating name="two-rate" value={2} max={3} readOnly />
+                        <hr style={{margin: 0}}></hr>
+                        <div><b>{twoStar}</b></div>
+                    </div>
+                    <div className="center one-star" style={{display: 'inline-block'}}>
+                        <Rating name="one-rate" value={1} max={3} readOnly />
+                        <hr style={{margin: 0}}></hr>
+                        <div><b>{oneStar}</b></div>
+                    </div>
+                    <div className="center zero-star" style={{display: 'inline-block'}}>
+                        <Rating name="zero-rate" value={0} max={3} readOnly />
+                        <hr style={{margin: 0}}></hr>
+                        <div><b>{zeroStar}</b></div>
+                    </div>
                     </Fragment>
                 }
                 {preIvArr.result.length > 0 ?

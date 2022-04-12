@@ -8,16 +8,21 @@ th {
     padding: 15px 0 15px 0;
 }
 
-table:nth-child(1) td:nth-child(1) {
+tbody tr.center td {
+    background-color: #f1f1ff !important;
+}
+
+.table-info td:nth-child(1) {
     width: 50%;
 }
 
-table:nth-child(2) td {
-    width: 50%;
+.bettle-league td:nth-child(1) {
+    width: 35%;
 }
 
 td {
-    padding: 5px 0 5px 10px;
+    height: 35px;
+    padding: 5px 10px 5px 10px;
 }
 
 .table-info, th, td {
@@ -36,3 +41,12 @@ td {
    color: #0571c2;
    font-weight: bolder;
 }
+
+.td-style {
+    height: 100%;
+    padding: 5px 10px 5px 10px;
+}
+
+/* .not-elidge {
+    color:
+} */

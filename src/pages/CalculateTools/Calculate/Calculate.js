@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { calBaseATK, calBaseDEF, calBaseSTA, calculateBetweenLevel, calculateStats, calculateStatsBettle, sortStatsPokemon } from "../../../components/Calculate/Calculate";
-import { Box, Slider, styled } from '@mui/material';
+import { calBaseATK, calBaseDEF, calBaseSTA, calculateBettleLeague, calculateBetweenLevel, calculateStats, calculateStatsBettle, sortStatsPokemon } from "../../../components/Calculate/Calculate";
+import { Box, FormControlLabel, Radio, RadioGroup, Slider, styled } from '@mui/material';
 import { useSnackbar } from "notistack";
 
 import APIService from "../../../services/API.service";
@@ -8,6 +8,10 @@ import APIService from "../../../services/API.service";
 import Tools from "../Tools";
 
 import './Calculate.css';
+
+import atk_logo from '../../../assets/attack.png';
+import def_logo from '../../../assets/defense.png';
+import sta_logo from '../../../assets/stamina.png';
 
 const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
 
@@ -19,8 +23,6 @@ const PokeGoSlider = styled(Slider)(() => ({
       height: 18,
       width: 18,
       backgroundColor: '#ee9219',
-      borderTopLeftRadius: '1px',
-      borderBottomLeftRadius: '1px',
       '&:hover, &.Mui-focusVisible, &.Mui-active': {
         boxShadow: 'none',
       },
@@ -37,16 +39,14 @@ const PokeGoSlider = styled(Slider)(() => ({
     },
     '& .MuiSlider-track': {
       height: 18,
-      borderTopLeftRadius: '1px',
-      borderBottomLeftRadius: '1px',
       border: 'none',
+      borderTopRightRadius: '1px',
+      borderBottomRightRadius: '1px',
     },
     '& .MuiSlider-rail': {
       color: 'lightgray',
       opacity: 0.5,
       height: 18,
-      borderTopLeftRadius: '1px',
-      borderBottomLeftRadius: '1px',
     },
     '& .MuiSlider-valueLabel': {
         lineHeight: 1.2,
@@ -77,7 +77,27 @@ const PokeGoSlider = styled(Slider)(() => ({
           height: 13
         },
     },
-  }));
+}));
+
+const LevelSlider = styled(Slider)(() => ({
+    '& .MuiSlider-mark': {
+        backgroundColor: 'currentColor',
+        height: 13,
+        width: 2,
+        '&.MuiSlider-markActive': {
+          opacity: 1,
+          backgroundColor: 'red',
+          height: 13
+        },
+    },
+}));
+
+const TypeRadioGroup = styled(RadioGroup)(() => ({
+    '&.MuiFormGroup-root, &.MuiFormGroup-row': {
+        display: 'block',
+    }
+
+}));
 
 const Calculate = () => {
 
@@ -110,9 +130,16 @@ const Calculate = () => {
     const [statDEF, setStatDEF] = useState(0);
     const [statSTA, setStatSTA] = useState(0);
 
+    const [typePoke, setTypePoke] = useState("none");
+
     const [pokeStats, setPokeStats] = useState(null);
     const [statLevel, setStatLevel] = useState(1);
     const [statData, setStatData] = useState(null);
+
+    const [dataLittleLeague, setDataLittleLeague] = useState(null);
+    const [dataGreatLeague, setDataGreatLeague] = useState(null);
+    const [dataUltraLeague, setDataUltraLeague] = useState(null);
+    const [dataMasterLeague, setDataMasterLeague] = useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -170,8 +197,15 @@ const Calculate = () => {
     const clearArrStats = () => {
         setSearchCP('');
         setPokeStats(null);
-        setStatLevel(1)
-        setStatData(null)
+        setStatLevel(1);
+        setStatData(null);
+        setATKIv(0);
+        setDEFIv(0);
+        setSTAIv(0);
+        setDataLittleLeague(null);
+        setDataGreatLeague(null);
+        setDataUltraLeague(null);
+        setDataMasterLeague(null);
     }
 
     const calculateStatsPoke = useCallback(() => {
@@ -179,13 +213,17 @@ const Calculate = () => {
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+pokeList.find(item => item.id === id).name, { variant: 'error' });
         setPokeStats(result);
-        setStatLevel(result.level)
-        setStatData(calculateBetweenLevel(result.level, result.level))
-    }, [enqueueSnackbar, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, id, pokeList]);
+        setStatLevel(result.level);
+        setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level));
+        setDataLittleLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 500, typePoke));
+        setDataGreatLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 1500, typePoke));
+        setDataUltraLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 2500, typePoke));
+        setDataMasterLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, null, typePoke));
+    }, [enqueueSnackbar, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, id, pokeList, typePoke]);
 
     const onCalculateStatsPoke = useCallback((e) => {
-        calculateStatsPoke();
         e.preventDefault();
+        calculateStatsPoke();
     }, [calculateStatsPoke]);
 
     const decId = () => {
@@ -200,8 +238,8 @@ const Calculate = () => {
 
     const onHandleLevel = useCallback((e, v) => {
         setStatLevel(v);
-        setStatData(calculateBetweenLevel(pokeStats.level, v));
-    }, [pokeStats]);
+        setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v));
+    }, [statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats]);
 
     return (
         <Fragment>
@@ -296,26 +334,40 @@ const Calculate = () => {
                             />
                         </Box>
                     </div>
-                    <div className="form-group d-flex justify-content-center center">
+                    <div className="d-flex justify-content-center center">
+                        <TypeRadioGroup
+                            row
+                            aria-labelledby="row-types-group-label"
+                            name="row-types-group"
+                            defaultValue={"none"}
+                            onChange={(e) => setTypePoke(e.target.value)}>
+                            <FormControlLabel value="none" control={<Radio />} label={<span>None</span>} />
+                            <FormControlLabel value="lucky" control={<Radio />} label={<span><img height={32} alt="img-shiny" src={APIService.getPokeLucky()}></img> Lucky</span>} />
+                            <FormControlLabel value="shadow" control={<Radio />} label={<span><img height={32} alt="img-shadow" src={APIService.getPokeShadow()}></img> Shadow</span>} />
+                            <FormControlLabel value="purified" control={<Radio />} label={<span><img height={32} alt="img-purified" src={APIService.getPokePurified()}></img> Purified</span>} />
+                        </TypeRadioGroup>
+                    </div>
+                    {/* <span>{typePoke}</span> */}
+                    <div className="form-group d-flex justify-content-center center element-top">
                         <button type="submit" className="btn btn-primary">Calculate</button>
                     </div>
                 </form>
                 <div>
                 <div className="d-flex justify-content-center center" style={{height: 80}}>
-                    <Box sx={{ width: '60%', minWidth: 350 }}>
+                    <Box sx={{ width: '60%', minWidth: 320 }}>
                         <div className="d-flex justify-content-between">
                                 <b>Level</b>
-                                <b>{statLevel}</b>
+                                <b>{statData ? statLevel : "None"}</b>
                         </div>
-                        <Slider
+                        <LevelSlider
                             aria-label="Temperature"
                             value={statLevel}
                             defaultValue={1}
-                            valueLabelDisplay="auto"
+                            valueLabelDisplay="off"
                             step={0.5}
                             min={1}
-                            max={51}
-                            marks={pokeStats ? [{value: pokeStats.level, label: 'Result LV '+pokeStats.level}] : false}
+                            max={50}
+                            marks={pokeStats ? [{value: pokeStats.level, label: 'Result LV'}] : false}
                             disabled={pokeStats ? false : true}
                             onChange={pokeStats ? onHandleLevel : null}
                         />
@@ -327,90 +379,218 @@ const Calculate = () => {
                             <div className="col" style={{padding: 0}}>
                                     <table className="table-info">
                                         <thead>
-                                            <tr className="center"><th colSpan="2">Result of resource in Level {pokeStats ? statLevel : "None"}</th></tr>
+                                            <tr className="center"><th colSpan="2">Simulater resource Pokémon</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>Stadust Required LV {pokeStats ? pokeStats.level+"-"+statLevel : ""}</td>
+                                                <td>Pokemon Level</td>
+                                                <td>{statLevel && statData ? statLevel : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Power-Up Count</td>
+                                                <td>{statData ? statData.power_up_count != null ? statData.power_up_count : "Unavailable" : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>CP</td>
+                                                <td>{statData ? statData.cp : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
                                                 <td>{statData ? statData.result_between_stadust != null ? statData.result_between_stadust : "Unavailable" : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>Stadust Power-Up Required</td>
-                                                <td>{statData ? statData.power_up_stardust != null ? statData.power_up_stardust : "Unavailable" : "-"}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Candy Required LV {pokeStats ? pokeStats.level+"-"+statLevel : ""}</td>
+                                                <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>Candy Required</td>
                                                 <td>{statData ? statData.result_between_candy != null ? statData.result_between_candy : "Unavailable" : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>Candy Power-Up Required</td>
-                                                <td>{statData ? statData.power_up_candy != null ? statData.power_up_candy : "Unavailable" : "-"}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>XL Candy Required LV {pokeStats ? pokeStats.level+"-"+statLevel : ""}</td>
+                                                <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>XL Candy Required</td>
                                                 <td>{statData ? statData.result_between_xl_candy != null ? statData.result_between_xl_candy : "Unavailable" : "-"}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>XL Candy Power-Up Required</td>
-                                                <td>{statData ? statData.power_up_xl_candy != null ? statData.power_up_xl_candy : "Unavailable" : "-"}</td>
                                             </tr>
                                             <tr className="center"><td colSpan="2">Stats</td></tr>
                                             <tr>
-                                                <td>ATK</td>
+                                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
                                                 <td>{statData ? calculateStatsBettle(statATK, pokeStats.IV.atk, statLevel) : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>DEF</td>
+                                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
                                                 <td>{statData ? calculateStatsBettle(statDEF, pokeStats.IV.def, statLevel) : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>HP</td>
+                                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
                                                 <td>{statData ? calculateStatsBettle(statSTA, pokeStats.IV.sta, statLevel) : "-"}</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                                 <div className="col" style={{padding: 0}}>
-                                    <table className="table-info">
+                                    <table className="table-info bettle-league">
                                         <thead className="center">
-                                            <tr><th colSpan="2">Recommend in Bettle League</th></tr>
+                                            <tr><th colSpan="5">Recommend in Bettle League</th></tr>
                                         </thead>
                                         <tbody>
-                                            <tr className="center"><td colSpan="2">Little Cup</td></tr>
+                                            <tr className="center"><td colSpan="4">
+                                            <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img>
+                                            <span className={dataLittleLeague ? dataLittleLeague.elidge ? null : "text-danger" : null}>Little Cup{dataLittleLeague ? dataLittleLeague.elidge ? "" : <span> (Not Elidge)</span>: ""}</span>
+                                            </td></tr>
                                             <tr>
                                                 <td>Level</td>
-                                                <td>555</td>
+                                                <td colSpan="3">{dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.level : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>Stadust Required</td>
-                                                <td>555</td>
+                                                <td>CP</td>
+                                                <td colSpan="3">{dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.cp : "-"}</td>
                                             </tr>
-                                            <tr className="center"><td colSpan="2">Great League</td></tr>
+                                            <tr>
+                                                <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
+                                                <td colSpan="3">{dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.rangeValue.result_between_stadust : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Candy Required</td>
+                                                <td colSpan="3" style={{padding: 0}}>
+                                                    <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
+                                                        <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                                                        {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.rangeValue.result_between_candy : "-"}
+                                                    </div>
+                                                    <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
+                                                        <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
+                                                        {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.rangeValue.result_between_xl_candy : "-"}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stats</td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
+                                                {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.atk : "-"}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
+                                                {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.def : "-"}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
+                                                {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.sta : "-"}
+                                                </td>
+                                            </tr>
+                                            <tr className="center"><td colSpan="4">
+                                                <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("great_league")}></img>
+                                                <span className={dataGreatLeague ? dataGreatLeague.elidge ? null : "text-danger" : null}>Great League{dataGreatLeague ? dataGreatLeague.elidge ? "" : <span> (Not Elidge)</span>: ""}</span>
+                                            </td></tr>
                                             <tr>
                                                 <td>Level</td>
-                                                <td>555</td>
+                                                <td colSpan="3">{dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.level : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>Stadust Required</td>
-                                                <td>555</td>
+                                                <td>CP</td>
+                                                <td colSpan="3">{dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.cp : "-"}</td>
                                             </tr>
-                                            <tr className="center"><td colSpan="2">Ultra League</td></tr>
+                                            <tr>
+                                                <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
+                                                <td colSpan="3">{dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.rangeValue.result_between_stadust : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Candy Required</td>
+                                                <td colSpan="3" style={{padding: 0}}>
+                                                    <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
+                                                        <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                                                        {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.rangeValue.result_between_candy : "-"}
+                                                    </div>
+                                                    <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
+                                                        <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
+                                                        {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.rangeValue.result_between_xl_candy : "-"}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stats</td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
+                                                {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.atk : "-"}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
+                                                {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.def : "-"}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
+                                                {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.sta : "-"}
+                                                </td>
+                                            </tr>
+                                            <tr className="center"><td colSpan="4">
+                                                <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("ultra_league")}></img>
+                                                <span className={dataUltraLeague ? dataUltraLeague.elidge ? null : "text-danger" : null}>Ultra League{dataUltraLeague ? dataUltraLeague.elidge ? "" : <span> (Not Elidge)</span> : ""}</span>
+                                            </td></tr>
                                             <tr>
                                                 <td>Level</td>
-                                                <td>555</td>
+                                                <td colSpan="3">{dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.level : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>Stadust Required</td>
-                                                <td>555</td>
+                                                <td>CP</td>
+                                                <td colSpan="3">{dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.cp : "-"}</td>
                                             </tr>
-                                            <tr className="center"><td colSpan="2">Master League</td></tr>
+                                            <tr>
+                                                <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
+                                                <td colSpan="3">{dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.rangeValue.result_between_stadust : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Candy Required</td>
+                                                <td colSpan="3" style={{padding: 0}}>
+                                                    <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
+                                                        <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                                                        {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.rangeValue.result_between_candy : "-"}
+                                                    </div>
+                                                    <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
+                                                        <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
+                                                        {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.rangeValue.result_between_xl_candy : "-"}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stats</td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
+                                                {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.atk : "-"}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
+                                                {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.def : "-"}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
+                                                {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.sta : "-"}
+                                                </td>
+                                            </tr>
+                                            <tr className="center"><td colSpan="4">
+                                                <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("master_league")}></img>
+                                                Master League
+                                            </td></tr>
                                             <tr>
                                                 <td>Level</td>
-                                                <td>555</td>
+                                                <td colSpan="3">{dataMasterLeague ? dataMasterLeague.level : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>Stadust Required</td>
-                                                <td>555</td>
+                                                <td>CP</td>
+                                                <td colSpan="3">{dataMasterLeague ? dataMasterLeague.cp : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
+                                                <td colSpan="3">{dataMasterLeague ? dataMasterLeague.rangeValue.result_between_stadust : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Candy Required</td>
+                                                <td colSpan="3" style={{padding: 0}}>
+                                                    <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
+                                                        <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                                                        {dataMasterLeague ? dataMasterLeague.rangeValue.result_between_candy : "-"}
+                                                    </div>
+                                                    <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
+                                                        <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
+                                                        {dataMasterLeague ? dataMasterLeague.rangeValue.result_between_xl_candy : "-"}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stats</td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
+                                                {dataMasterLeague ? dataMasterLeague.stats.atk : "-"}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
+                                                {dataMasterLeague ? dataMasterLeague.stats.def : "-"}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
+                                                {dataMasterLeague ? dataMasterLeague.stats.sta : "-"}
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>

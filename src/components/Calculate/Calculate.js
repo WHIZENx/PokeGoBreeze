@@ -192,32 +192,28 @@ export const calculateStats = (atk, def, sta, IVatk, IVdef, IVsta, cp) => {
     return dataStat;
 }
 
-export const calculateBetweenLevel = (from_lv, to_lv) => {
-    let from_sum_stadust = data.find(e => e.level === from_lv).sum_stadust ? data.find(e => e.level === from_lv).sum_stadust : 0;
-    let from_sum_candy = data.find(e => e.level === from_lv).sum_candy ? data.find(e => e.level === from_lv).sum_candy : 0;
-    let from_sum_xl_candy = data.find(e => e.level === from_lv).sum_xl_candy ? data.find(e => e.level === from_lv).sum_xl_candy : 0;
+export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, to_lv) => {
+    let from_sum_stadust = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_stadust : 0;
+    let from_sum_candy = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_candy : 0;
+    let from_sum_xl_candy = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_xl_candy : 0;
 
-    let power_up_stardust = data.find(e => e.level === to_lv).stadust ? data.find(e => e.level === to_lv).stadust : 0;
-    let power_up_candy = data.find(e => e.level === to_lv).candy ? data.find(e => e.level === to_lv).candy : 0;
-    let power_up_xl_candy = data.find(e => e.level === to_lv).xl_candy ? data.find(e => e.level === to_lv).xl_candy : 0;
+    let power_up_count = (to_lv-from_lv)*2;
 
     if (to_lv > 50) {
         return {
+            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv),
             result_between_stadust: null,
             result_between_candy: null,
             result_between_xl_candy: null,
-            power_up_stardust: null,
-            power_up_candy: null,
-            power_up_xl_candy: null
+            power_up_count: null
         }
     } else if (from_lv > to_lv) {
         return {
-            result_between_stadust: from_sum_stadust,
-            result_between_candy: from_sum_candy,
-            result_between_xl_candy: from_sum_xl_candy,
-            power_up_stardust: power_up_stardust,
-            power_up_candy: power_up_candy,
-            power_up_xl_candy
+            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv),
+            result_between_stadust: null,
+            result_between_candy: null,
+            result_between_xl_candy: null,
+            power_up_count: null
         }
     } else {
         let to_sum_stadust = data.find(e => e.level === to_lv).sum_stadust ? data.find(e => e.level === to_lv).sum_stadust : 0;
@@ -225,16 +221,54 @@ export const calculateBetweenLevel = (from_lv, to_lv) => {
         let to_sum_xl_candy = data.find(e => e.level === to_lv).sum_xl_candy ? data.find(e => e.level === to_lv).sum_xl_candy : 0;
 
         return {
+            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv),
             result_between_stadust: to_sum_stadust-from_sum_stadust,
             result_between_candy: to_sum_candy-from_sum_candy,
             result_between_xl_candy: to_sum_xl_candy-from_sum_xl_candy,
-            power_up_stardust: power_up_stardust,
-            power_up_candy: power_up_candy,
-            power_up_xl_candy
+            power_up_count: power_up_count
         }
     }
 }
 
 export const calculateStatsBettle = (base, iv, level) => {
     return Math.floor((base+iv)*data.find(item => item.level === level).multiplier)
+}
+
+export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, currCP, maxCp, type) => {
+
+    if (maxCp && currCP > maxCp) {
+        return {elidge: false}
+    } else {
+        let dataBettle = {};
+
+        dataBettle["elidge"] = true;
+        dataBettle["maxCP"] = maxCp;
+        dataBettle["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
+        dataBettle["cp"] = 0;
+        dataBettle["limit"] = true;
+        dataBettle["level"] = null;
+        if (maxCp == null) {
+            dataBettle["level"] = max_level-1;
+            dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, max_level-1);
+            dataBettle.limit = false;
+        } else {
+            for (let i = min_level; i <= max_level-1; i+=0.5) {
+                if (dataBettle.cp < calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) && calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) <= maxCp) {
+                    dataBettle["level"] = i;
+                    dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i);
+                    dataBettle.limit = false;
+                }
+            }
+        }
+
+        dataBettle["rangeValue"] = calculateBetweenLevel(atk, def, sta, IVatk, IVdef, IVsta, from_lv, dataBettle.level);
+        dataBettle["stats"] = {
+            atk : calculateStatsBettle(atk, IVatk, dataBettle.level),
+            def : calculateStatsBettle(def, IVdef, dataBettle.level),
+            sta : calculateStatsBettle(sta, IVsta, dataBettle.level)
+        }
+
+        return dataBettle
+    }
+
 }

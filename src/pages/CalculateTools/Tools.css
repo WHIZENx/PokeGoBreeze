@@ -80,6 +80,29 @@ ul {
   transform: translate(-50%, -50%);
 }
 
+.four-star {
+    border: 1px solid red;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: rgb(255, 215, 215);
+    margin: 10px;
+}
+
+.three-star, .two-star, .one-star {
+    border: 1px solid yellow;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: rgb(255, 255, 215);
+    margin: 10px;
+}
+
+.zero-star {
+    border: 1px solid yellow;
+    padding: 5px;
+    border-radius: 8px;
+    margin: 10px;
+}
+
 .loading {
     animation: loading-spin 1s linear infinite;
 }

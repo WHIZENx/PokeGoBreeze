@@ -79,6 +79,26 @@ class APIService {
         else if (name.includes("necrozma-dusk")) name += "-mane"
         return `${POKE_ICON_SPRITES_API_URL}${name}.png`;
     }
+
+    getPokeOtherLeague(league) {
+        return `${POGO_ASSET_API_URL}Combat/${league}.png`;
+    }
+
+    getPokeLeague(league) {
+        return `${POGO_ASSET_API_URL}Combat/pogo_${league}.png`;
+    }
+
+    getPokeShadow() {
+        return `${POGO_ASSET_API_URL}Rocket/ic_shadow.png`;
+    }
+
+    getPokePurified() {
+        return `${POGO_ASSET_API_URL}Rocket/ic_purified.png`;
+    }
+
+    getPokeLucky() {
+        return `${POGO_ASSET_API_URL}Friends/ui_bg_lucky_pokemon.png`;
+    }
 }
 
 export default (new APIService());
