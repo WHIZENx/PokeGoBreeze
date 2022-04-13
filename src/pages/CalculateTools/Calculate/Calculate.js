@@ -379,7 +379,7 @@ const Calculate = () => {
                             <div className="col" style={{padding: 0}}>
                                     <table className="table-info">
                                         <thead>
-                                            <tr className="center"><th colSpan="2">Simulater resource Pokémon</th></tr>
+                                            <tr className="center"><th colSpan="2">Simulate Power Up Pokémon</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr>
@@ -387,7 +387,7 @@ const Calculate = () => {
                                                 <td>{statLevel && statData ? statLevel : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td>Power-Up Count</td>
+                                                <td>Power Up Count</td>
                                                 <td>{statData ? statData.power_up_count != null ? statData.power_up_count : "Unavailable" : "-"}</td>
                                             </tr>
                                             <tr>

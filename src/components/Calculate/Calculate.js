@@ -193,6 +193,8 @@ export const calculateStats = (atk, def, sta, IVatk, IVdef, IVsta, cp) => {
 }
 
 export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, to_lv) => {
+    from_lv -= 0.5;
+    to_lv -= 0.5;
     let from_sum_stadust = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_stadust : 0;
     let from_sum_candy = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_candy : 0;
     let from_sum_xl_candy = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_xl_candy : 0;
@@ -201,7 +203,7 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
 
     if (to_lv > 50) {
         return {
-            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv),
+            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv+0.5),
             result_between_stadust: null,
             result_between_candy: null,
             result_between_xl_candy: null,
@@ -209,19 +211,19 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
         }
     } else if (from_lv > to_lv) {
         return {
-            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv),
+            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv+0.5),
             result_between_stadust: null,
             result_between_candy: null,
             result_between_xl_candy: null,
             power_up_count: null
         }
     } else {
-        let to_sum_stadust = data.find(e => e.level === to_lv).sum_stadust ? data.find(e => e.level === to_lv).sum_stadust : 0;
-        let to_sum_candy = data.find(e => e.level === to_lv).sum_candy ? data.find(e => e.level === to_lv).sum_candy : 0;
-        let to_sum_xl_candy = data.find(e => e.level === to_lv).sum_xl_candy ? data.find(e => e.level === to_lv).sum_xl_candy : 0;
+        let to_sum_stadust = data.find(e => e.level === to_lv) ? data.find(e => e.level === to_lv).sum_stadust : 0;
+        let to_sum_candy = data.find(e => e.level === to_lv) ? data.find(e => e.level === to_lv).sum_candy : 0;
+        let to_sum_xl_candy = data.find(e => e.level === to_lv) ? data.find(e => e.level === to_lv).sum_xl_candy : 0;
 
         return {
-            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv),
+            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv+0.5),
             result_between_stadust: to_sum_stadust-from_sum_stadust,
             result_between_candy: to_sum_candy-from_sum_candy,
             result_between_xl_candy: to_sum_xl_candy-from_sum_xl_candy,
