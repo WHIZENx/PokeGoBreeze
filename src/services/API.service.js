@@ -74,9 +74,11 @@ class APIService {
         return `${POKE_SPRITES_FULL_API_URL}${paddingID}.png`;
     }
 
-    getPokeIconSprite(name) {
-        if (name.includes("necrozma-dawn")) name += "-wings"
-        else if (name.includes("necrozma-dusk")) name += "-mane"
+    getPokeIconSprite(name, fix) {
+        if (!fix) {
+            if (name.includes("necrozma-dawn")) name += "-wings"
+            else if (name.includes("necrozma-dusk")) name += "-mane"
+        }
         return `${POKE_ICON_SPRITES_API_URL}${name}.png`;
     }
 

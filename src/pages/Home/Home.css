@@ -1,0 +1,41 @@
+ul {
+    margin: 0 !important;
+    padding: 0 !important;
+    margin-block-start: 0 !important;
+    margin-block-end: 0 !important;
+}
+
+.border-types {
+    border: 1px solid #b8d4da;
+}
+
+.border-input {
+    border: 1px solid #b8c3da;
+}
+
+.head-types {
+    padding: 10px;
+    background-color: rgb(64, 159, 241);
+    color: white;
+    font-weight: bolder;
+}
+
+.btn-select-type .img-group {
+    margin: 0 !important;
+}
+
+.btn-select-type {
+    outline: none;
+}
+
+.btn-select-type:hover {
+    background-color: lightgray;
+}
+
+.select-type, .select-type:hover {
+    background-color: gray !important;
+}
+
+.select-type span.caption {
+    color: white !important;
+}

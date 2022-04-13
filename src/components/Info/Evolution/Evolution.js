@@ -47,7 +47,7 @@ const Evolution = (props) => {
         <Fragment>
             { arrEvoList.length > 0 &&
             <Fragment>
-            <h4 className="title-evo">Pokemon Evolution:</h4>
+            <h4 className="title-evo">Evolution Chain </h4>
             <div className="evo-container">
                 <ul className="ul-evo" style={{height:setHeightEvo()}}>
                     {arrEvoList.map((value, index) => (
@@ -60,6 +60,7 @@ const Evolution = (props) => {
                                             <img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
                                             <b>{splitAndCapitalize(value.name)}</b>
                                             { value.baby && <span className="caption text-danger">(Baby)</span>}
+                                            {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
                                             <p>{ value.id === props.id.toString() && <span className="caption">Current</span>}</p>
                                         </div>
                                         :
@@ -67,6 +68,7 @@ const Evolution = (props) => {
                                             <img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
                                             <b>{splitAndCapitalize(value.name)}</b>
                                             { value.baby && <span className="caption text-danger">(Baby)</span>}
+                                            {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
                                             <p>{ value.id === props.id.toString() && <span className="caption">Current</span>}</p>
                                         </Link>
                                         }

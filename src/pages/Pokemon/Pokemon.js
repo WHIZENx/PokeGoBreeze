@@ -135,7 +135,7 @@ const Pokemon = (props) => {
                     {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go
                             <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
                             </h5> */}
-                <div className='poke-container'>
+                <div className={'poke-container'+(props.isSearch ? "" : " container")}>
                     <div className="row group-desc">
                         <div className="col-2 img-desc">
                             <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>

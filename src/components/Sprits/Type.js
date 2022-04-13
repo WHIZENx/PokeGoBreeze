@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import APIService from '../../services/API.service'
 
 const Type = (props) => {
@@ -14,8 +14,15 @@ const Type = (props) => {
             {props.text && <p>{props.text}</p>}
             {props.arr.map((value, index) => (
                 <li className='img-group' key={ index }>
-                    <img width={36} height={36} alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
-                    <span className='caption text-black'>{capitalize(value)}</span>
+                    {props.height ?
+                        <img width={props.height} height={props.height} alt='img-pokemon' src={APIService.getTypeSprite(value)}
+                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}></img>
+                        :
+                        <Fragment>
+                            <img width={36} height={36} alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
+                            <span className='caption text-black'>{capitalize(value)}</span>
+                        </Fragment>
+                    }
                 </li>
             ))
             }

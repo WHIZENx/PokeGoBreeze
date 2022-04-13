@@ -125,7 +125,7 @@ const Search = () => {
                     ))}
                 </ul>
             </div>
-            <Pokemon id={id} onSetIDPoke={setIDPoke} onSetPrev={handleSetPrev} onSetNext={handleSetNext}/>
+            <Pokemon id={id} onSetIDPoke={setIDPoke} onSetPrev={handleSetPrev} onSetNext={handleSetNext} isSearch={true}/>
         </div>
         </Fragment>
     );
