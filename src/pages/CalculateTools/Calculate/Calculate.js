@@ -212,9 +212,10 @@ const Calculate = () => {
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+pokeList.find(item => item.id === id).name, { variant: 'error' });
+        enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+pokeList.find(item => item.id === id).name, { variant: 'success' });
         setPokeStats(result);
         setStatLevel(result.level);
-        setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level));
+        setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
         setDataLittleLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 500, typePoke));
         setDataGreatLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 1500, typePoke));
         setDataUltraLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 2500, typePoke));
@@ -238,8 +239,8 @@ const Calculate = () => {
 
     const onHandleLevel = useCallback((e, v) => {
         setStatLevel(v);
-        setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v));
-    }, [statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats]);
+        setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
+    }, [statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
 
     return (
         <Fragment>
@@ -295,6 +296,7 @@ const Calculate = () => {
                                 <b>{ATKIv}</b>
                             </div>
                             <PokeGoSlider
+                                value={ATKIv}
                                 aria-label="ATK marks"
                                 defaultValue={0}
                                 min={0}
@@ -309,6 +311,7 @@ const Calculate = () => {
                                 <b>{DEFIv}</b>
                             </div>
                             <PokeGoSlider
+                                value={DEFIv}
                                 aria-label="DEF marks"
                                 defaultValue={0}
                                 min={0}
@@ -323,6 +326,7 @@ const Calculate = () => {
                                 <b>{STAIv}</b>
                             </div>
                             <PokeGoSlider
+                                value={STAIv}
                                 aria-label="STA marks"
                                 defaultValue={0}
                                 min={0}
@@ -396,15 +400,45 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
-                                                <td>{statData ? statData.result_between_stadust != null ? statData.result_between_stadust : "Unavailable" : "-"}</td>
+                                                <td>{statData ? statData.result_between_stadust != null ?
+                                                <span>{statData.result_between_stadust}{statData.type !== "none" && statData.result_between_stadust_diff > 0 &&
+                                                <Fragment>
+                                                {statData.type === "shadow" && <span className="shadow-text"> (+{statData.result_between_stadust_diff})</span>}
+                                                {statData.type === "purified" && <span className="purified-text"> (-{statData.result_between_stadust_diff})</span>}
+                                                {statData.type === "lucky" && <span className="lucky-text"> (-{statData.result_between_stadust_diff})</span>}
+                                                </Fragment>
+                                                }
+                                                </span>
+                                                : "Unavailable" : "-"}
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>Candy Required</td>
-                                                <td>{statData ? statData.result_between_candy != null ? statData.result_between_candy : "Unavailable" : "-"}</td>
+                                                <td>{statData ? statData.result_between_candy != null ?
+                                                <span>{statData.result_between_candy}{statData.type !== "none" && statData.result_between_candy_diff > 0 &&
+                                                <Fragment>
+                                                {statData.type === "shadow" && <span className="shadow-text"> (+{statData.result_between_candy_diff})</span>}
+                                                {statData.type === "purified" && <span className="purified-text"> (-{statData.result_between_candy_diff})</span>}
+                                                {statData.type === "lucky" && <span className="lucky-text"> (-{statData.result_between_candy_diff})</span>}
+                                                </Fragment>
+                                                }
+                                                </span>
+                                                : "Unavailable" : "-"}
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>XL Candy Required</td>
-                                                <td>{statData ? statData.result_between_xl_candy != null ? statData.result_between_xl_candy : "Unavailable" : "-"}</td>
+                                                <td>{statData ? statData.result_between_xl_candy != null ?
+                                                <span>{statData.result_between_xl_candy}{statData.type !== "none" && statData.result_between_xl_candy_diff > 0 &&
+                                                <Fragment>
+                                                {statData.type === "shadow" && <span className="shadow-text"> (+{statData.result_between_xl_candy_diff})</span>}
+                                                {statData.type === "purified" && <span className="purified-text"> (-{statData.result_between_xl_candy_diff})</span>}
+                                                {statData.type === "lucky" && <span className="lucky-text"> (-{statData.result_between_xl_candy_diff})</span>}
+                                                </Fragment>
+                                                }
+                                                </span>
+                                                : "Unavailable" : "-"}
+                                                </td>
                                             </tr>
                                             <tr className="center"><td colSpan="2">Stats</td></tr>
                                             <tr>

@@ -47,6 +47,20 @@ td {
     padding: 5px 10px 5px 10px;
 }
 
-/* .not-elidge {
-    color:
-} */
+.shadow-text {
+    color: #c184ec;
+    font-weight: 500;
+    text-shadow: 0.01px 0.01px black;
+}
+
+.purified-text {
+    color: #74e1e6;
+    font-weight: 500;
+    text-shadow: 0.01px 0.01px black;
+}
+
+.lucky-text {
+    color: #f4e474;
+    font-weight: 500;
+    text-shadow: 0.01px 0.01px black;
+}

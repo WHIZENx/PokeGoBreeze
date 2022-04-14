@@ -10,7 +10,7 @@ const Type = (props) => {
     }
 
     return (
-        <ul className='element-top'>
+        <ul className='element-top' style={props.styled && { padding: 0, margin: 0 }}>
             {props.text && <p>{props.text}</p>}
             {props.arr.map((value, index) => (
                 <li className='img-group' key={ index }>

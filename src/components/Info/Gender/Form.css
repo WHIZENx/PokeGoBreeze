@@ -2,6 +2,13 @@
     text-align: center;
 } */
 
+.scroll-form {
+    position: relative;
+    height: 180px !important;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
 .img-gender {
     float: left;
     margin-right: 15px;
@@ -20,6 +27,10 @@
     margin-right: 5%;
     width: 96px;
     height: 114px;
+}
+
+.img-evo-group {
+    width: 120px !important;
 }
 
 .btn-form {

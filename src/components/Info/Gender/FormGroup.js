@@ -77,25 +77,27 @@ const FormGroup = (props) => {
     return (
         <Fragment>
             <div className='form-container'>
-            {currForm && pokeID.current &&
-                <Fragment>
-                {props.formList.map((value, index) => (
-                    <Fragment key={index}>
-                        {value.map((value, index) => (
-                            <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
-                                <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
-                                <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
-                                {value.form.id === pokeID.current &&
-                                    <b><small className=''> (Default)</small></b>
-                                }
-                            </button>
-                        ))
-                        }
+                <div className='scroll-form'>
+                {currForm && pokeID.current &&
+                    <Fragment>
+                    {props.formList.map((value, index) => (
+                        <Fragment key={index}>
+                            {value.map((value, index) => (
+                                <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
+                                    <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
+                                    <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
+                                    {value.form.id === pokeID.current &&
+                                        <b><small className=''> (Default)</small></b>
+                                    }
+                                </button>
+                            ))
+                            }
+                        </Fragment>
+                    ))
+                    }
                     </Fragment>
-                ))
                 }
-                </Fragment>
-            }
+                </div>
             {dataPoke && currForm && props.typeEffective && props.weatherEffective &&
             <Fragment>
                 {props.ratio.M !== 0 && props.ratio.F !== 0 ?
@@ -111,6 +113,7 @@ const FormGroup = (props) => {
                     statSTA={statSTA}
                     pokemonStats={props.stats}
                     stats={dataPoke}/>
+                <hr className='w-100'></hr>
                 <Info data={dataPoke}
                     currForm={currForm}
                     typeEffective={props.typeEffective}
