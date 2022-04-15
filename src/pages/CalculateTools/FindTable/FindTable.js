@@ -8,7 +8,73 @@ import Tools from "../Tools";
 
 import '../Tools.css';
 import { useSnackbar } from "notistack";
-import { Rating, styled } from "@mui/material";
+import { Box, Rating, Slider, styled } from "@mui/material";
+
+const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
+
+const PokeGoSlider = styled(Slider)(() => ({
+    color: '#ee9219',
+    height: 18,
+    padding: '13px 0',
+    '& .MuiSlider-thumb': {
+      height: 18,
+      width: 18,
+      backgroundColor: '#ee9219',
+      '&:hover, &.Mui-focusVisible, &.Mui-active': {
+        boxShadow: 'none',
+      },
+      '&:before': {
+        boxShadow: 'none',
+      },
+      '& .airbnb-bar': {
+        height: 12,
+        width: 1,
+        backgroundColor: 'currentColor',
+        marginLeft: 1,
+        marginRight: 1,
+      },
+    },
+    '& .MuiSlider-track': {
+      height: 18,
+      border: 'none',
+      borderTopRightRadius: '1px',
+      borderBottomRightRadius: '1px',
+    },
+    '& .MuiSlider-rail': {
+      color: 'lightgray',
+      opacity: 0.5,
+      height: 18,
+    },
+    '& .MuiSlider-valueLabel': {
+        lineHeight: 1.2,
+        fontSize: 12,
+        background: 'unset',
+        padding: 0,
+        width: 32,
+        height: 32,
+        borderRadius: '50% 50% 50% 0',
+        backgroundColor: '#ee9219',
+        transformOrigin: 'bottom left',
+        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+        '&:before': { display: 'none' },
+        '&.MuiSlider-valueLabelOpen': {
+          transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
+        },
+        '& > *': {
+          transform: 'rotate(45deg)',
+        },
+    },
+    '& .MuiSlider-mark': {
+        backgroundColor: '#bfbfbf',
+        height: 13,
+        width: 1,
+        '&.MuiSlider-markActive': {
+          opacity: 1,
+          backgroundColor: '#fff',
+          height: 13
+        },
+    },
+}));
 
 const HundoRate = styled(Rating)(() => ({
     '& .MuiRating-icon': {
@@ -114,9 +180,9 @@ const FindTable = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchCP, setSearchCP] = useState('');
 
-    const [searchATKIv, setSearchATKIv] = useState('');
-    const [searchDEFIv, setSearchDEFIv] = useState('');
-    const [searchSTAIv, setSearchSTAIv] = useState('');
+    const [searchATKIv, setSearchATKIv] = useState(0);
+    const [searchDEFIv, setSearchDEFIv] = useState(0);
+    const [searchSTAIv, setSearchSTAIv] = useState(0);
 
     const currentPokemonListFilter = useRef([]);
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
@@ -196,9 +262,9 @@ const FindTable = () => {
         setPreIvArr(null);
         setPreCpArr(null);
         setSearchCP('');
-        setSearchATKIv('');
-        setSearchDEFIv('');
-        setSearchSTAIv('');
+        setSearchATKIv(0);
+        setSearchDEFIv(0);
+        setSearchSTAIv(0);
     }
 
     const findStatsCP = useCallback(() => {
@@ -375,16 +441,18 @@ const FindTable = () => {
                 </div>
                 <h1 id ="main" className='center'>Find IV</h1>
                 <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
-                            <div className="input-group mb-3">
-                        <div className="input-group-prepend">
+                    <Box sx={{ width: '50%', minWidth: 350 }}>
+                        <div className="input-group mb-3">
+                            <div className="input-group-prepend">
                             <span className="input-group-text">CP</span>
                         </div>
-                    <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
-                    onInput={e => setSearchCP(e.target.value)}></input>
-                    </div>
-                    <div className="btn-search">
-                        <button type="submit" className="btn btn-primary">Search</button>
-                    </div>
+                        <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
+                        onInput={e => setSearchCP(e.target.value)}></input>
+                        </div>
+                        <div className="btn-search d-flex justify-content-center center">
+                            <button type="submit" className="btn btn-primary">Search</button>
+                        </div>
+                    </Box>
                 </form>
                 {preIvArr ?
                     <Fragment>
@@ -394,7 +462,61 @@ const FindTable = () => {
                 }
                 <hr></hr>
                 <h1 id ="main" className='center'>Find CP</h1>
-                <form id="formCP" className="d-flex justify-content-center element-top" onSubmit={onFindCP.bind(this)}>
+                <form id="formCP" className="element-top" onSubmit={onFindCP.bind(this)}>
+                    <div className="form-group d-flex justify-content-center center">
+                        <Box sx={{ width: '50%', minWidth: 300 }}>
+                            <div className="d-flex justify-content-between">
+                                <b>ATK</b>
+                                <b>{searchATKIv}</b>
+                            </div>
+                            <PokeGoSlider
+                                value={searchATKIv}
+                                aria-label="ATK marks"
+                                defaultValue={0}
+                                min={0}
+                                max={15}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                marks={marks}
+                                onChange={(e,v) => setSearchATKIv(v)}
+                            />
+                            <div className="d-flex justify-content-between">
+                                <b>DEF</b>
+                                <b>{searchDEFIv}</b>
+                            </div>
+                            <PokeGoSlider
+                                value={searchDEFIv}
+                                aria-label="DEF marks"
+                                defaultValue={0}
+                                min={0}
+                                max={15}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                marks={marks}
+                                onChange={(e,v) => setSearchDEFIv(v)}
+                            />
+                            <div className="d-flex justify-content-between">
+                                <b>STA</b>
+                                <b>{searchSTAIv}</b>
+                            </div>
+                            <PokeGoSlider
+                                value={searchSTAIv}
+                                aria-label="STA marks"
+                                defaultValue={0}
+                                min={0}
+                                max={15}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                marks={marks}
+                                onChange={(e,v) => setSearchSTAIv(v)}
+                            />
+                        </Box>
+                    </div>
+                    <div className="form-group d-flex justify-content-center center element-top">
+                        <button type="submit" className="btn btn-primary">Search</button>
+                    </div>
+                </form>
+                {/* <form id="formCP" className="d-flex justify-content-center element-top" onSubmit={onFindCP.bind(this)}>
                     <div className="input-group mb-3">
                         <div className="input-group-prepend">
                             <span className="input-group-text">ATK</span>
@@ -419,7 +541,7 @@ const FindTable = () => {
                     <div className="btn-search">
                         <button type="submit" className="btn btn-primary">Search</button>
                     </div>
-                </form>
+                </form> */}
                 {preCpArr ?
                     <Fragment>
                     {showResultTableCP()}

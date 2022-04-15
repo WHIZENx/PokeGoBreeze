@@ -130,7 +130,7 @@ const Calculate = () => {
     const [statDEF, setStatDEF] = useState(0);
     const [statSTA, setStatSTA] = useState(0);
 
-    const [typePoke, setTypePoke] = useState("none");
+    const [typePoke, setTypePoke] = useState("");
 
     const [pokeStats, setPokeStats] = useState(null);
     const [statLevel, setStatLevel] = useState(1);
@@ -212,7 +212,7 @@ const Calculate = () => {
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+pokeList.find(item => item.id === id).name, { variant: 'error' });
-        enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+pokeList.find(item => item.id === id).name, { variant: 'success' });
+        enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+typePoke+' '+pokeList.find(item => item.id === id).name, { variant: 'success' });
         setPokeStats(result);
         setStatLevel(result.level);
         setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
@@ -343,15 +343,14 @@ const Calculate = () => {
                             row
                             aria-labelledby="row-types-group-label"
                             name="row-types-group"
-                            defaultValue={"none"}
+                            defaultValue={""}
                             onChange={(e) => setTypePoke(e.target.value)}>
-                            <FormControlLabel value="none" control={<Radio />} label={<span>None</span>} />
+                            <FormControlLabel value="" control={<Radio />} label={<span>None</span>} />
                             <FormControlLabel value="lucky" control={<Radio />} label={<span><img height={32} alt="img-shiny" src={APIService.getPokeLucky()}></img> Lucky</span>} />
                             <FormControlLabel value="shadow" control={<Radio />} label={<span><img height={32} alt="img-shadow" src={APIService.getPokeShadow()}></img> Shadow</span>} />
                             <FormControlLabel value="purified" control={<Radio />} label={<span><img height={32} alt="img-purified" src={APIService.getPokePurified()}></img> Purified</span>} />
                         </TypeRadioGroup>
                     </div>
-                    {/* <span>{typePoke}</span> */}
                     <div className="form-group d-flex justify-content-center center element-top">
                         <button type="submit" className="btn btn-primary">Calculate</button>
                     </div>
@@ -370,7 +369,7 @@ const Calculate = () => {
                             valueLabelDisplay="off"
                             step={0.5}
                             min={1}
-                            max={50}
+                            max={typePoke === "lucky" ? 51 : 50}
                             marks={pokeStats ? [{value: pokeStats.level, label: 'Result LV'}] : false}
                             disabled={pokeStats ? false : true}
                             onChange={pokeStats ? onHandleLevel : null}
@@ -401,7 +400,7 @@ const Calculate = () => {
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
                                                 <td>{statData ? statData.result_between_stadust != null ?
-                                                <span>{statData.result_between_stadust}{statData.type !== "none" && statData.result_between_stadust_diff > 0 &&
+                                                <span>{statData.result_between_stadust}{statData.type !== "" && statData.result_between_stadust_diff > 0 &&
                                                 <Fragment>
                                                 {statData.type === "shadow" && <span className="shadow-text"> (+{statData.result_between_stadust_diff})</span>}
                                                 {statData.type === "purified" && <span className="purified-text"> (-{statData.result_between_stadust_diff})</span>}
@@ -415,7 +414,7 @@ const Calculate = () => {
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>Candy Required</td>
                                                 <td>{statData ? statData.result_between_candy != null ?
-                                                <span>{statData.result_between_candy}{statData.type !== "none" && statData.result_between_candy_diff > 0 &&
+                                                <span>{statData.result_between_candy}{statData.type !== "" && statData.result_between_candy_diff > 0 &&
                                                 <Fragment>
                                                 {statData.type === "shadow" && <span className="shadow-text"> (+{statData.result_between_candy_diff})</span>}
                                                 {statData.type === "purified" && <span className="purified-text"> (-{statData.result_between_candy_diff})</span>}
@@ -429,7 +428,7 @@ const Calculate = () => {
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>XL Candy Required</td>
                                                 <td>{statData ? statData.result_between_xl_candy != null ?
-                                                <span>{statData.result_between_xl_candy}{statData.type !== "none" && statData.result_between_xl_candy_diff > 0 &&
+                                                <span>{statData.result_between_xl_candy}{statData.type !== "" && statData.result_between_xl_candy_diff > 0 &&
                                                 <Fragment>
                                                 {statData.type === "shadow" && <span className="shadow-text"> (+{statData.result_between_xl_candy_diff})</span>}
                                                 {statData.type === "purified" && <span className="purified-text"> (-{statData.result_between_xl_candy_diff})</span>}
@@ -443,11 +442,23 @@ const Calculate = () => {
                                             <tr className="center"><td colSpan="2">Stats</td></tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
-                                                <td>{statData ? calculateStatsBettle(statATK, pokeStats.IV.atk, statLevel) : "-"}</td>
+                                                <td>{statData ?
+                                                statData.type !== "shadow" ?
+                                                calculateStatsBettle(statATK, pokeStats.IV.atk, statLevel)
+                                                : <Fragment>
+                                                    {statData.atk_stat}{statData.atk_stat_diff > 0 && <span className="text-success" style={{fontWeight: 500}}> (+{statData.atk_stat_diff})</span>}
+                                                </Fragment>
+                                                : "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
-                                                <td>{statData ? calculateStatsBettle(statDEF, pokeStats.IV.def, statLevel) : "-"}</td>
+                                                <td>{statData ?
+                                                statData.type !== "shadow" ?
+                                                calculateStatsBettle(statDEF, pokeStats.IV.def, statLevel)
+                                                : <Fragment>
+                                                    {statData.def_stat}{statData.def_stat_diff > 0 && <span className="text-danger" style={{fontWeight: 500}}> (-{statData.def_stat_diff})</span>}
+                                                </Fragment>
+                                                : "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
@@ -476,28 +487,28 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
-                                                <td colSpan="3">{dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.rangeValue.result_between_stadust : "-"}</td>
+                                                <td colSpan="3">{dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type+"-text"}>{dataLittleLeague.rangeValue.result_between_stadust}</span> : "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td>Candy Required</td>
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
-                                                        {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.rangeValue.result_between_candy : "-"}
+                                                        {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type+"-text"}>{dataLittleLeague.rangeValue.result_between_candy}</span> : "-"}
                                                     </div>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
-                                                        {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.rangeValue.result_between_xl_candy : "-"}
+                                                        {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type+"-text"}>{dataLittleLeague.rangeValue.result_between_xl_candy}</span> : "-"}
                                                     </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Stats</td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
-                                                {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.atk : "-"}
+                                                {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type ==="shadow" ? "text-success" : ""}>{dataLittleLeague.stats.atk}</span> : "-"}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
-                                                {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.def : "-"}
+                                                {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataLittleLeague.stats.def}</span> : "-"}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
                                                 {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.sta : "-"}
@@ -517,28 +528,28 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
-                                                <td colSpan="3">{dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.rangeValue.result_between_stadust : "-"}</td>
+                                                <td colSpan="3">{dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type+"-text"}>{dataGreatLeague.rangeValue.result_between_stadust}</span> : "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td>Candy Required</td>
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
-                                                        {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.rangeValue.result_between_candy : "-"}
+                                                        {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type+"-text"}>{dataGreatLeague.rangeValue.result_between_candy}</span> : "-"}
                                                     </div>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
-                                                        {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.rangeValue.result_between_xl_candy : "-"}
+                                                        {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type+"-text"}>{dataGreatLeague.rangeValue.result_between_xl_candy}</span> : "-"}
                                                     </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Stats</td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
-                                                {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.atk : "-"}
+                                                {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type ==="shadow" ? "text-success" : ""}>{dataGreatLeague.stats.atk}</span> : "-"}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
-                                                {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.def : "-"}
+                                                {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataGreatLeague.stats.def}</span> : "-"}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
                                                 {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.sta : "-"}
@@ -558,28 +569,28 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
-                                                <td colSpan="3">{dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.rangeValue.result_between_stadust : "-"}</td>
+                                                <td colSpan="3">{dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type+"-text"}>{dataUltraLeague.rangeValue.result_between_stadust}</span> : "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td>Candy Required</td>
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
-                                                        {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.rangeValue.result_between_candy : "-"}
+                                                        {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type+"-text"}>{dataUltraLeague.rangeValue.result_between_candy}</span> : "-"}
                                                     </div>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
-                                                        {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.rangeValue.result_between_xl_candy : "-"}
+                                                        {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type+"-text"}>{dataUltraLeague.rangeValue.result_between_xl_candy}</span> : "-"}
                                                     </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Stats</td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
-                                                {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.atk : "-"}
+                                                {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type ==="shadow" ? "text-success" : ""}>{dataUltraLeague.stats.atk}</span> : "-"}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
-                                                {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.def : "-"}
+                                                {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataUltraLeague.stats.def}</span> : "-"}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
                                                 {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.sta : "-"}
@@ -599,28 +610,28 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>Stadust Required</td>
-                                                <td colSpan="3">{dataMasterLeague ? dataMasterLeague.rangeValue.result_between_stadust : "-"}</td>
+                                                <td colSpan="3">{dataMasterLeague ? <span className={statData.type+"-text"}>{dataMasterLeague.rangeValue.result_between_stadust}</span> : "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td>Candy Required</td>
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
-                                                        {dataMasterLeague ? dataMasterLeague.rangeValue.result_between_candy : "-"}
+                                                        {dataMasterLeague ? <span className={statData.type+"-text"}>{dataMasterLeague.rangeValue.result_between_candy}</span> : "-"}
                                                     </div>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
-                                                        {dataMasterLeague ? dataMasterLeague.rangeValue.result_between_xl_candy : "-"}
+                                                        {dataMasterLeague ? <span className={statData.type+"-text"}>{dataMasterLeague.rangeValue.result_between_xl_candy}</span> : "-"}
                                                     </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Stats</td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
-                                                {dataMasterLeague ? dataMasterLeague.stats.atk : "-"}
+                                                {dataMasterLeague ? <span className={statData.type ==="shadow" ? "text-success" : ""}>{dataMasterLeague.stats.atk}</span> : "-"}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
-                                                {dataMasterLeague ? dataMasterLeague.stats.def : "-"}
+                                                {dataMasterLeague ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataMasterLeague.stats.def}</span> : "-"}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
                                                 {dataMasterLeague ? dataMasterLeague.stats.sta : "-"}

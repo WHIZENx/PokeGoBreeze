@@ -36,7 +36,7 @@ const Defender = (prop) => {
         });
         setTypeEffective(data);
     }, [currentTypePri, currentTypeSec, prop.types]);
-    
+
     useEffect(() => {
         const results = Object.keys(prop.types).filter(item => item !== currentTypePri && item !== currentTypeSec);
         setTypes(results);
@@ -67,7 +67,7 @@ const Defender = (prop) => {
                 <div className="col d-flex justify-content-center">
                     <div>
                         <h6 className='text-center'><b>Type 1</b></h6>
-                        <div className='card-input' tabIndex={ 0 } onClick={() => setShowTypePri(true)} onBlur={() => setShowTypePri(false)}>
+                        <div className='card-input' style={{marginBottom: 15}} tabIndex={ 0 } onClick={() => setShowTypePri(true)} onBlur={() => setShowTypePri(false)}>
                             <div className='card-select'>
                             <CardType value={currentTypePri}/>
                             </div>
@@ -88,7 +88,7 @@ const Defender = (prop) => {
                 <div className="col d-flex justify-content-center">
                     <div>
                         <h6 className='text-center'><b>Type 2</b></h6>
-                        <div className='card-input' tabIndex={ 0 } onClick={() => setShowTypeSec(true)} onBlur={() => setShowTypeSec(false)}>
+                        <div className='card-input' style={{marginBottom: 15}} tabIndex={ 0 } onClick={() => setShowTypeSec(true)} onBlur={() => setShowTypeSec(false)}>
                             {currentTypeSec === '' ?
                                 <div className='type-none'>
                                     <b>None</b>
@@ -116,7 +116,7 @@ const Defender = (prop) => {
                 </div>
             </div>
             <TypeEffective typeEffective={typeEffective}/>
-        </div>  
+        </div>
     );
 }
 

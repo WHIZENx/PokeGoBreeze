@@ -191,21 +191,10 @@ export const calculateStats = (atk, def, sta, IVatk, IVdef, IVsta, cp) => {
 export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, to_lv, type) => {
     from_lv -= 0.5;
     to_lv -= 0.5;
-    // let from_sum_stadust = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_stadust : 0;
-    // let from_sum_candy = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_candy : 0;
-    // let from_sum_xl_candy = data.find(e => e.level === from_lv) ? data.find(e => e.level === from_lv).sum_xl_candy : 0;
 
     let power_up_count = (to_lv-from_lv)*2;
 
-    if (to_lv > 50) {
-        return {
-            cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv+0.5),
-            result_between_stadust: null,
-            result_between_candy: null,
-            result_between_xl_candy: null,
-            power_up_count: null
-        }
-    } else if (from_lv > to_lv) {
+    if (from_lv > to_lv) {
         return {
             cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv+0.5),
             result_between_stadust: null,
@@ -214,9 +203,6 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
             power_up_count: null
         }
     } else {
-        // let to_sum_stadust = data.find(e => e.level === to_lv) ? data.find(e => e.level === to_lv).sum_stadust : 0;
-        // let to_sum_candy = data.find(e => e.level === to_lv) ? data.find(e => e.level === to_lv).sum_candy : 0;
-        // let to_sum_xl_candy = data.find(e => e.level === to_lv) ? data.find(e => e.level === to_lv).sum_xl_candy : 0;
         let between_stadust = 0;
         let between_candy = 0;
         let between_xl_candy = 0;
@@ -224,6 +210,14 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
         let between_stadust_diff = 0;
         let between_candy_diff = 0;
         let between_xl_candy_diff = 0;
+
+        if (type === "shadow") {
+            var atk_stat = calculateStatsBettle(atk, IVatk, to_lv+0.5, typeCostPowerUp(type).bonus.atk);
+            var def_stat = calculateStatsBettle(def, IVdef, to_lv+0.5, typeCostPowerUp(type).bonus.def);
+
+            var atk_stat_diff = Math.abs(calculateStatsBettle(atk, IVatk, to_lv+0.5) - atk_stat);
+            var def_stat_diff = Math.abs(calculateStatsBettle(def, IVdef, to_lv+0.5) - def_stat);
+        }
 
         data.forEach(ele => {
             if (ele.level >= from_lv && ele.level <= to_lv) {
@@ -236,7 +230,7 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
             };
         });
 
-        return {
+        let dataList = {
             cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv+0.5),
             result_between_stadust: between_stadust,
             result_between_stadust_diff: between_stadust_diff,
@@ -247,15 +241,27 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
             power_up_count: power_up_count,
             type: type
         }
+
+        if (type === "shadow") {
+            dataList['atk_stat'] = atk_stat;
+            dataList['def_stat'] = def_stat;
+            dataList['atk_stat_diff'] = atk_stat_diff;
+            dataList['def_stat_diff'] = def_stat_diff;
+        }
+
+        return dataList;
     }
 }
 
-export const calculateStatsBettle = (base, iv, level) => {
-    return Math.floor((base+iv)*data.find(item => item.level === level).multiplier)
+export const calculateStatsBettle = (base, iv, level, addition) => {
+    let result = (base+iv)*data.find(item => item.level === level).multiplier
+    if (addition) return Math.floor(result*addition)
+    return Math.floor(result)
 }
 
 export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, currCP, maxCp, type) => {
-
+    let level = max_level;
+    if (type !== "lucky") level -= 1;
     if (maxCp && currCP > maxCp) {
         return {elidge: false}
     } else {
@@ -268,11 +274,11 @@ export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_l
         dataBettle["limit"] = true;
         dataBettle["level"] = null;
         if (maxCp == null) {
-            dataBettle["level"] = max_level-1;
-            dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, max_level-1);
+            dataBettle["level"] = level;
+            dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, level);
             dataBettle.limit = false;
         } else {
-            for (let i = min_level; i <= max_level-1; i+=0.5) {
+            for (let i = min_level; i <= level; i+=0.5) {
                 if (dataBettle.cp < calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) && calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) <= maxCp) {
                     dataBettle["level"] = i;
                     dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i);
@@ -281,10 +287,13 @@ export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_l
             }
         }
 
+        let atk_stat = (type === "shadow") ? calculateStatsBettle(atk, IVatk, dataBettle.level, typeCostPowerUp(type).bonus.atk) : calculateStatsBettle(atk, IVatk, dataBettle.level);
+        let def_stat = (type === "shadow") ? calculateStatsBettle(def, IVdef, dataBettle.level, typeCostPowerUp(type).bonus.def) : calculateStatsBettle(def, IVdef, dataBettle.level);
+
         dataBettle["rangeValue"] = calculateBetweenLevel(atk, def, sta, IVatk, IVdef, IVsta, from_lv, dataBettle.level, type);
         dataBettle["stats"] = {
-            atk : calculateStatsBettle(atk, IVatk, dataBettle.level),
-            def : calculateStatsBettle(def, IVdef, dataBettle.level),
+            atk : atk_stat,
+            def : def_stat,
             sta : calculateStatsBettle(sta, IVsta, dataBettle.level)
         }
 
@@ -300,20 +309,24 @@ export const typeCostPowerUp = (type) => {
             bonus: {
                 atk : 1.2,
                 def : 0.8
-            }
+            },
+            type: type,
         }
     } else if (type === "purified") {
         return {
             stadust: 0.9,
             candy: 0.9,
+            type: type,
         }
     } else if (type === "lucky") {
         return {
             stadust: 0.5,
             candy: 1,
+            type: type,
         }
     } else return {
         stadust: 1,
         candy: 1,
+        type: type,
     };
 }

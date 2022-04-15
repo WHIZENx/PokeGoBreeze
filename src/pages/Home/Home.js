@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } fr
 import Type from '../../components/Sprits/Type';
 import APIService from '../../services/API.service';
 
-import { calBaseATK, calBaseDEF, calBaseSTA, calculateCP, calculateStatsBettle } from '../../components/Calculate/Calculate';
+import { calBaseATK, calBaseDEF, calBaseSTA, calculateCP } from '../../components/Calculate/Calculate';
 
 import loading from '../../assets/loading.png';
 import './Home.css'
@@ -95,8 +95,8 @@ const Home = () => {
                         def: def,
                         sta: sta,
                         minCP: calculateCP(atk, def, sta, 1),
-                        maxCP: calculateCP(atk, def, sta, 50),
-                        maxHP: calculateStatsBettle(sta, 15, 50)
+                        maxCP_40: calculateCP(atk, def, sta, 40),
+                        maxCP_50: calculateCP(atk, def, sta, 50),
                     }
                 });
                 pokeList.push(...result);
@@ -196,10 +196,13 @@ const Home = () => {
                         <StyledTableCell align="center">Color</StyledTableCell>
                         <StyledTableCell align="center">Types</StyledTableCell>
                         <StyledTableCell align="center">Min CP</StyledTableCell>
-                        <StyledTableCell align="center">Max CP</StyledTableCell>
                         <StyledTableCell align="center">
-                            <div>Max HP</div>
-                            <span className='text-danger' style={{fontSize: 12}}>15/15/15</span>
+                            <div>Max CP</div>
+                            <span className='text-danger' style={{fontSize: 12}}>LV. 40</span>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                            <div>Max CP</div>
+                            <span className='text-danger' style={{fontSize: 12}}>LV. 50</span>
                         </StyledTableCell>
                         <StyledTableCell align="center" colSpan={3}>Base Stats</StyledTableCell>
                     </TableRow>
@@ -227,8 +230,8 @@ const Home = () => {
                                         </div></StyledTableCell>
                                         <StyledTableCell align="center" component="td"><Type styled={true} height={40} arr={row.types}/></StyledTableCell>
                                         <StyledTableCell align="center" component="td">{row.minCP}</StyledTableCell>
-                                        <StyledTableCell align="center" component="td">{row.maxCP}</StyledTableCell>
-                                        <StyledTableCell align="center" component="td">{row.maxHP}</StyledTableCell>
+                                        <StyledTableCell align="center" component="td">{row.maxCP_40}</StyledTableCell>
+                                        <StyledTableCell align="center" component="td">{row.maxCP_50}</StyledTableCell>
                                         <StyledTableCell align="center" component="td">
                                             <div>{row.atk}</div>
                                             <span className='text-success' style={{fontSize: 10}}>Attack</span>
