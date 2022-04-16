@@ -18,6 +18,13 @@ const Tools = (props) => {
 
     const { enqueueSnackbar } = useSnackbar();
 
+    // const setEvoForm = useCallback(async (url) => {
+    //     if (props.onHandleSetEvo) {
+    //         const dataEvo = await APIService.getFetchUrl(url)
+    //         props.onHandleSetEvo([dataEvo.data.chain]);
+    //     }
+    // }, [props]);
+
     const fetchMap = useCallback(async (data) => {
         setFormList([]);
         setPokeData([]);
@@ -63,6 +70,7 @@ const Tools = (props) => {
 
     useEffect(() => {
         queryPokemon(props.id);
+        // if (data && props.arrEvoList.length === 0) setEvoForm(data.evolution_chain.url)
     }, [props.id, queryPokemon]);
 
     const capitalize = (string) => {

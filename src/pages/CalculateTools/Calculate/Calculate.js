@@ -141,7 +141,17 @@ const Calculate = () => {
     const [dataUltraLeague, setDataUltraLeague] = useState(null);
     const [dataMasterLeague, setDataMasterLeague] = useState(null);
 
+    const [arrEvoList, setArrEvoList] = useState([]);
+
     const { enqueueSnackbar } = useSnackbar();
+
+    const getEvoChain = (data) => {
+        if (data.length === 0) return false;
+        setArrEvoList(oldArr => [...oldArr, data.map(item => {
+            return {name: item.species.name, id: item.species.url.split("/")[6], baby: item.is_baby}
+        })])
+        return data.map(item => getEvoChain(item.evolves_to))
+    };
 
     const convertArrStats = (data) => {
         return Object.entries(data).map(([key, value]) => {
@@ -242,6 +252,14 @@ const Calculate = () => {
         setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
     }, [statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
 
+    const capitalize = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    const splitAndCapitalize = (string, join) => {
+        return string.split("-").map(text => capitalize(text)).join(join);
+    };
+
     return (
         <Fragment>
             <div className="container element-top">
@@ -270,7 +288,7 @@ const Calculate = () => {
                         <div>
                         { pokeList.length > 0 && dataPri && stats &&
                             <Fragment>
-                                <Tools count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={clearArrStats} onSetPrev={decId} onSetNext={incId}/>
+                                <Tools count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={clearArrStats} onSetPrev={decId} onSetNext={incId} arrEvoList={arrEvoList} onHandleSetEvo={getEvoChain}/>
                             </Fragment>
                         }
                         </div>
@@ -439,7 +457,7 @@ const Calculate = () => {
                                                 : "Unavailable" : "-"}
                                                 </td>
                                             </tr>
-                                            <tr className="center"><td colSpan="2">Stats</td></tr>
+                                            <tr className="center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
                                                 <td>{statData ?
@@ -464,6 +482,32 @@ const Calculate = () => {
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
                                                 <td>{statData ? calculateStatsBettle(statSTA, pokeStats.IV.sta, statLevel) : "-"}</td>
                                             </tr>
+                                            <tr className="center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
+                                            {arrEvoList.map((value, index) => (
+                                                <Fragment key={index}>
+                                                {value.map((value, index) => (
+                                                    <Fragment key={index}>
+                                                        {parseInt(value.id) !== id &&
+                                                            <Fragment>
+                                                                <tr className="center">
+                                                                    <td className="img-table-evo" colSpan="2"><img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Name</td>
+                                                                    <td>{splitAndCapitalize(value.name)}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>CP</td>
+                                                                    <td>5555</td>
+                                                                </tr>
+                                                            </Fragment>
+                                                        }
+                                                    </Fragment>
+                                                ))
+                                                }
+                                                </Fragment>
+                                            ))
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
@@ -473,7 +517,7 @@ const Calculate = () => {
                                             <tr><th colSpan="5">Recommend in Bettle League</th></tr>
                                         </thead>
                                         <tbody>
-                                            <tr className="center"><td colSpan="4">
+                                            <tr className="center"><td className="table-sub-header" colSpan="4">
                                             <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img>
                                             <span className={dataLittleLeague ? dataLittleLeague.elidge ? null : "text-danger" : null}>Little Cup{dataLittleLeague ? dataLittleLeague.elidge ? "" : <span> (Not Elidge)</span>: ""}</span>
                                             </td></tr>
@@ -494,11 +538,11 @@ const Calculate = () => {
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
-                                                        {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type+"-text"}>{dataLittleLeague.rangeValue.result_between_candy}</span> : "-"}
+                                                        {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type !== "lucky" ? statData.type+"-text" : ""}>{dataLittleLeague.rangeValue.result_between_candy}</span> : "-"}
                                                     </div>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
-                                                        {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type+"-text"}>{dataLittleLeague.rangeValue.result_between_xl_candy}</span> : "-"}
+                                                        {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type !== "lucky" ? statData.type+"-text" : ""}>{dataLittleLeague.rangeValue.result_between_xl_candy}</span> : "-"}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -514,7 +558,7 @@ const Calculate = () => {
                                                 {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
-                                            <tr className="center"><td colSpan="4">
+                                            <tr className="center"><td className="table-sub-header" colSpan="4">
                                                 <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("great_league")}></img>
                                                 <span className={dataGreatLeague ? dataGreatLeague.elidge ? null : "text-danger" : null}>Great League{dataGreatLeague ? dataGreatLeague.elidge ? "" : <span> (Not Elidge)</span>: ""}</span>
                                             </td></tr>
@@ -535,11 +579,11 @@ const Calculate = () => {
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
-                                                        {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type+"-text"}>{dataGreatLeague.rangeValue.result_between_candy}</span> : "-"}
+                                                        {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type !== "lucky" ? statData.type+"-text" : ""}>{dataGreatLeague.rangeValue.result_between_candy}</span> : "-"}
                                                     </div>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
-                                                        {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type+"-text"}>{dataGreatLeague.rangeValue.result_between_xl_candy}</span> : "-"}
+                                                        {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type !== "lucky" ? statData.type+"-text" : ""}>{dataGreatLeague.rangeValue.result_between_xl_candy}</span> : "-"}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -555,7 +599,7 @@ const Calculate = () => {
                                                 {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
-                                            <tr className="center"><td colSpan="4">
+                                            <tr className="center"><td className="table-sub-header" colSpan="4">
                                                 <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("ultra_league")}></img>
                                                 <span className={dataUltraLeague ? dataUltraLeague.elidge ? null : "text-danger" : null}>Ultra League{dataUltraLeague ? dataUltraLeague.elidge ? "" : <span> (Not Elidge)</span> : ""}</span>
                                             </td></tr>
@@ -576,11 +620,11 @@ const Calculate = () => {
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
-                                                        {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type+"-text"}>{dataUltraLeague.rangeValue.result_between_candy}</span> : "-"}
+                                                        {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type !== "lucky" ? statData.type+"-text" : ""}>{dataUltraLeague.rangeValue.result_between_candy}</span> : "-"}
                                                     </div>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
-                                                        {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type+"-text"}>{dataUltraLeague.rangeValue.result_between_xl_candy}</span> : "-"}
+                                                        {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type !== "lucky" ? statData.type+"-text" : ""}>{dataUltraLeague.rangeValue.result_between_xl_candy}</span> : "-"}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -596,7 +640,7 @@ const Calculate = () => {
                                                 {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
-                                            <tr className="center"><td colSpan="4">
+                                            <tr className="center"><td className="table-sub-header" colSpan="4">
                                                 <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("master_league")}></img>
                                                 Master League
                                             </td></tr>
@@ -617,11 +661,11 @@ const Calculate = () => {
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
-                                                        {dataMasterLeague ? <span className={statData.type+"-text"}>{dataMasterLeague.rangeValue.result_between_candy}</span> : "-"}
+                                                        {dataMasterLeague ? <span className={statData.type !== "lucky" ? statData.type+"-text" : ""}>{dataMasterLeague.rangeValue.result_between_candy}</span> : "-"}
                                                     </div>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}></img>
-                                                        {dataMasterLeague ? <span className={statData.type+"-text"}>{dataMasterLeague.rangeValue.result_between_xl_candy}</span> : "-"}
+                                                        {dataMasterLeague ? <span className={statData.type !== "lucky" ? statData.type+"-text" : ""}>{dataMasterLeague.rangeValue.result_between_xl_candy}</span> : "-"}
                                                     </div>
                                                 </td>
                                             </tr>

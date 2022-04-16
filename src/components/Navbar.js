@@ -26,6 +26,7 @@ const NavbarComponent = () => {
                         <Link className="dropdown-item" to="/find-cp-iv">Find IV&CP</Link>
                         <Link className="dropdown-item" to="/calculate-cp-iv">Calculate IV&CP</Link>
                     </NavDropdown>
+                    <Link className="nav-link" to="/stats-table">Stats Table</Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

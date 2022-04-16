@@ -109,7 +109,7 @@ const Home = () => {
         const result = dataList.filter(item => {
             const boolFilterType = item.types.map(item => selectTypes.includes(item)).filter(bool => bool === true).length === selectTypes.length;
             const boolFilterPoke =  searchTerm === '' || item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm);
-            const boolFilterCP =  searchMaxCP === '' || item.maxCP <= searchMaxCP;
+            const boolFilterCP =  searchMaxCP === '' || item.maxCP_40 <= searchMaxCP || item.maxCP_50 <= searchMaxCP;
             return boolFilterType && boolFilterPoke && boolFilterCP;
         })
         dataListFilter.current = result;
@@ -220,11 +220,14 @@ const Home = () => {
                                 <Fragment>
                                 {listOfPokemon.map((row, index) => (
                                     <StyledTableRow key={index}>
-                                        <StyledTableCell component="th" scope="row">#{row.id} <img height={60}
-                                        alt='img-pokemon'
-                                        src={APIService.getPokeIconSprite(row.sprite, true)}
-                                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}>
-                                        </img> <Link to={"pokemon/"+row.id}>{splitAndCapitalize(row.name)}</Link></StyledTableCell>
+                                        <StyledTableCell component="th" scope="row">
+                                            <Link to={"pokemon/"+row.id} target="_blank">
+                                            #{row.id} <img height={60} alt='img-pokemon'
+                                            src={APIService.getPokeIconSprite(row.sprite, true)}
+                                            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}>
+                                            </img> {splitAndCapitalize(row.name)}
+                                            </Link>
+                                        </StyledTableCell>
                                         <StyledTableCell align="center" component="td">
                                             <div style={{width: '100%', height: '100%', backgroundColor: row.color}}>
                                         </div></StyledTableCell>

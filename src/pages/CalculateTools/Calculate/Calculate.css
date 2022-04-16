@@ -8,7 +8,7 @@ th {
     padding: 15px 0 15px 0;
 }
 
-tbody tr.center td {
+tbody tr.center td.table-sub-header {
     background-color: #f1f1ff !important;
 }
 
@@ -27,7 +27,6 @@ td {
 
 .table-info, th, td {
     border: 1px solid #b8d4da;
-
 }
 
 .table-info thead tr {
@@ -63,4 +62,8 @@ td {
     color: #f4e474;
     font-weight: 500;
     /* text-shadow: 0.01px 0.01px black; */
+}
+
+.img-table-evo {
+    background-color: white !important;
 }

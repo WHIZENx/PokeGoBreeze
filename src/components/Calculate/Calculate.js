@@ -283,7 +283,7 @@ export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_l
                     dataBettle["level"] = i;
                     dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i);
                     dataBettle.limit = false;
-                }
+                };
             }
         }
 
@@ -329,4 +329,37 @@ export const typeCostPowerUp = (type) => {
         candy: 1,
         type: type,
     };
+}
+
+export const calStatsProd = (atk, def, sta, maxCP) => {
+    let dataList = []
+
+    for (let l = min_level; l <= max_level; l+=0.5) {
+        let currCP = 0;
+        for (let i = min_iv; i <= max_iv; i++) {
+            for (let j = min_iv; j <= max_iv; j++) {
+                for (let k = min_iv; k <= max_iv; k++) {
+                    const cp = calculateCP(atk+i, def+j, sta+k, l);
+                    if (currCP < cp && cp <= maxCP) {
+                        const statsATK = calculateStatsBettle(atk, i, l);
+                        const statsDEF = calculateStatsBettle(def, j, l);
+                        const statsSTA = calculateStatsBettle(sta, k, l);
+                        dataList.push({
+                            IV: {atk: i, def: j, sta: k},
+                            CP: cp,
+                            level: l,
+                            stats: {statsATK: statsATK, statsDEF: statsDEF, statsSTA: statsSTA},
+                            statsProds: statsATK*statsDEF*statsSTA,
+                        });
+                        currCP = cp;
+                    }
+                }
+            }
+        }
+    }
+    const maxStatsProds = Math.max.apply(Math, dataList.map(item => { return item.statsProds; }));
+    dataList = dataList.map(item => ({...item, ratio: item.statsProds*100/maxStatsProds}));
+    dataList = dataList.sort((a,b) => a.statsProds - b.statsProds);
+    dataList = dataList.map((item, index) => ({...item, rank: dataList.length-index}));
+    return dataList;
 }
