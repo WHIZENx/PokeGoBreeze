@@ -1,5 +1,5 @@
 import { Box, Slider, styled } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
 import { calStatsProd } from "../../components/Calculate/Calculate";
 import APIService from "../../services/API.service";
@@ -128,12 +128,15 @@ const StatsTable = () => {
     const [statDEF, setStatDEF] = useState(0);
     const [statSTA, setStatSTA] = useState(0);
 
+    const currStatBattle = useRef([]);
     const [battleLeague, setBattleLeague] = useState(500);
 
     const [statsBattle, setStatsBattle] = useState([]);
 
     useEffect(() => {
-        setStatsBattle(calStatsProd(statATK, statDEF, statSTA, battleLeague))
+        const battleTable = calStatsProd(statATK, statDEF, statSTA, battleLeague);
+        currStatBattle.current = battleTable
+        setStatsBattle(battleTable)
     }, [statATK, statDEF, statSTA, battleLeague]);
 
     const clearStats = () => {
@@ -149,8 +152,8 @@ const StatsTable = () => {
     }, [battleLeague, statATK, statDEF, statSTA]);
 
     const searchStatsPoke = useCallback(() => {
-        setStatsBattle([...statsBattle].filter(item => item.CP === parseInt(searchCP) && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv))
-    }, [statsBattle, searchCP, ATKIv, DEFIv, STAIv]);
+        setStatsBattle([...currStatBattle.current].filter(item => item.CP === parseInt(searchCP) && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv))
+    }, [searchCP, ATKIv, DEFIv, STAIv]);
 
     const onSearchStatsPoke = useCallback((e) => {
         e.preventDefault();
