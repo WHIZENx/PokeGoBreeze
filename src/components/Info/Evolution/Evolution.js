@@ -46,7 +46,7 @@ const Evolution = (props) => {
         const result = lengths.indexOf(Math.max(...lengths));
         const isNotBaby = arrEvoList[result].filter(ele => !ele.baby).length;
         const isBaby = arrEvoList[result].filter(ele => ele.baby).length;
-        return 175 * isBaby + 165 * isNotBaby + noEvo;
+        return 170 * isBaby + 160 * isNotBaby + noEvo;
     }
 
     return (

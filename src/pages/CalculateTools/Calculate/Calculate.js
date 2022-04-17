@@ -1,17 +1,17 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { calBaseATK, calBaseDEF, calBaseSTA, calculateBettleLeague, calculateBetweenLevel, calculateStats, calculateStatsBettle, sortStatsPokemon } from "../../../components/Calculate/Calculate";
+import { Fragment, useCallback, useState } from "react";
+import { calculateBettleLeague, calculateBetweenLevel, calculateStats, calculateStatsBettle } from "../../../components/Calculate/Calculate";
 import { Box, FormControlLabel, Radio, RadioGroup, Slider, styled } from '@mui/material';
 import { useSnackbar } from "notistack";
 
 import APIService from "../../../services/API.service";
-
-import Tools from "../Tools";
 
 import './Calculate.css';
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
+import Find from "../Find";
+// import EvoChain from "./EvoChain";
 
 const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
 
@@ -101,30 +101,14 @@ const TypeRadioGroup = styled(RadioGroup)(() => ({
 
 const Calculate = () => {
 
-    const cardHeight = 57;
-    const pageCardScroll = 10;
+    // const [id, setId] = useState(1);
+    const [name, setName] = useState('Bulbasaur');
 
-    const initialize = useRef(false);
-    const [dataPri, setDataPri] = useState(null);
-    const [stats, setStats] = useState(null);
-
-    const searchResult = useRef(null);
-    const searchResultID = useRef(0);
-
-    const [pokemonList, setPokemonList] = useState([]);
-    const pokeList = useMemo(() => {return []}, []);
-
-    const [id, setId] = useState(1);
-
-    const [searchTerm, setSearchTerm] = useState('');
     const [searchCP, setSearchCP] = useState('');
 
     const [ATKIv, setATKIv] = useState(0);
     const [DEFIv, setDEFIv] = useState(0);
     const [STAIv, setSTAIv] = useState(0);
-
-    const currentPokemonListFilter = useRef([]);
-    const [pokemonListFilter, setPokemonListFilter] = useState([]);
 
     const [statATK, setStatATK] = useState(0);
     const [statDEF, setStatDEF] = useState(0);
@@ -141,68 +125,9 @@ const Calculate = () => {
     const [dataUltraLeague, setDataUltraLeague] = useState(null);
     const [dataMasterLeague, setDataMasterLeague] = useState(null);
 
-    const [arrEvoList, setArrEvoList] = useState([]);
+    const [urlEvo, setUrlEvo] = useState({url: null});
 
     const { enqueueSnackbar } = useSnackbar();
-
-    const getEvoChain = (data) => {
-        if (data.length === 0) return false;
-        setArrEvoList(oldArr => [...oldArr, data.map(item => {
-            return {name: item.species.name, id: item.species.url.split("/")[6], baby: item.is_baby}
-        })])
-        return data.map(item => getEvoChain(item.evolves_to))
-    };
-
-    const convertArrStats = (data) => {
-        return Object.entries(data).map(([key, value]) => {
-            return {id: value.num, name: value.slug, base_stats: value.baseStats,
-            baseStatsPokeGo: {attack: calBaseATK(value.baseStats, true), defense: calBaseDEF(value.baseStats, true), stamina: calBaseSTA(value.baseStats, true)}}
-        })
-    };
-
-    useEffect(() => {
-        if (!initialize.current) {
-            APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
-            .then(res => {
-                setStats(sortStatsPokemon(convertArrStats(res.data)));
-                setDataPri(res.data);
-            })
-            .finally(initialize.current = true);
-        }
-        const fetchMyAPI = async () => {
-            const res = await APIService.getPokeJSON('pokemon_names.json');
-            Object.entries(res.data).forEach(([key, value]) => {
-                pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
-            });
-            setPokemonList(pokeList);
-        }
-        if (pokeList.length === 0) fetchMyAPI();
-
-        if (searchResult.current.scrollTop > (cardHeight*pageCardScroll)) searchResult.current.scrollTop = (cardHeight*pageCardScroll)-cardHeight;
-        searchResultID.current = 1;
-        const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
-        currentPokemonListFilter.current = results;
-        setPokemonListFilter(currentPokemonListFilter.current.slice(0, 20));
-    }, [searchTerm, pokemonList, pokeList, searchResult, id]);
-
-    const listenScrollEvent = (ele) => {
-        let idScroll = Math.floor((ele.currentTarget.offsetHeight + ele.currentTarget.scrollTop) / (cardHeight*pageCardScroll));
-        if (idScroll <= searchResultID.current) return;
-        searchResultID.current = idScroll;
-        setPokemonListFilter([...pokemonListFilter, ...currentPokemonListFilter.current.slice(idScroll*pageCardScroll, idScroll*pageCardScroll+pageCardScroll)])
-    }
-
-    const getInfoPoke = (value) => {
-        const id = parseInt(value.currentTarget.dataset.id);
-        setId(id);
-        clearArrStats();
-    };
-
-    const handleSetStats = (type, value) => {
-        if (type === "atk") setStatATK(value)
-        else if (type === "def") setStatDEF(value)
-        else if (type === "sta") setStatSTA(value)
-    }
 
     const clearArrStats = () => {
         setSearchCP('');
@@ -221,8 +146,8 @@ const Calculate = () => {
     const calculateStatsPoke = useCallback(() => {
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
-        if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+pokeList.find(item => item.id === id).name, { variant: 'error' });
-        enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+typePoke+' '+pokeList.find(item => item.id === id).name, { variant: 'success' });
+        if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+name, { variant: 'error' });
+        enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+typePoke+' '+name, { variant: 'success' });
         setPokeStats(result);
         setStatLevel(result.level);
         setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
@@ -230,70 +155,24 @@ const Calculate = () => {
         setDataGreatLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 1500, typePoke));
         setDataUltraLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 2500, typePoke));
         setDataMasterLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, null, typePoke));
-    }, [enqueueSnackbar, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, id, pokeList, typePoke]);
+    }, [enqueueSnackbar, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
 
     const onCalculateStatsPoke = useCallback((e) => {
         e.preventDefault();
         calculateStatsPoke();
     }, [calculateStatsPoke]);
 
-    const decId = () => {
-        setTimeout(() => {setId(id-1);}, 300);
-        clearArrStats();
-    }
-
-    const incId = () => {
-        setTimeout(() => {setId(id+1);}, 300);
-        clearArrStats();
-    }
-
     const onHandleLevel = useCallback((e, v) => {
         setStatLevel(v);
         setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
     }, [statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = (string, join) => {
-        return string.split("-").map(text => capitalize(text)).join(join);
-    };
+    console.log(urlEvo)
 
     return (
         <Fragment>
             <div className="container element-top">
-                <h1 id ="main" className='center'>Pokémon GO Tools</h1>
-                <div className="row search-container">
-                    <div className="col d-flex justify-content-center" style={{height: pokemonListFilter.length*cardHeight+80, maxHeight: cardHeight*pageCardScroll+80}}>
-                        <div className="btn-group-search">
-                            <input type="text" className="form-control" aria-label="search" aria-describedby="input-search" placeholder="Enter name or ID"
-                            value={searchTerm} onInput={e => setSearchTerm(e.target.value)}></input>
-                        </div>
-                        <div className="result-tools">
-                            <ul ref={searchResult}
-                                onScroll={listenScrollEvent.bind(this)}
-                                style={pokemonListFilter.length < pageCardScroll ? {height: pokemonListFilter.length*cardHeight, overflowY: 'hidden'} : {height: cardHeight*pageCardScroll, overflowY: 'scroll'}}>
-                                {pokemonListFilter.map((value, index) => (
-                                    <li style={{height: cardHeight}} className={"container card-pokemon "+(value.id===id ? "selected": "")} key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
-                                        <b>#{value.id}</b>
-                                        <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}></img>
-                                        {value.name}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="col d-flex justify-content-center center">
-                        <div>
-                        { pokeList.length > 0 && dataPri && stats &&
-                            <Fragment>
-                                <Tools count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={clearArrStats} onSetPrev={decId} onSetNext={incId} arrEvoList={arrEvoList} onHandleSetEvo={getEvoChain}/>
-                            </Fragment>
-                        }
-                        </div>
-                    </div>
-                </div>
+                <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName} urlEvo={urlEvo} setUrlEvo={setUrlEvo}/>
                 <h1 id ="main" className='center'>Calculate IV&CP</h1>
                 <form className="element-top" onSubmit={onCalculateStatsPoke.bind(this)}>
                     <div className="form-group d-flex justify-content-center center">
@@ -482,7 +361,8 @@ const Calculate = () => {
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
                                                 <td>{statData ? calculateStatsBettle(statSTA, pokeStats.IV.sta, statLevel) : "-"}</td>
                                             </tr>
-                                            <tr className="center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
+                                            {/* <EvoChain id={id} url={urlEvo.url} /> */}
+                                            {/* <tr className="center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
                                             {arrEvoList.map((value, index) => (
                                                 <Fragment key={index}>
                                                 {value.map((value, index) => (
@@ -507,7 +387,7 @@ const Calculate = () => {
                                                 }
                                                 </Fragment>
                                             ))
-                                            }
+                                            } */}
                                         </tbody>
                                     </table>
                                 </div>

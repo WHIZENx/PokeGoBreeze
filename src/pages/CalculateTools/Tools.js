@@ -18,13 +18,6 @@ const Tools = (props) => {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    // const setEvoForm = useCallback(async (url) => {
-    //     if (props.onHandleSetEvo) {
-    //         const dataEvo = await APIService.getFetchUrl(url)
-    //         props.onHandleSetEvo([dataEvo.data.chain]);
-    //     }
-    // }, [props]);
-
     const fetchMap = useCallback(async (data) => {
         setFormList([]);
         setPokeData([]);
@@ -70,7 +63,7 @@ const Tools = (props) => {
 
     useEffect(() => {
         queryPokemon(props.id);
-        // if (data && props.arrEvoList.length === 0) setEvoForm(data.evolution_chain.url)
+        // if (data && props.urlEvo && props.setUrlEvo != null) props.setUrlEvo({...props.urlEvo, url: data.evolution_chain.url});
     }, [props.id, queryPokemon]);
 
     const capitalize = (string) => {
@@ -120,7 +113,7 @@ const Tools = (props) => {
                                 {value.map((value, index) => (
                                     <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
                                         <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
-                                        <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
+                                        <div>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</div>
                                         {value.form.id === pokeID &&
                                             <b><small className=''> (Default)</small></b>
                                         }

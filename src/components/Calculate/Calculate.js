@@ -340,10 +340,10 @@ export const calStatsProd = (atk, def, sta, maxCP) => {
             for (let j = min_iv; j <= max_iv; j++) {
                 for (let k = min_iv; k <= max_iv; k++) {
                     const cp = calculateCP(atk+i, def+j, sta+k, l);
-                    if (currCP < cp && cp <= maxCP) {
-                        const statsATK = calculateStatsBettle(atk, i, l);
-                        const statsDEF = calculateStatsBettle(def, j, l);
-                        const statsSTA = calculateStatsBettle(sta, k, l);
+                    if (currCP < cp && (maxCP == null || cp <= maxCP)) {
+                        const statsATK = (atk+i)*data.find(item => item.level === l).multiplier;
+                        const statsDEF = (def+j)*data.find(item => item.level === l).multiplier;
+                        const statsSTA = (sta+k)*data.find(item => item.level === l).multiplier;
                         dataList.push({
                             IV: {atk: i, def: j, sta: k},
                             CP: cp,
