@@ -9,6 +9,8 @@ import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import FormGroup from "../../components/Info/Gender/FormGroup";
 
+import pokemonData from '../../data/pokemon.json';
+
 const Pokemon = (props) => {
 
     const params = useParams();
@@ -34,7 +36,7 @@ const Pokemon = (props) => {
     const convertArrStats = (data) => {
         return Object.entries(data).map(([key, value]) => {
             return {id: value.num, name: value.slug, base_stats: value.baseStats,
-            baseStatsPokeGo: {attack: calBaseATK(value.baseStats, true), defense: calBaseDEF(value.baseStats, true), stamina: calBaseSTA(value.baseStats, true)}}
+            baseStatsPokeGo: {attack: calBaseATK(value.baseStats, true), defense: calBaseDEF(value.baseStats, true), stamina: value.slug !== "shedinja" ? calBaseSTA(value.baseStats, true) : 1}}
         })
     };
 
@@ -96,12 +98,15 @@ const Pokemon = (props) => {
     useEffect(() => {
 
         if (!initialize.current) {
-            APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
-            .then(res => {
-                setStats(sortStatsPokemon(convertArrStats(res.data)));
-                setDataPri(res.data);
-                return APIService.getPokeJSON('released_pokemon.json');
-            })
+            setStats(sortStatsPokemon(convertArrStats(pokemonData)));
+            setDataPri(pokemonData);
+            // APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
+            // .then(res => {
+                // setStats(sortStatsPokemon(convertArrStats(res.data)));
+                // setDataPri(res.data);
+            //     return APIService.getPokeJSON('released_pokemon.json');
+            // })
+            APIService.getPokeJSON('released_pokemon.json')
             .then(res => {
                 setReleased(res.data);
                 return APIService.getPokeJSON('type_effectiveness.json');

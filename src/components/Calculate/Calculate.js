@@ -14,7 +14,7 @@ export const calBaseATK = (stats, nerf) => {
     const speedMod = 1+(speed-75)/500;
     const baseATK = Math.round(scaleATK * speedMod);
     if (!nerf) return baseATK;
-    if (calculateCP(baseATK, calBaseDEF(stats, false), calBaseSTA(stats, false), 40) >= 4000) return Math.round(scaleATK * speedMod * 0.91);
+    if (calculateCP(baseATK+15, calBaseDEF(stats, false)+15, calBaseSTA(stats, false)+15, 40) >= 4000) return Math.round(scaleATK * speedMod * 0.91);
     else return baseATK;
 }
 
@@ -31,7 +31,7 @@ export const calBaseDEF = (stats, nerf) => {
     const speedMod = 1+(speed-75)/500;
     const baseDEF = Math.round(scaleDEF * speedMod);
     if (!nerf) return baseDEF;
-    if (calculateCP(calBaseATK(stats, false), baseDEF, calBaseSTA(stats, false), 40) >= 4000) return Math.round(scaleDEF * speedMod * 0.91);
+    if (calculateCP(calBaseATK(stats, false)+15, baseDEF+15, calBaseSTA(stats, false)+15, 40) >= 4000) return Math.round(scaleDEF * speedMod * 0.91);
     else return baseDEF;
 }
 
@@ -40,7 +40,7 @@ export const calBaseSTA = (stats, nerf) => {
 
     const baseSTA = Math.floor(hp * 1.75 + 50);
     if (!nerf) return baseSTA;
-    if (calculateCP(calBaseATK(stats, false), calBaseDEF(stats, false), baseSTA, 40) >= 4000) return Math.round((hp * 1.75 + 50) * 0.91);
+    if (calculateCP(calBaseATK(stats, false)+15, calBaseDEF(stats, false)+15, baseSTA+15, 40) >= 4000) return Math.round((hp * 1.75 + 50) * 0.91);
     else return baseSTA;
 }
 

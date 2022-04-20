@@ -9,6 +9,8 @@ import loading from '../../assets/loading.png';
 import './Home.css'
 import { Link } from 'react-router-dom';
 
+import pokemonData from '../../data/pokemon.json';
+
 const StyledTableCell = styled(TableCell)(() => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: 'rgb(64, 159, 241)',
@@ -77,12 +79,13 @@ const Home = () => {
         const fetchMyAPI = async () => {
             if (pokeList.length === 0) {
                 // const result = await Promise.all([...Array(startPokemon).keys()].map(async (n) => (await APIService.getPokeInfo(n+1)).data));
-                let result = Object.values((await APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')).data);
+                // let result = Object.values((await APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')).data);
+                let result = Object.values(pokemonData);
                 result = result.slice(0, result.length-3);
                 result = result.map(item => {
                     const atk  = calBaseATK(item.baseStats, true);
                     const def  = calBaseDEF(item.baseStats, true);
-                    const sta  = calBaseSTA(item.baseStats, true);
+                    const sta  = item.slug !== "shedinja" ? calBaseSTA(item.baseStats, true) : 1;
                     return {
                         id: item.num,
                         name: item.name,
@@ -95,8 +98,8 @@ const Home = () => {
                         def: def,
                         sta: sta,
                         minCP: calculateCP(atk, def, sta, 1),
-                        maxCP_40: calculateCP(atk, def, sta, 40),
-                        maxCP_50: calculateCP(atk, def, sta, 50),
+                        maxCP_40: calculateCP(atk+15, def+15, sta+15, 40),
+                        maxCP_50: calculateCP(atk+15, def+15, sta+15, 50),
                     }
                 });
                 pokeList.push(...result);

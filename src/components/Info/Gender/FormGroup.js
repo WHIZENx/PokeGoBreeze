@@ -28,7 +28,7 @@ const FormGroup = (props) => {
     };
 
     const filterFormName = useCallback((form, formStats) => {
-        form = form === "" ? "Normal" : form.includes("mega") ? form.toLowerCase() : capitalize(form);
+        form = form === "" || form === "standard" ? "Normal" : form.includes("mega") ? form.toLowerCase() : capitalize(form);
         formStats = formStats.includes("Mega") ? formStats.toLowerCase() : formStats.replaceAll("_", "-");
         formStats = formStats === "Hero" ? "Normal" : formStats;
         return form.toLowerCase().includes(formStats.toLowerCase());
@@ -36,6 +36,9 @@ const FormGroup = (props) => {
 
     const filterFormList = useCallback((stats, id) => {
         const filterId = stats.filter(item => item.id === id);
+        const firstFilter = stats.find(item => item.id === id &&
+            currForm.form.form_name.toLowerCase() === item.form.toLowerCase());
+        if (firstFilter) return firstFilter;
         const filterForm = stats.find(item => item.id === id &&
             filterFormName(currForm.form.form_name, item.form));
         if (filterId.length === 1 && props.formList.length === 1 && !filterForm) return filterId[0];

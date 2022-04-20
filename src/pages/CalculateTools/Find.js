@@ -3,6 +3,8 @@ import { calBaseATK, calBaseDEF, calBaseSTA, sortStatsPokemon } from "../../comp
 import APIService from "../../services/API.service";
 import Tools from "./Tools";
 
+import pokemonData from '../../data/pokemon.json'
+
 const Find = (props) => {
 
     const cardHeight = 57;
@@ -27,18 +29,21 @@ const Find = (props) => {
     const convertArrStats = (data) => {
         return Object.entries(data).map(([key, value]) => {
             return {id: value.num, name: value.slug, base_stats: value.baseStats,
-            baseStatsPokeGo: {attack: calBaseATK(value.baseStats, true), defense: calBaseDEF(value.baseStats, true), stamina: calBaseSTA(value.baseStats, true)}}
+            baseStatsPokeGo: {attack: calBaseATK(value.baseStats, true), defense: calBaseDEF(value.baseStats, true), stamina: value.slug !== "shedinja" ? calBaseSTA(value.baseStats, true) : 1}}
         })
     };
 
     useEffect(() => {
         if (!initialize.current) {
-            APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
-            .then(res => {
-                setStats(sortStatsPokemon(convertArrStats(res.data)));
-                setDataPri(res.data);
-            })
-            .finally(initialize.current = true);
+            // APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
+            // .then(res => {
+            //     setStats(sortStatsPokemon(convertArrStats(res.data)));
+            //     setDataPri(res.data);
+            // })
+            // .finally(initialize.current = true);
+            setStats(sortStatsPokemon(convertArrStats(pokemonData)));
+            setDataPri(pokemonData);
+            initialize.current = true
         }
         const fetchMyAPI = async () => {
             const res = await APIService.getPokeJSON('pokemon_names.json');
