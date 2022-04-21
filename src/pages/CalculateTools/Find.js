@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { calBaseATK, calBaseDEF, calBaseSTA, sortStatsPokemon } from "../../components/Calculate/Calculate";
+import { calculateStatsByTag, sortStatsPokemon } from "../../components/Calculate/Calculate";
 import APIService from "../../services/API.service";
 import Tools from "./Tools";
 
@@ -28,8 +28,9 @@ const Find = (props) => {
 
     const convertArrStats = (data) => {
         return Object.entries(data).map(([key, value]) => {
+            let stats = calculateStatsByTag(value.baseStats, value.slug);
             return {id: value.num, name: value.slug, base_stats: value.baseStats,
-            baseStatsPokeGo: {attack: calBaseATK(value.baseStats, true), defense: calBaseDEF(value.baseStats, true), stamina: value.slug !== "shedinja" ? calBaseSTA(value.baseStats, true) : 1}}
+            baseStatsPokeGo: {attack: stats.atk, defense: stats.def, stamina: stats.sta}}
         })
     };
 

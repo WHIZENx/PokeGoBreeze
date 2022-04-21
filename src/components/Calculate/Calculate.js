@@ -363,3 +363,15 @@ export const calStatsProd = (atk, def, sta, maxCP) => {
     dataList = dataList.map((item, index) => ({...item, rank: dataList.length-index}));
     return dataList;
 }
+
+export const calculateStatsByTag = (baseStats, tag) => {
+    let checkNerf = tag.toLowerCase().includes("mega") ? false : true;
+    const atk  = calBaseATK(baseStats, checkNerf);
+    const def  = calBaseDEF(baseStats, checkNerf);
+    const sta  = tag !== "shedinja" ? calBaseSTA(baseStats, checkNerf) : 1;
+    return {
+        atk: atk,
+        def: def,
+        sta: sta,
+    }
+}

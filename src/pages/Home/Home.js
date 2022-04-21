@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } fr
 import Type from '../../components/Sprits/Type';
 import APIService from '../../services/API.service';
 
-import { calBaseATK, calBaseDEF, calBaseSTA, calculateCP } from '../../components/Calculate/Calculate';
+import { calculateCP, calculateStatsByTag } from '../../components/Calculate/Calculate';
 
 import loading from '../../assets/loading.png';
 import './Home.css'
@@ -83,9 +83,7 @@ const Home = () => {
                 let result = Object.values(pokemonData);
                 result = result.slice(0, result.length-3);
                 result = result.map(item => {
-                    const atk  = calBaseATK(item.baseStats, true);
-                    const def  = calBaseDEF(item.baseStats, true);
-                    const sta  = item.slug !== "shedinja" ? calBaseSTA(item.baseStats, true) : 1;
+                    let stats = calculateStatsByTag(item.baseStats, item.slug);
                     return {
                         id: item.num,
                         name: item.name,
@@ -94,12 +92,12 @@ const Home = () => {
                         sprite: item.sprite.toLowerCase(),
                         baseSpecies: item.baseSpecies,
                         baseStats: item.baseStats,
-                        atk: atk,
-                        def: def,
-                        sta: sta,
-                        minCP: calculateCP(atk, def, sta, 1),
-                        maxCP_40: calculateCP(atk+15, def+15, sta+15, 40),
-                        maxCP_50: calculateCP(atk+15, def+15, sta+15, 50),
+                        atk: stats.atk,
+                        def: stats.def,
+                        sta: stats.sta,
+                        minCP: calculateCP(stats.atk, stats.def, stats.sta, 1),
+                        maxCP_40: calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 40),
+                        maxCP_50: calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50),
                     }
                 });
                 pokeList.push(...result);

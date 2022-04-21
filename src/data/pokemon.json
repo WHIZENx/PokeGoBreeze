@@ -2243,7 +2243,7 @@
     },
     "baseStats": {
       "hp": 60,
-      "atk": 95,
+      "atk": 85,
       "def": 69,
       "spa": 65,
       "spd": 79,
@@ -5280,7 +5280,7 @@
       "def": 30,
       "spa": 35,
       "spd": 45,
-      "spe": 95
+      "spe": 90
     },
     "abilities": {
       "0": "Sand Veil",
@@ -5403,9 +5403,9 @@
     "baseStats": {
       "hp": 35,
       "atk": 98,
-      "def": 74,
+      "def": 61,
       "spa": 63,
-      "spd": 56,
+      "spd": 69,
       "spe": 112
     },
     "abilities": {
@@ -8419,7 +8419,7 @@
     },
     "baseStats": {
       "hp": 52,
-      "atk": 90,
+      "atk": 65,
       "def": 55,
       "spa": 58,
       "spd": 62,
@@ -8611,7 +8611,7 @@
       "def": 70,
       "spa": 60,
       "spd": 60,
-      "spe": 110
+      "spe": 100
     },
     "abilities": {
       "0": "Run Away",
@@ -9987,7 +9987,7 @@
       "def": 70,
       "spa": 80,
       "spd": 80,
-      "spe": 150
+      "spe": 140
     },
     "abilities": {
       "0": "Soundproof",
@@ -10174,7 +10174,7 @@
       "atk": 95,
       "def": 85,
       "spa": 125,
-      "spd": 75,
+      "spd": 65,
       "spe": 55
     },
     "abilities": {
@@ -15178,7 +15178,7 @@
       "hp": 100,
       "atk": 50,
       "def": 50,
-      "spa": 86,
+      "spa": 76,
       "spd": 96,
       "spe": 70
     },
@@ -15431,7 +15431,7 @@
       "atk": 90,
       "def": 70,
       "spa": 60,
-      "spd": 70,
+      "spd": 60,
       "spe": 40
     },
     "abilities": {
@@ -18482,7 +18482,7 @@
     "baseStats": {
       "hp": 65,
       "atk": 95,
-      "def": 85,
+      "def": 75,
       "spa": 55,
       "spd": 55,
       "spe": 85
@@ -19232,10 +19232,10 @@
       "F": 0
     },
     "baseStats": {
-      "hp": 60,
+      "hp": 50,
       "atk": 50,
       "def": 120,
-      "spa": 90,
+      "spa": 80,
       "spd": 80,
       "spe": 30
     },
@@ -24289,9 +24289,9 @@
       "hp": 61,
       "atk": 90,
       "def": 45,
-      "spa": 40,
+      "spa": 50,
       "spd": 50,
-      "spe": 159
+      "spe": 160
     },
     "abilities": {
       "0": "Speed Boost",
@@ -56440,11 +56440,11 @@
     "unreleasedHidden": true,
     "cannotDynamax": true
   },
-  "pumpkaboo": {
+  "pumpkabooaverage": {
     "num": 710,
-    "name": "Pumpkaboo",
-    "alias": "pumpkaboo",
-    "slug": "pumpkaboo",
+    "name": "Pumpkaboo-Average",
+    "alias": "pumpkabooaverage",
+    "slug": "pumpkaboo-average",
     "sprite": "pumpkaboo",
     "types": ["Ghost", "Grass"],
     "genderRatio": {
@@ -56467,7 +56467,7 @@
     "heightm": 0.4,
     "weightkg": 5,
     "color": "Brown",
-    "evos": ["Gourgeist"],
+    "evos": ["Gourgeist-Average"],
     "eggGroups": ["Amorphous"],
     "hasLearnset": true,
     "baseForme": "Average",
@@ -56489,7 +56489,7 @@
       "pumpkaboo-super"
     ],
     "formeOrder": [
-      "Pumpkaboo",
+      "Pumpkaboo-Average",
       "Pumpkaboo-Small",
       "Pumpkaboo-Large",
       "Pumpkaboo-Super"
@@ -56705,11 +56705,11 @@
     "unreleasedHidden": true,
     "cannotDynamax": true
   },
-  "gourgeist": {
+  "gourgeistaverage": {
     "num": 711,
-    "name": "Gourgeist",
-    "alias": "gourgeist",
-    "slug": "gourgeist",
+    "name": "Gourgeist-Average",
+    "alias": "gourgeistaverage",
+    "slug": "gourgeist-average",
     "sprite": "gourgeist",
     "types": ["Ghost", "Grass"],
     "genderRatio": {
@@ -56754,12 +56754,12 @@
       "gourgeist-super"
     ],
     "formeOrder": [
-      "Gourgeist",
+      "Gourgeist-Average",
       "Gourgeist-Small",
       "Gourgeist-Large",
       "Gourgeist-Super"
     ],
-    "prevo": "Pumpkaboo",
+    "prevo": "Pumpkaboo-Average",
     "evoLevel": null,
     "canGigantamax": null,
     "baseSpecies": null,
@@ -65982,7 +65982,7 @@
       "F": 0
     },
     "baseStats": {
-      "hp": 135,
+      "hp": 137,
       "atk": 143,
       "def": 143,
       "spa": 80,
