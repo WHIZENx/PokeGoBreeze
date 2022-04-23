@@ -46,7 +46,7 @@ const Damage = () => {
     const [statLvATK, setStatLvATK] = useState(0);
 
     const [statLevel, setStatLevel] = useState(1);
-    const [statType, setStatType] = useState(null);
+    const [statType, setStatType] = useState("");
 
     const [formObj, setFormObj] = useState(null);
 
@@ -58,7 +58,7 @@ const Damage = () => {
     const [statLvSTAObj, setStatLvSTAObj] = useState(0);
 
     const [statLevelObj, setStatLevelObj] = useState(1);
-    const [statTypeObj, setStatTypeObj] = useState(null);
+    const [statTypeObj, setStatTypeObj] = useState("");
 
     const [enableFriend, setEnableFriend] = useState(false);
     const [battleState, setBattleState] = useState({
@@ -75,7 +75,9 @@ const Damage = () => {
         damage: null,
         hp: null,
         currPoke: null,
-        objPoke: null
+        objPoke: null,
+        type: null,
+        typeObj: null
     });
 
     const { enqueueSnackbar } = useSnackbar();
@@ -93,7 +95,9 @@ const Damage = () => {
             damage: null,
             hp: null,
             currPoke: null,
-            objPoke: null
+            objPoke: null,
+            type: null,
+            typeObj: null
         });
     }
 
@@ -105,7 +109,9 @@ const Damage = () => {
             damage: null,
             hp: null,
             currPoke: null,
-            objPoke: null
+            objPoke: null,
+            type: null,
+            typeObj: null
         });
     }
 
@@ -141,12 +147,14 @@ const Damage = () => {
                 damage: calculateDamagePVE(statLvATK, statLvDEFObj, move.pve_power, eff),
                 hp: statLvSTAObj,
                 currPoke: form,
-                objPoke: formObj
+                objPoke: formObj,
+                type: statType,
+                typeObj: statTypeObj
             }))
         } else {
             enqueueSnackbar('Please select move for pokémon!', { variant: 'error' });
         }
-    }, [enqueueSnackbar, enableFriend, battleState, move, form, formObj, statLvATK, statLvDEFObj, statLvSTAObj, findStabType]);
+    }, [enqueueSnackbar, enableFriend, battleState, move, form, formObj, statLvATK, statLvDEFObj, statLvSTAObj, findStabType, statType, statTypeObj]);
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);

@@ -1,9 +1,10 @@
-import { useCallback } from 'react';
+import { Fragment, useCallback } from 'react';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import atk_logo from '../../../assets/attack.png';
 import sta_logo from '../../../assets/stamina.png';
+import APIService from '../../../services/API.service';
 
 const labels = {
     0: 'Normal',
@@ -30,8 +31,20 @@ const DamageTable = (props) => {
                     <tbody>
                         <tr className="center"><td className="table-sub-header" colSpan="2">Battle Result</td></tr>
                         <tr>
-                            <td>Attack to</td>
-                            <td>{props.result.objPoke ? splitAndCapitalize(props.result.objPoke.form.pokemon.name, "-") : "-"}</td>
+                            <td>Attacker</td>
+                            <td>{props.result.objPoke ?
+                            <Fragment>
+                                {props.result.type === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}></img>}
+                                {props.result.type === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}></img>}
+                            {splitAndCapitalize(props.result.currPoke.form.pokemon.name, "-")}</Fragment> : "-"}</td>
+                        </tr>
+                        <tr>
+                            <td>Target</td>
+                            <td>{props.result.objPoke ?
+                            <Fragment>
+                            {props.result.typeObj === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}></img>}
+                            {props.result.typeObj === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}></img>}
+                            {splitAndCapitalize(props.result.objPoke.form.pokemon.name, "-")}</Fragment> : "-"}</td>
                         </tr>
                         <tr>
                             <td>Move name</td>

@@ -413,3 +413,62 @@ export const calculateDamagePVE = (atk, defObj, power, eff) => {
     const modifier = isStab * isWb * isFrind * isDogde * isCharge * isMega * isTrainer * eff.effective;
     return Math.floor(0.5 * power * (atk/defObj) * modifier) + 1
 }
+
+export const getBarCharge = (isRaid, energy) => {
+    if (isRaid) return Math.ceil(100 / energy);
+    else return energy > 50 ? 1 : 2;
+}
+
+export const calculateAvgDPS = (fmove, cmove, Def, HP, bar, specific, FDmgenemy, CDmgenemy) => {
+    const FDmg = fmove.pvp_power;
+    const CDmg = cmove.pvp_power;
+    const FE = Math.abs(fmove.pvp_energy);
+    const CE = Math.abs(cmove.pvp_energy);
+    const FDur = fmove.durationMs/1000;
+    const CDur = cmove.durationMs/1000;
+    const CDWS = cmove.damageWindowStartMs/1000;
+
+    const FDPS = FDmg/FDur;
+    const FEPS = FE/FDur;
+    const CDPS = CDmg/CDur;
+
+    let CEPS;
+    let x = 0.5*CE+0.5*FE;
+    let y = 900/Def;
+    if (specific) {
+        let λ;
+        if (bar === 1) λ = 3;
+        else if (bar === 2) λ = 1.5;
+        else if (bar === 3) λ = 1;
+        x = 0.5*CE+0.5*FE+0.5*λ*FDmgenemy+CDmgenemy*λ+1
+        y = 900/Def
+    }
+    if (bar === 1) CEPS = (CE+0.5*FE+0.5*y*CDWS)/CDur;
+    else CEPS = CE/CDur;
+
+    const DPS0 = (FDPS*CEPS+CDPS*FEPS)/(CEPS+FEPS);
+
+    const DPS = DPS0 + (CDPS-FDPS)/(CEPS+FEPS) * ((0.5-x)/HP) * y;
+    return DPS;
+}
+
+export const calculateTDO = (fmove, cmove, ATK, DEF, STA, HP, STABF, STABC) => {
+    const FPow = fmove.pvp_power;
+    const CPow = cmove.pvp_power;
+    const FE = Math.abs(fmove.pvp_energy);
+    const CE = Math.abs(cmove.pvp_energy);
+    const FDur = fmove.durationMs/1000;
+    const CDur = cmove.durationMs/1000;
+    const CDWS = cmove.damageWindowStartMs/1000;
+
+    const FDmg = (((1/2)*FPow*(ATK+15)*STABF)/200)+(1/2)
+    const CDmg = (((1/2)*CPow*(ATK+15)*STABC)/200)+(1/2)
+
+    const nFPC = ((CE*DEF)-(965*CDur))/((FE*DEF)+(965*FDur))
+    const nC = ((0.0005*STA*DEF)-((1/2)*FDur*nFPC)-((1/2)*CDWS))/(CDur+nFPC*FDur)
+
+    const DPSsimple = (CDmg+nFPC*FDmg)/(CDur+nFPC*FDur)
+    const DPS = ((nC*DPSsimple)+((1/2)*(FDmg/FDur)))/(nC+(1/2))
+    const TDO = DPS*(HP+14)*(DEF+14)
+    return TDO;
+}
