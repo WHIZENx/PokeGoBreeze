@@ -103,8 +103,41 @@ const Find = (props) => {
 
     return (
         <div className="container element-top">
-            <h1 id ="main" className='center'>Pokémon GO Tools</h1>
+            <h1 id ="main" className='center' style={{marginBottom: 15}}>{props.title ? props.title : "Pokémon GO Tools"}</h1>
             <div className="row search-container">
+            {props.swap ?
+                <Fragment>
+                <div className="col d-flex justify-content-center center">
+                    <div>
+                    { pokeList.length > 0 && dataPri && stats &&
+                        <Fragment>
+                            <Tools setForm={props.setForm} count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={props.clearStats} onSetPrev={decId} onSetNext={incId} setUrlEvo={props.setUrlEvo}/>
+                        </Fragment>
+                    }
+                    </div>
+                </div>
+                <div className="col d-flex justify-content-center" style={{height: pokemonListFilter.length*cardHeight+80, maxHeight: cardHeight*pageCardScroll+80}}>
+                    <div className="btn-group-search">
+                        <input type="text" className="form-control" aria-label="search" aria-describedby="input-search" placeholder="Enter name or ID"
+                        value={searchTerm} onInput={e => setSearchTerm(e.target.value)}></input>
+                    </div>
+                    <div className="result-tools">
+                        <ul ref={searchResult}
+                            onScroll={listenScrollEvent.bind(this)}
+                            style={pokemonListFilter.length < pageCardScroll ? {height: pokemonListFilter.length*cardHeight, overflowY: 'hidden'} : {height: cardHeight*pageCardScroll, overflowY: 'scroll'}}>
+                            {pokemonListFilter.map((value, index) => (
+                                <li style={{height: cardHeight}} className={"container card-pokemon "+(value.id===id ? "selected": "")} key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
+                                    <b>#{value.id}</b>
+                                    <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}></img>
+                                    {value.name}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+                </Fragment>
+            :
+                <Fragment>
                 <div className="col d-flex justify-content-center" style={{height: pokemonListFilter.length*cardHeight+80, maxHeight: cardHeight*pageCardScroll+80}}>
                     <div className="btn-group-search">
                         <input type="text" className="form-control" aria-label="search" aria-describedby="input-search" placeholder="Enter name or ID"
@@ -128,11 +161,13 @@ const Find = (props) => {
                     <div>
                     { pokeList.length > 0 && dataPri && stats &&
                         <Fragment>
-                            <Tools count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={props.clearStats} onSetPrev={decId} onSetNext={incId} setUrlEvo={props.setUrlEvo}/>
+                            <Tools setForm={props.setForm} count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats} onHandleSetStats={handleSetStats} onClearArrStats={props.clearStats} onSetPrev={decId} onSetNext={incId} setUrlEvo={props.setUrlEvo}/>
                         </Fragment>
                     }
                     </div>
                 </div>
+                </Fragment>
+            }
             </div>
         </div>
     )

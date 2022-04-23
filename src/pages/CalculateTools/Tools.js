@@ -42,7 +42,6 @@ const Tools = (props) => {
         if (isDefault) {
             setCurrForm(isDefault);
             setPokeID(isDefault.form.id);
-
         }
         else {
             setCurrForm(formDefault[0]);
@@ -131,7 +130,7 @@ const Tools = (props) => {
                     </div>
                 }
             </div>
-            <FormTools id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
+            <FormTools setForm={props.setForm} id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
         </Fragment>
     )
 }

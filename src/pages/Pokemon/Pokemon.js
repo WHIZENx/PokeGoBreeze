@@ -23,8 +23,6 @@ const Pokemon = (props) => {
     const [dataPri, setDataPri] = useState(null);
 
     const [released, setReleased] = useState(null);
-    const [typeEffective, setTypeEffective] = useState(null);
-    const [weatherEffective, setWeatherEffective] = useState(null);
     const [data, setData] = useState(null);
     const [stats, setStats] = useState(null);
     const [pokeRatio, setPokeRatio] = useState(null);
@@ -110,14 +108,6 @@ const Pokemon = (props) => {
             APIService.getPokeJSON('released_pokemon.json')
             .then(res => {
                 setReleased(res.data);
-                return APIService.getPokeJSON('type_effectiveness.json');
-            })
-            .then(res => {
-                setTypeEffective(res.data);
-                return APIService.getPokeJSON('weather_boosts.json');
-            })
-            .then(res => {
-                setWeatherEffective(res.data);
             })
             .finally(initialize.current = true);
         } else {
@@ -165,8 +155,6 @@ const Pokemon = (props) => {
                                     pokemonRaito={pokeRatio}
                                     formList={formList}
                                     ratio={pokeRatio}
-                                    typeEffective={typeEffective}
-                                    weatherEffective={weatherEffective}
                                     stats={stats}
                                     species={data}
                                     onSetIDPoke={props.onSetIDPoke}/>

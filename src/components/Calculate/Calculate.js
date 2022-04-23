@@ -1,4 +1,5 @@
 import data from "../../data/cp_multiplier.json";
+import typeEffective from "../../data/type_effectiveness.json";
 
 // Thank calculate algorithm from pokemongohub.net
 export const calBaseATK = (stats, nerf) => {
@@ -259,6 +260,12 @@ export const calculateStatsBettle = (base, iv, level, addition) => {
     return Math.floor(result)
 }
 
+export const calculateStatsBettlePure = (base, iv, level, addition) => {
+    let result = (base+iv)*data.find(item => item.level === level).multiplier
+    if (addition) return result*addition
+    return result
+}
+
 export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, currCP, maxCp, type) => {
     let level = max_level;
     if (type !== "lucky") level -= 1;
@@ -373,5 +380,36 @@ export const calculateStatsByTag = (baseStats, tag) => {
         atk: atk,
         def: def,
         sta: sta,
-    }
+    };
+}
+
+const capitalize = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export const getTypeEffective = (typeMove, typesObj) => {
+    let value_effective = 1;
+    typesObj.forEach(type => {
+        value_effective *= typeEffective[typeMove][capitalize(type.type.name)];
+    });
+    return value_effective;
+}
+
+export const calculateDamagePVE = (atk, defObj, power, eff) => {
+    const isStab = eff.stab ? 1.2 : 1;
+    const isWb = eff.wb ? 1.2 : 1;
+    const isDogde = eff.dogde ? 0.25 : 1;
+    const isMega = eff.mega ? eff.stab ? 1.3 : 1.1 : 1;
+    const isTrainer = eff.trainer ? 1.3 : 1;
+    let isFrind = 1;
+    if (eff.flevel === 1) isFrind += 0.03;
+    else if (eff.flevel === 2) isFrind += 0.05;
+    else if (eff.flevel === 3) isFrind += 0.07;
+    else if (eff.flevel === 4) isFrind += 0.1;
+    let isCharge = 0.25;
+    if (eff.clevel === 1) isFrind += 0.25;
+    else if (eff.clevel === 2) isFrind += 0.5;
+    else if (eff.clevel === 3) isFrind += 0.75;
+    const modifier = isStab * isWb * isFrind * isDogde * isCharge * isMega * isTrainer * eff.effective;
+    return Math.floor(0.5 * power * (atk/defObj) * modifier) + 1
 }

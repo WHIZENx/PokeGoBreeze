@@ -13,6 +13,7 @@ import Pokemon from './pages/Pokemon/Pokemon';
 import FindTable from './pages/CalculateTools/FindTable/FindTable';
 import Calculate from './pages/CalculateTools/Calculate/Calculate';
 import StatsTable from './pages/Table/Stats';
+import Damage from './pages/Battle/Damage/Damage';
 
 const App = () => {
 
@@ -35,6 +36,7 @@ const App = () => {
               <Route path="/calculate-cp-iv" element={<Calculate/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
               <Route path="/stats-table" element={<StatsTable/>}></Route>
+              <Route path="/damage-calculate" element={<Damage/>}></Route>
             </Routes>
             {/* <FooterComponent /> */}
           </div>

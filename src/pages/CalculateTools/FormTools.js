@@ -43,9 +43,9 @@ const FormTools = (props) => {
                 props.onSetStats("atk", formATK.attack)
                 props.onSetStats("def", formDEF.defense)
                 props.onSetStats("sta", formSTA.stamina)
+                if (props.setForm) props.setForm(props.currForm)
             }
         }
-
     }, [props, filterFormList]);
 
     return (

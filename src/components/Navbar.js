@@ -27,6 +27,9 @@ const NavbarComponent = () => {
                         <Link className="dropdown-item" to="/calculate-cp-iv">Calculate IV&CP</Link>
                     </NavDropdown>
                     <Link className="nav-link" to="/stats-table">Stats Table</Link>
+                    <NavDropdown title="Battle Simulator" id="basic-nav-dropdown">
+                        <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
+                    </NavDropdown>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

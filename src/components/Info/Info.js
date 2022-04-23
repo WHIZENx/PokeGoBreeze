@@ -3,11 +3,14 @@ import TypeEffective from "../Effective/TypeEffective";
 import WeatherTypeEffective from "../Effective/WeatherTypeEffective";
 import Type from "../Sprits/Type";
 
+import typeEffective from '../../data/type_effectiveness.json';
+import weatherEffective from '../../data/weather_boosts.json';
+
 const Info = (props) => {
 
     const getWeatherEffective = (types) => {
         let data = [];
-        Object.entries(props.weatherEffective).forEach(([key, value]) => {
+        Object.entries(weatherEffective).forEach(([key, value]) => {
             types.forEach((type) => {
                 if (value.includes(splitAndCapitalize(type.type.name)) && !data.includes(key)) data.push(key);
             });
@@ -24,7 +27,7 @@ const Info = (props) => {
             resist: [],
             neutral: []
         };
-        Object.entries(props.typeEffective).forEach(([key, value]) => {
+        Object.entries(typeEffective).forEach(([key, value]) => {
             let value_effective = 1;
             types.forEach((type) => {
                 value_effective *= value[splitAndCapitalize(type.type.name)];

@@ -96,7 +96,6 @@ const TypeRadioGroup = styled(RadioGroup)(() => ({
     '&.MuiFormGroup-root, &.MuiFormGroup-row': {
         display: 'block',
     }
-
 }));
 
 const Calculate = () => {
@@ -167,7 +166,7 @@ const Calculate = () => {
         setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
     }, [statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
 
-    console.log(urlEvo)
+    // console.log(urlEvo)
 
     return (
         <Fragment>
@@ -260,7 +259,7 @@ const Calculate = () => {
                                 <b>{statData ? statLevel : "None"}</b>
                         </div>
                         <LevelSlider
-                            aria-label="Temperature"
+                            aria-label="Level"
                             value={statLevel}
                             defaultValue={1}
                             valueLabelDisplay="off"

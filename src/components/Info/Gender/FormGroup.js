@@ -101,7 +101,7 @@ const FormGroup = (props) => {
                     </Fragment>
                 }
                 </div>
-            {dataPoke && currForm && props.typeEffective && props.weatherEffective &&
+            {dataPoke && currForm &&
             <Fragment>
                 {props.ratio.M !== 0 && props.ratio.F !== 0 ?
                 <Fragment>
@@ -118,9 +118,7 @@ const FormGroup = (props) => {
                     stats={dataPoke}/>
                 <hr className='w-100'></hr>
                 <Info data={dataPoke}
-                    currForm={currForm}
-                    typeEffective={props.typeEffective}
-                    weatherEffective={props.weatherEffective} />
+                    currForm={currForm} />
             </Fragment>
             }
             </div>
