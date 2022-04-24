@@ -166,8 +166,6 @@ const Calculate = () => {
         setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
     }, [statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
 
-    // console.log(urlEvo)
-
     return (
         <Fragment>
             <div className="container element-top">

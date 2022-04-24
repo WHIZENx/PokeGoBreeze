@@ -5,11 +5,14 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -45,
-        "pve_power": 25.0,
+        "pve_power": 60.0,
         "pve_energy": -33,
         "durationMs": 2900,
         "damageWindowStartMs": 2050,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "HYPER_BEAM",
@@ -21,7 +24,10 @@
         "pve_energy": -100,
         "durationMs": 3800,
         "damageWindowStartMs": 3300,
-        "damageWindowEndMs": 3600
+        "damageWindowEndMs": 3600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.15
     },
     {
         "name": "DARK_PULSE",
@@ -33,7 +39,10 @@
         "pve_energy": -50,
         "durationMs": 3000,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 2300
+        "damageWindowEndMs": 2300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "SLUDGE",
@@ -41,11 +50,14 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -40,
-        "pve_power": 110.0,
-        "pve_energy": -100,
-        "durationMs": 3200,
-        "damageWindowStartMs": 2000,
-        "damageWindowEndMs": 3000
+        "pve_power": 50.0,
+        "pve_energy": -33,
+        "durationMs": 2100,
+        "damageWindowStartMs": 1200,
+        "damageWindowEndMs": 1550,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "VICE_GRIP",
@@ -57,7 +69,10 @@
         "pve_energy": -33,
         "durationMs": 1900,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 1500
+        "damageWindowEndMs": 1500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.055
     },
     {
         "name": "FLAME_WHEEL",
@@ -69,7 +84,10 @@
         "pve_energy": -50,
         "durationMs": 2700,
         "damageWindowStartMs": 2100,
-        "damageWindowEndMs": 2400
+        "damageWindowEndMs": 2400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "MEGAHORN",
@@ -81,7 +99,10 @@
         "pve_energy": -100,
         "durationMs": 2200,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 1900
+        "damageWindowEndMs": 1900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.12
     },
     {
         "name": "FLAMETHROWER",
@@ -93,7 +114,10 @@
         "pve_energy": -50,
         "durationMs": 2200,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 1700
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "DIG",
@@ -105,7 +129,10 @@
         "pve_energy": -50,
         "durationMs": 4700,
         "damageWindowStartMs": 2800,
-        "damageWindowEndMs": 4500
+        "damageWindowEndMs": 4500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "CROSS_CHOP",
@@ -117,7 +144,10 @@
         "pve_energy": -50,
         "durationMs": 1500,
         "damageWindowStartMs": 800,
-        "damageWindowEndMs": 1200
+        "damageWindowEndMs": 1200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.1
     },
     {
         "name": "PSYBEAM",
@@ -129,7 +159,10 @@
         "pve_energy": -50,
         "durationMs": 3200,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "EARTHQUAKE",
@@ -141,7 +174,10 @@
         "pve_energy": -100,
         "durationMs": 3600,
         "damageWindowStartMs": 2700,
-        "damageWindowEndMs": 3500
+        "damageWindowEndMs": 3500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.1
     },
     {
         "name": "STONE_EDGE",
@@ -153,7 +189,10 @@
         "pve_energy": -100,
         "durationMs": 2300,
         "damageWindowStartMs": 700,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.5,
+        "staminaLossScalar": 0.1
     },
     {
         "name": "ICE_PUNCH",
@@ -165,7 +204,10 @@
         "pve_energy": -33,
         "durationMs": 1900,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.075
     },
     {
         "name": "HEART_STAMP",
@@ -177,7 +219,10 @@
         "pve_energy": -33,
         "durationMs": 1900,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "DISCHARGE",
@@ -189,7 +234,10 @@
         "pve_energy": -33,
         "durationMs": 2500,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "FLASH_CANNON",
@@ -201,7 +249,10 @@
         "pve_energy": -100,
         "durationMs": 2700,
         "damageWindowStartMs": 1600,
-        "damageWindowEndMs": 2500
+        "damageWindowEndMs": 2500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "DRILL_PECK",
@@ -213,7 +264,10 @@
         "pve_energy": -33,
         "durationMs": 2300,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "ICE_BEAM",
@@ -225,7 +279,10 @@
         "pve_energy": -50,
         "durationMs": 3300,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 2800
+        "damageWindowEndMs": 2800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "BLIZZARD",
@@ -233,11 +290,14 @@
         "type_move": "CHARGE",
         "pvp_power": 140.0,
         "pvp_energy": -75,
-        "pve_power": 110.0,
+        "pve_power": 130.0,
         "pve_energy": -100,
-        "durationMs": 2600,
-        "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2300
+        "durationMs": 3100,
+        "damageWindowStartMs": 1500,
+        "damageWindowEndMs": 2900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.11
     },
     {
         "name": "HEAT_WAVE",
@@ -249,7 +309,10 @@
         "pve_energy": -100,
         "durationMs": 3000,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2800
+        "damageWindowEndMs": 2800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.095
     },
     {
         "name": "AERIAL_ACE",
@@ -261,7 +324,10 @@
         "pve_energy": -33,
         "durationMs": 2400,
         "damageWindowStartMs": 1900,
-        "damageWindowEndMs": 2200
+        "damageWindowEndMs": 2200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "DRILL_RUN",
@@ -273,7 +339,10 @@
         "pve_energy": -50,
         "durationMs": 2800,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "PETAL_BLIZZARD",
@@ -285,7 +354,10 @@
         "pve_energy": -100,
         "durationMs": 2600,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2300
+        "damageWindowEndMs": 2300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "MEGA_DRAIN",
@@ -297,7 +369,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 950,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "BUG_BUZZ",
@@ -309,7 +384,10 @@
         "pve_energy": -50,
         "durationMs": 3700,
         "damageWindowStartMs": 2000,
-        "damageWindowEndMs": 3100
+        "damageWindowEndMs": 3100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "POISON_FANG",
@@ -321,7 +399,10 @@
         "pve_energy": -33,
         "durationMs": 1700,
         "damageWindowStartMs": 900,
-        "damageWindowEndMs": 1400
+        "damageWindowEndMs": 1400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.05
     },
     {
         "name": "NIGHT_SLASH",
@@ -333,7 +414,10 @@
         "pve_energy": -33,
         "durationMs": 2200,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.07
     },
     {
         "name": "BUBBLE_BEAM",
@@ -345,7 +429,10 @@
         "pve_energy": -33,
         "durationMs": 1900,
         "damageWindowStartMs": 1450,
-        "damageWindowEndMs": 1700
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "SUBMISSION",
@@ -357,7 +444,10 @@
         "pve_energy": -50,
         "durationMs": 2200,
         "damageWindowStartMs": 1800,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "LOW_SWEEP",
@@ -369,7 +459,10 @@
         "pve_energy": -33,
         "durationMs": 1900,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 1650
+        "damageWindowEndMs": 1650,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "AQUA_JET",
@@ -381,7 +474,10 @@
         "pve_energy": -33,
         "durationMs": 2600,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "AQUA_TAIL",
@@ -393,7 +489,10 @@
         "pve_energy": -33,
         "durationMs": 1900,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1650
+        "damageWindowEndMs": 1650,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "SEED_BOMB",
@@ -405,7 +504,10 @@
         "pve_energy": -33,
         "durationMs": 2100,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1900
+        "damageWindowEndMs": 1900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "PSYSHOCK",
@@ -417,7 +519,10 @@
         "pve_energy": -33,
         "durationMs": 2700,
         "damageWindowStartMs": 2000,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "ANCIENT_POWER",
@@ -429,7 +534,10 @@
         "pve_energy": -33,
         "durationMs": 3500,
         "damageWindowStartMs": 2850,
-        "damageWindowEndMs": 3100
+        "damageWindowEndMs": 3100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "ROCK_TOMB",
@@ -441,7 +549,10 @@
         "pve_energy": -50,
         "durationMs": 3200,
         "damageWindowStartMs": 2250,
-        "damageWindowEndMs": 3000
+        "damageWindowEndMs": 3000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "ROCK_SLIDE",
@@ -453,7 +564,10 @@
         "pve_energy": -50,
         "durationMs": 2700,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.075
     },
     {
         "name": "POWER_GEM",
@@ -465,7 +579,10 @@
         "pve_energy": -50,
         "durationMs": 2900,
         "damageWindowStartMs": 1950,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "SHADOW_SNEAK",
@@ -477,7 +594,10 @@
         "pve_energy": -33,
         "durationMs": 2900,
         "damageWindowStartMs": 2200,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "SHADOW_PUNCH",
@@ -489,7 +609,10 @@
         "pve_energy": -33,
         "durationMs": 1700,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 1500
+        "damageWindowEndMs": 1500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "OMINOUS_WIND",
@@ -501,7 +624,10 @@
         "pve_energy": -33,
         "durationMs": 2300,
         "damageWindowStartMs": 1850,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "SHADOW_BALL",
@@ -513,7 +639,10 @@
         "pve_energy": -50,
         "durationMs": 3000,
         "damageWindowStartMs": 2400,
-        "damageWindowEndMs": 2800
+        "damageWindowEndMs": 2800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "MAGNET_BOMB",
@@ -525,7 +654,10 @@
         "pve_energy": -33,
         "durationMs": 2800,
         "damageWindowStartMs": 2200,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "IRON_HEAD",
@@ -537,7 +669,10 @@
         "pve_energy": -50,
         "durationMs": 1900,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 1700
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "PARABOLIC_CHARGE",
@@ -549,7 +684,10 @@
         "pve_energy": -50,
         "durationMs": 2800,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 2400
+        "damageWindowEndMs": 2400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.05
     },
     {
         "name": "THUNDER_PUNCH",
@@ -561,7 +699,10 @@
         "pve_energy": -33,
         "durationMs": 1800,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 1550
+        "damageWindowEndMs": 1550,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.075
     },
     {
         "name": "THUNDER",
@@ -569,11 +710,14 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -60,
-        "pve_power": 12.0,
-        "pve_energy": 16,
-        "durationMs": 1200,
-        "damageWindowStartMs": 400,
-        "damageWindowEndMs": 900
+        "pve_power": 100.0,
+        "pve_energy": -100,
+        "durationMs": 2400,
+        "damageWindowStartMs": 1200,
+        "damageWindowEndMs": 2200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.11
     },
     {
         "name": "THUNDERBOLT",
@@ -585,7 +729,10 @@
         "pve_energy": -50,
         "durationMs": 2500,
         "damageWindowStartMs": 1800,
-        "damageWindowEndMs": 2300
+        "damageWindowEndMs": 2300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "TWISTER",
@@ -597,7 +744,10 @@
         "pve_energy": -33,
         "durationMs": 2800,
         "damageWindowStartMs": 950,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "DRAGON_PULSE",
@@ -609,7 +759,10 @@
         "pve_energy": -50,
         "durationMs": 3600,
         "damageWindowStartMs": 2150,
-        "damageWindowEndMs": 3300
+        "damageWindowEndMs": 3300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.085
     },
     {
         "name": "DRAGON_CLAW",
@@ -621,7 +774,10 @@
         "pve_energy": -33,
         "durationMs": 1700,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 1300
+        "damageWindowEndMs": 1300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "DISARMING_VOICE",
@@ -633,7 +789,10 @@
         "pve_energy": -33,
         "durationMs": 3900,
         "damageWindowStartMs": 3200,
-        "damageWindowEndMs": 3500
+        "damageWindowEndMs": 3500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "DRAINING_KISS",
@@ -645,7 +804,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 1300
+        "damageWindowEndMs": 1300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.05
     },
     {
         "name": "DAZZLING_GLEAM",
@@ -657,7 +819,10 @@
         "pve_energy": -50,
         "durationMs": 3500,
         "damageWindowStartMs": 2100,
-        "damageWindowEndMs": 3300
+        "damageWindowEndMs": 3300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "MOONBLAST",
@@ -669,7 +834,10 @@
         "pve_energy": -100,
         "durationMs": 3900,
         "damageWindowStartMs": 2200,
-        "damageWindowEndMs": 3700
+        "damageWindowEndMs": 3700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.095
     },
     {
         "name": "PLAY_ROUGH",
@@ -681,7 +849,10 @@
         "pve_energy": -50,
         "durationMs": 2900,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.1
     },
     {
         "name": "CROSS_POISON",
@@ -693,7 +864,10 @@
         "pve_energy": -33,
         "durationMs": 1500,
         "damageWindowStartMs": 900,
-        "damageWindowEndMs": 1300
+        "damageWindowEndMs": 1300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.07
     },
     {
         "name": "SLUDGE_BOMB",
@@ -705,7 +879,10 @@
         "pve_energy": -50,
         "durationMs": 2300,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "SLUDGE_WAVE",
@@ -717,7 +894,10 @@
         "pve_energy": -100,
         "durationMs": 3200,
         "damageWindowStartMs": 2000,
-        "damageWindowEndMs": 3000
+        "damageWindowEndMs": 3000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.095
     },
     {
         "name": "GUNK_SHOT",
@@ -729,7 +909,10 @@
         "pve_energy": -100,
         "durationMs": 3100,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.12
     },
     {
         "name": "BONE_CLUB",
@@ -741,7 +924,10 @@
         "pve_energy": -33,
         "durationMs": 1600,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 1400
+        "damageWindowEndMs": 1400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "BULLDOZE",
@@ -753,7 +939,10 @@
         "pve_energy": -50,
         "durationMs": 3500,
         "damageWindowStartMs": 2600,
-        "damageWindowEndMs": 3100
+        "damageWindowEndMs": 3100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "MUD_BOMB",
@@ -765,7 +954,10 @@
         "pve_energy": -33,
         "durationMs": 2300,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "SIGNAL_BEAM",
@@ -777,7 +969,10 @@
         "pve_energy": -50,
         "durationMs": 2900,
         "damageWindowStartMs": 1800,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.075
     },
     {
         "name": "X_SCISSOR",
@@ -789,7 +984,10 @@
         "pve_energy": -33,
         "durationMs": 1600,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1400
+        "damageWindowEndMs": 1400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "FLAME_CHARGE",
@@ -801,7 +999,10 @@
         "pve_energy": -33,
         "durationMs": 3800,
         "damageWindowStartMs": 2900,
-        "damageWindowEndMs": 3450
+        "damageWindowEndMs": 3450,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.05
     },
     {
         "name": "FLAME_BURST",
@@ -813,7 +1014,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.07
     },
     {
         "name": "FIRE_BLAST",
@@ -825,7 +1029,10 @@
         "pve_energy": -100,
         "durationMs": 4200,
         "damageWindowStartMs": 3100,
-        "damageWindowEndMs": 3900
+        "damageWindowEndMs": 3900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.11
     },
     {
         "name": "BRINE",
@@ -837,7 +1044,10 @@
         "pve_energy": -50,
         "durationMs": 2300,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "WATER_PULSE",
@@ -849,7 +1059,10 @@
         "pve_energy": -50,
         "durationMs": 3200,
         "damageWindowStartMs": 2200,
-        "damageWindowEndMs": 2900
+        "damageWindowEndMs": 2900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "SCALD",
@@ -857,11 +1070,14 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -50,
-        "pve_power": 50.0,
-        "pve_energy": -100,
-        "durationMs": 4700,
-        "damageWindowStartMs": 2500,
-        "damageWindowEndMs": 4600
+        "pve_power": 80.0,
+        "pve_energy": -50,
+        "durationMs": 3700,
+        "damageWindowStartMs": 1300,
+        "damageWindowEndMs": 3400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "HYDRO_PUMP",
@@ -869,11 +1085,14 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -75,
-        "pve_power": 90.0,
+        "pve_power": 130.0,
         "pve_energy": -100,
-        "durationMs": 4500,
-        "damageWindowStartMs": 2200,
-        "damageWindowEndMs": 4300
+        "durationMs": 3300,
+        "damageWindowStartMs": 900,
+        "damageWindowEndMs": 3000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.11
     },
     {
         "name": "PSYCHIC",
@@ -881,11 +1100,14 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -55,
-        "pve_power": 30.0,
-        "pve_energy": -33,
-        "durationMs": 1200,
-        "damageWindowStartMs": 400,
-        "damageWindowEndMs": 1100
+        "pve_power": 90.0,
+        "pve_energy": -50,
+        "durationMs": 2800,
+        "damageWindowStartMs": 1300,
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "PSYSTRIKE",
@@ -897,7 +1119,10 @@
         "pve_energy": -50,
         "durationMs": 2300,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.1
     },
     {
         "name": "ICY_WIND",
@@ -909,7 +1134,10 @@
         "pve_energy": -33,
         "durationMs": 3300,
         "damageWindowStartMs": 2000,
-        "damageWindowEndMs": 2800
+        "damageWindowEndMs": 2800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.055
     },
     {
         "name": "GIGA_DRAIN",
@@ -921,7 +1149,10 @@
         "pve_energy": -100,
         "durationMs": 3900,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 2200
+        "damageWindowEndMs": 2200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.075
     },
     {
         "name": "FIRE_PUNCH",
@@ -933,7 +1164,10 @@
         "pve_energy": -33,
         "durationMs": 2200,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 1900
+        "damageWindowEndMs": 1900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.075
     },
     {
         "name": "SOLAR_BEAM",
@@ -945,7 +1179,10 @@
         "pve_energy": -100,
         "durationMs": 4900,
         "damageWindowStartMs": 2700,
-        "damageWindowEndMs": 4700
+        "damageWindowEndMs": 4700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.12
     },
     {
         "name": "LEAF_BLADE",
@@ -957,7 +1194,10 @@
         "pve_energy": -33,
         "durationMs": 2400,
         "damageWindowStartMs": 1250,
-        "damageWindowEndMs": 2200
+        "damageWindowEndMs": 2200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.09
     },
     {
         "name": "POWER_WHIP",
@@ -969,7 +1209,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 1250,
-        "damageWindowEndMs": 2350
+        "damageWindowEndMs": 2350,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.12
     },
     {
         "name": "AIR_CUTTER",
@@ -981,7 +1224,10 @@
         "pve_energy": -50,
         "durationMs": 2700,
         "damageWindowStartMs": 1800,
-        "damageWindowEndMs": 2500
+        "damageWindowEndMs": 2500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "HURRICANE",
@@ -993,7 +1239,10 @@
         "pve_energy": -100,
         "durationMs": 2700,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 2400
+        "damageWindowEndMs": 2400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.11
     },
     {
         "name": "BRICK_BREAK",
@@ -1005,7 +1254,10 @@
         "pve_energy": -33,
         "durationMs": 1600,
         "damageWindowStartMs": 800,
-        "damageWindowEndMs": 1400
+        "damageWindowEndMs": 1400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.25,
+        "staminaLossScalar": 0.075
     },
     {
         "name": "SWIFT",
@@ -1017,7 +1269,10 @@
         "pve_energy": -50,
         "durationMs": 2800,
         "damageWindowStartMs": 2000,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "HORN_ATTACK",
@@ -1029,7 +1284,10 @@
         "pve_energy": -33,
         "durationMs": 1850,
         "damageWindowStartMs": 800,
-        "damageWindowEndMs": 1650
+        "damageWindowEndMs": 1650,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "STOMP",
@@ -1041,7 +1299,10 @@
         "pve_energy": -50,
         "durationMs": 1700,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 1500
+        "damageWindowEndMs": 1500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "HYPER_FANG",
@@ -1053,7 +1314,10 @@
         "pve_energy": -50,
         "durationMs": 2500,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "BODY_SLAM",
@@ -1065,7 +1329,10 @@
         "pve_energy": -33,
         "durationMs": 1900,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1700
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.085
     },
     {
         "name": "REST",
@@ -1077,7 +1344,10 @@
         "pve_energy": -33,
         "durationMs": 1900,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 1700
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0
     },
     {
         "name": "STRUGGLE",
@@ -1085,11 +1355,14 @@
         "type_move": "CHARGE",
         "pvp_power": 35.0,
         "pvp_energy": -100,
-        "pve_power": 15.0,
-        "pve_energy": 15,
-        "durationMs": 1500,
+        "pve_power": 35.0,
+        "pve_energy": -33,
+        "durationMs": 2200,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1500
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.1
     },
     {
         "name": "SCALD_BLASTOISE",
@@ -1101,7 +1374,10 @@
         "pve_energy": -100,
         "durationMs": 4700,
         "damageWindowStartMs": 2500,
-        "damageWindowEndMs": 4600
+        "damageWindowEndMs": 4600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.08
     },
     {
         "name": "HYDRO_PUMP_BLASTOISE",
@@ -1113,7 +1389,10 @@
         "pve_energy": -100,
         "durationMs": 4500,
         "damageWindowStartMs": 2200,
-        "damageWindowEndMs": 4300
+        "damageWindowEndMs": 4300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.11
     },
     {
         "name": "WRAP_GREEN",
@@ -1125,7 +1404,10 @@
         "pve_energy": -33,
         "durationMs": 2900,
         "damageWindowStartMs": 2050,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "WRAP_PINK",
@@ -1137,7 +1419,10 @@
         "pve_energy": -33,
         "durationMs": 2900,
         "damageWindowStartMs": 2050,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.06
     },
     {
         "name": "FURY_CUTTER",
@@ -1149,7 +1434,10 @@
         "pve_energy": 6,
         "durationMs": 400,
         "damageWindowStartMs": 100,
-        "damageWindowEndMs": 400
+        "damageWindowEndMs": 400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BUG_BITE",
@@ -1161,7 +1449,10 @@
         "pve_energy": 6,
         "durationMs": 500,
         "damageWindowStartMs": 250,
-        "damageWindowEndMs": 450
+        "damageWindowEndMs": 450,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BITE",
@@ -1173,7 +1464,10 @@
         "pve_energy": 4,
         "durationMs": 500,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 500
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SUCKER_PUNCH",
@@ -1185,7 +1479,10 @@
         "pve_energy": 8,
         "durationMs": 700,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 700
+        "damageWindowEndMs": 700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "DRAGON_BREATH",
@@ -1197,7 +1494,10 @@
         "pve_energy": 4,
         "durationMs": 500,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 500
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "THUNDER_SHOCK",
@@ -1209,7 +1509,10 @@
         "pve_energy": 8,
         "durationMs": 600,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 600
+        "damageWindowEndMs": 600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SPARK",
@@ -1221,7 +1524,10 @@
         "pve_energy": 9,
         "durationMs": 700,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 700
+        "damageWindowEndMs": 700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LOW_KICK",
@@ -1233,7 +1539,10 @@
         "pve_energy": 6,
         "durationMs": 600,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 600
+        "damageWindowEndMs": 600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "KARATE_CHOP",
@@ -1245,7 +1554,10 @@
         "pve_energy": 10,
         "durationMs": 800,
         "damageWindowStartMs": 600,
-        "damageWindowEndMs": 800
+        "damageWindowEndMs": 800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "EMBER",
@@ -1257,7 +1569,10 @@
         "pve_energy": 10,
         "durationMs": 1000,
         "damageWindowStartMs": 600,
-        "damageWindowEndMs": 800
+        "damageWindowEndMs": 800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WING_ATTACK",
@@ -1269,7 +1584,10 @@
         "pve_energy": 9,
         "durationMs": 800,
         "damageWindowStartMs": 550,
-        "damageWindowEndMs": 750
+        "damageWindowEndMs": 750,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PECK",
@@ -1281,7 +1599,10 @@
         "pve_energy": 10,
         "durationMs": 1000,
         "damageWindowStartMs": 450,
-        "damageWindowEndMs": 900
+        "damageWindowEndMs": 900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LICK",
@@ -1293,7 +1614,10 @@
         "pve_energy": 6,
         "durationMs": 500,
         "damageWindowStartMs": 200,
-        "damageWindowEndMs": 500
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SHADOW_CLAW",
@@ -1305,7 +1629,10 @@
         "pve_energy": 6,
         "durationMs": 700,
         "damageWindowStartMs": 250,
-        "damageWindowEndMs": 500
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "VINE_WHIP",
@@ -1317,7 +1644,10 @@
         "pve_energy": 6,
         "durationMs": 600,
         "damageWindowStartMs": 350,
-        "damageWindowEndMs": 600
+        "damageWindowEndMs": 600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "RAZOR_LEAF",
@@ -1329,7 +1659,10 @@
         "pve_energy": 7,
         "durationMs": 1000,
         "damageWindowStartMs": 600,
-        "damageWindowEndMs": 850
+        "damageWindowEndMs": 850,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MUD_SHOT",
@@ -1341,7 +1674,10 @@
         "pve_energy": 7,
         "durationMs": 600,
         "damageWindowStartMs": 350,
-        "damageWindowEndMs": 550
+        "damageWindowEndMs": 550,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ICE_SHARD",
@@ -1353,7 +1689,10 @@
         "pve_energy": 12,
         "durationMs": 1200,
         "damageWindowStartMs": 600,
-        "damageWindowEndMs": 900
+        "damageWindowEndMs": 900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FROST_BREATH",
@@ -1365,7 +1704,10 @@
         "pve_energy": 8,
         "durationMs": 900,
         "damageWindowStartMs": 450,
-        "damageWindowEndMs": 750
+        "damageWindowEndMs": 750,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "QUICK_ATTACK",
@@ -1377,7 +1719,10 @@
         "pve_energy": 10,
         "durationMs": 800,
         "damageWindowStartMs": 250,
-        "damageWindowEndMs": 550
+        "damageWindowEndMs": 550,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SCRATCH",
@@ -1389,7 +1734,10 @@
         "pve_energy": 4,
         "durationMs": 500,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 500
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TACKLE",
@@ -1401,7 +1749,10 @@
         "pve_energy": 5,
         "durationMs": 500,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 500
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POUND",
@@ -1413,7 +1764,10 @@
         "pve_energy": 6,
         "durationMs": 600,
         "damageWindowStartMs": 340,
-        "damageWindowEndMs": 540
+        "damageWindowEndMs": 540,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CUT",
@@ -1422,10 +1776,13 @@
         "pvp_power": 3.0,
         "pvp_energy": 2,
         "pve_power": 5.0,
-        "pve_energy": 8,
-        "durationMs": 600,
-        "damageWindowStartMs": 370,
-        "damageWindowEndMs": 570
+        "pve_energy": 5,
+        "durationMs": 500,
+        "damageWindowStartMs": 300,
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POISON_JAB",
@@ -1437,7 +1794,10 @@
         "pve_energy": 7,
         "durationMs": 800,
         "damageWindowStartMs": 200,
-        "damageWindowEndMs": 800
+        "damageWindowEndMs": 800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ACID",
@@ -1445,11 +1805,14 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 5,
-        "pve_power": 20.0,
-        "pve_energy": -50,
-        "durationMs": 3000,
-        "damageWindowStartMs": 2100,
-        "damageWindowEndMs": 2800
+        "pve_power": 9.0,
+        "pve_energy": 8,
+        "durationMs": 800,
+        "damageWindowStartMs": 400,
+        "damageWindowEndMs": 600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PSYCHO_CUT",
@@ -1461,7 +1824,10 @@
         "pve_energy": 8,
         "durationMs": 600,
         "damageWindowStartMs": 370,
-        "damageWindowEndMs": 570
+        "damageWindowEndMs": 570,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ROCK_THROW",
@@ -1473,7 +1839,10 @@
         "pve_energy": 7,
         "durationMs": 900,
         "damageWindowStartMs": 500,
-        "damageWindowEndMs": 800
+        "damageWindowEndMs": 800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "METAL_CLAW",
@@ -1485,7 +1854,10 @@
         "pve_energy": 7,
         "durationMs": 700,
         "damageWindowStartMs": 430,
-        "damageWindowEndMs": 630
+        "damageWindowEndMs": 630,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BULLET_PUNCH",
@@ -1497,7 +1869,10 @@
         "pve_energy": 10,
         "durationMs": 900,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 900
+        "damageWindowEndMs": 900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WATER_GUN",
@@ -1505,11 +1880,14 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 3,
-        "pve_power": 10.0,
-        "pve_energy": 6,
-        "durationMs": 1000,
+        "pve_power": 5.0,
+        "pve_energy": 5,
+        "durationMs": 500,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 500
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SPLASH",
@@ -1521,7 +1899,10 @@
         "pve_energy": 20,
         "durationMs": 1730,
         "damageWindowStartMs": 1030,
-        "damageWindowEndMs": 1230
+        "damageWindowEndMs": 1230,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WATER_GUN_BLASTOISE",
@@ -1533,7 +1914,10 @@
         "pve_energy": 6,
         "durationMs": 1000,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 500
+        "damageWindowEndMs": 500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MUD_SLAP",
@@ -1545,7 +1929,10 @@
         "pve_energy": 12,
         "durationMs": 1400,
         "damageWindowStartMs": 1150,
-        "damageWindowEndMs": 1350
+        "damageWindowEndMs": 1350,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ZEN_HEADBUTT",
@@ -1557,7 +1944,10 @@
         "pve_energy": 10,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CONFUSION",
@@ -1569,7 +1959,10 @@
         "pve_energy": 15,
         "durationMs": 1600,
         "damageWindowStartMs": 600,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POISON_STING",
@@ -1581,7 +1974,10 @@
         "pve_energy": 7,
         "durationMs": 600,
         "damageWindowStartMs": 375,
-        "damageWindowEndMs": 575
+        "damageWindowEndMs": 575,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BUBBLE",
@@ -1593,7 +1989,10 @@
         "pve_energy": 14,
         "durationMs": 1200,
         "damageWindowStartMs": 750,
-        "damageWindowEndMs": 1000
+        "damageWindowEndMs": 1000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FEINT_ATTACK",
@@ -1605,7 +2004,10 @@
         "pve_energy": 9,
         "durationMs": 900,
         "damageWindowStartMs": 750,
-        "damageWindowEndMs": 900
+        "damageWindowEndMs": 900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "STEEL_WING",
@@ -1617,7 +2019,10 @@
         "pve_energy": 6,
         "durationMs": 800,
         "damageWindowStartMs": 500,
-        "damageWindowEndMs": 800
+        "damageWindowEndMs": 800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FIRE_FANG",
@@ -1629,7 +2034,10 @@
         "pve_energy": 8,
         "durationMs": 900,
         "damageWindowStartMs": 640,
-        "damageWindowEndMs": 840
+        "damageWindowEndMs": 840,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ROCK_SMASH",
@@ -1641,7 +2049,10 @@
         "pve_energy": 10,
         "durationMs": 1300,
         "damageWindowStartMs": 550,
-        "damageWindowEndMs": 800
+        "damageWindowEndMs": 800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TRANSFORM",
@@ -1653,7 +2064,10 @@
         "pve_energy": 0,
         "durationMs": 2230,
         "damageWindowStartMs": 300,
-        "damageWindowEndMs": 700
+        "damageWindowEndMs": 700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "COUNTER",
@@ -1665,7 +2079,10 @@
         "pve_energy": 8,
         "durationMs": 900,
         "damageWindowStartMs": 700,
-        "damageWindowEndMs": 900
+        "damageWindowEndMs": 900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POWDER_SNOW",
@@ -1677,7 +2094,10 @@
         "pve_energy": 15,
         "durationMs": 1000,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1000
+        "damageWindowEndMs": 1000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CLOSE_COMBAT",
@@ -1689,7 +2109,10 @@
         "pve_energy": -100,
         "durationMs": 2300,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 2300
+        "damageWindowEndMs": 2300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "DYNAMIC_PUNCH",
@@ -1701,7 +2124,10 @@
         "pve_energy": -50,
         "durationMs": 2700,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "FOCUS_BLAST",
@@ -1713,7 +2139,10 @@
         "pve_energy": -100,
         "durationMs": 3500,
         "damageWindowStartMs": 3000,
-        "damageWindowEndMs": 3500
+        "damageWindowEndMs": 3500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "AURORA_BEAM",
@@ -1725,7 +2154,10 @@
         "pve_energy": -50,
         "durationMs": 3550,
         "damageWindowStartMs": 3350,
-        "damageWindowEndMs": 3550
+        "damageWindowEndMs": 3550,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "CHARGE_BEAM",
@@ -1737,7 +2169,10 @@
         "pve_energy": 15,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "VOLT_SWITCH",
@@ -1749,7 +2184,10 @@
         "pve_energy": 21,
         "durationMs": 1600,
         "damageWindowStartMs": 700,
-        "damageWindowEndMs": 900
+        "damageWindowEndMs": 900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WILD_CHARGE",
@@ -1761,7 +2199,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "ZAP_CANNON",
@@ -1773,7 +2214,10 @@
         "pve_energy": -100,
         "durationMs": 3700,
         "damageWindowStartMs": 3000,
-        "damageWindowEndMs": 3500
+        "damageWindowEndMs": 3500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "DRAGON_TAIL",
@@ -1785,7 +2229,10 @@
         "pve_energy": 9,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AVALANCHE",
@@ -1797,7 +2244,10 @@
         "pve_energy": -50,
         "durationMs": 2700,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2100
+        "damageWindowEndMs": 2100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "AIR_SLASH",
@@ -1809,7 +2259,10 @@
         "pve_energy": 10,
         "durationMs": 1200,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 1200
+        "damageWindowEndMs": 1200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BRAVE_BIRD",
@@ -1821,7 +2274,10 @@
         "pve_energy": -100,
         "durationMs": 2000,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "SKY_ATTACK",
@@ -1833,7 +2289,10 @@
         "pve_energy": -50,
         "durationMs": 2000,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 1700
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "SAND_TOMB",
@@ -1845,7 +2304,10 @@
         "pve_energy": -33,
         "durationMs": 4000,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 4000
+        "damageWindowEndMs": 4000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "ROCK_BLAST",
@@ -1857,7 +2319,10 @@
         "pve_energy": -33,
         "durationMs": 2100,
         "damageWindowStartMs": 1600,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "INFESTATION",
@@ -1869,7 +2334,10 @@
         "pve_energy": 14,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "STRUGGLE_BUG",
@@ -1881,7 +2349,10 @@
         "pve_energy": 15,
         "durationMs": 1500,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1500
+        "damageWindowEndMs": 1500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SILVER_WIND",
@@ -1893,7 +2364,10 @@
         "pve_energy": -33,
         "durationMs": 3700,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 3500
+        "damageWindowEndMs": 3500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "ASTONISH",
@@ -1905,7 +2379,10 @@
         "pve_energy": 14,
         "durationMs": 1100,
         "damageWindowStartMs": 700,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "HEX",
@@ -1917,7 +2394,10 @@
         "pve_energy": 16,
         "durationMs": 1200,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 1200
+        "damageWindowEndMs": 1200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "NIGHT_SHADE",
@@ -1929,7 +2409,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 2100,
-        "damageWindowEndMs": 2500
+        "damageWindowEndMs": 2500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "IRON_TAIL",
@@ -1941,7 +2424,10 @@
         "pve_energy": 7,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "GYRO_BALL",
@@ -1953,7 +2439,10 @@
         "pve_energy": -50,
         "durationMs": 3300,
         "damageWindowStartMs": 3000,
-        "damageWindowEndMs": 3300
+        "damageWindowEndMs": 3300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "HEAVY_SLAM",
@@ -1965,7 +2454,10 @@
         "pve_energy": -50,
         "durationMs": 2100,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 1900
+        "damageWindowEndMs": 1900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "FIRE_SPIN",
@@ -1977,7 +2469,10 @@
         "pve_energy": 10,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "OVERHEAT",
@@ -1989,7 +2484,10 @@
         "pve_energy": -100,
         "durationMs": 4000,
         "damageWindowStartMs": 2600,
-        "damageWindowEndMs": 3800
+        "damageWindowEndMs": 3800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "BULLET_SEED",
@@ -2001,7 +2499,10 @@
         "pve_energy": 14,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "GRASS_KNOT",
@@ -2013,7 +2514,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "ENERGY_BALL",
@@ -2025,7 +2529,10 @@
         "pve_energy": -50,
         "durationMs": 3900,
         "damageWindowStartMs": 3000,
-        "damageWindowEndMs": 3800
+        "damageWindowEndMs": 3800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "EXTRASENSORY",
@@ -2037,7 +2544,10 @@
         "pve_energy": 12,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FUTURESIGHT",
@@ -2049,7 +2559,10 @@
         "pve_energy": -100,
         "durationMs": 2700,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "MIRROR_COAT",
@@ -2061,7 +2574,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 2300,
-        "damageWindowEndMs": 2500
+        "damageWindowEndMs": 2500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "OUTRAGE",
@@ -2073,7 +2589,10 @@
         "pve_energy": -50,
         "durationMs": 3900,
         "damageWindowStartMs": 2500,
-        "damageWindowEndMs": 3700
+        "damageWindowEndMs": 3700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "SNARL",
@@ -2085,7 +2604,10 @@
         "pve_energy": 14,
         "durationMs": 1100,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1050
+        "damageWindowEndMs": 1050,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CRUNCH",
@@ -2097,7 +2619,10 @@
         "pve_energy": -33,
         "durationMs": 3200,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 3000
+        "damageWindowEndMs": 3000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "FOUL_PLAY",
@@ -2109,7 +2634,10 @@
         "pve_energy": -50,
         "durationMs": 2000,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 1900
+        "damageWindowEndMs": 1900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.04
     },
     {
         "name": "HIDDEN_POWER",
@@ -2121,7 +2649,10 @@
         "pve_energy": 15,
         "durationMs": 1500,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 1400
+        "damageWindowEndMs": 1400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TAKE_DOWN",
@@ -2133,7 +2664,10 @@
         "pve_energy": 10,
         "durationMs": 1200,
         "damageWindowStartMs": 950,
-        "damageWindowEndMs": 1100
+        "damageWindowEndMs": 1100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WATERFALL",
@@ -2145,7 +2679,10 @@
         "pve_energy": 8,
         "durationMs": 1200,
         "damageWindowStartMs": 950,
-        "damageWindowEndMs": 1100
+        "damageWindowEndMs": 1100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SURF",
@@ -2157,7 +2694,10 @@
         "pve_energy": -50,
         "durationMs": 1700,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "DRACO_METEOR",
@@ -2169,7 +2709,10 @@
         "pve_energy": -100,
         "durationMs": 3600,
         "damageWindowStartMs": 3000,
-        "damageWindowEndMs": 3500
+        "damageWindowEndMs": 3500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "DOOM_DESIRE",
@@ -2181,7 +2724,10 @@
         "pve_energy": -33,
         "durationMs": 1700,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "YAWN",
@@ -2193,7 +2739,10 @@
         "pve_energy": 15,
         "durationMs": 1700,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PSYCHO_BOOST",
@@ -2205,7 +2754,10 @@
         "pve_energy": -50,
         "durationMs": 4000,
         "damageWindowStartMs": 3500,
-        "damageWindowEndMs": 4000
+        "damageWindowEndMs": 4000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ORIGIN_PULSE",
@@ -2217,7 +2769,10 @@
         "pve_energy": -100,
         "durationMs": 1700,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PRECIPICE_BLADES",
@@ -2229,7 +2784,10 @@
         "pve_energy": -100,
         "durationMs": 1700,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PRESENT",
@@ -2241,7 +2799,10 @@
         "pve_energy": 20,
         "durationMs": 1300,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 1300
+        "damageWindowEndMs": 1300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_FIRE",
@@ -2253,7 +2814,10 @@
         "pve_energy": -33,
         "durationMs": 1600,
         "damageWindowStartMs": 1350,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_ICE",
@@ -2265,7 +2829,10 @@
         "pve_energy": -33,
         "durationMs": 1600,
         "damageWindowStartMs": 1350,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_ROCK",
@@ -2277,7 +2844,10 @@
         "pve_energy": -33,
         "durationMs": 1600,
         "damageWindowStartMs": 1350,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_WATER",
@@ -2289,7 +2859,10 @@
         "pve_energy": -33,
         "durationMs": 1600,
         "damageWindowStartMs": 1350,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FRENZY_PLANT",
@@ -2301,7 +2874,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 2145,
-        "damageWindowEndMs": 2550
+        "damageWindowEndMs": 2550,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SMACK_DOWN",
@@ -2313,7 +2889,10 @@
         "pve_energy": 8,
         "durationMs": 1200,
         "damageWindowStartMs": 800,
-        "damageWindowEndMs": 1100
+        "damageWindowEndMs": 1100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BLAST_BURN",
@@ -2321,11 +2900,14 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -50,
-        "pve_power": 120.0,
-        "pve_energy": -100,
-        "durationMs": 2000,
-        "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 2000
+        "pve_power": 110.0,
+        "pve_energy": -50,
+        "durationMs": 3300,
+        "damageWindowStartMs": 2750,
+        "damageWindowEndMs": 3200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "HYDRO_CANNON",
@@ -2337,7 +2919,10 @@
         "pve_energy": -50,
         "durationMs": 1900,
         "damageWindowStartMs": 500,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "LAST_RESORT",
@@ -2349,7 +2934,10 @@
         "pve_energy": -50,
         "durationMs": 2900,
         "damageWindowStartMs": 2700,
-        "damageWindowEndMs": 2850
+        "damageWindowEndMs": 2850,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "METEOR_MASH",
@@ -2361,7 +2949,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 2300,
-        "damageWindowEndMs": 2500
+        "damageWindowEndMs": 2500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0.05,
+        "staminaLossScalar": 0.065
     },
     {
         "name": "SKULL_BASH",
@@ -2373,7 +2964,10 @@
         "pve_energy": -100,
         "durationMs": 3100,
         "damageWindowStartMs": 1800,
-        "damageWindowEndMs": 2300
+        "damageWindowEndMs": 2300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ACID_SPRAY",
@@ -2385,7 +2979,10 @@
         "pve_energy": -50,
         "durationMs": 3000,
         "damageWindowStartMs": 2100,
-        "damageWindowEndMs": 2800
+        "damageWindowEndMs": 2800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "EARTH_POWER",
@@ -2397,7 +2994,10 @@
         "pve_energy": -50,
         "durationMs": 3600,
         "damageWindowStartMs": 2700,
-        "damageWindowEndMs": 3400
+        "damageWindowEndMs": 3400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CRABHAMMER",
@@ -2409,7 +3009,10 @@
         "pve_energy": -50,
         "durationMs": 1900,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 1750
+        "damageWindowEndMs": 1750,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LUNGE",
@@ -2421,7 +3024,10 @@
         "pve_energy": -33,
         "durationMs": 2900,
         "damageWindowStartMs": 2400,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "OCTAZOOKA",
@@ -2433,7 +3039,10 @@
         "pve_energy": -50,
         "durationMs": 2300,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MIRROR_SHOT",
@@ -2445,7 +3054,10 @@
         "pve_energy": -33,
         "durationMs": 2400,
         "damageWindowStartMs": 1800,
-        "damageWindowEndMs": 2200
+        "damageWindowEndMs": 2200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SUPER_POWER",
@@ -2457,7 +3069,10 @@
         "pve_energy": -50,
         "durationMs": 3000,
         "damageWindowStartMs": 2100,
-        "damageWindowEndMs": 2800
+        "damageWindowEndMs": 2800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FELL_STINGER",
@@ -2469,7 +3084,10 @@
         "pve_energy": -33,
         "durationMs": 2200,
         "damageWindowStartMs": 1800,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LEAF_TORNADO",
@@ -2481,7 +3099,10 @@
         "pve_energy": -33,
         "durationMs": 3100,
         "damageWindowStartMs": 2000,
-        "damageWindowEndMs": 2600
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "DRAIN_PUNCH",
@@ -2493,7 +3114,10 @@
         "pve_energy": -33,
         "durationMs": 2400,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 1500
+        "damageWindowEndMs": 1500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SHADOW_BONE",
@@ -2505,7 +3129,10 @@
         "pve_energy": -50,
         "durationMs": 2800,
         "damageWindowStartMs": 2250,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MUDDY_WATER",
@@ -2517,7 +3144,10 @@
         "pve_energy": -33,
         "durationMs": 2200,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1900
+        "damageWindowEndMs": 1900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BLAZE_KICK",
@@ -2529,7 +3159,10 @@
         "pve_energy": -33,
         "durationMs": 1200,
         "damageWindowStartMs": 450,
-        "damageWindowEndMs": 800
+        "damageWindowEndMs": 800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "RAZOR_SHELL",
@@ -2541,7 +3174,10 @@
         "pve_energy": -33,
         "durationMs": 1300,
         "damageWindowStartMs": 650,
-        "damageWindowEndMs": 1000
+        "damageWindowEndMs": 1000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POWER_UP_PUNCH",
@@ -2553,7 +3189,10 @@
         "pve_energy": -33,
         "durationMs": 2000,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 1900
+        "damageWindowEndMs": 1900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CHARM",
@@ -2565,7 +3204,10 @@
         "pve_energy": 11,
         "durationMs": 1500,
         "damageWindowStartMs": 900,
-        "damageWindowEndMs": 1200
+        "damageWindowEndMs": 1200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "GIGA_IMPACT",
@@ -2577,7 +3219,10 @@
         "pve_energy": -100,
         "durationMs": 4700,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 2400
+        "damageWindowEndMs": 2400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FRUSTRATION",
@@ -2589,7 +3234,10 @@
         "pve_energy": -33,
         "durationMs": 2000,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 1800
+        "damageWindowEndMs": 1800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "RETURN",
@@ -2601,7 +3249,10 @@
         "pve_energy": -33,
         "durationMs": 700,
         "damageWindowStartMs": 100,
-        "damageWindowEndMs": 350
+        "damageWindowEndMs": 350,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SYNCHRONOISE",
@@ -2613,7 +3264,10 @@
         "pve_energy": -50,
         "durationMs": 2600,
         "damageWindowStartMs": 850,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LOCK_ON",
@@ -2625,7 +3279,10 @@
         "pve_energy": 6,
         "durationMs": 300,
         "damageWindowStartMs": 170,
-        "damageWindowEndMs": 300
+        "damageWindowEndMs": 300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "THUNDER_FANG",
@@ -2637,7 +3294,10 @@
         "pve_energy": 16,
         "durationMs": 1200,
         "damageWindowStartMs": 400,
-        "damageWindowEndMs": 900
+        "damageWindowEndMs": 900,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ICE_FANG",
@@ -2649,7 +3309,10 @@
         "pve_energy": 20,
         "durationMs": 1500,
         "damageWindowStartMs": 400,
-        "damageWindowEndMs": 1000
+        "damageWindowEndMs": 1000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SACRED_SWORD",
@@ -2661,7 +3324,10 @@
         "pve_energy": -33,
         "durationMs": 1200,
         "damageWindowStartMs": 500,
-        "damageWindowEndMs": 1000
+        "damageWindowEndMs": 1000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FLYING_PRESS",
@@ -2673,7 +3339,10 @@
         "pve_energy": -50,
         "durationMs": 2300,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AURA_SPHERE",
@@ -2685,7 +3354,10 @@
         "pve_energy": -50,
         "durationMs": 1800,
         "damageWindowStartMs": 1000,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PAYBACK",
@@ -2697,7 +3369,10 @@
         "pve_energy": -100,
         "durationMs": 2200,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ROCK_WRECKER",
@@ -2709,7 +3384,10 @@
         "pve_energy": -50,
         "durationMs": 3600,
         "damageWindowStartMs": 2000,
-        "damageWindowEndMs": 2700
+        "damageWindowEndMs": 2700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AEROBLAST",
@@ -2717,11 +3395,14 @@
         "type_move": "CHARGE",
         "pvp_power": 170.0,
         "pvp_energy": -75,
-        "pve_power": 225.0,
+        "pve_power": 180.0,
         "pve_energy": -100,
         "durationMs": 3400,
         "damageWindowStartMs": 3200,
-        "damageWindowEndMs": 3400
+        "damageWindowEndMs": 3400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TECHNO_BLAST_NORMAL",
@@ -2733,7 +3414,10 @@
         "pve_energy": -100,
         "durationMs": 2000,
         "damageWindowStartMs": 1600,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0
     },
     {
         "name": "TECHNO_BLAST_BURN",
@@ -2745,7 +3429,10 @@
         "pve_energy": -100,
         "durationMs": 2000,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0
     },
     {
         "name": "TECHNO_BLAST_CHILL",
@@ -2757,7 +3444,10 @@
         "pve_energy": -100,
         "durationMs": 2000,
         "damageWindowStartMs": 1400,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0
     },
     {
         "name": "TECHNO_BLAST_WATER",
@@ -2769,7 +3459,10 @@
         "pve_energy": -100,
         "durationMs": 2000,
         "damageWindowStartMs": 1500,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0
     },
     {
         "name": "TECHNO_BLAST_SHOCK",
@@ -2781,7 +3474,10 @@
         "pve_energy": -100,
         "durationMs": 2000,
         "damageWindowStartMs": 1600,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0
     },
     {
         "name": "FLY",
@@ -2793,7 +3489,10 @@
         "pve_energy": -50,
         "durationMs": 1800,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1500
+        "damageWindowEndMs": 1500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "V_CREATE",
@@ -2805,7 +3504,10 @@
         "pve_energy": -33,
         "durationMs": 2800,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2500
+        "damageWindowEndMs": 2500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LEAF_STORM",
@@ -2817,7 +3519,10 @@
         "pve_energy": -100,
         "durationMs": 2500,
         "damageWindowStartMs": 1100,
-        "damageWindowEndMs": 1250
+        "damageWindowEndMs": 1250,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TRI_ATTACK",
@@ -2829,7 +3534,10 @@
         "pve_energy": -50,
         "durationMs": 2500,
         "damageWindowStartMs": 1300,
-        "damageWindowEndMs": 2400
+        "damageWindowEndMs": 2400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "GUST",
@@ -2841,7 +3549,10 @@
         "pve_energy": 20,
         "durationMs": 2000,
         "damageWindowStartMs": 900,
-        "damageWindowEndMs": 2000
+        "damageWindowEndMs": 2000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "INCINERATE",
@@ -2853,7 +3564,10 @@
         "pve_energy": 20,
         "durationMs": 2300,
         "damageWindowStartMs": 500,
-        "damageWindowEndMs": 2300
+        "damageWindowEndMs": 2300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FEATHER_DANCE",
@@ -2865,7 +3579,10 @@
         "pve_energy": -50,
         "durationMs": 2800,
         "damageWindowStartMs": 1700,
-        "damageWindowEndMs": 2500
+        "damageWindowEndMs": 2500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_NORMAL",
@@ -2877,7 +3594,10 @@
         "pve_energy": -33,
         "durationMs": 1600,
         "damageWindowStartMs": 1350,
-        "damageWindowEndMs": 1600
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PSYCHIC_FANGS",
@@ -2889,7 +3609,10 @@
         "pve_energy": -33,
         "durationMs": 1200,
         "damageWindowStartMs": 400,
-        "damageWindowEndMs": 1100
+        "damageWindowEndMs": 1100,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MAGICAL_LEAF",
@@ -2901,7 +3624,10 @@
         "pve_energy": 16,
         "durationMs": 1400,
         "damageWindowStartMs": 750,
-        "damageWindowEndMs": 1300
+        "damageWindowEndMs": 1300,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SACRED_FIRE",
@@ -2909,11 +3635,14 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -65,
-        "pve_power": 155.0,
+        "pve_power": 120.0,
         "pve_energy": -100,
         "durationMs": 2600,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 2400
+        "damageWindowEndMs": 2400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ICICLE_SPEAR",
@@ -2925,7 +3654,10 @@
         "pve_energy": -33,
         "durationMs": 2200,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 1800
+        "damageWindowEndMs": 1800,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AEROBLAST_PLUS",
@@ -2933,11 +3665,14 @@
         "type_move": "CHARGE",
         "pvp_power": 170.0,
         "pvp_energy": -75,
-        "pve_power": 225.0,
+        "pve_power": 200.0,
         "pve_energy": -100,
         "durationMs": 3400,
         "damageWindowStartMs": 3200,
-        "damageWindowEndMs": 3400
+        "damageWindowEndMs": 3400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AEROBLAST_PLUS_PLUS",
@@ -2949,7 +3684,10 @@
         "pve_energy": -100,
         "durationMs": 3400,
         "damageWindowStartMs": 3200,
-        "damageWindowEndMs": 3400
+        "damageWindowEndMs": 3400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SACRED_FIRE_PLUS",
@@ -2957,11 +3695,14 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -65,
-        "pve_power": 155.0,
+        "pve_power": 135.0,
         "pve_energy": -100,
         "durationMs": 2600,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 2400
+        "damageWindowEndMs": 2400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SACRED_FIRE_PLUS_PLUS",
@@ -2973,7 +3714,10 @@
         "pve_energy": -100,
         "durationMs": 2600,
         "damageWindowStartMs": 1200,
-        "damageWindowEndMs": 2400
+        "damageWindowEndMs": 2400,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ACROBATICS",
@@ -2985,6 +3729,9 @@
         "pve_energy": -100,
         "durationMs": 2000,
         "damageWindowStartMs": 600,
-        "damageWindowEndMs": 1700
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     }
 ]

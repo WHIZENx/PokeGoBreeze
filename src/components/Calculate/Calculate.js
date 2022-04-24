@@ -315,7 +315,7 @@ export const typeCostPowerUp = (type) => {
             candy: 1.2,
             bonus: {
                 atk : 1.2,
-                def : 0.8
+                def : 0.83333331
             },
             type: type,
         }
@@ -395,21 +395,26 @@ export const getTypeEffective = (typeMove, typesObj) => {
     return value_effective;
 }
 
+const getMultiFriendshipMulti = (level) => {
+    let dmg = 1;
+    if (level === 1) dmg += 0.03;
+    else if (level === 2) dmg += 0.05;
+    else if (level === 3) dmg += 0.07;
+    else if (level === 4) dmg += 0.1;
+    return dmg;
+}
+
 export const calculateDamagePVE = (atk, defObj, power, eff) => {
     const isStab = eff.stab ? 1.2 : 1;
     const isWb = eff.wb ? 1.2 : 1;
     const isDogde = eff.dogde ? 0.25 : 1;
     const isMega = eff.mega ? eff.stab ? 1.3 : 1.1 : 1;
     const isTrainer = eff.trainer ? 1.3 : 1;
-    let isFrind = 1;
-    if (eff.flevel === 1) isFrind += 0.03;
-    else if (eff.flevel === 2) isFrind += 0.05;
-    else if (eff.flevel === 3) isFrind += 0.07;
-    else if (eff.flevel === 4) isFrind += 0.1;
+    const isFrind = getMultiFriendshipMulti(eff.flevel);
     let isCharge = 0.25;
-    if (eff.clevel === 1) isFrind += 0.25;
-    else if (eff.clevel === 2) isFrind += 0.5;
-    else if (eff.clevel === 3) isFrind += 0.75;
+    if (eff.clevel === 1) isCharge += 0.25;
+    else if (eff.clevel === 2) isCharge += 0.5;
+    else if (eff.clevel === 3) isCharge += 0.75;
     const modifier = isStab * isWb * isFrind * isDogde * isCharge * isMega * isTrainer * eff.effective;
     return Math.floor(0.5 * power * (atk/defObj) * modifier) + 1
 }
@@ -419,56 +424,81 @@ export const getBarCharge = (isRaid, energy) => {
     else return energy > 50 ? 1 : 2;
 }
 
-export const calculateAvgDPS = (fmove, cmove, Def, HP, bar, specific, FDmgenemy, CDmgenemy) => {
-    const FDmg = fmove.pvp_power;
-    const CDmg = cmove.pvp_power;
-    const FE = Math.abs(fmove.pvp_energy);
-    const CE = Math.abs(cmove.pvp_energy);
+const DEFAULT_POKEMON_DEF_OBJ = 160;
+const DEFAULT_POKEMON_SHADOW = false;
+const DEFAULT_WEATHER_BOOSTS = false;
+const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
+
+const DEFAULT_ENERYGY_PER_HP_LOST = 0.5;
+const DEFAULT_DAMAGE_MULTIPLY = 0.5;
+const DEFAULT_DAMAGE_CONST = 1;
+
+export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, options, shadow) => {
+    const FPow = fmove.pve_power;
+    const CPow = cmove.pve_power;
+    const FE = Math.abs(fmove.pve_energy);
+    const CE = Math.abs(cmove.pve_energy);
     const FDur = fmove.durationMs/1000;
     const CDur = cmove.durationMs/1000;
     const CDWS = cmove.damageWindowStartMs/1000;
 
-    const FDPS = FDmg/FDur;
-    const FEPS = FE/FDur;
-    const CDPS = CDmg/CDur;
+    let FMulti = (typePoke.includes(capitalize(fmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
+    let CMulti = (typePoke.includes(capitalize(cmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
 
-    let CEPS;
+    let y,FDmg,CDmg,FDmgBase,CDmgBase
+    if (options === undefined) {
+        FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(DEFAULT_POKEMON_SHADOW ? 1.2 : 1)*(DEFAULT_WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL)
+        CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(DEFAULT_POKEMON_SHADOW ? 1.2 : 1)*(DEFAULT_WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL)
+
+        FDmg = Math.floor(FDmgBase*Atk/DEFAULT_POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST
+        CDmg = Math.floor(CDmgBase*Atk/DEFAULT_POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST
+
+        y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? 0.83333331 : 1));
+    } else {
+        FDmgBase = options.DAMAGE_MULTIPLY*FPow*FMulti*(shadow ? 1.2 : 1)*(options.WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(options.POKEMON_FRIEND_LEVEL)
+        CDmgBase = options.DAMAGE_MULTIPLY*CPow*CMulti*(shadow ? 1.2 : 1)*(options.WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(options.POKEMON_FRIEND_LEVEL)
+
+        FDmg = Math.floor(FDmgBase*Atk/options.POKEMON_DEF_OBJ)+options.DAMAGE_CONST
+        CDmg = Math.floor(CDmgBase*Atk/options.POKEMON_DEF_OBJ)+options.DAMAGE_CONST
+
+        y = 900/(Def*(shadow ? 0.83333331 : 1));
+    }
+
+    const FDPS = FDmg/(FDur+(options && options.delay ? options.delay.ftime : 0));
+    const CDPS = CDmg/(CDur+(options && options.delay ? options.delay.ctime : 0));
+
+    const FEPS = FE/(FDur+(options && options.delay ? options.delay.ftime : 0));
+
+    let CEPSM;
     let x = 0.5*CE+0.5*FE;
-    let y = 900/Def;
-    if (specific) {
+
+    if (bar === 1) CEPSM = 0.5*FE+0.5*y*CDWS;
+    else CEPSM = 0;
+
+    const CEPS = (CE+CEPSM)/(CDur+(options && options.delay ? options.delay.ctime : 0));
+
+    if (options !== undefined && options.specific) {
         let λ;
         if (bar === 1) λ = 3;
         else if (bar === 2) λ = 1.5;
         else if (bar === 3) λ = 1;
-        x = 0.5*CE+0.5*FE+0.5*λ*FDmgenemy+CDmgenemy*λ+1
-        y = 900/Def
+        x = 0.5*CE+0.5*FE+0.5*λ*options.FDmgenemy+options.CDmgenemy*λ+1
     }
-    if (bar === 1) CEPS = (CE+0.5*FE+0.5*y*CDWS)/CDur;
-    else CEPS = CE/CDur;
 
     const DPS0 = (FDPS*CEPS+CDPS*FEPS)/(CEPS+FEPS);
 
-    const DPS = DPS0 + (CDPS-FDPS)/(CEPS+FEPS) * ((0.5-x)/HP) * y;
-    return DPS;
+    let DPS;
+    if (FDPS > CDPS) DPS = DPS0;
+    else DPS = Math.max(0, DPS0+((CDPS-FDPS)/(CEPS+FEPS)*(DEFAULT_ENERYGY_PER_HP_LOST-(x/HP))*y))
+    return Math.max(FDPS, DPS);
 }
 
-export const calculateTDO = (fmove, cmove, ATK, DEF, STA, HP, STABF, STABC) => {
-    const FPow = fmove.pvp_power;
-    const CPow = cmove.pvp_power;
-    const FE = Math.abs(fmove.pvp_energy);
-    const CE = Math.abs(cmove.pvp_energy);
-    const FDur = fmove.durationMs/1000;
-    const CDur = cmove.durationMs/1000;
-    const CDWS = cmove.damageWindowStartMs/1000;
-
-    const FDmg = (((1/2)*FPow*(ATK+15)*STABF)/200)+(1/2)
-    const CDmg = (((1/2)*CPow*(ATK+15)*STABC)/200)+(1/2)
-
-    const nFPC = ((CE*DEF)-(965*CDur))/((FE*DEF)+(965*FDur))
-    const nC = ((0.0005*STA*DEF)-((1/2)*FDur*nFPC)-((1/2)*CDWS))/(CDur+nFPC*FDur)
-
-    const DPSsimple = (CDmg+nFPC*FDmg)/(CDur+nFPC*FDur)
-    const DPS = ((nC*DPSsimple)+((1/2)*(FDmg/FDur)))/(nC+(1/2))
-    const TDO = DPS*(HP+14)*(DEF+14)
-    return TDO;
+export const calculateTDO = (Def, HP, dps, shadow) => {
+    let y;
+    if (shadow === undefined) {
+        y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? 0.83333331 : 1));
+    } else {
+        y = 900/(Def*(shadow ? 0.83333331 : 1));
+    }
+    return HP/y*dps
 }

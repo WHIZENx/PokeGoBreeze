@@ -81,7 +81,6 @@ const Home = () => {
                 // const result = await Promise.all([...Array(startPokemon).keys()].map(async (n) => (await APIService.getPokeInfo(n+1)).data));
                 // let result = Object.values((await APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')).data);
                 let result = Object.values(pokemonData);
-                result = result.slice(0, result.length-3);
                 result = result.map(item => {
                     let stats = calculateStatsByTag(item.baseStats, item.slug);
                     return {
@@ -99,7 +98,8 @@ const Home = () => {
                         maxCP_40: calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 40),
                         maxCP_50: calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50),
                     }
-                });
+                }).sort((a,b) => a.id-b.id);
+                result.shift();
                 pokeList.push(...result);
                 setDataList(result);
             }
@@ -257,8 +257,8 @@ const Home = () => {
                             <StyledTableRow>
                                 <StyledTableCell align="center" component="td" colSpan={7} sx={{height: window.innerHeight/2}}>
                                     <div className='loading-group'>
-                                        <img className="loading" width={40} height={40} alt='img-pokemon' src={loading}></img>
-                                        <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
+                                        <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}></img>
+                                        <span className='caption text-black' style={{fontSize: 20}}><b>Loading...</b></span>
                                     </div>
                                 </StyledTableCell>
                             </StyledTableRow>

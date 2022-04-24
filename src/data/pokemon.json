@@ -75337,9 +75337,9 @@
   },
   "rockruffdusk": {
     "num": 744,
-    "name": "Rockruff",
+    "name": "Rockruff Dusk",
     "alias": "rockruffdusk",
-    "slug": "rockruff",
+    "slug": "rockruffdusk",
     "sprite": "rockruff",
     "types": ["Rock"],
     "genderRatio": {
@@ -75401,10 +75401,10 @@
   },
   "gastrodoneast": {
     "num": 423,
-    "name": "Gastrodon",
+    "name": "Gastrodon East",
     "alias": "gastrodoneast",
     "slug": "gastrodon",
-    "sprite": "gastrodon",
+    "sprite": "gastrodon-east",
     "types": ["Water", "Ground"],
     "genderRatio": {
       "M": 0,

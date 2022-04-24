@@ -29,7 +29,7 @@ const NavbarComponent = () => {
                     <Link className="nav-link" to="/stats-table">Stats Table</Link>
                     <NavDropdown title="Battle Simulator" id="basic-nav-dropdown">
                         <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
-                        <Link className="dropdown-item" to="/dps-table">Dps Table</Link>
+                        <Link className="dropdown-item" to="/dps-table">Dps&Tdo Table</Link>
                     </NavDropdown>
                 </Nav>
             </Navbar.Collapse>
