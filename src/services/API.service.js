@@ -7,6 +7,7 @@ const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_as
 const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
 const POKE_ICON_SPRITES_API_URL = 'https://raw.githubusercontent.com/itsjavi/pokemon-assets/main/assets/img/pokemon/';
+const POKE_ICON_SPRITES_TYPE_API_URL = 'https://raw.githubusercontent.com/apavlinovic/pokemon-go-imagery/master/Sprite/'
 const POKE_SPRITES_FULL_API_URL = 'https://assets.pokemon.com/assets/cms2/img/pokedex/detail/';
 
 class APIService {
@@ -54,6 +55,11 @@ class APIService {
     getTypeSprite(type) {
         if (type.toLowerCase() === "unknown") return this.getPokeSprite(0);
         return `${POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
+    }
+
+    getTypeHqSprite(type) {
+        if (type === "Fighting") type = "Fight";
+        return `${POKE_ICON_SPRITES_TYPE_API_URL}Badge_Type_${type}_01.png`;
     }
 
     getWeatherSprite(weather) {

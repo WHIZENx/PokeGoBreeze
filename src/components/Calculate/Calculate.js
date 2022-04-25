@@ -420,8 +420,11 @@ export const calculateDamagePVE = (atk, defObj, power, eff) => {
 }
 
 export const getBarCharge = (isRaid, energy) => {
-    if (isRaid) return Math.ceil(100 / energy);
-    else return energy > 50 ? 1 : 2;
+    if (isRaid) {
+        const bar = Math.ceil(100 / Math.abs(energy))
+        return bar > 3 ? 3 : bar;
+    }
+    else return Math.abs(energy) > 50 ? 1 : 2;
 }
 
 const DEFAULT_POKEMON_DEF_OBJ = 160;

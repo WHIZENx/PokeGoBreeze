@@ -15,6 +15,7 @@ import Calculate from './pages/CalculateTools/Calculate/Calculate';
 import StatsTable from './pages/Table/Stats';
 import Damage from './pages/Battle/Damage/Damage';
 import DpsTable from './pages/Battle/DpsSheet/DpsTable';
+import Move from './pages/Move/Move';
 
 const App = () => {
 
@@ -36,6 +37,7 @@ const App = () => {
               <Route path="/find-cp-iv" element={<FindTable/>}></Route>
               <Route path="/calculate-cp-iv" element={<Calculate/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
+              <Route path="/move/:id" element={<Move/>}></Route>
               <Route path="/stats-table" element={<StatsTable/>}></Route>
               <Route path="/damage-calculate" element={<Damage/>}></Route>
               <Route path="/dps-table" element={<DpsTable/>}></Route>

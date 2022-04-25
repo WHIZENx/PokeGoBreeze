@@ -1,0 +1,25 @@
+.head-box {
+    height: 60px;
+    margin-top: 1rem;
+    margin-left: 2%;
+}
+
+.move-img-desc {
+    min-width: 100px !important;
+    margin-right: 15px;
+}
+
+.move-img-desc img {
+    min-width: 100px;
+    border: 2px solid lightgray;
+    padding: 10px;
+}
+
+.bar-charge {
+    margin-right: 10px;
+    border-radius: 5px;
+    width: 50px;
+    height: 10px;
+    background-color: rgb(15, 245, 253);
+    box-shadow: 0 0 1.5px 1.5px rgba(0, 247, 255, 0.5);
+}

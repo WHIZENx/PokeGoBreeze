@@ -95,7 +95,6 @@ const Pokemon = (props) => {
     }, [enqueueSnackbar, getRatioGender, fetchMap, dataPri]);
 
     useEffect(() => {
-
         if (!initialize.current) {
             setStats(sortStatsPokemon(convertArrStats(pokemonData)));
             setDataPri(pokemonData);
