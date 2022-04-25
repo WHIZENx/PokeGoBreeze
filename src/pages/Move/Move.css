@@ -23,3 +23,8 @@
     background-color: rgb(15, 245, 253);
     box-shadow: 0 0 1.5px 1.5px rgba(0, 247, 255, 0.5);
 }
+
+.move-table td:nth-child(1) {
+    width: 20%;
+    min-width: 150px;
+}

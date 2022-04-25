@@ -46,7 +46,7 @@ const Move = (props) => {
                 </div>
                 <hr></hr>
                 <div className="">
-                    <table className="table-info bettle-league">
+                    <table className="table-info move-table">
                         <thead className="center">
                             <tr><th colSpan="2">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_")+" in Pokemon Go"}</th></tr>
                         </thead>
