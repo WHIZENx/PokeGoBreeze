@@ -71,6 +71,13 @@ class APIService {
         return `${POGO_ASSET_API_URL}Weather/weatherIcon_large_${weather}${timeOfSun}.png`;
     }
 
+    getWeatherIconSprite(weather) {
+        weather = weather.replaceAll(' ', '').replaceAll('Rainy', 'Rain');
+
+        if (weather === "PartlyCloudy") return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather.toLowerCase()}_${this.date.getHours() > 6 && this.date.getHours() < 18 ? 'day' : 'night'}.png`;
+        return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather.toLowerCase()}.png`;
+    }
+
     getPokeSprite(id) {
         return `${POKE_SPRITES_API_URL}${id}.png`;
     }

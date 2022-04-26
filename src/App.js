@@ -37,7 +37,7 @@ const App = () => {
               <Route path="/find-cp-iv" element={<FindTable/>}></Route>
               <Route path="/calculate-cp-iv" element={<Calculate/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
-              <Route path="/move/:id" element={<Move/>}></Route>
+              <Route path="/moves/:id" element={<Move/>}></Route>
               <Route path="/stats-table" element={<StatsTable/>}></Route>
               <Route path="/damage-calculate" element={<Damage/>}></Route>
               <Route path="/dps-table" element={<DpsTable/>}></Route>

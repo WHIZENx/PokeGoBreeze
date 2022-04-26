@@ -405,17 +405,20 @@ const getMultiFriendshipMulti = (level) => {
 }
 
 export const calculateDamagePVE = (atk, defObj, power, eff) => {
-    const isStab = eff.stab ? 1.2 : 1;
-    const isWb = eff.wb ? 1.2 : 1;
-    const isDogde = eff.dogde ? 0.25 : 1;
-    const isMega = eff.mega ? eff.stab ? 1.3 : 1.1 : 1;
-    const isTrainer = eff.trainer ? 1.3 : 1;
-    const isFrind = getMultiFriendshipMulti(eff.flevel);
-    let isCharge = 0.25;
-    if (eff.clevel === 1) isCharge += 0.25;
-    else if (eff.clevel === 2) isCharge += 0.5;
-    else if (eff.clevel === 3) isCharge += 0.75;
-    const modifier = isStab * isWb * isFrind * isDogde * isCharge * isMega * isTrainer * eff.effective;
+    let modifier;
+    if (eff) {
+        const isStab = eff.stab ? 1.2 : 1;
+        const isWb = eff.wb ? 1.2 : 1;
+        const isDogde = eff.dogde ? 0.25 : 1;
+        const isMega = eff.mega ? eff.stab ? 1.3 : 1.1 : 1;
+        const isTrainer = eff.trainer ? 1.3 : 1;
+        const isFrind = getMultiFriendshipMulti(eff.flevel);
+        let isCharge = 0.25;
+        if (eff.clevel === 1) isCharge += 0.25;
+        else if (eff.clevel === 2) isCharge += 0.5;
+        else if (eff.clevel === 3) isCharge += 0.75;
+        modifier = isStab * isWb * isFrind * isDogde * isCharge * isMega * isTrainer * eff.effective;
+    } else modifier = 1;
     return Math.floor(0.5 * power * (atk/defObj) * modifier) + 1
 }
 

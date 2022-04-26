@@ -73,7 +73,7 @@ const Find = (props) => {
         const id = parseInt(value.currentTarget.dataset.id);
         setId(id);
         if (props.setId) props.setId(id);
-        props.setName(pokeList.find(item => item.id === id).name);
+        if (props.setName) props.setName(pokeList.find(item => item.id === id).name);
         props.clearStats();
     };
 
@@ -87,7 +87,7 @@ const Find = (props) => {
         setTimeout(() => {
             setId(id-1);
             if (props.setId) props.setId(id-1);
-            props.setName(pokeList.find(item => item.id === id-1).name);
+            if (props.setName) props.setName(pokeList.find(item => item.id === id-1).name);
         }, 300);
         props.clearStats();
     }
@@ -96,7 +96,7 @@ const Find = (props) => {
         setTimeout(() => {
             setId(id+1);
             if (props.setId) props.setId(id+1);
-            props.setName(pokeList.find(item => item.id === id+1).name);
+            if (props.setName) props.setName(pokeList.find(item => item.id === id+1).name);
         }, 300);
         props.clearStats();
     }

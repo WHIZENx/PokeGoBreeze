@@ -133,7 +133,7 @@ const Damage = () => {
             let eff = {
                 stab: findStabType(move.type.toLowerCase()),
                 wb: battleState.weather,
-                dogde: battleState.dodge,
+                dodge: battleState.dodge,
                 mega: form.form.pokemon.name.includes("mega") ? true : false,
                 trainer: battleState.trainer,
                 flevel: enableFriend ? battleState.flevel : 0,
@@ -184,7 +184,7 @@ const Damage = () => {
         <h1 id ="main" className='center'>Battle Damage Calculate</h1>
         <div className="d-flex justify-content-center">
             <div className="element-top container row" style={{marginBottom: 20}}>
-                <div className="col">
+                <div className="col" style={{marginBottom: 15}}>
                     <form onSubmit={onCalculateDamagePoke.bind(this)}>
                         <div className="d-flex justify-content-center">
                             <div className='row center' style={{width: 520}}>

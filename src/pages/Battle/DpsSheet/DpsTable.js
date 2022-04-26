@@ -74,14 +74,14 @@ const columns = [
     },
     {
         name: 'Fast Move',
-        selector: row => <Link to={"/move/"+combatData.find(item => item.name === row.fmove.name).id} target="_blank"><img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}></img> <span className={row.elite.fmove ? "text-danger" : ""}>{splitAndCapitalize(row.fmove.name, "_")}</span></Link>,
+        selector: row => <Link to={"/moves/"+combatData.find(item => item.name === row.fmove.name).id} target="_blank"><img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}></img> <span className={row.elite.fmove ? "text-danger" : ""}>{splitAndCapitalize(row.fmove.name, "_")}</span></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: fmoveSort
     },
     {
         name: 'Charge Move',
-        selector: row => <Link to={"/move/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank"><img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <span className={row.elite.cmove ? "text-danger" : ""}>{splitAndCapitalize(row.cmove.name, "_")}</span></Link>,
+        selector: row => <Link to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank"><img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <span className={row.elite.cmove ? "text-danger" : ""}>{splitAndCapitalize(row.cmove.name, "_")}</span></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: cmoveSort
