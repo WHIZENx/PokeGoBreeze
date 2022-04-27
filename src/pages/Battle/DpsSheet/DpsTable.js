@@ -3,7 +3,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
-import { calculateAvgDPS, calculateCP, calculateStatsBettle, calculateStatsByTag, calculateTDO, getBarCharge } from "../../../components/Calculate/Calculate";
+import { calculateAvgDPS, calculateCP, calculateStatsBettle, calculateStatsByTag, calculateTDO, getBarCharge, convertName } from "../../../components/Calculate/Calculate";
 import DataTable from "react-data-table-component";
 import APIService from "../../../services/API.service";
 
@@ -143,18 +143,6 @@ const DpsTable = (props) => {
     const [enableMega, setEnableMega] = useState(false);
 
     const {ELITE_MOVE, POKEMON_SHADOW, WEATHER_BOOSTS} = options;
-
-    const convertName = (text) => {
-        return text.toUpperCase()
-        .replaceAll("-", "_")
-        .replaceAll("NIDORAN_F", "NIDORAN_FEMALE")
-        .replaceAll("NIDORAN_M", "NIDORAN_MALE")
-        .replaceAll("’", "")
-        .replaceAll(".", "")
-        .replaceAll(":", "")
-        .replaceAll(" ", "_")
-        .replaceAll("É", "E")
-    }
 
     const addCPokeData = useCallback((movePoke, value, vf, shadow, felite, celite) => {
         movePoke.forEach(vc => {

@@ -2,6 +2,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import Info from '../Info';
 import Form from './Form';
 
+import TableMove from '../../Move/Table/MoveTable'
 import Stats from '../Stats/Stats'
 
 import './Form.css';
@@ -117,8 +118,15 @@ const FormGroup = (props) => {
                     pokemonStats={props.stats}
                     stats={dataPoke}/>
                 <hr className='w-100'></hr>
-                <Info data={dataPoke}
-                    currForm={currForm} />
+                <div className="row">
+                    <div className="col">
+                        <Info data={dataPoke} currForm={currForm} />
+                    </div>
+                    <div className="col">
+                        <TableMove data={dataPoke} />
+                    </div>
+                </div>
+
             </Fragment>
             }
             </div>

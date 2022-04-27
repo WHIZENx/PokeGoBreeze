@@ -1,7 +1,8 @@
 import { useSnackbar } from "notistack";
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getBarCharge } from "../../components/Calculate/Calculate";
+import DataTable from "react-data-table-component";
+import { Link, useParams } from "react-router-dom";
+import { getBarCharge, queryTopMove } from "../../components/Calculate/Calculate";
 import TypeBar from "../../components/Sprits/TypeBar";
 
 import moveData from '../../data/combat.json';
@@ -9,21 +10,52 @@ import weathers from '../../data/weather_boosts.json';
 import APIService from "../../services/API.service";
 import './Move.css';
 
+const capitalize = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const splitAndCapitalize = (string, split) => {
+    return string.split(split).map(text => capitalize(text)).join(" ");
+};
+
+const nameSort = (rowA, rowB) => {
+    const a = rowA.name.toLowerCase();
+    const b = rowB.name.toLowerCase();
+    return a === b ? 0 : a > b ? 1 : -1;
+};
+
+const columns = [
+    {
+        name: 'ID',
+        selector: row => row.num,
+        sortable: true,
+        width: '100px',
+    },
+    {
+        name: 'Name',
+        selector: row => <Link to={"/pokemon/"+row.num} target="_blank"><img height={48} alt='img-pokemon' style={{marginRight: 10}}
+        src={APIService.getPokeIconSprite(row.sprite, true)}
+        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}></img>
+        {splitAndCapitalize(row.name, "-")}</Link>,
+        sortable: true,
+        sortFunction: nameSort
+    },
+    {
+        name: 'DPS',
+        selector: row => parseFloat(row.dps.toFixed(2)),
+        sortable: true,
+        width: '150px',
+    },
+]
+
 const Move = (props) => {
 
     const params = useParams();
 
     const [move, setMove] = useState(null);
+    const [topList, setTopList] = useState([]);
 
     const { enqueueSnackbar } = useSnackbar();
-
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = useCallback((string, split) => {
-        return string.split(split).map(text => capitalize(text)).join(" ");
-    }, []);
 
     const getWeatherEffective = (type) => {
         let result;
@@ -43,7 +75,7 @@ const Move = (props) => {
         if (move === null) {
             const id = params.id ? params.id.toLowerCase() : props.id;
             queryMove(id);
-        }
+        } else setTopList(queryTopMove(move));
     }, [params.id, props.id, queryMove, move]);
 
     return (
@@ -169,17 +201,18 @@ const Move = (props) => {
                                     <td>{((move.pvp_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td>DPS (Weather)</td>
-                                    <td>{((move.pvp_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td colSpan={2}><DataTable
+                                        columns={columns}
+                                        data={topList}
+                                        pagination
+                                        defaultSortFieldId={3}
+                                        defaultSortAsc={false}
+                                        highlightOnHover
+                                        striped
+                                        fixedHeader
+                                        fixedHeaderScrollHeight="18rem"
+                                    /></td>
                                 </tr>
-                                <tr>
-                                    <td>DPS (STAB+Weather)</td>
-                                    <td>{((move.pvp_power*1.2*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
-                                </tr>
-                                {move.type_move === "FAST" &&<tr>
-                                    <td>EPS</td>
-                                    <td>{((move.pvp_energy)/(move.durationMs/1000)).toFixed(2)}</td>
-                                </tr>}
                             </tbody>
                         </table>
                     </div>

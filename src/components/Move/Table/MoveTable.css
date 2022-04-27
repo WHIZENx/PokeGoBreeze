@@ -1,0 +1,11 @@
+.table-moves tbody tr td {
+    color: #0571c2;
+    font-weight: bolder;
+}
+
+.table-column-head {
+    background-color: #f1ffff !important;
+    width: auto !important;
+    color: black !important;
+    font-weight: lighter !important;
+}

@@ -74,6 +74,7 @@ class APIService {
     getWeatherIconSprite(weather) {
         weather = weather.replaceAll(' ', '').replaceAll('Rainy', 'Rain');
 
+        if (weather === "Overcast") weather = "Cloudy"
         if (weather === "PartlyCloudy") return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather.toLowerCase()}_${this.date.getHours() > 6 && this.date.getHours() < 18 ? 'day' : 'night'}.png`;
         return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather.toLowerCase()}.png`;
     }
