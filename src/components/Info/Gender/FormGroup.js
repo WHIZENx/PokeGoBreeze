@@ -118,11 +118,11 @@ const FormGroup = (props) => {
                     pokemonStats={props.stats}
                     stats={dataPoke}/>
                 <hr className='w-100'></hr>
-                <div className="row">
-                    <div className="col">
+                <div className="row w-100" style={{margin:0}}>
+                    <div className="col-md-5"  style={{padding:0}}>
                         <Info data={dataPoke} currForm={currForm} />
                     </div>
-                    <div className="col">
+                    <div className="col-md-7" style={{padding:0}}>
                         <TableMove data={dataPoke} />
                     </div>
                 </div>

@@ -29,7 +29,8 @@ const columns = [
         name: 'ID',
         selector: row => row.num,
         sortable: true,
-        width: '100px',
+        width: '20%',
+        maxWidth: '100px',
     },
     {
         name: 'Name',
@@ -44,7 +45,8 @@ const columns = [
         name: 'DPS',
         selector: row => parseFloat(row.dps.toFixed(2)),
         sortable: true,
-        width: '150px',
+        width: '20%',
+        maxWidth: '150px',
     },
 ]
 
@@ -200,6 +202,7 @@ const Move = (props) => {
                                     <td>DPS (STAB)</td>
                                     <td>{((move.pvp_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
+                                <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_")}</td></tr>
                                 <tr>
                                     <td colSpan={2}><DataTable
                                         columns={columns}

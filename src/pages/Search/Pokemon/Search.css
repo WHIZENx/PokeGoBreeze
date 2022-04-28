@@ -3,7 +3,6 @@ ul {
 }
 
 .result {
-    /* margin-left: 73px; */
     position: absolute;
     z-index: 1;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -88,7 +87,7 @@ ul {
     color: red;
     cursor: pointer;
   }
-  
+
 .carousel-control-prev-icon:hover {
     color: red;
     cursor: pointer;

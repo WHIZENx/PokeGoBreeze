@@ -47,6 +47,10 @@ const StyledTableRow = styled(TableRow)(() => ({
             minWidth: 85,
             width: 85,
         },
+        '&:nth-of-type(9)': {
+            minWidth: 100,
+            width: 85,
+        },
     },
 }));
 
@@ -206,6 +210,7 @@ const Home = () => {
                             <span className='text-danger' style={{fontSize: 12}}>LV. 50</span>
                         </StyledTableCell>
                         <StyledTableCell align="center" colSpan={3}>Base Stats</StyledTableCell>
+                        <StyledTableCell align="center">Total Stats</StyledTableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
@@ -248,6 +253,7 @@ const Home = () => {
                                             <div>{row.sta}</div>
                                             <span className='text-info' style={{fontSize: 10}}>Stamina</span>
                                         </StyledTableCell>
+                                        <StyledTableCell align="center" component="td"><b>{row.atk+row.def+row.sta}</b></StyledTableCell>
                                     </StyledTableRow>
                                 ))}
                                 </Fragment>

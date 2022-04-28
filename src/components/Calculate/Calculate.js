@@ -428,7 +428,7 @@ export const calculateDamagePVE = (atk, defObj, power, eff, pure) => {
     if (eff) {
         const isStab = eff.stab ? 1.2 : 1;
         const isWb = eff.wb ? 1.2 : 1;
-        const isDogde = eff.dogde ? 0.25 : 1;
+        const isDodge = eff.dodge ? 0.25 : 1;
         const isMega = eff.mega ? eff.stab ? 1.3 : 1.1 : 1;
         const isTrainer = eff.trainer ? 1.3 : 1;
         const isFrind = getMultiFriendshipMulti(eff.flevel);
@@ -436,7 +436,7 @@ export const calculateDamagePVE = (atk, defObj, power, eff, pure) => {
         if (eff.clevel === 1) isCharge += 0.25;
         else if (eff.clevel === 2) isCharge += 0.5;
         else if (eff.clevel === 3) isCharge += 0.75;
-        modifier = isStab * isWb * isFrind * isDogde * isCharge * isMega * isTrainer * eff.effective;
+        modifier = isStab * isWb * isFrind * isDodge * isCharge * isMega * isTrainer * eff.effective;
     } else modifier = 1;
     if (pure) return (0.5 * power * (atk/defObj) * modifier) + 1
     return Math.floor(0.5 * power * (atk/defObj) * modifier) + 1
@@ -556,78 +556,34 @@ export const queryTopMove = (move) => {
     return dataPri;
 }
 
+const queryMoveByCType = (dataList, vf, type, cmove, felite, celite) => {
+    cmove.forEach(vc => {
+        let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
+        let mc = combat.find(item => item.name === vc);
+        let bar = getBarCharge(true, mc.pve_energy)
+
+        mf["elite"] = felite;
+        mc["elite"] = celite;
+
+        let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
+
+        let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
+        let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
+        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: (bar*mcPower)/offensive, defensive: (bar*mcPower)/defensive}})
+    });
+}
+
 export const rankMove = (move, type) => {
     let dataPri = []
     move.QUICK_MOVES.forEach(vf => {
-        move.CINEMATIC_MOVES.forEach(vc => {
-            let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
-            let mc = combat.find(item => item.name === vc);
-            let bar = getBarCharge(true, mc.pve_energy)
-
-            let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
-
-            let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
-            let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-            dataPri.push({fmove: mf, cmove: mc, eDPS: {offensive: (bar*mcPower)/offensive, defensive: (bar*mcPower)/defensive}})
-        });
-        move.ELITE_CINEMATIC_MOVES.forEach(vc => {
-            let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
-            let mc = combat.find(item => item.name === vc);
-            let bar = getBarCharge(true, mc.pve_energy)
-
-            let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
-
-            let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
-            let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-            dataPri.push({fmove: mf, cmove: mc, eDPS: {offensive: (bar*mcPower)/offensive, defensive: (bar*mcPower)/defensive}})
-        });
-        move.SHADOW_MOVES.forEach(vc => {
-            let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
-            let mc = combat.find(item => item.name === vc);
-            let bar = getBarCharge(true, mc.pve_energy)
-
-            let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
-
-            let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
-            let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-            dataPri.push({fmove: mf, cmove: mc, eDPS: {offensive: (bar*mcPower)/offensive, defensive: (bar*mcPower)/defensive}})
-        });
+        queryMoveByCType(dataPri, vf, type, move.CINEMATIC_MOVES, false, false);
+        queryMoveByCType(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, false, true);
+        queryMoveByCType(dataPri, vf, type, move.SHADOW_MOVES, false, false);
     });
     move.ELITE_QUICK_MOVES.forEach(vf => {
-        move.CINEMATIC_MOVES.forEach(vc => {
-            let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
-            let mc = combat.find(item => item.name === vc);
-            let bar = getBarCharge(true, mc.pve_energy)
-
-            let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
-
-            let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
-            let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-            dataPri.push({fmove: mf, cmove: mc, eDPS: {offensive: (bar*mcPower)/offensive, defensive: (bar*mcPower)/defensive}})
-        });
-        move.ELITE_CINEMATIC_MOVES.forEach(vc => {
-            let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
-            let mc = combat.find(item => item.name === vc);
-            let bar = getBarCharge(true, mc.pve_energy)
-
-            let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
-
-            let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
-            let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-            dataPri.push({fmove: mf, cmove: mc, eDPS: {offensive: (bar*mcPower)/offensive, defensive: (bar*mcPower)/defensive}})
-        });
-        move.SHADOW_MOVES.forEach(vc => {
-            let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
-            let mc = combat.find(item => item.name === vc);
-            let bar = getBarCharge(true, mc.pve_energy)
-
-            let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
-
-            let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
-            let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-            dataPri.push({fmove: mf, cmove: mc, eDPS: {offensive: (bar*mcPower)/offensive, defensive: (bar*mcPower)/defensive}})
-        });
+        queryMoveByCType(dataPri, vf, type, move.CINEMATIC_MOVES, true, false);
+        queryMoveByCType(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, true, true);
+        queryMoveByCType(dataPri, vf, type, move.SHADOW_MOVES, true, false);
     });
-    // console.log(dataPri.sort((a,b) => b.eDPS.offensive - a.eDPS.offensive))
-    // console.log(dataPri.sort((a,b) => b.eDPS.defensive - a.eDPS.defensive))
+    return dataPri;
 }

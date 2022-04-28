@@ -17,7 +17,10 @@ const NavbarComponent = () => {
             <Navbar.Collapse id="responsive-navbar-nav">
                 <Nav className="me-auto">
                     <Link className="nav-link" to="/">Home</Link>
-                    <Link className="nav-link" to="/search">Search Pokémon</Link>
+                    <NavDropdown title="Search" id="basic-nav-dropdown">
+                        <Link className="dropdown-item" to="/search-pokemon">Pokémon</Link>
+                        <Link className="dropdown-item" to="/search-move">Moves</Link>
+                    </NavDropdown>
                     <NavDropdown title="Effective" id="basic-nav-dropdown">
                         <Link className="dropdown-item" to="/type-effective">Type Effective</Link>
                         <Link className="dropdown-item" to="/weather-boosts">Weather Boosts</Link>

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo, useRef, Fragment, useCallback } fr
 
 import './Search.css';
 
-import APIService from '../../services/API.service';
-import Pokemon from '../Pokemon/Pokemon';
+import APIService from '../../../services/API.service';
+import Pokemon from '../../Pokemon/Pokemon';
 
 const Search = () => {
 
