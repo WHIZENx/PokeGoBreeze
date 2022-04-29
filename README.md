@@ -1,70 +1,75 @@
-# Getting Started with Create React App
+# Pokemon GO Tools&Information
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This Web Appliation was hosted in [Firebase](https://pokego-breeze.web.app/) with travis CI/CD and [Vercel](https://poke-go-breeze.vercel.app/) with github CI/CD.
 
-## Available Scripts
+## Pages information
+### [Home](https://pokego-breeze.web.app/)
 
-In the project directory, you can run:
+Show all current with released pokemon by filter to show all stats and type.
+- Pokedex includes 898 pokemon.
 
-### `npm start`
+### `Search`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+#### - [Pokemon](https://pokego-breeze.web.app/search-pokemon)
+You can search pokemon by filter to show all stats and type.
+- Includes 898 pokemon.
+- Show information pokemon etc. stats, shiny image, type effective and evolution chains.
+- Show information pokemon GO etc. Weather Boosts and recommend movesets.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+#### - [Moves](https://pokego-breeze.web.app/search-move)
+You can search moves by filter to show all stats and type.
+- Includes current all movesets in Pokemon GO.
+- Show information pokemon etc. stats and DPS (Damage Per Seconds).
 
-### `npm test`
+### `Effective`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### - [Type Effective](https://pokego-breeze.web.app/type-effective)
+You can search pokemon by filter to show effective.
+- Includes all types in Pokemon.
+- Show effective weakness, resistance and neutral.
 
-### `npm run build`
+#### - [Weaher Boosts](https://pokego-breeze.web.app/weather-boosts)
+You can search pokemon by filter to show effective.
+- Includes 898 pokemon.
+- Show effective weakness, resistance and neutral.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `Tools`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### - [Find CP&IV](https://pokego-breeze.web.app/find-cp-iv)
+Calculate IV with your pokemon selected by CP.
+- Includes 898 pokemon.
+- Show all available possible CP.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### - [Calculate CP&IV](https://pokego-breeze.web.app/calculate-cp-iv)
+Calculate stats with your pokemon selected by CP&IV.
+- Includes 898 pokemon.
+- Show all available stats in Pokemon GO.
 
-### `npm run eject`
+### [Stats Table](https://pokego-breeze.web.app/stats-table)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Show all stats pokemon by filter battle leagues.
+- Find bast Pokemon GO stats in battle leagues (Little cup, Great league, Ultra league, Master league)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `Battle Simulator`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### - [Damage Simulator](https://pokego-breeze.web.app/damage-calculate)
+Calculate damage by options with Pokemon vs another Pokemon.
+- Includes options and type pokemon to feelfree calculate damage.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### - [DPS&TDO Table](https://pokego-breeze.web.app/dps-table)
+You can search pokemon by filter to show DPS, TDO.
+- Includes 898 pokemon.
+- Includes all types in Pokemon.
+- Includes current all movesets in Pokemon GO.
+- Show DPS, TDO, DPS^3*TDO and CP in each pokemon.
 
-## Learn More
+## Other Pages
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### `Pokemon`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Show information pokemon etc. stats, shiny image, type effective and evolution chains.
+- Show information pokemon GO etc. Weather Boosts and recommend movesets.
 
-### Code Splitting
+### `Moves`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Show information pokemon etc. stats and DPS (Damage Per Seconds).
