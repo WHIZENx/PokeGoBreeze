@@ -46,7 +46,7 @@ const columns = [
         selector: row => parseFloat(row.dps.toFixed(2)),
         sortable: true,
         width: '20%',
-        maxWidth: '150px',
+        maxWidth: '200px',
     },
 ]
 
@@ -204,7 +204,7 @@ const Move = (props) => {
                                 </tr>
                                 <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_")}</td></tr>
                                 <tr>
-                                    <td colSpan={2}><DataTable
+                                    <td colSpan={2} style={{padding: 0}}><DataTable
                                         columns={columns}
                                         data={topList}
                                         pagination

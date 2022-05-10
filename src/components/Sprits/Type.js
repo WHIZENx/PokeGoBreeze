@@ -13,7 +13,7 @@ const Type = (props) => {
         <ul className='element-top' style={props.styled && { padding: 0, margin: 0 }}>
             {props.text && <p>{props.text}</p>}
             {props.arr.map((value, index) => (
-                <li className='img-group' key={ index }>
+                <li style={props.style} className='img-group' key={ index }>
                     {props.height ?
                         <img width={props.height} height={props.height} alt='img-pokemon' src={APIService.getTypeSprite(value)}
                         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}></img>

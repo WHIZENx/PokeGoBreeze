@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 
 const TableMove = (props) => {
 
-    const [move, setMove] = useState([]);
+    const [move, setMove] = useState({data: []});
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -45,11 +45,11 @@ const TableMove = (props) => {
                                 <td className="table-column-head main-move">Charge</td>
                                 <td className="table-column-head">%</td>
                             </tr>
-                            {move.sort((a,b) => b.eDPS.offensive - a.eDPS.offensive).map((value, index) => (
+                            {move.data.sort((a,b) => b.eDPS.offensive - a.eDPS.offensive).map((value, index) => (
                                 <tr key={index}>
-                                    <td className="text-origin main-move"><Link to={"../moves/"+value.fmove.id} target="_blank" className="d-flex"><Type styled={true} height={20} arr={[capitalize(value.fmove.type.toLowerCase())]}/> <span className={value.fmove.elite ? "text-danger":""}>{splitAndCapitalize(value.fmove.name.toLowerCase(), "_")}</span></Link></td>
-                                    <td className="text-origin main-move"><Link to={"../moves/"+value.cmove.id} target="_blank" className="d-flex"><Type styled={true} height={20} arr={[capitalize(value.cmove.type.toLowerCase())]}/> <span className={value.cmove.elite ? "text-danger":""}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_")}</span></Link></td>
-                                    <td className="center">{Math.round(100-(index*100/move.length))}</td>
+                                    <td className="text-origin main-move"><Link to={"../moves/"+value.fmove.id} target="_blank" className="d-flex align-items-center"><Type style={{marginBottom:0}} styled={true} height={20} arr={[capitalize(value.fmove.type.toLowerCase())]}/> <div><span className="text-b-ic">{splitAndCapitalize(value.fmove.name.toLowerCase(), "_")}</span>{value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link></td>
+                                    <td className="text-origin main-move"><Link to={"../moves/"+value.cmove.id} target="_blank" className="d-flex align-items-center"><Type style={{marginBottom:0}} styled={true} height={20} arr={[capitalize(value.cmove.type.toLowerCase())]}/> <div><span className="text-b-ic">{splitAndCapitalize(value.cmove.name.toLowerCase(), "_")}</span>{value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}</div></Link></td>
+                                    <td className="center">{Math.round(value.eDPS.offensive*100/move.maxOff)}</td>
                                 </tr>
                             ))
                             }
@@ -66,11 +66,11 @@ const TableMove = (props) => {
                                 <td className="table-column-head main-move">Charge</td>
                                 <td className="table-column-head">%</td>
                             </tr>
-                            {move.sort((a,b) => b.eDPS.defensive - a.eDPS.defensive).map((value, index) => (
+                            {move.data.sort((a,b) => b.eDPS.defensive - a.eDPS.defensive).map((value, index) => (
                                 <tr key={index}>
-                                    <td className="text-origin main-move"><Link to={"../moves/"+value.fmove.id} target="_blank" className="d-flex"><Type styled={true} height={20} arr={[capitalize(value.fmove.type.toLowerCase())]}/> <span className={value.fmove.elite ? "text-danger":""}>{splitAndCapitalize(value.fmove.name.toLowerCase(), "_")}</span></Link></td>
-                                    <td className="text-origin main-move"><Link to={"../moves/"+value.cmove.id} target="_blank" className="d-flex"><Type styled={true} height={20} arr={[capitalize(value.cmove.type.toLowerCase())]}/> <span className={value.cmove.elite ? "text-danger":""}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_")}</span></Link></td>
-                                    <td className="center">{Math.round(100-(index*100/move.length))}</td>
+                                    <td className="text-origin main-move"><Link to={"../moves/"+value.fmove.id} target="_blank" className="d-flex align-items-center"><Type style={{marginBottom:0}} styled={true} height={20} arr={[capitalize(value.fmove.type.toLowerCase())]}/> <div><span className="text-b-ic">{splitAndCapitalize(value.fmove.name.toLowerCase(), "_")}</span>{value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link></td>
+                                    <td className="text-origin main-move"><Link to={"../moves/"+value.cmove.id} target="_blank" className="d-flex align-items-center"><Type style={{marginBottom:0}} styled={true} height={20} arr={[capitalize(value.cmove.type.toLowerCase())]}/> <div><span className="text-b-ic">{splitAndCapitalize(value.cmove.name.toLowerCase(), "_")}</span>{value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}</div></Link></td>
+                                    <td className="center">{Math.round(value.eDPS.defensive*100/move.maxDef)}</td>
                                 </tr>
                             ))
                             }

@@ -531,7 +531,7 @@ export const calculateTDO = (Def, HP, dps, shadow) => {
 
 export const queryTopMove = (move) => {
     let dataPri = [];
-    Object.values(pokemonData).forEach((value, index) => {
+    Object.values(pokemonData).forEach(value => {
         let combatPoke = pokemonCombatList.filter(item => item.ID === value.num
             && item.BASE_SPECIES === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
         );
@@ -547,6 +547,7 @@ export const queryTopMove = (move) => {
             }
             else if (move.type_move === "CHARGE") {
                 pokemonList = combatPoke.CINEMATIC_MOVES.includes(move.name);
+                if (!pokemonList) pokemonList = combatPoke.SHADOW_MOVES.includes(move.name)
                 if (!pokemonList) pokemonList = combatPoke.ELITE_CINEMATIC_MOVES.includes(move.name);
             }
 
@@ -556,7 +557,7 @@ export const queryTopMove = (move) => {
     return dataPri;
 }
 
-const queryMoveByCType = (dataList, vf, type, cmove, felite, celite) => {
+const queryMoveByCType = (dataList, vf, type, cmove, felite, celite, shadow) => {
     cmove.forEach(vc => {
         let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
         let mc = combat.find(item => item.name === vc);
@@ -564,26 +565,33 @@ const queryMoveByCType = (dataList, vf, type, cmove, felite, celite) => {
 
         mf["elite"] = felite;
         mc["elite"] = celite;
+        mc["shadow"] = mc.name === "RETURN" ? false : shadow;
 
+        let mfPower = mf.pve_power*(type.includes(mf.type.toLowerCase()) ? 1.2 : 1)
         let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
 
         let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
         let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: (bar*mcPower)/offensive, defensive: (bar*mcPower)/defensive}})
+        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: ((bar*mcPower)+(Math.floor(100/mf.pve_energy)*mfPower))/offensive, defensive: ((bar*mcPower)+(Math.floor(100/mf.pve_energy)*mfPower))/defensive}})
     });
 }
 
 export const rankMove = (move, type) => {
     let dataPri = []
     move.QUICK_MOVES.forEach(vf => {
-        queryMoveByCType(dataPri, vf, type, move.CINEMATIC_MOVES, false, false);
-        queryMoveByCType(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, false, true);
-        queryMoveByCType(dataPri, vf, type, move.SHADOW_MOVES, false, false);
+        queryMoveByCType(dataPri, vf, type, move.CINEMATIC_MOVES, false, false, false);
+        queryMoveByCType(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, false, true, false);
+        queryMoveByCType(dataPri, vf, type, move.SHADOW_MOVES, false, false, true);
     });
     move.ELITE_QUICK_MOVES.forEach(vf => {
-        queryMoveByCType(dataPri, vf, type, move.CINEMATIC_MOVES, true, false);
-        queryMoveByCType(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, true, true);
-        queryMoveByCType(dataPri, vf, type, move.SHADOW_MOVES, true, false);
+        queryMoveByCType(dataPri, vf, type, move.CINEMATIC_MOVES, true, false, false);
+        queryMoveByCType(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, true, true, false);
+        queryMoveByCType(dataPri, vf, type, move.SHADOW_MOVES, true, false, true);
     });
-    return dataPri;
+
+    return {
+        data: dataPri,
+        maxOff: Math.max(...dataPri.map(item => item.eDPS.offensive)),
+        maxDef: Math.max(...dataPri.map(item => item.eDPS.defensive))
+    };
 }

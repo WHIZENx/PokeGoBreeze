@@ -17,13 +17,24 @@ const Move = (props) => {
         let resultFirst = data.filter(item => item.ID === id);
         form = form.replaceAll("-", "_").replaceAll("_standard", "").toUpperCase();
         let result = resultFirst.find(item => item.NAME === form);
+        let simpleMove = [];
         if (resultFirst.length === 1 || result == null) {
-            setCountFM(resultFirst[0].QUICK_MOVES.length);
-            setResultMove(resultFirst[0].QUICK_MOVES.concat(resultFirst[0].CINEMATIC_MOVES));
+            resultFirst[0].QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false})});
+            resultFirst[0].ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false})});
+            setCountFM(simpleMove.length);
+            resultFirst[0].CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false})});
+            resultFirst[0].ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false})});
+            resultFirst[0].SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: value === "RETURN" ? false : true})});
+            setResultMove(simpleMove);
             return;
         };
-        setCountFM(result.QUICK_MOVES.length);
-        setResultMove(result.QUICK_MOVES.concat(result.CINEMATIC_MOVES));
+        result.QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false})});
+        result.ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false})});
+        setCountFM(simpleMove.length);
+        result.CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false})});
+        result.ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false})});
+        result.SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: value === "RETURN" ? false : true})});
+        setResultMove(simpleMove);
         return;
     }, []);
 
@@ -46,8 +57,8 @@ const Move = (props) => {
 
     const changeMove = (value) => {
         setShowMove(false)
-        setCurrentMove(value.currentTarget.dataset.id);
-        props.setMove(findMoveData(value.currentTarget.dataset.id));
+        setCurrentMove(resultMove.find(item => item.name === value.currentTarget.dataset.id));
+        props.setMove(findMoveData(resultMove.find(item => item.name === value.currentTarget.dataset.id).name));
     }
 
     return (
@@ -57,7 +68,7 @@ const Move = (props) => {
                     <div className='card-input' tabIndex={ 0 } onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
                         <div className='card-select'>
                             {currentMove ?
-                            <CardType value={findType(currentMove)} name={splitAndCapitalize(currentMove)}/>
+                            <CardType value={findType(currentMove.name)} name={splitAndCapitalize(currentMove.name)} elite={currentMove.elite} shadow={currentMove.shadow}/>
                             :
                             <CardType />
                             }
@@ -76,8 +87,8 @@ const Move = (props) => {
                                                 <li className='card-header'><b>Charge Moves</b></li>
                                                 }
                                                 {value !== currentMove &&
-                                                <li className="container card-pokemon" data-id={value} onMouseDown={changeMove.bind(this)}>
-                                                    <CardType value={findType(value)} name={splitAndCapitalize(value)}/>
+                                                <li className="container card-pokemon" data-id={value.name} onMouseDown={changeMove.bind(this)}>
+                                                    <CardType value={findType(value.name)} name={splitAndCapitalize(value.name)} elite={value.elite} shadow={value.shadow}/>
                                                 </li>
                                                 }
                                                 </Fragment>

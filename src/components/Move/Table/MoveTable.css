@@ -27,3 +27,28 @@
     color: black !important;
     font-weight: lighter !important;
 }
+
+.text-b-ic {
+    margin-right: 8px;
+}
+
+.ic {
+    font-size: 10px;
+    padding: 1px 6px !important;
+    font-weight: bold !important;
+    text-shadow: none !important;
+    display: inline-block;
+    text-align: center;
+}
+
+.elite-ic {
+    background-color:#f8d030 !important;
+    color: black !important;
+    width: 35px;
+}
+
+.shadow-ic {
+    background-color:#c184ec !important;
+    color: black !important;
+    width: 50px;
+}
