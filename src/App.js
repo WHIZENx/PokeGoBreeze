@@ -18,7 +18,6 @@ import Damage from './pages/Battle/Damage/Damage';
 import DpsTable from './pages/Battle/DpsSheet/DpsTable';
 import Move from './pages/Move/Move';
 
-
 const App = () => {
 
     return (
@@ -29,7 +28,6 @@ const App = () => {
       }}
       maxSnack={1}>
         <BrowserRouter>
-          <div className="App">
             <NavbarComponent />
             <Routes>
               <Route path="/" element={<Home />}></Route>
@@ -46,7 +44,6 @@ const App = () => {
               <Route path="/dps-table" element={<DpsTable/>}></Route>
             </Routes>
             {/* <FooterComponent /> */}
-          </div>
         </BrowserRouter>
       </SnackbarProvider>
     );

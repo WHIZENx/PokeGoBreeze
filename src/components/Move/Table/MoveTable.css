@@ -3,6 +3,23 @@
     max-height: 700px;
     overflow-y: auto;
     border: 1px solid #b8d4da;
+    /* border-collapse: collapse; */
+}
+
+.table-moves thead {
+    position: sticky;
+    top: 0;
+}
+
+.table-moves thead tr th.table-sub-header {
+    background-color: #f1f1ff !important;
+    color: #0571c2;
+}
+
+.table-moves thead tr th {
+    font-size: 16px;
+    padding: 5px 10px 5px 10px;
+    height: 35px;
 }
 
 .table-moves tbody tr td {
@@ -17,9 +34,8 @@
 }
 
 .main-move {
-    max-width: 130px !important;
     min-width: 130px !important;
-    width: 130px !important;
+    width: 42% !important;
 }
 
 .text-origin {
@@ -39,16 +55,20 @@
     text-shadow: none !important;
     display: inline-block;
     text-align: center;
+    color: black !important;
 }
 
 .elite-ic {
     background-color:#f8d030 !important;
-    color: black !important;
     width: 35px;
 }
 
 .shadow-ic {
     background-color:#c184ec !important;
-    color: black !important;
+    width: 50px;
+}
+
+.purified-ic {
+    background-color:#a8a8a8 !important;
     width: 50px;
 }

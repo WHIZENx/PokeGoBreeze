@@ -73,8 +73,13 @@ const FormGroup = (props) => {
         const findData = props.pokeData.find(item => item.name === e.currentTarget.value);
         const findForm = props.formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
         setCurrForm(findForm);
-        if (findData) setDataPoke(findData)
-        else setDataPoke(props.pokeData[0]);
+        if (findData) {
+            setDataPoke(findData)
+        } else if (findForm) {
+            let oriForm = props.pokeData[0];
+            oriForm.types = findForm.form.types
+            setDataPoke(oriForm);
+        } else setDataPoke(props.pokeData[0]);
         props.setVersion(findForm.form.version_group.name);
     }
 
@@ -123,7 +128,7 @@ const FormGroup = (props) => {
                         <Info data={dataPoke} currForm={currForm} />
                     </div>
                     <div className="col-md-7" style={{padding:0}}>
-                        <TableMove data={dataPoke} />
+                        <TableMove data={dataPoke} types={currForm.form.types}/>
                     </div>
                 </div>
 

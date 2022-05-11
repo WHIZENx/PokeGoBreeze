@@ -566,13 +566,14 @@ const queryMoveByCType = (dataList, vf, type, cmove, felite, celite, shadow) => 
         mf["elite"] = felite;
         mc["elite"] = celite;
         mc["shadow"] = mc.name === "RETURN" ? false : shadow;
+        mc["purified"] = mc.name === "RETURN" ? true : false;
 
         let mfPower = mf.pve_power*(type.includes(mf.type.toLowerCase()) ? 1.2 : 1)
         let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
 
         let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
         let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: ((bar*mcPower)+(Math.floor(100/mf.pve_energy)*mfPower))/offensive, defensive: ((bar*mcPower)+(Math.floor(100/mf.pve_energy)*mfPower))/defensive}})
+        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive, defensive: ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/defensive}})
     });
 }
 

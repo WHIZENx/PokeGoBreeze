@@ -81,7 +81,7 @@ const columns = [
     },
     {
         name: 'Charge Move',
-        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank"><img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.cmove.name === "FRUSTRATION" && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}</div></Link>,
+        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank"><img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.cmove.name === "FRUSTRATION" && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.cmove.name === "RETURN" && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: cmoveSort
