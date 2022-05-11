@@ -91,6 +91,9 @@ const Search = () => {
 
     return (
         <Fragment>
+            {/* <Helmet>
+                <title>{"Search - Pokémon"}</title>
+            </Helmet> */}
             <div className='group-prev-next'>
                 { id  > 1 && prev &&
                 <div className='btn-prev'>

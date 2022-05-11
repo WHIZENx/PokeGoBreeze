@@ -136,7 +136,8 @@ const StatsTable = () => {
     useEffect(() => {
         const battleTable = calStatsProd(statATK, statDEF, statSTA, battleLeague);
         currStatBattle.current = battleTable
-        setStatsBattle(battleTable)
+        setStatsBattle(battleTable);
+        document.title = "Stats Battle League - Tool";
     }, [statATK, statDEF, statSTA, battleLeague]);
 
     const clearStats = () => {

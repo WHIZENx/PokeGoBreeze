@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { calculateCP, predictCPList, predictStat } from "../../../components/Calculate/Calculate";
 import DataTable from 'react-data-table-component';
 import data from "../../../data/cp_multiplier.json";
@@ -196,6 +196,10 @@ const FindTable = () => {
         setSearchDEFIv(0);
         setSearchSTAIv(0);
     }
+
+    useEffect(() => {
+        document.title = "Find CP&IV - Tool";
+    }, []);
 
     const findStatsCP = useCallback(() => {
         if (searchATKIv < 0 || searchATKIv > 15 || searchDEFIv < 0 || searchDEFIv > 15 || searchSTAIv < 0 || searchSTAIv > 15) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });

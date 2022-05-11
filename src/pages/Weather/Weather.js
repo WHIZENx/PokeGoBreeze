@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 
 import Affect from './Affect';
 import Effect from './Effect';
@@ -8,6 +8,11 @@ import weatherBoosts from '../../data/weather_boosts.json';
 import typeEffective from '../../data/type_effectiveness.json';
 
 const Weather = () => {
+
+    useEffect(() => {
+        document.title = "Weather Boosts";
+    }, []);
+
     return (
         <div className="container element-top">
             {weatherBoosts && typeEffective &&

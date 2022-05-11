@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { calculateBettleLeague, calculateBetweenLevel, calculateStats, calculateStatsBettle } from "../../../components/Calculate/Calculate";
 import { Box, FormControlLabel, Radio, RadioGroup, Slider, styled } from '@mui/material';
 import { useSnackbar } from "notistack";
@@ -155,6 +155,10 @@ const Calculate = () => {
         setDataUltraLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 2500, typePoke));
         setDataMasterLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, null, typePoke));
     }, [enqueueSnackbar, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
+
+    useEffect(() => {
+        document.title = "Calculate CP&IV - Tool";
+    }, []);
 
     const onCalculateStatsPoke = useCallback((e) => {
         e.preventDefault();

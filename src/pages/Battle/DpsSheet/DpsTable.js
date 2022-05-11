@@ -210,6 +210,7 @@ const DpsTable = (props) => {
     }, [addFPokeData, options.ELITE_MOVE]);
 
     useEffect(() => {
+        document.title = "DPS&TDO Table - Battle Simulator";
         if (dpsTable.length === 0) calculateDPSTable();
         else {
             const result = dpsTable.filter(item => {
@@ -222,7 +223,6 @@ const DpsTable = (props) => {
                 else return boolFilterType && boolFilterPoke;
             })
             setDataFilter(result);
-            console.log(result)
         }
     }, [calculateDPSTable, dpsTable, selectTypes, searchTerm, enableElite, enableShadow, enableMega]);
 

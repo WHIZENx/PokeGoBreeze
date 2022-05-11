@@ -41,7 +41,7 @@ const App = () => {
               <Route path="/moves/:id" element={<Move/>}></Route>
               <Route path="/stats-table" element={<StatsTable/>}></Route>
               <Route path="/damage-calculate" element={<Damage/>}></Route>
-              <Route path="/dps-table" element={<DpsTable/>}></Route>
+              <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
             </Routes>
             {/* <FooterComponent /> */}
         </BrowserRouter>

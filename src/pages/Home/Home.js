@@ -80,6 +80,7 @@ const Home = () => {
 
 
     useEffect(() => {
+        document.title = "Pokedex - Home";
         const fetchMyAPI = async () => {
             if (pokeList.length === 0) {
                 // const result = await Promise.all([...Array(startPokemon).keys()].map(async (n) => (await APIService.getPokeInfo(n+1)).data));

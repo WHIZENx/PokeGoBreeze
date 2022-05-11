@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import combatData from '../../../data/combat.json';
@@ -56,6 +57,10 @@ const columnsF = [
 ]
 
 const Search = () => {
+
+    useEffect(() => {
+        document.title = "Moves - Search";
+    }, []);
 
     return (
         <div className="container" style={{marginTop:20, marginBottom:20}}>

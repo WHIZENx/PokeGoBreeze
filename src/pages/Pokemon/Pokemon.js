@@ -88,11 +88,14 @@ const Pokemon = (props) => {
             setPokeRatio(getRatioGender(dataPri, res.data.id));
             fetchMap(res.data);
             setData(res.data);
+            if (params.id) document.title =  `#${res.data.id} - ${splitAndCapitalize(res.data.name)}`;
+            else document.title = "Pokémon - Search"
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
+            if (params.id) document.title = `#${params.id} - Not Found`
         });
-    }, [enqueueSnackbar, getRatioGender, fetchMap, dataPri]);
+    }, [enqueueSnackbar, getRatioGender, fetchMap, dataPri, params.id, splitAndCapitalize]);
 
     useEffect(() => {
         if (!initialize.current) {

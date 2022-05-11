@@ -69,9 +69,15 @@ const Move = (props) => {
 
     const queryMove = useCallback((id) => {
         let move = moveData.find(item => item.id === parseInt(id));
-        if (move) setMove(move)
-        else enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
-    }, [enqueueSnackbar]);
+        if (move) {
+            setMove(move)
+            document.title =  `#${move.id} - ${splitAndCapitalize(move.name.toLowerCase(), "_")}`;
+        }
+        else {
+            enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
+            if (params.id) document.title = `#${params.id} - Not Found`
+        }
+    }, [enqueueSnackbar, params.id]);
 
     useEffect(() => {
         if (move === null) {

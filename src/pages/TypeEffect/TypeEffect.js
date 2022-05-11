@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Row, Col} from 'react-bootstrap'
 
 import Attacker from './Attacker';
@@ -8,6 +8,10 @@ import './TypeEffect.css';
 import typeEffective from '../../data/type_effectiveness.json';
 
 const TypeEffect = () => {
+
+    useEffect(() => {
+        document.title = "Type Effectiveness";
+    }, []);
 
     return (
         <div className="container element-top">

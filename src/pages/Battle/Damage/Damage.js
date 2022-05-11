@@ -86,6 +86,7 @@ const Damage = () => {
         if (statATK !== 0) setStatLvATK(calculateStatsBettlePure(statATK, 15, statLevel, statType === "shadow" ? 1.2 : 1));
         if (statDEFObj !== 0) setStatLvDEFObj(calculateStatsBettlePure(statDEFObj, 15, statLevelObj, statTypeObj === "shadow" ? 0.8 : 1));
         if (statSTAObj !== 0) setStatLvSTAObj(calculateStatsBettlePure(statSTAObj, 15, statLevelObj));
+        document.title = "Damage Simulator - Battle Simulator";
     }, [statATK, statLevel, statType, statATKObj, statDEF, statDEFObj, statLevelObj, statSTA, statSTAObj, statTypeObj])
 
     const clearData = () => {
