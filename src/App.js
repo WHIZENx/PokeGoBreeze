@@ -17,6 +17,7 @@ import StatsTable from './pages/Table/Stats';
 import Damage from './pages/Battle/Damage/Damage';
 import DpsTable from './pages/Battle/DpsSheet/DpsTable';
 import Move from './pages/Move/Move';
+import Error from './pages/Error/Error';
 
 const App = () => {
 
@@ -42,6 +43,7 @@ const App = () => {
               <Route path="/stats-table" element={<StatsTable/>}></Route>
               <Route path="/damage-calculate" element={<Damage/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
+              <Route path="*" element={<Error/>}></Route>
             </Routes>
             {/* <FooterComponent /> */}
         </BrowserRouter>

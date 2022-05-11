@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+    # react-app
+    nginx:
+        container_name: pokego-breeze
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - 8000:80
+        environment:
+            NODE_ENV: production
+        restart: always

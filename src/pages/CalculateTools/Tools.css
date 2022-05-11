@@ -1,7 +1,3 @@
-ul {
-    list-style-type: none;
-}
-
 .btn-group-search input {
     width: 300px !important;
 }
@@ -14,44 +10,16 @@ ul {
     margin-top: 38px;
 }
 
-.result-tools ul {
-    margin: 0;
-    padding: 0;
-}
-
-.card-pokemon {
-    padding: 10px;
-    border-top: 1px solid #ddd;
-    width: 100%;
-}
-
 .selected {
     background-color: rgb(170, 170, 170);
-}
-
-.card-pokemon:hover {
-    background-color: lightgray;
-    cursor: pointer;
 }
 
 .select-pokemon {
     height: 650px;
 }
 
-.element-top {
-    margin-top: 10px;
-}
-
 .search-container {
     margin-bottom: 15px;
-}
-
-.center {
-    text-align: center;
-}
-
-.img-search {
-    margin: 0 5px 0 5px;
 }
 
 .scroll-card {

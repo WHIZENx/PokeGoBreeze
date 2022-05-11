@@ -1,41 +1,9 @@
-ul {
-    list-style-type: none;
-}
-
 .result {
     position: absolute;
     z-index: 1;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     width: 300px;
     background-color: white;
-}
-
-.result ul {
-    margin: 0;
-    padding: 0;
-}
-
-.card-pokemon {
-    padding: 10px;
-    border-top: 1px solid #ddd;
-    width: 100%;
-}
-
-.card-pokemon:hover {
-    background-color: lightgray;
-    cursor: pointer;
-}
-
-.element-top {
-    margin-top: 10px;
-}
-
-.center {
-    text-align: center;
-}
-
-.img-search {
-    margin: 0 5px 0 5px;
 }
 
 .group-prev-next {

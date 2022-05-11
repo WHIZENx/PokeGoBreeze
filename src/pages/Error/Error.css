@@ -1,0 +1,33 @@
+.error-img {
+    width: 100%;
+    min-height: calc(100vh - 56px);
+    background-color: black;
+}
+
+.error-desc {
+    width: 100%;
+    text-align: center;
+}
+
+.error-desc .desc {
+    position: fixed;
+    top: 20%;
+    transform: translateY(-20%);
+    color: white;
+    width: 100%;
+    padding: 10px;
+}
+
+.error-desc .desc .desc-head {
+    font-size: calc(5rem + 7vw);
+    color: indianred;
+    text-decoration: underline;
+}
+
+.error-img img {
+    position: fixed;
+    max-width: 900px;
+    width: 100%;
+    right: 0;
+    bottom: 0;
+}
