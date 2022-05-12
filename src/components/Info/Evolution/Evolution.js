@@ -49,13 +49,26 @@ const Evolution = (props) => {
         return 170 * isBaby + 160 * isNotBaby + noEvo;
     }
 
+    const renderImageEvo = (value) => {
+        return (
+            <Fragment>
+                <img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                <div style={{color: 'black'}}><b>#{value.id}</b></div>
+                <div><b className="link-title">{splitAndCapitalize(value.name)}</b></div>
+                { value.baby && <span className="caption text-danger">(Baby)</span>}
+                {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
+                <p>{ value.id === props.id.toString() && <span className="caption">Current</span>}</p>
+            </Fragment>
+        )
+    }
+
     return (
         <Fragment>
             { arrEvoList.length > 0 &&
             <Fragment>
             <h4 className="title-evo">Evolution Chain </h4>
             <div className="evo-container">
-                <ul className="ul-evo" style={{height:setHeightEvo()}}>
+                <ul className="ul-evo" style={{minHeight:setHeightEvo()}}>
                     {arrEvoList.map((value, index) => (
                         <li key={index} className='img-form-gender-group li-evo'>
                             <ul className="ul-evo">
@@ -63,21 +76,11 @@ const Evolution = (props) => {
                                     <li key={index} className='img-form-gender-group img-evo-group li-evo'>
                                         {props.onSetIDPoke ?
                                         <div className="select-evo" onClick={() => {handlePokeID(value.id)}}>
-                                            <img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
-                                            <div style={{color: 'black'}}><b>#{value.id}</b></div>
-                                            <div><b className="link-title">{splitAndCapitalize(value.name)}</b></div>
-                                            { value.baby && <span className="caption text-danger">(Baby)</span>}
-                                            {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
-                                            <p>{ value.id === props.id.toString() && <span className="caption">Current</span>}</p>
+                                            {renderImageEvo(value)}
                                         </div>
                                         :
                                         <Link className="select-evo" to={"/pokemon/"+value.name} onClick={() => {handlePokeID(value.id)}}>
-                                            <img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
-                                            <div style={{color: 'black'}}><b>#{value.id}</b></div>
-                                            <div><b className="link-title">{splitAndCapitalize(value.name)}</b></div>
-                                            { value.baby && <span className="caption text-danger">(Baby)</span>}
-                                            {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
-                                            <p>{ value.id === props.id.toString() && <span className="caption">Current</span>}</p>
+                                            {renderImageEvo(value)}
                                         </Link>
                                         }
                                     </li>

@@ -7,14 +7,14 @@
 }
 
 .group-prev-next {
-    position: -webkit-absolute;
     position: absolute;
+    position: -webkit-absolute;
     height: 100%;
 }
 
 .btn-prev {
-    position: -webkit-sticky;
     position: fixed;
+    position: -webkit-sticky;
     z-index: 1;
     top: 50%;
     left: 0;
@@ -22,8 +22,8 @@
 }
 
 .btn-next {
-    position: -webkit-fixed;
     position: fixed;
+    position: -webkit-fixed;
     z-index: 1;
     top: 50%;
     right: 0;

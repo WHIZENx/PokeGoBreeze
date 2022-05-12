@@ -28,6 +28,7 @@ const Search = () => {
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
 
     useEffect(() => {
+        document.title = "Pokémon - Search"
         const fetchMyAPI = async () => {
             if (pokeList.length === 0) {
                 const res = await APIService.getPokeJSON('pokemon_names.json');
@@ -91,9 +92,6 @@ const Search = () => {
 
     return (
         <Fragment>
-            {/* <Helmet>
-                <title>{"Search - Pokémon"}</title>
-            </Helmet> */}
             <div className='group-prev-next'>
                 { id  > 1 && prev &&
                 <div className='btn-prev'>

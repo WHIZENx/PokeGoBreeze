@@ -1,0 +1,32 @@
+ul {
+    list-style-type: none;
+}
+
+.result ul, .result-type ul, .result-weather ul, .result-tools ul, .result-move ul {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+
+.card-pokemon {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    width: 100%;
+}
+
+.card-pokemon:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.center {
+    text-align: center;
+}
+
+.element-top {
+    margin-top: 10px;
+}
+
+.img-search {
+    margin: 0 5px 0 5px;
+}

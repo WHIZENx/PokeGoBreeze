@@ -89,7 +89,6 @@ const Pokemon = (props) => {
             fetchMap(res.data);
             setData(res.data);
             if (params.id) document.title =  `#${res.data.id} - ${splitAndCapitalize(res.data.name)}`;
-            else document.title = "Pokémon - Search"
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });

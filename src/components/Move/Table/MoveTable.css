@@ -3,7 +3,6 @@
     max-height: 700px;
     overflow-y: auto;
     border: 1px solid #b8d4da;
-    /* border-collapse: collapse; */
 }
 
 .table-moves thead {
@@ -29,13 +28,13 @@
 
 .table-column-head {
     background-color: #f1ffff !important;
-    width: auto !important;
     color: black !important;
 }
 
 .main-move {
-    min-width: 130px !important;
-    width: 42% !important;
+    min-width: 45%;
+    max-width: 45%;
+    width: 45%;
 }
 
 .text-origin {
@@ -49,26 +48,26 @@
 }
 
 .ic {
+    display: inline-block;
     font-size: 10px;
     padding: 1px 6px !important;
     font-weight: bold !important;
     text-shadow: none !important;
-    display: inline-block;
     text-align: center;
     color: black !important;
 }
 
 .elite-ic {
     background-color:#f8d030 !important;
-    width: 35px;
+    width: 35px !important;
 }
 
 .shadow-ic {
     background-color:#c184ec !important;
-    width: 50px;
+    width: 50px !important;
 }
 
 .purified-ic {
     background-color:#a8a8a8 !important;
-    width: 50px;
+    width: 50px !important;
 }
