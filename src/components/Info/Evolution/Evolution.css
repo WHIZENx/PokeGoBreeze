@@ -1,5 +1,6 @@
 .evo-container {
     text-align: center;
+    white-space: initial !important;
 }
 
 .ul-evo {

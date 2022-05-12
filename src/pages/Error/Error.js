@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import error from '../../assets/error.jpg';
 
@@ -13,7 +13,7 @@ const Error = () => {
     }, []);
 
     return (
-        <Fragment>
+        <div className='d-block position-relative'>
             <div className="error-img"><img alt="error-img" src={error}></img></div>
             <div className="error-desc">
                 <div className='desc'>
@@ -24,7 +24,7 @@ const Error = () => {
                     <div style={{marginTop: 15}}><Link className='btn btn-danger' to="/">Go home</Link></div>
                 </div>
             </div>
-        </Fragment>
+        </div>
     )
 }
 

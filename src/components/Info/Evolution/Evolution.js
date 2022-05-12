@@ -1,4 +1,6 @@
+import { Badge } from "@mui/material";
 import { Fragment, useCallback, useEffect, useState } from "react";
+import Xarrow from "react-xarrows";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
 
@@ -49,11 +51,23 @@ const Evolution = (props) => {
         return 170 * isBaby + 160 * isNotBaby + noEvo;
     }
 
-    const renderImageEvo = (value) => {
+    const renderImageEvo = (value, chain, evo, index, evoCount) => {
+        let showArrow = true;
+        let offsetY = 35;
+        offsetY += value.baby ? 20 : 0
+        offsetY += arrEvoList.length === 1 ? 20 : 0
+        let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-10}};
+        // const evoContainer = document.documentElement.getElementsByClassName('evo-container')[0];
+        // if (evoContainer && window.innerWidth < 362) showArrow = false;
         return (
             <Fragment>
-                <img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
-                <div style={{color: 'black'}}><b>#{value.id}</b></div>
+                {showArrow && evo > 0 && <Xarrow
+                strokeWidth={2} path="grid" startAnchor={startAnchor} endAnchor={"left"}
+                start={`evo-${evo-1}-${chain.length > 1 ? 0 : index}`} end={`evo-${evo}-${chain.length > 1 ? index : 0}`} />}
+                <Badge color="primary" overlap="circular" badgeContent={evo+1}>
+                    <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                </Badge>
+                <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
                 <div><b className="link-title">{splitAndCapitalize(value.name)}</b></div>
                 { value.baby && <span className="caption text-danger">(Baby)</span>}
                 {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
@@ -66,21 +80,21 @@ const Evolution = (props) => {
         <Fragment>
             { arrEvoList.length > 0 &&
             <Fragment>
-            <h4 className="title-evo">Evolution Chain </h4>
-            <div className="evo-container">
-                <ul className="ul-evo" style={{minHeight:setHeightEvo()}}>
-                    {arrEvoList.map((value, index) => (
-                        <li key={index} className='img-form-gender-group li-evo'>
+            <h4 className="title-evo"><b>Evolution Chain</b></h4>
+            <div className="evo-container scroll-form" style={{minHeight:setHeightEvo()}}>
+                <ul className="ul-evo">
+                    {arrEvoList.map((values, evo) => (
+                        <li key={evo} className='img-form-gender-group li-evo'>
                             <ul className="ul-evo">
-                                {value.map((value, index) => (
-                                    <li key={index} className='img-form-gender-group img-evo-group li-evo'>
+                                {values.map((value, index) => (
+                                    <li id={"evo-"+evo+"-"+index} key={index} className='img-form-gender-group img-evo-group li-evo'>
                                         {props.onSetIDPoke ?
                                         <div className="select-evo" onClick={() => {handlePokeID(value.id)}}>
-                                            {renderImageEvo(value)}
+                                            {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </div>
                                         :
                                         <Link className="select-evo" to={"/pokemon/"+value.name} onClick={() => {handlePokeID(value.id)}}>
-                                            {renderImageEvo(value)}
+                                            {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </Link>
                                         }
                                     </li>

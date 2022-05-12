@@ -5,6 +5,11 @@
     border: 1px solid #b8d4da;
 }
 
+.table-moves {
+    width: 100%;
+    table-layout: fixed;
+}
+
 .table-moves thead {
     position: sticky;
     top: 0;
@@ -13,6 +18,7 @@
 .table-moves thead tr th.table-sub-header {
     background-color: #f1f1ff !important;
     color: #0571c2;
+    border: 1px solid #b8d4da;
 }
 
 .table-moves thead tr th {
@@ -29,12 +35,11 @@
 .table-column-head {
     background-color: #f1ffff !important;
     color: black !important;
+    border: 1px solid #b8d4da;
 }
 
 .main-move {
-    min-width: 45%;
-    max-width: 45%;
-    width: 45%;
+    width: 42%;
 }
 
 .text-origin {
