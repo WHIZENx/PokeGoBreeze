@@ -32,7 +32,7 @@ const TableMove = (props) => {
         findMove();
     }, [findMove]);
 
-    const renderMovesetTable = (value) => {
+    const renderMovesetTable = (value, max, type) => {
         return (
             <tr>
                 <td className="text-origin">
@@ -58,7 +58,7 @@ const TableMove = (props) => {
 
                         </Link>
                     </td>
-                <td className="center">{Math.round(value.eDPS.offensive*100/move.maxOff)}</td>
+                <td className="center">{Math.round(value.eDPS[type]*100/max)}</td>
             </tr>
         )
     }
@@ -80,7 +80,7 @@ const TableMove = (props) => {
                         </thead>
                         <tbody>
                             {move.data.sort((a,b) => b.eDPS.offensive - a.eDPS.offensive).map((value, index) => (
-                                <Fragment key={index}>{renderMovesetTable(value)}</Fragment>
+                                <Fragment key={index}>{renderMovesetTable(value, move.maxOff, "offensive")}</Fragment>
                             ))
                             }
                         </tbody>
@@ -100,7 +100,7 @@ const TableMove = (props) => {
                         </thead>
                         <tbody>
                             {move.data.sort((a,b) => b.eDPS.defensive - a.eDPS.defensive).map((value, index) => (
-                                <Fragment key={index}>{renderMovesetTable(value)}</Fragment>
+                                <Fragment key={index}>{renderMovesetTable(value, move.maxDef, "defensive")}</Fragment>
                             ))
                             }
                         </tbody>
