@@ -66,8 +66,8 @@ const Search = () => {
         <div className="container" style={{marginTop:20, marginBottom:20}}>
             <div className="table-head">Movesets list in Pokémon GO</div>
             <div className="row w-100" style={{margin:0}}>
-                <div className="col" style={{padding:0}}>
-                    <table className="table-info table-moves">
+                <div className="col-xl table-movesets-col" style={{padding:0}}>
+                    <table className="table-info table-movesets">
                         <thead></thead>
                         <tbody>
                             <tr className="center"><td className="table-sub-header" colSpan="3">Fast move</td></tr>
@@ -80,8 +80,8 @@ const Search = () => {
                         </tbody>
                     </table>
                 </div>
-                <div className="col" style={{padding:0}}>
-                    <table className="table-info table-moves">
+                <div className="col-xl table-movesets-col" style={{padding:0}}>
+                    <table className="table-info table-movesets">
                         <thead></thead>
                         <tbody>
                             <tr className="center"><td className="table-sub-header" colSpan="3">Charge move</td></tr>

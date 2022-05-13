@@ -4,6 +4,21 @@ import pokemonData from '../../data/pokemon.json';
 import pokemonCombatList from "../../data/combat_pokemon_go_list.json";
 import typeEffective from "../../data/type_effectiveness.json";
 
+const DEFAULT_POKEMON_DEF_OBJ = 160;
+const DEFAULT_POKEMON_SHADOW = false;
+const DEFAULT_WEATHER_BOOSTS = false;
+const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
+
+const DEFAULT_ENERYGY_PER_HP_LOST = 0.5;
+const DEFAULT_DAMAGE_MULTIPLY = 0.5;
+const DEFAULT_DAMAGE_CONST = 1;
+
+const min_level = 1;
+const max_level = 51;
+
+const min_iv = 0
+const max_iv = 15
+
 const capitalize = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -11,6 +26,15 @@ const capitalize = (string) => {
 const splitAndCapitalize = (string, splitBy) => {
     return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(" ");
 };
+
+const getMultiFriendshipMulti = (level) => {
+    let dmg = 1;
+    if (level === 1) dmg += 0.03;
+    else if (level === 2) dmg += 0.05;
+    else if (level === 3) dmg += 0.07;
+    else if (level === 4) dmg += 0.1;
+    return dmg;
+}
 
 export const convertName = (text) => {
     return text.toUpperCase()
@@ -126,12 +150,6 @@ export const sortStatsPokemon = (states) => {
         }
     };
 }
-
-let min_level = 1;
-let max_level = 51;
-
-let min_iv = 0
-let max_iv = 15
 
 export const calculateCP = (atk, def, sta, level) => {
     return Math.floor(Math.max(10, (atk*(def**0.5)*(sta**0.5)*data.find(item => item.level === level).multiplier**2)/10))
@@ -414,15 +432,6 @@ export const getTypeEffective = (typeMove, typesObj) => {
     return value_effective;
 }
 
-const getMultiFriendshipMulti = (level) => {
-    let dmg = 1;
-    if (level === 1) dmg += 0.03;
-    else if (level === 2) dmg += 0.05;
-    else if (level === 3) dmg += 0.07;
-    else if (level === 4) dmg += 0.1;
-    return dmg;
-}
-
 export const calculateDamagePVE = (atk, defObj, power, eff, pure) => {
     let modifier;
     if (eff) {
@@ -449,15 +458,6 @@ export const getBarCharge = (isRaid, energy) => {
     }
     else return Math.abs(energy) > 50 ? 1 : 2;
 }
-
-const DEFAULT_POKEMON_DEF_OBJ = 160;
-const DEFAULT_POKEMON_SHADOW = false;
-const DEFAULT_WEATHER_BOOSTS = false;
-const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
-
-const DEFAULT_ENERYGY_PER_HP_LOST = 0.5;
-const DEFAULT_DAMAGE_MULTIPLY = 0.5;
-const DEFAULT_DAMAGE_CONST = 1;
 
 export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, options, shadow) => {
     const FPow = fmove.pve_power;

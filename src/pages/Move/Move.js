@@ -145,7 +145,7 @@ const Move = (props) => {
                                 {move.type_move === "CHARGE" && <tr>
                                     <td>PVP Bar Charge</td>
                                     <td className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((value, index) => (
-                                        <div key={index} className="bar-charge"></div>
+                                        <div key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
                                 </tr>}
                                 <tr className="center"><td className="table-sub-header" colSpan="2">Other Stats</td></tr>

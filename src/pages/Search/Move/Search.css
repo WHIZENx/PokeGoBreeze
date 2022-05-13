@@ -9,6 +9,13 @@
     font-weight: bold;
 }
 
+.table-movesets-col {
+    position: relative;
+    overflow-y: auto;
+    border: 1px solid #b8d4da;
+    height: auto;
+}
+
 td.data-table {
     padding: 0;
 }

@@ -115,6 +115,14 @@ class APIService {
     getPokeLucky() {
         return `${POGO_ASSET_API_URL}Friends/ui_bg_lucky_pokemon.png`;
     }
+
+    getItemEvo(item) {
+        return `${POGO_ASSET_API_URL}Items/Bag_${item}_Sprite.png`;
+    }
+
+    getItemTroy(item) {
+        return `${POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
+    }
 }
 
 export default (new APIService());

@@ -7,24 +7,24 @@
 }
 
 .group-prev-next {
-    position: absolute;
     position: -webkit-absolute;
+    position: absolute;
     height: 100%;
 }
 
 .btn-prev {
+    position: -webkit-fixed;
     position: fixed;
-    position: -webkit-sticky;
-    z-index: 1;
+    z-index: 3;
     top: 50%;
     left: 0;
     margin-left: 4%;
 }
 
 .btn-next {
-    position: fixed;
     position: -webkit-fixed;
-    z-index: 1;
+    position: fixed;
+    z-index: 3;
     top: 50%;
     right: 0;
     margin-right: 4%
@@ -51,11 +51,7 @@
   font-weight: bold;
 }
 
-.carousel-control-next-icon:hover {
-    color: red;
-    cursor: pointer;
-  }
-
+.carousel-control-next-icon:hover,
 .carousel-control-prev-icon:hover {
     color: red;
     cursor: pointer;
