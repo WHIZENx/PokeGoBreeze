@@ -66,7 +66,7 @@ const Damage = () => {
         dodge: false,
         trainer: false,
         flevel: 0,
-        clevel: 0
+        clevel: 3
     });
     const { weather, dodge, trainer } = battleState;
     const [result, setResult] = useState({
@@ -77,7 +77,9 @@ const Damage = () => {
         currPoke: null,
         objPoke: null,
         type: null,
-        typeObj: null
+        typeObj: null,
+        currLevel: 1,
+        objLevel: 1,
     });
 
     const { enqueueSnackbar } = useSnackbar();
@@ -98,7 +100,9 @@ const Damage = () => {
             currPoke: null,
             objPoke: null,
             type: null,
-            typeObj: null
+            typeObj: null,
+            currLevel: 1,
+            objLevel: 1,
         });
     }
 
@@ -112,7 +116,9 @@ const Damage = () => {
             currPoke: null,
             objPoke: null,
             type: null,
-            typeObj: null
+            typeObj: null,
+            currLevel: 1,
+            objLevel: 1,
         });
     }
 
@@ -150,12 +156,14 @@ const Damage = () => {
                 currPoke: form,
                 objPoke: formObj,
                 type: statType,
-                typeObj: statTypeObj
+                typeObj: statTypeObj,
+                currLevel: statLevel,
+                objLevel: statLevelObj,
             }))
         } else {
             enqueueSnackbar('Please select move for pokémon!', { variant: 'error' });
         }
-    }, [enqueueSnackbar, enableFriend, battleState, move, form, formObj, statLvATK, statLvDEFObj, statLvSTAObj, findStabType, statType, statTypeObj]);
+    }, [enqueueSnackbar, enableFriend, battleState, move, form, formObj, statLvATK, statLvDEFObj, statLvSTAObj, findStabType, statType, statTypeObj, statLevel, statLevelObj]);
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -204,7 +212,7 @@ const Damage = () => {
                             {move &&
                             <div style={{width: 300, margin: 'auto'}}>
                                 <p>- Move Ability Type: <b>{capitalize(move.type_move.toLowerCase())}</b></p>
-                                <p>- Move Type: <b>{capitalize(move.type.toLowerCase())}</b></p>
+                                <p>- Move Type: <span className={"type-icon-small "+move.type.toLowerCase()}>{capitalize(move.type.toLowerCase())}</span></p>
                                 {findStabType(move.type.toLowerCase())}
                                 <p>- Damage: <b>{move.pve_power}
                                 {findStabType(move.type) && <span className={"caption-small text-success"}> (x1.2)</span>}

@@ -9,12 +9,13 @@ import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
+import PetsIcon from '@mui/icons-material/Pets';
 import { Fragment, useCallback, useEffect, useState } from "react";
 import Xarrow from "react-xarrows";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
 
-import evoData from "../../../data/evolution_pokemon_go.json"
+import evoData from "../../../data/evolution_pokemon_go.json";
 
 import "./Evolution.css"
 import Type from "../../Sprits/Type";
@@ -34,6 +35,7 @@ const Evolution = (props) => {
     useEffect(() => {
         APIService.getFetchUrl(props.evolution_url)
         .then(res => {
+            setArrEvoList([])
             getEvoChain([res.data.chain]);
         })
     }, [props.evolution_url, getEvoChain]);
@@ -62,15 +64,15 @@ const Evolution = (props) => {
         const isBaby = arrEvoList[result].filter(ele => ele.baby).length;
         return (170 * isBaby + 160 * isNotBaby + noEvo) + 10;
     }
+
     const getQuestEvo = (prevId) => {
-        let data;
         try {
-            evoData.find(item => item.evo_list.find(value => value.evo_to_id === prevId)).evo_list.forEach(value => {
-                if (value.evo_to_id === prevId) data = value
-            });
-            return data
+            return evoData.find(item => item.evo_list.find(value => value.evo_to_id === prevId)).evo_list.find(item => item.evo_to_id === prevId)
         } catch (error) {
-            return 0
+            return {
+                candyCost: 0,
+                quest: {}
+            };
         }
     }
 
@@ -78,7 +80,7 @@ const Evolution = (props) => {
         let offsetY = 35;
         offsetY += value.baby ? 20 : 0
         offsetY += arrEvoList.length === 1 ? 20 : 0
-        let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-10}};
+        let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-15}};
         let data = getQuestEvo(parseInt(value.id));
         return (
             <Fragment>
@@ -95,7 +97,7 @@ const Evolution = (props) => {
                                 }</span>}
                                 {data.quest.kmBuddyDistanceRequirement && <span className="caption">
                                     {data.quest.mustBeBuddy ?
-                                    <div className="d-flex"><DirectionsWalkIcon fontSize="small"/><DirectionsWalkIcon fontSize="small"/></div> :
+                                    <div className="d-flex align-items-end"><DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /></div> :
                                     <DirectionsWalkIcon fontSize="small"/>} {`${data.quest.kmBuddyDistanceRequirement}km`}
                                 </span>}
                                 {data.quest.onlyDaytime && <span className="caption"><WbSunnyIcon fontSize="small" /></span>}
@@ -139,7 +141,7 @@ const Evolution = (props) => {
                         }
                     </div>)
                 }}
-                strokeWidth={2} path="grid" startAnchor={startAnchor} endAnchor={{position: "left", offset: {x:10}}}
+                strokeWidth={2} path="grid" startAnchor={startAnchor} endAnchor={{position: "left", offset: {x:15}}}
                 start={`evo-${evo-1}-${chain.length > 1 ? 0 : index}`} end={`evo-${evo}-${chain.length > 1 ? index : 0}`} />}
                 {evoCount > 1 ?
                 <Badge color="primary" overlap="circular" badgeContent={evo+1}>
@@ -159,9 +161,9 @@ const Evolution = (props) => {
 
     return (
         <Fragment>
+            <h4 className="title-evo"><b>Evolution Chain</b></h4>
             { arrEvoList.length > 0 &&
             <Fragment>
-            <h4 className="title-evo"><b>Evolution Chain</b></h4>
             {/* <div className="d-flex">
                 <span>? is random evolution</span>
                 <span><MaleIcon fontSize="small" /> is gender male</span>
@@ -169,7 +171,7 @@ const Evolution = (props) => {
             <div className="evo-container scroll-form" style={{minHeight:setHeightEvo()}}>
                 <ul className="ul-evo">
                     {arrEvoList.map((values, evo) => (
-                        <li key={evo} className='img-form-gender-group li-evo'>
+                        <li key={evo} className='img-form-gender-group li-evo' style={{marginRight: arrEvoList.length > 1 && evo < arrEvoList.length-1 ? window.innerWidth/(6*arrEvoList.length) : 0}}>
                             <ul className="ul-evo">
                                 {values.map((value, index) => (
                                     <li id={"evo-"+evo+"-"+index} key={index} className='img-form-gender-group img-evo-group li-evo'>

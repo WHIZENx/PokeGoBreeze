@@ -13,11 +13,11 @@ const DEFAULT_ENERYGY_PER_HP_LOST = 0.5;
 const DEFAULT_DAMAGE_MULTIPLY = 0.5;
 const DEFAULT_DAMAGE_CONST = 1;
 
-const min_level = 1;
-const max_level = 51;
+const MIN_LEVEL = 1;
+const MAX_LEVEL = 51;
 
-const min_iv = 0
-const max_iv = 15
+const MIN_IV = 0
+const MAX_IV = 15
 
 const capitalize = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -160,13 +160,13 @@ export const predictStat = (atk, def, sta, cp) => {
     let dataStat = {}
     let minLevel = 1;
     let maxLevel = 1;
-    for (let i = min_level; i <= max_level; i+=0.5) {
+    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i+=0.5) {
         if (cp <= calculateCP(atk+15, def+15, sta+15, i)) {
             minLevel = i
             break;
         }
     }
-    for (let i = minLevel; i <= max_level; i+=0.5) {
+    for (let i = minLevel; i <= MAX_LEVEL; i+=0.5) {
         if (calculateCP(atk, def, sta, i) >= cp) {
             maxLevel = i;
             break;
@@ -178,9 +178,9 @@ export const predictStat = (atk, def, sta, cp) => {
 
     let predictArr = [];
     for (let l = minLevel; l <= maxLevel; l+=0.5) {
-        for (let i = min_iv; i <= max_iv; i++) {
-            for (let j = min_iv; j <= max_iv; j++) {
-                for (let k = min_iv; k <= max_iv; k++) {
+        for (let i = MIN_IV; i <= MAX_IV; i++) {
+            for (let j = MIN_IV; j <= MAX_IV; j++) {
+                for (let k = MIN_IV; k <= MAX_IV; k++) {
                     if (calculateCP(atk+i, def+j, sta+k, l) === cp) predictArr.push({atk: i,
                         def: j,
                         sta: k,
@@ -204,7 +204,7 @@ export const predictCPList = (atk, def, sta, IVatk, IVdef, IVsta) => {
     dataStat["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
 
     let predictArr = [];
-    for (let i = min_level; i <= max_level; i+=0.5) {
+    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i+=0.5) {
         predictArr.push({level: i,
             cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i),
             hp: Math.floor((sta+IVsta)*data.find(item => item.level === i).multiplier)})
@@ -221,7 +221,7 @@ export const calculateStats = (atk, def, sta, IVatk, IVdef, IVsta, cp) => {
     dataStat["CP"] = cp;
     dataStat["level"] = null;
 
-    for (let i = min_level; i <= max_level; i+=0.5) {
+    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i+=0.5) {
         if (cp === calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i)) {
             dataStat.level = i;
             break;
@@ -308,7 +308,7 @@ export const calculateStatsBettlePure = (base, iv, level, addition) => {
 }
 
 export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, currCP, maxCp, type) => {
-    let level = max_level;
+    let level = MAX_LEVEL;
     if (type !== "lucky") level -= 1;
     if (maxCp && currCP > maxCp) {
         return {elidge: false}
@@ -326,7 +326,7 @@ export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_l
             dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, level);
             dataBettle.limit = false;
         } else {
-            for (let i = min_level; i <= level; i+=0.5) {
+            for (let i = MIN_LEVEL; i <= level; i+=0.5) {
                 if (dataBettle.cp < calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) && calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) <= maxCp) {
                     dataBettle["level"] = i;
                     dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i);
@@ -382,11 +382,11 @@ export const typeCostPowerUp = (type) => {
 export const calStatsProd = (atk, def, sta, maxCP) => {
     let dataList = []
 
-    for (let l = min_level; l <= max_level; l+=0.5) {
+    for (let l = MIN_LEVEL; l <= MAX_LEVEL; l+=0.5) {
         let currCP = 0;
-        for (let i = min_iv; i <= max_iv; i++) {
-            for (let j = min_iv; j <= max_iv; j++) {
-                for (let k = min_iv; k <= max_iv; k++) {
+        for (let i = MIN_IV; i <= MAX_IV; i++) {
+            for (let j = MIN_IV; j <= MAX_IV; j++) {
+                for (let k = MIN_IV; k <= MAX_IV; k++) {
                     const cp = calculateCP(atk+i, def+j, sta+k, l);
                     if (currCP < cp && (maxCP == null || cp <= maxCP)) {
                         const statsATK = (atk+i)*data.find(item => item.level === l).multiplier;

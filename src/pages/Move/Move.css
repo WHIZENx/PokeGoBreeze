@@ -17,9 +17,8 @@
 
 .bar-charge {
     margin-right: 5px;
-    width: 50px;
     height: 10px;
-    transform: skew(-20deg);
+    transform: skew(-25deg);
 }
 
 .move-table td:nth-child(1) {

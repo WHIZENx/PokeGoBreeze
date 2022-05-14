@@ -1,6 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Info from '../Info';
-import Form from './Form';
 
 import TableMove from '../../Move/Table/MoveTable'
 import Stats from '../Stats/Stats'
@@ -8,8 +7,10 @@ import Stats from '../Stats/Stats'
 import './Form.css';
 import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
+import Gender from '../Gender';
+import Mega from '../Mega/Mega';
 
-const FormGroup = (props) => {
+const Form = (props) => {
 
     const formDefault = useRef(props.formList.map(item => {
         return item.find(item => item.form.is_default)
@@ -73,13 +74,19 @@ const FormGroup = (props) => {
         const findData = props.pokeData.find(item => item.name === e.currentTarget.value);
         const findForm = props.formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
         setCurrForm(findForm);
+        props.setFormName(splitAndCapitalize(findForm.form.name, " "));
         if (findData) {
-            setDataPoke(findData)
+            setDataPoke(findData);
+            props.setWH(prevWH => ({...prevWH, weight: findData.weight, height: findData.height}));
         } else if (findForm) {
             let oriForm = props.pokeData[0];
-            oriForm.types = findForm.form.types
+            oriForm.types = findForm.form.types;
             setDataPoke(oriForm);
-        } else setDataPoke(props.pokeData[0]);
+            props.setWH(prevWH => ({...prevWH, weight: oriForm.weight, height: oriForm.height}));
+        } else {
+            setDataPoke(props.pokeData[0]);
+            props.setWH(prevWH => ({...prevWH, weight: props.pokeData[0].weight, height: props.pokeData[0].height}));
+        }
         props.setVersion(findForm.form.version_group.name);
     }
 
@@ -111,11 +118,11 @@ const FormGroup = (props) => {
             <Fragment>
                 {props.ratio.M !== 0 && props.ratio.F !== 0 ?
                 <Fragment>
-                {props.ratio.M !== 0 && <Fragment><Form ratio={props.ratio} sex='Male' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+                {props.ratio.M !== 0 && <Fragment><Gender ratio={props.ratio} sex='Male' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
                 {props.ratio.M !== 0 && props.ratio.F !== 0 && <hr></hr>}
-                {props.ratio.F !== 0 && <Fragment><Form ratio={props.ratio} sex='Female' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+                {props.ratio.F !== 0 && <Fragment><Gender ratio={props.ratio} sex='Female' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
                 </Fragment>
-                : <Form sex='Genderless' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/>
+                : <Gender sex='Genderless' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/>
                 }
                 <Stats statATK={statATK}
                     statDEF={statDEF}
@@ -136,9 +143,20 @@ const FormGroup = (props) => {
             }
             </div>
             <hr className="w-100"></hr>
+            {props.formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 ?
+            <div className='row w-100' style={{margin:0}}>
+                <div className='col-xl' style={{padding:0}}>
+                    <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>
+                </div>
+                <div className='col-xl' style={{padding:0}}>
+                    <Mega onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} formList={props.formList} id={props.id_default}/>
+                </div>
+            </div>
+            :
             <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>
-        </Fragment>
+            }
+            </Fragment>
     )
 }
 
-export default FormGroup;
+export default Form;

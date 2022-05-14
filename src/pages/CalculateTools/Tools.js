@@ -102,7 +102,7 @@ const Tools = (props) => {
                     </div>
                 }
             </div>
-            <h4><b>#{props.id} {props.name}</b></h4>
+            <h4><b>#{props.id} {currForm ? splitAndCapitalize(currForm.form.name) : props.name}</b></h4>
             <div className="scroll-card">
                 {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
                     <Fragment>

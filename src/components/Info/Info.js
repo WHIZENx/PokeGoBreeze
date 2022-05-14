@@ -54,7 +54,6 @@ const Info = (props) => {
             <Type arr={props.currForm.form.types.map(ele => ele.type.name)}/>
             <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm.form.types)}/>
             <TypeEffective typeEffective={getTypeEffective(props.currForm.form.types)}/>
-            <h5 className='element-top'>- Pokémon height: {props.data.height/10} m, weight: {props.data.weight/10} kg</h5>
         </Fragment>
     )
 }

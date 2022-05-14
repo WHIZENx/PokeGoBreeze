@@ -1,9 +1,7 @@
 import React from 'react';
-import APIService from '../../../services/API.service'
+import APIService from '../../services/API.service'
 
-import './Form.css';
-
-const Form = (props) => {
+const Gender = (props) => {
 
     // const calculateRatio = (sex, ratio) => {
     //     let maleRatio = parseInt(ratio.charAt(0));
@@ -29,21 +27,21 @@ const Form = (props) => {
             </div>
             <ul>
                 <li className='img-form-gender-group'>
-                    <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ? 
+                    <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ?
                         (props.default_m) ? props.default_m : props.default_f ? props.default_f : APIService.getPokeSprite(0) :
-                        (props.default_f) ? props.default_f : props.default_m ? props.default_m : APIService.getPokeSprite(0)}></img> 
+                        (props.default_f) ? props.default_f : props.default_m ? props.default_m : APIService.getPokeSprite(0)}></img>
                     <span className="caption">Original form</span>
                 </li>
                 <li className='img-group'>
-                    <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ? 
+                    <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ?
                         (props.shiny_m) ? props.shiny_m : props.shiny_f ? props.shiny_f : APIService.getPokeSprite(0) :
-                        (props.shiny_f) ? props.shiny_f : props.shiny_m ? props.shiny_m : APIService.getPokeSprite(0) }></img> 
+                        (props.shiny_f) ? props.shiny_f : props.shiny_m ? props.shiny_m : APIService.getPokeSprite(0) }></img>
                     <span className="caption">Shiny form</span>
                 </li>
             </ul>
-            
+
         </div>
     );
 }
 
-export default Form;
+export default Gender;

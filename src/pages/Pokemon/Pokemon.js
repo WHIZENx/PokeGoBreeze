@@ -7,7 +7,7 @@ import './Pokemon.css';
 import { calculateStatsByTag, sortStatsPokemon } from '../../components/Calculate/Calculate';
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import FormGroup from "../../components/Info/Gender/FormGroup";
+import Form from "../../components/Info/Form/Form";
 
 import pokemonData from '../../data/pokemon.json';
 
@@ -28,6 +28,8 @@ const Pokemon = (props) => {
     const [pokeRatio, setPokeRatio] = useState(null);
 
     const [version, setVersion] = useState(null);
+    const [WH, setWH] = useState({weight: 0, height: 0});
+    const [formName, setFormName] = useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -64,11 +66,11 @@ const Pokemon = (props) => {
         let dataPokeList = [];
         let dataFromList = [];
         await Promise.all(data.varieties.map(async (value, index) => {
-            const poke_info = await APIService.getFetchUrl(value.pokemon.url);
-            // const poke_form = await APIService.getFetchUrl(poke_info.data.forms[0].url);
-            const poke_form = await Promise.all(poke_info.data.forms.map(async (item) => (await APIService.getFetchUrl(item.url)).data));
-            dataPokeList.push(poke_info.data);
+            const poke_info = (await APIService.getFetchUrl(value.pokemon.url)).data;
+            const poke_form = await Promise.all(poke_info.forms.map(async (item) => (await APIService.getFetchUrl(item.url)).data));
+            dataPokeList.push(poke_info);
             dataFromList.push(poke_form);
+            if (poke_info.id === data.id) setWH(prevWH => ({...prevWH, weight: poke_info.weight, height: poke_info.height}));
         }));
         setPokeData(dataPokeList);
         dataFromList = dataFromList.map(item => {
@@ -79,7 +81,7 @@ const Pokemon = (props) => {
         const defaultFrom = dataFromList.map(item => item.find(item => item.form.is_default));
         const isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
         if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name));
-        else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name));
+        else  setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name));
     }, [splitAndCapitalize]);
 
     const queryPokemon = useCallback((id) => {
@@ -139,18 +141,21 @@ const Pokemon = (props) => {
                         </div>
                         <div className="col text-desc">
                             <h4 className='element-top'>ID: <b>#{data.id}</b></h4>
-                            <h4>Name: <b>{splitAndCapitalize(data.name)}</b></h4>
+                            <h4>Name: <b>{formName ? formName : splitAndCapitalize(data.name)}</b></h4>
                             <h4>Generation: <b>{data.generation.name.split("-")[1].toUpperCase()}</b> <span className="text-gen">({getNumGen(data.generation.url)})</span></h4>
                             <h4>Version: {version}<b></b></h4>
+                            <h4 className='element-top'>Height: {WH.height/10} m, Weight: {WH.weight/10} kg</h4>
                         </div>
                     </div>
                     <div className='img-form-group' style={{textAlign: (initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length) ? null : 'center'}}>
                     {initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
                             <Fragment>
-                                <FormGroup
+                                <Form
                                     onSetPrev={props.onSetPrev}
                                     onSetNext={props.onSetNext}
                                     setVersion={setVersionName}
+                                    setWH={setWH}
+                                    setFormName={setFormName}
                                     id_default={data.id}
                                     pokeData={pokeData}
                                     pokemonRaito={pokeRatio}

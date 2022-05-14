@@ -112,7 +112,7 @@ const Move = (props) => {
                                 </tr>
                                 <tr>
                                     <td>Type</td>
-                                    <td><b>{splitAndCapitalize(move.type.toLowerCase(), "_")}</b></td>
+                                    <td><div style={{width: 'fit-content'}} className={"type-icon-small "+move.type.toLowerCase()}>{capitalize(move.type.toLowerCase())}</div></td>
                                 </tr>
                                 <tr>
                                     <td>Move Type</td>
@@ -130,7 +130,7 @@ const Move = (props) => {
                                 {move.type_move === "CHARGE" && <tr>
                                     <td>PVE Bar Charge</td>
                                     <td className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(true, move.pve_energy)).keys()].map((value, index) => (
-                                        <div key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
+                                        <div style={{width: (120/getBarCharge(true, move.pve_energy))-(5/(Math.max(1, getBarCharge(true, move.pve_energy)-1)))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
                                 </tr>}
                                 <tr className="center"><td className="table-sub-header" colSpan="2">PVP Stats</td></tr>
@@ -145,7 +145,7 @@ const Move = (props) => {
                                 {move.type_move === "CHARGE" && <tr>
                                     <td>PVP Bar Charge</td>
                                     <td className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((value, index) => (
-                                        <div key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
+                                        <div style={{width: (120/getBarCharge(false, move.pvp_energy))-(5/(Math.max(1, getBarCharge(false, move.pvp_energy)-1)))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
                                 </tr>}
                                 <tr className="center"><td className="table-sub-header" colSpan="2">Other Stats</td></tr>

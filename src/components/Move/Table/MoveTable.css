@@ -62,19 +62,17 @@
     text-shadow: none !important;
     text-align: center;
     color: black !important;
+    width: fit-content !important;
 }
 
 .elite-ic {
     background-color:#f8d030 !important;
-    width: 35px !important;
 }
 
 .shadow-ic {
     background-color:#c184ec !important;
-    width: 50px !important;
 }
 
 .purified-ic {
     background-color:#a8a8a8 !important;
-    width: 50px !important;
 }

@@ -3,6 +3,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import atk_logo from '../../../assets/attack.png';
+import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
 import APIService from '../../../services/API.service';
 
@@ -36,7 +37,7 @@ const DamageTable = (props) => {
                             <Fragment>
                                 {props.result.type === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}></img>}
                                 {props.result.type === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}></img>}
-                            {splitAndCapitalize(props.result.currPoke.form.pokemon.name, "-")}</Fragment> : "-"}</td>
+                            {splitAndCapitalize(props.result.currPoke.form.pokemon.name, "-")} <span className='d-inline-block caption'>(LV. {props.result.currLevel})</span></Fragment> : "-"}</td>
                         </tr>
                         <tr>
                             <td>Target</td>
@@ -44,7 +45,7 @@ const DamageTable = (props) => {
                             <Fragment>
                             {props.result.typeObj === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}></img>}
                             {props.result.typeObj === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}></img>}
-                            {splitAndCapitalize(props.result.objPoke.form.pokemon.name, "-")}</Fragment> : "-"}</td>
+                            {splitAndCapitalize(props.result.objPoke.form.pokemon.name, "-")} <span className='d-inline-block caption'>(LV. {props.result.objLevel})</span></Fragment> : "-"}</td>
                         </tr>
                         <tr>
                             <td>Move name</td>
@@ -85,6 +86,17 @@ const DamageTable = (props) => {
                         <tr>
                             <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>Damage Taken</td>
                             <td>{props.result.damage ? <b>{props.result.damage}</b> : "-"}</td>
+                        </tr>
+                        <tr>
+                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>Damage Reduced</td>
+                            <td>{props.result.damage ?
+                            <Fragment>
+                            {props.result.damage < props.result.move.pve_power ?
+                            <b className="text-success">{((props.result.move.pve_power-props.result.damage)*100/props.result.move.pve_power).toFixed(2)}%</b>
+                            :
+                            <b className="text-danger">0</b>
+                            }
+                            </Fragment> : "-"}</td>
                         </tr>
                         <tr>
                             <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP Object remaining</td>
