@@ -14,6 +14,33 @@ const labels = {
     3: 'Excellent'
 };
 
+const eff = {
+    0.244140625: {
+        label: 0.244,
+        style: 'super-resistance'
+    },
+    0.390625: {
+        label: 0.391,
+        style: 'very-resistance'
+    },
+    0.625: {
+        label: 0.625,
+        style: 'resistance'
+    },
+    1: {
+        label: 1,
+        style: 'neutral'
+    },
+    1.6: {
+        label: 1.6,
+        style: 'weakness'
+    },
+    2.5600000000000005: {
+        label: 2.56,
+        style: 'super-weakness'
+    }
+};
+
 const DamageTable = (props) => {
 
     const capitalize = (string) => {
@@ -81,7 +108,7 @@ const DamageTable = (props) => {
                         </tr>
                         <tr>
                             <td>Damage Effective</td>
-                            <td>{props.result.battleState ? "x"+props.result.battleState.effective : "-"}</td>
+                            <td>{props.result.battleState ? <span className={'eff-'+eff[props.result.battleState.effective].style}>{"x"+eff[props.result.battleState.effective].label}</span> : "-"}</td>
                         </tr>
                         <tr>
                             <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>Damage Taken</td>
