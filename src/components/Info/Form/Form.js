@@ -71,7 +71,7 @@ const Form = (props) => {
     }
 
     const changeForm = (e) => {
-        const findData = props.pokeData.find(item => item.name === e.currentTarget.value);
+        const findData = props.pokeData.find(item => e.currentTarget.value.includes(item.name));
         const findForm = props.formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
         setCurrForm(findForm);
         props.setFormName(splitAndCapitalize(findForm.form.name, " "));
@@ -138,22 +138,25 @@ const Form = (props) => {
                         <TableMove data={dataPoke} types={currForm.form.types}/>
                     </div>
                 </div>
-
             </Fragment>
             }
             </div>
+            {dataPoke && currForm &&
+            <Fragment>
             <hr className="w-100"></hr>
             {props.formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 ?
             <div className='row w-100' style={{margin:0}}>
                 <div className='col-xl' style={{padding:0}}>
-                    <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>
+                    <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form}/>
                 </div>
                 <div className='col-xl' style={{padding:0}}>
                     <Mega onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} formList={props.formList} id={props.id_default}/>
                 </div>
             </div>
             :
-            <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default}/>
+            <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form}/>
+            }
+            </Fragment>
             }
             </Fragment>
     )

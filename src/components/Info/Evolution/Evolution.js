@@ -17,8 +17,7 @@ import APIService from "../../../services/API.service";
 
 import evoData from "../../../data/evolution_pokemon_go.json";
 
-import "./Evolution.css"
-import Type from "../../Sprits/Type";
+import "./Evolution.css";
 
 const Evolution = (props) => {
 
@@ -27,18 +26,61 @@ const Evolution = (props) => {
     const getEvoChain = useCallback((data) => {
         if (data.length === 0) return false;
         setArrEvoList(oldArr => [...oldArr, data.map(item => {
+            // console.log(item.species.name)
             return {name: item.species.name, id: item.species.url.split("/")[6], baby: item.is_baby}
         })])
         return data.map(item => getEvoChain(item.evolves_to))
     }, []);
 
     useEffect(() => {
-        APIService.getFetchUrl(props.evolution_url)
-        .then(res => {
-            setArrEvoList([])
-            getEvoChain([res.data.chain]);
-        })
-    }, [props.evolution_url, getEvoChain]);
+        if (arrEvoList.length === 0) {
+            APIService.getFetchUrl(props.evolution_url)
+            .then(res => {
+                setArrEvoList([])
+                getEvoChain([res.data.chain]);
+            });
+        }
+    }, [props.evolution_url, getEvoChain, arrEvoList.length]);
+
+    const evoChain = (currId, arr) => {
+        if (currId.length === 0) return arr
+        let currData = evoData.find(item => currId === item.id);
+        if (!arr.map(i => i.id).includes(currData.id)) arr.push(currData);
+        return evoChain(currData.evo_list.map(i => i.evo_to_id), arr)
+    }
+
+    const prevEvoChain = (currId, arr) => {
+        let currData = evoData.filter(item => item.evo_list.find(i => currId === i.evo_to_id));
+        if (!arr.map(i => i.id).includes(currData.id)) arr.push(...currData);
+        if (arr.length === 0) {
+            currData = evoData.filter(item => currId === item.id)
+            arr.push(...currData);
+        }
+        if (currData.length === 0) return arr;
+        currData.forEach(item => {
+            item.evo_list.forEach(i => {
+                evoChain(i.evo_to_id, arr)
+            });
+        });
+        return currData.map(item => prevEvoChain(item.id, arr));
+    }
+
+    if (arrEvoList.length > 1 && props.form) {
+        let data = []
+        prevEvoChain(props.id, []).forEach(item => {
+            item.forEach(subItem => {
+                try {
+                    subItem.forEach(sub2Item => {
+                        data.push(sub2Item)
+                    });
+                } catch (error) {
+                    data.push(subItem)
+                }
+            });
+        });
+        data = data.sort((a,b) => a.id - b.id);
+        // console.log(data);
+    }
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -80,15 +122,17 @@ const Evolution = (props) => {
         let offsetY = 35;
         offsetY += value.baby ? 20 : 0
         offsetY += arrEvoList.length === 1 ? 20 : 0
-        let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-15}};
+        let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-10}};
         let data = getQuestEvo(parseInt(value.id));
         return (
             <Fragment>
                 {evo > 0 && <Xarrow
                 labels={{end:
-                    (<div className="position-absolute" style={{left: '-1rem'}}>
-                        <img alt='img-stardust' height={16} src={APIService.getItemSprite("Item_1301")}></img>
-                        <span className="caption">{`x${data.candyCost}`}</span>
+                    (<div className="position-absolute" style={{left: -40}}>
+                        <span className="d-flex align-items-center caption" style={{width: 'max-content'}}>
+                            <img alt='img-stardust' height={16} src={APIService.getItemSprite("Item_1301")}></img>
+                            <span style={{marginLeft: 2}}>{`x${data.candyCost}`}</span>
+                        </span>
                         {Object.keys(data.quest).length > 0 &&
                             <Fragment>
                                 {data.quest.randomEvolution && <span className="caption">?</span>}
@@ -114,8 +158,11 @@ const Evolution = (props) => {
                                     }
                                     {data.quest.condition.desc === "POKEMON_TYPE" &&
                                     <Fragment>
-                                        <Type style={{marginBottom: 0, marginRight: 0}} styled={true} height={16} arr={data.quest.condition.pokemonType}></Type>
-                                        <span>{`x${data.quest.goal}`}</span>
+                                        {data.quest.condition.pokemonType.map((value, index) => (
+                                            <img key={index} alt='img-stardust' height={16} src={APIService.getTypeSprite(value)}
+                                            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}></img>
+                                        ))}
+                                        <span style={{marginLeft: 2}}>{`x${data.quest.goal}`}</span>
                                     </Fragment>
                                     }
                                     {data.quest.condition.desc === "WIN_RAID_STATUS" &&
@@ -141,7 +188,7 @@ const Evolution = (props) => {
                         }
                     </div>)
                 }}
-                strokeWidth={2} path="grid" startAnchor={startAnchor} endAnchor={{position: "left", offset: {x:15}}}
+                strokeWidth={2} path="grid" startAnchor={startAnchor} endAnchor={{position: "left", offset: {x:10}}}
                 start={`evo-${evo-1}-${chain.length > 1 ? 0 : index}`} end={`evo-${evo}-${chain.length > 1 ? index : 0}`} />}
                 {evoCount > 1 ?
                 <Badge color="primary" overlap="circular" badgeContent={evo+1}>
@@ -171,7 +218,7 @@ const Evolution = (props) => {
             <div className="evo-container scroll-form" style={{minHeight:setHeightEvo()}}>
                 <ul className="ul-evo">
                     {arrEvoList.map((values, evo) => (
-                        <li key={evo} className='img-form-gender-group li-evo' style={{marginRight: arrEvoList.length > 1 && evo < arrEvoList.length-1 ? window.innerWidth/(6*arrEvoList.length) : 0}}>
+                        <li key={evo} className='img-form-gender-group li-evo' style={{marginRight: arrEvoList.length > 1 && evo < arrEvoList.length-1 ? window.innerWidth/(6.5*arrEvoList.length) : 0}}>
                             <ul className="ul-evo">
                                 {values.map((value, index) => (
                                     <li id={"evo-"+evo+"-"+index} key={index} className='img-form-gender-group img-evo-group li-evo'>
