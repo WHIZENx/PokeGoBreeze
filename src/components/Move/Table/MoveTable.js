@@ -47,9 +47,9 @@ const TableMove = (props) => {
                 <td className="text-origin">
                     <Link to={"../moves/"+value.cmove.id} target="_blank" className="d-flex align-items-center">
                         <Type style={{marginBottom:0}} styled={true} height={20} arr={[capitalize(value.cmove.type.toLowerCase())]}/>
-                        <div>
+                        <div style={{width: 'max-content'}}>
                             <span className="text-b-ic">{splitAndCapitalize(value.cmove.name.toLowerCase(), "_")}</span>
-                            <div className="d-inline-block" style={{width: 'max-content'}}>
+                            <div style={{width: 'max-content'}}>
                                 {value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
                                 {value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}
                                 {value.cmove.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}

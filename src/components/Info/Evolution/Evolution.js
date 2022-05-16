@@ -210,7 +210,7 @@ const Evolution = (props) => {
                 <span className="info-evo">
                 <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img> : Candy of pokemon.</span>
                     <span className="d-block caption">- <QuestionMarkIcon fontSize="small"/> : Random evolution.</span>
-                    <span className="d-block caption">- <MaleIcon fontSize="small" />/<FemaleIcon fontSize="small" /> : Only onec gender can evolution.</span>
+                    <span className="d-block caption">- <MaleIcon fontSize="small" />/<FemaleIcon fontSize="small" /> : Only once gender can evolution.</span>
                     <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /> : Walk together with buddy.</span>
                     <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/> : Buddy walk with trainer.</span>
                     <span className="d-block caption">- <WbSunnyIcon fontSize="small" /> : Evolution during at day.</span>
