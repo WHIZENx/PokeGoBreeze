@@ -121,7 +121,7 @@ class APIService {
     }
 
     getItemTroy(item) {
-        return `${POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
+        return item === "" ? `${POGO_ASSET_API_URL}Items/TroyKey.png` : `${POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
     }
 }
 

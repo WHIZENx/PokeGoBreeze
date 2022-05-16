@@ -3,6 +3,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
+import weatherBoosts from '../../../data/weather_boosts.json';
 import { calculateAvgDPS, calculateCP, calculateStatsBettle, calculateStatsByTag, calculateTDO, getBarCharge, convertName } from "../../../components/Calculate/Calculate";
 import DataTable from "react-data-table-component";
 import APIService from "../../../services/API.service";
@@ -215,7 +216,7 @@ const DpsTable = (props) => {
         else {
             const result = dpsTable.filter(item => {
                 const boolFilterType = selectTypes.length === 0 || (selectTypes.includes(capitalize(item.fmove.type.toLowerCase())) && selectTypes.includes(capitalize(item.cmove.type.toLowerCase())));
-                const boolFilterPoke =  searchTerm === '' || item.pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.pokemon.num.toString().includes(searchTerm);
+                const boolFilterPoke =  searchTerm === '' || splitAndCapitalize(item.pokemon.name, "-").toLowerCase().includes(searchTerm.toLowerCase()) || item.pokemon.num.toString().includes(searchTerm);
                 const boolOnlyShadow = enableShadow && item.shadow
                 const boolOnlyElite = enableElite && (item.elite.fmove || item.elite.cmove)
                 const boolOnlyMega = enableMega && item.pokemon.name.toLowerCase().includes("mega")
@@ -362,7 +363,21 @@ const DpsTable = (props) => {
                                         ...options,
                                         POKEMON_DEF_OBJ: parseInt(e.target.value),
                                     })} name="POKEMON_DEF_OBJ"></input>
-                                    <FormControlLabel control={<Checkbox checked={WEATHER_BOOSTS} onChange={handleCheckbox} name="WEATHER_BOOSTS"/>} label="Weather Boosts" />
+                                    <div className="input-group-prepend">
+                                        <label className="input-group-text">Weather Boosts</label>
+                                    </div>
+                                    <select className="border-input form-control" defaultValue={WEATHER_BOOSTS}
+                                    onChange={(e) => setOptions({
+                                        ...options,
+                                        WEATHER_BOOSTS: e.target.value === "true" ? true : e.target.value === "false" ? false : e.target.value})}>
+                                        <option value={false}>None</option>
+                                        <option value={true}>Extream</option>
+                                        {Object.keys(weatherBoosts).map((value, index) => (
+                                            <option key={index} value={value}>{value}</option>
+                                        ))
+                                        }
+                                    </select>
+                                    {/* <FormControlLabel control={<Checkbox checked={WEATHER_BOOSTS} onChange={handleCheckbox} name="WEATHER_BOOSTS"/>} label="Weather Boosts" /> */}
                                     <Box sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',paddingLeft: 1,paddingRight: 1}}>
                                         <FormControlLabel control={<Switch onChange={(event, check) => {
                                                 setEnableFriend(check)

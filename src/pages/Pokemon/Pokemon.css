@@ -55,6 +55,6 @@ a {
     text-decoration: none !important;
 }
 
-a b.link-title, .title-evo, .info-title {
+a b.link-title, .title-evo b, .info-title {
     text-decoration: underline !important;
 }

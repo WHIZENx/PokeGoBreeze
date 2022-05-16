@@ -3,6 +3,7 @@ import combat from '../../data/combat.json';
 import pokemonData from '../../data/pokemon.json';
 import pokemonCombatList from "../../data/combat_pokemon_go_list.json";
 import typeEffective from "../../data/type_effectiveness.json";
+import weatherBoosts from '../../data/weather_boosts.json';
 
 const DEFAULT_POKEMON_DEF_OBJ = 160;
 const DEFAULT_POKEMON_SHADOW = false;
@@ -34,6 +35,10 @@ const getMultiFriendshipMulti = (level) => {
     else if (level === 3) dmg += 0.07;
     else if (level === 4) dmg += 0.1;
     return dmg;
+}
+
+const weatherMultiple = (weather, type) => {
+    return weatherBoosts[weather].find(item => item === capitalize(type.toLowerCase())) ? 1.2 : 1;
 }
 
 export const convertName = (text) => {
@@ -481,8 +486,8 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, optio
 
         y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? 0.83333331 : 1));
     } else {
-        FDmgBase = options.DAMAGE_MULTIPLY*FPow*FMulti*(shadow ? 1.2 : 1)*(options.WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(options.POKEMON_FRIEND_LEVEL)
-        CDmgBase = options.DAMAGE_MULTIPLY*CPow*CMulti*(shadow ? 1.2 : 1)*(options.WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(options.POKEMON_FRIEND_LEVEL)
+        FDmgBase = options.DAMAGE_MULTIPLY*FPow*FMulti*(shadow ? 1.2 : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, fmove.type) : options.WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(options.POKEMON_FRIEND_LEVEL)
+        CDmgBase = options.DAMAGE_MULTIPLY*CPow*CMulti*(shadow ? 1.2 : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, cmove.type) : options.WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(options.POKEMON_FRIEND_LEVEL)
 
         FDmg = Math.floor(FDmgBase*Atk/options.POKEMON_DEF_OBJ)+options.DAMAGE_CONST
         CDmg = Math.floor(CDmgBase*Atk/options.POKEMON_DEF_OBJ)+options.DAMAGE_CONST

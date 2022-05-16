@@ -1,4 +1,5 @@
 import { Badge } from "@mui/material";
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
@@ -10,6 +11,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import PetsIcon from '@mui/icons-material/Pets';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Fragment, useCallback, useEffect, useState } from "react";
 import Xarrow from "react-xarrows";
 import { Link } from "react-router-dom";
@@ -26,61 +28,42 @@ const Evolution = (props) => {
     const getEvoChain = useCallback((data) => {
         if (data.length === 0) return false;
         setArrEvoList(oldArr => [...oldArr, data.map(item => {
-            // console.log(item.species.name)
-            return {name: item.species.name, id: item.species.url.split("/")[6], baby: item.is_baby}
+            return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby}
         })])
         return data.map(item => getEvoChain(item.evolves_to))
     }, []);
+
+    // const evoChain = useCallback((currId, arr, form) => {
+    //     if (currId.length === 0) return arr;
+    //     let currData = evoData.find(item => item.name.includes(form) && currId.includes(item.id));
+    //     if (!arr.map(i => i.id).includes(currData.id)) arr.push(currData);
+    //     return evoChain(currData.evo_list.map(i => i.evo_to_id), arr, form)
+    // }, []);
+
+    // const prevEvoChain = useCallback((currId, arr, form) => {
+    //     let currData = evoData.filter(item => item.evo_list.find(i => i.evo_to_form.includes(form) && currId.includes(i.evo_to_id)));
+    //     if (!arr.map(i => i.id).includes(currData.id)) arr.push(...currData);
+    //     if (arr.length === 0) {
+    //         currData = evoData.filter(item => item.name.includes(form) && currId.includes(item.id))
+    //         arr.push(...currData);
+    //     }
+    //     if (currData.length === 0) return arr;
+    //     currData.forEach(item => {
+    //         item.evo_list.forEach(i => {
+    //             evoChain([i.evo_to_id], arr, i.evo_to_form)
+    //         });
+    //     });
+    //     return currData.map(item => prevEvoChain([item.id], arr, form));
+    // }, [evoChain]);
 
     useEffect(() => {
         if (arrEvoList.length === 0) {
             APIService.getFetchUrl(props.evolution_url)
             .then(res => {
-                setArrEvoList([])
                 getEvoChain([res.data.chain]);
             });
         }
     }, [props.evolution_url, getEvoChain, arrEvoList.length]);
-
-    const evoChain = (currId, arr) => {
-        if (currId.length === 0) return arr
-        let currData = evoData.find(item => currId === item.id);
-        if (!arr.map(i => i.id).includes(currData.id)) arr.push(currData);
-        return evoChain(currData.evo_list.map(i => i.evo_to_id), arr)
-    }
-
-    const prevEvoChain = (currId, arr) => {
-        let currData = evoData.filter(item => item.evo_list.find(i => currId === i.evo_to_id));
-        if (!arr.map(i => i.id).includes(currData.id)) arr.push(...currData);
-        if (arr.length === 0) {
-            currData = evoData.filter(item => currId === item.id)
-            arr.push(...currData);
-        }
-        if (currData.length === 0) return arr;
-        currData.forEach(item => {
-            item.evo_list.forEach(i => {
-                evoChain(i.evo_to_id, arr)
-            });
-        });
-        return currData.map(item => prevEvoChain(item.id, arr));
-    }
-
-    if (arrEvoList.length > 1 && props.form) {
-        let data = []
-        prevEvoChain(props.id, []).forEach(item => {
-            item.forEach(subItem => {
-                try {
-                    subItem.forEach(sub2Item => {
-                        data.push(sub2Item)
-                    });
-                } catch (error) {
-                    data.push(subItem)
-                }
-            });
-        });
-        data = data.sort((a,b) => a.id - b.id);
-        // console.log(data);
-    }
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -107,35 +90,48 @@ const Evolution = (props) => {
         return (170 * isBaby + 160 * isNotBaby + noEvo) + 10;
     }
 
-    const getQuestEvo = (prevId) => {
+    const getQuestEvo = (prevId, form) => {
         try {
-            return evoData.find(item => item.evo_list.find(value => value.evo_to_id === prevId)).evo_list.find(item => item.evo_to_id === prevId)
+            return evoData
+            .find(item => item.evo_list
+                .find(value => value.evo_to_form.includes(form) && value.evo_to_id === prevId))
+                .evo_list
+                .find(item => item.evo_to_form.includes(form) && item.evo_to_id === prevId)
         } catch (error) {
-            return {
-                candyCost: 0,
-                quest: {}
-            };
+            try {
+                return evoData
+                .find(item => item.evo_list
+                    .find(value => value.evo_to_id === prevId))
+                    .evo_list
+                    .find(item => item.evo_to_id === prevId)
+            } catch (error) {
+                return {
+                    candyCost: 0,
+                    quest: {}
+                };
+            }
         }
     }
 
     const renderImageEvo = (value, chain, evo, index, evoCount) => {
+        let form = props.form.form_name;
         let offsetY = 35;
         offsetY += value.baby ? 20 : 0
         offsetY += arrEvoList.length === 1 ? 20 : 0
         let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-10}};
-        let data = getQuestEvo(parseInt(value.id));
+        let data = getQuestEvo(parseInt(value.id), form.toUpperCase());
         return (
             <Fragment>
                 {evo > 0 && <Xarrow
                 labels={{end:
                     (<div className="position-absolute" style={{left: -40}}>
                         <span className="d-flex align-items-center caption" style={{width: 'max-content'}}>
-                            <img alt='img-stardust' height={16} src={APIService.getItemSprite("Item_1301")}></img>
+                            <img alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
                             <span style={{marginLeft: 2}}>{`x${data.candyCost}`}</span>
                         </span>
                         {Object.keys(data.quest).length > 0 &&
                             <Fragment>
-                                {data.quest.randomEvolution && <span className="caption">?</span>}
+                                {data.quest.randomEvolution && <span className="caption"><QuestionMarkIcon fontSize="small"/></span>}
                                 {data.quest.genderRequirement && <span className="caption">{
                                 data.quest.genderRequirement === "MALE" ? <MaleIcon fontSize="small" /> : <FemaleIcon fontSize="small" />
                                 }</span>}
@@ -146,8 +142,8 @@ const Evolution = (props) => {
                                 </span>}
                                 {data.quest.onlyDaytime && <span className="caption"><WbSunnyIcon fontSize="small" /></span>}
                                 {data.quest.onlyNighttime && <span className="caption"><DarkModeIcon fontSize="small" /></span>}
-                                {data.quest.evolutionItemRequirement && <img alt='img-item-required' height={16} src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}></img>}
-                                {data.quest.lureItemRequirement && <img alt='img-troy-required' height={16} src={APIService.getItemTroy(data.quest.lureItemRequirement)}></img>}
+                                {data.quest.evolutionItemRequirement && <img alt='img-item-required' height={20} src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}></img>}
+                                {data.quest.lureItemRequirement && <img alt='img-troy-required' height={20} src={APIService.getItemTroy(data.quest.lureItemRequirement)}></img>}
                                 {data.quest.onlyUpsideDown && <span className="caption"><SecurityUpdateIcon fontSize="small" /></span>}
                                 {data.quest.condition && <span className="caption">
                                     {data.quest.condition.desc === "THROW_TYPE" &&
@@ -159,7 +155,7 @@ const Evolution = (props) => {
                                     {data.quest.condition.desc === "POKEMON_TYPE" &&
                                     <Fragment>
                                         {data.quest.condition.pokemonType.map((value, index) => (
-                                            <img key={index} alt='img-stardust' height={16} src={APIService.getTypeSprite(value)}
+                                            <img key={index} alt='img-stardust' height={20} src={APIService.getTypeSprite(value)}
                                             onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}></img>
                                         ))}
                                         <span style={{marginLeft: 2}}>{`x${data.quest.goal}`}</span>
@@ -198,23 +194,38 @@ const Evolution = (props) => {
                 <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
                 }
                 <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
-                <div><b className="link-title">{splitAndCapitalize(value.name)}</b></div>
-                { value.baby && <span className="caption text-danger">(Baby)</span>}
+                <div><b className="link-title">{splitAndCapitalize(value.name, " ")}</b></div>
+                {value.baby && <span className="caption text-danger">(Baby)</span>}
                 {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
-                <p>{ value.id === props.id.toString() && <span className="caption">Current</span>}</p>
+                <p>{value.id === props.id && <span className="caption">Current</span>}</p>
             </Fragment>
         )
     }
 
     return (
         <Fragment>
-            <h4 className="title-evo"><b>Evolution Chain</b></h4>
+            <h4 className="title-evo"><b>Evolution Chain</b>
+            <span className="tooltips-info">
+                <InfoOutlinedIcon color="primary"/>
+                <span className="info-evo">
+                <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img> : Candy of pokemon.</span>
+                    <span className="d-block caption">- <QuestionMarkIcon fontSize="small"/> : Random evolution.</span>
+                    <span className="d-block caption">- <MaleIcon fontSize="small" />/<FemaleIcon fontSize="small" /> : Only onec gender can evolution.</span>
+                    <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /> : Walk together with buddy.</span>
+                    <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/> : Buddy walk with trainer.</span>
+                    <span className="d-block caption">- <WbSunnyIcon fontSize="small" /> : Evolution during at day.</span>
+                    <span className="d-block caption">- <DarkModeIcon fontSize="small" /> : Evolution during at night.</span>
+                    <span className="d-block caption">- <img alt='img-troy-required' height={20} src={APIService.getItemTroy("")}></img> : Evolution in lure module.</span>
+                    <span className="d-block caption">- <SecurityUpdateIcon fontSize="small" /> : Evolution at upside down phone.</span>
+                    <span className="d-block caption">- <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.</span>
+                    <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getPokeSprite(0)}></img> : Catch pokemon with type.</span>
+                    <span className="d-block caption">- <SportsMartialArtsIcon fontSize="small" /> : Win raid.</span>
+                    <span className="d-block caption">- <FavoriteIcon fontSize="small" sx={{color:'red'}}/> : Evolution with affection points.</span>
+                    <span className="d-block caption">- <RestaurantIcon fontSize="small"/> : Buddy feed.</span>
+                </span>
+            </span></h4>
             { arrEvoList.length > 0 &&
             <Fragment>
-            {/* <div className="d-flex">
-                <span>? is random evolution</span>
-                <span><MaleIcon fontSize="small" /> is gender male</span>
-            </div> */}
             <div className="evo-container scroll-form" style={{minHeight:setHeightEvo()}}>
                 <ul className="ul-evo">
                     {arrEvoList.map((values, evo) => (

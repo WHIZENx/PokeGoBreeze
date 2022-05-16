@@ -40,7 +40,7 @@ const TableMove = (props) => {
                         <Type style={{marginBottom:0}} styled={true} height={20} arr={[capitalize(value.fmove.type.toLowerCase())]}/>
                         <div>
                             <span className="text-b-ic">{splitAndCapitalize(value.fmove.name.toLowerCase(), "_")}</span>
-                            <div>{value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div>
+                            <div className="d-inline-flex">{value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div>
                         </div>
                     </Link>
                 </td>
@@ -49,7 +49,7 @@ const TableMove = (props) => {
                         <Type style={{marginBottom:0}} styled={true} height={20} arr={[capitalize(value.cmove.type.toLowerCase())]}/>
                         <div>
                             <span className="text-b-ic">{splitAndCapitalize(value.cmove.name.toLowerCase(), "_")}</span>
-                            <div>
+                            <div className="d-inline-flex">
                                 {value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
                                 {value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}
                                 {value.cmove.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}
