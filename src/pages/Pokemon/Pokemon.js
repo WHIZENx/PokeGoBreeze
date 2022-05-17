@@ -4,7 +4,7 @@ import APIService from "../../services/API.service";
 import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
-import { calculateStatsByTag, sortStatsPokemon } from '../../components/Calculate/Calculate';
+import { calculateStatsByTag, regionList, sortStatsPokemon } from '../../components/Calculate/Calculate';
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import Form from "../../components/Info/Form/Form";
@@ -28,6 +28,7 @@ const Pokemon = (props) => {
     const [pokeRatio, setPokeRatio] = useState(null);
 
     const [version, setVersion] = useState(null);
+    const [region, setRegion] = useState(null);
     const [WH, setWH] = useState({weight: 0, height: 0});
     const [formName, setFormName] = useState(null);
 
@@ -81,7 +82,8 @@ const Pokemon = (props) => {
         const defaultFrom = dataFromList.map(item => item.find(item => item.form.is_default));
         const isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
         if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name));
-        else  setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name));
+        else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name));
+        setRegion(regionList[parseInt(data.generation.url.split("/")[6])]);
     }, [splitAndCapitalize]);
 
     const queryPokemon = useCallback((id) => {
@@ -135,17 +137,41 @@ const Pokemon = (props) => {
                             <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
                             </h5> */}
                 <div className={'poke-container'+(props.isSearch ? "" : " container")}>
-                    <div className="row group-desc">
-                        <div className="col-2 img-desc">
+                    <div className="row group-desc"  style={{overflowX:'hidden'}}>
+                        <div className="col-lg-2 img-desc" style={{padding:0}}>
                             <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
                         </div>
-                        <div className="col text-desc">
+                        <div className="col-lg-5 text-desc" style={{padding:0}}>
                             <h4 className='element-top'>ID: <b>#{data.id}</b></h4>
                             <h4>Name: <b>{formName ? formName : splitAndCapitalize(data.name)}</b></h4>
                             <h4>Generation: <b>{data.generation.name.split("-")[1].toUpperCase()}</b> <span className="text-gen">({getNumGen(data.generation.url)})</span></h4>
-                            <h4>Version: {version}<b></b></h4>
-                            <h4 className='element-top'>Height: {WH.height/10} m, Weight: {WH.weight/10} kg</h4>
+                            <h4>Region: {region}</h4>
+                            <h4>Version: {version}</h4>
+                            <h4>Height: {WH.height/10} m, Weight: {WH.weight/10} kg</h4>
                         </div>
+                        {/* <div className="col-lg-4" style={{padding:0}}>
+                            <table className="table-info table-main">
+                                <thead></thead>
+                                <tbody>
+                                    <tr className="center">
+                                        <td className="table-sub-header">Unlock third move</td>
+                                        <td className="table-sub-header">Costs</td>
+                                    </tr>
+                                    <tr className="info-costs">
+                                        <td><img width={100} height={100}></img></td>
+                                        <td>Costs</td>
+                                    </tr>
+                                    <tr className="center">
+                                        <td className="table-sub-header">Purified</td>
+                                        <td className="table-sub-header">Costs</td>
+                                    </tr>
+                                    <tr className="info-costs">
+                                        <td><img width={100} height={100}></img></td>
+                                        <td>Costs</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> */}
                     </div>
                     <div className='img-form-group' style={{textAlign: (initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length) ? null : 'center'}}>
                     {initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
@@ -154,6 +180,7 @@ const Pokemon = (props) => {
                                     onSetPrev={props.onSetPrev}
                                     onSetNext={props.onSetNext}
                                     setVersion={setVersionName}
+                                    setRegion={setRegion}
                                     setWH={setWH}
                                     setFormName={setFormName}
                                     id_default={data.id}

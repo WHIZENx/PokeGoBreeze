@@ -4,7 +4,7 @@
         "name": "BULBASAUR",
         "evo_list": [
             {
-                "evo_to_form": "IVYSAUR",
+                "evo_to_form": "",
                 "evo_to_id": 2,
                 "evo_to_name": "IVYSAUR",
                 "candyCost": 25,
@@ -26,7 +26,7 @@
         "name": "IVYSAUR",
         "evo_list": [
             {
-                "evo_to_form": "VENUSAUR",
+                "evo_to_form": "",
                 "evo_to_id": 3,
                 "evo_to_name": "VENUSAUR",
                 "candyCost": 100,
@@ -68,7 +68,7 @@
         "name": "CHARMANDER",
         "evo_list": [
             {
-                "evo_to_form": "CHARMELEON",
+                "evo_to_form": "",
                 "evo_to_id": 5,
                 "evo_to_name": "CHARMELEON",
                 "candyCost": 25,
@@ -90,7 +90,7 @@
         "name": "CHARMELEON",
         "evo_list": [
             {
-                "evo_to_form": "CHARIZARD",
+                "evo_to_form": "",
                 "evo_to_id": 6,
                 "evo_to_name": "CHARIZARD",
                 "candyCost": 100,
@@ -137,7 +137,7 @@
         "name": "SQUIRTLE",
         "evo_list": [
             {
-                "evo_to_form": "WARTORTLE",
+                "evo_to_form": "",
                 "evo_to_id": 8,
                 "evo_to_name": "WARTORTLE",
                 "candyCost": 25,
@@ -159,7 +159,7 @@
         "name": "WARTORTLE",
         "evo_list": [
             {
-                "evo_to_form": "BLASTOISE",
+                "evo_to_form": "",
                 "evo_to_id": 9,
                 "evo_to_name": "BLASTOISE",
                 "candyCost": 100,
@@ -201,7 +201,7 @@
         "name": "CATERPIE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 11,
                 "evo_to_name": "METAPOD",
                 "candyCost": 12,
@@ -220,7 +220,7 @@
         "name": "METAPOD",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 12,
                 "evo_to_name": "BUTTERFREE",
                 "candyCost": 50,
@@ -250,7 +250,7 @@
         "name": "WEEDLE",
         "evo_list": [
             {
-                "evo_to_form": "KAKUNA",
+                "evo_to_form": "",
                 "evo_to_id": 14,
                 "evo_to_name": "KAKUNA",
                 "candyCost": 12,
@@ -272,7 +272,7 @@
         "name": "KAKUNA",
         "evo_list": [
             {
-                "evo_to_form": "BEEDRILL",
+                "evo_to_form": "",
                 "evo_to_id": 15,
                 "evo_to_name": "BEEDRILL",
                 "candyCost": 50,
@@ -314,7 +314,7 @@
         "name": "PIDGEY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 17,
                 "evo_to_name": "PIDGEOTTO",
                 "candyCost": 12,
@@ -333,7 +333,7 @@
         "name": "PIDGEOTTO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 18,
                 "evo_to_name": "PIDGEOT",
                 "candyCost": 50,
@@ -369,7 +369,7 @@
         "name": "RATTATA",
         "evo_list": [
             {
-                "evo_to_form": "RATICATE",
+                "evo_to_form": "",
                 "evo_to_id": 20,
                 "evo_to_name": "RATICATE",
                 "candyCost": 25,
@@ -391,7 +391,7 @@
         "name": "RATTATA_ALOLA",
         "evo_list": [
             {
-                "evo_to_form": "RATICATE_ALOLA",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 20,
                 "evo_to_name": "RATICATE",
                 "candyCost": 25,
@@ -441,7 +441,7 @@
         "name": "SPEAROW",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 22,
                 "evo_to_name": "FEAROW",
                 "candyCost": 50,
@@ -471,7 +471,7 @@
         "name": "EKANS",
         "evo_list": [
             {
-                "evo_to_form": "ARBOK",
+                "evo_to_form": "",
                 "evo_to_id": 24,
                 "evo_to_name": "ARBOK",
                 "candyCost": 50,
@@ -507,7 +507,7 @@
         "name": "PIKACHU",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 26,
                 "evo_to_name": "RAICHU",
                 "candyCost": 50,
@@ -548,7 +548,7 @@
         "name": "SANDSHREW",
         "evo_list": [
             {
-                "evo_to_form": "SANDSLASH",
+                "evo_to_form": "",
                 "evo_to_id": 28,
                 "evo_to_name": "SANDSLASH",
                 "candyCost": 50,
@@ -570,7 +570,7 @@
         "name": "SANDSHREW_ALOLA",
         "evo_list": [
             {
-                "evo_to_form": "SANDSLASH_ALOLA",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 28,
                 "evo_to_name": "SANDSLASH",
                 "candyCost": 50,
@@ -620,7 +620,7 @@
         "name": "NIDORAN_FEMALE",
         "evo_list": [
             {
-                "evo_to_form": "NIDORINA",
+                "evo_to_form": "",
                 "evo_to_id": 30,
                 "evo_to_name": "NIDORINA",
                 "candyCost": 25,
@@ -642,7 +642,7 @@
         "name": "NIDORINA",
         "evo_list": [
             {
-                "evo_to_form": "NIDOQUEEN",
+                "evo_to_form": "",
                 "evo_to_id": 31,
                 "evo_to_name": "NIDOQUEEN",
                 "candyCost": 100,
@@ -678,7 +678,7 @@
         "name": "NIDORAN_MALE",
         "evo_list": [
             {
-                "evo_to_form": "NIDORINO",
+                "evo_to_form": "",
                 "evo_to_id": 33,
                 "evo_to_name": "NIDORINO",
                 "candyCost": 25,
@@ -700,7 +700,7 @@
         "name": "NIDORINO",
         "evo_list": [
             {
-                "evo_to_form": "NIDOKING",
+                "evo_to_form": "",
                 "evo_to_id": 34,
                 "evo_to_name": "NIDOKING",
                 "candyCost": 100,
@@ -736,7 +736,7 @@
         "name": "CLEFAIRY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 36,
                 "evo_to_name": "CLEFABLE",
                 "candyCost": 50,
@@ -766,7 +766,7 @@
         "name": "VULPIX",
         "evo_list": [
             {
-                "evo_to_form": "NINETALES",
+                "evo_to_form": "",
                 "evo_to_id": 38,
                 "evo_to_name": "NINETALES",
                 "candyCost": 50,
@@ -788,7 +788,7 @@
         "name": "VULPIX_ALOLA",
         "evo_list": [
             {
-                "evo_to_form": "NINETALES_ALOLA",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 38,
                 "evo_to_name": "NINETALES",
                 "candyCost": 50,
@@ -838,7 +838,7 @@
         "name": "JIGGLYPUFF",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 40,
                 "evo_to_name": "WIGGLYTUFF",
                 "candyCost": 50,
@@ -868,7 +868,7 @@
         "name": "ZUBAT",
         "evo_list": [
             {
-                "evo_to_form": "GOLBAT",
+                "evo_to_form": "",
                 "evo_to_id": 42,
                 "evo_to_name": "GOLBAT",
                 "candyCost": 25,
@@ -890,7 +890,7 @@
         "name": "GOLBAT",
         "evo_list": [
             {
-                "evo_to_form": "CROBAT",
+                "evo_to_form": "",
                 "evo_to_id": 169,
                 "evo_to_name": "CROBAT",
                 "candyCost": 100,
@@ -912,7 +912,7 @@
         "name": "ODDISH",
         "evo_list": [
             {
-                "evo_to_form": "GLOOM",
+                "evo_to_form": "",
                 "evo_to_id": 44,
                 "evo_to_name": "GLOOM",
                 "candyCost": 25,
@@ -934,16 +934,16 @@
         "name": "GLOOM",
         "evo_list": [
             {
-                "evo_to_form": "VILEPLUME",
+                "evo_to_form": "",
                 "evo_to_id": 45,
                 "evo_to_name": "VILEPLUME",
                 "candyCost": 100,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             },
             {
-                "evo_to_form": "BELLOSSOM",
+                "evo_to_form": "",
                 "evo_to_id": 182,
                 "evo_to_name": "BELLOSSOM",
                 "candyCost": 100,
@@ -981,7 +981,7 @@
         "name": "PARAS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 47,
                 "evo_to_name": "PARASECT",
                 "candyCost": 50,
@@ -1011,7 +1011,7 @@
         "name": "VENONAT",
         "evo_list": [
             {
-                "evo_to_form": "VENOMOTH",
+                "evo_to_form": "",
                 "evo_to_id": 49,
                 "evo_to_name": "VENOMOTH",
                 "candyCost": 50,
@@ -1047,7 +1047,7 @@
         "name": "DIGLETT",
         "evo_list": [
             {
-                "evo_to_form": "DUGTRIO",
+                "evo_to_form": "",
                 "evo_to_id": 51,
                 "evo_to_name": "DUGTRIO",
                 "candyCost": 50,
@@ -1069,7 +1069,7 @@
         "name": "DIGLETT_ALOLA",
         "evo_list": [
             {
-                "evo_to_form": "DUGTRIO_ALOLA",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 51,
                 "evo_to_name": "DUGTRIO",
                 "candyCost": 50,
@@ -1119,7 +1119,7 @@
         "name": "MEOWTH",
         "evo_list": [
             {
-                "evo_to_form": "PERSIAN",
+                "evo_to_form": "",
                 "evo_to_id": 53,
                 "evo_to_name": "PERSIAN",
                 "candyCost": 50,
@@ -1141,7 +1141,7 @@
         "name": "MEOWTH_ALOLA",
         "evo_list": [
             {
-                "evo_to_form": "PERSIAN_ALOLA",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 53,
                 "evo_to_name": "PERSIAN",
                 "candyCost": 50,
@@ -1163,7 +1163,7 @@
         "name": "MEOWTH_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "PERRSERKER",
+                "evo_to_form": "",
                 "evo_to_id": 863,
                 "evo_to_name": "PERRSERKER",
                 "candyCost": 50,
@@ -1213,7 +1213,7 @@
         "name": "PSYDUCK",
         "evo_list": [
             {
-                "evo_to_form": "GOLDUCK",
+                "evo_to_form": "",
                 "evo_to_id": 55,
                 "evo_to_name": "GOLDUCK",
                 "candyCost": 50,
@@ -1249,7 +1249,7 @@
         "name": "MANKEY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 57,
                 "evo_to_name": "PRIMEAPE",
                 "candyCost": 50,
@@ -1279,7 +1279,7 @@
         "name": "GROWLITHE",
         "evo_list": [
             {
-                "evo_to_form": "ARCANINE",
+                "evo_to_form": "",
                 "evo_to_id": 59,
                 "evo_to_name": "ARCANINE",
                 "candyCost": 50,
@@ -1315,7 +1315,7 @@
         "name": "POLIWAG",
         "evo_list": [
             {
-                "evo_to_form": "POLIWHIRL",
+                "evo_to_form": "",
                 "evo_to_id": 61,
                 "evo_to_name": "POLIWHIRL",
                 "candyCost": 25,
@@ -1337,16 +1337,16 @@
         "name": "POLIWHIRL",
         "evo_list": [
             {
-                "evo_to_form": "POLIWRATH",
+                "evo_to_form": "",
                 "evo_to_id": 62,
                 "evo_to_name": "POLIWRATH",
                 "candyCost": 100,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             },
             {
-                "evo_to_form": "POLITOED",
+                "evo_to_form": "",
                 "evo_to_id": 186,
                 "evo_to_name": "POLITOED",
                 "candyCost": 100,
@@ -1384,7 +1384,7 @@
         "name": "ABRA",
         "evo_list": [
             {
-                "evo_to_form": "KADABRA",
+                "evo_to_form": "",
                 "evo_to_id": 64,
                 "evo_to_name": "KADABRA",
                 "candyCost": 25,
@@ -1406,7 +1406,7 @@
         "name": "KADABRA",
         "evo_list": [
             {
-                "evo_to_form": "ALAKAZAM",
+                "evo_to_form": "",
                 "evo_to_id": 65,
                 "evo_to_name": "ALAKAZAM",
                 "candyCost": 100,
@@ -1442,7 +1442,7 @@
         "name": "MACHOP",
         "evo_list": [
             {
-                "evo_to_form": "MACHOKE",
+                "evo_to_form": "",
                 "evo_to_id": 67,
                 "evo_to_name": "MACHOKE",
                 "candyCost": 25,
@@ -1464,7 +1464,7 @@
         "name": "MACHOKE",
         "evo_list": [
             {
-                "evo_to_form": "MACHAMP",
+                "evo_to_form": "",
                 "evo_to_id": 68,
                 "evo_to_name": "MACHAMP",
                 "candyCost": 100,
@@ -1500,7 +1500,7 @@
         "name": "BELLSPROUT",
         "evo_list": [
             {
-                "evo_to_form": "WEEPINBELL",
+                "evo_to_form": "",
                 "evo_to_id": 70,
                 "evo_to_name": "WEEPINBELL",
                 "candyCost": 25,
@@ -1522,7 +1522,7 @@
         "name": "WEEPINBELL",
         "evo_list": [
             {
-                "evo_to_form": "VICTREEBEL",
+                "evo_to_form": "",
                 "evo_to_id": 71,
                 "evo_to_name": "VICTREEBEL",
                 "candyCost": 100,
@@ -1558,7 +1558,7 @@
         "name": "TENTACOOL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 73,
                 "evo_to_name": "TENTACRUEL",
                 "candyCost": 50,
@@ -1588,7 +1588,7 @@
         "name": "GEODUDE",
         "evo_list": [
             {
-                "evo_to_form": "GRAVELER",
+                "evo_to_form": "",
                 "evo_to_id": 75,
                 "evo_to_name": "GRAVELER",
                 "candyCost": 25,
@@ -1610,7 +1610,7 @@
         "name": "GEODUDE_ALOLA",
         "evo_list": [
             {
-                "evo_to_form": "GRAVELER_ALOLA",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 75,
                 "evo_to_name": "GRAVELER",
                 "candyCost": 25,
@@ -1632,7 +1632,7 @@
         "name": "GRAVELER",
         "evo_list": [
             {
-                "evo_to_form": "GOLEM",
+                "evo_to_form": "",
                 "evo_to_id": 76,
                 "evo_to_name": "GOLEM",
                 "candyCost": 100,
@@ -1654,7 +1654,7 @@
         "name": "GRAVELER_ALOLA",
         "evo_list": [
             {
-                "evo_to_form": "GOLEM_ALOLA",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 76,
                 "evo_to_name": "GOLEM",
                 "candyCost": 100,
@@ -1704,7 +1704,7 @@
         "name": "PONYTA",
         "evo_list": [
             {
-                "evo_to_form": "RAPIDASH",
+                "evo_to_form": "",
                 "evo_to_id": 78,
                 "evo_to_name": "RAPIDASH",
                 "candyCost": 50,
@@ -1726,7 +1726,7 @@
         "name": "PONYTA_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "RAPIDASH_GALARIAN",
+                "evo_to_form": "GALARIAN",
                 "evo_to_id": 78,
                 "evo_to_name": "RAPIDASH",
                 "candyCost": 50,
@@ -1776,16 +1776,16 @@
         "name": "SLOWPOKE",
         "evo_list": [
             {
-                "evo_to_form": "SLOWBRO",
+                "evo_to_form": "",
                 "evo_to_id": 80,
                 "evo_to_name": "SLOWBRO",
                 "candyCost": 50,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             },
             {
-                "evo_to_form": "SLOWKING",
+                "evo_to_form": "",
                 "evo_to_id": 199,
                 "evo_to_name": "SLOWKING",
                 "candyCost": 50,
@@ -1809,7 +1809,7 @@
         "name": "SLOWPOKE_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "SLOWBRO_GALARIAN",
+                "evo_to_form": "GALARIAN",
                 "evo_to_id": 80,
                 "evo_to_name": "SLOWBRO",
                 "candyCost": 50,
@@ -1825,7 +1825,7 @@
                 }
             },
             {
-                "evo_to_form": "SLOWKING_GALARIAN",
+                "evo_to_form": "GALARIAN",
                 "evo_to_id": 199,
                 "evo_to_name": "SLOWKING",
                 "candyCost": 50,
@@ -1890,7 +1890,7 @@
         "name": "MAGNEMITE",
         "evo_list": [
             {
-                "evo_to_form": "MAGNETON",
+                "evo_to_form": "",
                 "evo_to_id": 82,
                 "evo_to_name": "MAGNETON",
                 "candyCost": 25,
@@ -1912,7 +1912,7 @@
         "name": "MAGNETON",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 462,
                 "evo_to_name": "MAGNEZONE",
                 "candyCost": 100,
@@ -1950,7 +1950,7 @@
         "name": "FARFETCHD_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "SIRFETCHD",
+                "evo_to_form": "",
                 "evo_to_id": 865,
                 "evo_to_name": "SIRFETCHD",
                 "candyCost": 50,
@@ -1980,7 +1980,7 @@
         "name": "DODUO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 85,
                 "evo_to_name": "DODRIO",
                 "candyCost": 50,
@@ -2010,7 +2010,7 @@
         "name": "SEEL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 87,
                 "evo_to_name": "DEWGONG",
                 "candyCost": 50,
@@ -2040,7 +2040,7 @@
         "name": "GRIMER",
         "evo_list": [
             {
-                "evo_to_form": "MUK",
+                "evo_to_form": "",
                 "evo_to_id": 89,
                 "evo_to_name": "MUK",
                 "candyCost": 50,
@@ -2062,7 +2062,7 @@
         "name": "GRIMER_ALOLA",
         "evo_list": [
             {
-                "evo_to_form": "MUK_ALOLA",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 89,
                 "evo_to_name": "MUK",
                 "candyCost": 50,
@@ -2112,7 +2112,7 @@
         "name": "SHELLDER",
         "evo_list": [
             {
-                "evo_to_form": "CLOYSTER",
+                "evo_to_form": "",
                 "evo_to_id": 91,
                 "evo_to_name": "CLOYSTER",
                 "candyCost": 50,
@@ -2148,7 +2148,7 @@
         "name": "GASTLY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 93,
                 "evo_to_name": "HAUNTER",
                 "candyCost": 25,
@@ -2167,7 +2167,7 @@
         "name": "HAUNTER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 94,
                 "evo_to_name": "GENGAR",
                 "candyCost": 100,
@@ -2203,7 +2203,7 @@
         "name": "ONIX",
         "evo_list": [
             {
-                "evo_to_form": "STEELIX",
+                "evo_to_form": "",
                 "evo_to_id": 208,
                 "evo_to_name": "STEELIX",
                 "candyCost": 50,
@@ -2227,7 +2227,7 @@
         "name": "DROWZEE",
         "evo_list": [
             {
-                "evo_to_form": "HYPNO",
+                "evo_to_form": "",
                 "evo_to_id": 97,
                 "evo_to_name": "HYPNO",
                 "candyCost": 50,
@@ -2263,7 +2263,7 @@
         "name": "KRABBY",
         "evo_list": [
             {
-                "evo_to_form": "KINGLER",
+                "evo_to_form": "",
                 "evo_to_id": 99,
                 "evo_to_name": "KINGLER",
                 "candyCost": 50,
@@ -2299,7 +2299,7 @@
         "name": "VOLTORB",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 101,
                 "evo_to_name": "ELECTRODE",
                 "candyCost": 50,
@@ -2321,7 +2321,7 @@
         "name": "VOLTORB_HISUIAN",
         "evo_list": [
             {
-                "evo_to_form": "ELECTRODE_HISUIAN",
+                "evo_to_form": "HISUIAN",
                 "evo_to_id": 101,
                 "evo_to_name": "ELECTRODE",
                 "candyCost": 50,
@@ -2371,7 +2371,7 @@
         "name": "EXEGGCUTE",
         "evo_list": [
             {
-                "evo_to_form": "EXEGGUTOR",
+                "evo_to_form": "",
                 "evo_to_id": 103,
                 "evo_to_name": "EXEGGUTOR",
                 "candyCost": 50,
@@ -2421,7 +2421,7 @@
         "name": "CUBONE",
         "evo_list": [
             {
-                "evo_to_form": "MAROWAK",
+                "evo_to_form": "",
                 "evo_to_id": 105,
                 "evo_to_name": "MAROWAK",
                 "candyCost": 50,
@@ -2499,7 +2499,7 @@
         "name": "LICKITUNG",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 463,
                 "evo_to_name": "LICKILICKY",
                 "candyCost": 100,
@@ -2520,7 +2520,7 @@
         "name": "KOFFING",
         "evo_list": [
             {
-                "evo_to_form": "WEEZING",
+                "evo_to_form": "",
                 "evo_to_id": 110,
                 "evo_to_name": "WEEZING",
                 "candyCost": 50,
@@ -2570,7 +2570,7 @@
         "name": "RHYHORN",
         "evo_list": [
             {
-                "evo_to_form": "RHYDON",
+                "evo_to_form": "",
                 "evo_to_id": 112,
                 "evo_to_name": "RHYDON",
                 "candyCost": 25,
@@ -2592,7 +2592,7 @@
         "name": "RHYDON",
         "evo_list": [
             {
-                "evo_to_form": "RHYPERIOR",
+                "evo_to_form": "",
                 "evo_to_id": 464,
                 "evo_to_name": "RHYPERIOR",
                 "candyCost": 100,
@@ -2616,7 +2616,7 @@
         "name": "CHANSEY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 242,
                 "evo_to_name": "BLISSEY",
                 "candyCost": 50,
@@ -2635,7 +2635,7 @@
         "name": "TANGELA",
         "evo_list": [
             {
-                "evo_to_form": "TANGROWTH",
+                "evo_to_form": "",
                 "evo_to_id": 465,
                 "evo_to_name": "TANGROWTH",
                 "candyCost": 100,
@@ -2679,7 +2679,7 @@
         "name": "HORSEA",
         "evo_list": [
             {
-                "evo_to_form": "SEADRA",
+                "evo_to_form": "",
                 "evo_to_id": 117,
                 "evo_to_name": "SEADRA",
                 "candyCost": 25,
@@ -2701,7 +2701,7 @@
         "name": "SEADRA",
         "evo_list": [
             {
-                "evo_to_form": "KINGDRA",
+                "evo_to_form": "",
                 "evo_to_id": 230,
                 "evo_to_name": "KINGDRA",
                 "candyCost": 100,
@@ -2725,7 +2725,7 @@
         "name": "GOLDEEN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 119,
                 "evo_to_name": "SEAKING",
                 "candyCost": 50,
@@ -2755,7 +2755,7 @@
         "name": "STARYU",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 121,
                 "evo_to_name": "STARMIE",
                 "candyCost": 50,
@@ -2799,7 +2799,7 @@
         "name": "MR_MIME_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "MR_RIME",
+                "evo_to_form": "",
                 "evo_to_id": 866,
                 "evo_to_name": "MR_RIME",
                 "candyCost": 50,
@@ -2821,7 +2821,7 @@
         "name": "SCYTHER",
         "evo_list": [
             {
-                "evo_to_form": "SCIZOR",
+                "evo_to_form": "",
                 "evo_to_id": 212,
                 "evo_to_name": "SCIZOR",
                 "candyCost": 50,
@@ -2856,7 +2856,7 @@
         "name": "ELECTABUZZ",
         "evo_list": [
             {
-                "evo_to_form": "ELECTIVIRE",
+                "evo_to_form": "",
                 "evo_to_id": 466,
                 "evo_to_name": "ELECTIVIRE",
                 "candyCost": 100,
@@ -2880,7 +2880,7 @@
         "name": "MAGMAR",
         "evo_list": [
             {
-                "evo_to_form": "MAGMORTAR",
+                "evo_to_form": "",
                 "evo_to_id": 467,
                 "evo_to_name": "MAGMORTAR",
                 "candyCost": 100,
@@ -2929,7 +2929,7 @@
         "name": "MAGIKARP",
         "evo_list": [
             {
-                "evo_to_form": "GYARADOS",
+                "evo_to_form": "",
                 "evo_to_id": 130,
                 "evo_to_name": "GYARADOS",
                 "candyCost": 400,
@@ -2996,7 +2996,7 @@
         "name": "EEVEE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 134,
                 "evo_to_name": "VAPOREON",
                 "candyCost": 25,
@@ -3005,7 +3005,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 135,
                 "evo_to_name": "JOLTEON",
                 "candyCost": 25,
@@ -3014,7 +3014,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 136,
                 "evo_to_name": "FLAREON",
                 "candyCost": 25,
@@ -3023,7 +3023,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 196,
                 "evo_to_name": "ESPEON",
                 "candyCost": 25,
@@ -3037,7 +3037,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 197,
                 "evo_to_name": "UMBREON",
                 "candyCost": 25,
@@ -3051,7 +3051,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 470,
                 "evo_to_name": "LEAFEON",
                 "candyCost": 25,
@@ -3060,7 +3060,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 471,
                 "evo_to_name": "GLACEON",
                 "candyCost": 25,
@@ -3069,7 +3069,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 700,
                 "evo_to_name": "SYLVEON",
                 "candyCost": 25,
@@ -3125,7 +3125,7 @@
         "name": "PORYGON",
         "evo_list": [
             {
-                "evo_to_form": "PORYGON2",
+                "evo_to_form": "",
                 "evo_to_id": 233,
                 "evo_to_name": "PORYGON2",
                 "candyCost": 25,
@@ -3149,7 +3149,7 @@
         "name": "OMANYTE",
         "evo_list": [
             {
-                "evo_to_form": "OMASTAR",
+                "evo_to_form": "",
                 "evo_to_id": 139,
                 "evo_to_name": "OMASTAR",
                 "candyCost": 50,
@@ -3185,7 +3185,7 @@
         "name": "KABUTO",
         "evo_list": [
             {
-                "evo_to_form": "KABUTOPS",
+                "evo_to_form": "",
                 "evo_to_id": 141,
                 "evo_to_name": "KABUTOPS",
                 "candyCost": 50,
@@ -3297,7 +3297,7 @@
         "name": "DRATINI",
         "evo_list": [
             {
-                "evo_to_form": "DRAGONAIR",
+                "evo_to_form": "",
                 "evo_to_id": 148,
                 "evo_to_name": "DRAGONAIR",
                 "candyCost": 25,
@@ -3319,7 +3319,7 @@
         "name": "DRAGONAIR",
         "evo_list": [
             {
-                "evo_to_form": "DRAGONITE",
+                "evo_to_form": "",
                 "evo_to_id": 149,
                 "evo_to_name": "DRAGONITE",
                 "candyCost": 100,
@@ -3394,7 +3394,7 @@
         "name": "CHIKORITA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 153,
                 "evo_to_name": "BAYLEEF",
                 "candyCost": 25,
@@ -3416,7 +3416,7 @@
         "name": "BAYLEEF",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 154,
                 "evo_to_name": "MEGANIUM",
                 "candyCost": 100,
@@ -3452,7 +3452,7 @@
         "name": "CYNDAQUIL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 156,
                 "evo_to_name": "QUILAVA",
                 "candyCost": 25,
@@ -3474,7 +3474,7 @@
         "name": "QUILAVA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 157,
                 "evo_to_name": "TYPHLOSION",
                 "candyCost": 100,
@@ -3510,7 +3510,7 @@
         "name": "TOTODILE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 159,
                 "evo_to_name": "CROCONAW",
                 "candyCost": 25,
@@ -3532,7 +3532,7 @@
         "name": "CROCONAW",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 160,
                 "evo_to_name": "FERALIGATR",
                 "candyCost": 100,
@@ -3568,7 +3568,7 @@
         "name": "SENTRET",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 162,
                 "evo_to_name": "FURRET",
                 "candyCost": 25,
@@ -3598,7 +3598,7 @@
         "name": "HOOTHOOT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 164,
                 "evo_to_name": "NOCTOWL",
                 "candyCost": 50,
@@ -3628,7 +3628,7 @@
         "name": "LEDYBA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 166,
                 "evo_to_name": "LEDIAN",
                 "candyCost": 25,
@@ -3658,7 +3658,7 @@
         "name": "SPINARAK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 168,
                 "evo_to_name": "ARIADOS",
                 "candyCost": 50,
@@ -3702,7 +3702,7 @@
         "name": "CHINCHOU",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 171,
                 "evo_to_name": "LANTURN",
                 "candyCost": 50,
@@ -3732,7 +3732,7 @@
         "name": "PICHU",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 25,
                 "evo_to_name": "PIKACHU",
                 "candyCost": 25,
@@ -3751,7 +3751,7 @@
         "name": "CLEFFA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 35,
                 "evo_to_name": "CLEFAIRY",
                 "candyCost": 25,
@@ -3770,7 +3770,7 @@
         "name": "IGGLYBUFF",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 39,
                 "evo_to_name": "JIGGLYPUFF",
                 "candyCost": 25,
@@ -3789,7 +3789,7 @@
         "name": "TOGEPI",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 176,
                 "evo_to_name": "TOGETIC",
                 "candyCost": 25,
@@ -3808,7 +3808,7 @@
         "name": "TOGETIC",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 468,
                 "evo_to_name": "TOGEKISS",
                 "candyCost": 100,
@@ -3829,7 +3829,7 @@
         "name": "NATU",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 178,
                 "evo_to_name": "XATU",
                 "candyCost": 50,
@@ -3859,7 +3859,7 @@
         "name": "MAREEP",
         "evo_list": [
             {
-                "evo_to_form": "FLAAFFY",
+                "evo_to_form": "",
                 "evo_to_id": 180,
                 "evo_to_name": "FLAAFFY",
                 "candyCost": 25,
@@ -3881,7 +3881,7 @@
         "name": "FLAAFFY",
         "evo_list": [
             {
-                "evo_to_form": "AMPHAROS",
+                "evo_to_form": "",
                 "evo_to_id": 181,
                 "evo_to_name": "AMPHAROS",
                 "candyCost": 100,
@@ -3937,7 +3937,7 @@
         "name": "MARILL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 184,
                 "evo_to_name": "AZUMARILL",
                 "candyCost": 25,
@@ -3995,7 +3995,7 @@
         "name": "HOPPIP",
         "evo_list": [
             {
-                "evo_to_form": "SKIPLOOM",
+                "evo_to_form": "",
                 "evo_to_id": 188,
                 "evo_to_name": "SKIPLOOM",
                 "candyCost": 25,
@@ -4017,7 +4017,7 @@
         "name": "SKIPLOOM",
         "evo_list": [
             {
-                "evo_to_form": "JUMPLUFF",
+                "evo_to_form": "",
                 "evo_to_id": 189,
                 "evo_to_name": "JUMPLUFF",
                 "candyCost": 100,
@@ -4053,7 +4053,7 @@
         "name": "AIPOM",
         "evo_list": [
             {
-                "evo_to_form": "AMBIPOM",
+                "evo_to_form": "",
                 "evo_to_id": 424,
                 "evo_to_name": "AMBIPOM",
                 "candyCost": 100,
@@ -4077,7 +4077,7 @@
         "name": "SUNKERN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 192,
                 "evo_to_name": "SUNFLORA",
                 "candyCost": 50,
@@ -4109,7 +4109,7 @@
         "name": "YANMA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 469,
                 "evo_to_name": "YANMEGA",
                 "candyCost": 100,
@@ -4130,7 +4130,7 @@
         "name": "WOOPER",
         "evo_list": [
             {
-                "evo_to_form": "QUAGSIRE",
+                "evo_to_form": "",
                 "evo_to_id": 195,
                 "evo_to_name": "QUAGSIRE",
                 "candyCost": 50,
@@ -4188,7 +4188,7 @@
         "name": "MURKROW",
         "evo_list": [
             {
-                "evo_to_form": "HONCHKROW",
+                "evo_to_form": "",
                 "evo_to_id": 430,
                 "evo_to_name": "HONCHKROW",
                 "candyCost": 100,
@@ -4240,7 +4240,7 @@
         "name": "MISDREAVUS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 429,
                 "evo_to_name": "MISMAGIUS",
                 "candyCost": 100,
@@ -4303,7 +4303,7 @@
         "name": "PINECO",
         "evo_list": [
             {
-                "evo_to_form": "FORRETRESS",
+                "evo_to_form": "",
                 "evo_to_id": 205,
                 "evo_to_name": "FORRETRESS",
                 "candyCost": 50,
@@ -4350,7 +4350,7 @@
         "name": "GLIGAR",
         "evo_list": [
             {
-                "evo_to_form": "GLISCOR",
+                "evo_to_form": "",
                 "evo_to_id": 472,
                 "evo_to_name": "GLISCOR",
                 "candyCost": 100,
@@ -4394,7 +4394,7 @@
         "name": "SNUBBULL",
         "evo_list": [
             {
-                "evo_to_form": "GRANBULL",
+                "evo_to_form": "",
                 "evo_to_id": 210,
                 "evo_to_name": "GRANBULL",
                 "candyCost": 50,
@@ -4480,7 +4480,7 @@
         "name": "SNEASEL",
         "evo_list": [
             {
-                "evo_to_form": "WEAVILE",
+                "evo_to_form": "",
                 "evo_to_id": 461,
                 "evo_to_name": "WEAVILE",
                 "candyCost": 100,
@@ -4504,7 +4504,7 @@
         "name": "TEDDIURSA",
         "evo_list": [
             {
-                "evo_to_form": "URSARING",
+                "evo_to_form": "",
                 "evo_to_id": 217,
                 "evo_to_name": "URSARING",
                 "candyCost": 50,
@@ -4540,7 +4540,7 @@
         "name": "SLUGMA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 219,
                 "evo_to_name": "MAGCARGO",
                 "candyCost": 50,
@@ -4570,7 +4570,7 @@
         "name": "SWINUB",
         "evo_list": [
             {
-                "evo_to_form": "PILOSWINE",
+                "evo_to_form": "",
                 "evo_to_id": 221,
                 "evo_to_name": "PILOSWINE",
                 "candyCost": 25,
@@ -4592,7 +4592,7 @@
         "name": "PILOSWINE",
         "evo_list": [
             {
-                "evo_to_form": "MAMOSWINE",
+                "evo_to_form": "",
                 "evo_to_id": 473,
                 "evo_to_name": "MAMOSWINE",
                 "candyCost": 100,
@@ -4627,7 +4627,7 @@
         "name": "REMORAID",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 224,
                 "evo_to_name": "OCTILLERY",
                 "candyCost": 50,
@@ -4696,7 +4696,7 @@
         "name": "HOUNDOUR",
         "evo_list": [
             {
-                "evo_to_form": "HOUNDOOM",
+                "evo_to_form": "",
                 "evo_to_id": 229,
                 "evo_to_name": "HOUNDOOM",
                 "candyCost": 50,
@@ -4752,7 +4752,7 @@
         "name": "PHANPY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 232,
                 "evo_to_name": "DONPHAN",
                 "candyCost": 50,
@@ -4782,7 +4782,7 @@
         "name": "PORYGON2",
         "evo_list": [
             {
-                "evo_to_form": "PORYGON_Z",
+                "evo_to_form": "",
                 "evo_to_id": 474,
                 "evo_to_name": "PORYGON_Z",
                 "candyCost": 100,
@@ -4828,7 +4828,7 @@
         "name": "TYROGUE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 106,
                 "evo_to_name": "HITMONLEE",
                 "candyCost": 25,
@@ -4837,7 +4837,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 107,
                 "evo_to_name": "HITMONCHAN",
                 "candyCost": 25,
@@ -4846,7 +4846,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 237,
                 "evo_to_name": "HITMONTOP",
                 "candyCost": 25,
@@ -4878,7 +4878,7 @@
         "name": "SMOOCHUM",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 124,
                 "evo_to_name": "JYNX",
                 "candyCost": 25,
@@ -4897,7 +4897,7 @@
         "name": "ELEKID",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 125,
                 "evo_to_name": "ELECTABUZZ",
                 "candyCost": 25,
@@ -4916,7 +4916,7 @@
         "name": "MAGBY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 126,
                 "evo_to_name": "MAGMAR",
                 "candyCost": 25,
@@ -4999,7 +4999,7 @@
         "name": "LARVITAR",
         "evo_list": [
             {
-                "evo_to_form": "PUPITAR",
+                "evo_to_form": "",
                 "evo_to_id": 247,
                 "evo_to_name": "PUPITAR",
                 "candyCost": 25,
@@ -5021,7 +5021,7 @@
         "name": "PUPITAR",
         "evo_list": [
             {
-                "evo_to_form": "TYRANITAR",
+                "evo_to_form": "",
                 "evo_to_id": 248,
                 "evo_to_name": "TYRANITAR",
                 "candyCost": 100,
@@ -5096,7 +5096,7 @@
         "name": "TREECKO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 253,
                 "evo_to_name": "GROVYLE",
                 "candyCost": 25,
@@ -5115,7 +5115,7 @@
         "name": "GROVYLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 254,
                 "evo_to_name": "SCEPTILE",
                 "candyCost": 100,
@@ -5145,7 +5145,7 @@
         "name": "TORCHIC",
         "evo_list": [
             {
-                "evo_to_form": "COMBUSKEN",
+                "evo_to_form": "",
                 "evo_to_id": 256,
                 "evo_to_name": "COMBUSKEN",
                 "candyCost": 25,
@@ -5167,7 +5167,7 @@
         "name": "COMBUSKEN",
         "evo_list": [
             {
-                "evo_to_form": "BLAZIKEN",
+                "evo_to_form": "",
                 "evo_to_id": 257,
                 "evo_to_name": "BLAZIKEN",
                 "candyCost": 100,
@@ -5203,7 +5203,7 @@
         "name": "MUDKIP",
         "evo_list": [
             {
-                "evo_to_form": "MARSHTOMP",
+                "evo_to_form": "",
                 "evo_to_id": 259,
                 "evo_to_name": "MARSHTOMP",
                 "candyCost": 25,
@@ -5225,7 +5225,7 @@
         "name": "MARSHTOMP",
         "evo_list": [
             {
-                "evo_to_form": "SWAMPERT",
+                "evo_to_form": "",
                 "evo_to_id": 260,
                 "evo_to_name": "SWAMPERT",
                 "candyCost": 100,
@@ -5261,7 +5261,7 @@
         "name": "POOCHYENA",
         "evo_list": [
             {
-                "evo_to_form": "MIGHTYENA",
+                "evo_to_form": "",
                 "evo_to_id": 262,
                 "evo_to_name": "MIGHTYENA",
                 "candyCost": 50,
@@ -5297,7 +5297,7 @@
         "name": "ZIGZAGOON",
         "evo_list": [
             {
-                "evo_to_form": "LINOONE",
+                "evo_to_form": "",
                 "evo_to_id": 264,
                 "evo_to_name": "LINOONE",
                 "candyCost": 50,
@@ -5319,7 +5319,7 @@
         "name": "ZIGZAGOON_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "LINOONE_GALARIAN",
+                "evo_to_form": "GALARIAN",
                 "evo_to_id": 264,
                 "evo_to_name": "LINOONE",
                 "candyCost": 25,
@@ -5355,7 +5355,7 @@
         "name": "LINOONE_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "OBSTAGOON",
+                "evo_to_form": "",
                 "evo_to_id": 862,
                 "evo_to_name": "OBSTAGOON",
                 "candyCost": 100,
@@ -5377,7 +5377,7 @@
         "name": "WURMPLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 266,
                 "evo_to_name": "SILCOON",
                 "candyCost": 12,
@@ -5386,7 +5386,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 268,
                 "evo_to_name": "CASCOON",
                 "candyCost": 12,
@@ -5407,7 +5407,7 @@
         "name": "SILCOON",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 267,
                 "evo_to_name": "BEAUTIFLY",
                 "candyCost": 50,
@@ -5437,7 +5437,7 @@
         "name": "CASCOON",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 269,
                 "evo_to_name": "DUSTOX",
                 "candyCost": 50,
@@ -5467,7 +5467,7 @@
         "name": "LOTAD",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 271,
                 "evo_to_name": "LOMBRE",
                 "candyCost": 25,
@@ -5486,7 +5486,7 @@
         "name": "LOMBRE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 272,
                 "evo_to_name": "LUDICOLO",
                 "candyCost": 100,
@@ -5516,7 +5516,7 @@
         "name": "SEEDOT",
         "evo_list": [
             {
-                "evo_to_form": "NUZLEAF",
+                "evo_to_form": "",
                 "evo_to_id": 274,
                 "evo_to_name": "NUZLEAF",
                 "candyCost": 25,
@@ -5538,7 +5538,7 @@
         "name": "NUZLEAF",
         "evo_list": [
             {
-                "evo_to_form": "SHIFTRY",
+                "evo_to_form": "",
                 "evo_to_id": 275,
                 "evo_to_name": "SHIFTRY",
                 "candyCost": 100,
@@ -5574,7 +5574,7 @@
         "name": "TAILLOW",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 277,
                 "evo_to_name": "SWELLOW",
                 "candyCost": 50,
@@ -5604,7 +5604,7 @@
         "name": "WINGULL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 279,
                 "evo_to_name": "PELIPPER",
                 "candyCost": 50,
@@ -5634,7 +5634,7 @@
         "name": "RALTS",
         "evo_list": [
             {
-                "evo_to_form": "KIRLIA",
+                "evo_to_form": "",
                 "evo_to_id": 281,
                 "evo_to_name": "KIRLIA",
                 "candyCost": 25,
@@ -5656,7 +5656,7 @@
         "name": "KIRLIA",
         "evo_list": [
             {
-                "evo_to_form": "GALLADE",
+                "evo_to_form": "",
                 "evo_to_id": 475,
                 "evo_to_name": "GALLADE",
                 "candyCost": 100,
@@ -5666,12 +5666,12 @@
                 }
             },
             {
-                "evo_to_form": "GARDEVOIR",
+                "evo_to_form": "",
                 "evo_to_id": 282,
                 "evo_to_name": "GARDEVOIR",
                 "candyCost": 100,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             }
         ],
@@ -5704,7 +5704,7 @@
         "name": "SURSKIT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 284,
                 "evo_to_name": "MASQUERAIN",
                 "candyCost": 50,
@@ -5734,7 +5734,7 @@
         "name": "SHROOMISH",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 286,
                 "evo_to_name": "BRELOOM",
                 "candyCost": 50,
@@ -5764,7 +5764,7 @@
         "name": "SLAKOTH",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 288,
                 "evo_to_name": "VIGOROTH",
                 "candyCost": 25,
@@ -5783,7 +5783,7 @@
         "name": "VIGOROTH",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 289,
                 "evo_to_name": "SLAKING",
                 "candyCost": 100,
@@ -5813,7 +5813,7 @@
         "name": "NINCADA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 291,
                 "evo_to_name": "NINJASK",
                 "candyCost": 50,
@@ -5854,7 +5854,7 @@
         "name": "WHISMUR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 294,
                 "evo_to_name": "LOUDRED",
                 "candyCost": 12,
@@ -5876,7 +5876,7 @@
         "name": "LOUDRED",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 295,
                 "evo_to_name": "EXPLOUD",
                 "candyCost": 50,
@@ -5912,7 +5912,7 @@
         "name": "MAKUHITA",
         "evo_list": [
             {
-                "evo_to_form": "HARIYAMA",
+                "evo_to_form": "",
                 "evo_to_id": 297,
                 "evo_to_name": "HARIYAMA",
                 "candyCost": 50,
@@ -5948,7 +5948,7 @@
         "name": "AZURILL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 183,
                 "evo_to_name": "MARILL",
                 "candyCost": 25,
@@ -5967,7 +5967,7 @@
         "name": "NOSEPASS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 476,
                 "evo_to_name": "PROBOPASS",
                 "candyCost": 50,
@@ -5991,7 +5991,7 @@
         "name": "SKITTY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 301,
                 "evo_to_name": "DELCATTY",
                 "candyCost": 50,
@@ -6049,7 +6049,7 @@
         "name": "ARON",
         "evo_list": [
             {
-                "evo_to_form": "LAIRON",
+                "evo_to_form": "",
                 "evo_to_id": 305,
                 "evo_to_name": "LAIRON",
                 "candyCost": 25,
@@ -6071,7 +6071,7 @@
         "name": "LAIRON",
         "evo_list": [
             {
-                "evo_to_form": "AGGRON",
+                "evo_to_form": "",
                 "evo_to_id": 306,
                 "evo_to_name": "AGGRON",
                 "candyCost": 100,
@@ -6107,7 +6107,7 @@
         "name": "MEDITITE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 308,
                 "evo_to_name": "MEDICHAM",
                 "candyCost": 50,
@@ -6137,7 +6137,7 @@
         "name": "ELECTRIKE",
         "evo_list": [
             {
-                "evo_to_form": "MANECTRIC",
+                "evo_to_form": "",
                 "evo_to_id": 310,
                 "evo_to_name": "MANECTRIC",
                 "candyCost": 50,
@@ -6223,7 +6223,7 @@
         "name": "ROSELIA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 407,
                 "evo_to_name": "ROSERADE",
                 "candyCost": 100,
@@ -6244,7 +6244,7 @@
         "name": "GULPIN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 317,
                 "evo_to_name": "SWALOT",
                 "candyCost": 50,
@@ -6274,7 +6274,7 @@
         "name": "CARVANHA",
         "evo_list": [
             {
-                "evo_to_form": "SHARPEDO",
+                "evo_to_form": "",
                 "evo_to_id": 319,
                 "evo_to_name": "SHARPEDO",
                 "candyCost": 50,
@@ -6310,7 +6310,7 @@
         "name": "WAILMER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 321,
                 "evo_to_name": "WAILORD",
                 "candyCost": 400,
@@ -6340,7 +6340,7 @@
         "name": "NUMEL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 323,
                 "evo_to_name": "CAMERUPT",
                 "candyCost": 50,
@@ -6387,7 +6387,7 @@
         "name": "SPOINK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 326,
                 "evo_to_name": "GRUMPIG",
                 "candyCost": 50,
@@ -6428,7 +6428,7 @@
         "name": "TRAPINCH",
         "evo_list": [
             {
-                "evo_to_form": "VIBRAVA",
+                "evo_to_form": "",
                 "evo_to_id": 329,
                 "evo_to_name": "VIBRAVA",
                 "candyCost": 25,
@@ -6450,7 +6450,7 @@
         "name": "VIBRAVA",
         "evo_list": [
             {
-                "evo_to_form": "FLYGON",
+                "evo_to_form": "",
                 "evo_to_id": 330,
                 "evo_to_name": "FLYGON",
                 "candyCost": 100,
@@ -6486,7 +6486,7 @@
         "name": "CACNEA",
         "evo_list": [
             {
-                "evo_to_form": "CACTURNE",
+                "evo_to_form": "",
                 "evo_to_id": 332,
                 "evo_to_name": "CACTURNE",
                 "candyCost": 50,
@@ -6522,7 +6522,7 @@
         "name": "SWABLU",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 334,
                 "evo_to_name": "ALTARIA",
                 "candyCost": 400,
@@ -6602,7 +6602,7 @@
         "name": "BARBOACH",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 340,
                 "evo_to_name": "WHISCASH",
                 "candyCost": 50,
@@ -6632,7 +6632,7 @@
         "name": "CORPHISH",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 342,
                 "evo_to_name": "CRAWDAUNT",
                 "candyCost": 50,
@@ -6662,7 +6662,7 @@
         "name": "BALTOY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 344,
                 "evo_to_name": "CLAYDOL",
                 "candyCost": 50,
@@ -6692,7 +6692,7 @@
         "name": "LILEEP",
         "evo_list": [
             {
-                "evo_to_form": "CRADILY",
+                "evo_to_form": "",
                 "evo_to_id": 346,
                 "evo_to_name": "CRADILY",
                 "candyCost": 50,
@@ -6728,7 +6728,7 @@
         "name": "ANORITH",
         "evo_list": [
             {
-                "evo_to_form": "ARMALDO",
+                "evo_to_form": "",
                 "evo_to_id": 348,
                 "evo_to_name": "ARMALDO",
                 "candyCost": 50,
@@ -6764,7 +6764,7 @@
         "name": "FEEBAS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 350,
                 "evo_to_name": "MILOTIC",
                 "candyCost": 100,
@@ -6854,7 +6854,7 @@
         "name": "SHUPPET",
         "evo_list": [
             {
-                "evo_to_form": "BANETTE",
+                "evo_to_form": "",
                 "evo_to_id": 354,
                 "evo_to_name": "BANETTE",
                 "candyCost": 50,
@@ -6890,7 +6890,7 @@
         "name": "DUSKULL",
         "evo_list": [
             {
-                "evo_to_form": "DUSCLOPS",
+                "evo_to_form": "",
                 "evo_to_id": 356,
                 "evo_to_name": "DUSCLOPS",
                 "candyCost": 25,
@@ -6912,7 +6912,7 @@
         "name": "DUSCLOPS",
         "evo_list": [
             {
-                "evo_to_form": "DUSKNOIR",
+                "evo_to_form": "",
                 "evo_to_id": 477,
                 "evo_to_name": "DUSKNOIR",
                 "candyCost": 100,
@@ -6978,7 +6978,7 @@
         "name": "WYNAUT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 202,
                 "evo_to_name": "WOBBUFFET",
                 "candyCost": 25,
@@ -6997,7 +6997,7 @@
         "name": "SNORUNT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 478,
                 "evo_to_name": "FROSLASS",
                 "candyCost": 100,
@@ -7007,7 +7007,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 362,
                 "evo_to_name": "GLALIE",
                 "candyCost": 100,
@@ -7039,7 +7039,7 @@
         "name": "SPHEAL",
         "evo_list": [
             {
-                "evo_to_form": "SEALEO",
+                "evo_to_form": "",
                 "evo_to_id": 364,
                 "evo_to_name": "SEALEO",
                 "candyCost": 25,
@@ -7061,7 +7061,7 @@
         "name": "SEALEO",
         "evo_list": [
             {
-                "evo_to_form": "WALREIN",
+                "evo_to_form": "",
                 "evo_to_id": 365,
                 "evo_to_name": "WALREIN",
                 "candyCost": 100,
@@ -7097,7 +7097,7 @@
         "name": "CLAMPERL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 367,
                 "evo_to_name": "HUNTAIL",
                 "candyCost": 50,
@@ -7106,7 +7106,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 368,
                 "evo_to_name": "GOREBYSS",
                 "candyCost": 50,
@@ -7171,7 +7171,7 @@
         "name": "BAGON",
         "evo_list": [
             {
-                "evo_to_form": "SHELGON",
+                "evo_to_form": "",
                 "evo_to_id": 372,
                 "evo_to_name": "SHELGON",
                 "candyCost": 25,
@@ -7193,7 +7193,7 @@
         "name": "SHELGON",
         "evo_list": [
             {
-                "evo_to_form": "SALAMENCE",
+                "evo_to_form": "",
                 "evo_to_id": 373,
                 "evo_to_name": "SALAMENCE",
                 "candyCost": 100,
@@ -7229,7 +7229,7 @@
         "name": "BELDUM",
         "evo_list": [
             {
-                "evo_to_form": "METANG",
+                "evo_to_form": "",
                 "evo_to_id": 375,
                 "evo_to_name": "METANG",
                 "candyCost": 25,
@@ -7251,7 +7251,7 @@
         "name": "METANG",
         "evo_list": [
             {
-                "evo_to_form": "METAGROSS",
+                "evo_to_form": "",
                 "evo_to_id": 376,
                 "evo_to_name": "METAGROSS",
                 "candyCost": 100,
@@ -7448,7 +7448,7 @@
         "name": "TURTWIG",
         "evo_list": [
             {
-                "evo_to_form": "GROTLE",
+                "evo_to_form": "",
                 "evo_to_id": 388,
                 "evo_to_name": "GROTLE",
                 "candyCost": 25,
@@ -7470,7 +7470,7 @@
         "name": "GROTLE",
         "evo_list": [
             {
-                "evo_to_form": "TORTERRA",
+                "evo_to_form": "",
                 "evo_to_id": 389,
                 "evo_to_name": "TORTERRA",
                 "candyCost": 100,
@@ -7506,7 +7506,7 @@
         "name": "CHIMCHAR",
         "evo_list": [
             {
-                "evo_to_form": "MONFERNO",
+                "evo_to_form": "",
                 "evo_to_id": 391,
                 "evo_to_name": "MONFERNO",
                 "candyCost": 25,
@@ -7528,7 +7528,7 @@
         "name": "MONFERNO",
         "evo_list": [
             {
-                "evo_to_form": "INFERNAPE",
+                "evo_to_form": "",
                 "evo_to_id": 392,
                 "evo_to_name": "INFERNAPE",
                 "candyCost": 100,
@@ -7564,7 +7564,7 @@
         "name": "PIPLUP",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 394,
                 "evo_to_name": "PRINPLUP",
                 "candyCost": 25,
@@ -7583,7 +7583,7 @@
         "name": "PRINPLUP",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 395,
                 "evo_to_name": "EMPOLEON",
                 "candyCost": 100,
@@ -7613,7 +7613,7 @@
         "name": "STARLY",
         "evo_list": [
             {
-                "evo_to_form": "STARAVIA",
+                "evo_to_form": "",
                 "evo_to_id": 397,
                 "evo_to_name": "STARAVIA",
                 "candyCost": 25,
@@ -7635,7 +7635,7 @@
         "name": "STARAVIA",
         "evo_list": [
             {
-                "evo_to_form": "STARAPTOR",
+                "evo_to_form": "",
                 "evo_to_id": 398,
                 "evo_to_name": "STARAPTOR",
                 "candyCost": 100,
@@ -7671,7 +7671,7 @@
         "name": "BIDOOF",
         "evo_list": [
             {
-                "evo_to_form": "BIBAREL",
+                "evo_to_form": "",
                 "evo_to_id": 400,
                 "evo_to_name": "BIBAREL",
                 "candyCost": 50,
@@ -7707,7 +7707,7 @@
         "name": "KRICKETOT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 402,
                 "evo_to_name": "KRICKETUNE",
                 "candyCost": 50,
@@ -7737,7 +7737,7 @@
         "name": "SHINX",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 404,
                 "evo_to_name": "LUXIO",
                 "candyCost": 25,
@@ -7759,7 +7759,7 @@
         "name": "LUXIO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 405,
                 "evo_to_name": "LUXRAY",
                 "candyCost": 100,
@@ -7795,7 +7795,7 @@
         "name": "BUDEW",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 315,
                 "evo_to_name": "ROSELIA",
                 "candyCost": 25,
@@ -7825,7 +7825,7 @@
         "name": "CRANIDOS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 409,
                 "evo_to_name": "RAMPARDOS",
                 "candyCost": 50,
@@ -7855,7 +7855,7 @@
         "name": "SHIELDON",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 411,
                 "evo_to_name": "BASTIODON",
                 "candyCost": 50,
@@ -7885,7 +7885,7 @@
         "name": "BURMY",
         "evo_list": [
             {
-                "evo_to_form": "WORMADAM_PLANT",
+                "evo_to_form": "PLANT",
                 "evo_to_id": 413,
                 "evo_to_name": "WORMADAM",
                 "candyCost": 50,
@@ -7894,7 +7894,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 414,
                 "evo_to_name": "MOTHIM",
                 "candyCost": 50,
@@ -7915,7 +7915,7 @@
         "name": "BURMY_PLANT",
         "evo_list": [
             {
-                "evo_to_form": "WORMADAM_PLANT",
+                "evo_to_form": "PLANT",
                 "evo_to_id": 413,
                 "evo_to_name": "WORMADAM",
                 "candyCost": 50,
@@ -7924,7 +7924,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 414,
                 "evo_to_name": "MOTHIM",
                 "candyCost": 50,
@@ -7945,7 +7945,7 @@
         "name": "BURMY_SANDY",
         "evo_list": [
             {
-                "evo_to_form": "WORMADAM_SANDY",
+                "evo_to_form": "SANDY",
                 "evo_to_id": 413,
                 "evo_to_name": "WORMADAM",
                 "candyCost": 50,
@@ -7954,7 +7954,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 414,
                 "evo_to_name": "MOTHIM",
                 "candyCost": 50,
@@ -7975,7 +7975,7 @@
         "name": "BURMY_TRASH",
         "evo_list": [
             {
-                "evo_to_form": "WORMADAM_TRASH",
+                "evo_to_form": "TRASH",
                 "evo_to_id": 413,
                 "evo_to_name": "WORMADAM",
                 "candyCost": 50,
@@ -7984,7 +7984,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 414,
                 "evo_to_name": "MOTHIM",
                 "candyCost": 50,
@@ -8060,7 +8060,7 @@
         "name": "COMBEE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 416,
                 "evo_to_name": "VESPIQUEN",
                 "candyCost": 50,
@@ -8103,7 +8103,7 @@
         "name": "BUIZEL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 419,
                 "evo_to_name": "FLOATZEL",
                 "candyCost": 50,
@@ -8133,21 +8133,21 @@
         "name": "CHERUBI",
         "evo_list": [
             {
-                "evo_to_form": "CHERRIM_OVERCAST",
+                "evo_to_form": "OVERCAST",
                 "evo_to_id": 421,
                 "evo_to_name": "CHERRIM",
                 "candyCost": 50,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             },
             {
-                "evo_to_form": "CHERRIM_SUNNY",
+                "evo_to_form": "SUNNY",
                 "evo_to_id": 421,
                 "evo_to_name": "CHERRIM",
                 "candyCost": 50,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             }
         ],
@@ -8196,7 +8196,7 @@
         "name": "SHELLOS",
         "evo_list": [
             {
-                "evo_to_form": "GASTRODON_EAST_SEA",
+                "evo_to_form": "EAST_SEA",
                 "evo_to_id": 423,
                 "evo_to_name": "GASTRODON",
                 "candyCost": 50,
@@ -8215,7 +8215,7 @@
         "name": "SHELLOS_EAST_SEA",
         "evo_list": [
             {
-                "evo_to_form": "GASTRODON_EAST_SEA",
+                "evo_to_form": "EAST_SEA",
                 "evo_to_id": 423,
                 "evo_to_name": "GASTRODON",
                 "candyCost": 50,
@@ -8234,7 +8234,7 @@
         "name": "SHELLOS_WEST_SEA",
         "evo_list": [
             {
-                "evo_to_form": "GASTRODON_WEST_SEA",
+                "evo_to_form": "WEST_SEA",
                 "evo_to_id": 423,
                 "evo_to_name": "GASTRODON",
                 "candyCost": 50,
@@ -8300,7 +8300,7 @@
         "name": "DRIFLOON",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 426,
                 "evo_to_name": "DRIFBLIM",
                 "candyCost": 50,
@@ -8330,7 +8330,7 @@
         "name": "BUNEARY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 428,
                 "evo_to_name": "LOPUNNY",
                 "candyCost": 50,
@@ -8394,7 +8394,7 @@
         "name": "GLAMEOW",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 432,
                 "evo_to_name": "PURUGLY",
                 "candyCost": 50,
@@ -8424,7 +8424,7 @@
         "name": "CHINGLING",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 358,
                 "evo_to_name": "CHIMECHO",
                 "candyCost": 50,
@@ -8443,7 +8443,7 @@
         "name": "STUNKY",
         "evo_list": [
             {
-                "evo_to_form": "SKUNTANK",
+                "evo_to_form": "",
                 "evo_to_id": 435,
                 "evo_to_name": "SKUNTANK",
                 "candyCost": 50,
@@ -8479,7 +8479,7 @@
         "name": "BRONZOR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 437,
                 "evo_to_name": "BRONZONG",
                 "candyCost": 50,
@@ -8509,7 +8509,7 @@
         "name": "BONSLY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 185,
                 "evo_to_name": "SUDOWOODO",
                 "candyCost": 50,
@@ -8533,7 +8533,7 @@
         "name": "MIME_JR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 122,
                 "evo_to_name": "MR_MIME",
                 "candyCost": 50,
@@ -8557,7 +8557,7 @@
         "name": "HAPPINY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 113,
                 "evo_to_name": "CHANSEY",
                 "candyCost": 25,
@@ -8603,7 +8603,7 @@
         "name": "GIBLE",
         "evo_list": [
             {
-                "evo_to_form": "GABITE",
+                "evo_to_form": "",
                 "evo_to_id": 444,
                 "evo_to_name": "GABITE",
                 "candyCost": 25,
@@ -8625,7 +8625,7 @@
         "name": "GABITE",
         "evo_list": [
             {
-                "evo_to_form": "GARCHOMP",
+                "evo_to_form": "",
                 "evo_to_id": 445,
                 "evo_to_name": "GARCHOMP",
                 "candyCost": 100,
@@ -8661,7 +8661,7 @@
         "name": "MUNCHLAX",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 143,
                 "evo_to_name": "SNORLAX",
                 "candyCost": 50,
@@ -8680,7 +8680,7 @@
         "name": "RIOLU",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 448,
                 "evo_to_name": "LUCARIO",
                 "candyCost": 50,
@@ -8710,7 +8710,7 @@
         "name": "HIPPOPOTAS",
         "evo_list": [
             {
-                "evo_to_form": "HIPPOWDON",
+                "evo_to_form": "",
                 "evo_to_id": 450,
                 "evo_to_name": "HIPPOWDON",
                 "candyCost": 50,
@@ -8746,7 +8746,7 @@
         "name": "SKORUPI",
         "evo_list": [
             {
-                "evo_to_form": "DRAPION",
+                "evo_to_form": "",
                 "evo_to_id": 452,
                 "evo_to_name": "DRAPION",
                 "candyCost": 50,
@@ -8782,7 +8782,7 @@
         "name": "CROAGUNK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 454,
                 "evo_to_name": "TOXICROAK",
                 "candyCost": 50,
@@ -8823,7 +8823,7 @@
         "name": "FINNEON",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 457,
                 "evo_to_name": "LUMINEON",
                 "candyCost": 50,
@@ -8853,7 +8853,7 @@
         "name": "MANTYKE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 226,
                 "evo_to_name": "MANTINE",
                 "candyCost": 50,
@@ -8872,7 +8872,7 @@
         "name": "SNOVER",
         "evo_list": [
             {
-                "evo_to_form": "ABOMASNOW",
+                "evo_to_form": "",
                 "evo_to_id": 460,
                 "evo_to_name": "ABOMASNOW",
                 "candyCost": 50,
@@ -9610,7 +9610,7 @@
         "name": "SNIVY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 496,
                 "evo_to_name": "SERVINE",
                 "candyCost": 25,
@@ -9629,7 +9629,7 @@
         "name": "SERVINE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 497,
                 "evo_to_name": "SERPERIOR",
                 "candyCost": 100,
@@ -9659,7 +9659,7 @@
         "name": "TEPIG",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 499,
                 "evo_to_name": "PIGNITE",
                 "candyCost": 25,
@@ -9678,7 +9678,7 @@
         "name": "PIGNITE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 500,
                 "evo_to_name": "EMBOAR",
                 "candyCost": 100,
@@ -9708,7 +9708,7 @@
         "name": "OSHAWOTT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 502,
                 "evo_to_name": "DEWOTT",
                 "candyCost": 25,
@@ -9727,7 +9727,7 @@
         "name": "DEWOTT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 503,
                 "evo_to_name": "SAMUROTT",
                 "candyCost": 100,
@@ -9757,7 +9757,7 @@
         "name": "PATRAT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 505,
                 "evo_to_name": "WATCHOG",
                 "candyCost": 50,
@@ -9787,7 +9787,7 @@
         "name": "LILLIPUP",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 507,
                 "evo_to_name": "HERDIER",
                 "candyCost": 25,
@@ -9806,7 +9806,7 @@
         "name": "HERDIER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 508,
                 "evo_to_name": "STOUTLAND",
                 "candyCost": 100,
@@ -9836,7 +9836,7 @@
         "name": "PURRLOIN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 510,
                 "evo_to_name": "LIEPARD",
                 "candyCost": 50,
@@ -9866,7 +9866,7 @@
         "name": "PANSAGE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 512,
                 "evo_to_name": "SIMISAGE",
                 "candyCost": 50,
@@ -9898,7 +9898,7 @@
         "name": "PANSEAR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 514,
                 "evo_to_name": "SIMISEAR",
                 "candyCost": 50,
@@ -9930,7 +9930,7 @@
         "name": "PANPOUR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 516,
                 "evo_to_name": "SIMIPOUR",
                 "candyCost": 50,
@@ -9962,7 +9962,7 @@
         "name": "MUNNA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 518,
                 "evo_to_name": "MUSHARNA",
                 "candyCost": 50,
@@ -9994,7 +9994,7 @@
         "name": "PIDOVE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 520,
                 "evo_to_name": "TRANQUILL",
                 "candyCost": 12,
@@ -10013,7 +10013,7 @@
         "name": "TRANQUILL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 521,
                 "evo_to_name": "UNFEZANT",
                 "candyCost": 50,
@@ -10043,7 +10043,7 @@
         "name": "BLITZLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 523,
                 "evo_to_name": "ZEBSTRIKA",
                 "candyCost": 50,
@@ -10073,7 +10073,7 @@
         "name": "ROGGENROLA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 525,
                 "evo_to_name": "BOLDORE",
                 "candyCost": 50,
@@ -10092,7 +10092,7 @@
         "name": "BOLDORE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 526,
                 "evo_to_name": "GIGALITH",
                 "candyCost": 200,
@@ -10122,7 +10122,7 @@
         "name": "WOOBAT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 528,
                 "evo_to_name": "SWOOBAT",
                 "candyCost": 50,
@@ -10157,7 +10157,7 @@
         "name": "DRILBUR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 530,
                 "evo_to_name": "EXCADRILL",
                 "candyCost": 50,
@@ -10198,7 +10198,7 @@
         "name": "TIMBURR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 533,
                 "evo_to_name": "GURDURR",
                 "candyCost": 50,
@@ -10217,7 +10217,7 @@
         "name": "GURDURR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 534,
                 "evo_to_name": "CONKELDURR",
                 "candyCost": 200,
@@ -10247,7 +10247,7 @@
         "name": "TYMPOLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 536,
                 "evo_to_name": "PALPITOAD",
                 "candyCost": 25,
@@ -10266,7 +10266,7 @@
         "name": "PALPITOAD",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 537,
                 "evo_to_name": "SEISMITOAD",
                 "candyCost": 100,
@@ -10318,7 +10318,7 @@
         "name": "SEWADDLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 541,
                 "evo_to_name": "SWADLOON",
                 "candyCost": 25,
@@ -10337,7 +10337,7 @@
         "name": "SWADLOON",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 542,
                 "evo_to_name": "LEAVANNY",
                 "candyCost": 100,
@@ -10367,7 +10367,7 @@
         "name": "VENIPEDE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 544,
                 "evo_to_name": "WHIRLIPEDE",
                 "candyCost": 25,
@@ -10386,7 +10386,7 @@
         "name": "WHIRLIPEDE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 545,
                 "evo_to_name": "SCOLIPEDE",
                 "candyCost": 100,
@@ -10416,7 +10416,7 @@
         "name": "COTTONEE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 547,
                 "evo_to_name": "WHIMSICOTT",
                 "candyCost": 50,
@@ -10448,7 +10448,7 @@
         "name": "PETILIL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 549,
                 "evo_to_name": "LILLIGANT",
                 "candyCost": 50,
@@ -10513,7 +10513,7 @@
         "name": "SANDILE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 552,
                 "evo_to_name": "KROKOROK",
                 "candyCost": 25,
@@ -10532,7 +10532,7 @@
         "name": "KROKOROK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 553,
                 "evo_to_name": "KROOKODILE",
                 "candyCost": 100,
@@ -10562,7 +10562,7 @@
         "name": "DARUMAKA",
         "evo_list": [
             {
-                "evo_to_form": "DARMANITAN_STANDARD",
+                "evo_to_form": "STANDARD",
                 "evo_to_id": 555,
                 "evo_to_name": "DARMANITAN",
                 "candyCost": 50,
@@ -10584,7 +10584,7 @@
         "name": "DARUMAKA_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "DARMANITAN_GALARIAN_STANDARD",
+                "evo_to_form": "GALARIAN_STANDARD",
                 "evo_to_id": 555,
                 "evo_to_name": "DARMANITAN",
                 "candyCost": 50,
@@ -10672,7 +10672,7 @@
         "name": "DWEBBLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 558,
                 "evo_to_name": "CRUSTLE",
                 "candyCost": 50,
@@ -10702,7 +10702,7 @@
         "name": "SCRAGGY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 560,
                 "evo_to_name": "SCRAFTY",
                 "candyCost": 50,
@@ -10743,7 +10743,7 @@
         "name": "YAMASK",
         "evo_list": [
             {
-                "evo_to_form": "COFAGRIGUS",
+                "evo_to_form": "",
                 "evo_to_id": 563,
                 "evo_to_name": "COFAGRIGUS",
                 "candyCost": 50,
@@ -10765,7 +10765,7 @@
         "name": "YAMASK_GALARIAN",
         "evo_list": [
             {
-                "evo_to_form": "RUNERIGUS",
+                "evo_to_form": "",
                 "evo_to_id": 867,
                 "evo_to_name": "RUNERIGUS",
                 "candyCost": 50,
@@ -10808,7 +10808,7 @@
         "name": "TIRTOUGA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 565,
                 "evo_to_name": "CARRACOSTA",
                 "candyCost": 50,
@@ -10838,7 +10838,7 @@
         "name": "ARCHEN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 567,
                 "evo_to_name": "ARCHEOPS",
                 "candyCost": 50,
@@ -10868,7 +10868,7 @@
         "name": "TRUBBISH",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 569,
                 "evo_to_name": "GARBODOR",
                 "candyCost": 50,
@@ -10898,7 +10898,7 @@
         "name": "ZORUA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 571,
                 "evo_to_name": "ZOROARK",
                 "candyCost": 50,
@@ -10928,7 +10928,7 @@
         "name": "MINCCINO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 573,
                 "evo_to_name": "CINCCINO",
                 "candyCost": 50,
@@ -10960,7 +10960,7 @@
         "name": "GOTHITA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 575,
                 "evo_to_name": "GOTHORITA",
                 "candyCost": 25,
@@ -10979,7 +10979,7 @@
         "name": "GOTHORITA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 576,
                 "evo_to_name": "GOTHITELLE",
                 "candyCost": 100,
@@ -11009,7 +11009,7 @@
         "name": "SOLOSIS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 578,
                 "evo_to_name": "DUOSION",
                 "candyCost": 25,
@@ -11028,7 +11028,7 @@
         "name": "DUOSION",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 579,
                 "evo_to_name": "REUNICLUS",
                 "candyCost": 100,
@@ -11058,7 +11058,7 @@
         "name": "DUCKLETT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 581,
                 "evo_to_name": "SWANNA",
                 "candyCost": 50,
@@ -11088,7 +11088,7 @@
         "name": "VANILLITE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 583,
                 "evo_to_name": "VANILLISH",
                 "candyCost": 25,
@@ -11107,7 +11107,7 @@
         "name": "VANILLISH",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 584,
                 "evo_to_name": "VANILLUXE",
                 "candyCost": 100,
@@ -11148,7 +11148,7 @@
         "name": "DEERLING_AUTUMN",
         "evo_list": [
             {
-                "evo_to_form": "SAWSBUCK_AUTUMN",
+                "evo_to_form": "AUTUMN",
                 "evo_to_id": 586,
                 "evo_to_name": "SAWSBUCK",
                 "candyCost": 50,
@@ -11167,7 +11167,7 @@
         "name": "DEERLING_SPRING",
         "evo_list": [
             {
-                "evo_to_form": "SAWSBUCK_SPRING",
+                "evo_to_form": "SPRING",
                 "evo_to_id": 586,
                 "evo_to_name": "SAWSBUCK",
                 "candyCost": 50,
@@ -11186,7 +11186,7 @@
         "name": "DEERLING_SUMMER",
         "evo_list": [
             {
-                "evo_to_form": "SAWSBUCK_SUMMER",
+                "evo_to_form": "SUMMER",
                 "evo_to_id": 586,
                 "evo_to_name": "SAWSBUCK",
                 "candyCost": 50,
@@ -11205,7 +11205,7 @@
         "name": "DEERLING_WINTER",
         "evo_list": [
             {
-                "evo_to_form": "SAWSBUCK_WINTER",
+                "evo_to_form": "WINTER",
                 "evo_to_id": 586,
                 "evo_to_name": "SAWSBUCK",
                 "candyCost": 50,
@@ -11290,7 +11290,7 @@
         "name": "KARRABLAST",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 589,
                 "evo_to_name": "ESCAVALIER",
                 "candyCost": 200,
@@ -11320,7 +11320,7 @@
         "name": "FOONGUS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 591,
                 "evo_to_name": "AMOONGUSS",
                 "candyCost": 50,
@@ -11350,7 +11350,7 @@
         "name": "FRILLISH",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 593,
                 "evo_to_name": "JELLICENT",
                 "candyCost": 50,
@@ -11369,7 +11369,7 @@
         "name": "FRILLISH_FEMALE",
         "evo_list": [
             {
-                "evo_to_form": "JELLICENT_FEMALE",
+                "evo_to_form": "FEMALE",
                 "evo_to_id": 593,
                 "evo_to_name": "JELLICENT",
                 "candyCost": 50,
@@ -11421,7 +11421,7 @@
         "name": "JOLTIK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 596,
                 "evo_to_name": "GALVANTULA",
                 "candyCost": 50,
@@ -11451,7 +11451,7 @@
         "name": "FERROSEED",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 598,
                 "evo_to_name": "FERROTHORN",
                 "candyCost": 50,
@@ -11481,7 +11481,7 @@
         "name": "KLINK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 600,
                 "evo_to_name": "KLANG",
                 "candyCost": 25,
@@ -11500,7 +11500,7 @@
         "name": "KLANG",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 601,
                 "evo_to_name": "KLINKLANG",
                 "candyCost": 100,
@@ -11530,7 +11530,7 @@
         "name": "TYNAMO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 603,
                 "evo_to_name": "EELEKTRIK",
                 "candyCost": 25,
@@ -11549,7 +11549,7 @@
         "name": "EELEKTRIK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 604,
                 "evo_to_name": "EELEKTROSS",
                 "candyCost": 100,
@@ -11581,7 +11581,7 @@
         "name": "ELGYEM",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 606,
                 "evo_to_name": "BEHEEYEM",
                 "candyCost": 50,
@@ -11611,7 +11611,7 @@
         "name": "LITWICK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 608,
                 "evo_to_name": "LAMPENT",
                 "candyCost": 25,
@@ -11630,7 +11630,7 @@
         "name": "LAMPENT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 609,
                 "evo_to_name": "CHANDELURE",
                 "candyCost": 100,
@@ -11662,7 +11662,7 @@
         "name": "AXEW",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 611,
                 "evo_to_name": "FRAXURE",
                 "candyCost": 25,
@@ -11681,7 +11681,7 @@
         "name": "FRAXURE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 612,
                 "evo_to_name": "HAXORUS",
                 "candyCost": 100,
@@ -11711,7 +11711,7 @@
         "name": "CUBCHOO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 614,
                 "evo_to_name": "BEARTIC",
                 "candyCost": 50,
@@ -11752,7 +11752,7 @@
         "name": "SHELMET",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 617,
                 "evo_to_name": "ACCELGOR",
                 "candyCost": 200,
@@ -11810,7 +11810,7 @@
         "name": "MIENFOO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 620,
                 "evo_to_name": "MIENSHAO",
                 "candyCost": 50,
@@ -11851,7 +11851,7 @@
         "name": "GOLETT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 623,
                 "evo_to_name": "GOLURK",
                 "candyCost": 50,
@@ -11881,7 +11881,7 @@
         "name": "PAWNIARD",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 625,
                 "evo_to_name": "BISHARP",
                 "candyCost": 50,
@@ -11922,7 +11922,7 @@
         "name": "RUFFLET",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 628,
                 "evo_to_name": "BRAVIARY",
                 "candyCost": 50,
@@ -11952,7 +11952,7 @@
         "name": "VULLABY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 630,
                 "evo_to_name": "MANDIBUZZ",
                 "candyCost": 50,
@@ -12004,7 +12004,7 @@
         "name": "DEINO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 634,
                 "evo_to_name": "ZWEILOUS",
                 "candyCost": 25,
@@ -12023,7 +12023,7 @@
         "name": "ZWEILOUS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 635,
                 "evo_to_name": "HYDREIGON",
                 "candyCost": 100,
@@ -12053,7 +12053,7 @@
         "name": "LARVESTA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 637,
                 "evo_to_name": "VOLCARONA",
                 "candyCost": 400,
@@ -12391,7 +12391,7 @@
         "name": "CHESPIN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 651,
                 "evo_to_name": "QUILLADIN",
                 "candyCost": 25,
@@ -12410,7 +12410,7 @@
         "name": "QUILLADIN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 652,
                 "evo_to_name": "CHESNAUGHT",
                 "candyCost": 100,
@@ -12440,7 +12440,7 @@
         "name": "FENNEKIN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 654,
                 "evo_to_name": "BRAIXEN",
                 "candyCost": 25,
@@ -12459,7 +12459,7 @@
         "name": "BRAIXEN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 655,
                 "evo_to_name": "DELPHOX",
                 "candyCost": 100,
@@ -12489,7 +12489,7 @@
         "name": "FROAKIE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 657,
                 "evo_to_name": "FROGADIER",
                 "candyCost": 25,
@@ -12508,7 +12508,7 @@
         "name": "FROGADIER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 658,
                 "evo_to_name": "GRENINJA",
                 "candyCost": 100,
@@ -12538,7 +12538,7 @@
         "name": "BUNNELBY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 660,
                 "evo_to_name": "DIGGERSBY",
                 "candyCost": 50,
@@ -12568,7 +12568,7 @@
         "name": "FLETCHLING",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 662,
                 "evo_to_name": "FLETCHINDER",
                 "candyCost": 25,
@@ -12587,7 +12587,7 @@
         "name": "FLETCHINDER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 663,
                 "evo_to_name": "TALONFLAME",
                 "candyCost": 100,
@@ -12617,7 +12617,7 @@
         "name": "SCATTERBUG",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 665,
                 "evo_to_name": "SPEWPA",
                 "candyCost": 12,
@@ -12636,7 +12636,7 @@
         "name": "SPEWPA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 666,
                 "evo_to_name": "VIVILLON",
                 "candyCost": 50,
@@ -12666,7 +12666,7 @@
         "name": "LITLEO",
         "evo_list": [
             {
-                "evo_to_form": "PYROAR",
+                "evo_to_form": "",
                 "evo_to_id": 668,
                 "evo_to_name": "PYROAR",
                 "candyCost": 50,
@@ -12675,7 +12675,7 @@
                 }
             },
             {
-                "evo_to_form": "PYROAR_FEMALE",
+                "evo_to_form": "FEMALE",
                 "evo_to_id": 668,
                 "evo_to_name": "PYROAR",
                 "candyCost": 50,
@@ -12718,7 +12718,7 @@
         "name": "FLABEBE",
         "evo_list": [
             {
-                "evo_to_form": "FLOETTE_RED",
+                "evo_to_form": "RED",
                 "evo_to_id": 670,
                 "evo_to_name": "FLOETTE",
                 "candyCost": 25,
@@ -12737,7 +12737,7 @@
         "name": "FLABEBE_BLUE",
         "evo_list": [
             {
-                "evo_to_form": "FLOETTE_BLUE",
+                "evo_to_form": "BLUE",
                 "evo_to_id": 670,
                 "evo_to_name": "FLOETTE",
                 "candyCost": 25,
@@ -12756,7 +12756,7 @@
         "name": "FLABEBE_ORANGE",
         "evo_list": [
             {
-                "evo_to_form": "FLOETTE_ORANGE",
+                "evo_to_form": "ORANGE",
                 "evo_to_id": 670,
                 "evo_to_name": "FLOETTE",
                 "candyCost": 25,
@@ -12775,7 +12775,7 @@
         "name": "FLABEBE_RED",
         "evo_list": [
             {
-                "evo_to_form": "FLOETTE_RED",
+                "evo_to_form": "RED",
                 "evo_to_id": 670,
                 "evo_to_name": "FLOETTE",
                 "candyCost": 25,
@@ -12794,7 +12794,7 @@
         "name": "FLABEBE_WHITE",
         "evo_list": [
             {
-                "evo_to_form": "FLOETTE_WHITE",
+                "evo_to_form": "WHITE",
                 "evo_to_id": 670,
                 "evo_to_name": "FLOETTE",
                 "candyCost": 25,
@@ -12813,7 +12813,7 @@
         "name": "FLABEBE_YELLOW",
         "evo_list": [
             {
-                "evo_to_form": "FLOETTE_YELLOW",
+                "evo_to_form": "YELLOW",
                 "evo_to_id": 670,
                 "evo_to_name": "FLOETTE",
                 "candyCost": 25,
@@ -12832,7 +12832,7 @@
         "name": "FLOETTE",
         "evo_list": [
             {
-                "evo_to_form": "FLORGES_RED",
+                "evo_to_form": "RED",
                 "evo_to_id": 671,
                 "evo_to_name": "FLORGES",
                 "candyCost": 100,
@@ -12855,7 +12855,7 @@
         "name": "FLOETTE_BLUE",
         "evo_list": [
             {
-                "evo_to_form": "FLORGES_BLUE",
+                "evo_to_form": "BLUE",
                 "evo_to_id": 671,
                 "evo_to_name": "FLORGES",
                 "candyCost": 100,
@@ -12878,7 +12878,7 @@
         "name": "FLOETTE_ORANGE",
         "evo_list": [
             {
-                "evo_to_form": "FLORGES_ORANGE",
+                "evo_to_form": "ORANGE",
                 "evo_to_id": 671,
                 "evo_to_name": "FLORGES",
                 "candyCost": 100,
@@ -12901,7 +12901,7 @@
         "name": "FLOETTE_RED",
         "evo_list": [
             {
-                "evo_to_form": "FLORGES_RED",
+                "evo_to_form": "RED",
                 "evo_to_id": 671,
                 "evo_to_name": "FLORGES",
                 "candyCost": 100,
@@ -12924,7 +12924,7 @@
         "name": "FLOETTE_WHITE",
         "evo_list": [
             {
-                "evo_to_form": "FLORGES_WHITE",
+                "evo_to_form": "WHITE",
                 "evo_to_id": 671,
                 "evo_to_name": "FLORGES",
                 "candyCost": 100,
@@ -12947,7 +12947,7 @@
         "name": "FLOETTE_YELLOW",
         "evo_list": [
             {
-                "evo_to_form": "FLORGES_YELLOW",
+                "evo_to_form": "YELLOW",
                 "evo_to_id": 671,
                 "evo_to_name": "FLORGES",
                 "candyCost": 100,
@@ -13036,7 +13036,7 @@
         "name": "SKIDDO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 673,
                 "evo_to_name": "GOGOAT",
                 "candyCost": 50,
@@ -13066,7 +13066,7 @@
         "name": "PANCHAM",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 675,
                 "evo_to_name": "PANGORO",
                 "candyCost": 50,
@@ -13226,7 +13226,7 @@
         "name": "ESPURR",
         "evo_list": [
             {
-                "evo_to_form": "MEOWSTIC",
+                "evo_to_form": "",
                 "evo_to_id": 678,
                 "evo_to_name": "MEOWSTIC",
                 "candyCost": 50,
@@ -13235,7 +13235,7 @@
                 }
             },
             {
-                "evo_to_form": "MEOWSTIC_FEMALE",
+                "evo_to_form": "FEMALE",
                 "evo_to_id": 678,
                 "evo_to_name": "MEOWSTIC",
                 "candyCost": 50,
@@ -13278,7 +13278,7 @@
         "name": "HONEDGE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 680,
                 "evo_to_name": "DOUBLADE",
                 "candyCost": 25,
@@ -13297,7 +13297,7 @@
         "name": "DOUBLADE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 681,
                 "evo_to_name": "AEGISLASH",
                 "candyCost": 100,
@@ -13327,7 +13327,7 @@
         "name": "SPRITZEE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 683,
                 "evo_to_name": "AROMATISSE",
                 "candyCost": 50,
@@ -13361,7 +13361,7 @@
         "name": "SWIRLIX",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 685,
                 "evo_to_name": "SLURPUFF",
                 "candyCost": 50,
@@ -13395,7 +13395,7 @@
         "name": "INKAY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 687,
                 "evo_to_name": "MALAMAR",
                 "candyCost": 50,
@@ -13427,7 +13427,7 @@
         "name": "BINACLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 689,
                 "evo_to_name": "BARBARACLE",
                 "candyCost": 50,
@@ -13457,7 +13457,7 @@
         "name": "SKRELP",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 691,
                 "evo_to_name": "DRAGALGE",
                 "candyCost": 50,
@@ -13487,7 +13487,7 @@
         "name": "CLAUNCHER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 693,
                 "evo_to_name": "CLAWITZER",
                 "candyCost": 50,
@@ -13517,7 +13517,7 @@
         "name": "HELIOPTILE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 695,
                 "evo_to_name": "HELIOLISK",
                 "candyCost": 50,
@@ -13549,7 +13549,7 @@
         "name": "TYRUNT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 697,
                 "evo_to_name": "TYRANTRUM",
                 "candyCost": 50,
@@ -13581,7 +13581,7 @@
         "name": "AMAURA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 699,
                 "evo_to_name": "AURORUS",
                 "candyCost": 50,
@@ -13657,7 +13657,7 @@
         "name": "GOOMY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 705,
                 "evo_to_name": "SLIGGOO",
                 "candyCost": 25,
@@ -13676,7 +13676,7 @@
         "name": "SLIGGOO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 706,
                 "evo_to_name": "GOODRA",
                 "candyCost": 100,
@@ -13719,7 +13719,7 @@
         "name": "PHANTUMP",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 709,
                 "evo_to_name": "TREVENANT",
                 "candyCost": 200,
@@ -13749,7 +13749,7 @@
         "name": "PUMPKABOO",
         "evo_list": [
             {
-                "evo_to_form": "GOURGEIST_SMALL",
+                "evo_to_form": "SMALL",
                 "evo_to_id": 711,
                 "evo_to_name": "GOURGEIST",
                 "candyCost": 200,
@@ -13768,7 +13768,7 @@
         "name": "PUMPKABOO_AVERAGE",
         "evo_list": [
             {
-                "evo_to_form": "GOURGEIST_AVERAGE",
+                "evo_to_form": "AVERAGE",
                 "evo_to_id": 711,
                 "evo_to_name": "GOURGEIST",
                 "candyCost": 200,
@@ -13787,7 +13787,7 @@
         "name": "PUMPKABOO_LARGE",
         "evo_list": [
             {
-                "evo_to_form": "GOURGEIST_LARGE",
+                "evo_to_form": "LARGE",
                 "evo_to_id": 711,
                 "evo_to_name": "GOURGEIST",
                 "candyCost": 200,
@@ -13806,7 +13806,7 @@
         "name": "PUMPKABOO_SMALL",
         "evo_list": [
             {
-                "evo_to_form": "GOURGEIST_SMALL",
+                "evo_to_form": "SMALL",
                 "evo_to_id": 711,
                 "evo_to_name": "GOURGEIST",
                 "candyCost": 200,
@@ -13825,7 +13825,7 @@
         "name": "PUMPKABOO_SUPER",
         "evo_list": [
             {
-                "evo_to_form": "GOURGEIST_SUPER",
+                "evo_to_form": "SUPER",
                 "evo_to_id": 711,
                 "evo_to_name": "GOURGEIST",
                 "candyCost": 200,
@@ -13899,7 +13899,7 @@
         "name": "BERGMITE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 713,
                 "evo_to_name": "AVALUGG",
                 "candyCost": 50,
@@ -13929,7 +13929,7 @@
         "name": "NOIBAT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 715,
                 "evo_to_name": "NOIVERN",
                 "candyCost": 400,
@@ -14047,7 +14047,7 @@
         "name": "ROWLET",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 723,
                 "evo_to_name": "DARTRIX",
                 "candyCost": 25,
@@ -14066,7 +14066,7 @@
         "name": "DARTRIX",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 724,
                 "evo_to_name": "DECIDUEYE",
                 "candyCost": 100,
@@ -14096,7 +14096,7 @@
         "name": "LITTEN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 726,
                 "evo_to_name": "TORRACAT",
                 "candyCost": 25,
@@ -14115,7 +14115,7 @@
         "name": "TORRACAT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 727,
                 "evo_to_name": "INCINEROAR",
                 "candyCost": 100,
@@ -14145,7 +14145,7 @@
         "name": "POPPLIO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 729,
                 "evo_to_name": "BRIONNE",
                 "candyCost": 25,
@@ -14164,7 +14164,7 @@
         "name": "BRIONNE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 730,
                 "evo_to_name": "PRIMARINA",
                 "candyCost": 100,
@@ -14194,7 +14194,7 @@
         "name": "PIKIPEK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 732,
                 "evo_to_name": "TRUMBEAK",
                 "candyCost": 25,
@@ -14213,7 +14213,7 @@
         "name": "TRUMBEAK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 733,
                 "evo_to_name": "TOUCANNON",
                 "candyCost": 100,
@@ -14243,7 +14243,7 @@
         "name": "YUNGOOS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 735,
                 "evo_to_name": "GUMSHOOS",
                 "candyCost": 50,
@@ -14275,7 +14275,7 @@
         "name": "GRUBBIN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 737,
                 "evo_to_name": "CHARJABUG",
                 "candyCost": 25,
@@ -14294,7 +14294,7 @@
         "name": "CHARJABUG",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 738,
                 "evo_to_name": "VIKAVOLT",
                 "candyCost": 100,
@@ -14326,7 +14326,7 @@
         "name": "CRABRAWLER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 740,
                 "evo_to_name": "CRABOMINABLE",
                 "candyCost": 50,
@@ -14413,7 +14413,7 @@
         "name": "CUTIEFLY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 743,
                 "evo_to_name": "RIBOMBEE",
                 "candyCost": 50,
@@ -14443,7 +14443,7 @@
         "name": "ROCKRUFF",
         "evo_list": [
             {
-                "evo_to_form": "LYCANROC_MIDDAY",
+                "evo_to_form": "MIDDAY",
                 "evo_to_id": 745,
                 "evo_to_name": "LYCANROC",
                 "candyCost": 50,
@@ -14452,7 +14452,7 @@
                 }
             },
             {
-                "evo_to_form": "LYCANROC_MIDNIGHT",
+                "evo_to_form": "MIDNIGHT",
                 "evo_to_id": 745,
                 "evo_to_name": "LYCANROC",
                 "candyCost": 50,
@@ -14550,7 +14550,7 @@
         "name": "MAREANIE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 748,
                 "evo_to_name": "TOXAPEX",
                 "candyCost": 50,
@@ -14580,7 +14580,7 @@
         "name": "MUDBRAY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 750,
                 "evo_to_name": "MUDSDALE",
                 "candyCost": 50,
@@ -14610,7 +14610,7 @@
         "name": "DEWPIDER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 752,
                 "evo_to_name": "ARAQUANID",
                 "candyCost": 50,
@@ -14640,7 +14640,7 @@
         "name": "FOMANTIS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 754,
                 "evo_to_name": "LURANTIS",
                 "candyCost": 50,
@@ -14672,7 +14672,7 @@
         "name": "MORELULL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 756,
                 "evo_to_name": "SHIINOTIC",
                 "candyCost": 50,
@@ -14702,7 +14702,7 @@
         "name": "SALANDIT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 758,
                 "evo_to_name": "SALAZZLE",
                 "candyCost": 50,
@@ -14734,7 +14734,7 @@
         "name": "STUFFUL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 760,
                 "evo_to_name": "BEWEAR",
                 "candyCost": 400,
@@ -14764,7 +14764,7 @@
         "name": "BOUNSWEET",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 762,
                 "evo_to_name": "STEENEE",
                 "candyCost": 25,
@@ -14783,7 +14783,7 @@
         "name": "STEENEE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 763,
                 "evo_to_name": "TSAREENA",
                 "candyCost": 100,
@@ -14846,7 +14846,7 @@
         "name": "WIMPOD",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 768,
                 "evo_to_name": "GOLISOPOD",
                 "candyCost": 400,
@@ -14876,7 +14876,7 @@
         "name": "SANDYGAST",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 770,
                 "evo_to_name": "PALOSSAND",
                 "candyCost": 50,
@@ -14917,7 +14917,7 @@
         "name": "TYPE_NULL",
         "evo_list": [
             {
-                "evo_to_form": "SILVALLY",
+                "evo_to_form": "",
                 "evo_to_id": 773,
                 "evo_to_name": "SILVALLY",
                 "candyCost": 200,
@@ -15321,7 +15321,7 @@
         "name": "JANGMO_O",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 783,
                 "evo_to_name": "HAKAMO_O",
                 "candyCost": 25,
@@ -15340,7 +15340,7 @@
         "name": "HAKAMO_O",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 784,
                 "evo_to_name": "KOMMO_O",
                 "candyCost": 100,
@@ -15414,7 +15414,7 @@
         "name": "COSMOG",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 790,
                 "evo_to_name": "COSMOEM",
                 "candyCost": 25,
@@ -15433,7 +15433,7 @@
         "name": "COSMOEM",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 791,
                 "evo_to_name": "SOLGALEO",
                 "candyCost": 100,
@@ -15442,7 +15442,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 792,
                 "evo_to_name": "LUNALA",
                 "candyCost": 100,
@@ -15639,7 +15639,7 @@
         "name": "POIPOLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 804,
                 "evo_to_name": "NAGANADEL",
                 "candyCost": 200,
@@ -15702,7 +15702,7 @@
         "name": "MELTAN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 809,
                 "evo_to_name": "MELMETAL",
                 "candyCost": 400,
@@ -15732,7 +15732,7 @@
         "name": "GROOKEY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 811,
                 "evo_to_name": "THWACKEY",
                 "candyCost": 25,
@@ -15751,7 +15751,7 @@
         "name": "THWACKEY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 812,
                 "evo_to_name": "RILLABOOM",
                 "candyCost": 100,
@@ -15781,7 +15781,7 @@
         "name": "SCORBUNNY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 814,
                 "evo_to_name": "RABOOT",
                 "candyCost": 25,
@@ -15800,7 +15800,7 @@
         "name": "RABOOT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 815,
                 "evo_to_name": "CINDERACE",
                 "candyCost": 100,
@@ -15830,7 +15830,7 @@
         "name": "SOBBLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 817,
                 "evo_to_name": "DRIZZILE",
                 "candyCost": 25,
@@ -15849,7 +15849,7 @@
         "name": "DRIZZILE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 818,
                 "evo_to_name": "INTELEON",
                 "candyCost": 100,
@@ -15879,7 +15879,7 @@
         "name": "SKWOVET",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 820,
                 "evo_to_name": "GREEDENT",
                 "candyCost": 50,
@@ -15909,7 +15909,7 @@
         "name": "ROOKIDEE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 822,
                 "evo_to_name": "CORVISQUIRE",
                 "candyCost": 25,
@@ -15928,7 +15928,7 @@
         "name": "CORVISQUIRE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 823,
                 "evo_to_name": "CORVIKNIGHT",
                 "candyCost": 100,
@@ -15958,7 +15958,7 @@
         "name": "BLIPBUG",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 825,
                 "evo_to_name": "DOTTLER",
                 "candyCost": 25,
@@ -15977,7 +15977,7 @@
         "name": "DOTTLER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 826,
                 "evo_to_name": "ORBEETLE",
                 "candyCost": 100,
@@ -16007,7 +16007,7 @@
         "name": "NICKIT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 828,
                 "evo_to_name": "THIEVUL",
                 "candyCost": 50,
@@ -16037,7 +16037,7 @@
         "name": "GOSSIFLEUR",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 830,
                 "evo_to_name": "ELDEGOSS",
                 "candyCost": 50,
@@ -16067,7 +16067,7 @@
         "name": "WOOLOO",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 832,
                 "evo_to_name": "DUBWOOL",
                 "candyCost": 50,
@@ -16097,7 +16097,7 @@
         "name": "CHEWTLE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 834,
                 "evo_to_name": "DREDNAW",
                 "candyCost": 50,
@@ -16127,7 +16127,7 @@
         "name": "YAMPER",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 836,
                 "evo_to_name": "BOLTUND",
                 "candyCost": 50,
@@ -16157,7 +16157,7 @@
         "name": "ROLYCOLY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 838,
                 "evo_to_name": "CARKOL",
                 "candyCost": 25,
@@ -16176,7 +16176,7 @@
         "name": "CARKOL",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 839,
                 "evo_to_name": "COALOSSAL",
                 "candyCost": 100,
@@ -16206,7 +16206,7 @@
         "name": "APPLIN",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 841,
                 "evo_to_name": "FLAPPLE",
                 "candyCost": 400,
@@ -16215,7 +16215,7 @@
                 }
             },
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 842,
                 "evo_to_name": "APPLETUN",
                 "candyCost": 400,
@@ -16258,7 +16258,7 @@
         "name": "SILICOBRA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 844,
                 "evo_to_name": "SANDACONDA",
                 "candyCost": 50,
@@ -16299,7 +16299,7 @@
         "name": "ARROKUDA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 847,
                 "evo_to_name": "BARRASKEWDA",
                 "candyCost": 50,
@@ -16329,21 +16329,21 @@
         "name": "TOXEL",
         "evo_list": [
             {
-                "evo_to_form": "TOXTRICITY_LOW_KEY",
+                "evo_to_form": "LOW_KEY",
                 "evo_to_id": 849,
                 "evo_to_name": "TOXTRICITY",
                 "candyCost": 50,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             },
             {
-                "evo_to_form": "TOXTRICITY_AMPED",
+                "evo_to_form": "AMPED",
                 "evo_to_id": 849,
                 "evo_to_name": "TOXTRICITY",
                 "candyCost": 50,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             }
         ],
@@ -16392,7 +16392,7 @@
         "name": "SIZZLIPEDE",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 851,
                 "evo_to_name": "CENTISKORCH",
                 "candyCost": 50,
@@ -16422,7 +16422,7 @@
         "name": "CLOBBOPUS",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 853,
                 "evo_to_name": "GRAPPLOCT",
                 "candyCost": 50,
@@ -16452,7 +16452,7 @@
         "name": "SINISTEA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 855,
                 "evo_to_name": "POLTEAGEIST",
                 "candyCost": 50,
@@ -16471,7 +16471,7 @@
         "name": "SINISTEA_ANTIQUE",
         "evo_list": [
             {
-                "evo_to_form": "POLTEAGEIST_ANTIQUE",
+                "evo_to_form": "ANTIQUE",
                 "evo_to_id": 855,
                 "evo_to_name": "POLTEAGEIST",
                 "candyCost": 50,
@@ -16490,7 +16490,7 @@
         "name": "SINISTEA_PHONY",
         "evo_list": [
             {
-                "evo_to_form": "POLTEAGEIST_PHONY",
+                "evo_to_form": "PHONY",
                 "evo_to_id": 855,
                 "evo_to_name": "POLTEAGEIST",
                 "candyCost": 50,
@@ -16542,7 +16542,7 @@
         "name": "HATENNA",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 857,
                 "evo_to_name": "HATTREM",
                 "candyCost": 25,
@@ -16561,7 +16561,7 @@
         "name": "HATTREM",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 858,
                 "evo_to_name": "HATTERENE",
                 "candyCost": 100,
@@ -16591,7 +16591,7 @@
         "name": "IMPIDIMP",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 860,
                 "evo_to_name": "MORGREM",
                 "candyCost": 25,
@@ -16610,7 +16610,7 @@
         "name": "MORGREM",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 861,
                 "evo_to_name": "GRIMMSNARL",
                 "candyCost": 100,
@@ -16724,7 +16724,7 @@
         "name": "MILCERY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 869,
                 "evo_to_name": "ALCREMIE",
                 "candyCost": 50,
@@ -16776,7 +16776,7 @@
         "name": "SNOM",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 873,
                 "evo_to_name": "FROSMOTH",
                 "candyCost": 50,
@@ -16916,7 +16916,7 @@
         "name": "CUFANT",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 879,
                 "evo_to_name": "COPPERAJAH",
                 "candyCost": 50,
@@ -17001,7 +17001,7 @@
         "name": "DREEPY",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 886,
                 "evo_to_name": "DRAKLOAK",
                 "candyCost": 25,
@@ -17020,7 +17020,7 @@
         "name": "DRAKLOAK",
         "evo_list": [
             {
-                "evo_to_form": "NORMAL",
+                "evo_to_form": "",
                 "evo_to_id": 887,
                 "evo_to_name": "DRAGAPULT",
                 "candyCost": 100,
@@ -17138,21 +17138,21 @@
         "name": "KUBFU",
         "evo_list": [
             {
-                "evo_to_form": "URSHIFU_SINGLE_STRIKE",
+                "evo_to_form": "SINGLE_STRIKE",
                 "evo_to_id": 892,
                 "evo_to_name": "URSHIFU",
                 "candyCost": 400,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             },
             {
-                "evo_to_form": "URSHIFU_RAPID_STRIKE",
+                "evo_to_form": "RAPID_STRIKE",
                 "evo_to_id": 892,
                 "evo_to_name": "URSHIFU",
                 "candyCost": 400,
                 "quest": {
-                    "randomEvolution": true
+                    "randomEvolution": false
                 }
             }
         ],

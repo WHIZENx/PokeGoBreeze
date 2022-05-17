@@ -9,6 +9,7 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
+import { regionList } from '../../Calculate/Calculate';
 
 const Form = (props) => {
 
@@ -74,6 +75,9 @@ const Form = (props) => {
         const findData = props.pokeData.find(item => e.currentTarget.value.includes(item.name));
         const findForm = props.formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
         setCurrForm(findForm);
+        let region = Object.values(regionList).find(item => findForm.form.form_name.includes(item.toLowerCase()));
+        if (findForm.form.form_name !== "" && region) props.setRegion(region);
+        else props.setRegion(regionList[parseInt(props.species.generation.url.split("/")[6])]);
         props.setFormName(splitAndCapitalize(findForm.form.name, " "));
         if (findData) {
             setDataPoke(findData);
@@ -116,7 +120,7 @@ const Form = (props) => {
                 </div>
             {dataPoke && currForm &&
             <Fragment>
-                {props.ratio.M !== 0 && props.ratio.F !== 0 ?
+                {props.ratio.M !== 0 || props.ratio.F !== 0 ?
                 <Fragment>
                 {props.ratio.M !== 0 && <Fragment><Gender ratio={props.ratio} sex='Male' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
                 {props.ratio.M !== 0 && props.ratio.F !== 0 && <hr></hr>}
@@ -147,14 +151,14 @@ const Form = (props) => {
             {props.formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 ?
             <div className='row w-100' style={{margin:0}}>
                 <div className='col-xl' style={{padding:0}}>
-                    <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form}/>
+                <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} eqForm={props.formList.length === 1 && props.species.pokedex_numbers.length > 1}/>
                 </div>
                 <div className='col-xl' style={{padding:0}}>
                     <Mega onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} formList={props.formList} id={props.id_default}/>
                 </div>
             </div>
             :
-            <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form}/>
+            <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} eqForm={props.formList.length === 1 && props.species.pokedex_numbers.length > 1}/>
             }
             </Fragment>
             }

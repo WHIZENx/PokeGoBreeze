@@ -20,6 +20,17 @@ import APIService from "../../../services/API.service";
 import evoData from "../../../data/evolution_pokemon_go.json";
 
 import "./Evolution.css";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+    palette: {
+      neutral: {
+        main: '#a6efff80',
+        contrastText: 'gray',
+        fontSize: 10
+      },
+    },
+  });
 
 const Evolution = (props) => {
 
@@ -27,11 +38,40 @@ const Evolution = (props) => {
 
     const getEvoChain = useCallback((data) => {
         if (data.length === 0) return false;
+        let evoList = data.map(item => {
+            return evoData.filter(e => e.id === parseInt(item.species.url.split("/")[6]));
+        })[0];
+        let curForm = props.formDefault ? "" : props.form.form_name;
+        if (evoList.length > 1) {
+            let evoInJSON = evoList.find(item => item.name.includes(curForm.toUpperCase()));
+            if (evoInJSON) {
+                let evoInAPI = data.find(item => parseInt(item.species.url.split("/")[6]) === evoInJSON.id);
+                if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length && !props.eqForm) {
+                    data = [evoInAPI].map(item => ({...item, evolves_to: evoInJSON.evo_list}));
+                }
+            }
+        } else {
+            let evoInJSON = evoList.find(item => item.name.includes(curForm.toUpperCase()));
+            if (evoInJSON) {
+                let evoInAPI = data.find(item => parseInt(item.species.url.split("/")[6]) === evoInJSON.id);
+                if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
+                    let tempArr = [];
+                    evoInJSON.evo_list.forEach(value =>
+                        data.forEach(item => {
+                            item.evolves_to.forEach(i => {
+                                tempArr.push({...i, form: value.evo_to_form.toLowerCase().replaceAll("_", "-")});
+                            });
+                        })
+                    );
+                    data = [evoInAPI].map(item => ({...item, evolves_to: tempArr}));
+                }
+            }
+        }
         setArrEvoList(oldArr => [...oldArr, data.map(item => {
-            return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby}
-        })])
+            return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby, form: item.form ? item.form : null}
+        })]);
         return data.map(item => getEvoChain(item.evolves_to))
-    }, []);
+    }, [props.formDefault, props.form.form_name, props.eqForm]);
 
     // const evoChain = useCallback((currId, arr, form) => {
     //     if (currId.length === 0) return arr;
@@ -57,13 +97,12 @@ const Evolution = (props) => {
     // }, [evoChain]);
 
     useEffect(() => {
-        if (arrEvoList.length === 0) {
-            APIService.getFetchUrl(props.evolution_url)
-            .then(res => {
-                getEvoChain([res.data.chain]);
-            });
-        }
-    }, [props.evolution_url, getEvoChain, arrEvoList.length]);
+        APIService.getFetchUrl(props.evolution_url)
+        .then(res => {
+            setArrEvoList([]);
+            getEvoChain([res.data.chain]);
+        });
+    }, [props.evolution_url, getEvoChain]);
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -114,7 +153,7 @@ const Evolution = (props) => {
     }
 
     const renderImageEvo = (value, chain, evo, index, evoCount) => {
-        let form = props.form.form_name;
+        let form = value.form ? value.form : props.form.form_name;
         let offsetY = 35;
         offsetY += value.baby ? 20 : 0
         offsetY += arrEvoList.length === 1 ? 20 : 0
@@ -132,9 +171,16 @@ const Evolution = (props) => {
                         {Object.keys(data.quest).length > 0 &&
                             <Fragment>
                                 {data.quest.randomEvolution && <span className="caption"><QuestionMarkIcon fontSize="small"/></span>}
-                                {data.quest.genderRequirement && <span className="caption">{
-                                data.quest.genderRequirement === "MALE" ? <MaleIcon fontSize="small" /> : <FemaleIcon fontSize="small" />
-                                }</span>}
+                                {data.quest.genderRequirement && <span className="caption">
+                                {form === "male" ?
+                                <MaleIcon fontSize="small" />
+                                :
+                                <Fragment>{form === "female" ?
+                                    <FemaleIcon fontSize="small" />
+                                    :
+                                    <Fragment>{data.quest.genderRequirement === "MALE" ? <MaleIcon fontSize="small" /> : <FemaleIcon fontSize="small" />}</Fragment>
+                                }</Fragment>}
+                                </span>}
                                 {data.quest.kmBuddyDistanceRequirement && <span className="caption">
                                     {data.quest.mustBeBuddy ?
                                     <div className="d-flex align-items-end"><DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /></div> :
@@ -153,13 +199,13 @@ const Evolution = (props) => {
                                     </Fragment>
                                     }
                                     {data.quest.condition.desc === "POKEMON_TYPE" &&
-                                    <Fragment>
+                                    <div className="d-flex align-items-center" style={{marginTop: 5}}>
                                         {data.quest.condition.pokemonType.map((value, index) => (
                                             <img key={index} alt='img-stardust' height={20} src={APIService.getTypeSprite(value)}
                                             onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}></img>
                                         ))}
                                         <span style={{marginLeft: 2}}>{`x${data.quest.goal}`}</span>
-                                    </Fragment>
+                                    </div>
                                     }
                                     {data.quest.condition.desc === "WIN_RAID_STATUS" &&
                                     <Fragment>
@@ -187,9 +233,24 @@ const Evolution = (props) => {
                 strokeWidth={2} path="grid" startAnchor={startAnchor} endAnchor={{position: "left", offset: {x:10}}}
                 start={`evo-${evo-1}-${chain.length > 1 ? 0 : index}`} end={`evo-${evo}-${chain.length > 1 ? index : 0}`} />}
                 {evoCount > 1 ?
-                <Badge color="primary" overlap="circular" badgeContent={evo+1}>
-                    <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
-                </Badge>
+                <Fragment>
+                {(!["", "mega"].includes(form)) && ((chain.length > 1) || (chain.length === 1 && props.form.form_name !== "")) ?
+                    <ThemeProvider theme={theme}>
+                        <Badge color="neutral" overlap="circular" badgeContent={splitAndCapitalize(form, " ")} anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}>
+                            <Badge color="primary" overlap="circular" badgeContent={evo+1}>
+                                <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                            </Badge>
+                        </Badge>
+                    </ThemeProvider>
+                    :
+                    <Badge color="primary" overlap="circular" badgeContent={evo+1}>
+                        <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                    </Badge>
+                }
+                </Fragment>
                 :
                 <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
                 }

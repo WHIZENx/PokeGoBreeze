@@ -41,6 +41,17 @@ const weatherMultiple = (weather, type) => {
     return weatherBoosts[weather].find(item => item === capitalize(type.toLowerCase())) ? 1.2 : 1;
 }
 
+export const regionList = {
+    1: "Kanto",
+    2: "Johto",
+    3: "Hoenn",
+    4: "Sinnoh",
+    5: "Unova",
+    6: "Kalos",
+    7: "Alola",
+    8: "Galar",
+}
+
 export const convertName = (text) => {
     return text.toUpperCase()
     .replaceAll("-", "_")
