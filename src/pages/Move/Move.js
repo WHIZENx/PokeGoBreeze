@@ -169,6 +169,16 @@ const Move = (props) => {
                                     <td>Critical Chance</td>
                                     <td>{move.criticalChance*100}%</td>
                                 </tr>
+                                <tr className="center"><td className="table-sub-header" colSpan="2">Effect</td></tr>
+                                <tr>
+                                    <td>Sound</td>
+                                    <td>
+                                        <audio className="w-100" controls style={{height: 30}}>
+                                            <source src={APIService.getSoundMove(move.sound)} type="audio/wav"></source>
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

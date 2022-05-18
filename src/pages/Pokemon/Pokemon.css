@@ -12,19 +12,9 @@
     overflow-y: hidden;
 }
 
-.img-desc {
-    min-width: 200px !important;
-    margin-right: 15px;
-}
-
 .img-desc img {
-    min-width: 200px;
     border: 2px solid lightgray;
     padding: 10px;
-}
-
-.text-desc {
-    min-width: 200px !important;
 }
 
 .text-gen {
@@ -59,20 +49,52 @@ a b.link-title, .title-evo b, .info-title {
     text-decoration: underline !important;
 }
 
-.table-main {
+.table-main, .table-desc {
     max-width: 500px !important;
 }
 
 .table-main tbody tr td.table-sub-header {
     background-color: #f1f1ff !important;
     color: #0571c2;
-    border: 1px solid #b8d4da
+    border: 1px solid #b8d4da;
 }
 
 .table-main thead tr th {
     font-size: 16px;
     padding: 5px 10px 5px 10px;
     height: 35px;
+}
+
+td h5, td h6 {
+    margin: 0;
+}
+
+.table-desc tbody tr td {
+    border: 1px solid lightgray
+}
+
+.table-desc tbody tr td:nth-child(1) {
+    color: black !important;
+    min-width: 0 !important;
+    text-align: start !important;
+}
+
+.table-desc tbody tr:nth-child(odd) td {
+    background-color: #eeeeee !important;
+    text-align: start;
+}
+
+.table-desc tbody tr td div.first-extra-col {
+    border-right: 1px solid lightgray
+}
+
+.table-desc tbody tr td div.h-100 {
+    padding: 5px 10px;
+}
+
+.table-desc tbody tr:nth-child(even) td {
+    background-color: white !important;
+    text-align: start;
 }
 
 .table-info tbody tr.center td.table-sub-header:nth-child(2) {
@@ -87,8 +109,58 @@ a b.link-title, .title-evo b, .info-title {
     background-color: #f1ffff !important;
 }
 
+.table-info tbody tr:nth-child(even) td:nth-child(2) {
+    text-align: start;
+}
+
 .table-info tbody tr td:nth-child(1) {
+    width: 25% !important;
+    min-width: 180px;
+}
+
+.table-desc tbody tr td:nth-child(1) {
     text-align: center;
     width: 25% !important;
     min-width: 180px;
+}
+
+.table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs {
+    border-bottom: 1px solid #b8d4da;
+}
+
+.table-info tbody tr:nth-child(even) td:nth-child(2) div.row-extra {
+    padding: 5px 10px 5px 10px;
+}
+
+.text-navigate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.prev-next-block {
+    border: 1px solid lightgray;
+    background-color: #eeeeee;
+    z-index: 1 !important;
+}
+
+.prev-next-block a {
+    color: black !important;
+}
+
+.prev-block {
+    border-right: 0.5px solid lightgray;
+}
+
+.prev-block .text-navigate {
+    padding-right: 3%;
+}
+
+.next-block {
+    border-left: 0.5px solid lightgray;
+}
+
+.next-block .text-navigate {
+    padding-left: 5%;
 }

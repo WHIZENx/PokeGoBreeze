@@ -41,17 +41,26 @@ const Evolution = (props) => {
         let evoList = data.map(item => {
             return evoData.filter(e => e.id === parseInt(item.species.url.split("/")[6]));
         })[0];
-        let curForm = props.formDefault ? "" : props.form.form_name;
+        let curForm = props.formDefault ?
+        ["Alola", "Galar"].includes(props.region) ?
+        props.region : "" : props.form.form_name;
         if (evoList.length > 1) {
             let evoInJSON = evoList.find(item => item.name.includes(curForm.toUpperCase()));
             if (evoInJSON) {
                 let evoInAPI = data.find(item => parseInt(item.species.url.split("/")[6]) === evoInJSON.id);
-                if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length && !props.eqForm) {
-                    data = [evoInAPI].map(item => ({...item, evolves_to: evoInJSON.evo_list}));
+                if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
+                    let tempData =[]
+                    evoInJSON.evo_list.forEach(item => {
+                        evoInAPI.evolves_to.forEach(value => {
+                            if (parseInt(value.species.url.split("/")[6]) === item.evo_to_id) return tempData.push(value);
+                        });
+                    });
+                    data = [evoInAPI].map(item => ({...item, evolves_to: tempData}));
                 }
             }
         } else {
             let evoInJSON = evoList.find(item => item.name.includes(curForm.toUpperCase()));
+            if (!evoInJSON && ["Alola", "Galar"].includes(props.region)) evoInJSON = evoList.find(item => item.name.includes(""))
             if (evoInJSON) {
                 let evoInAPI = data.find(item => parseInt(item.species.url.split("/")[6]) === evoInJSON.id);
                 if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
@@ -71,7 +80,7 @@ const Evolution = (props) => {
             return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby, form: item.form ? item.form : null}
         })]);
         return data.map(item => getEvoChain(item.evolves_to))
-    }, [props.formDefault, props.form.form_name, props.eqForm]);
+    }, [props.formDefault, props.form.form_name, props.region]);
 
     // const evoChain = useCallback((currId, arr, form) => {
     //     if (currId.length === 0) return arr;
@@ -234,7 +243,9 @@ const Evolution = (props) => {
                 start={`evo-${evo-1}-${chain.length > 1 ? 0 : index}`} end={`evo-${evo}-${chain.length > 1 ? index : 0}`} />}
                 {evoCount > 1 ?
                 <Fragment>
-                {(!["", "mega"].includes(form)) && ((chain.length > 1) || (chain.length === 1 && props.form.form_name !== "")) ?
+                {(chain.length > 1) || (chain.length === 1 && props.form.form_name !== "") ?
+                    <Fragment>
+                    {form !== "" && !form.includes("mega") ?
                     <ThemeProvider theme={theme}>
                         <Badge color="neutral" overlap="circular" badgeContent={splitAndCapitalize(form, " ")} anchorOrigin={{
                             vertical: 'top',
@@ -245,6 +256,12 @@ const Evolution = (props) => {
                             </Badge>
                         </Badge>
                     </ThemeProvider>
+                    :
+                    <Badge color="primary" overlap="circular" badgeContent={evo+1}>
+                        <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                    </Badge>
+                    }
+                    </Fragment>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1}>
                         <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>

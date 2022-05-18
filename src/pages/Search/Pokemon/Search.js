@@ -5,6 +5,8 @@ import './Search.css';
 import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
+import pokeListName from '../../../data/pokemon_names.json';
+
 const Search = () => {
 
     const cardHeight = 57;
@@ -29,23 +31,30 @@ const Search = () => {
 
     useEffect(() => {
         document.title = "Pokémon - Search"
-        const fetchMyAPI = async () => {
-            if (pokeList.length === 0) {
-                const res = await APIService.getPokeJSON('pokemon_names.json');
-                Object.entries(res.data).forEach(([key, value]) => {
-                    pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
-                });
-                setPokemonList(pokeList);
-            }
+        // const fetchMyAPI = async () => {
+        //     if (pokeList.length === 0) {
+        //         const res = await APIService.getPokeJSON('pokemon_names.json');
+        //         Object.entries(res.data).forEach(([key, value]) => {
+        //             pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
+        //         });
+        //         setPokemonList(pokeList);
+        //     }
+        // }
+        // fetchMyAPI();
+
+        if (pokeList.length === 0) {
+            Object.entries(pokeListName).forEach(([key, value]) => {
+                pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
+            });
+            setPokemonList(pokeList);
         }
-        fetchMyAPI();
 
         if (searchResult.current.scrollTop > (cardHeight*pageCardScroll)) searchResult.current.scrollTop = (cardHeight*pageCardScroll)-cardHeight;
         searchResultID.current = 1;
         const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
         currentPokemonListFilter.current = results;
         setPokemonListFilter(currentPokemonListFilter.current.slice(0, 20));
-    }, [searchTerm, pokemonList, pokeList, searchResult]);
+    }, [searchTerm, searchResult, pokemonList, pokeList]);
 
     const listenScrollEvent = (ele) => {
         let idScroll = Math.floor((ele.currentTarget.offsetHeight + ele.currentTarget.scrollTop) / (cardHeight*pageCardScroll));
@@ -92,7 +101,7 @@ const Search = () => {
 
     return (
         <Fragment>
-            <div className='group-prev-next'>
+            {/* <div className='group-prev-next'>
                 { id  > 1 && prev &&
                 <div className='btn-prev'>
                     <span className="carousel-control-prev-icon previous" onClick={decId}></span>
@@ -103,7 +112,7 @@ const Search = () => {
                         <span className="carousel-control-next-icon next" onClick={incId}></span>
                     </div>
                 }
-            </div>
+            </div> */}
         <div className="container element-top">
             <h1 id ="main" className='center'>Pokémon Info Search</h1>
             <div className="input-group mb-12 element-top">
@@ -126,7 +135,7 @@ const Search = () => {
                     ))}
                 </ul>
             </div>
-            <Pokemon id={id} onSetIDPoke={setIDPoke} onSetPrev={handleSetPrev} onSetNext={handleSetNext} isSearch={true}/>
+            <Pokemon id={id} onSetIDPoke={setIDPoke} prev={prev} next={next} onIncId={incId} onDecId={decId} onSetPrev={handleSetPrev} onSetNext={handleSetNext} isSearch={true}/>
         </div>
         </Fragment>
     );

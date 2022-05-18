@@ -4,6 +4,7 @@ const POKE_API_URL = 'https://pokeapi.co/api/v2/';
 const POGO_API_URL = 'https://pogoapi.net/api/v1/';
 
 const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/';
+const POGO_SOUND_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Sounds/';
 const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
 const POKE_ICON_SPRITES_API_URL = 'https://raw.githubusercontent.com/itsjavi/pokemon-assets/main/assets/img/pokemon/';
@@ -84,8 +85,8 @@ class APIService {
     }
 
     getPokeFullSprite(id) {
-        let paddingID = id.toString().padStart(3, '0');
-        return `${POKE_SPRITES_FULL_API_URL}${paddingID}.png`;
+        id = id.toString().padStart(3, '0');
+        return `${POKE_SPRITES_FULL_API_URL}${id}.png`;
     }
 
     getPokeIconSprite(name, fix) {
@@ -122,6 +123,15 @@ class APIService {
 
     getItemTroy(item) {
         return item === "" ? `${POGO_ASSET_API_URL}Items/TroyKey.png` : `${POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
+    }
+
+    getSoundPokemon(id) {
+        id = id.toString().padStart(3, '0');
+        return `${POGO_SOUND_API_URL}Pokemon Cries/pv${id}.wav`;
+    }
+
+    getSoundMove(sound) {
+        return `${POGO_SOUND_API_URL}Pokemon Moves/${sound}.wav`;
     }
 }
 

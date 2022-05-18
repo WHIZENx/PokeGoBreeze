@@ -13,7 +13,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "035-0_wrap"
     },
     {
         "name": "HYPER_BEAM",
@@ -29,7 +30,8 @@
         "damageWindowEndMs": 3600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.15
+        "staminaLossScalar": 0.15,
+        "sound": "063-0_hyper_beam"
     },
     {
         "name": "DARK_PULSE",
@@ -45,7 +47,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "399-0_dark_pulse"
     },
     {
         "name": "SLUDGE",
@@ -61,7 +64,8 @@
         "damageWindowEndMs": 1550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "124-0_sludge"
     },
     {
         "name": "VICE_GRIP",
@@ -77,7 +81,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.055
+        "staminaLossScalar": 0.055,
+        "sound": "011-0_vice_grip"
     },
     {
         "name": "FLAME_WHEEL",
@@ -93,7 +98,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "172-0_flame_wheel"
     },
     {
         "name": "MEGAHORN",
@@ -109,7 +115,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12
+        "staminaLossScalar": 0.12,
+        "sound": "224-0_megahorn"
     },
     {
         "name": "FLAMETHROWER",
@@ -125,7 +132,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "053-0_flamethrower"
     },
     {
         "name": "DIG",
@@ -141,7 +149,8 @@
         "damageWindowEndMs": 4500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "091-0_dig"
     },
     {
         "name": "CROSS_CHOP",
@@ -157,7 +166,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "sound": "238-0_cross_chop"
     },
     {
         "name": "PSYBEAM",
@@ -173,7 +183,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "060-0_psybeam"
     },
     {
         "name": "EARTHQUAKE",
@@ -189,7 +200,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "sound": "089-0_earthquake"
     },
     {
         "name": "STONE_EDGE",
@@ -205,7 +217,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.5,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "sound": "444-0_stone_edge"
     },
     {
         "name": "ICE_PUNCH",
@@ -221,7 +234,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "sound": "008-0_ice_punch"
     },
     {
         "name": "HEART_STAMP",
@@ -237,7 +251,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "531-0_heart_stamp"
     },
     {
         "name": "DISCHARGE",
@@ -253,7 +268,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "435-0_discharge"
     },
     {
         "name": "FLASH_CANNON",
@@ -269,7 +285,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "430-0_flash_cannon"
     },
     {
         "name": "DRILL_PECK",
@@ -285,7 +302,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "065-0_drill_peck"
     },
     {
         "name": "ICE_BEAM",
@@ -301,7 +319,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "058-0_ice_beam"
     },
     {
         "name": "BLIZZARD",
@@ -317,7 +336,8 @@
         "damageWindowEndMs": 2900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "sound": "059-0_blizzard"
     },
     {
         "name": "HEAT_WAVE",
@@ -333,7 +353,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095
+        "staminaLossScalar": 0.095,
+        "sound": "257-0_heat_wave"
     },
     {
         "name": "AERIAL_ACE",
@@ -349,7 +370,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "332-0_aerial_ace"
     },
     {
         "name": "DRILL_RUN",
@@ -365,7 +387,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "529-0_drill_run"
     },
     {
         "name": "PETAL_BLIZZARD",
@@ -381,7 +404,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "572-0_petal_blizzard"
     },
     {
         "name": "MEGA_DRAIN",
@@ -397,7 +421,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "072-0_mega_drain"
     },
     {
         "name": "BUG_BUZZ",
@@ -413,7 +438,8 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "405-0_bug_buzz"
     },
     {
         "name": "POISON_FANG",
@@ -429,7 +455,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05
+        "staminaLossScalar": 0.05,
+        "sound": "305-0_poison_fang"
     },
     {
         "name": "NIGHT_SLASH",
@@ -445,7 +472,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.07
+        "staminaLossScalar": 0.07,
+        "sound": "400-0_night_slash"
     },
     {
         "name": "BUBBLE_BEAM",
@@ -461,7 +489,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "061-0_bubble_beam"
     },
     {
         "name": "SUBMISSION",
@@ -477,7 +506,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "066-0_submission"
     },
     {
         "name": "LOW_SWEEP",
@@ -493,7 +523,8 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "490-0_low_sweep"
     },
     {
         "name": "AQUA_JET",
@@ -509,7 +540,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "453-0_aqua_jet"
     },
     {
         "name": "AQUA_TAIL",
@@ -525,7 +557,8 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "401-0_aqua_tail"
     },
     {
         "name": "SEED_BOMB",
@@ -541,7 +574,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "402-0_seed_bomb"
     },
     {
         "name": "PSYSHOCK",
@@ -557,7 +591,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "473-0_psyshock"
     },
     {
         "name": "ANCIENT_POWER",
@@ -573,7 +608,8 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "246-0_ancient_power"
     },
     {
         "name": "ROCK_TOMB",
@@ -589,7 +625,8 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "317-0_rock_tomb"
     },
     {
         "name": "ROCK_SLIDE",
@@ -605,7 +642,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "sound": "157-0_rock_slide"
     },
     {
         "name": "POWER_GEM",
@@ -621,7 +659,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "408-0_power_gem"
     },
     {
         "name": "SHADOW_SNEAK",
@@ -637,7 +676,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "425-0_shadow_sneak"
     },
     {
         "name": "SHADOW_PUNCH",
@@ -653,7 +693,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "325-0_shadow_punch"
     },
     {
         "name": "OMINOUS_WIND",
@@ -669,7 +710,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "466-0_ominous_wind"
     },
     {
         "name": "SHADOW_BALL",
@@ -685,7 +727,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "247-0_shadow_ball"
     },
     {
         "name": "MAGNET_BOMB",
@@ -701,7 +744,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "443-0_magnet_bomb"
     },
     {
         "name": "IRON_HEAD",
@@ -717,7 +761,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "442-0_iron_head"
     },
     {
         "name": "PARABOLIC_CHARGE",
@@ -733,7 +778,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05
+        "staminaLossScalar": 0.05,
+        "sound": "570-0_parabolic_charge"
     },
     {
         "name": "THUNDER_PUNCH",
@@ -749,7 +795,8 @@
         "damageWindowEndMs": 1550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "sound": "009-0_thunder_punch"
     },
     {
         "name": "THUNDER",
@@ -765,7 +812,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "sound": "087-0_thunder"
     },
     {
         "name": "THUNDERBOLT",
@@ -781,7 +829,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "085-0_thunderbolt"
     },
     {
         "name": "TWISTER",
@@ -797,7 +846,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "239-0_twister"
     },
     {
         "name": "DRAGON_PULSE",
@@ -813,7 +863,8 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.085
+        "staminaLossScalar": 0.085,
+        "sound": "406-0_dragon_pulse"
     },
     {
         "name": "DRAGON_CLAW",
@@ -829,7 +880,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "337-0_dragon_claw"
     },
     {
         "name": "DISARMING_VOICE",
@@ -845,7 +897,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "574-0_disarming_voice"
     },
     {
         "name": "DRAINING_KISS",
@@ -861,7 +914,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05
+        "staminaLossScalar": 0.05,
+        "sound": "577-0_draining_kiss"
     },
     {
         "name": "DAZZLING_GLEAM",
@@ -877,7 +931,8 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "605-0_dazzling_gleam"
     },
     {
         "name": "MOONBLAST",
@@ -893,7 +948,8 @@
         "damageWindowEndMs": 3700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095
+        "staminaLossScalar": 0.095,
+        "sound": "585-0_moonblast"
     },
     {
         "name": "PLAY_ROUGH",
@@ -909,7 +965,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "sound": "583-0_play_rough"
     },
     {
         "name": "CROSS_POISON",
@@ -925,7 +982,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.07
+        "staminaLossScalar": 0.07,
+        "sound": "440-0_cross_poison"
     },
     {
         "name": "SLUDGE_BOMB",
@@ -941,7 +999,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "188-0_sludge_bomb"
     },
     {
         "name": "SLUDGE_WAVE",
@@ -957,7 +1016,8 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095
+        "staminaLossScalar": 0.095,
+        "sound": "482-0_sludge_wave"
     },
     {
         "name": "GUNK_SHOT",
@@ -973,7 +1033,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12
+        "staminaLossScalar": 0.12,
+        "sound": "441-0_gunk_shot"
     },
     {
         "name": "BONE_CLUB",
@@ -989,7 +1050,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "125-0_bone_club"
     },
     {
         "name": "BULLDOZE",
@@ -1005,7 +1067,8 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "523-0_bulldoze"
     },
     {
         "name": "MUD_BOMB",
@@ -1021,7 +1084,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "426-0_mud_bomb"
     },
     {
         "name": "SIGNAL_BEAM",
@@ -1037,7 +1101,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "sound": "324-0_signal_beam"
     },
     {
         "name": "X_SCISSOR",
@@ -1053,7 +1118,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "404-0_x_scissor"
     },
     {
         "name": "FLAME_CHARGE",
@@ -1069,7 +1135,8 @@
         "damageWindowEndMs": 3450,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05
+        "staminaLossScalar": 0.05,
+        "sound": "488-0_flame_charge"
     },
     {
         "name": "FLAME_BURST",
@@ -1085,7 +1152,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.07
+        "staminaLossScalar": 0.07,
+        "sound": "481-0_flame_burst"
     },
     {
         "name": "FIRE_BLAST",
@@ -1101,7 +1169,8 @@
         "damageWindowEndMs": 3900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "sound": "126-0_fire_blast"
     },
     {
         "name": "BRINE",
@@ -1117,7 +1186,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "362-0_brine"
     },
     {
         "name": "WATER_PULSE",
@@ -1133,7 +1203,8 @@
         "damageWindowEndMs": 2900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "352-0_water_pulse"
     },
     {
         "name": "SCALD",
@@ -1149,7 +1220,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "503-0_scald"
     },
     {
         "name": "HYDRO_PUMP",
@@ -1165,7 +1237,8 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "sound": "056-0_hydro_pump"
     },
     {
         "name": "PSYCHIC",
@@ -1181,7 +1254,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "094-0_psychic"
     },
     {
         "name": "PSYSTRIKE",
@@ -1197,7 +1271,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "sound": "540-0_psystrike"
     },
     {
         "name": "ICY_WIND",
@@ -1213,7 +1288,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.055
+        "staminaLossScalar": 0.055,
+        "sound": "196-0_icy_wind"
     },
     {
         "name": "GIGA_DRAIN",
@@ -1229,7 +1305,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "sound": "202-0_giga_drain"
     },
     {
         "name": "FIRE_PUNCH",
@@ -1245,7 +1322,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "sound": "007-0_fire_punch"
     },
     {
         "name": "SOLAR_BEAM",
@@ -1261,7 +1339,8 @@
         "damageWindowEndMs": 4700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12
+        "staminaLossScalar": 0.12,
+        "sound": "076-0_solar_beam"
     },
     {
         "name": "LEAF_BLADE",
@@ -1277,7 +1356,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "sound": "348-0_leaf_blade"
     },
     {
         "name": "POWER_WHIP",
@@ -1293,7 +1373,8 @@
         "damageWindowEndMs": 2350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.12
+        "staminaLossScalar": 0.12,
+        "sound": "438-0_power_whip"
     },
     {
         "name": "AIR_CUTTER",
@@ -1309,7 +1390,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "314-0_air_cutter"
     },
     {
         "name": "HURRICANE",
@@ -1325,7 +1407,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "sound": "542-0_hurricane"
     },
     {
         "name": "BRICK_BREAK",
@@ -1341,7 +1424,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "sound": "280-0_brick_break"
     },
     {
         "name": "SWIFT",
@@ -1357,7 +1441,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "129-0_swift"
     },
     {
         "name": "HORN_ATTACK",
@@ -1373,7 +1458,8 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "030-0_horn_attack"
     },
     {
         "name": "STOMP",
@@ -1389,7 +1475,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "023-0_stomp"
     },
     {
         "name": "HYPER_FANG",
@@ -1405,7 +1492,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "158-0_hyper_fang"
     },
     {
         "name": "BODY_SLAM",
@@ -1421,7 +1509,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.085
+        "staminaLossScalar": 0.085,
+        "sound": "034-0_body_slam"
     },
     {
         "name": "REST",
@@ -1437,7 +1526,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "sound": "156-0_rest"
     },
     {
         "name": "STRUGGLE",
@@ -1453,7 +1543,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "sound": "165-0_struggle"
     },
     {
         "name": "SCALD_BLASTOISE",
@@ -1469,7 +1560,8 @@
         "damageWindowEndMs": 4600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "sound": "503-0_scald"
     },
     {
         "name": "HYDRO_PUMP_BLASTOISE",
@@ -1485,7 +1577,8 @@
         "damageWindowEndMs": 4300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "sound": "056-0_hydro_pump"
     },
     {
         "name": "WRAP_GREEN",
@@ -1501,7 +1594,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "035-0_wrap"
     },
     {
         "name": "WRAP_PINK",
@@ -1517,7 +1611,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "sound": "035-0_wrap"
     },
     {
         "name": "FURY_CUTTER",
@@ -1533,7 +1628,8 @@
         "damageWindowEndMs": 400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "210-0_fury_cutter"
     },
     {
         "name": "BUG_BITE",
@@ -1549,7 +1645,8 @@
         "damageWindowEndMs": 450,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "450-0_bug_bite"
     },
     {
         "name": "BITE",
@@ -1565,7 +1662,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "044-0_bite"
     },
     {
         "name": "SUCKER_PUNCH",
@@ -1581,7 +1679,8 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "389-0_sucker_punch"
     },
     {
         "name": "DRAGON_BREATH",
@@ -1597,7 +1696,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "225-0_dragon_breath"
     },
     {
         "name": "THUNDER_SHOCK",
@@ -1613,7 +1713,8 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "084-0_thunder_shock"
     },
     {
         "name": "SPARK",
@@ -1629,7 +1730,8 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "209-0_spark"
     },
     {
         "name": "LOW_KICK",
@@ -1645,7 +1747,8 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "067-0_low_kick"
     },
     {
         "name": "KARATE_CHOP",
@@ -1661,7 +1764,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "002-0_karate_chop"
     },
     {
         "name": "EMBER",
@@ -1677,7 +1781,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "052-0_ember"
     },
     {
         "name": "WING_ATTACK",
@@ -1693,7 +1798,8 @@
         "damageWindowEndMs": 750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "017-0_wing_attack"
     },
     {
         "name": "PECK",
@@ -1709,7 +1815,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "064-0_peck"
     },
     {
         "name": "LICK",
@@ -1725,7 +1832,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "122-0_lick"
     },
     {
         "name": "SHADOW_CLAW",
@@ -1741,7 +1849,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "421-0_shadow_claw"
     },
     {
         "name": "VINE_WHIP",
@@ -1757,7 +1866,8 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "022-0_vine_whip"
     },
     {
         "name": "RAZOR_LEAF",
@@ -1773,7 +1883,8 @@
         "damageWindowEndMs": 850,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "075-0_razor_leaf"
     },
     {
         "name": "MUD_SHOT",
@@ -1789,7 +1900,8 @@
         "damageWindowEndMs": 550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "341-0_mud_shot"
     },
     {
         "name": "ICE_SHARD",
@@ -1805,7 +1917,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "420-0_ice_shard"
     },
     {
         "name": "FROST_BREATH",
@@ -1821,7 +1934,8 @@
         "damageWindowEndMs": 750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "524-0_frost_breath"
     },
     {
         "name": "QUICK_ATTACK",
@@ -1837,7 +1951,8 @@
         "damageWindowEndMs": 550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "098-0_quick_attack"
     },
     {
         "name": "SCRATCH",
@@ -1853,7 +1968,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "010-0_scratch"
     },
     {
         "name": "TACKLE",
@@ -1869,7 +1985,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "033-0_tackle"
     },
     {
         "name": "POUND",
@@ -1885,7 +2002,8 @@
         "damageWindowEndMs": 540,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "001-0_pound"
     },
     {
         "name": "CUT",
@@ -1901,7 +2019,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "015-0_cut"
     },
     {
         "name": "POISON_JAB",
@@ -1917,7 +2036,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "398-0_poison_jab"
     },
     {
         "name": "ACID",
@@ -1933,7 +2053,8 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "051-0_acid"
     },
     {
         "name": "PSYCHO_CUT",
@@ -1949,7 +2070,8 @@
         "damageWindowEndMs": 570,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "427-0_psycho_cut"
     },
     {
         "name": "ROCK_THROW",
@@ -1965,7 +2087,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "088-0_rock_throw"
     },
     {
         "name": "METAL_CLAW",
@@ -1981,7 +2104,8 @@
         "damageWindowEndMs": 630,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "232-0_metal_claw"
     },
     {
         "name": "BULLET_PUNCH",
@@ -1997,7 +2121,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "418-0_bullet_punch"
     },
     {
         "name": "WATER_GUN",
@@ -2013,7 +2138,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "055-0_water_gun"
     },
     {
         "name": "SPLASH",
@@ -2029,7 +2155,8 @@
         "damageWindowEndMs": 1230,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "150-0_splash"
     },
     {
         "name": "WATER_GUN_BLASTOISE",
@@ -2045,7 +2172,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "055-0_water_gun"
     },
     {
         "name": "MUD_SLAP",
@@ -2061,7 +2189,8 @@
         "damageWindowEndMs": 1350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "ZEN_HEADBUTT",
@@ -2077,7 +2206,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "CONFUSION",
@@ -2093,7 +2223,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "POISON_STING",
@@ -2109,7 +2240,8 @@
         "damageWindowEndMs": 575,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "BUBBLE",
@@ -2125,7 +2257,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "FEINT_ATTACK",
@@ -2141,7 +2274,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "185-0_feint_attack"
     },
     {
         "name": "STEEL_WING",
@@ -2157,7 +2291,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "FIRE_FANG",
@@ -2173,7 +2308,8 @@
         "damageWindowEndMs": 840,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "ROCK_SMASH",
@@ -2189,7 +2325,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "TRANSFORM",
@@ -2205,7 +2342,8 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "COUNTER",
@@ -2221,7 +2359,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "068-0_counter"
     },
     {
         "name": "POWDER_SNOW",
@@ -2237,7 +2376,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "181-0_powder_snow"
     },
     {
         "name": "CLOSE_COMBAT",
@@ -2253,7 +2393,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "370-0_close_combat"
     },
     {
         "name": "DYNAMIC_PUNCH",
@@ -2269,7 +2410,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "223-0_dynamic_punch"
     },
     {
         "name": "FOCUS_BLAST",
@@ -2285,7 +2427,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "411-0_focus_blast"
     },
     {
         "name": "AURORA_BEAM",
@@ -2301,7 +2444,8 @@
         "damageWindowEndMs": 3550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "062-0_aurora_beam"
     },
     {
         "name": "CHARGE_BEAM",
@@ -2317,7 +2461,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "451-0_charge_beam"
     },
     {
         "name": "VOLT_SWITCH",
@@ -2333,7 +2478,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "521-0_volt_switch"
     },
     {
         "name": "WILD_CHARGE",
@@ -2349,7 +2495,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "528-0_wild_charge"
     },
     {
         "name": "ZAP_CANNON",
@@ -2365,7 +2512,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "192-0_zap_cannon"
     },
     {
         "name": "DRAGON_TAIL",
@@ -2381,7 +2529,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "525-0_dragon_tail"
     },
     {
         "name": "AVALANCHE",
@@ -2397,7 +2546,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "419-0_avalanche"
     },
     {
         "name": "AIR_SLASH",
@@ -2413,7 +2563,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "403-0_air_slash"
     },
     {
         "name": "BRAVE_BIRD",
@@ -2429,7 +2580,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "413-0_brave_bird"
     },
     {
         "name": "SKY_ATTACK",
@@ -2445,7 +2597,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "143-0_sky_attack"
     },
     {
         "name": "SAND_TOMB",
@@ -2461,7 +2614,8 @@
         "damageWindowEndMs": 4000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "328-0_sand_tomb"
     },
     {
         "name": "ROCK_BLAST",
@@ -2477,7 +2631,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "350-0_rock_blast"
     },
     {
         "name": "INFESTATION",
@@ -2493,7 +2648,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "611-0_infestation"
     },
     {
         "name": "STRUGGLE_BUG",
@@ -2509,7 +2665,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "522-0_struggle_bug"
     },
     {
         "name": "SILVER_WIND",
@@ -2525,7 +2682,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "318-0_silver_wind"
     },
     {
         "name": "ASTONISH",
@@ -2541,7 +2699,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "310-0_astonish"
     },
     {
         "name": "HEX",
@@ -2557,7 +2716,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "506-0_hex"
     },
     {
         "name": "NIGHT_SHADE",
@@ -2573,7 +2733,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "101-0_night_shade"
     },
     {
         "name": "IRON_TAIL",
@@ -2589,7 +2750,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "231-0_iron_tail"
     },
     {
         "name": "GYRO_BALL",
@@ -2605,7 +2767,8 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "360-0_gyro_ball"
     },
     {
         "name": "HEAVY_SLAM",
@@ -2621,7 +2784,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "484-0_heavy_slam"
     },
     {
         "name": "FIRE_SPIN",
@@ -2637,7 +2801,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "083-0_fire_spin"
     },
     {
         "name": "OVERHEAT",
@@ -2653,7 +2818,8 @@
         "damageWindowEndMs": 3800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "315-0_overheat"
     },
     {
         "name": "BULLET_SEED",
@@ -2669,7 +2835,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "331-0_bullet_seed"
     },
     {
         "name": "GRASS_KNOT",
@@ -2685,7 +2852,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "447-0_grass_knot"
     },
     {
         "name": "ENERGY_BALL",
@@ -2701,7 +2869,8 @@
         "damageWindowEndMs": 3800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "412-0_energy_ball"
     },
     {
         "name": "EXTRASENSORY",
@@ -2717,7 +2886,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "326-0_extrasensory"
     },
     {
         "name": "FUTURESIGHT",
@@ -2733,7 +2903,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "248-0_future_sight"
     },
     {
         "name": "MIRROR_COAT",
@@ -2749,7 +2920,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "243-0_mirror_coat"
     },
     {
         "name": "OUTRAGE",
@@ -2765,7 +2937,8 @@
         "damageWindowEndMs": 3700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "200-0_outrage"
     },
     {
         "name": "SNARL",
@@ -2781,7 +2954,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "555-0_snarl"
     },
     {
         "name": "CRUNCH",
@@ -2797,7 +2971,8 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "242-0_crunch"
     },
     {
         "name": "FOUL_PLAY",
@@ -2813,7 +2988,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "sound": "492-0_foul_play"
     },
     {
         "name": "HIDDEN_POWER",
@@ -2829,7 +3005,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "237-0_hidden_power"
     },
     {
         "name": "TAKE_DOWN",
@@ -2845,7 +3022,8 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "036-0_take_down"
     },
     {
         "name": "WATERFALL",
@@ -2861,7 +3039,8 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "127-0_waterfall"
     },
     {
         "name": "SURF",
@@ -2877,7 +3056,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "057-0_surf"
     },
     {
         "name": "DRACO_METEOR",
@@ -2893,7 +3073,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "434-0_draco_meteor"
     },
     {
         "name": "DOOM_DESIRE",
@@ -2909,7 +3090,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "353-0_doom_desire"
     },
     {
         "name": "YAWN",
@@ -2925,7 +3107,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "281-0_yawn"
     },
     {
         "name": "PSYCHO_BOOST",
@@ -2941,7 +3124,8 @@
         "damageWindowEndMs": 4000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "354-0_psycho_boost"
     },
     {
         "name": "ORIGIN_PULSE",
@@ -2957,7 +3141,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "618-0_origin_pulse"
     },
     {
         "name": "PRECIPICE_BLADES",
@@ -2973,7 +3158,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "619-0_precipice_blades"
     },
     {
         "name": "PRESENT",
@@ -2989,7 +3175,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "217-0_present"
     },
     {
         "name": "WEATHER_BALL_FIRE",
@@ -3005,7 +3192,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "311-0_weather_ball_normal"
     },
     {
         "name": "WEATHER_BALL_ICE",
@@ -3021,7 +3209,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "311-0_weather_ball_normal"
     },
     {
         "name": "WEATHER_BALL_ROCK",
@@ -3037,7 +3226,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "311-0_weather_ball_normal"
     },
     {
         "name": "WEATHER_BALL_WATER",
@@ -3053,7 +3243,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "311-0_weather_ball_normal"
     },
     {
         "name": "FRENZY_PLANT",
@@ -3069,7 +3260,8 @@
         "damageWindowEndMs": 2550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "338-0_frenzy_plant"
     },
     {
         "name": "SMACK_DOWN",
@@ -3085,7 +3277,8 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "479-0_smack_down"
     },
     {
         "name": "BLAST_BURN",
@@ -3101,7 +3294,8 @@
         "damageWindowEndMs": 3200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "307-0_blast_burn"
     },
     {
         "name": "HYDRO_CANNON",
@@ -3117,7 +3311,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "308-0_hydro_cannon"
     },
     {
         "name": "LAST_RESORT",
@@ -3133,7 +3328,8 @@
         "damageWindowEndMs": 2850,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "384-0_last_resort"
     },
     {
         "name": "METEOR_MASH",
@@ -3149,7 +3345,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "sound": "309-0_meteor_mash"
     },
     {
         "name": "SKULL_BASH",
@@ -3165,7 +3362,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "ACID_SPRAY",
@@ -3181,7 +3379,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "491-0_acid_spray"
     },
     {
         "name": "EARTH_POWER",
@@ -3197,7 +3396,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "414-0_earth_power"
     },
     {
         "name": "CRABHAMMER",
@@ -3213,7 +3413,8 @@
         "damageWindowEndMs": 1750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "152-0_crabhammer"
     },
     {
         "name": "LUNGE",
@@ -3229,7 +3430,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "OCTAZOOKA",
@@ -3245,7 +3447,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "190-0_octazooka"
     },
     {
         "name": "MIRROR_SHOT",
@@ -3261,7 +3464,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "429-0_mirror_shot"
     },
     {
         "name": "SUPER_POWER",
@@ -3277,7 +3481,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "276-0_super_power"
     },
     {
         "name": "FELL_STINGER",
@@ -3293,7 +3498,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "565-0_fell_stinger"
     },
     {
         "name": "LEAF_TORNADO",
@@ -3309,7 +3515,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "536-0_leaf_tornado"
     },
     {
         "name": "DRAIN_PUNCH",
@@ -3325,7 +3532,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "409-0_drain_punch"
     },
     {
         "name": "SHADOW_BONE",
@@ -3341,7 +3549,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "MUDDY_WATER",
@@ -3357,7 +3566,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "330-0_muddy_water"
     },
     {
         "name": "BLAZE_KICK",
@@ -3373,7 +3583,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "299-0_blaze_kick"
     },
     {
         "name": "RAZOR_SHELL",
@@ -3389,7 +3600,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "534-0_razor_shell"
     },
     {
         "name": "POWER_UP_PUNCH",
@@ -3405,7 +3617,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "CHARM",
@@ -3421,7 +3634,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "204-0_charm"
     },
     {
         "name": "GIGA_IMPACT",
@@ -3437,7 +3651,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "416-0_giga_impact"
     },
     {
         "name": "FRUSTRATION",
@@ -3453,7 +3668,8 @@
         "damageWindowEndMs": 1800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "218-0_frustration"
     },
     {
         "name": "RETURN",
@@ -3469,7 +3685,8 @@
         "damageWindowEndMs": 350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "216-0_return"
     },
     {
         "name": "SYNCHRONOISE",
@@ -3485,7 +3702,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "485-0_synchronoise"
     },
     {
         "name": "LOCK_ON",
@@ -3501,7 +3719,8 @@
         "damageWindowEndMs": 300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "199-0_lock_on"
     },
     {
         "name": "THUNDER_FANG",
@@ -3517,7 +3736,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "422-0_thunder_fang"
     },
     {
         "name": "ICE_FANG",
@@ -3533,7 +3753,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "423-0_ice_fang"
     },
     {
         "name": "SACRED_SWORD",
@@ -3549,7 +3770,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "533-0_sacred_sword"
     },
     {
         "name": "FLYING_PRESS",
@@ -3565,7 +3787,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "560-0_flying_press"
     },
     {
         "name": "AURA_SPHERE",
@@ -3581,7 +3804,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "396-0_aura_sphere"
     },
     {
         "name": "PAYBACK",
@@ -3597,7 +3821,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "371-0_payback"
     },
     {
         "name": "ROCK_WRECKER",
@@ -3613,7 +3838,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "439-0_rock_wrecker"
     },
     {
         "name": "AEROBLAST",
@@ -3629,7 +3855,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "170-0_aeroblast"
     },
     {
         "name": "TECHNO_BLAST_NORMAL",
@@ -3645,7 +3872,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "sound": "546-0_techno_blast_normal"
     },
     {
         "name": "TECHNO_BLAST_BURN",
@@ -3661,7 +3889,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "sound": "307-0_blast_burn"
     },
     {
         "name": "TECHNO_BLAST_CHILL",
@@ -3677,7 +3906,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "sound": "546-0_techno_blast_normal"
     },
     {
         "name": "TECHNO_BLAST_WATER",
@@ -3693,7 +3923,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "sound": "546-0_techno_blast_normal"
     },
     {
         "name": "TECHNO_BLAST_SHOCK",
@@ -3709,7 +3940,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "sound": "546-0_techno_blast_normal"
     },
     {
         "name": "FLY",
@@ -3725,7 +3957,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "019-0_fly"
     },
     {
         "name": "V_CREATE",
@@ -3741,7 +3974,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "557-0_v_create"
     },
     {
         "name": "LEAF_STORM",
@@ -3757,7 +3991,8 @@
         "damageWindowEndMs": 1250,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "437-0_leaf_storm"
     },
     {
         "name": "TRI_ATTACK",
@@ -3773,7 +4008,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "161-0_tri_attack"
     },
     {
         "name": "GUST",
@@ -3789,7 +4025,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "016-0_gust"
     },
     {
         "name": "INCINERATE",
@@ -3805,7 +4042,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "510-0_incinerate"
     },
     {
         "name": "FEATHER_DANCE",
@@ -3821,7 +4059,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "297-0_feather_dance"
     },
     {
         "name": "WEATHER_BALL_NORMAL",
@@ -3837,7 +4076,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "311-0_weather_ball_normal"
     },
     {
         "name": "PSYCHIC_FANGS",
@@ -3853,7 +4093,8 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": null
     },
     {
         "name": "MAGICAL_LEAF",
@@ -3869,7 +4110,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "345-0_magical_leaf"
     },
     {
         "name": "SACRED_FIRE",
@@ -3885,7 +4127,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "221-0_sacred_fire"
     },
     {
         "name": "ICICLE_SPEAR",
@@ -3901,7 +4144,8 @@
         "damageWindowEndMs": 1800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "333-0_icicle_spear"
     },
     {
         "name": "AEROBLAST_PLUS",
@@ -3917,7 +4161,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "170-0_aeroblast"
     },
     {
         "name": "AEROBLAST_PLUS_PLUS",
@@ -3933,7 +4178,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "170-0_aeroblast"
     },
     {
         "name": "SACRED_FIRE_PLUS",
@@ -3949,7 +4195,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "221-0_sacred_fire"
     },
     {
         "name": "SACRED_FIRE_PLUS_PLUS",
@@ -3965,7 +4212,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "221-0_sacred_fire"
     },
     {
         "name": "ACROBATICS",
@@ -3981,6 +4229,7 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "sound": "512-0_acrobatics"
     }
 ]

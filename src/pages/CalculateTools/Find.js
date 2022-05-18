@@ -3,7 +3,8 @@ import { calculateStatsByTag, sortStatsPokemon } from "../../components/Calculat
 import APIService from "../../services/API.service";
 import Tools from "./Tools";
 
-import pokemonData from '../../data/pokemon.json'
+import pokemonData from '../../data/pokemon.json';
+import pokeListName from '../../data/pokemon_names.json';
 
 const Find = (props) => {
 
@@ -46,14 +47,21 @@ const Find = (props) => {
             setDataPri(pokemonData);
             initialize.current = true
         }
-        const fetchMyAPI = async () => {
-            const res = await APIService.getPokeJSON('pokemon_names.json');
-            Object.entries(res.data).forEach(([key, value]) => {
+        // const fetchMyAPI = async () => {
+        //     const res = await APIService.getPokeJSON('pokemon_names.json');
+        //     Object.entries(res.data).forEach(([key, value]) => {
+        //         pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
+        //     });
+        //     setPokemonList(pokeList);
+        // }
+        // if (pokeList.length === 0) fetchMyAPI();
+
+        if (pokeList.length === 0) {
+            Object.entries(pokeListName).forEach(([key, value]) => {
                 pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
             });
             setPokemonList(pokeList);
         }
-        if (pokeList.length === 0) fetchMyAPI();
 
         if (searchResult.current.scrollTop > (cardHeight*pageCardScroll)) searchResult.current.scrollTop = (cardHeight*pageCardScroll)-cardHeight;
         searchResultID.current = 1;

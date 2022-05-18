@@ -227,27 +227,27 @@ const FindTable = () => {
                     <p className="element-top">All of result: <b>{preIvArr.result.length}</b></p>
                     <p className="element-top">Average of percent: <b>{parseFloat(avgPercent.toFixed(2))}</b></p>
                     <p className="element-top">Average of HP: <b>{Math.round(avgHP)}</b></p>
-                    <div className="center four-star" style={{display: 'inline-block'}}>
+                    <div className="d-inline-block center four-star">
                         <HundoRate name="hundo-rate" value={3} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{fourStar}</b></div>
                     </div>
-                    <div className="center three-star" style={{display: 'inline-block'}}>
+                    <div className="d-inline-block center three-star">
                         <Rating name="three-rate" value={3} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{threeStar}</b></div>
                     </div>
-                    <div className="center two-star" style={{display: 'inline-block'}}>
+                    <div className="d-inline-block center two-star">
                         <Rating name="two-rate" value={2} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{twoStar}</b></div>
                     </div>
-                    <div className="center one-star" style={{display: 'inline-block'}}>
+                    <div className="d-inline-block center one-star">
                         <Rating name="one-rate" value={1} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{oneStar}</b></div>
                     </div>
-                    <div className="center zero-star" style={{display: 'inline-block'}}>
+                    <div className="d-inline-block center zero-star">
                         <Rating name="zero-rate" value={0} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{zeroStar}</b></div>

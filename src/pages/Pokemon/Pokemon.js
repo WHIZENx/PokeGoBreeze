@@ -5,11 +5,15 @@ import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
 import { calculateStatsByTag, regionList, sortStatsPokemon } from '../../components/Calculate/Calculate';
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import Form from "../../components/Info/Form/Form";
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 import pokemonData from '../../data/pokemon.json';
+import evoData from '../../data/evolution_pokemon_go.json';
+import pokeListName from '../../data/pokemon_names.json';
 
 const Pokemon = (props) => {
 
@@ -22,7 +26,7 @@ const Pokemon = (props) => {
 
     const [dataPri, setDataPri] = useState(null);
 
-    const [released, setReleased] = useState(null);
+    // const [released, setReleased] = useState(null);
     const [data, setData] = useState(null);
     const [stats, setStats] = useState(null);
     const [pokeRatio, setPokeRatio] = useState(null);
@@ -62,6 +66,7 @@ const Pokemon = (props) => {
     }, []);
 
     const fetchMap = useCallback(async (data) => {
+        setFormName(splitAndCapitalize(data.name));
         setFormList([]);
         setPokeData([]);
         let dataPokeList = [];
@@ -110,11 +115,12 @@ const Pokemon = (props) => {
                 // setDataPri(res.data);
             //     return APIService.getPokeJSON('released_pokemon.json');
             // })
-            APIService.getPokeJSON('released_pokemon.json')
-            .then(res => {
-                setReleased(res.data);
-            })
-            .finally(initialize.current = true);
+            // APIService.getPokeJSON('released_pokemon.json')
+            // .then(res => {
+            //     setReleased(res.data);
+            // })
+            // .finally(initialize.current = true);
+            initialize.current = true;
         } else {
             const id = params.id ? params.id.toLowerCase() : props.id;
             queryPokemon(id);
@@ -129,27 +135,157 @@ const Pokemon = (props) => {
         setVersion(splitAndCapitalize(version));
     }
 
+    const getCostModifier = (id) => {
+        return evoData.find(item => item.id === id)
+    }
+
     return (
         <Fragment>
-            {data && released &&
+            {data &&
                 <Fragment>
                     {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go
                             <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
                             </h5> */}
+                <div className="w-100 row prev-next-block sticky-top" style={{margin:0, height: 60}}>
+                    {params.id ?
+                    <Fragment>
+                    {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
+                        <Link className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)}>
+                            <div style={{cursor: "pointer"}}>
+                                <b><NavigateBeforeIcon fontSize="large"/></b>
+                            </div>
+                            <div style={{cursor: "pointer"}}>
+                                <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}></img>
+                            </div>
+                            <div className="w-100" style={{cursor: "pointer"}}>
+                                <div style={{textAlign: "start"}}>
+                                    <b>#{data.id-1}</b>
+                                </div>
+                                <div className="text-navigate">
+                                    {splitAndCapitalize(pokeListName[data.id-1].name)}
+                                </div>
+                            </div>
+                        </Link>
+                    </div>}
+                    {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
+                        <Link className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(params.id)+1)}>
+                            <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
+                                <div style={{textAlign: "end"}}>
+                                    <b>#{data.id+1}</b>
+                                </div>
+                                <div className="text-navigate">
+                                    {splitAndCapitalize(pokeListName[data.id+1].name)}
+                                </div>
+                            </div>
+                            <div style={{cursor: "pointer"}}>
+                                <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}></img>
+                            </div>
+                            <div style={{cursor: "pointer"}}>
+                                <b><NavigateNextIcon fontSize="large"/></b>
+                            </div>
+                        </Link>
+                    </div>}
+                    </Fragment>
+                    :
+                    <Fragment>
+                    {props.prev && props.next ?
+                    <Fragment>
+                    {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
+                        <div className="d-flex justify-content-start align-items-center" onClick={() => props.onDecId()}>
+                            <div style={{cursor: "pointer"}}>
+                                <b><NavigateBeforeIcon fontSize="large"/></b>
+                            </div>
+                            <div style={{cursor: "pointer"}}>
+                                <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}></img>
+                            </div>
+                            <div className="w-100" style={{cursor: "pointer"}}>
+                                <div style={{textAlign: "start"}}>
+                                    <b>#{data.id-1}</b>
+                                </div>
+                                <div className="text-navigate">
+                                    {splitAndCapitalize(pokeListName[data.id-1].name)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>}
+                    {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
+                        <div className="d-flex justify-content-end align-items-center" onClick={() => props.onIncId()}>
+                            <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
+                                <div style={{textAlign: "end"}}>
+                                    <b>#{data.id+1}</b>
+                                </div>
+                                <div className="text-navigate">
+                                    {splitAndCapitalize(pokeListName[data.id+1].name)}
+                                </div>
+                            </div>
+                            <div style={{cursor: "pointer"}}>
+                                <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}></img>
+                            </div>
+                            <div style={{cursor: "pointer"}}>
+                                <b><NavigateNextIcon fontSize="large"/></b>
+                            </div>
+                        </div>
+                    </div>}
+                    </Fragment>
+                    :
+                    <div className='loading-group'>
+                        <img className="loading" width={20} height={20} alt='img-pokemon' src={loading}></img>
+                        <span className='caption text-black' style={{fontSize: 14}}><b>Loading...</b></span>
+                    </div>
+                    }
+                    </Fragment>
+                    }
+                </div>
                 <div className={'poke-container'+(props.isSearch ? "" : " container")}>
-                    <div className="row group-desc"  style={{overflowX:'hidden'}}>
-                        <div className="col-lg-2 img-desc" style={{padding:0}}>
-                            <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
+                    <div className="w-100 center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
+                        <div className="d-inline-block img-desc">
+                            <img style={{verticalAlign: 'baseline'}} height={211} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
                         </div>
-                        <div className="col-lg-5 text-desc" style={{padding:0}}>
-                            <h4 className='element-top'>ID: <b>#{data.id}</b></h4>
-                            <h4>Name: <b>{formName ? formName : splitAndCapitalize(data.name)}</b></h4>
-                            <h4>Generation: <b>{data.generation.name.split("-")[1].toUpperCase()}</b> <span className="text-gen">({getNumGen(data.generation.url)})</span></h4>
-                            <h4>Region: {region}</h4>
-                            <h4>Version: {version}</h4>
-                            <h4>Height: {WH.height/10} m, Weight: {WH.weight/10} kg</h4>
+                        <div className="d-inline-block">
+                            <table className="table-info table-desc">
+                                <thead></thead>
+                                <tbody>
+                                    <tr>
+                                        <td><h5>ID</h5></td>
+                                        <td colSpan={2}><h5><b>#{data.id}</b></h5></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h5>Name</h5></td>
+                                        <td colSpan={2}><h5><b>{formName}</b></h5></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h5>Generation</h5></td>
+                                        <td colSpan={2}><h5><b>{data.generation.name.split("-")[1].toUpperCase()}</b> <span className="text-gen">({getNumGen(data.generation.url)})</span></h5></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h5>Region</h5></td>
+                                        <td colSpan={2}><h5>{region}</h5></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h5>Version</h5></td>
+                                        <td colSpan={2}><h5>{version}</h5></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h5>Body</h5></td>
+                                        <td colSpan={2} style={{padding:0}}>
+                                            <div className="d-flex align-items-center first-extra-col h-100" style={{float: "left", width: "50%"}}>
+                                                <div>
+                                                    <div className="d-inline-block" style={{marginRight: 5}}><h6>Weight:</h6></div>
+                                                    <div className="d-inline-block"><h6>{WH.weight/10} kg</h6></div>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex align-items-center h-100" style={{float: "left", width: "50%"}}>
+                                                <div>
+                                                    <div className="d-inline-block" style={{marginRight: 5}}><h6>Height:</h6></div>
+                                                    <div className="d-inline-block"><h6>{WH.height/10} m</h6></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        {/* <div className="col-lg-4" style={{padding:0}}>
+                        <div className="d-inline-block" style={{padding:0}}>
                             <table className="table-info table-main">
                                 <thead></thead>
                                 <tbody>
@@ -158,20 +294,42 @@ const Pokemon = (props) => {
                                         <td className="table-sub-header">Costs</td>
                                     </tr>
                                     <tr className="info-costs">
-                                        <td><img width={100} height={100}></img></td>
-                                        <td>Costs</td>
+                                        <td><img alt="img-cost-info" width={100} src={APIService.getItemSprite("Item_1202")}></img></td>
+                                        <td style={{padding:0}}>
+                                            <div className="row-extra td-costs">
+                                                <img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                                                <span>{getCostModifier(data.id).thirdMove.candy ? `x${getCostModifier(data.id).thirdMove.candy}` : "Unavailable"}</span>
+                                            </div>
+                                            <div className="row-extra">
+                                                <div className="d-inline-flex justify-content-center" style={{width: 20, marginRight: 5}}>
+                                                    <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>
+                                                </div>
+                                                <span>{getCostModifier(data.id).thirdMove.stardust ? `x${getCostModifier(data.id).thirdMove.stardust}` : "Unavailable"}</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr className="center">
                                         <td className="table-sub-header">Purified</td>
                                         <td className="table-sub-header">Costs</td>
                                     </tr>
                                     <tr className="info-costs">
-                                        <td><img width={100} height={100}></img></td>
-                                        <td>Costs</td>
+                                        <td><img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()}></img></td>
+                                        <td style={{padding:0}}>
+                                            <div className="row-extra td-costs">
+                                                <img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                                                <span>{getCostModifier(data.id).purified.candy ? `x${getCostModifier(data.id).purified.candy}` : "Unavailable"}</span>
+                                            </div>
+                                            <div className="row-extra">
+                                                <div className="d-inline-flex justify-content-center" style={{width: 20, marginRight: 5}}>
+                                                    <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>
+                                                </div>
+                                                <span>{getCostModifier(data.id).purified.stardust ? `x${getCostModifier(data.id).purified.stardust}` : "Unavailable"}</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
-                        </div> */}
+                        </div>
                     </div>
                     <div className='img-form-group' style={{textAlign: (initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length) ? null : 'center'}}>
                     {initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
@@ -204,7 +362,6 @@ const Pokemon = (props) => {
             }
         </Fragment>
     )
-
 }
 
 export default Pokemon;

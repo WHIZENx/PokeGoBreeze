@@ -62,7 +62,6 @@ const Tools = (props) => {
 
     useEffect(() => {
         queryPokemon(props.id);
-        // if (data && props.urlEvo && props.setUrlEvo != null) props.setUrlEvo({...props.urlEvo, url: data.evolution_chain.url});
     }, [props.id, queryPokemon]);
 
     const capitalize = (string) => {
@@ -81,7 +80,7 @@ const Tools = (props) => {
 
     return (
         <Fragment>
-            <div style={{display: 'inline-block', width: 60, height: 60}}>
+            <div className="d-inline-block" style={{width: 60, height: 60}}>
                 {props.id > 1 &&
                     <div style={{cursor: 'pointer'}} onClick={() => props.onSetPrev()}>
                         <div>
@@ -92,7 +91,7 @@ const Tools = (props) => {
                 }
             </div>
             <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id)}></img>
-            <div style={{display: 'inline-block', width: 60, height: 60}}>
+            <div className="d-inline-block" style={{width: 60, height: 60}}>
                 {props.id < props.count &&
                     <div style={{cursor: 'pointer'}} onClick={() => props.onSetNext()}>
                         <div>
@@ -114,7 +113,7 @@ const Tools = (props) => {
                                         <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
                                         <div>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</div>
                                         {value.form.id === pokeID &&
-                                            <b><small className=''> (Default)</small></b>
+                                            <b><small>(Default)</small></b>
                                         }
                                     </button>
                                 ))
