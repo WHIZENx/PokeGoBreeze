@@ -3193,7 +3193,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball_normal"
+        "sound": "311-0_weather_ball"
     },
     {
         "name": "WEATHER_BALL_ICE",
@@ -3210,7 +3210,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball_normal"
+        "sound": "311-0_weather_ball"
     },
     {
         "name": "WEATHER_BALL_ROCK",
@@ -3227,7 +3227,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball_normal"
+        "sound": "311-0_weather_ball"
     },
     {
         "name": "WEATHER_BALL_WATER",
@@ -3244,7 +3244,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball_normal"
+        "sound": "311-0_weather_ball"
     },
     {
         "name": "FRENZY_PLANT",
@@ -3873,7 +3873,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0,
-        "sound": "546-0_techno_blast_normal"
+        "sound": "546-0_techno_blast"
     },
     {
         "name": "TECHNO_BLAST_BURN",
@@ -3907,7 +3907,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0,
-        "sound": "546-0_techno_blast_normal"
+        "sound": "546-0_techno_blast"
     },
     {
         "name": "TECHNO_BLAST_WATER",
@@ -3924,7 +3924,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0,
-        "sound": "546-0_techno_blast_normal"
+        "sound": "546-0_techno_blast"
     },
     {
         "name": "TECHNO_BLAST_SHOCK",
@@ -3941,7 +3941,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0,
-        "sound": "546-0_techno_blast_normal"
+        "sound": "546-0_techno_blast"
     },
     {
         "name": "FLY",
@@ -4077,7 +4077,7 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball_normal"
+        "sound": "311-0_weather_ball"
     },
     {
         "name": "PSYCHIC_FANGS",
