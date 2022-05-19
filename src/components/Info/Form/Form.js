@@ -160,11 +160,6 @@ const Form = (props) => {
             :
             <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} region={regionList[parseInt(props.species.generation.url.split("/")[6])]}/>
             }
-            <h4 className="title-evo"><b>{"Sound of "+splitAndCapitalize(currForm.form.name, " ")}</b></h4>
-            <audio className="w-100" controls style={{height: 30}}>
-                <source src={APIService.getSoundPokemon(props.id_default)} type="audio/wav"></source>
-                Your browser does not support the audio element.
-            </audio>
             </Fragment>
             }
             </Fragment>

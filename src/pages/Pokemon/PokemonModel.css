@@ -1,0 +1,27 @@
+.group-model {
+    padding: 15px;
+}
+
+.model {
+    border: 1px solid lightgray;
+    padding: 10px;
+    display: inline-block;
+    min-width: 50%;
+}
+
+.sub-group-model .gender {
+    background-color: #f1ffff;
+    border: 1px solid #b8d4da;
+    text-align: center;
+    font-weight: bold;
+    width: auto;
+    min-width: 180px;
+}
+
+.group-model .desc {
+    background-color: #f1f1ff;
+    border: 1px solid #b8d4da;
+    text-align: center;
+    font-weight: bold;
+    width: auto !important;
+}

@@ -21,6 +21,10 @@ class APIService {
         return axios.get(url);
     }
 
+    getPokemonModel(item) {
+        return `${POGO_ASSET_API_URL}Pokemon/${item}.png`;
+    }
+
     getPokemonGoIcon(icon) {
         return `${POGO_ASSET_API_URL}App Icons/${icon}.png`;
     }

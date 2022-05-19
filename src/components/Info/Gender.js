@@ -30,13 +30,13 @@ const Gender = (props) => {
                     <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ?
                         (props.default_m) ? props.default_m : props.default_f ? props.default_f : APIService.getPokeSprite(0) :
                         (props.default_f) ? props.default_f : props.default_m ? props.default_m : APIService.getPokeSprite(0)}></img>
-                    <span className="caption">Original form</span>
+                    <span className="caption">Default</span>
                 </li>
                 <li className='img-group'>
                     <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ?
                         (props.shiny_m) ? props.shiny_m : props.shiny_f ? props.shiny_f : APIService.getPokeSprite(0) :
                         (props.shiny_f) ? props.shiny_f : props.shiny_m ? props.shiny_m : APIService.getPokeSprite(0) }></img>
-                    <span className="caption">Shiny form</span>
+                    <span className="caption">Shiny</span>
                 </li>
             </ul>
 

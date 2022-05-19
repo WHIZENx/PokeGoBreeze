@@ -142,7 +142,7 @@ td h5, td h6 {
 .prev-next-block {
     border: 1px solid lightgray;
     background-color: #eeeeee;
-    z-index: 1 !important;
+    z-index: 2 !important;
 }
 
 .prev-next-block a {
@@ -162,5 +162,5 @@ td h5, td h6 {
 }
 
 .next-block .text-navigate {
-    padding-left: 5%;
+    padding-left: 8%;
 }

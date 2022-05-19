@@ -14,6 +14,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import pokemonData from '../../data/pokemon.json';
 import evoData from '../../data/evolution_pokemon_go.json';
 import pokeListName from '../../data/pokemon_names.json';
+import PokemonModel from "./PokemonModel";
 
 const Pokemon = (props) => {
 
@@ -349,6 +350,7 @@ const Pokemon = (props) => {
                                     stats={stats}
                                     species={data}
                                     onSetIDPoke={props.onSetIDPoke}/>
+                                <PokemonModel id={data.id} name={data.name}/>
                             </Fragment>
                         :
                         <div className='loading-group'>
