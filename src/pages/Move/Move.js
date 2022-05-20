@@ -60,11 +60,9 @@ const Move = (props) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const getWeatherEffective = (type) => {
-        let result;
-        Object.entries(weathers).forEach(([key, value]) => {
-            if (value.includes(capitalize(type.toLowerCase()))) result = key;
-        });
-        return result;
+        return (Object.entries(weathers).find(([key, value]) => {
+            return value.includes(capitalize(type.toLowerCase()))
+        }))[0];
     };
 
     const queryMove = useCallback((id) => {

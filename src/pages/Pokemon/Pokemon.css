@@ -1,3 +1,9 @@
+.poke-candy {
+    width: max-content;
+    height: max-content;
+    border-radius: 50%;
+}
+
 .poke-container {
     margin-bottom: 15px;
     overflow: hidden;
@@ -154,7 +160,7 @@ td h5, td h6 {
 }
 
 .prev-block .text-navigate {
-    padding-right: 3%;
+    padding-right: 5%;
 }
 
 .next-block {
@@ -162,5 +168,5 @@ td h5, td h6 {
 }
 
 .next-block .text-navigate {
-    padding-left: 8%;
+    padding-left: 10%;
 }

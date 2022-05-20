@@ -589,7 +589,7 @@ const queryMoveByCType = (dataList, vf, type, cmove, felite, celite, shadow) => 
 
         let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
         let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive, defensive: ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/defensive}})
+        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: Number.isFinite(offensive) ? ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive : 1, defensive: Number.isFinite(defensive) ? ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/defensive : 1}})
     });
 }
 

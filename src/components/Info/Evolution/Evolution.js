@@ -312,11 +312,11 @@ const Evolution = (props) => {
                                 {values.map((value, index) => (
                                     <li id={"evo-"+evo+"-"+index} key={index} className='img-form-gender-group img-evo-group li-evo'>
                                         {props.onSetIDPoke ?
-                                        <div className="select-evo" onClick={() => {handlePokeID(value.id)}}>
+                                        <div className="select-evo" onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, " ")}`}>
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </div>
                                         :
-                                        <Link className="select-evo" to={"/pokemon/"+value.name} onClick={() => {handlePokeID(value.id)}}>
+                                        <Link className="select-evo" to={"/pokemon/"+value.name} onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, " ")}`}>
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </Link>
                                         }

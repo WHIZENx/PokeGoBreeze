@@ -28,7 +28,7 @@ const Find = (props) => {
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
 
     const convertArrStats = (data) => {
-        return Object.entries(data).map(([key, value]) => {
+        return Object.values(data).map(value => {
             let stats = calculateStatsByTag(value.baseStats, value.slug);
             return {id: value.num, name: value.slug, base_stats: value.baseStats,
             baseStatsPokeGo: {attack: stats.atk, defense: stats.def, stamina: stats.sta}}
@@ -57,9 +57,7 @@ const Find = (props) => {
         // if (pokeList.length === 0) fetchMyAPI();
 
         if (pokeList.length === 0) {
-            Object.entries(pokeListName).forEach(([key, value]) => {
-                pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
-            });
+            pokeList.push(...Object.values(pokeListName).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));
             setPokemonList(pokeList);
         }
 

@@ -3,12 +3,16 @@ version: '3.8'
 services:
     # react-app
     nginx:
+        image: pokego-breeze-nginx
         container_name: pokego-breeze
         build:
             context: .
             dockerfile: Dockerfile
+        volumes:
+            - './:/app'
         ports:
             - 8000:80
+        stdin_open: true
+        tty: true
         environment:
-            NODE_ENV: production
-        restart: always
+            - CHOKIDAR_USEPOLLING=true

@@ -14,7 +14,9 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import pokemonData from '../../data/pokemon.json';
 import evoData from '../../data/evolution_pokemon_go.json';
 import pokeListName from '../../data/pokemon_names.json';
-import PokemonModel from "./PokemonModel";
+import PokemonModel from "../../components/Info/Assets/PokemonModel";
+import Error from "../Error/Error";
+// import { computeColor, computeFilter } from "../../components/Filter/Filter";
 
 const Pokemon = (props) => {
 
@@ -36,11 +38,12 @@ const Pokemon = (props) => {
     const [region, setRegion] = useState(null);
     const [WH, setWH] = useState({weight: 0, height: 0});
     const [formName, setFormName] = useState(null);
+    const [isFound, setIsFound] = useState(true);
 
     const { enqueueSnackbar } = useSnackbar();
 
     const convertArrStats = (data) => {
-        return Object.entries(data).map(([key, value]) => {
+        return Object.values(data).map(value => {
             let stats = calculateStatsByTag(value.baseStats, value.slug);
             return {id: value.num, name: value.slug, base_stats: value.baseStats,
             baseStatsPokeGo: {attack: stats.atk, defense: stats.def, stamina: stats.sta}}
@@ -48,14 +51,7 @@ const Pokemon = (props) => {
     };
 
     const getRatioGender = useCallback((data, id) => {
-        let genderRatio;
-        Object.entries(data).forEach(([key, value]) => {
-            if (id === value.num) {
-                genderRatio = value.genderRatio;
-                return;
-            };
-        });
-        return genderRatio;
+        return Object.values(data).find(item => id === item.num).genderRatio;
     }, []);
 
     const capitalize = (string) => {
@@ -102,7 +98,8 @@ const Pokemon = (props) => {
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
-            if (params.id) document.title = `#${params.id} - Not Found`
+            if (params.id) document.title = `#${params.id} - Not Found`;
+            setIsFound(false);
         });
     }, [enqueueSnackbar, getRatioGender, fetchMap, dataPri, params.id, splitAndCapitalize]);
 
@@ -142,16 +139,23 @@ const Pokemon = (props) => {
 
     return (
         <Fragment>
+            {!isFound ?
+            <Error />
+            :
+            <Fragment>
             {data &&
                 <Fragment>
                     {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go
                             <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
                             </h5> */}
+                {/* <div className="poke-candy" style={{backgroundColor: computeColor(0.6313726, 0.9843137, 0.509803951, 1)}}>
+                    <img height={60} style={{filter: computeFilter(0.215987027, 0.797, 0.659303248).result.filterRaw}} alt="img-full-pokemon" src={APIService.getIconSprite("ic_candy")}></img>
+                </div> */}
                 <div className="w-100 row prev-next-block sticky-top" style={{margin:0, height: 60}}>
                     {params.id ?
                     <Fragment>
                     {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
-                        <Link className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)}>
+                        <Link className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)} title={`#${params.id-1} ${splitAndCapitalize(pokeListName[params.id-1].name)}`}>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
@@ -169,7 +173,7 @@ const Pokemon = (props) => {
                         </Link>
                     </div>}
                     {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
-                        <Link className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(params.id)+1)}>
+                        <Link className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(params.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[params.id+1].name)}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
                                     <b>#{data.id+1}</b>
@@ -192,7 +196,7 @@ const Pokemon = (props) => {
                     {props.prev && props.next ?
                     <Fragment>
                     {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
-                        <div className="d-flex justify-content-start align-items-center" onClick={() => props.onDecId()}>
+                        <div className="d-flex justify-content-start align-items-center" onClick={() => props.onDecId()}  title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name)}`}>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
@@ -210,7 +214,7 @@ const Pokemon = (props) => {
                         </div>
                     </div>}
                     {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
-                        <div className="d-flex justify-content-end align-items-center" onClick={() => props.onIncId()}>
+                        <div className="d-flex justify-content-end align-items-center" onClick={() => props.onIncId()}  title={`#${data.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name)}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
                                     <b>#{data.id+1}</b>
@@ -361,6 +365,8 @@ const Pokemon = (props) => {
                     </div>
                 </div>
                 </Fragment>
+            }
+            </Fragment>
             }
         </Fragment>
     )

@@ -63,7 +63,8 @@ const columns = [
     {
         name: 'Pokemon Name',
         selector: row =>
-            <Link to={"/pokemon/"+row.pokemon.num} target="_blank">{row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
+            <Link to={"/pokemon/"+row.pokemon.num} target="_blank" title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, "-")}`}>
+            {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
             <img height={48} alt='img-pokemon' style={{marginRight: 10}}
             src={APIService.getPokeIconSprite(row.pokemon.sprite, true)}
             onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.pokemon.baseSpecies)}}></img>
@@ -75,14 +76,16 @@ const columns = [
     },
     {
         name: 'Fast Move',
-        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.fmove.name).id} target="_blank"><img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.fmove.name, "_")}</span>{row.elite.fmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link>,
+        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.fmove.name).id} target="_blank" title={`${splitAndCapitalize(row.fmove.name, "_")}`}>
+            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.fmove.name, "_")}</span>{row.elite.fmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: fmoveSort
     },
     {
         name: 'Charge Move',
-        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank"><img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.cmove.name === "FRUSTRATION" && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.cmove.name === "RETURN" && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
+        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_")}`}>
+            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.cmove.name === "FRUSTRATION" && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.cmove.name === "RETURN" && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: cmoveSort

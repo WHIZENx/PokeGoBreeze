@@ -3,6 +3,8 @@ import axios from 'axios';
 const POKE_API_URL = 'https://pokeapi.co/api/v2/';
 const POGO_API_URL = 'https://pogoapi.net/api/v1/';
 
+const POGO_PROD_ASSET_URL = 'https://storage.googleapis.com/prod-public-images/';
+
 const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/';
 const POGO_SOUND_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Sounds/';
 const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
@@ -136,6 +138,10 @@ class APIService {
 
     getSoundMove(sound) {
         return `${POGO_SOUND_API_URL}Pokemon Moves/${sound}.wav`;
+    }
+
+    getAssetPokeGo(image) {
+        return `${POGO_PROD_ASSET_URL}${image}`;
     }
 }
 

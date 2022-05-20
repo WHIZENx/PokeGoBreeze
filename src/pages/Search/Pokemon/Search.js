@@ -43,9 +43,7 @@ const Search = () => {
         // fetchMyAPI();
 
         if (pokeList.length === 0) {
-            Object.entries(pokeListName).forEach(([key, value]) => {
-                pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
-            });
+            pokeList.push(...Object.values(pokeListName).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));
             setPokemonList(pokeList);
         }
 

@@ -1,12 +1,12 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import pokemonData from '../../data/pokemon.json';
-import pokeImageList from '../../data/assets_pokemon_go.json';
-import APIService from '../../services/API.service';
+import pokemonData from '../../../data/pokemon.json';
+import pokeImageList from '../../../data/assets_pokemon_go.json';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.css';
+import APIService from '../../../services/API.service';
 
 const PokemonModel = (props) => {
 
