@@ -4,7 +4,7 @@ import APIService from "../../services/API.service";
 import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
-import { calculateStatsByTag, regionList, sortStatsPokemon } from '../../components/Calculate/Calculate';
+import { calculateStatsByTag, computeBgColor, computeColor, regionList, sortStatsPokemon } from '../../components/Calculate/Calculate';
 import { Link, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import Form from "../../components/Info/Form/Form";
@@ -16,7 +16,6 @@ import evoData from '../../data/evolution_pokemon_go.json';
 import pokeListName from '../../data/pokemon_names.json';
 import PokemonModel from "../../components/Info/Assets/PokemonModel";
 import Error from "../Error/Error";
-// import { computeColor, computeFilter } from "../../components/Filter/Filter";
 
 const Pokemon = (props) => {
 
@@ -147,15 +146,12 @@ const Pokemon = (props) => {
                 <Fragment>
                     {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go
                             <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
-                            </h5> */}
-                {/* <div className="poke-candy" style={{backgroundColor: computeColor(0.6313726, 0.9843137, 0.509803951, 1)}}>
-                    <img height={60} style={{filter: computeFilter(0.215987027, 0.797, 0.659303248).result.filterRaw}} alt="img-full-pokemon" src={APIService.getIconSprite("ic_candy")}></img>
-                </div> */}
+                    </h5> */}
                 <div className="w-100 row prev-next-block sticky-top" style={{margin:0, height: 60}}>
                     {params.id ?
                     <Fragment>
                     {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
-                        <Link className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)} title={`#${params.id-1} ${splitAndCapitalize(pokeListName[params.id-1].name)}`}>
+                        <Link className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name)}`}>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
@@ -173,7 +169,7 @@ const Pokemon = (props) => {
                         </Link>
                     </div>}
                     {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
-                        <Link className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(params.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[params.id+1].name)}`}>
+                        <Link className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(data.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name)}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
                                     <b>#{data.id+1}</b>
@@ -301,8 +297,10 @@ const Pokemon = (props) => {
                                     <tr className="info-costs">
                                         <td><img alt="img-cost-info" width={100} src={APIService.getItemSprite("Item_1202")}></img></td>
                                         <td style={{padding:0}}>
-                                            <div className="row-extra td-costs">
-                                                <img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                                            <div className="d-flex align-items-center row-extra td-costs">
+                                                <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(data.id), marginRight: 5}}>
+                                                    <div className="poke-candy" style={{background: computeColor(data.id), width: 20, height: 20}}></div>
+                                                </div>
                                                 <span>{getCostModifier(data.id).thirdMove.candy ? `x${getCostModifier(data.id).thirdMove.candy}` : "Unavailable"}</span>
                                             </div>
                                             <div className="row-extra">
@@ -320,8 +318,10 @@ const Pokemon = (props) => {
                                     <tr className="info-costs">
                                         <td><img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()}></img></td>
                                         <td style={{padding:0}}>
-                                            <div className="row-extra td-costs">
-                                                <img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                                            <div className="d-flex align-items-center row-extra td-costs">
+                                                <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(data.id), marginRight: 5}}>
+                                                    <div className="poke-candy" style={{background: computeColor(data.id), width: 20, height: 20}}></div>
+                                                </div>
                                                 <span>{getCostModifier(data.id).purified.candy ? `x${getCostModifier(data.id).purified.candy}` : "Unavailable"}</span>
                                             </div>
                                             <div className="row-extra">

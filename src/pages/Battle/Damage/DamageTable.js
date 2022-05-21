@@ -54,7 +54,7 @@ const DamageTable = (props) => {
     return (
         <div className="container">
             <div className="d-flex justify-content-center">
-                <table className="table-info">
+                <table className="table-info table-result">
                     <thead></thead>
                     <tbody>
                         <tr className="center"><td className="table-sub-header" colSpan="2">Battle Result</td></tr>

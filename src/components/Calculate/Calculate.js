@@ -1,5 +1,6 @@
 import data from "../../data/cp_multiplier.json";
 import combat from '../../data/combat.json';
+import candyData from '../../data/candy_pokemon_go.json';
 import pokemonData from '../../data/pokemon.json';
 import pokemonCombatList from "../../data/combat_pokemon_go_list.json";
 import typeEffective from "../../data/type_effectiveness.json";
@@ -63,6 +64,18 @@ export const convertName = (text) => {
     .replaceAll(" ", "_")
     .replaceAll("É", "E")
 };
+
+export const computeBgColor = (id) => {
+    let data = candyData.find(item => item.familyGroup.map(value => value.id).includes(id));
+    if (!data) data = candyData.find(item => item.familyId === 0);
+    return `rgb(${Math.round(255*data.SecondaryColor.r)}, ${Math.round(255*data.SecondaryColor.g)}, ${Math.round(255*data.SecondaryColor.b)}, ${data.SecondaryColor.a})`
+}
+
+export const computeColor = (id) => {
+  let data = candyData.find(item => item.familyGroup.map(value => value.id).includes(id));
+  if (!data) data = candyData.find(item => item.familyId === 0);
+  return `rgb(${Math.round(255*data.PrimaryColor.r)}, ${Math.round(255*data.PrimaryColor.g)}, ${Math.round(255*data.PrimaryColor.b)}, ${data.PrimaryColor.a})`
+}
 
 // Thank calculate algorithm from pokemongohub.net
 export const calBaseATK = (stats, nerf) => {

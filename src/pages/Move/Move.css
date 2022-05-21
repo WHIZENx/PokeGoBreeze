@@ -22,16 +22,29 @@
 }
 
 .move-table td:nth-child(1) {
-    width: 40%;
-    min-width: 150px;
+    width: 40% !important;
+    min-width: 150px !important;
 }
 
 .move-damage-table td:nth-child(1) {
-    width: 40%;
-    min-width: 200px;
+    width: 40% !important;
+    min-width: 200px !important;
 }
 
 .img-type-icon {
     -webkit-filter: drop-shadow(1px 1px 1px black);
     filter: drop-shadow(1px 1px 1px black);
+}
+
+.target-buff {
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+    text-transform: none;
+    text-indent: 0px !important;
+    text-align: start !important;
+    text-align-last: start !important;
+}
+
+.buff-power {
+    font-size: 14px;
 }

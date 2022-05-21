@@ -1923,7 +1923,9 @@
             "RETURN",
             "FRUSTRATION"
         ],
-        "ELITE_QUICK_MOVES": [],
+        "ELITE_QUICK_MOVES": [
+            "ROLLOUT_FAST"
+        ],
         "ELITE_CINEMATIC_MOVES": []
     },
     {
@@ -2711,7 +2713,9 @@
             "FRUSTRATION"
         ],
         "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
+        "ELITE_CINEMATIC_MOVES": [
+            "DRACO_METEOR"
+        ]
     },
     {
         "ID": 104,
@@ -8313,7 +8317,9 @@
             "FRUSTRATION"
         ],
         "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
+        "ELITE_CINEMATIC_MOVES": [
+            "MIST_BALL"
+        ]
     },
     {
         "ID": 381,
@@ -8328,9 +8334,14 @@
             "DRAGON_CLAW",
             "SOLAR_BEAM"
         ],
-        "SHADOW_MOVES": [],
+        "SHADOW_MOVES": [
+            "RETURN",
+            "FRUSTRATION"
+        ],
         "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
+        "ELITE_CINEMATIC_MOVES": [
+            "LUSTER_PURGE"
+        ]
     },
     {
         "ID": 382,

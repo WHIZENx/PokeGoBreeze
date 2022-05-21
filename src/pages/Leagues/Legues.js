@@ -110,44 +110,34 @@ const Leagues = () => {
                                 <CloseIcon sx={{color: 'red'}}/>
                                 }
                             </li>
+                            {value.conditions.unique_type &&
                             <li style={{fontWeight: 500}}>
-                                <h6 className='title-leagues'>Enable Types</h6>
-                                {!value.conditions.unique_type ?
-                                <DoneIcon sx={{color: 'green'}}/>
-                                :
+                                <h6 className='title-leagues'>Unique Type</h6>
                                 <Type arr={value.conditions.unique_type}/>
-                                }
                             </li>
+                            }
+                            {value.conditions.whiteList.length !== 0 &&
                             <li style={{fontWeight: 500}}>
                                 <h6 className='title-leagues text-success'>White List</h6>
-                                {value.conditions.whiteList.length === 0 ?
-                                <DoneIcon sx={{color: 'green'}}/>
-                                :
-                                    <Fragment>
-                                        {value.conditions.whiteList.map((item, index) => (
-                                            <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), " ")}`}>
-                                                <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
-                                                <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), " ")}</span>
-                                            </Link>
-                                        ))}
-                                    </Fragment>
-                                }
+                                {value.conditions.whiteList.map((item, index) => (
+                                    <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), " ")}`}>
+                                        <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
+                                        <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), " ")}</span>
+                                    </Link>
+                                ))}
                             </li>
+                            }
+                            {value.conditions.banned.length !== 0 &&
                             <li style={{fontWeight: 500}}>
                                 <h6 className='title-leagues text-danger'>Ban List</h6>
-                                {value.conditions.banned.length === 0 ?
-                                <CloseIcon sx={{color: 'red'}}/>
-                                :
-                                    <Fragment>
-                                        {value.conditions.banned.map((item, index) => (
-                                            <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), " ")}`}>
-                                                <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, "NORMAL")}></img>
-                                                <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), " ")}</span>
-                                            </Link>
-                                        ))}
-                                    </Fragment>
-                                }
+                                {value.conditions.banned.map((item, index) => (
+                                    <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), " ")}`}>
+                                        <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, "NORMAL")}></img>
+                                        <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), " ")}</span>
+                                    </Link>
+                                ))}
                             </li>
+                            }
                             </ul>
                             </div>
                             <LeaveToggle eventKey={index} />

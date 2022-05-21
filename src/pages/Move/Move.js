@@ -10,6 +10,10 @@ import weathers from '../../data/weather_boosts.json';
 import APIService from "../../services/API.service";
 import './Move.css';
 
+import CircleIcon from '@mui/icons-material/Circle';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+
 const capitalize = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -88,89 +92,115 @@ const Move = (props) => {
         <Fragment>
             {move &&
             <div className={'poke-container'+(props.id ? "" : " container")}>
-                <div className="d-flex align-items-center head-box">
-                    <h1><b>{splitAndCapitalize(move.name.toLowerCase(), "_")}</b></h1>
-                    <TypeBar type={move.type}/>
+                <div className="h-100 head-box">
+                    <h1 className="d-inline-block" style={{marginRight: 15}}><b>{splitAndCapitalize(move.name.toLowerCase(), "_")}</b></h1>
+                    <div className="d-inline-block"><TypeBar type={move.type}/></div>
                 </div>
                 <hr></hr>
                 <div className="row" style={{margin: 0}}>
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-table">
                             <thead className="center">
-                                <tr><th colSpan="2">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_")+" in Pokemon Go"}</th></tr>
+                                <tr><th colSpan="3">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_")+" in Pokemon Go"}</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>ID</td>
-                                    <td><b>#{move.id}</b></td>
+                                    <td colSpan="2"><b>#{move.id}</b></td>
                                 </tr>
                                 <tr>
                                     <td>Name</td>
-                                    <td><b>{splitAndCapitalize(move.name.toLowerCase(), "_")}</b></td>
+                                    <td colSpan="2"><b>{splitAndCapitalize(move.name.toLowerCase(), "_")}</b></td>
                                 </tr>
                                 <tr>
                                     <td>Type</td>
-                                    <td><div style={{width: 'fit-content'}} className={"type-icon-small "+move.type.toLowerCase()}>{capitalize(move.type.toLowerCase())}</div></td>
+                                    <td colSpan="2"><div style={{width: 'fit-content'}} className={"type-icon-small "+move.type.toLowerCase()}>{capitalize(move.type.toLowerCase())}</div></td>
                                 </tr>
                                 <tr>
                                     <td>Move Type</td>
-                                    <td><b>{capitalize(move.type_move.toLowerCase())} Move</b></td>
+                                    <td colSpan="2"><b>{capitalize(move.type_move.toLowerCase())} Move</b></td>
                                 </tr>
-                                <tr className="center"><td className="table-sub-header" colSpan="2">PVE Stats</td></tr>
+                                <tr className="center"><td className="table-sub-header" colSpan="3">PVE Stats</td></tr>
                                 <tr>
                                     <td>PVE Power</td>
-                                    <td>{move.pve_power}</td>
+                                    <td colSpan="2">{move.pve_power}</td>
+                                </tr>
+                                <tr>
+                                    <td>PVE Power (Weather)</td>
+                                    <td colSpan="2">{move.pve_power*1.2} <span className="text-success d-inline-block caption">+{(move.pve_power*0.2).toFixed(2)}</span></td>
                                 </tr>
                                 <tr>
                                     <td>PVE Energy</td>
-                                    <td>{move.pve_energy > 0 && "+"}{move.pve_energy}</td>
+                                    <td colSpan="2">{move.pve_energy > 0 && "+"}{move.pve_energy}</td>
                                 </tr>
                                 {move.type_move === "CHARGE" && <tr>
                                     <td>PVE Bar Charge</td>
-                                    <td className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(true, move.pve_energy)).keys()].map((value, index) => (
+                                    <td colSpan="2" className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(true, move.pve_energy)).keys()].map((value, index) => (
                                         <div style={{width: ((120-(5*(Math.max(1, getBarCharge(true, move.pve_energy)))))/getBarCharge(true, move.pve_energy))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
                                 </tr>}
-                                <tr className="center"><td className="table-sub-header" colSpan="2">PVP Stats</td></tr>
+                                <tr className="center"><td className="table-sub-header" colSpan="3">PVP Stats</td></tr>
                                 <tr>
                                     <td>PVP Power</td>
-                                    <td>{move.pvp_power}</td>
+                                    <td colSpan="2">{move.pvp_power}</td>
                                 </tr>
                                 <tr>
                                     <td>PVP Energy</td>
-                                    <td>{move.pvp_energy > 0 && "+"}{move.pvp_energy}</td>
+                                    <td colSpan="2">{move.pvp_energy > 0 && "+"}{move.pvp_energy}</td>
                                 </tr>
                                 {move.type_move === "CHARGE" && <tr>
                                     <td>PVP Bar Charge</td>
-                                    <td className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((value, index) => (
+                                    <td colSpan="2" className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((value, index) => (
                                         <div style={{width: ((120-(5*(Math.max(1, getBarCharge(false, move.pvp_energy)))))/getBarCharge(false, move.pvp_energy))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
                                 </tr>}
-                                <tr className="center"><td className="table-sub-header" colSpan="2">Other Stats</td></tr>
+                                {move.buffs.length > 0 &&
+                                    <Fragment>
+                                    <tr className="center"><td className="table-sub-header" colSpan="3">PVP Buffs</td></tr>
+                                    {move.buffs.map((value, index) => (
+                                        <tr key={index}>
+                                            <td className="target-buff"><CircleIcon sx={{fontSize: "5px"}}/> {capitalize(value.target)}</td>
+                                            <td>
+                                                {value.power > 0 ? <ArrowUpwardIcon sx={{color: "green"}} /> : <ArrowDownwardIcon sx={{color: "red"}} />}
+                                                <span className="d-inline-block caption">
+                                                    {value.type === "atk" ? "Attack " : "Defense "}
+                                                    <span className={"buff-power " + (value.power > 0 ? "text-success" : "text-danger")}>
+                                                        <b>{value.power > 0 && "+"}{value.power}</b>
+                                                    </span>
+                                                </span>
+                                            </td>
+                                            <td>{value.buffChance*100}%</td>
+                                        </tr>
+                                    ))
+                                    }
+                                    </Fragment>
+                                }
+
+                                <tr className="center"><td className="table-sub-header" colSpan="3">Other Stats</td></tr>
                                 <tr>
                                     <td>Weather Boosts</td>
-                                    <td><img className="img-type-icon" height={25} alt="img-type" src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}></img></td>
+                                    <td colSpan="2"><img className="img-type-icon" height={25} alt="img-type" src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}></img></td>
                                 </tr>
                                 <tr>
                                     <td>Animation Duration</td>
-                                    <td>{move.durationMs} ms ({move.durationMs/1000} sec)</td>
+                                    <td colSpan="2">{move.durationMs} ms ({move.durationMs/1000} sec)</td>
                                 </tr>
                                 <tr>
                                     <td>Damage Start Window</td>
-                                    <td>{move.damageWindowStartMs} ms ({move.damageWindowStartMs/1000} sec)</td>
+                                    <td colSpan="2">{move.damageWindowStartMs} ms ({move.damageWindowStartMs/1000} sec)</td>
                                 </tr>
                                 <tr>
                                     <td>Damage End Window</td>
-                                    <td>{move.damageWindowEndMs} ms ({move.damageWindowEndMs/1000} sec)</td>
+                                    <td colSpan="2">{move.damageWindowEndMs} ms ({move.damageWindowEndMs/1000} sec)</td>
                                 </tr>
                                 <tr>
                                     <td>Critical Chance</td>
-                                    <td>{move.criticalChance*100}%</td>
+                                    <td colSpan="2">{move.criticalChance*100}%</td>
                                 </tr>
-                                <tr className="center"><td className="table-sub-header" colSpan="2">Effect</td></tr>
+                                <tr className="center"><td className="table-sub-header" colSpan="3">Effect</td></tr>
                                 <tr>
                                     <td>Sound</td>
-                                    <td>
+                                    <td colSpan="2">
                                         <audio className="w-100" controls style={{height: 30}}>
                                             <source src={APIService.getSoundMove(move.sound)} type="audio/wav"></source>
                                             Your browser does not support the audio element.
@@ -227,7 +257,7 @@ const Move = (props) => {
                                         highlightOnHover
                                         striped
                                         fixedHeader
-                                        fixedHeaderScrollHeight="18rem"
+                                        fixedHeaderScrollHeight="35vh"
                                     /></td>
                                 </tr>
                             </tbody>

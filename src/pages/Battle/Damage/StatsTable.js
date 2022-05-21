@@ -86,15 +86,15 @@ const StatsTable = (props) => {
                             <tr className="center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
-                                    <td>{calculateStatsBettle(props.statATK, 15, statLevel, statType === "shadow" ? 1.2 : 1)}</td>
+                                    <td className="center">{calculateStatsBettle(props.statATK, 15, statLevel, statType === "shadow" ? 1.2 : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
-                                    <td>{calculateStatsBettle(props.statDEF, 15, statLevel, statType === "shadow" ? 0.8 : 1)}</td>
+                                    <td className="center">{calculateStatsBettle(props.statDEF, 15, statLevel, statType === "shadow" ? 0.8 : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
-                                    <td>{calculateStatsBettle(props.statSTA, 15, statLevel)}</td>
+                                    <td className="center">{calculateStatsBettle(props.statSTA, 15, statLevel)}</td>
                                 </tr>
                         </tbody>
                     </table>

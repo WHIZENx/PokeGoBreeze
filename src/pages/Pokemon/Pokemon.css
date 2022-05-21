@@ -1,7 +1,22 @@
-.poke-candy {
-    width: max-content;
-    height: max-content;
+.bg-poke-candy {
     border-radius: 50%;
+    width: fit-content;
+    height: fit-content;
+}
+
+.bg-poke-xl-candy {
+    position: absolute;
+    clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
+}
+
+.poke-candy {
+    -webkit-mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Menu Icons/ic_candy.png") center/contain;
+    mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Menu Icons/ic_candy.png") center/contain;
+}
+
+.poke-xl-candy {
+    -webkit-mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Today View/TodayView_Icon_CandyXL.png") center/contain;
+    mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Today View/TodayView_Icon_CandyXL.png") center/contain;
 }
 
 .poke-container {
@@ -120,7 +135,7 @@ td h5, td h6 {
 }
 
 .table-info tbody tr td:nth-child(1) {
-    width: 25% !important;
+    width: 25%;
     min-width: 180px;
 }
 

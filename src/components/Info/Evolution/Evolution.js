@@ -21,6 +21,7 @@ import evoData from "../../../data/evolution_pokemon_go.json";
 
 import "./Evolution.css";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { computeBgColor, computeColor } from "../../Calculate/Calculate";
 
 const theme = createTheme({
     palette: {
@@ -174,7 +175,9 @@ const Evolution = (props) => {
                 labels={{end:
                     (<div className="position-absolute" style={{left: -40}}>
                         <span className="d-flex align-items-center caption" style={{width: 'max-content'}}>
-                            <img alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img>
+                            <div className="bg-poke-candy" style={{backgroundColor: computeBgColor(value.id)}}>
+                                <div className="poke-candy" style={{background: computeColor(value.id), width: 20, height: 20}}></div>
+                            </div>
                             <span style={{marginLeft: 2}}>{`x${data.candyCost}`}</span>
                         </span>
                         {Object.keys(data.quest).length > 0 &&

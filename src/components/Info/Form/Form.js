@@ -72,21 +72,26 @@ const Form = (props) => {
     }
 
     const changeForm = (e) => {
-        const findData = props.pokeData.find(item => e.currentTarget.value.includes(item.name));
+        const findData = props.pokeData.find(item => e.currentTarget.value === item.name);
         const findForm = props.formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
         setCurrForm(findForm);
         let region = Object.values(regionList).find(item => findForm.form.form_name.includes(item.toLowerCase()));
         if (findForm.form.form_name !== "" && region) props.setRegion(region);
         else props.setRegion(regionList[parseInt(props.species.generation.url.split("/")[6])]);
         props.setFormName(splitAndCapitalize(findForm.form.name, " "));
-        if (findData) {
-            setDataPoke(findData);
-            props.setWH(prevWH => ({...prevWH, weight: findData.weight, height: findData.height}));
+        if (findData && findForm) {
+            let oriForm = findData;
+            oriForm.types = findForm.form.types;
+            setDataPoke(oriForm);
+            props.setWH(prevWH => ({...prevWH, weight: oriForm.weight, height: oriForm.height}));
         } else if (findForm) {
             let oriForm = props.pokeData[0];
             oriForm.types = findForm.form.types;
             setDataPoke(oriForm);
             props.setWH(prevWH => ({...prevWH, weight: oriForm.weight, height: oriForm.height}));
+        } else if (findData) {
+            setDataPoke(findData);
+            props.setWH(prevWH => ({...prevWH, weight: findData.weight, height: findData.height}));
         } else {
             setDataPoke(props.pokeData[0]);
             props.setWH(prevWH => ({...prevWH, weight: props.pokeData[0].weight, height: props.pokeData[0].height}));

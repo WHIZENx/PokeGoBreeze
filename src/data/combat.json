@@ -5,6 +5,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -45,
+        "sound": "035-0_wrap",
+        "buffs": [],
         "id": 13,
         "pve_power": 60.0,
         "pve_energy": -33,
@@ -13,8 +15,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "035-0_wrap"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "HYPER_BEAM",
@@ -22,6 +23,8 @@
         "type_move": "CHARGE",
         "pvp_power": 150.0,
         "pvp_energy": -80,
+        "sound": "063-0_hyper_beam",
+        "buffs": [],
         "id": 14,
         "pve_power": 150.0,
         "pve_energy": -100,
@@ -30,8 +33,7 @@
         "damageWindowEndMs": 3600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.15,
-        "sound": "063-0_hyper_beam"
+        "staminaLossScalar": 0.15
     },
     {
         "name": "DARK_PULSE",
@@ -39,6 +41,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -50,
+        "sound": "399-0_dark_pulse",
+        "buffs": [],
         "id": 16,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -47,8 +51,7 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "399-0_dark_pulse"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "SLUDGE",
@@ -56,6 +59,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -40,
+        "sound": "124-0_sludge",
+        "buffs": [],
         "id": 18,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -64,8 +69,7 @@
         "damageWindowEndMs": 1550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "124-0_sludge"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "VICE_GRIP",
@@ -73,6 +77,8 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -40,
+        "sound": "011-0_vice_grip",
+        "buffs": [],
         "id": 20,
         "pve_power": 35.0,
         "pve_energy": -33,
@@ -81,8 +87,7 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.055,
-        "sound": "011-0_vice_grip"
+        "staminaLossScalar": 0.055
     },
     {
         "name": "FLAME_WHEEL",
@@ -90,6 +95,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -55,
+        "sound": "172-0_flame_wheel",
+        "buffs": [],
         "id": 21,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -98,8 +105,7 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "172-0_flame_wheel"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "MEGAHORN",
@@ -107,6 +113,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -55,
+        "sound": "224-0_megahorn",
+        "buffs": [],
         "id": 22,
         "pve_power": 110.0,
         "pve_energy": -100,
@@ -115,8 +123,7 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12,
-        "sound": "224-0_megahorn"
+        "staminaLossScalar": 0.12
     },
     {
         "name": "FLAMETHROWER",
@@ -124,6 +131,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -55,
+        "sound": "053-0_flamethrower",
+        "buffs": [],
         "id": 24,
         "pve_power": 70.0,
         "pve_energy": -50,
@@ -132,8 +141,7 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09,
-        "sound": "053-0_flamethrower"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "DIG",
@@ -141,6 +149,8 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -80,
+        "sound": "091-0_dig",
+        "buffs": [],
         "id": 26,
         "pve_power": 100.0,
         "pve_energy": -50,
@@ -149,8 +159,7 @@
         "damageWindowEndMs": 4500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "091-0_dig"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "CROSS_CHOP",
@@ -158,6 +167,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -35,
+        "sound": "238-0_cross_chop",
+        "buffs": [],
         "id": 28,
         "pve_power": 50.0,
         "pve_energy": -50,
@@ -166,8 +177,7 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.1,
-        "sound": "238-0_cross_chop"
+        "staminaLossScalar": 0.1
     },
     {
         "name": "PSYBEAM",
@@ -175,6 +185,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -60,
+        "sound": "060-0_psybeam",
+        "buffs": [],
         "id": 30,
         "pve_power": 70.0,
         "pve_energy": -50,
@@ -183,8 +195,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "060-0_psybeam"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "EARTHQUAKE",
@@ -192,6 +203,8 @@
         "type_move": "CHARGE",
         "pvp_power": 120.0,
         "pvp_energy": -65,
+        "sound": "089-0_earthquake",
+        "buffs": [],
         "id": 31,
         "pve_power": 140.0,
         "pve_energy": -100,
@@ -200,8 +213,7 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1,
-        "sound": "089-0_earthquake"
+        "staminaLossScalar": 0.1
     },
     {
         "name": "STONE_EDGE",
@@ -209,6 +221,8 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -55,
+        "sound": "444-0_stone_edge",
+        "buffs": [],
         "id": 32,
         "pve_power": 100.0,
         "pve_energy": -100,
@@ -217,8 +231,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.5,
-        "staminaLossScalar": 0.1,
-        "sound": "444-0_stone_edge"
+        "staminaLossScalar": 0.1
     },
     {
         "name": "ICE_PUNCH",
@@ -226,6 +239,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -40,
+        "sound": "008-0_ice_punch",
+        "buffs": [],
         "id": 33,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -234,8 +249,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075,
-        "sound": "008-0_ice_punch"
+        "staminaLossScalar": 0.075
     },
     {
         "name": "HEART_STAMP",
@@ -243,6 +257,8 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -40,
+        "sound": "531-0_heart_stamp",
+        "buffs": [],
         "id": 34,
         "pve_power": 40.0,
         "pve_energy": -33,
@@ -251,8 +267,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "531-0_heart_stamp"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "DISCHARGE",
@@ -260,6 +275,8 @@
         "type_move": "CHARGE",
         "pvp_power": 65.0,
         "pvp_energy": -45,
+        "sound": "435-0_discharge",
+        "buffs": [],
         "id": 35,
         "pve_power": 65.0,
         "pve_energy": -33,
@@ -268,8 +285,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "435-0_discharge"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "FLASH_CANNON",
@@ -277,6 +293,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -70,
+        "sound": "430-0_flash_cannon",
+        "buffs": [],
         "id": 36,
         "pve_power": 100.0,
         "pve_energy": -100,
@@ -285,8 +303,7 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "430-0_flash_cannon"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "DRILL_PECK",
@@ -294,6 +311,8 @@
         "type_move": "CHARGE",
         "pvp_power": 65.0,
         "pvp_energy": -40,
+        "sound": "065-0_drill_peck",
+        "buffs": [],
         "id": 38,
         "pve_power": 65.0,
         "pve_energy": -33,
@@ -302,8 +321,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "065-0_drill_peck"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "ICE_BEAM",
@@ -311,6 +329,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -55,
+        "sound": "058-0_ice_beam",
+        "buffs": [],
         "id": 39,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -319,8 +339,7 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09,
-        "sound": "058-0_ice_beam"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "BLIZZARD",
@@ -328,6 +347,8 @@
         "type_move": "CHARGE",
         "pvp_power": 140.0,
         "pvp_energy": -75,
+        "sound": "059-0_blizzard",
+        "buffs": [],
         "id": 40,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -336,8 +357,7 @@
         "damageWindowEndMs": 2900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11,
-        "sound": "059-0_blizzard"
+        "staminaLossScalar": 0.11
     },
     {
         "name": "HEAT_WAVE",
@@ -345,6 +365,8 @@
         "type_move": "CHARGE",
         "pvp_power": 95.0,
         "pvp_energy": -75,
+        "sound": "257-0_heat_wave",
+        "buffs": [],
         "id": 42,
         "pve_power": 95.0,
         "pve_energy": -100,
@@ -353,8 +375,7 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095,
-        "sound": "257-0_heat_wave"
+        "staminaLossScalar": 0.095
     },
     {
         "name": "AERIAL_ACE",
@@ -362,6 +383,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -45,
+        "sound": "332-0_aerial_ace",
+        "buffs": [],
         "id": 45,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -370,8 +393,7 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "332-0_aerial_ace"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "DRILL_RUN",
@@ -379,6 +401,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -45,
+        "sound": "529-0_drill_run",
+        "buffs": [],
         "id": 46,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -387,8 +411,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.08,
-        "sound": "529-0_drill_run"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "PETAL_BLIZZARD",
@@ -396,6 +419,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -65,
+        "sound": "572-0_petal_blizzard",
+        "buffs": [],
         "id": 47,
         "pve_power": 110.0,
         "pve_energy": -100,
@@ -404,8 +429,7 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09,
-        "sound": "572-0_petal_blizzard"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "MEGA_DRAIN",
@@ -413,6 +437,8 @@
         "type_move": "CHARGE",
         "pvp_power": 25.0,
         "pvp_energy": -55,
+        "sound": "072-0_mega_drain",
+        "buffs": [],
         "id": 48,
         "pve_power": 25.0,
         "pve_energy": -50,
@@ -421,8 +447,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "072-0_mega_drain"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "BUG_BUZZ",
@@ -430,6 +455,15 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -60,
+        "sound": "405-0_bug_buzz",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.3
+            }
+        ],
         "id": 49,
         "pve_power": 100.0,
         "pve_energy": -50,
@@ -438,8 +472,7 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09,
-        "sound": "405-0_bug_buzz"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "POISON_FANG",
@@ -447,6 +480,15 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -35,
+        "sound": "305-0_poison_fang",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 50,
         "pve_power": 35.0,
         "pve_energy": -33,
@@ -455,8 +497,7 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05,
-        "sound": "305-0_poison_fang"
+        "staminaLossScalar": 0.05
     },
     {
         "name": "NIGHT_SLASH",
@@ -464,6 +505,15 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -35,
+        "sound": "400-0_night_slash",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.125
+            }
+        ],
         "id": 51,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -472,8 +522,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.07,
-        "sound": "400-0_night_slash"
+        "staminaLossScalar": 0.07
     },
     {
         "name": "BUBBLE_BEAM",
@@ -481,6 +530,15 @@
         "type_move": "CHARGE",
         "pvp_power": 25.0,
         "pvp_energy": -40,
+        "sound": "061-0_bubble_beam",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 53,
         "pve_power": 45.0,
         "pve_energy": -33,
@@ -489,8 +547,7 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "061-0_bubble_beam"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "SUBMISSION",
@@ -498,6 +555,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -50,
+        "sound": "066-0_submission",
+        "buffs": [],
         "id": 54,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -506,8 +565,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "066-0_submission"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "LOW_SWEEP",
@@ -515,6 +573,8 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -40,
+        "sound": "490-0_low_sweep",
+        "buffs": [],
         "id": 56,
         "pve_power": 40.0,
         "pve_energy": -33,
@@ -523,8 +583,7 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "490-0_low_sweep"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "AQUA_JET",
@@ -532,6 +591,8 @@
         "type_move": "CHARGE",
         "pvp_power": 45.0,
         "pvp_energy": -45,
+        "sound": "453-0_aqua_jet",
+        "buffs": [],
         "id": 57,
         "pve_power": 45.0,
         "pve_energy": -33,
@@ -540,8 +601,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "453-0_aqua_jet"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "AQUA_TAIL",
@@ -549,6 +609,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -35,
+        "sound": "401-0_aqua_tail",
+        "buffs": [],
         "id": 58,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -557,8 +619,7 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09,
-        "sound": "401-0_aqua_tail"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "SEED_BOMB",
@@ -566,6 +627,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -40,
+        "sound": "402-0_seed_bomb",
+        "buffs": [],
         "id": 59,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -574,8 +637,7 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "402-0_seed_bomb"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "PSYSHOCK",
@@ -583,6 +645,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -45,
+        "sound": "473-0_psyshock",
+        "buffs": [],
         "id": 60,
         "pve_power": 65.0,
         "pve_energy": -33,
@@ -591,8 +655,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "473-0_psyshock"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "ANCIENT_POWER",
@@ -600,6 +663,21 @@
         "type_move": "CHARGE",
         "pvp_power": 45.0,
         "pvp_energy": -45,
+        "sound": "246-0_ancient_power",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.1
+            },
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.1
+            }
+        ],
         "id": 62,
         "pve_power": 70.0,
         "pve_energy": -33,
@@ -608,8 +686,7 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "246-0_ancient_power"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "ROCK_TOMB",
@@ -617,6 +694,15 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -60,
+        "sound": "317-0_rock_tomb",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 63,
         "pve_power": 70.0,
         "pve_energy": -50,
@@ -625,8 +711,7 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.06,
-        "sound": "317-0_rock_tomb"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "ROCK_SLIDE",
@@ -634,6 +719,8 @@
         "type_move": "CHARGE",
         "pvp_power": 75.0,
         "pvp_energy": -45,
+        "sound": "157-0_rock_slide",
+        "buffs": [],
         "id": 64,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -642,8 +729,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075,
-        "sound": "157-0_rock_slide"
+        "staminaLossScalar": 0.075
     },
     {
         "name": "POWER_GEM",
@@ -651,6 +737,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -60,
+        "sound": "408-0_power_gem",
+        "buffs": [],
         "id": 65,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -659,8 +747,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "408-0_power_gem"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "SHADOW_SNEAK",
@@ -668,6 +755,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -45,
+        "sound": "425-0_shadow_sneak",
+        "buffs": [],
         "id": 66,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -676,8 +765,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "425-0_shadow_sneak"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "SHADOW_PUNCH",
@@ -685,6 +773,8 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -35,
+        "sound": "325-0_shadow_punch",
+        "buffs": [],
         "id": 67,
         "pve_power": 40.0,
         "pve_energy": -33,
@@ -693,8 +783,7 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "325-0_shadow_punch"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "OMINOUS_WIND",
@@ -702,6 +791,21 @@
         "type_move": "CHARGE",
         "pvp_power": 45.0,
         "pvp_energy": -45,
+        "sound": "466-0_ominous_wind",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.1
+            },
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.1
+            }
+        ],
         "id": 69,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -710,8 +814,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "466-0_ominous_wind"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "SHADOW_BALL",
@@ -719,6 +822,8 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -55,
+        "sound": "247-0_shadow_ball",
+        "buffs": [],
         "id": 70,
         "pve_power": 100.0,
         "pve_energy": -50,
@@ -727,8 +832,7 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "247-0_shadow_ball"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "MAGNET_BOMB",
@@ -736,6 +840,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -45,
+        "sound": "443-0_magnet_bomb",
+        "buffs": [],
         "id": 72,
         "pve_power": 70.0,
         "pve_energy": -33,
@@ -744,8 +850,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "443-0_magnet_bomb"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "IRON_HEAD",
@@ -753,6 +858,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -50,
+        "sound": "442-0_iron_head",
+        "buffs": [],
         "id": 74,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -761,8 +868,7 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "442-0_iron_head"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "PARABOLIC_CHARGE",
@@ -770,6 +876,8 @@
         "type_move": "CHARGE",
         "pvp_power": 65.0,
         "pvp_energy": -55,
+        "sound": "570-0_parabolic_charge",
+        "buffs": [],
         "id": 75,
         "pve_power": 65.0,
         "pve_energy": -50,
@@ -778,8 +886,7 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05,
-        "sound": "570-0_parabolic_charge"
+        "staminaLossScalar": 0.05
     },
     {
         "name": "THUNDER_PUNCH",
@@ -787,6 +894,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -40,
+        "sound": "009-0_thunder_punch",
+        "buffs": [],
         "id": 77,
         "pve_power": 45.0,
         "pve_energy": -33,
@@ -795,8 +904,7 @@
         "damageWindowEndMs": 1550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075,
-        "sound": "009-0_thunder_punch"
+        "staminaLossScalar": 0.075
     },
     {
         "name": "THUNDER",
@@ -804,6 +912,8 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -60,
+        "sound": "087-0_thunder",
+        "buffs": [],
         "id": 78,
         "pve_power": 100.0,
         "pve_energy": -100,
@@ -812,8 +922,7 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11,
-        "sound": "087-0_thunder"
+        "staminaLossScalar": 0.11
     },
     {
         "name": "THUNDERBOLT",
@@ -821,6 +930,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -55,
+        "sound": "085-0_thunderbolt",
+        "buffs": [],
         "id": 79,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -829,8 +940,7 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09,
-        "sound": "085-0_thunderbolt"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "TWISTER",
@@ -838,6 +948,8 @@
         "type_move": "CHARGE",
         "pvp_power": 45.0,
         "pvp_energy": -45,
+        "sound": "239-0_twister",
+        "buffs": [],
         "id": 80,
         "pve_power": 45.0,
         "pve_energy": -33,
@@ -846,8 +958,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "239-0_twister"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "DRAGON_PULSE",
@@ -855,6 +966,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -60,
+        "sound": "406-0_dragon_pulse",
+        "buffs": [],
         "id": 82,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -863,8 +976,7 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.085,
-        "sound": "406-0_dragon_pulse"
+        "staminaLossScalar": 0.085
     },
     {
         "name": "DRAGON_CLAW",
@@ -872,6 +984,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -35,
+        "sound": "337-0_dragon_claw",
+        "buffs": [],
         "id": 83,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -880,8 +994,7 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.08,
-        "sound": "337-0_dragon_claw"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "DISARMING_VOICE",
@@ -889,6 +1002,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -45,
+        "sound": "574-0_disarming_voice",
+        "buffs": [],
         "id": 84,
         "pve_power": 70.0,
         "pve_energy": -33,
@@ -897,8 +1012,7 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "574-0_disarming_voice"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "DRAINING_KISS",
@@ -906,6 +1020,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -55,
+        "sound": "577-0_draining_kiss",
+        "buffs": [],
         "id": 85,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -914,8 +1030,7 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05,
-        "sound": "577-0_draining_kiss"
+        "staminaLossScalar": 0.05
     },
     {
         "name": "DAZZLING_GLEAM",
@@ -923,6 +1038,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -70,
+        "sound": "605-0_dazzling_gleam",
+        "buffs": [],
         "id": 86,
         "pve_power": 100.0,
         "pve_energy": -50,
@@ -931,8 +1048,7 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "605-0_dazzling_gleam"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "MOONBLAST",
@@ -940,6 +1056,15 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -60,
+        "sound": "585-0_moonblast",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.1
+            }
+        ],
         "id": 87,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -948,8 +1073,7 @@
         "damageWindowEndMs": 3700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095,
-        "sound": "585-0_moonblast"
+        "staminaLossScalar": 0.095
     },
     {
         "name": "PLAY_ROUGH",
@@ -957,6 +1081,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -60,
+        "sound": "583-0_play_rough",
+        "buffs": [],
         "id": 88,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -965,8 +1091,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1,
-        "sound": "583-0_play_rough"
+        "staminaLossScalar": 0.1
     },
     {
         "name": "CROSS_POISON",
@@ -974,6 +1099,15 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -35,
+        "sound": "440-0_cross_poison",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.125
+            }
+        ],
         "id": 89,
         "pve_power": 40.0,
         "pve_energy": -33,
@@ -982,8 +1116,7 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.07,
-        "sound": "440-0_cross_poison"
+        "staminaLossScalar": 0.07
     },
     {
         "name": "SLUDGE_BOMB",
@@ -991,6 +1124,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -50,
+        "sound": "188-0_sludge_bomb",
+        "buffs": [],
         "id": 90,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -999,8 +1134,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09,
-        "sound": "188-0_sludge_bomb"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "SLUDGE_WAVE",
@@ -1008,6 +1142,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -65,
+        "sound": "482-0_sludge_wave",
+        "buffs": [],
         "id": 91,
         "pve_power": 110.0,
         "pve_energy": -100,
@@ -1016,8 +1152,7 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095,
-        "sound": "482-0_sludge_wave"
+        "staminaLossScalar": 0.095
     },
     {
         "name": "GUNK_SHOT",
@@ -1025,6 +1160,8 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -75,
+        "sound": "441-0_gunk_shot",
+        "buffs": [],
         "id": 92,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -1033,8 +1170,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12,
-        "sound": "441-0_gunk_shot"
+        "staminaLossScalar": 0.12
     },
     {
         "name": "BONE_CLUB",
@@ -1042,6 +1178,8 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -35,
+        "sound": "125-0_bone_club",
+        "buffs": [],
         "id": 94,
         "pve_power": 40.0,
         "pve_energy": -33,
@@ -1050,8 +1188,7 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "125-0_bone_club"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "BULLDOZE",
@@ -1059,6 +1196,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -60,
+        "sound": "523-0_bulldoze",
+        "buffs": [],
         "id": 95,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -1067,8 +1206,7 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "523-0_bulldoze"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "MUD_BOMB",
@@ -1076,6 +1214,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -40,
+        "sound": "426-0_mud_bomb",
+        "buffs": [],
         "id": 96,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -1084,8 +1224,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "426-0_mud_bomb"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "SIGNAL_BEAM",
@@ -1093,6 +1232,21 @@
         "type_move": "CHARGE",
         "pvp_power": 75.0,
         "pvp_energy": -55,
+        "sound": "324-0_signal_beam",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.2
+            },
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.2
+            }
+        ],
         "id": 99,
         "pve_power": 75.0,
         "pve_energy": -50,
@@ -1101,8 +1255,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075,
-        "sound": "324-0_signal_beam"
+        "staminaLossScalar": 0.075
     },
     {
         "name": "X_SCISSOR",
@@ -1110,6 +1263,8 @@
         "type_move": "CHARGE",
         "pvp_power": 45.0,
         "pvp_energy": -35,
+        "sound": "404-0_x_scissor",
+        "buffs": [],
         "id": 100,
         "pve_power": 45.0,
         "pve_energy": -33,
@@ -1118,8 +1273,7 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "404-0_x_scissor"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "FLAME_CHARGE",
@@ -1127,6 +1281,15 @@
         "type_move": "CHARGE",
         "pvp_power": 65.0,
         "pvp_energy": -50,
+        "sound": "488-0_flame_charge",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 101,
         "pve_power": 70.0,
         "pve_energy": -33,
@@ -1135,8 +1298,7 @@
         "damageWindowEndMs": 3450,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05,
-        "sound": "488-0_flame_charge"
+        "staminaLossScalar": 0.05
     },
     {
         "name": "FLAME_BURST",
@@ -1144,6 +1306,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -55,
+        "sound": "481-0_flame_burst",
+        "buffs": [],
         "id": 102,
         "pve_power": 70.0,
         "pve_energy": -50,
@@ -1152,8 +1316,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.07,
-        "sound": "481-0_flame_burst"
+        "staminaLossScalar": 0.07
     },
     {
         "name": "FIRE_BLAST",
@@ -1161,6 +1324,8 @@
         "type_move": "CHARGE",
         "pvp_power": 140.0,
         "pvp_energy": -80,
+        "sound": "126-0_fire_blast",
+        "buffs": [],
         "id": 103,
         "pve_power": 140.0,
         "pve_energy": -100,
@@ -1169,8 +1334,7 @@
         "damageWindowEndMs": 3900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11,
-        "sound": "126-0_fire_blast"
+        "staminaLossScalar": 0.11
     },
     {
         "name": "BRINE",
@@ -1178,6 +1342,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -50,
+        "sound": "362-0_brine",
+        "buffs": [],
         "id": 104,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -1186,8 +1352,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "362-0_brine"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "WATER_PULSE",
@@ -1195,6 +1360,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -60,
+        "sound": "352-0_water_pulse",
+        "buffs": [],
         "id": 105,
         "pve_power": 70.0,
         "pve_energy": -50,
@@ -1203,8 +1370,7 @@
         "damageWindowEndMs": 2900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "352-0_water_pulse"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "SCALD",
@@ -1212,6 +1378,15 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -50,
+        "sound": "503-0_scald",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.3
+            }
+        ],
         "id": 106,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -1220,8 +1395,7 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "503-0_scald"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "HYDRO_PUMP",
@@ -1229,6 +1403,8 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -75,
+        "sound": "056-0_hydro_pump",
+        "buffs": [],
         "id": 107,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -1237,8 +1413,7 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11,
-        "sound": "056-0_hydro_pump"
+        "staminaLossScalar": 0.11
     },
     {
         "name": "PSYCHIC",
@@ -1246,6 +1421,15 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -55,
+        "sound": "094-0_psychic",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.1
+            }
+        ],
         "id": 108,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -1254,8 +1438,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09,
-        "sound": "094-0_psychic"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "PSYSTRIKE",
@@ -1263,6 +1446,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -45,
+        "sound": "540-0_psystrike",
+        "buffs": [],
         "id": 109,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -1271,8 +1456,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1,
-        "sound": "540-0_psystrike"
+        "staminaLossScalar": 0.1
     },
     {
         "name": "ICY_WIND",
@@ -1280,6 +1464,15 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -45,
+        "sound": "196-0_icy_wind",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 111,
         "pve_power": 60.0,
         "pve_energy": -33,
@@ -1288,8 +1481,7 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.055,
-        "sound": "196-0_icy_wind"
+        "staminaLossScalar": 0.055
     },
     {
         "name": "GIGA_DRAIN",
@@ -1297,6 +1489,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -80,
+        "sound": "030-0_horn_attack",
+        "buffs": [],
         "id": 114,
         "pve_power": 50.0,
         "pve_energy": -100,
@@ -1305,8 +1499,7 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075,
-        "sound": "202-0_giga_drain"
+        "staminaLossScalar": 0.075
     },
     {
         "name": "FIRE_PUNCH",
@@ -1314,6 +1507,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -40,
+        "sound": "007-0_fire_punch",
+        "buffs": [],
         "id": 115,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -1322,8 +1517,7 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075,
-        "sound": "007-0_fire_punch"
+        "staminaLossScalar": 0.075
     },
     {
         "name": "SOLAR_BEAM",
@@ -1331,6 +1525,8 @@
         "type_move": "CHARGE",
         "pvp_power": 150.0,
         "pvp_energy": -80,
+        "sound": "076-0_solar_beam",
+        "buffs": [],
         "id": 116,
         "pve_power": 180.0,
         "pve_energy": -100,
@@ -1339,8 +1535,7 @@
         "damageWindowEndMs": 4700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12,
-        "sound": "076-0_solar_beam"
+        "staminaLossScalar": 0.12
     },
     {
         "name": "LEAF_BLADE",
@@ -1348,6 +1543,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -35,
+        "sound": "348-0_leaf_blade",
+        "buffs": [],
         "id": 117,
         "pve_power": 70.0,
         "pve_energy": -33,
@@ -1356,8 +1553,7 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.09,
-        "sound": "348-0_leaf_blade"
+        "staminaLossScalar": 0.09
     },
     {
         "name": "POWER_WHIP",
@@ -1365,6 +1561,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -50,
+        "sound": "438-0_power_whip",
+        "buffs": [],
         "id": 118,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -1373,8 +1571,7 @@
         "damageWindowEndMs": 2350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.12,
-        "sound": "438-0_power_whip"
+        "staminaLossScalar": 0.12
     },
     {
         "name": "AIR_CUTTER",
@@ -1382,6 +1579,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -55,
+        "sound": "314-0_air_cutter",
+        "buffs": [],
         "id": 121,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -1390,8 +1589,7 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.06,
-        "sound": "314-0_air_cutter"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "HURRICANE",
@@ -1399,6 +1597,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -65,
+        "sound": "542-0_hurricane",
+        "buffs": [],
         "id": 122,
         "pve_power": 110.0,
         "pve_energy": -100,
@@ -1407,8 +1607,7 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11,
-        "sound": "542-0_hurricane"
+        "staminaLossScalar": 0.11
     },
     {
         "name": "BRICK_BREAK",
@@ -1416,6 +1615,8 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -35,
+        "sound": "280-0_brick_break",
+        "buffs": [],
         "id": 123,
         "pve_power": 40.0,
         "pve_energy": -33,
@@ -1424,8 +1625,7 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.075,
-        "sound": "280-0_brick_break"
+        "staminaLossScalar": 0.075
     },
     {
         "name": "SWIFT",
@@ -1433,6 +1633,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -55,
+        "sound": "129-0_swift",
+        "buffs": [],
         "id": 125,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -1441,8 +1643,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "129-0_swift"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "HORN_ATTACK",
@@ -1450,6 +1651,8 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -35,
+        "sound": "030-0_horn_attack",
+        "buffs": [],
         "id": 126,
         "pve_power": 40.0,
         "pve_energy": -33,
@@ -1458,8 +1661,7 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "030-0_horn_attack"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "STOMP",
@@ -1467,6 +1669,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -40,
+        "sound": "023-0_stomp",
+        "buffs": [],
         "id": 127,
         "pve_power": 55.0,
         "pve_energy": -50,
@@ -1475,8 +1679,7 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "023-0_stomp"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "HYPER_FANG",
@@ -1484,6 +1687,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -50,
+        "sound": "158-0_hyper_fang",
+        "buffs": [],
         "id": 129,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -1492,8 +1697,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "158-0_hyper_fang"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "BODY_SLAM",
@@ -1501,6 +1705,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -35,
+        "sound": "034-0_body_slam",
+        "buffs": [],
         "id": 131,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -1509,8 +1715,7 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.085,
-        "sound": "034-0_body_slam"
+        "staminaLossScalar": 0.085
     },
     {
         "name": "REST",
@@ -1518,6 +1723,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -35,
+        "sound": "156-0_rest",
+        "buffs": [],
         "id": 132,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -1526,8 +1733,7 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0,
-        "sound": "156-0_rest"
+        "staminaLossScalar": 0
     },
     {
         "name": "STRUGGLE",
@@ -1535,6 +1741,8 @@
         "type_move": "CHARGE",
         "pvp_power": 35.0,
         "pvp_energy": -100,
+        "sound": "165-0_struggle",
+        "buffs": [],
         "id": 133,
         "pve_power": 35.0,
         "pve_energy": -33,
@@ -1543,8 +1751,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.1,
-        "sound": "165-0_struggle"
+        "staminaLossScalar": 0.1
     },
     {
         "name": "SCALD_BLASTOISE",
@@ -1552,6 +1759,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -80,
+        "sound": "503-0_scald",
+        "buffs": [],
         "id": 134,
         "pve_power": 50.0,
         "pve_energy": -100,
@@ -1560,8 +1769,7 @@
         "damageWindowEndMs": 4600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08,
-        "sound": "503-0_scald"
+        "staminaLossScalar": 0.08
     },
     {
         "name": "HYDRO_PUMP_BLASTOISE",
@@ -1569,6 +1777,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -80,
+        "sound": "056-0_hydro_pump",
+        "buffs": [],
         "id": 135,
         "pve_power": 90.0,
         "pve_energy": -100,
@@ -1577,8 +1787,7 @@
         "damageWindowEndMs": 4300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11,
-        "sound": "056-0_hydro_pump"
+        "staminaLossScalar": 0.11
     },
     {
         "name": "WRAP_GREEN",
@@ -1586,6 +1795,8 @@
         "type_move": "CHARGE",
         "pvp_power": 25.0,
         "pvp_energy": -45,
+        "sound": "035-0_wrap",
+        "buffs": [],
         "id": 136,
         "pve_power": 25.0,
         "pve_energy": -33,
@@ -1594,8 +1805,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "035-0_wrap"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "WRAP_PINK",
@@ -1603,6 +1813,8 @@
         "type_move": "CHARGE",
         "pvp_power": 25.0,
         "pvp_energy": -45,
+        "sound": "035-0_wrap",
+        "buffs": [],
         "id": 137,
         "pve_power": 25.0,
         "pve_energy": -33,
@@ -1611,8 +1823,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06,
-        "sound": "035-0_wrap"
+        "staminaLossScalar": 0.06
     },
     {
         "name": "FURY_CUTTER",
@@ -1620,6 +1831,8 @@
         "type_move": "FAST",
         "pvp_power": 2.0,
         "pvp_energy": 4,
+        "sound": "210-0_fury_cutter",
+        "buffs": [],
         "id": 200,
         "pve_power": 3.0,
         "pve_energy": 6,
@@ -1628,8 +1841,7 @@
         "damageWindowEndMs": 400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "210-0_fury_cutter"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BUG_BITE",
@@ -1637,6 +1849,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 3,
+        "sound": "450-0_bug_bite",
+        "buffs": [],
         "id": 201,
         "pve_power": 5.0,
         "pve_energy": 6,
@@ -1645,8 +1859,7 @@
         "damageWindowEndMs": 450,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "450-0_bug_bite"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BITE",
@@ -1654,6 +1867,8 @@
         "type_move": "FAST",
         "pvp_power": 4.0,
         "pvp_energy": 2,
+        "sound": "044-0_bite",
+        "buffs": [],
         "id": 202,
         "pve_power": 6.0,
         "pve_energy": 4,
@@ -1662,8 +1877,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "044-0_bite"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SUCKER_PUNCH",
@@ -1671,6 +1885,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 7,
+        "sound": "389-0_sucker_punch",
+        "buffs": [],
         "id": 203,
         "pve_power": 7.0,
         "pve_energy": 8,
@@ -1679,8 +1895,7 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "389-0_sucker_punch"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "DRAGON_BREATH",
@@ -1688,6 +1903,8 @@
         "type_move": "FAST",
         "pvp_power": 4.0,
         "pvp_energy": 3,
+        "sound": "225-0_dragon_breath",
+        "buffs": [],
         "id": 204,
         "pve_power": 6.0,
         "pve_energy": 4,
@@ -1696,8 +1913,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "225-0_dragon_breath"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "THUNDER_SHOCK",
@@ -1705,6 +1921,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 9,
+        "sound": "084-0_thunder_shock",
+        "buffs": [],
         "id": 205,
         "pve_power": 5.0,
         "pve_energy": 8,
@@ -1713,8 +1931,7 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "084-0_thunder_shock"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SPARK",
@@ -1722,6 +1939,8 @@
         "type_move": "FAST",
         "pvp_power": 4.0,
         "pvp_energy": 8,
+        "sound": "209-0_spark",
+        "buffs": [],
         "id": 206,
         "pve_power": 6.0,
         "pve_energy": 9,
@@ -1730,8 +1949,7 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "209-0_spark"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LOW_KICK",
@@ -1739,6 +1957,8 @@
         "type_move": "FAST",
         "pvp_power": 4.0,
         "pvp_energy": 5,
+        "sound": "067-0_low_kick",
+        "buffs": [],
         "id": 207,
         "pve_power": 6.0,
         "pve_energy": 6,
@@ -1747,8 +1967,7 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "067-0_low_kick"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "KARATE_CHOP",
@@ -1756,6 +1975,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 8,
+        "sound": "002-0_karate_chop",
+        "buffs": [],
         "id": 208,
         "pve_power": 8.0,
         "pve_energy": 10,
@@ -1764,8 +1985,7 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "002-0_karate_chop"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "EMBER",
@@ -1773,6 +1993,8 @@
         "type_move": "FAST",
         "pvp_power": 7.0,
         "pvp_energy": 6,
+        "sound": "052-0_ember",
+        "buffs": [],
         "id": 209,
         "pve_power": 10.0,
         "pve_energy": 10,
@@ -1781,8 +2003,7 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "052-0_ember"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WING_ATTACK",
@@ -1790,6 +2011,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 7,
+        "sound": "017-0_wing_attack",
+        "buffs": [],
         "id": 210,
         "pve_power": 8.0,
         "pve_energy": 9,
@@ -1798,8 +2021,7 @@
         "damageWindowEndMs": 750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "017-0_wing_attack"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PECK",
@@ -1807,6 +2029,8 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 5,
+        "sound": "064-0_peck",
+        "buffs": [],
         "id": 211,
         "pve_power": 10.0,
         "pve_energy": 10,
@@ -1815,8 +2039,7 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "064-0_peck"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LICK",
@@ -1824,6 +2047,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 3,
+        "sound": "122-0_lick",
+        "buffs": [],
         "id": 212,
         "pve_power": 5.0,
         "pve_energy": 6,
@@ -1832,8 +2057,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "122-0_lick"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SHADOW_CLAW",
@@ -1841,6 +2065,8 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 8,
+        "sound": "421-0_shadow_claw",
+        "buffs": [],
         "id": 213,
         "pve_power": 9.0,
         "pve_energy": 6,
@@ -1849,8 +2075,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "421-0_shadow_claw"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "VINE_WHIP",
@@ -1858,6 +2083,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 8,
+        "sound": "022-0_vine_whip",
+        "buffs": [],
         "id": 214,
         "pve_power": 7.0,
         "pve_energy": 6,
@@ -1866,8 +2093,7 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "022-0_vine_whip"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "RAZOR_LEAF",
@@ -1875,6 +2101,8 @@
         "type_move": "FAST",
         "pvp_power": 10.0,
         "pvp_energy": 4,
+        "sound": "075-0_razor_leaf",
+        "buffs": [],
         "id": 215,
         "pve_power": 13.0,
         "pve_energy": 7,
@@ -1883,8 +2111,7 @@
         "damageWindowEndMs": 850,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "075-0_razor_leaf"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MUD_SHOT",
@@ -1892,6 +2119,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 9,
+        "sound": "341-0_mud_shot",
+        "buffs": [],
         "id": 216,
         "pve_power": 5.0,
         "pve_energy": 7,
@@ -1900,8 +2129,7 @@
         "damageWindowEndMs": 550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "341-0_mud_shot"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ICE_SHARD",
@@ -1909,6 +2137,8 @@
         "type_move": "FAST",
         "pvp_power": 9.0,
         "pvp_energy": 10,
+        "sound": "420-0_ice_shard",
+        "buffs": [],
         "id": 217,
         "pve_power": 12.0,
         "pve_energy": 12,
@@ -1917,8 +2147,7 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "420-0_ice_shard"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FROST_BREATH",
@@ -1926,6 +2155,8 @@
         "type_move": "FAST",
         "pvp_power": 7.0,
         "pvp_energy": 5,
+        "sound": "524-0_frost_breath",
+        "buffs": [],
         "id": 218,
         "pve_power": 10.0,
         "pve_energy": 8,
@@ -1934,8 +2165,7 @@
         "damageWindowEndMs": 750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "524-0_frost_breath"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "QUICK_ATTACK",
@@ -1943,6 +2173,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 7,
+        "sound": "098-0_quick_attack",
+        "buffs": [],
         "id": 219,
         "pve_power": 8.0,
         "pve_energy": 10,
@@ -1951,8 +2183,7 @@
         "damageWindowEndMs": 550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "098-0_quick_attack"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SCRATCH",
@@ -1960,6 +2191,8 @@
         "type_move": "FAST",
         "pvp_power": 4.0,
         "pvp_energy": 2,
+        "sound": "010-0_scratch",
+        "buffs": [],
         "id": 220,
         "pve_power": 6.0,
         "pve_energy": 4,
@@ -1968,8 +2201,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "010-0_scratch"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TACKLE",
@@ -1977,6 +2209,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 2,
+        "sound": "033-0_tackle",
+        "buffs": [],
         "id": 221,
         "pve_power": 5.0,
         "pve_energy": 5,
@@ -1985,8 +2219,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "033-0_tackle"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POUND",
@@ -1994,6 +2227,8 @@
         "type_move": "FAST",
         "pvp_power": 4.0,
         "pvp_energy": 4,
+        "sound": "001-0_pound",
+        "buffs": [],
         "id": 222,
         "pve_power": 7.0,
         "pve_energy": 6,
@@ -2002,8 +2237,7 @@
         "damageWindowEndMs": 540,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "001-0_pound"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CUT",
@@ -2011,6 +2245,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 2,
+        "sound": "015-0_cut",
+        "buffs": [],
         "id": 223,
         "pve_power": 5.0,
         "pve_energy": 5,
@@ -2019,8 +2255,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "015-0_cut"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POISON_JAB",
@@ -2028,6 +2263,8 @@
         "type_move": "FAST",
         "pvp_power": 7.0,
         "pvp_energy": 7,
+        "sound": "398-0_poison_jab",
+        "buffs": [],
         "id": 224,
         "pve_power": 10.0,
         "pve_energy": 7,
@@ -2036,8 +2273,7 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "398-0_poison_jab"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ACID",
@@ -2045,6 +2281,8 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 5,
+        "sound": "051-0_acid",
+        "buffs": [],
         "id": 225,
         "pve_power": 9.0,
         "pve_energy": 8,
@@ -2053,8 +2291,7 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "051-0_acid"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PSYCHO_CUT",
@@ -2062,6 +2299,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 9,
+        "sound": "427-0_psycho_cut",
+        "buffs": [],
         "id": 226,
         "pve_power": 5.0,
         "pve_energy": 8,
@@ -2070,8 +2309,7 @@
         "damageWindowEndMs": 570,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "427-0_psycho_cut"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ROCK_THROW",
@@ -2079,6 +2317,8 @@
         "type_move": "FAST",
         "pvp_power": 8.0,
         "pvp_energy": 5,
+        "sound": "088-0_rock_throw",
+        "buffs": [],
         "id": 227,
         "pve_power": 12.0,
         "pve_energy": 7,
@@ -2087,8 +2327,7 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "088-0_rock_throw"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "METAL_CLAW",
@@ -2096,6 +2335,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 6,
+        "sound": "232-0_metal_claw",
+        "buffs": [],
         "id": 228,
         "pve_power": 8.0,
         "pve_energy": 7,
@@ -2104,8 +2345,7 @@
         "damageWindowEndMs": 630,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "232-0_metal_claw"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BULLET_PUNCH",
@@ -2113,6 +2353,8 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 7,
+        "sound": "418-0_bullet_punch",
+        "buffs": [],
         "id": 229,
         "pve_power": 9.0,
         "pve_energy": 10,
@@ -2121,8 +2363,7 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "418-0_bullet_punch"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WATER_GUN",
@@ -2130,6 +2371,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 3,
+        "sound": "055-0_water_gun",
+        "buffs": [],
         "id": 230,
         "pve_power": 5.0,
         "pve_energy": 5,
@@ -2138,8 +2381,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "055-0_water_gun"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SPLASH",
@@ -2147,6 +2389,8 @@
         "type_move": "FAST",
         "pvp_power": 0.0,
         "pvp_energy": 12,
+        "sound": "150-0_splash",
+        "buffs": [],
         "id": 231,
         "pve_power": 0.0,
         "pve_energy": 20,
@@ -2155,8 +2399,7 @@
         "damageWindowEndMs": 1230,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "150-0_splash"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WATER_GUN_BLASTOISE",
@@ -2164,6 +2407,8 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 4,
+        "sound": "055-0_water_gun",
+        "buffs": [],
         "id": 232,
         "pve_power": 10.0,
         "pve_energy": 6,
@@ -2172,8 +2417,7 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "055-0_water_gun"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MUD_SLAP",
@@ -2181,6 +2425,8 @@
         "type_move": "FAST",
         "pvp_power": 11.0,
         "pvp_energy": 8,
+        "sound": "341-0_mud_shot",
+        "buffs": [],
         "id": 233,
         "pve_power": 18.0,
         "pve_energy": 12,
@@ -2189,8 +2435,7 @@
         "damageWindowEndMs": 1350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ZEN_HEADBUTT",
@@ -2198,6 +2443,8 @@
         "type_move": "FAST",
         "pvp_power": 8.0,
         "pvp_energy": 6,
+        "sound": "442-0_iron_head",
+        "buffs": [],
         "id": 234,
         "pve_power": 12.0,
         "pve_energy": 10,
@@ -2206,8 +2453,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CONFUSION",
@@ -2215,6 +2461,8 @@
         "type_move": "FAST",
         "pvp_power": 16.0,
         "pvp_energy": 12,
+        "sound": "466-0_ominous_wind",
+        "buffs": [],
         "id": 235,
         "pve_power": 20.0,
         "pve_energy": 15,
@@ -2223,8 +2471,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POISON_STING",
@@ -2232,6 +2479,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 9,
+        "sound": "305-0_poison_fang",
+        "buffs": [],
         "id": 236,
         "pve_power": 5.0,
         "pve_energy": 7,
@@ -2240,8 +2489,7 @@
         "damageWindowEndMs": 575,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BUBBLE",
@@ -2249,6 +2497,8 @@
         "type_move": "FAST",
         "pvp_power": 7.0,
         "pvp_energy": 11,
+        "sound": "061-0_bubble_beam",
+        "buffs": [],
         "id": 237,
         "pve_power": 12.0,
         "pve_energy": 14,
@@ -2257,8 +2507,7 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FEINT_ATTACK",
@@ -2266,6 +2515,8 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 6,
+        "sound": "185-0_feint_attack",
+        "buffs": [],
         "id": 238,
         "pve_power": 10.0,
         "pve_energy": 9,
@@ -2274,8 +2525,7 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "185-0_feint_attack"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "STEEL_WING",
@@ -2283,6 +2533,8 @@
         "type_move": "FAST",
         "pvp_power": 7.0,
         "pvp_energy": 5,
+        "sound": "017-0_wing_attack",
+        "buffs": [],
         "id": 239,
         "pve_power": 11.0,
         "pve_energy": 6,
@@ -2291,8 +2543,7 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FIRE_FANG",
@@ -2300,6 +2551,8 @@
         "type_move": "FAST",
         "pvp_power": 8.0,
         "pvp_energy": 5,
+        "sound": "158-0_hyper_fang",
+        "buffs": [],
         "id": 240,
         "pve_power": 12.0,
         "pve_energy": 8,
@@ -2308,8 +2561,7 @@
         "damageWindowEndMs": 840,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ROCK_SMASH",
@@ -2317,6 +2569,8 @@
         "type_move": "FAST",
         "pvp_power": 9.0,
         "pvp_energy": 7,
+        "sound": "280-0_brick_break",
+        "buffs": [],
         "id": 241,
         "pve_power": 15.0,
         "pve_energy": 10,
@@ -2325,8 +2579,7 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TRANSFORM",
@@ -2334,6 +2587,7 @@
         "type_move": "FAST",
         "pvp_power": 0.0,
         "pvp_energy": 0,
+        "buffs": [],
         "id": 242,
         "pve_power": 0.0,
         "pve_energy": 0,
@@ -2342,8 +2596,7 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "COUNTER",
@@ -2351,6 +2604,8 @@
         "type_move": "FAST",
         "pvp_power": 8.0,
         "pvp_energy": 7,
+        "sound": "068-0_counter",
+        "buffs": [],
         "id": 243,
         "pve_power": 12.0,
         "pve_energy": 8,
@@ -2359,8 +2614,7 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "068-0_counter"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POWDER_SNOW",
@@ -2368,6 +2622,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 8,
+        "sound": "181-0_powder_snow",
+        "buffs": [],
         "id": 244,
         "pve_power": 6.0,
         "pve_energy": 15,
@@ -2376,8 +2632,7 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "181-0_powder_snow"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CLOSE_COMBAT",
@@ -2385,6 +2640,15 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -45,
+        "sound": "370-0_close_combat",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": -2,
+                "buffChance": 1.0
+            }
+        ],
         "id": 245,
         "pve_power": 100.0,
         "pve_energy": -100,
@@ -2393,8 +2657,7 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "370-0_close_combat"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "DYNAMIC_PUNCH",
@@ -2402,6 +2665,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -50,
+        "sound": "223-0_dynamic_punch",
+        "buffs": [],
         "id": 246,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -2410,8 +2675,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "223-0_dynamic_punch"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "FOCUS_BLAST",
@@ -2419,6 +2683,8 @@
         "type_move": "CHARGE",
         "pvp_power": 150.0,
         "pvp_energy": -75,
+        "sound": "411-0_focus_blast",
+        "buffs": [],
         "id": 247,
         "pve_power": 140.0,
         "pve_energy": -100,
@@ -2427,8 +2693,7 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "411-0_focus_blast"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "AURORA_BEAM",
@@ -2436,6 +2701,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -60,
+        "sound": "062-0_aurora_beam",
+        "buffs": [],
         "id": 248,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -2444,8 +2711,7 @@
         "damageWindowEndMs": 3550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "062-0_aurora_beam"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "CHARGE_BEAM",
@@ -2453,6 +2719,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 11,
+        "sound": "451-0_charge_beam",
+        "buffs": [],
         "id": 249,
         "pve_power": 8.0,
         "pve_energy": 15,
@@ -2461,8 +2729,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "451-0_charge_beam"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "VOLT_SWITCH",
@@ -2470,6 +2737,8 @@
         "type_move": "FAST",
         "pvp_power": 12.0,
         "pvp_energy": 16,
+        "sound": "521-0_volt_switch",
+        "buffs": [],
         "id": 250,
         "pve_power": 14.0,
         "pve_energy": 21,
@@ -2478,8 +2747,7 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "521-0_volt_switch"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WILD_CHARGE",
@@ -2487,6 +2755,15 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -45,
+        "sound": "528-0_wild_charge",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": -2,
+                "buffChance": 1.0
+            }
+        ],
         "id": 251,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -2495,8 +2772,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "528-0_wild_charge"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "ZAP_CANNON",
@@ -2504,6 +2780,15 @@
         "type_move": "CHARGE",
         "pvp_power": 150.0,
         "pvp_energy": -80,
+        "sound": "192-0_zap_cannon",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 252,
         "pve_power": 140.0,
         "pve_energy": -100,
@@ -2512,8 +2797,7 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "192-0_zap_cannon"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "DRAGON_TAIL",
@@ -2521,6 +2805,8 @@
         "type_move": "FAST",
         "pvp_power": 13.0,
         "pvp_energy": 9,
+        "sound": "525-0_dragon_tail",
+        "buffs": [],
         "id": 253,
         "pve_power": 15.0,
         "pve_energy": 9,
@@ -2529,8 +2815,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "525-0_dragon_tail"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AVALANCHE",
@@ -2538,6 +2823,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -45,
+        "sound": "419-0_avalanche",
+        "buffs": [],
         "id": 254,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -2546,8 +2833,7 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "419-0_avalanche"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "AIR_SLASH",
@@ -2555,6 +2841,8 @@
         "type_move": "FAST",
         "pvp_power": 9.0,
         "pvp_energy": 9,
+        "sound": "403-0_air_slash",
+        "buffs": [],
         "id": 255,
         "pve_power": 14.0,
         "pve_energy": 10,
@@ -2563,8 +2851,7 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "403-0_air_slash"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BRAVE_BIRD",
@@ -2572,6 +2859,15 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -55,
+        "sound": "413-0_brave_bird",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": -3,
+                "buffChance": 1.0
+            }
+        ],
         "id": 256,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -2580,8 +2876,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "413-0_brave_bird"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "SKY_ATTACK",
@@ -2589,6 +2884,8 @@
         "type_move": "CHARGE",
         "pvp_power": 75.0,
         "pvp_energy": -45,
+        "sound": "143-0_sky_attack",
+        "buffs": [],
         "id": 257,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -2597,8 +2894,7 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "143-0_sky_attack"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "SAND_TOMB",
@@ -2606,6 +2902,15 @@
         "type_move": "CHARGE",
         "pvp_power": 25.0,
         "pvp_energy": -40,
+        "sound": "328-0_sand_tomb",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 258,
         "pve_power": 60.0,
         "pve_energy": -33,
@@ -2614,8 +2919,7 @@
         "damageWindowEndMs": 4000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "328-0_sand_tomb"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "ROCK_BLAST",
@@ -2623,6 +2927,8 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -40,
+        "sound": "350-0_rock_blast",
+        "buffs": [],
         "id": 259,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -2631,8 +2937,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "350-0_rock_blast"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "INFESTATION",
@@ -2640,6 +2945,8 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 12,
+        "sound": "611-0_infestation",
+        "buffs": [],
         "id": 260,
         "pve_power": 10.0,
         "pve_energy": 14,
@@ -2648,8 +2955,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "611-0_infestation"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "STRUGGLE_BUG",
@@ -2657,6 +2963,8 @@
         "type_move": "FAST",
         "pvp_power": 9.0,
         "pvp_energy": 8,
+        "sound": "522-0_struggle_bug",
+        "buffs": [],
         "id": 261,
         "pve_power": 15.0,
         "pve_energy": 15,
@@ -2665,8 +2973,7 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "522-0_struggle_bug"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SILVER_WIND",
@@ -2674,6 +2981,21 @@
         "type_move": "CHARGE",
         "pvp_power": 45.0,
         "pvp_energy": -45,
+        "sound": "318-0_silver_wind",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.1
+            },
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.1
+            }
+        ],
         "id": 262,
         "pve_power": 70.0,
         "pve_energy": -33,
@@ -2682,8 +3004,7 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "318-0_silver_wind"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "ASTONISH",
@@ -2691,6 +3012,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 9,
+        "sound": "310-0_astonish",
+        "buffs": [],
         "id": 263,
         "pve_power": 8.0,
         "pve_energy": 14,
@@ -2699,8 +3022,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "310-0_astonish"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "HEX",
@@ -2708,6 +3030,8 @@
         "type_move": "FAST",
         "pvp_power": 6.0,
         "pvp_energy": 12,
+        "sound": "506-0_hex",
+        "buffs": [],
         "id": 264,
         "pve_power": 10.0,
         "pve_energy": 16,
@@ -2716,8 +3040,7 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "506-0_hex"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "NIGHT_SHADE",
@@ -2725,6 +3048,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -55,
+        "sound": "101-0_night_shade",
+        "buffs": [],
         "id": 265,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -2733,8 +3058,7 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "101-0_night_shade"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "IRON_TAIL",
@@ -2742,6 +3066,8 @@
         "type_move": "FAST",
         "pvp_power": 9.0,
         "pvp_energy": 6,
+        "sound": "231-0_iron_tail",
+        "buffs": [],
         "id": 266,
         "pve_power": 15.0,
         "pve_energy": 7,
@@ -2750,8 +3076,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "231-0_iron_tail"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "GYRO_BALL",
@@ -2759,6 +3084,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -60,
+        "sound": "360-0_gyro_ball",
+        "buffs": [],
         "id": 267,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -2767,8 +3094,7 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "360-0_gyro_ball"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "HEAVY_SLAM",
@@ -2776,6 +3102,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -50,
+        "sound": "484-0_heavy_slam",
+        "buffs": [],
         "id": 268,
         "pve_power": 70.0,
         "pve_energy": -50,
@@ -2784,8 +3112,7 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "484-0_heavy_slam"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "FIRE_SPIN",
@@ -2793,6 +3120,8 @@
         "type_move": "FAST",
         "pvp_power": 9.0,
         "pvp_energy": 10,
+        "sound": "083-0_fire_spin",
+        "buffs": [],
         "id": 269,
         "pve_power": 14.0,
         "pve_energy": 10,
@@ -2801,8 +3130,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "083-0_fire_spin"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "OVERHEAT",
@@ -2810,6 +3138,15 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -55,
+        "sound": "315-0_overheat",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": -2,
+                "buffChance": 1.0
+            }
+        ],
         "id": 270,
         "pve_power": 160.0,
         "pve_energy": -100,
@@ -2818,8 +3155,7 @@
         "damageWindowEndMs": 3800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "315-0_overheat"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "BULLET_SEED",
@@ -2827,6 +3163,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 13,
+        "sound": "331-0_bullet_seed",
+        "buffs": [],
         "id": 271,
         "pve_power": 8.0,
         "pve_energy": 14,
@@ -2835,8 +3173,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "331-0_bullet_seed"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "GRASS_KNOT",
@@ -2844,6 +3181,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -50,
+        "sound": "447-0_grass_knot",
+        "buffs": [],
         "id": 272,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -2852,8 +3191,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "447-0_grass_knot"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "ENERGY_BALL",
@@ -2861,6 +3199,15 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -55,
+        "sound": "412-0_energy_ball",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.1
+            }
+        ],
         "id": 273,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -2869,8 +3216,7 @@
         "damageWindowEndMs": 3800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "412-0_energy_ball"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "EXTRASENSORY",
@@ -2878,6 +3224,8 @@
         "type_move": "FAST",
         "pvp_power": 8.0,
         "pvp_energy": 10,
+        "sound": "326-0_extrasensory",
+        "buffs": [],
         "id": 274,
         "pve_power": 12.0,
         "pve_energy": 12,
@@ -2886,8 +3234,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "326-0_extrasensory"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FUTURESIGHT",
@@ -2895,6 +3242,8 @@
         "type_move": "CHARGE",
         "pvp_power": 120.0,
         "pvp_energy": -65,
+        "sound": "248-0_future_sight",
+        "buffs": [],
         "id": 275,
         "pve_power": 120.0,
         "pve_energy": -100,
@@ -2903,8 +3252,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "248-0_future_sight"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "MIRROR_COAT",
@@ -2912,6 +3260,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -55,
+        "sound": "243-0_mirror_coat",
+        "buffs": [],
         "id": 276,
         "pve_power": 60.0,
         "pve_energy": -50,
@@ -2920,8 +3270,7 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "243-0_mirror_coat"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "OUTRAGE",
@@ -2929,6 +3278,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -60,
+        "sound": "200-0_outrage",
+        "buffs": [],
         "id": 277,
         "pve_power": 110.0,
         "pve_energy": -50,
@@ -2937,8 +3288,7 @@
         "damageWindowEndMs": 3700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "200-0_outrage"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "SNARL",
@@ -2946,6 +3296,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 13,
+        "sound": "555-0_snarl",
+        "buffs": [],
         "id": 278,
         "pve_power": 12.0,
         "pve_energy": 14,
@@ -2954,8 +3306,7 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "555-0_snarl"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CRUNCH",
@@ -2963,6 +3314,15 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -45,
+        "sound": "242-0_crunch",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.3
+            }
+        ],
         "id": 279,
         "pve_power": 70.0,
         "pve_energy": -33,
@@ -2971,8 +3331,7 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "242-0_crunch"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "FOUL_PLAY",
@@ -2980,6 +3339,8 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -45,
+        "sound": "492-0_foul_play",
+        "buffs": [],
         "id": 280,
         "pve_power": 70.0,
         "pve_energy": -50,
@@ -2988,8 +3349,7 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04,
-        "sound": "492-0_foul_play"
+        "staminaLossScalar": 0.04
     },
     {
         "name": "HIDDEN_POWER",
@@ -2997,6 +3357,8 @@
         "type_move": "FAST",
         "pvp_power": 9.0,
         "pvp_energy": 8,
+        "sound": "237-0_hidden_power",
+        "buffs": [],
         "id": 281,
         "pve_power": 15.0,
         "pve_energy": 15,
@@ -3005,8 +3367,7 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.01,
-        "sound": "237-0_hidden_power"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TAKE_DOWN",
@@ -3014,6 +3375,8 @@
         "type_move": "FAST",
         "pvp_power": 5.0,
         "pvp_energy": 8,
+        "sound": "36-0_take_down",
+        "buffs": [],
         "id": 282,
         "pve_power": 8.0,
         "pve_energy": 10,
@@ -3022,8 +3385,7 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "036-0_take_down"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WATERFALL",
@@ -3031,6 +3393,8 @@
         "type_move": "FAST",
         "pvp_power": 12.0,
         "pvp_energy": 8,
+        "sound": "127-0_waterfall",
+        "buffs": [],
         "id": 283,
         "pve_power": 16.0,
         "pve_energy": 8,
@@ -3039,8 +3403,7 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "127-0_waterfall"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SURF",
@@ -3048,6 +3411,8 @@
         "type_move": "CHARGE",
         "pvp_power": 65.0,
         "pvp_energy": -40,
+        "sound": "057-0_surf",
+        "buffs": [],
         "id": 284,
         "pve_power": 65.0,
         "pve_energy": -50,
@@ -3056,8 +3421,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "057-0_surf"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "DRACO_METEOR",
@@ -3065,6 +3429,15 @@
         "type_move": "CHARGE",
         "pvp_power": 150.0,
         "pvp_energy": -65,
+        "sound": "434-0_draco_meteor",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": -2,
+                "buffChance": 1.0
+            }
+        ],
         "id": 285,
         "pve_power": 150.0,
         "pve_energy": -100,
@@ -3073,8 +3446,7 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "434-0_draco_meteor"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "DOOM_DESIRE",
@@ -3082,6 +3454,8 @@
         "type_move": "CHARGE",
         "pvp_power": 75.0,
         "pvp_energy": -40,
+        "sound": "353-0_doom_desire",
+        "buffs": [],
         "id": 286,
         "pve_power": 70.0,
         "pve_energy": -33,
@@ -3090,8 +3464,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "353-0_doom_desire"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "YAWN",
@@ -3099,6 +3472,8 @@
         "type_move": "FAST",
         "pvp_power": 0.0,
         "pvp_energy": 12,
+        "sound": "281-0_yawn",
+        "buffs": [],
         "id": 287,
         "pve_power": 0.0,
         "pve_energy": 15,
@@ -3107,8 +3482,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "281-0_yawn"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PSYCHO_BOOST",
@@ -3116,6 +3490,15 @@
         "type_move": "CHARGE",
         "pvp_power": 70.0,
         "pvp_energy": -35,
+        "sound": "354-0_psycho_boost",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": -2,
+                "buffChance": 1.0
+            }
+        ],
         "id": 288,
         "pve_power": 70.0,
         "pve_energy": -50,
@@ -3124,8 +3507,7 @@
         "damageWindowEndMs": 4000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "354-0_psycho_boost"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ORIGIN_PULSE",
@@ -3133,6 +3515,8 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -60,
+        "sound": "618-0_origin_pulse",
+        "buffs": [],
         "id": 289,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -3141,8 +3525,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "618-0_origin_pulse"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PRECIPICE_BLADES",
@@ -3150,6 +3533,8 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -60,
+        "sound": "619-0_precipice_blades",
+        "buffs": [],
         "id": 290,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -3158,8 +3543,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "619-0_precipice_blades"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PRESENT",
@@ -3167,6 +3551,8 @@
         "type_move": "FAST",
         "pvp_power": 3.0,
         "pvp_energy": 12,
+        "sound": "217-0_present",
+        "buffs": [],
         "id": 291,
         "pve_power": 5.0,
         "pve_energy": 20,
@@ -3175,8 +3561,7 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "217-0_present"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_FIRE",
@@ -3184,6 +3569,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -35,
+        "sound": "311-0_weather_ball",
+        "buffs": [],
         "id": 292,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -3192,8 +3579,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_ICE",
@@ -3201,6 +3587,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -35,
+        "sound": "311-0_weather_ball",
+        "buffs": [],
         "id": 293,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -3209,8 +3597,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_ROCK",
@@ -3218,6 +3605,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -35,
+        "sound": "311-0_weather_ball",
+        "buffs": [],
         "id": 294,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -3226,8 +3615,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_WATER",
@@ -3235,6 +3623,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -35,
+        "sound": "311-0_weather_ball",
+        "buffs": [],
         "id": 295,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -3243,8 +3633,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FRENZY_PLANT",
@@ -3252,6 +3641,8 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -45,
+        "sound": "338-0_frenzy_plant",
+        "buffs": [],
         "id": 296,
         "pve_power": 100.0,
         "pve_energy": -50,
@@ -3260,8 +3651,7 @@
         "damageWindowEndMs": 2550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "338-0_frenzy_plant"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SMACK_DOWN",
@@ -3269,6 +3659,8 @@
         "type_move": "FAST",
         "pvp_power": 12.0,
         "pvp_energy": 8,
+        "sound": "479-0_smack_down",
+        "buffs": [],
         "id": 297,
         "pve_power": 16.0,
         "pve_energy": 8,
@@ -3277,8 +3669,7 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "479-0_smack_down"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BLAST_BURN",
@@ -3286,6 +3677,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -50,
+        "sound": "307-0_blast_burn",
+        "buffs": [],
         "id": 298,
         "pve_power": 110.0,
         "pve_energy": -50,
@@ -3294,8 +3687,7 @@
         "damageWindowEndMs": 3200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "307-0_blast_burn"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "HYDRO_CANNON",
@@ -3303,6 +3695,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -40,
+        "sound": "308-0_hydro_cannon",
+        "buffs": [],
         "id": 299,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -3311,8 +3705,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "308-0_hydro_cannon"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "LAST_RESORT",
@@ -3320,6 +3713,8 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -55,
+        "sound": "384-0_last_resort",
+        "buffs": [],
         "id": 300,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -3328,8 +3723,7 @@
         "damageWindowEndMs": 2850,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "384-0_last_resort"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "METEOR_MASH",
@@ -3337,6 +3731,8 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -50,
+        "sound": "309-0_meteor_mash",
+        "buffs": [],
         "id": 301,
         "pve_power": 100.0,
         "pve_energy": -50,
@@ -3345,8 +3741,7 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065,
-        "sound": "309-0_meteor_mash"
+        "staminaLossScalar": 0.065
     },
     {
         "name": "SKULL_BASH",
@@ -3354,6 +3749,15 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -75,
+        "sound": "130-1_skull_bash",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": 1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 302,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -3362,8 +3766,7 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ACID_SPRAY",
@@ -3371,6 +3774,15 @@
         "type_move": "CHARGE",
         "pvp_power": 20.0,
         "pvp_energy": -45,
+        "sound": "491-0_acid_spray",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -2,
+                "buffChance": 1.0
+            }
+        ],
         "id": 303,
         "pve_power": 20.0,
         "pve_energy": -50,
@@ -3379,8 +3791,7 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "491-0_acid_spray"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "EARTH_POWER",
@@ -3388,6 +3799,15 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -55,
+        "sound": "414-0_earth_power",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.1
+            }
+        ],
         "id": 304,
         "pve_power": 100.0,
         "pve_energy": -50,
@@ -3396,8 +3816,7 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "414-0_earth_power"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CRABHAMMER",
@@ -3405,6 +3824,15 @@
         "type_move": "CHARGE",
         "pvp_power": 85.0,
         "pvp_energy": -50,
+        "sound": "152-0_crabhammer",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.125
+            }
+        ],
         "id": 305,
         "pve_power": 85.0,
         "pve_energy": -50,
@@ -3413,8 +3841,7 @@
         "damageWindowEndMs": 1750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "152-0_crabhammer"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LUNGE",
@@ -3422,6 +3849,15 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -45,
+        "sound": "101-0_night_shade",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 306,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -3430,8 +3866,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "OCTAZOOKA",
@@ -3439,6 +3874,15 @@
         "type_move": "CHARGE",
         "pvp_power": 50.0,
         "pvp_energy": -50,
+        "sound": "190-0_octazooka",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -2,
+                "buffChance": 0.5
+            }
+        ],
         "id": 308,
         "pve_power": 50.0,
         "pve_energy": -50,
@@ -3447,8 +3891,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "190-0_octazooka"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MIRROR_SHOT",
@@ -3456,6 +3899,15 @@
         "type_move": "CHARGE",
         "pvp_power": 35.0,
         "pvp_energy": -35,
+        "sound": "429-0_mirror_shot",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.3
+            }
+        ],
         "id": 309,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -3464,8 +3916,7 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "429-0_mirror_shot"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SUPER_POWER",
@@ -3473,6 +3924,21 @@
         "type_move": "CHARGE",
         "pvp_power": 85.0,
         "pvp_energy": -40,
+        "sound": "276-0_super_power",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": -1,
+                "buffChance": 1.0
+            },
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 310,
         "pve_power": 85.0,
         "pve_energy": -50,
@@ -3481,8 +3947,7 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "276-0_super_power"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FELL_STINGER",
@@ -3490,6 +3955,15 @@
         "type_move": "CHARGE",
         "pvp_power": 20.0,
         "pvp_energy": -35,
+        "sound": "565-0_fell_stinger",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 311,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -3498,8 +3972,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "565-0_fell_stinger"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LEAF_TORNADO",
@@ -3507,6 +3980,15 @@
         "type_move": "CHARGE",
         "pvp_power": 45.0,
         "pvp_energy": -40,
+        "sound": "536-0_leaf_tornado",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -2,
+                "buffChance": 0.5
+            }
+        ],
         "id": 312,
         "pve_power": 45.0,
         "pve_energy": -33,
@@ -3515,8 +3997,7 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "536-0_leaf_tornado"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "DRAIN_PUNCH",
@@ -3524,6 +4005,15 @@
         "type_move": "CHARGE",
         "pvp_power": 20.0,
         "pvp_energy": -40,
+        "sound": "409-0_drain_punch",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": 1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 314,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -3532,8 +4022,7 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "409-0_drain_punch"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SHADOW_BONE",
@@ -3541,6 +4030,15 @@
         "type_move": "CHARGE",
         "pvp_power": 75.0,
         "pvp_energy": -45,
+        "sound": "125-0_bone_club",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.2
+            }
+        ],
         "id": 315,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -3549,8 +4047,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MUDDY_WATER",
@@ -3558,6 +4055,15 @@
         "type_move": "CHARGE",
         "pvp_power": 35.0,
         "pvp_energy": -35,
+        "sound": "330-0_muddy_water",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.3
+            }
+        ],
         "id": 316,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -3566,8 +4072,7 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "330-0_muddy_water"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "BLAZE_KICK",
@@ -3575,6 +4080,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -40,
+        "sound": "299-0_blaze_kick",
+        "buffs": [],
         "id": 317,
         "pve_power": 45.0,
         "pve_energy": -33,
@@ -3583,8 +4090,7 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "299-0_blaze_kick"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "RAZOR_SHELL",
@@ -3592,6 +4098,15 @@
         "type_move": "CHARGE",
         "pvp_power": 35.0,
         "pvp_energy": -35,
+        "sound": "534-0_razor_shell",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.5
+            }
+        ],
         "id": 318,
         "pve_power": 45.0,
         "pve_energy": -33,
@@ -3600,8 +4115,7 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "534-0_razor_shell"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "POWER_UP_PUNCH",
@@ -3609,6 +4123,15 @@
         "type_move": "CHARGE",
         "pvp_power": 20.0,
         "pvp_energy": -35,
+        "sound": "612-0_power-up_punch",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 319,
         "pve_power": 50.0,
         "pve_energy": -33,
@@ -3617,8 +4140,7 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "CHARM",
@@ -3626,6 +4148,8 @@
         "type_move": "FAST",
         "pvp_power": 16.0,
         "pvp_energy": 6,
+        "sound": "204-0_charm",
+        "buffs": [],
         "id": 320,
         "pve_power": 20.0,
         "pve_energy": 11,
@@ -3634,8 +4158,7 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "204-0_charm"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "GIGA_IMPACT",
@@ -3643,6 +4166,8 @@
         "type_move": "CHARGE",
         "pvp_power": 150.0,
         "pvp_energy": -80,
+        "sound": "416-0_giga_impact",
+        "buffs": [],
         "id": 321,
         "pve_power": 200.0,
         "pve_energy": -100,
@@ -3651,8 +4176,7 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "416-0_giga_impact"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FRUSTRATION",
@@ -3660,6 +4184,8 @@
         "type_move": "CHARGE",
         "pvp_power": 10.0,
         "pvp_energy": -70,
+        "sound": "218-0_frustration",
+        "buffs": [],
         "id": 322,
         "pve_power": 10.0,
         "pve_energy": -33,
@@ -3668,8 +4194,7 @@
         "damageWindowEndMs": 1800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "218-0_frustration"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "RETURN",
@@ -3677,6 +4202,8 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -70,
+        "sound": "216-0_return",
+        "buffs": [],
         "id": 323,
         "pve_power": 35.0,
         "pve_energy": -33,
@@ -3685,8 +4212,7 @@
         "damageWindowEndMs": 350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "216-0_return"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SYNCHRONOISE",
@@ -3694,6 +4220,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -50,
+        "sound": "485-0_synchronoise",
+        "buffs": [],
         "id": 324,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -3702,8 +4230,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "485-0_synchronoise"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LOCK_ON",
@@ -3711,6 +4238,8 @@
         "type_move": "FAST",
         "pvp_power": 1.0,
         "pvp_energy": 5,
+        "sound": "199-0_lock_on_fast",
+        "buffs": [],
         "id": 325,
         "pve_power": 1.0,
         "pve_energy": 6,
@@ -3719,8 +4248,7 @@
         "damageWindowEndMs": 300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "199-0_lock_on"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "THUNDER_FANG",
@@ -3728,6 +4256,8 @@
         "type_move": "FAST",
         "pvp_power": 8.0,
         "pvp_energy": 5,
+        "sound": "422-0_thunder_fang_fast",
+        "buffs": [],
         "id": 326,
         "pve_power": 12.0,
         "pve_energy": 16,
@@ -3736,8 +4266,7 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "422-0_thunder_fang"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ICE_FANG",
@@ -3745,6 +4274,8 @@
         "type_move": "FAST",
         "pvp_power": 8.0,
         "pvp_energy": 5,
+        "sound": "423-0_ice_fang_fast",
+        "buffs": [],
         "id": 327,
         "pve_power": 12.0,
         "pve_energy": 20,
@@ -3753,8 +4284,7 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "423-0_ice_fang"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SACRED_SWORD",
@@ -3762,6 +4292,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -35,
+        "sound": "533-0_sacred_sword",
+        "buffs": [],
         "id": 330,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -3770,8 +4302,7 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "533-0_sacred_sword"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FLYING_PRESS",
@@ -3779,6 +4310,7 @@
         "type_move": "CHARGE",
         "pvp_power": 90.0,
         "pvp_energy": -40,
+        "buffs": [],
         "id": 331,
         "pve_power": 110.0,
         "pve_energy": -50,
@@ -3787,8 +4319,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "560-0_flying_press"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AURA_SPHERE",
@@ -3796,6 +4327,8 @@
         "type_move": "CHARGE",
         "pvp_power": 100.0,
         "pvp_energy": -55,
+        "sound": "396-0_aura_sphere",
+        "buffs": [],
         "id": 332,
         "pve_power": 90.0,
         "pve_energy": -50,
@@ -3804,8 +4337,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "396-0_aura_sphere"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PAYBACK",
@@ -3813,6 +4345,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -60,
+        "sound": "371-0_payback",
+        "buffs": [],
         "id": 333,
         "pve_power": 100.0,
         "pve_energy": -100,
@@ -3821,8 +4355,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "371-0_payback"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ROCK_WRECKER",
@@ -3830,6 +4363,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -50,
+        "sound": "439-0_rock_wrecker",
+        "buffs": [],
         "id": 334,
         "pve_power": 110.0,
         "pve_energy": -50,
@@ -3838,8 +4373,7 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "439-0_rock_wrecker"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AEROBLAST",
@@ -3847,6 +4381,15 @@
         "type_move": "CHARGE",
         "pvp_power": 170.0,
         "pvp_energy": -75,
+        "sound": "170-0_aeroblast",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.125
+            }
+        ],
         "id": 335,
         "pve_power": 180.0,
         "pve_energy": -100,
@@ -3855,8 +4398,7 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "170-0_aeroblast"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TECHNO_BLAST_NORMAL",
@@ -3864,6 +4406,8 @@
         "type_move": "CHARGE",
         "pvp_power": 120.0,
         "pvp_energy": -55,
+        "sound": "170-0_aeroblast",
+        "buffs": [],
         "id": 336,
         "pve_power": 120.0,
         "pve_energy": -100,
@@ -3872,8 +4416,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0,
-        "sound": "546-0_techno_blast"
+        "staminaLossScalar": 0
     },
     {
         "name": "TECHNO_BLAST_BURN",
@@ -3881,6 +4424,8 @@
         "type_move": "CHARGE",
         "pvp_power": 120.0,
         "pvp_energy": -55,
+        "sound": "546-0_techno_blast",
+        "buffs": [],
         "id": 337,
         "pve_power": 120.0,
         "pve_energy": -100,
@@ -3889,8 +4434,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0,
-        "sound": "307-0_blast_burn"
+        "staminaLossScalar": 0
     },
     {
         "name": "TECHNO_BLAST_CHILL",
@@ -3898,6 +4442,8 @@
         "type_move": "CHARGE",
         "pvp_power": 120.0,
         "pvp_energy": -55,
+        "sound": "546-0_techno_blast",
+        "buffs": [],
         "id": 338,
         "pve_power": 120.0,
         "pve_energy": -100,
@@ -3906,8 +4452,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0,
-        "sound": "546-0_techno_blast"
+        "staminaLossScalar": 0
     },
     {
         "name": "TECHNO_BLAST_WATER",
@@ -3915,6 +4460,8 @@
         "type_move": "CHARGE",
         "pvp_power": 120.0,
         "pvp_energy": -55,
+        "sound": "546-0_techno_blast",
+        "buffs": [],
         "id": 339,
         "pve_power": 120.0,
         "pve_energy": -100,
@@ -3923,8 +4470,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0,
-        "sound": "546-0_techno_blast"
+        "staminaLossScalar": 0
     },
     {
         "name": "TECHNO_BLAST_SHOCK",
@@ -3932,6 +4478,8 @@
         "type_move": "CHARGE",
         "pvp_power": 120.0,
         "pvp_energy": -55,
+        "sound": "546-0_techno_blast",
+        "buffs": [],
         "id": 340,
         "pve_power": 120.0,
         "pve_energy": -100,
@@ -3940,8 +4488,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0,
-        "sound": "546-0_techno_blast"
+        "staminaLossScalar": 0
     },
     {
         "name": "FLY",
@@ -3949,6 +4496,8 @@
         "type_move": "CHARGE",
         "pvp_power": 80.0,
         "pvp_energy": -45,
+        "sound": "019-0_fly",
+        "buffs": [],
         "id": 341,
         "pve_power": 80.0,
         "pve_energy": -50,
@@ -3957,8 +4506,7 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "019-0_fly"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "V_CREATE",
@@ -3966,6 +4514,15 @@
         "type_move": "CHARGE",
         "pvp_power": 95.0,
         "pvp_energy": -40,
+        "sound": "557-0_v_create",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "attacker",
+                "power": -3,
+                "buffChance": 1.0
+            }
+        ],
         "id": 342,
         "pve_power": 95.0,
         "pve_energy": -33,
@@ -3974,8 +4531,7 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "557-0_v_create"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "LEAF_STORM",
@@ -3983,6 +4539,15 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -55,
+        "sound": "437-0_leaf_storm",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": -2,
+                "buffChance": 1.0
+            }
+        ],
         "id": 343,
         "pve_power": 130.0,
         "pve_energy": -100,
@@ -3991,8 +4556,7 @@
         "damageWindowEndMs": 1250,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "437-0_leaf_storm"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "TRI_ATTACK",
@@ -4000,6 +4564,21 @@
         "type_move": "CHARGE",
         "pvp_power": 65.0,
         "pvp_energy": -50,
+        "sound": "161-0_tri_attack",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.5
+            },
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.5
+            }
+        ],
         "id": 344,
         "pve_power": 75.0,
         "pve_energy": -50,
@@ -4008,8 +4587,7 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "161-0_tri_attack"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "GUST",
@@ -4017,6 +4595,8 @@
         "type_move": "FAST",
         "pvp_power": 16.0,
         "pvp_energy": 12,
+        "sound": "016-0_gust_fast",
+        "buffs": [],
         "id": 345,
         "pve_power": 25.0,
         "pve_energy": 20,
@@ -4025,8 +4605,7 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "016-0_gust"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "INCINERATE",
@@ -4034,6 +4613,8 @@
         "type_move": "FAST",
         "pvp_power": 15.0,
         "pvp_energy": 20,
+        "sound": "510-0_incinerate_fast",
+        "buffs": [],
         "id": 346,
         "pve_power": 29.0,
         "pve_energy": 20,
@@ -4042,8 +4623,7 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "510-0_incinerate"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "FEATHER_DANCE",
@@ -4051,6 +4631,15 @@
         "type_move": "CHARGE",
         "pvp_power": 35.0,
         "pvp_energy": -50,
+        "sound": "297-0_feather_dance",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -2,
+                "buffChance": 1.0
+            }
+        ],
         "id": 348,
         "pve_power": 35.0,
         "pve_energy": -50,
@@ -4059,8 +4648,7 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "297-0_feather_dance"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "WEATHER_BALL_NORMAL",
@@ -4068,6 +4656,8 @@
         "type_move": "CHARGE",
         "pvp_power": 55.0,
         "pvp_energy": -35,
+        "sound": "311-0_weather_ball",
+        "buffs": [],
         "id": 352,
         "pve_power": 55.0,
         "pve_energy": -33,
@@ -4076,8 +4666,7 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "311-0_weather_ball"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "PSYCHIC_FANGS",
@@ -4085,6 +4674,15 @@
         "type_move": "CHARGE",
         "pvp_power": 40.0,
         "pvp_energy": -35,
+        "sound": "423-0_ice_fang_fast",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 1.0
+            }
+        ],
         "id": 353,
         "pve_power": 30.0,
         "pve_energy": -33,
@@ -4093,8 +4691,7 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": null
+        "staminaLossScalar": 0.01
     },
     {
         "name": "MAGICAL_LEAF",
@@ -4102,6 +4699,8 @@
         "type_move": "FAST",
         "pvp_power": 10.0,
         "pvp_energy": 10,
+        "sound": "345-0_magical_leaf_fast",
+        "buffs": [],
         "id": 357,
         "pve_power": 16.0,
         "pve_energy": 16,
@@ -4110,8 +4709,7 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "345-0_magical_leaf"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SACRED_FIRE",
@@ -4119,6 +4717,15 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -65,
+        "sound": "221-0_sacred_fire",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.5
+            }
+        ],
         "id": 358,
         "pve_power": 120.0,
         "pve_energy": -100,
@@ -4127,8 +4734,7 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "221-0_sacred_fire"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ICICLE_SPEAR",
@@ -4136,6 +4742,8 @@
         "type_move": "CHARGE",
         "pvp_power": 60.0,
         "pvp_energy": -35,
+        "sound": "333-0_icicle_spear",
+        "buffs": [],
         "id": 359,
         "pve_power": 60.0,
         "pve_energy": -33,
@@ -4144,8 +4752,7 @@
         "damageWindowEndMs": 1800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "333-0_icicle_spear"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AEROBLAST_PLUS",
@@ -4153,6 +4760,15 @@
         "type_move": "CHARGE",
         "pvp_power": 170.0,
         "pvp_energy": -75,
+        "sound": "170-0_aeroblast",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.125
+            }
+        ],
         "id": 360,
         "pve_power": 200.0,
         "pve_energy": -100,
@@ -4161,8 +4777,7 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "170-0_aeroblast"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "AEROBLAST_PLUS_PLUS",
@@ -4170,6 +4785,15 @@
         "type_move": "CHARGE",
         "pvp_power": 170.0,
         "pvp_energy": -75,
+        "sound": "170-0_aeroblast",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "attacker",
+                "power": 2,
+                "buffChance": 0.125
+            }
+        ],
         "id": 361,
         "pve_power": 225.0,
         "pve_energy": -100,
@@ -4178,8 +4802,7 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "170-0_aeroblast"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SACRED_FIRE_PLUS",
@@ -4187,6 +4810,15 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -65,
+        "sound": "221-0_sacred_fire",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.5
+            }
+        ],
         "id": 362,
         "pve_power": 135.0,
         "pve_energy": -100,
@@ -4195,8 +4827,7 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "221-0_sacred_fire"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "SACRED_FIRE_PLUS_PLUS",
@@ -4204,6 +4835,15 @@
         "type_move": "CHARGE",
         "pvp_power": 130.0,
         "pvp_energy": -65,
+        "sound": "221-0_sacred_fire",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.5
+            }
+        ],
         "id": 363,
         "pve_power": 155.0,
         "pve_energy": -100,
@@ -4212,8 +4852,7 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "221-0_sacred_fire"
+        "staminaLossScalar": 0.01
     },
     {
         "name": "ACROBATICS",
@@ -4221,6 +4860,8 @@
         "type_move": "CHARGE",
         "pvp_power": 110.0,
         "pvp_energy": -60,
+        "sound": "512-0_acrobatics",
+        "buffs": [],
         "id": 364,
         "pve_power": 100.0,
         "pve_energy": -100,
@@ -4229,7 +4870,74 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01,
-        "sound": "512-0_acrobatics"
+        "staminaLossScalar": 0.01
+    },
+    {
+        "name": "LUSTER_PURGE",
+        "type": "PSYCHIC",
+        "type_move": "CHARGE",
+        "pvp_power": 120.0,
+        "pvp_energy": -60,
+        "sound": "295-0_luster_purge",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.5
+            }
+        ],
+        "id": 365,
+        "pve_power": 100.0,
+        "pve_energy": -100,
+        "durationMs": 1500,
+        "damageWindowStartMs": 500,
+        "damageWindowEndMs": 1500,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
+    },
+    {
+        "name": "MIST_BALL",
+        "type": "PSYCHIC",
+        "type_move": "CHARGE",
+        "pvp_power": 120.0,
+        "pvp_energy": -60,
+        "sound": "296-0_mist_ball",
+        "buffs": [
+            {
+                "type": "atk",
+                "target": "target",
+                "power": -1,
+                "buffChance": 0.5
+            }
+        ],
+        "id": 366,
+        "pve_power": 105.0,
+        "pve_energy": -100,
+        "durationMs": 2000,
+        "damageWindowStartMs": 1200,
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
+    },
+    {
+        "name": "ROLLOUT",
+        "type": "ROCK",
+        "type_move": "FAST",
+        "pvp_power": 4.0,
+        "pvp_energy": 14,
+        "sound": "205-0_rollout_fast",
+        "buffs": [],
+        "id": 368,
+        "pve_power": 14.0,
+        "pve_energy": 18,
+        "durationMs": 1400,
+        "damageWindowStartMs": 960,
+        "damageWindowEndMs": 1200,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     }
 ]
