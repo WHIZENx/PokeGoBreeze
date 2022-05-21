@@ -83,6 +83,13 @@ const Evolution = (props) => {
         return data.map(item => getEvoChain(item.evolves_to))
     }, [props.formDefault, props.form.form_name, props.region]);
 
+    const getGmaxChain = useCallback((id) => {
+        setArrEvoList([
+            [{name: props.form.name.replace("-gmax", ""), id: id, baby: false, form: 'normal', gmax: true}],
+            [{name: props.form.name.replace("-gmax", ""), id: id, baby: false, form: 'gmax', gmax: true}]
+        ]);
+    }, [props.form.name]);
+
     // const evoChain = useCallback((currId, arr, form) => {
     //     if (currId.length === 0) return arr;
     //     let currData = evoData.find(item => item.name.includes(form) && currId.includes(item.id));
@@ -110,9 +117,10 @@ const Evolution = (props) => {
         APIService.getFetchUrl(props.evolution_url)
         .then(res => {
             setArrEvoList([]);
-            getEvoChain([res.data.chain]);
+            if (props.form.form_name !== "gmax") getEvoChain([res.data.chain]);
+            else getGmaxChain(props.id);
         });
-    }, [props.evolution_url, getEvoChain]);
+    }, [props.evolution_url, props.form.form_name, getEvoChain, getGmaxChain, props.id]);
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -174,12 +182,12 @@ const Evolution = (props) => {
                 {evo > 0 && <Xarrow
                 labels={{end:
                     (<div className="position-absolute" style={{left: -40}}>
-                        <span className="d-flex align-items-center caption" style={{width: 'max-content'}}>
+                        {!value.gmax && <span className="d-flex align-items-center caption" style={{width: 'max-content'}}>
                             <div className="bg-poke-candy" style={{backgroundColor: computeBgColor(value.id)}}>
                                 <div className="poke-candy" style={{background: computeColor(value.id), width: 20, height: 20}}></div>
                             </div>
                             <span style={{marginLeft: 2}}>{`x${data.candyCost}`}</span>
-                        </span>
+                        </span>}
                         {Object.keys(data.quest).length > 0 &&
                             <Fragment>
                                 {data.quest.randomEvolution && <span className="caption"><QuestionMarkIcon fontSize="small"/></span>}
@@ -255,7 +263,9 @@ const Evolution = (props) => {
                             horizontal: 'left',
                         }}>
                             <Badge color="primary" overlap="circular" badgeContent={evo+1}>
-                                <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                                <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={
+                                    value.gmax && form === "gmax" ? props.form.sprites.front_default : APIService.getPokeSprite(value.id)
+                                }></img>
                             </Badge>
                         </Badge>
                     </ThemeProvider>

@@ -568,7 +568,6 @@ export const queryTopMove = (move) => {
         if (result === undefined) combatPoke = combatPoke[0]
         else combatPoke = result;
         if (combatPoke !== undefined) {
-
             let pokemonList;
             if (move.type_move === "FAST") {
                 pokemonList = combatPoke.QUICK_MOVES.map(item => item.replaceAll("_FAST", "")).includes(move.name);
@@ -576,17 +575,17 @@ export const queryTopMove = (move) => {
             }
             else if (move.type_move === "CHARGE") {
                 pokemonList = combatPoke.CINEMATIC_MOVES.includes(move.name);
-                if (!pokemonList) pokemonList = combatPoke.SHADOW_MOVES.includes(move.name)
+                if (!pokemonList) pokemonList = combatPoke.SHADOW_MOVES.includes(move.name);
+                if (!pokemonList) pokemonList = combatPoke.PURIFIED_MOVES.includes(move.name)
                 if (!pokemonList) pokemonList = combatPoke.ELITE_CINEMATIC_MOVES.includes(move.name);
             }
-
             if (pokemonList) dataPri.push({num: value.num, name: splitAndCapitalize(value.name, "-"), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: calculateDamagePVE(calculateStatsBettlePure(calBaseATK(value.baseStats, true), 15, 40), 200, move.pve_power, null, true)});
         }
     });
     return dataPri;
 }
 
-const queryMoveByCType = (dataList, vf, type, cmove, felite, celite, shadow) => {
+const queryMove = (dataList, vf, type, cmove, felite, celite, shadow, purified) => {
     cmove.forEach(vc => {
         let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
         let mc = combat.find(item => item.name === vc);
@@ -594,8 +593,8 @@ const queryMoveByCType = (dataList, vf, type, cmove, felite, celite, shadow) => 
 
         mf["elite"] = felite;
         mc["elite"] = celite;
-        mc["shadow"] = mc.name === "RETURN" ? false : shadow;
-        mc["purified"] = mc.name === "RETURN" ? true : false;
+        mc["shadow"] = shadow;
+        mc["purified"] = purified;
 
         let mfPower = mf.pve_power*(type.includes(mf.type.toLowerCase()) ? 1.2 : 1)
         let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
@@ -609,14 +608,16 @@ const queryMoveByCType = (dataList, vf, type, cmove, felite, celite, shadow) => 
 export const rankMove = (move, type) => {
     let dataPri = []
     move.QUICK_MOVES.forEach(vf => {
-        queryMoveByCType(dataPri, vf, type, move.CINEMATIC_MOVES, false, false, false);
-        queryMoveByCType(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, false, true, false);
-        queryMoveByCType(dataPri, vf, type, move.SHADOW_MOVES, false, false, true);
+        queryMove(dataPri, vf, type, move.CINEMATIC_MOVES, false, false, false, false);
+        queryMove(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, false, true, false, false);
+        queryMove(dataPri, vf, type, move.SHADOW_MOVES, false, false, true, false);
+        queryMove(dataPri, vf, type, move.PURIFIED_MOVES, false, false, false, true);
     });
     move.ELITE_QUICK_MOVES.forEach(vf => {
-        queryMoveByCType(dataPri, vf, type, move.CINEMATIC_MOVES, true, false, false);
-        queryMoveByCType(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, true, true, false);
-        queryMoveByCType(dataPri, vf, type, move.SHADOW_MOVES, true, false, true);
+        queryMove(dataPri, vf, type, move.CINEMATIC_MOVES, true, false, false, false);
+        queryMove(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, true, true, false);
+        queryMove(dataPri, vf, type, move.SHADOW_MOVES, true, false, true, false);
+        queryMove(dataPri, vf, type, move.PURIFIED_MOVES, true, false, false, true);
     });
 
     return {

@@ -153,7 +153,7 @@ const Form = (props) => {
             {dataPoke && currForm &&
             <Fragment>
             <hr className="w-100"></hr>
-            {props.formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 ?
+            {props.formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 && !currForm.form.form_name.includes("gmax") ?
             <div className='row w-100' style={{margin:0}}>
                 <div className='col-xl' style={{padding:0}}>
                 <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} eqForm={props.formList.length === 1 && props.species.pokedex_numbers.length > 1}/>

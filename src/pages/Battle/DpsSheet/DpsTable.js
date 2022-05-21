@@ -47,8 +47,8 @@ const fmoveSort = (rowA, rowB) => {
 };
 
 const cmoveSort = (rowA, rowB) => {
-    const a = rowA.cmove.name.toLowerCase();
-    const b = rowB.cmove.name.toLowerCase();
+    const a = rowA.cmove.name.toLowerCase().replaceAll(" plus", "+");
+    const b = rowB.cmove.name.toLowerCase().replaceAll(" plus", "+");
     return a === b ? 0 : a > b ? 1 : -1;
 };
 
@@ -65,6 +65,7 @@ const columns = [
         selector: row =>
             <Link to={"/pokemon/"+row.pokemon.num} target="_blank" title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, "-")}`}>
             {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
+            {row.purified && <img height={25} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
             <img height={48} alt='img-pokemon' style={{marginRight: 10}}
             src={APIService.getPokeIconSprite(row.pokemon.sprite, true)}
             onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.pokemon.baseSpecies)}}></img>
@@ -85,7 +86,7 @@ const columns = [
     {
         name: 'Charge Move',
         selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_")}`}>
-            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.cmove.name === "FRUSTRATION" && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.cmove.name === "RETURN" && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
+            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_").replaceAll(" Plus", "+")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.mShadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: cmoveSort
@@ -148,7 +149,7 @@ const DpsTable = (props) => {
 
     const {ELITE_MOVE, POKEMON_SHADOW, WEATHER_BOOSTS} = options;
 
-    const addCPokeData = useCallback((movePoke, value, vf, shadow, felite, celite) => {
+    const addCPokeData = useCallback((movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
         movePoke.forEach(vc => {
             let fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
             let cmove = combatData.find(item => item.name === vc);
@@ -158,9 +159,9 @@ const DpsTable = (props) => {
                 calculateStatsBettle(stats.def, options.IV_DEF, options.POKEMON_LEVEL),
                 calculateStatsBettle(stats.sta, options.IV_HP, options.POKEMON_LEVEL),
                 getBarCharge(true, Math.abs(cmove.pve_energy)),
-                value.types, options, cmove.name === "RETURN" ? false : shadow);
+                value.types, options, shadow);
             const tdo = calculateTDO(calculateStatsBettle(stats.def, options.IV_DEF, options.POKEMON_LEVEL),
-            calculateStatsBettle(stats.sta, options.IV_HP, options.POKEMON_LEVEL), dps, cmove.name === "RETURN" ? false : shadow)
+            calculateStatsBettle(stats.sta, options.IV_HP, options.POKEMON_LEVEL), dps, shadow)
             setDpsTable(oldArr => [...oldArr, {
                 pokemon: value,
                 fmove: fmove,
@@ -168,7 +169,9 @@ const DpsTable = (props) => {
                 dps: dps,
                 tdo: tdo,
                 multiDpsTdo: Math.pow(dps,3)*tdo,
-                shadow: cmove.name === "RETURN" ? false : shadow,
+                shadow: shadow,
+                purified: purified && purifiedMove && purifiedMove.includes(cmove.name),
+                mShadow: shadow && shadowMove && shadowMove.includes(cmove.name),
                 elite: {
                     fmove: felite,
                     cmove: celite
@@ -180,14 +183,15 @@ const DpsTable = (props) => {
 
     const addFPokeData = useCallback((combat, movePoke, value, felite) => {
         movePoke.forEach(vf => {
-            addCPokeData(combat.CINEMATIC_MOVES, value, vf, false, felite, false);
+            addCPokeData(combat.CINEMATIC_MOVES, value, vf, false, false, felite, false);
             if (options.POKEMON_SHADOW && !value.slug.includes("mega")) {
-                if (combat.SHADOW_MOVES.length > 0) addCPokeData(combat.CINEMATIC_MOVES, value, vf, true, felite, false);
-                addCPokeData(combat.SHADOW_MOVES, value, vf, true, felite, false);
+                if (combat.SHADOW_MOVES.length > 0) addCPokeData(combat.CINEMATIC_MOVES, value, vf, true, false, felite, false);
+                addCPokeData(combat.SHADOW_MOVES, value, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
+                addCPokeData(combat.PURIFIED_MOVES, value, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
             }
             if (options.ELITE_MOVE) {
-                if (options.POKEMON_SHADOW && !value.slug.includes("mega") && combat.SHADOW_MOVES.length > 0) addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, true, felite, true);
-                else addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, false, felite, true);
+                if (options.POKEMON_SHADOW && !value.slug.includes("mega") && combat.SHADOW_MOVES.length > 0) addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, true, false, felite, true);
+                else addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, false, false, felite, true);
             }
         });
     }, [addCPokeData, options.ELITE_MOVE, options.POKEMON_SHADOW]);

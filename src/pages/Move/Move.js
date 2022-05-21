@@ -93,7 +93,7 @@ const Move = (props) => {
             {move &&
             <div className={'poke-container'+(props.id ? "" : " container")}>
                 <div className="h-100 head-box">
-                    <h1 className="d-inline-block" style={{marginRight: 15}}><b>{splitAndCapitalize(move.name.toLowerCase(), "_")}</b></h1>
+                    <h1 className="d-inline-block" style={{marginRight: 15}}><b>{splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</b></h1>
                     <div className="d-inline-block"><TypeBar type={move.type}/></div>
                 </div>
                 <hr></hr>
@@ -101,7 +101,7 @@ const Move = (props) => {
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-table">
                             <thead className="center">
-                                <tr><th colSpan="3">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_")+" in Pokemon Go"}</th></tr>
+                                <tr><th colSpan="3">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")+" in Pokemon Go"}</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
@@ -110,7 +110,7 @@ const Move = (props) => {
                                 </tr>
                                 <tr>
                                     <td>Name</td>
-                                    <td colSpan="2"><b>{splitAndCapitalize(move.name.toLowerCase(), "_")}</b></td>
+                                    <td colSpan="2"><b>{splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</b></td>
                                 </tr>
                                 <tr>
                                     <td>Type</td>
@@ -213,7 +213,7 @@ const Move = (props) => {
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-damage-table">
                             <thead className="center">
-                                <tr><th colSpan="2">{"Damage "+splitAndCapitalize(move.name.toLowerCase(), "_")+" Simulator"}</th></tr>
+                                <tr><th colSpan="2">{"Damage "+splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")+" Simulator"}</th></tr>
                             </thead>
                             <tbody>
                                 <tr className="center"><td className="table-sub-header" colSpan="2">PVE Stats</td></tr>
@@ -246,7 +246,7 @@ const Move = (props) => {
                                     <td>DPS (STAB)</td>
                                     <td>{((move.pvp_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
-                                <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_")}</td></tr>
+                                <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</td></tr>
                                 <tr>
                                     <td colSpan={2} style={{padding: 0}}><DataTable
                                         columns={columns}

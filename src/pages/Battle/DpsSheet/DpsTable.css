@@ -3,6 +3,11 @@
     bottom: 0;
 }
 
+.purified-icon {
+    position: absolute;
+    bottom: 0;
+}
+
 .level-select {
     border-radius: 0;
     outline: 0;

@@ -36,16 +36,14 @@ const TableMove = (props) => {
         return (
             <tr>
                 <td className="text-origin">
-                    <Link to={"../moves/"+value.fmove.id} target="_blank" className="d-flex align-items-center">
-                    <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
+                    <Link to={"../moves/"+value.fmove.id} target="_blank" className="d-block">
+                        <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
                             <img width={20} height={20} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}></img>
                         </div>
-                        <div className="d-inline-block" style={{width: 'max-content'}}>
-                            <span style={{marginRight: 5}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_")}</span>
-                            <span tyle={{width: 'max-content'}}>
-                                {value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
-                            </span>
-                        </div>
+                        <span style={{marginRight: 5}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</span>
+                        <span style={{width: 'max-content'}}>
+                            {value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
+                        </span>
                     </Link>
                 </td>
                 <td className="text-origin">
@@ -53,14 +51,12 @@ const TableMove = (props) => {
                         <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
                             <img width={20} height={20} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}></img>
                         </div>
-                        <div className="d-inline-block" style={{width: 'max-content'}}>
-                            <span style={{marginRight: 5}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_")}</span>
-                            <span tyle={{width: 'max-content'}}>
-                                {value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
-                                {value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}
-                                {value.cmove.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}
-                            </span>
-                        </div>
+                        <span style={{marginRight: 5}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</span>
+                        <span style={{width: 'max-content'}}>
+                            {value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
+                            {value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}
+                            {value.cmove.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}
+                        </span>
                     </Link>
                 </td>
                 <td className="center">{Math.round(value.eDPS[type]*100/max)}</td>
