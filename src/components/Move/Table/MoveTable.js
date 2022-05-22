@@ -23,10 +23,10 @@ const TableMove = (props) => {
         let combatPoke = pokemonCombatList.filter(item => item.ID === parseInt(props.data.species.url.split("/")[6]));
         if (combatPoke && combatPoke.length === 1) return setMove(rankMove(combatPoke[0], props.data.types.map(item => item.type.name)));
 
-        let result = combatPoke.find(item => item.NAME === convertName(props.data.name));
+        let result = combatPoke.find(item => item.NAME === convertName(props.form.name));
         if (result === undefined) setMove(rankMove(combatPoke[0], props.data.types.map(item => item.type.name)));
-        else setMove(rankMove(result, props.types.map(item => item.type.name)));
-    }, [props.data, props.types]);
+        else setMove(rankMove(result, props.form.types.map(item => item.type.name)));
+    }, [props.data, props.form]);
 
     useEffect(() => {
         findMove();

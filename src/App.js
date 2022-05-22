@@ -19,6 +19,7 @@ import DpsTable from './pages/Battle/DpsSheet/DpsTable';
 import Move from './pages/Move/Move';
 import Error from './pages/Error/Error';
 import Leagues from './pages/Leagues/Legues';
+import FindBattle from './pages/CalculateTools/FindBattle/FindBattle';
 
 const App = () => {
 
@@ -39,6 +40,7 @@ const App = () => {
               <Route path="/search-move" element={<SearchMove/>}></Route>
               <Route path="/find-cp-iv" element={<FindTable/>}></Route>
               <Route path="/calculate-cp-iv" element={<Calculate/>}></Route>
+              <Route path="/find-battle-stats" element={<FindBattle/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
               <Route path="/moves/:id" element={<Move/>}></Route>
               <Route path="/stats-table" element={<StatsTable/>}></Route>

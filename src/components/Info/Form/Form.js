@@ -144,7 +144,7 @@ const Form = (props) => {
                         <Info data={dataPoke} currForm={currForm} />
                     </div>
                     <div className="col-md-7" style={{padding:0}}>
-                        <TableMove data={dataPoke} types={currForm.form.types}/>
+                        <TableMove data={dataPoke} form={currForm.form}/>
                     </div>
                 </div>
             </Fragment>

@@ -626,3 +626,21 @@ export const rankMove = (move, type) => {
         maxDef: Math.max(...dataPri.map(item => item.eDPS.defensive))
     };
 }
+
+export const queryStatesEvoChain = (id, item, cp, atkIV, defIV, staIV) => {
+    // let battleData = [];
+    let currPokemon = Object.values(pokemonData).find(value => value.num === id);
+    var stats = calculateStats(calBaseATK(currPokemon.baseStats, true), calBaseDEF(currPokemon.baseStats, true), calBaseSTA(currPokemon.baseStats, true), atkIV, defIV, staIV, cp);
+
+    if (id !== item.id) {
+        let pokemon = Object.values(pokemonData).find(value => value.num === item.id);
+
+        let atkStats = calBaseATK(pokemon.baseStats, true);
+        let defStats = calBaseDEF(pokemon.baseStats, true);
+        let staStats = calBaseSTA(pokemon.baseStats, true);
+
+        let cp = calculateCP(atkStats,defStats,staStats,stats.level);
+        console.log(cp)
+    }
+
+}

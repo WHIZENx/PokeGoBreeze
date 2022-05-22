@@ -28,12 +28,11 @@ const NavbarComponent = () => {
                     <NavDropdown title="Tools" id="basic-nav-dropdown">
                         <Link className="dropdown-item" to="/find-cp-iv">Find IV&CP</Link>
                         <Link className="dropdown-item" to="/calculate-cp-iv">Calculate IV&CP</Link>
-                    </NavDropdown>
-                    <NavDropdown title="Battle Simulator" id="basic-nav-dropdown">
+                        <Link className="dropdown-item" to="/find-battle-stats">Find Battle Stats</Link>
                         <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
-                        <Link className="dropdown-item" to="/dps-tdo-table">DPS&TDO Table</Link>
+                        <Link className="dropdown-item" to="/stats-table">Stats Table</Link>
                     </NavDropdown>
-                    <Link className="nav-link" to="/stats-table">Stats Table</Link>
+                    <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Sheet</Link>
                     <Link className="nav-link" to="/leagues">Battle Leagues</Link>
                 </Nav>
             </Navbar.Collapse>

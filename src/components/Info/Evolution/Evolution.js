@@ -42,11 +42,11 @@ const Evolution = (props) => {
         let evoList = data.map(item => {
             return evoData.filter(e => e.id === parseInt(item.species.url.split("/")[6]));
         })[0];
-        let curForm = props.formDefault ?
-        ["Alola", "Galar"].includes(props.region) ?
-        props.region : "" : props.form.form_name;
+        let currForm = props.formDefault ?
+        props.form.form_name === "" && ["Alola", "Galar"].includes(props.region) ?
+        props.region : props.form.form_name : props.form.form_name;
         if (evoList.length > 1) {
-            let evoInJSON = evoList.find(item => item.name.includes(curForm.toUpperCase()));
+            let evoInJSON = evoList.find(item => item.name.includes(currForm.toUpperCase()));
             if (evoInJSON) {
                 let evoInAPI = data.find(item => parseInt(item.species.url.split("/")[6]) === evoInJSON.id);
                 if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
@@ -60,7 +60,7 @@ const Evolution = (props) => {
                 }
             }
         } else {
-            let evoInJSON = evoList.find(item => item.name.includes(curForm.toUpperCase()));
+            let evoInJSON = evoList.find(item => item.name.includes(currForm.toUpperCase()));
             if (!evoInJSON && ["Alola", "Galar"].includes(props.region)) evoInJSON = evoList.find(item => item.name.includes(""))
             if (evoInJSON) {
                 let evoInAPI = data.find(item => parseInt(item.species.url.split("/")[6]) === evoInJSON.id);
@@ -69,11 +69,12 @@ const Evolution = (props) => {
                     evoInJSON.evo_list.forEach(value =>
                         data.forEach(item => {
                             item.evolves_to.forEach(i => {
-                                tempArr.push({...i, form: value.evo_to_form.toLowerCase().replaceAll("_", "-")});
+                                if (["kubfu", "rockruff"].includes(props.form.name) || value.evo_to_form.toLowerCase().replaceAll("_", "-") === currForm) tempArr.push({...i, form: value.evo_to_form.toLowerCase().replaceAll("_", "-")});
                             });
                         })
                     );
                     data = [evoInAPI].map(item => ({...item, evolves_to: tempArr}));
+
                 }
             }
         }
@@ -81,7 +82,7 @@ const Evolution = (props) => {
             return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby, form: item.form ? item.form : null}
         })]);
         return data.map(item => getEvoChain(item.evolves_to))
-    }, [props.formDefault, props.form.form_name, props.region]);
+    }, [props.formDefault, props.form, props.region]);
 
     const getGmaxChain = useCallback((id) => {
         setArrEvoList([

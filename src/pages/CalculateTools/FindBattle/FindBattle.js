@@ -1,9 +1,13 @@
+import { useCallback, useEffect, useState } from "react";
+import Find from "../Find";
+
 import { Box, Slider, styled } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
-import DataTable from "react-data-table-component";
-import { calStatsProd } from "../../components/Calculate/Calculate";
-import APIService from "../../services/API.service";
-import Find from "../CalculateTools/Find";
+import evoData from "../../../data/evolution_pokemon_go.json";
+import pokeImageList from '../../../data/assets_pokemon_go.json';
+
+import './FineBattle.css';
+import APIService from "../../../services/API.service";
+import { queryStatesEvoChain } from "../../../components/Calculate/Calculate";
 
 const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
 
@@ -71,122 +75,91 @@ const PokeGoSlider = styled(Slider)(() => ({
     },
 }));
 
-const columnsStats = [
-    {
-        name: 'Rank',
-        selector: row => row.rank,
-        sortable: true,
-    },
-    {
-        name: 'Level',
-        selector: row => row.level,
-        sortable: true,
-    },
-    {
-        name: 'IV ATK',
-        selector: row => row.IV.atk,
-        sortable: true,
-    },
-    {
-        name: 'IV DEF',
-        selector: row => row.IV.def,
-        sortable: true,
-    },
-    {
-        name: 'IV STA',
-        selector: row => row.IV.sta,
-        sortable: true,
-    },
-    {
-        name: 'CP',
-        selector: row => row.CP,
-        sortable: true,
-    },
-    {
-        name: 'Stat Prod (*1000)',
-        selector: row => parseFloat((row.statsProds/1000).toFixed(2)),
-        sortable: true,
-    },
-    {
-        name: 'Stat Prod (%)',
-        selector: row => parseFloat(row.ratio.toFixed(2)),
-        sortable: true,
-    },
-];
+const FindBattle = () => {
 
-const StatsTable = () => {
-
+    const [id, setId] = useState(1);
     const [name, setName] = useState('Bulbasaur');
 
     const [searchCP, setSearchCP] = useState('');
-
-    const [ATKIv, setATKIv] = useState(0);
-    const [DEFIv, setDEFIv] = useState(0);
-    const [STAIv, setSTAIv] = useState(0);
 
     const [statATK, setStatATK] = useState(0);
     const [statDEF, setStatDEF] = useState(0);
     const [statSTA, setStatSTA] = useState(0);
 
-    const currStatBattle = useRef([]);
-    const [battleLeague, setBattleLeague] = useState(500);
+    const [ATKIv, setATKIv] = useState(0);
+    const [DEFIv, setDEFIv] = useState(0);
+    const [STAIv, setSTAIv] = useState(0);
 
-    const [statsBattle, setStatsBattle] = useState([]);
+    const [evoChain, setEvoChain] = useState([]);
 
-    useEffect(() => {
-        const battleTable = calStatsProd(statATK, statDEF, statSTA, battleLeague);
-        currStatBattle.current = battleTable
-        setStatsBattle(battleTable);
-        document.title = "Stats Battle League - Tool";
-    }, [statATK, statDEF, statSTA, battleLeague]);
-
-    const clearStats = () => {
-        setBattleLeague(500);
+    const clearArrStats = () => {
         setSearchCP('');
-        setATKIv(0);
-        setDEFIv(0);
-        setSTAIv(0);
     }
 
-    const clearStatsPoke = useCallback(() => {
-        setStatsBattle(calStatsProd(statATK, statDEF, statSTA, battleLeague))
-    }, [battleLeague, statATK, statDEF, statSTA]);
+    const currEvoChain = useCallback((currId, arr) => {
+        if (currId.length === 0) return arr;
+        let curr = evoData.find(item => currId.includes(item.id));
+        if (!arr.map(i => i.id).includes(curr.id)) arr.push(curr);
+        return currEvoChain(curr.evo_list.map(i => i.evo_to_id), arr)
+    }, []);
+
+    const prevEvoChain = useCallback((obj, arr) => {
+        if (!arr.map(i => i.id).includes(obj.id)) arr.push(obj);
+        obj.evo_list.forEach(i => {
+            currEvoChain([i.evo_to_id], arr)
+        });
+        let curr = evoData.filter(item => item.evo_list.find(i => obj.id === i.evo_to_id));
+        if (curr.length === 0) return arr
+        else if (curr.length === 1) return prevEvoChain(curr[0], arr)
+        else return curr.map(item => prevEvoChain(item, arr));
+    }, [currEvoChain]);
+
+    const getEvoChain = useCallback((id) => {
+        setEvoChain([]);
+        let curr = evoData.filter(item => item.evo_list.find(i => id === i.evo_to_id));
+        if (curr.length === 0) curr = evoData.filter(item => id === item.id);
+        return curr.map(item => prevEvoChain(item, []));
+    }, [prevEvoChain]);
 
     const searchStatsPoke = useCallback(() => {
-        setStatsBattle([...currStatBattle.current].filter(item => item.CP === parseInt(searchCP) && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv))
-    }, [searchCP, ATKIv, DEFIv, STAIv]);
+        let arr = []
+        let data = getEvoChain(id);
+        data.forEach(item => {
+            let tempArr = []
+            item.forEach(value => {
+                tempArr.push(queryStatesEvoChain(id, value, searchCP, ATKIv, DEFIv, STAIv))
+            });
+            arr.push(tempArr);
+        });
+    }, [searchCP, ATKIv, DEFIv, STAIv, getEvoChain, id]);
 
     const onSearchStatsPoke = useCallback((e) => {
         e.preventDefault();
         searchStatsPoke();
     }, [searchStatsPoke]);
 
+    useEffect(() => {
+        console.log(name,statATK,statDEF,statSTA);
+    }, [name,statATK,statDEF,statSTA]);
+
+    const getImageList = (id, name) => {
+        let img = pokeImageList.find(item => item.id === id).image.find(item => name.includes(item.form));
+        if (!img) img = pokeImageList.find(item => item.id === id).image[0];
+        return img.default;
+    };
+
+    const capitalize = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    const splitAndCapitalize = (string) => {
+        return string.split("_").map(text => capitalize(text)).join(" ");
+    };
+
     return (
-        <div className="container" style={{minHeight: 1650}}>
-            <Find clearStats={clearStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName}/>
-            <h1 id ="main" className='center'>Stats Battle Table</h1>
-            <div className="center" style={{marginTop: 15, marginBottom: 15}}>
-                <button className={"btn btn-form"+(battleLeague === 500 ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(500)}>
-                    <img alt='img-league' width={128} height={128} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img>
-                    <div><b>Little Cup</b></div>
-                    <span className="text-danger">CP below 500</span>
-                </button>
-                <button className={"btn btn-form"+(battleLeague === 1500 ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(1500)}>
-                    <img alt='img-league' width={128} height={128} src={APIService.getPokeLeague("great_league")}></img>
-                    <div><b>Great League</b></div>
-                    <span className="text-danger">CP below 1500</span>
-                </button>
-                <button className={"btn btn-form"+(battleLeague === 2500 ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(2500)}>
-                    <img alt='img-league' width={128} height={128} src={APIService.getPokeLeague("ultra_league")}></img>
-                    <div><b>Ultra League</b></div>
-                    <span className="text-danger">CP below 2500</span>
-                </button>
-                <button className={"btn btn-form"+(battleLeague === null ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(null)}>
-                    <img alt='img-league' width={128} height={128} src={APIService.getPokeLeague("master_league")}></img>
-                    <div><b>Master League</b></div>
-                    <span className="text-danger">No limit CP</span>
-                </button>
-            </div>
+        <div className="container">
+            <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName}/>
+            <h1 id ="main" className='center'>Find Stats Battle</h1>
             <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)}>
                 <div className="form-group d-flex justify-content-center center">
                     <Box sx={{ width: '50%', minWidth: 350 }}>
@@ -249,22 +222,23 @@ const StatsTable = () => {
                     </Box>
                 </div>
                 <div className="form-group d-flex justify-content-center center element-top">
-                    <button type="button" className="btn btn-danger" style={{marginRight: 15}} onClick={() => clearStatsPoke()}>Clear</button>
                     <button type="submit" className="btn btn-primary">Search</button>
                 </div>
             </form>
-            <DataTable
-                title={"Stat Battle for "+name}
-                columns={columnsStats}
-                data={statsBattle}
-                pagination
-                defaultSortFieldId={1}
-                striped
-                highlightOnHover
-            />
+            <div className="center element-top">
+            {evoChain.map((value, index) => (
+                <div className="evo-content" key={index}>
+                    {value.sort((a,b) => a.id - b.id).map((item, index) => (
+                        <div className="d-inline-block evo-item-desc" key={index}>
+                            <img alt='pokemon-model' height={100} src={APIService.getPokemonModel(getImageList(item.id, item.name))}></img>
+                            <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase())}</b></div>
+                        </div>
+                    ))}
+                </div>
+            ))}
+            </div>
         </div>
     )
-
 }
 
-export default StatsTable;
+export default FindBattle;
