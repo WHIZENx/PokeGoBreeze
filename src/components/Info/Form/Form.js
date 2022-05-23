@@ -9,7 +9,7 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { regionList, splitAndCapitalize } from '../../Calculate/Calculate';
+import { capitalize, regionList, splitAndCapitalize } from '../../Calculate/Calculate';
 
 const Form = (props) => {
 

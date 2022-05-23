@@ -21,7 +21,7 @@ import evoData from "../../../data/evolution_pokemon_go.json";
 
 import "./Evolution.css";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { computeBgColor, computeColor, splitAndCapitalize } from "../../Calculate/Calculate";
+import { capitalize, computeBgColor, computeColor, splitAndCapitalize } from "../../Calculate/Calculate";
 
 const theme = createTheme({
     palette: {
