@@ -373,8 +373,21 @@ export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_l
             def : def_stat,
             sta : calculateStatsBettle(sta, IVsta, dataBettle.level)
         }
-
         return dataBettle
+    }
+}
+
+export const findCPforLeague = (atk, def, sta, IVatk, IVdef, IVsta, level, maxCPLeague) => {
+    let cp = 10;
+    let l = level;
+    for (let i = level; i <= MAX_LEVEL; i+=0.5) {
+        if (calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) > maxCPLeague && maxCPLeague !== null) break;
+        cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i);
+        l = i;
+    }
+    return {
+        cp: cp,
+        level: l
     }
 }
 
@@ -627,20 +640,23 @@ export const rankMove = (move, type) => {
     };
 }
 
-export const queryStatesEvoChain = (id, item, cp, atkIV, defIV, staIV) => {
-    // let battleData = [];
-    let currPokemon = Object.values(pokemonData).find(value => value.num === id);
-    var stats = calculateStats(calBaseATK(currPokemon.baseStats, true), calBaseDEF(currPokemon.baseStats, true), calBaseSTA(currPokemon.baseStats, true), atkIV, defIV, staIV, cp);
+export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
+    let pokemon = Object.values(pokemonData).find(value => value.num === item.id);
+    let pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+    let dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 500);
+    let dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 1500);
+    let dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 2500);
+    let dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, null);
 
-    if (id !== item.id) {
-        let pokemon = Object.values(pokemonData).find(value => value.num === item.id);
-
-        let atkStats = calBaseATK(pokemon.baseStats, true);
-        let defStats = calBaseDEF(pokemon.baseStats, true);
-        let staStats = calBaseSTA(pokemon.baseStats, true);
-
-        let cp = calculateCP(atkStats,defStats,staStats,stats.level);
-        console.log(cp)
+    let battleLeague = {
+        little: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 500).find(item => item.CP === dataLittle.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        great: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 1500).find(item => item.CP === dataGreat.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        ultra: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 2500).find(item => item.CP === dataUltra.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        master: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null).find(item => item.CP === dataMaster.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV)
     }
-
+    if (battleLeague.little) battleLeague.little = {...battleLeague.little, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.little.level)};
+    if (battleLeague.great) battleLeague.great = {...battleLeague.great, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.great.level)};
+    if (battleLeague.ultra) battleLeague.ultra = {...battleLeague.ultra, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.ultra.level)};
+    if (battleLeague.master) battleLeague.master = {...battleLeague.master, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.master.level)};
+    return {...item, battleLeague}
 }

@@ -84,9 +84,9 @@ const Find = (props) => {
     };
 
     const handleSetStats = (type, value) => {
-        if (type === "atk") props.setStatATK(value)
-        else if (type === "def") props.setStatDEF(value)
-        else if (type === "sta") props.setStatSTA(value)
+        if (type === "atk" && props.setStatATK) props.setStatATK(value)
+        else if (type === "def" && props.setStatDEF) props.setStatDEF(value)
+        else if (type === "sta" && props.setStatSTA) props.setStatSTA(value)
     }
 
     const decId = () => {

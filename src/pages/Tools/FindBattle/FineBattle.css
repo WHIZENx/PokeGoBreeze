@@ -1,3 +1,56 @@
+.contain-poke-best-league {
+    margin: 10px;
+}
+
+.poke-best-league {
+    padding: 10px;
+}
+
+.best-poke-desc {
+    padding: 13px;
+}
+
+.border-best-poke {
+    border: 1px solid lightgray;
+}
+
 .evo-item-desc {
     margin: 10px 5%;
+}
+
+.rank-max {
+    color: red;
+    background-color: rgb(236, 200, 200);
+}
+
+.rank-max div b {
+    text-shadow: white 1px 1px;
+}
+
+.rank-excellent {
+
+    color: blueviolet;
+    background-color: rgb(236, 200, 236);
+}
+
+.rank-excellent div b {
+    text-shadow: white 1px 1px;
+}
+
+.rank-great {
+    color: green;
+    background-color: rgb(200, 236, 200);
+}
+
+.rank-great div b {
+    text-shadow: white 1px 1px;
+}
+
+.rank-nice {
+    color: yellow;
+    background-color: rgb(236, 236, 200);
+}
+
+.rank-nice div b {
+    text-shadow: black 1px 1px;
 }
