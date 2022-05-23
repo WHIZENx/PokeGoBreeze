@@ -10,6 +10,10 @@
     padding: 13px;
 }
 
+.list-best-league li {
+    padding-left: 2rem;
+}
+
 .border-best-poke {
     border: 1px solid lightgray;
 }

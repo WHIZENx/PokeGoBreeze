@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import evoData from "../../../data/evolution_pokemon_go.json";
 import pokeImageList from '../../../data/assets_pokemon_go.json';
 
-import './FineBattle.css';
+import './FindBattle.css';
 import APIService from "../../../services/API.service";
 import { calculateStats, computeBgColor, computeColor, queryStatesEvoChain, splitAndCapitalize } from "../../../components/Calculate/Calculate";
 import { Accordion } from "react-bootstrap";
@@ -102,6 +102,9 @@ const FindBattle = () => {
         setSearchCP('');
         setEvoChain([]);
         setBestInLeague([]);
+        setATKIv(0);
+        setDEFIv(0);
+        setSTAIv(0);
     }
 
     const currEvoChain = useCallback((currId, arr) => {
@@ -153,7 +156,8 @@ const FindBattle = () => {
             || (item.league === "master" && item.CP >= 2500));
         if (bestLeague.length === 0) bestLeague = evoBaseStats.filter(item => item.ratio > currBastStats.ratio);
         if (bestLeague.length === 0) bestLeague = [currBastStats];
-        setBestInLeague(bestLeague);
+        if (currBastStats.ratio >= 90) bestLeague.push(currBastStats);
+        setBestInLeague(bestLeague.sort((a,b) => a.id - b.id));
     }, [ATKIv, DEFIv, STAIv, getEvoChain, id]);
 
     const onSearchStatsPoke = useCallback((e) => {
@@ -171,7 +175,8 @@ const FindBattle = () => {
     const getImageList = (id, name) => {
         let img = pokeImageList.find(item => item.id === id).image.find(item => name.includes(item.form));
         if (!img) img = pokeImageList.find(item => item.id === id).image[0];
-        return img.default;
+        try {return img.default}
+        catch {return null}
     };
 
     const getCandyEvo = (item, id) => {
@@ -278,7 +283,7 @@ const FindBattle = () => {
                         <div className="d-inline-block contain-poke-best-league border-best-poke" key={index}>
                             <div className="d-flex align-items-center h-100">
                                 <div className="border-best-poke h-100">
-                                    <img className="poke-best-league" alt='pokemon-model' height={102} src={APIService.getPokemonModel(getImageList(value.id, value.name))}></img>
+                                    <img className="poke-best-league" alt='pokemon-model' height={102} src={getImageList(value.id, value.name) ? APIService.getPokemonModel(getImageList(value.id, value.name)) : APIService.getPokeFullSprite(value.id)}></img>
                                     <span className="caption text-black border-best-poke"><b>#{value.id} {splitAndCapitalize(value.name, "_", " ")}</b></span>
                                 </div>
                                 <div className={"border-best-poke "+(getTextColorRatio(value.ratio))}>
@@ -311,53 +316,60 @@ const FindBattle = () => {
                         </Accordion.Header>
                         <Accordion.Body>
                             {evoChain.map((value, index) => (
-                                <div className="d-flex justify-content-center league-info-content" key={index}>
+                                <div className="row justify-content-center league-info-content" key={index} style={{margin:0}}>
                                     {value.sort((a,b) => a.id - b.id).map((item, index) => (
-                                        <div className="d-inline-block evo-item-desc" key={index}>
-                                            <img alt='pokemon-model' height={100} src={APIService.getPokemonModel(getImageList(item.id, item.name))}></img>
+                                        <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{padding:0}}>
+                                            <img alt='pokemon-model' height={100} src={getImageList(item.id, item.name) ? APIService.getPokemonModel(getImageList(item.id, item.name)) : APIService.getPokeFullSprite(item.id)}></img>
                                             <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</b></div>
                                             {item.id < id ?
-                                            <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Elidge</b></div>
+                                            <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Not Elidge</b></div>
                                             :
                                             <Fragment>
-                                            <div className="element-top" style={{textAlign: 'start'}}>
-                                                <h6><img alt='pokemon-model' height={32} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img> <b>Little Cup</b></h6>
+                                            <hr></hr>
+                                            <div className="element-top d-flex justify-content-center" style={{textAlign: 'start'}}>
                                                 {item.battleLeague.little ?
-                                                <ul>
-                                                    <li>Rank: {item.battleLeague.little.rank}</li>
-                                                    <li>CP: {item.battleLeague.little.CP}</li>
-                                                    <li>Stats Prod (%): {item.battleLeague.little.ratio.toFixed(2)}</li>
-                                                    <li>
-                                                        <span className="d-flex align-items-center">
-                                                            <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
-                                                                <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
-                                                            </div>
-                                                            <span>{item.battleLeague.little.result_between_candy+getCandyEvo(value, item.id)} <span className="d-inline-block caption text-success"> (+{getCandyEvo(value, item.id)})</span></span>
-                                                            <div className="position-relative d-inline-block">
-                                                                <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                                <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
-                                                            </div>
-                                                            {item.battleLeague.little.result_between_xl_candy}
-                                                        </span>
-                                                    </li>
-                                                </ul>
+                                                    <ul className="list-best-league">
+                                                        <h6><img alt='pokemon-model' height={32} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img> <b>Little Cup</b></h6>
+                                                        <li>Rank: {item.battleLeague.little.rank}</li>
+                                                        <li>CP: {item.battleLeague.little.CP}</li>
+                                                        <li>Level: {item.battleLeague.little.level}</li>
+                                                        <li>Stats Prod (%): {item.battleLeague.little.ratio.toFixed(2)}</li>
+                                                        <li>
+                                                            <span className="d-flex align-items-center">
+                                                                <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
+                                                                    <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
+                                                                </div>
+                                                                <span className="d-flex align-items-center" style={{marginRight: 5}}>{item.battleLeague.little.result_between_candy+getCandyEvo(value, item.id)}<span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span></span>
+                                                                <div className="position-relative d-inline-block">
+                                                                    <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
+                                                                    <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                                </div>
+                                                                {item.battleLeague.little.result_between_xl_candy}
+                                                            </span>
+                                                        </li>
+                                                        <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img> {item.battleLeague.little.result_between_stadust} {item.battleLeague.little.result_between_stadust}</li>
+                                                    </ul>
                                                 :
-                                                <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Elidge</b></div>
+                                                <div>
+                                                    <h6><img alt='pokemon-model' height={32} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img> <b>Little Cup</b></h6>
+                                                    <b style={{padding: '1rem'}} className="text-danger"><CloseIcon sx={{color: 'red'}}/> Not Elidge</b>
+                                                </div>
                                                 }
                                             </div>
-                                            <div className="element-top" style={{textAlign: 'start'}}>
-                                                <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("great_league")}></img> <b>Great League</b></h6>
+                                            <div className="element-top d-flex justify-content-center" style={{textAlign: 'start'}}>
                                                 {item.battleLeague.great ?
-                                                <ul>
+                                                <ul className="list-best-league">
+                                                    <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("great_league")}></img> <b>Great League</b></h6>
                                                     <li>Rank: {item.battleLeague.great.rank}</li>
                                                     <li>CP: {item.battleLeague.great.CP}</li>
+                                                    <li>Level: {item.battleLeague.great.level}</li>
                                                     <li>Stats Prod (%): {item.battleLeague.great.ratio.toFixed(2)}</li>
                                                     <li>
                                                         <span className="d-flex align-items-center">
                                                             <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
                                                                 <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
                                                             </div>
-                                                            <span>{item.battleLeague.great.result_between_candy+getCandyEvo(value, item.id)} <span className="d-inline-block caption text-success"> (+{getCandyEvo(value, item.id)})</span></span>
+                                                            <span className="d-flex align-items-center">{item.battleLeague.great.result_between_candy+getCandyEvo(value, item.id)}<span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span></span>
                                                             <div className="position-relative d-inline-block">
                                                                 <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
                                                                 <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
@@ -365,24 +377,30 @@ const FindBattle = () => {
                                                             {item.battleLeague.great.result_between_xl_candy}
                                                         </span>
                                                     </li>
+                                                    <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img> {item.battleLeague.great.result_between_stadust}</li>
                                                 </ul>
                                                 :
-                                                <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Elidge</b></div>
+                                                <div>
+                                                    <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("great_league")}></img> <b>Little Cup</b></h6>
+                                                    <b style={{padding: '1rem'}} className="text-danger"><CloseIcon sx={{color: 'red'}}/> Not Elidge</b>
+                                                </div>
+
                                                 }
                                             </div>
-                                            <div className="element-top" style={{textAlign: 'start'}}>
-                                                <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("ultra_league")}></img> <b>Ultra League</b></h6>
+                                            <div className="element-top d-flex justify-content-center" style={{textAlign: 'start'}}>
                                                 {item.battleLeague.ultra ?
-                                                <ul>
+                                                <ul className="list-best-league">
+                                                    <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("ultra_league")}></img> <b>Ultra League</b></h6>
                                                     <li>Rank: {item.battleLeague.ultra.rank}</li>
                                                     <li>CP: {item.battleLeague.ultra.CP}</li>
+                                                    <li>Level: {item.battleLeague.ultra.level}</li>
                                                     <li>Stats Prod (%): {item.battleLeague.ultra.ratio.toFixed(2)}</li>
                                                     <li>
                                                         <span className="d-flex align-items-center">
                                                             <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
                                                                 <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
                                                             </div>
-                                                            <span>{item.battleLeague.ultra.result_between_candy+getCandyEvo(value, item.id)} <span className="d-inline-block caption text-success"> (+{getCandyEvo(value, item.id)})</span></span>
+                                                            <span className="d-flex align-items-center">{item.battleLeague.ultra.result_between_candy+getCandyEvo(value, item.id)}<span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span></span>
                                                             <div className="position-relative d-inline-block">
                                                                 <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
                                                                 <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
@@ -390,24 +408,29 @@ const FindBattle = () => {
                                                             {item.battleLeague.ultra.result_between_xl_candy}
                                                         </span>
                                                     </li>
+                                                    <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img> {item.battleLeague.ultra.result_between_stadust}</li>
                                                 </ul>
                                                 :
-                                                <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Elidge</b></div>
+                                                <div>
+                                                    <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("ultra_league")}></img> <b>Little Cup</b></h6>
+                                                    <b style={{padding: '1rem'}} className="text-danger"><CloseIcon sx={{color: 'red'}}/> Not Elidge</b>
+                                                </div>
                                                 }
                                             </div>
-                                            <div className="element-top" style={{textAlign: 'start'}}>
-                                                <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("master_league")}></img> <b>Master League</b></h6>
+                                            <div className="element-top d-flex justify-content-center" style={{textAlign: 'start'}}>
                                                 {item.battleLeague.master ?
-                                                <ul>
+                                                <ul className="list-best-league">
+                                                    <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("master_league")}></img> <b>Master League</b></h6>
                                                     <li>Rank: {item.battleLeague.master.rank}</li>
                                                     <li>CP: {item.battleLeague.master.CP}</li>
+                                                    <li>Level: {item.battleLeague.master.level}</li>
                                                     <li>Stats Prod (%): {item.battleLeague.master.ratio.toFixed(2)}</li>
                                                     <li>
                                                         <span className="d-flex align-items-center">
                                                             <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
                                                                 <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
                                                             </div>
-                                                            <span>{item.battleLeague.master.result_between_candy+getCandyEvo(value, item.id)} <span className="d-inline-block caption text-success"> (+{getCandyEvo(value, item.id)})</span></span>
+                                                            <span className="d-flex align-items-center">{item.battleLeague.master.result_between_candy+getCandyEvo(value, item.id)}<span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span></span>
                                                             <div className="position-relative d-inline-block">
                                                                 <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
                                                                 <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
@@ -415,9 +438,13 @@ const FindBattle = () => {
                                                             {item.battleLeague.master.result_between_xl_candy}
                                                         </span>
                                                     </li>
+                                                    <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img> {item.battleLeague.master.result_between_stadust}</li>
                                                 </ul>
                                                 :
-                                                <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Elidge</b></div>
+                                                <div>
+                                                    <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("master_league")}></img> <b>Little Cup</b></h6>
+                                                    <b style={{padding: '1rem'}} className="text-danger"><CloseIcon sx={{color: 'red'}}/> Not Elidge</b>
+                                                </div>
                                                 }
                                             </div>
                                             </Fragment>

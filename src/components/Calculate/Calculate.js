@@ -260,7 +260,7 @@ export const calculateStats = (atk, def, sta, IVatk, IVdef, IVsta, cp) => {
 }
 
 export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, to_lv, type) => {
-    from_lv -= 0.5;
+    // from_lv -= 0.5;
     to_lv -= 0.5;
 
     let power_up_count = (to_lv-from_lv)*2;
@@ -268,10 +268,10 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
     if (from_lv > to_lv) {
         return {
             cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv+0.5),
-            result_between_stadust: null,
-            result_between_candy: null,
-            result_between_xl_candy: null,
-            power_up_count: null
+            result_between_stadust: 0,
+            result_between_candy: 0,
+            result_between_xl_candy: 0,
+            power_up_count: 0
         }
     } else {
         let between_stadust = 0;
@@ -422,18 +422,19 @@ export const typeCostPowerUp = (type) => {
 }
 
 export const calStatsProd = (atk, def, sta, maxCP) => {
-    let dataList = []
+    let dataList = [];
+    if (atk === 0 || def === 0 || sta === 0) return dataList;
 
     for (let l = MIN_LEVEL; l <= MAX_LEVEL; l+=0.5) {
-        let currCP = 0;
         for (let i = MIN_IV; i <= MAX_IV; i++) {
+            let currCP = 0;
             for (let j = MIN_IV; j <= MAX_IV; j++) {
                 for (let k = MIN_IV; k <= MAX_IV; k++) {
                     const cp = calculateCP(atk+i, def+j, sta+k, l);
-                    if (currCP < cp && (maxCP == null || cp <= maxCP)) {
-                        const statsATK = (atk+i)*data.find(item => item.level === l).multiplier;
-                        const statsDEF = (def+j)*data.find(item => item.level === l).multiplier;
-                        const statsSTA = (sta+k)*data.find(item => item.level === l).multiplier;
+                    if (currCP <= cp && (maxCP == null || cp <= maxCP)) {
+                        const statsATK = calculateStatsBettlePure(atk, i, l);
+                        const statsDEF = calculateStatsBettlePure(def, j, l);
+                        const statsSTA = calculateStatsBettlePure(sta, k, l);
                         dataList.push({
                             IV: {atk: i, def: j, sta: k},
                             CP: cp,
@@ -447,6 +448,7 @@ export const calStatsProd = (atk, def, sta, maxCP) => {
             }
         }
     }
+
     const maxStatsProds = Math.max.apply(Math, dataList.map(item => { return item.statsProds; }));
     dataList = dataList.map(item => ({...item, ratio: item.statsProds*100/maxStatsProds}));
     dataList = dataList.sort((a,b) => a.statsProds - b.statsProds);
@@ -654,6 +656,7 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
         ultra: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 2500).find(item => item.CP === dataUltra.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
         master: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null).find(item => item.CP === dataMaster.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV)
     }
+
     if (battleLeague.little) battleLeague.little = {...battleLeague.little, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.little.level)};
     if (battleLeague.great) battleLeague.great = {...battleLeague.great, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.great.level)};
     if (battleLeague.ultra) battleLeague.ultra = {...battleLeague.ultra, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.ultra.level)};
