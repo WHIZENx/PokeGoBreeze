@@ -4,6 +4,7 @@ import APIService from "../../services/API.service";
 import FormTools from "./FormTools";
 
 import loading from '../../assets/loading.png';
+import { splitAndCapitalize } from "../../components/Calculate/Calculate";
 
 const Tools = (props) => {
 
@@ -64,14 +65,6 @@ const Tools = (props) => {
         queryPokemon(props.id);
     }, [props.id, queryPokemon]);
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = useCallback((string) => {
-        return string.split("-").map(text => capitalize(text)).join(" ");
-    }, []);
-
     const changeForm = (e) => {
         const findForm = formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
         setCurrForm(findForm);
@@ -101,7 +94,7 @@ const Tools = (props) => {
                     </div>
                 }
             </div>
-            <h4><b>#{props.id} {currForm ? splitAndCapitalize(currForm.form.name) : props.name}</b></h4>
+            <h4><b>#{props.id} {currForm ? splitAndCapitalize(currForm.form.name, "-", " ") : props.name}</b></h4>
             <div className="scroll-card">
                 {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
                     <Fragment>
@@ -111,7 +104,7 @@ const Tools = (props) => {
                                 {value.map((value, index) => (
                                     <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
                                         <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
-                                        <div>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</div>
+                                        <div>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</div>
                                         {value.form.id === pokeID &&
                                             <b><small>(Default)</small></b>
                                         }

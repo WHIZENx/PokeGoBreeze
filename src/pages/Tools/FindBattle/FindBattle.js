@@ -7,7 +7,7 @@ import pokeImageList from '../../../data/assets_pokemon_go.json';
 
 import './FineBattle.css';
 import APIService from "../../../services/API.service";
-import { queryStatesEvoChain } from "../../../components/Calculate/Calculate";
+import { queryStatesEvoChain, splitAndCapitalize } from "../../../components/Calculate/Calculate";
 
 const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
 
@@ -148,14 +148,6 @@ const FindBattle = () => {
         return img.default;
     };
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = (string) => {
-        return string.split("_").map(text => capitalize(text)).join(" ");
-    };
-
     return (
         <div className="container">
             <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName}/>
@@ -231,7 +223,7 @@ const FindBattle = () => {
                     {value.sort((a,b) => a.id - b.id).map((item, index) => (
                         <div className="d-inline-block evo-item-desc" key={index}>
                             <img alt='pokemon-model' height={100} src={APIService.getPokemonModel(getImageList(item.id, item.name))}></img>
-                            <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase())}</b></div>
+                            <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</b></div>
                         </div>
                     ))}
                 </div>

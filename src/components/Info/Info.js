@@ -5,6 +5,7 @@ import Type from "../Sprits/Type";
 
 import typeEffective from '../../data/type_effectiveness.json';
 import weatherEffective from '../../data/weather_boosts.json';
+import { splitAndCapitalize } from "../Calculate/Calculate";
 
 const Info = (props) => {
 
@@ -12,7 +13,7 @@ const Info = (props) => {
         let data = [];
         Object.entries(weatherEffective).forEach(([key, value]) => {
             types.forEach((type) => {
-                if (value.includes(splitAndCapitalize(type.type.name)) && !data.includes(key)) data.push(key);
+                if (value.includes(splitAndCapitalize(type.type.name, "-", " ")) && !data.includes(key)) data.push(key);
             });
         });
         return data;
@@ -30,7 +31,7 @@ const Info = (props) => {
         Object.entries(typeEffective).forEach(([key, value]) => {
             let value_effective = 1;
             types.forEach((type) => {
-                value_effective *= value[splitAndCapitalize(type.type.name)];
+                value_effective *= value[splitAndCapitalize(type.type.name, "-", " ")];
             });
             if (value_effective >= 2.56) data.very_weak.push(key);
             else if (value_effective >= 1.6) data.weak.push(key);
@@ -42,10 +43,6 @@ const Info = (props) => {
         });
         return data;
     };
-
-    const splitAndCapitalize = (string) => {
-        return string.split("-").map(text => text.charAt(0).toUpperCase() + text.slice(1)).join(" ");
-    }
 
     return (
         <Fragment>

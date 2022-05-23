@@ -2,6 +2,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import data from '../../data/combat_pokemon_go_list.json';
 import combat from '../../data/combat.json';
 import CardType from '../Card/CardType';
+import { splitAndCapitalize } from '../Calculate/Calculate';
 
 const Move = (props) => {
     const [countFM, setCountFM] = useState(0);
@@ -38,14 +39,6 @@ const Move = (props) => {
         return;
     }, []);
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = useCallback((string) => {
-        return string.split("_").map(text => capitalize(text.toLowerCase().replaceAll("fast", ""))).join(" ");
-    }, []);
-
     useEffect(() => {
         findMove(props.id, props.form);
         if (!props.move) setCurrentMove(null);
@@ -68,7 +61,7 @@ const Move = (props) => {
                     <div className='card-input' tabIndex={ 0 } onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
                         <div className='card-select'>
                             {currentMove ?
-                            <CardType value={findType(currentMove.name)} name={splitAndCapitalize(currentMove.name)} elite={currentMove.elite} shadow={currentMove.shadow} purified={currentMove.purified}/>
+                            <CardType value={findType(currentMove.name)} name={splitAndCapitalize(currentMove.name.replaceAll("_FAST", ""), "_", " ")} elite={currentMove.elite} shadow={currentMove.shadow} purified={currentMove.purified}/>
                             :
                             <CardType />
                             }
@@ -88,7 +81,7 @@ const Move = (props) => {
                                                 }
                                                 {value !== currentMove &&
                                                 <li className="container card-pokemon" data-id={value.name} onMouseDown={changeMove.bind(this)}>
-                                                    <CardType value={findType(value.name)} name={splitAndCapitalize(value.name)} elite={value.elite} shadow={value.shadow}  purified={value.purified}/>
+                                                    <CardType value={findType(value.name)} name={splitAndCapitalize(value.name.replaceAll("_FAST", ""), "_", " ")} elite={value.elite} shadow={value.shadow}  purified={value.purified}/>
                                                 </li>
                                                 }
                                                 </Fragment>

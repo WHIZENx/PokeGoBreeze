@@ -1,17 +1,10 @@
 import { useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
+import { capitalize, splitAndCapitalize } from "../../../components/Calculate/Calculate";
 import combatData from '../../../data/combat.json';
 
 import './Search.css';
-
-const capitalize = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-const splitAndCapitalize = (string, splitBy) => {
-    return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(" ");
-};
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.name.toLowerCase();
@@ -39,7 +32,7 @@ const columnsF = [
     },
     {
         name: 'Name',
-        selector: row => <Link to={"/moves/"+row.id} target="_blank">{splitAndCapitalize(row.name, "_")}</Link>,
+        selector: row => <Link to={"/moves/"+row.id} target="_blank">{splitAndCapitalize(row.name, "_", " ")}</Link>,
         sortable: true,
         sortFunction: nameSort,
         width: '200px'

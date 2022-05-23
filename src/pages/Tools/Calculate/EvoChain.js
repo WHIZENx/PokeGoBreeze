@@ -1,4 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
+import { splitAndCapitalize } from "../../../components/Calculate/Calculate";
 import APIService from "../../../services/API.service";
 
 const EvoChain = (props) => {
@@ -22,14 +23,6 @@ const EvoChain = (props) => {
         if (props.url) fetchMyAPI();
     }, [getEvoChain, props.url]);
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = (string, join) => {
-        return string.split("-").map(text => capitalize(text)).join(join);
-    };
-
     return (
         <Fragment>
             <tr className="center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
@@ -44,7 +37,7 @@ const EvoChain = (props) => {
                                     </tr>
                                     <tr>
                                         <td>Name</td>
-                                        <td>{splitAndCapitalize(value.name)}</td>
+                                        <td>{splitAndCapitalize(value.name, "-", " ")}</td>
                                     </tr>
                                     <tr>
                                         <td>CP</td>

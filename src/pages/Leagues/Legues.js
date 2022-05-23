@@ -11,16 +11,10 @@ import Moment from 'moment';
 import './Leagues.css';
 import { Fragment, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { splitAndCapitalize } from '../../components/Calculate/Calculate';
+import { capitalize } from '@mui/material';
 
 const Leagues = () => {
-
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = (string, join) => {
-        return string.split("_").map(text => capitalize(text)).join(join);
-    };
 
     const getTime = (value) => {
         return Moment((new Date(parseInt(value)))).format('HH:mm DD MMMM YYYY')
@@ -57,12 +51,12 @@ const Leagues = () => {
                         <Accordion.Header>
                             <img style={{marginRight: 10}} alt='img-league' height={50} src={APIService.getAssetPokeGo(value.iconUrl)}></img>
                             <b className={value.enabled ? "" : "text-danger"}>{(value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title) ? "Seeker " : "") +
-                            splitAndCapitalize(value.title.toLowerCase(), " ") +
+                            splitAndCapitalize(value.title.toLowerCase(), "_", " ") +
                             (value.id.includes("SAFARI_ZONE") ? ` ${value.id.split("_")[3]} ${capitalize(value.id.split("_")[4].toLowerCase())}` : "")}</b>
                         </Accordion.Header>
                         <Accordion.Body>
                             <div className='sub-body'>
-                            <h4 className='title-leagues'>{splitAndCapitalize(value.id.toLowerCase(), " ")}</h4>
+                            <h4 className='title-leagues'>{splitAndCapitalize(value.id.toLowerCase(), "_", " ")}</h4>
                             <div className='center'>
                                 {value.league !== value.title && !value.title.includes("REMIX") ?
                                     <div className='league'>
@@ -120,9 +114,9 @@ const Leagues = () => {
                             <li style={{fontWeight: 500}}>
                                 <h6 className='title-leagues text-success'>White List</h6>
                                 {value.conditions.whiteList.map((item, index) => (
-                                    <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), " ")}`}>
+                                    <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                         <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
-                                        <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), " ")}</span>
+                                        <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
                                     </Link>
                                 ))}
                             </li>
@@ -131,9 +125,9 @@ const Leagues = () => {
                             <li style={{fontWeight: 500}}>
                                 <h6 className='title-leagues text-danger'>Ban List</h6>
                                 {value.conditions.banned.map((item, index) => (
-                                    <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), " ")}`}>
+                                    <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                         <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, "NORMAL")}></img>
-                                        <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), " ")}</span>
+                                        <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
                                     </Link>
                                 ))}
                             </li>

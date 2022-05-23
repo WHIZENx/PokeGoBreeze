@@ -9,7 +9,7 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { regionList } from '../../Calculate/Calculate';
+import { regionList, splitAndCapitalize } from '../../Calculate/Calculate';
 
 const Form = (props) => {
 
@@ -25,10 +25,6 @@ const Form = (props) => {
     const [statATK, setStatATK] = useState(null);
     const [statDEF, setStatDEF] = useState(null);
     const [statSTA, setStatSTA] = useState(null);
-
-    const splitAndCapitalize = (string, join) => {
-        return string.split("-").map(text => capitalize(text)).join(join);
-    };
 
     const filterFormName = useCallback((form, formStats) => {
         form = form === "" || form === "standard" ? "Normal" : form.includes("mega") ? form.toLowerCase() : capitalize(form);
@@ -67,10 +63,6 @@ const Form = (props) => {
         }
     }, [filterFormList, props, currForm, dataPoke, formDefault])
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
     const changeForm = (e) => {
         const findData = props.pokeData.find(item => e.currentTarget.value === item.name);
         const findForm = props.formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
@@ -78,7 +70,7 @@ const Form = (props) => {
         let region = Object.values(regionList).find(item => findForm.form.form_name.includes(item.toLowerCase()));
         if (findForm.form.form_name !== "" && region) props.setRegion(region);
         else props.setRegion(regionList[parseInt(props.species.generation.url.split("/")[6])]);
-        props.setFormName(splitAndCapitalize(findForm.form.name, " "));
+        props.setFormName(splitAndCapitalize(findForm.form.name, "-", " "));
         if (findData && findForm) {
             let oriForm = findData;
             oriForm.types = findForm.form.types;
@@ -110,7 +102,7 @@ const Form = (props) => {
                             {value.map((value, index) => (
                                 <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
                                     <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
-                                    <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, " ")}</p>
+                                    <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</p>
                                     {value.form.id === pokeID.current &&
                                         <b><small className=''> (Default)</small></b>
                                     }

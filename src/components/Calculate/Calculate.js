@@ -21,14 +21,6 @@ const MAX_LEVEL = 51;
 const MIN_IV = 0
 const MAX_IV = 15
 
-const capitalize = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-const splitAndCapitalize = (string, splitBy) => {
-    return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(" ");
-};
-
 const getMultiFriendshipMulti = (level) => {
     let dmg = 1;
     if (level === 1) dmg += 0.03;
@@ -41,6 +33,14 @@ const getMultiFriendshipMulti = (level) => {
 const weatherMultiple = (weather, type) => {
     return weatherBoosts[weather].find(item => item === capitalize(type.toLowerCase())) ? 1.2 : 1;
 }
+
+export const capitalize = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export const splitAndCapitalize = (string, splitBy, joinBy) => {
+    return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(joinBy);
+};
 
 export const regionList = {
     1: "Kanto",
@@ -579,7 +579,7 @@ export const queryTopMove = (move) => {
                 if (!pokemonList) pokemonList = combatPoke.PURIFIED_MOVES.includes(move.name)
                 if (!pokemonList) pokemonList = combatPoke.ELITE_CINEMATIC_MOVES.includes(move.name);
             }
-            if (pokemonList) dataPri.push({num: value.num, name: splitAndCapitalize(value.name, "-"), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: calculateDamagePVE(calculateStatsBettlePure(calBaseATK(value.baseStats, true), 15, 40), 200, move.pve_power, null, true)});
+            if (pokemonList) dataPri.push({num: value.num, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: calculateDamagePVE(calculateStatsBettlePure(calBaseATK(value.baseStats, true), 15, 40), 200, move.pve_power, null, true)});
         }
     });
     return dataPri;

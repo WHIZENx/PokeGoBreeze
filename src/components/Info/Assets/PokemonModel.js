@@ -7,6 +7,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.css';
 import APIService from '../../../services/API.service';
+import { splitAndCapitalize } from '../../Calculate/Calculate';
 
 const PokemonModel = (props) => {
 
@@ -24,17 +25,9 @@ const PokemonModel = (props) => {
         if (pokeAssets.length === 0) setPokeAssets(getImageList());
     }, [getImageList, pokeAssets.length]);
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = (string, join) => {
-        return string.split("_").map(text => capitalize(text)).join(join);
-    };
-
     return (
         <div>
-            <h4 className="title-evo"><b>{"Assets of "+splitAndCapitalize(props.name, " ")+" in Pokemon Go"}</b> <img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img></h4>
+            <h4 className="title-evo"><b>{"Assets of "+splitAndCapitalize(props.name, "_", " ")+" in Pokemon Go"}</b> <img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img></h4>
             <div>
                 {pokeAssets.map((assets, index) => (
                     <div key={index} className="d-inline-block group-model center">
@@ -70,7 +63,7 @@ const PokemonModel = (props) => {
                         </div>
                         ))
                         }
-                        <div className='desc'>{splitAndCapitalize(assets.form.toLowerCase(), " ")}</div>
+                        <div className='desc'>{splitAndCapitalize(assets.form.toLowerCase(), "_", " ")}</div>
                     </div>
                 ))
                 }
@@ -78,7 +71,7 @@ const PokemonModel = (props) => {
                 <div style={{marginBottom: 15}}>Assets in Pokemon Go unavailable.</div>
                 }
             </div>
-            <h4 className="title-evo"><b>{"Sound of "+splitAndCapitalize(props.name, " ")}</b></h4>
+            <h4 className="title-evo"><b>{"Sound of "+splitAndCapitalize(props.name, "_", " ")}</b></h4>
             <audio className="w-100" controls style={{height: 30}}>
                 <source src={APIService.getSoundPokemon(props.id)} type="audio/wav"></source>
                 Your browser does not support the audio element.

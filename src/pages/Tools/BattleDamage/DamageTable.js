@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment } from 'react';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -6,6 +6,8 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
 import APIService from '../../../services/API.service';
+
+import { splitAndCapitalize } from "../../../components/Calculate/Calculate";
 
 const labels = {
     0: 'Normal',
@@ -43,14 +45,6 @@ const eff = {
 
 const DamageTable = (props) => {
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = useCallback((string, splitBy) => {
-        return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(" ");
-    }, []);
-
     return (
         <div className="container">
             <div className="d-flex justify-content-center">
@@ -64,7 +58,7 @@ const DamageTable = (props) => {
                             <Fragment>
                                 {props.result.type === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}></img>}
                                 {props.result.type === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}></img>}
-                            {splitAndCapitalize(props.result.currPoke.form.pokemon.name, "-")} <span className='d-inline-block caption'>(LV. {props.result.currLevel})</span></Fragment> : "-"}</td>
+                            {splitAndCapitalize(props.result.currPoke.form.pokemon.name, "-", " ")} <span className='d-inline-block caption'>(LV. {props.result.currLevel})</span></Fragment> : "-"}</td>
                         </tr>
                         <tr>
                             <td>Target</td>
@@ -72,11 +66,11 @@ const DamageTable = (props) => {
                             <Fragment>
                             {props.result.typeObj === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}></img>}
                             {props.result.typeObj === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}></img>}
-                            {splitAndCapitalize(props.result.objPoke.form.pokemon.name, "-")} <span className='d-inline-block caption'>(LV. {props.result.objLevel})</span></Fragment> : "-"}</td>
+                            {splitAndCapitalize(props.result.objPoke.form.pokemon.name, "-", " ")} <span className='d-inline-block caption'>(LV. {props.result.objLevel})</span></Fragment> : "-"}</td>
                         </tr>
                         <tr>
                             <td>Move name</td>
-                            <td>{props.result.move ? splitAndCapitalize(props.result.move.name, "_") : "-"}</td>
+                            <td>{props.result.move ? splitAndCapitalize(props.result.move.name, "_", " ") : "-"}</td>
                         </tr>
                         <tr>
                             <td>Move damage</td>

@@ -4,7 +4,7 @@ import APIService from "../../services/API.service";
 import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
-import { calculateStatsByTag, computeBgColor, computeColor, regionList, sortStatsPokemon } from '../../components/Calculate/Calculate';
+import { calculateStatsByTag, computeBgColor, computeColor, regionList, sortStatsPokemon, splitAndCapitalize } from '../../components/Calculate/Calculate';
 import { Link, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import Form from "../../components/Info/Form/Form";
@@ -53,16 +53,8 @@ const Pokemon = (props) => {
         return Object.values(data).find(item => id === item.num).genderRatio;
     }, []);
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = useCallback((string) => {
-        return string.split("-").map(text => capitalize(text)).join(" ");
-    }, []);
-
     const fetchMap = useCallback(async (data) => {
-        setFormName(splitAndCapitalize(data.name));
+        setFormName(splitAndCapitalize(data.name, "-", " "));
         setFormList([]);
         setPokeData([]);
         let dataPokeList = [];
@@ -82,10 +74,10 @@ const Pokemon = (props) => {
         setFormList(dataFromList);
         const defaultFrom = dataFromList.map(item => item.find(item => item.form.is_default));
         const isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
-        if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name));
-        else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name));
+        if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name, "-", " "));
+        else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name, "-", " "));
         setRegion(regionList[parseInt(data.generation.url.split("/")[6])]);
-    }, [splitAndCapitalize]);
+    }, []);
 
     const queryPokemon = useCallback((id) => {
         APIService.getPokeSpicies(id)
@@ -93,14 +85,14 @@ const Pokemon = (props) => {
             setPokeRatio(getRatioGender(dataPri, res.data.id));
             fetchMap(res.data);
             setData(res.data);
-            if (params.id) document.title =  `#${res.data.id} - ${splitAndCapitalize(res.data.name)}`;
+            if (params.id) document.title =  `#${res.data.id} - ${splitAndCapitalize(res.data.name, "-", " ")}`;
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
             if (params.id) document.title = `#${params.id} - Not Found`;
             setIsFound(false);
         });
-    }, [enqueueSnackbar, getRatioGender, fetchMap, dataPri, params.id, splitAndCapitalize]);
+    }, [enqueueSnackbar, getRatioGender, fetchMap, dataPri, params.id]);
 
     useEffect(() => {
         if (!initialize.current) {
@@ -129,7 +121,7 @@ const Pokemon = (props) => {
     }
 
     const setVersionName = (version) => {
-        setVersion(splitAndCapitalize(version));
+        setVersion(splitAndCapitalize(version, "-", " "));
     }
 
     const getCostModifier = (id) => {
@@ -144,14 +136,14 @@ const Pokemon = (props) => {
             <Fragment>
             {data &&
                 <Fragment>
-                    {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name)} not release in Pokémon go
+                    {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name, "-", " ")} not release in Pokémon go
                             <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
                     </h5> */}
                 <div className="w-100 row prev-next-block sticky-top" style={{margin:0, height: 60}}>
                     {params.id ?
                     <Fragment>
                     {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
-                        <Link className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name)}`}>
+                        <Link className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
@@ -163,19 +155,19 @@ const Pokemon = (props) => {
                                     <b>#{data.id-1}</b>
                                 </div>
                                 <div className="text-navigate">
-                                    {splitAndCapitalize(pokeListName[data.id-1].name)}
+                                    {splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}
                                 </div>
                             </div>
                         </Link>
                     </div>}
                     {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
-                        <Link className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(data.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name)}`}>
+                        <Link className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(data.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
                                     <b>#{data.id+1}</b>
                                 </div>
                                 <div className="text-navigate">
-                                    {splitAndCapitalize(pokeListName[data.id+1].name)}
+                                    {splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}
                                 </div>
                             </div>
                             <div style={{cursor: "pointer"}}>
@@ -204,19 +196,19 @@ const Pokemon = (props) => {
                                     <b>#{data.id-1}</b>
                                 </div>
                                 <div className="text-navigate">
-                                    {splitAndCapitalize(pokeListName[data.id-1].name)}
+                                    {splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}
                                 </div>
                             </div>
                         </div>
                     </div>}
                     {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
-                        <div className="d-flex justify-content-end align-items-center" onClick={() => props.onIncId()}  title={`#${data.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name)}`}>
+                        <div className="d-flex justify-content-end align-items-center" onClick={() => props.onIncId()}  title={`#${data.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
                                     <b>#{data.id+1}</b>
                                 </div>
                                 <div className="text-navigate">
-                                    {splitAndCapitalize(pokeListName[data.id+1].name)}
+                                    {splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}
                                 </div>
                             </div>
                             <div style={{cursor: "pointer"}}>

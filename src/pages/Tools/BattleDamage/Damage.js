@@ -4,16 +4,16 @@ import { useSnackbar } from "notistack";
 import { FormGroup } from "react-bootstrap";
 import { calculateDamagePVE, calculateStatsBettlePure, getTypeEffective } from "../../../components/Calculate/Calculate";
 import Move from "../../../components/Move/Move";
-import Find from "../../CalculateTools/Find";
 
 import './Damage.css';
-import StatsTable from "./StatsTable";
 import Type from "../../../components/Sprits/Type";
 import { Box } from "@mui/system";
 import DamageTable from "./DamageTable";
 
 import atk_logo from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import Find from "../Find";
+import StatsTable from "./StatsDamageTable";
 
 const LevelRating = styled(Rating)({
     '& .MuiRating-iconFilled': {

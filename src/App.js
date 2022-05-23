@@ -11,15 +11,15 @@ import SearchMove from './pages/Search/Move/Search';
 import TypeEffect from './pages/TypeEffect/TypeEffect';
 import Weather from './pages/Weather/Weather';
 import Pokemon from './pages/Pokemon/Pokemon';
-import FindTable from './pages/CalculateTools/FindTable/FindTable';
-import Calculate from './pages/CalculateTools/Calculate/Calculate';
-import StatsTable from './pages/Table/Stats';
-import Damage from './pages/Battle/Damage/Damage';
-import DpsTable from './pages/Battle/DpsSheet/DpsTable';
+import FindTable from './pages/Tools/FindTable/FindTable';
+import Calculate from './pages/Tools/Calculate/Calculate';
+import Damage from './pages/Tools/BattleDamage/Damage';
+import DpsTable from './pages/DpsSheet/DpsTable';
 import Move from './pages/Move/Move';
 import Error from './pages/Error/Error';
 import Leagues from './pages/Leagues/Legues';
-import FindBattle from './pages/CalculateTools/FindBattle/FindBattle';
+import FindBattle from './pages/Tools/FindBattle/FindBattle';
+import StatsTable from './pages/Tools/StatsTable/Stats';
 
 const App = () => {
 
@@ -46,7 +46,7 @@ const App = () => {
               <Route path="/stats-table" element={<StatsTable/>}></Route>
               <Route path="/damage-calculate" element={<Damage/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
-              <Route path="/leagues" element={<Leagues/>}></Route>
+              <Route path="/battle-leagues" element={<Leagues/>}></Route>
               <Route path="*" element={<Error/>}></Route>
             </Routes>
             {/* <FooterComponent /> */}

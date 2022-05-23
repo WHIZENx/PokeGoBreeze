@@ -1,9 +1,9 @@
 import { Box, Slider, styled } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
-import { calStatsProd } from "../../components/Calculate/Calculate";
-import APIService from "../../services/API.service";
-import Find from "../CalculateTools/Find";
+import { calStatsProd } from "../../../components/Calculate/Calculate";
+import APIService from "../../../services/API.service";
+import Find from "../Find";
 
 const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
 

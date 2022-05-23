@@ -33,7 +33,7 @@ const NavbarComponent = () => {
                         <Link className="dropdown-item" to="/stats-table">Stats Table</Link>
                     </NavDropdown>
                     <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Sheet</Link>
-                    <Link className="nav-link" to="/leagues">Battle Leagues</Link>
+                    <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

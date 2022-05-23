@@ -1,9 +1,9 @@
 import { Table, TableContainer, TableHead, TableRow, TableBody, TableCell, tableCellClasses, styled } from '@mui/material';
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import Type from '../../components/Sprits/Type';
 import APIService from '../../services/API.service';
 
-import { calculateCP, calculateStatsByTag } from '../../components/Calculate/Calculate';
+import { calculateCP, calculateStatsByTag, splitAndCapitalize } from '../../components/Calculate/Calculate';
 
 import loading from '../../assets/loading.png';
 import './Home.css'
@@ -69,15 +69,6 @@ const Home = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [searchMaxCP, setSearchMaxCP] = useState('');
-
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = useCallback((string) => {
-        return string.split("-").map(text => capitalize(text)).join(" ");
-    }, []);
-
 
     useEffect(() => {
         document.title = "Pokedex - Home";
@@ -232,7 +223,7 @@ const Home = () => {
                                             #{row.id} <img height={60} alt='img-pokemon'
                                             src={APIService.getPokeIconSprite(row.sprite, true)}
                                             onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}>
-                                            </img> {splitAndCapitalize(row.name)}
+                                            </img> {splitAndCapitalize(row.name, "-", " ")}
                                             </Link>
                                         </StyledTableCell>
                                         <StyledTableCell align="center" component="td">

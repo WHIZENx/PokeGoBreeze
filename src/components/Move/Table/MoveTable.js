@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { convertName, rankMove } from "../../Calculate/Calculate";
+import { capitalize, convertName, rankMove, splitAndCapitalize } from "../../Calculate/Calculate";
 
 import pokemonCombatList from "../../../data/combat_pokemon_go_list.json";
 
@@ -10,14 +10,6 @@ import APIService from "../../../services/API.service";
 const TableMove = (props) => {
 
     const [move, setMove] = useState({data: []});
-
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = (string, splitBy) => {
-        return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(" ");
-    };
 
     const findMove = useCallback(() => {
         let combatPoke = pokemonCombatList.filter(item => item.ID === parseInt(props.data.species.url.split("/")[6]));
@@ -40,7 +32,7 @@ const TableMove = (props) => {
                         <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
                             <img width={20} height={20} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}></img>
                         </div>
-                        <span style={{marginRight: 5}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</span>
+                        <span style={{marginRight: 5}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                         <span style={{width: 'max-content'}}>
                             {value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
                         </span>
@@ -51,7 +43,7 @@ const TableMove = (props) => {
                         <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
                             <img width={20} height={20} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}></img>
                         </div>
-                        <span style={{marginRight: 5}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</span>
+                        <span style={{marginRight: 5}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                         <span style={{width: 'max-content'}}>
                             {value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
                             {value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}

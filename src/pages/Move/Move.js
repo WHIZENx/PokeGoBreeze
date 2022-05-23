@@ -2,7 +2,7 @@ import { useSnackbar } from "notistack";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useParams } from "react-router-dom";
-import { getBarCharge, queryTopMove } from "../../components/Calculate/Calculate";
+import { capitalize, getBarCharge, queryTopMove, splitAndCapitalize } from "../../components/Calculate/Calculate";
 import TypeBar from "../../components/Sprits/TypeBar";
 
 import moveData from '../../data/combat.json';
@@ -13,14 +13,6 @@ import './Move.css';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-
-const capitalize = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-const splitAndCapitalize = (string, split) => {
-    return string.split(split).map(text => capitalize(text)).join(" ");
-};
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.name.toLowerCase();
@@ -41,7 +33,7 @@ const columns = [
         selector: row => <Link to={"/pokemon/"+row.num} target="_blank"><img height={48} alt='img-pokemon' style={{marginRight: 10}}
         src={APIService.getPokeIconSprite(row.sprite, true)}
         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}></img>
-        {splitAndCapitalize(row.name, "-")}</Link>,
+        {splitAndCapitalize(row.name, "-", " ")}</Link>,
         sortable: true,
         sortFunction: nameSort
     },
@@ -73,7 +65,7 @@ const Move = (props) => {
         let move = moveData.find(item => item.id === parseInt(id));
         if (move) {
             setMove(move)
-            document.title =  `#${move.id} - ${splitAndCapitalize(move.name.toLowerCase(), "_")}`;
+            document.title =  `#${move.id} - ${splitAndCapitalize(move.name.toLowerCase(), "_", " ")}`;
         }
         else {
             enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
@@ -93,7 +85,7 @@ const Move = (props) => {
             {move &&
             <div className={'poke-container'+(props.id ? "" : " container")}>
                 <div className="h-100 head-box">
-                    <h1 className="d-inline-block" style={{marginRight: 15}}><b>{splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</b></h1>
+                    <h1 className="d-inline-block" style={{marginRight: 15}}><b>{splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</b></h1>
                     <div className="d-inline-block"><TypeBar type={move.type}/></div>
                 </div>
                 <hr></hr>
@@ -101,7 +93,7 @@ const Move = (props) => {
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-table">
                             <thead className="center">
-                                <tr><th colSpan="3">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")+" in Pokemon Go"}</th></tr>
+                                <tr><th colSpan="3">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")+" in Pokemon Go"}</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
@@ -110,7 +102,7 @@ const Move = (props) => {
                                 </tr>
                                 <tr>
                                     <td>Name</td>
-                                    <td colSpan="2"><b>{splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</b></td>
+                                    <td colSpan="2"><b>{splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</b></td>
                                 </tr>
                                 <tr>
                                     <td>Type</td>
@@ -213,7 +205,7 @@ const Move = (props) => {
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-damage-table">
                             <thead className="center">
-                                <tr><th colSpan="2">{"Damage "+splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")+" Simulator"}</th></tr>
+                                <tr><th colSpan="2">{"Damage "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")+" Simulator"}</th></tr>
                             </thead>
                             <tbody>
                                 <tr className="center"><td className="table-sub-header" colSpan="2">PVE Stats</td></tr>
@@ -246,7 +238,7 @@ const Move = (props) => {
                                     <td>DPS (STAB)</td>
                                     <td>{((move.pvp_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
-                                <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_").replaceAll(" Plus", "+")}</td></tr>
+                                <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
                                 <tr>
                                     <td colSpan={2} style={{padding: 0}}><DataTable
                                         columns={columns}

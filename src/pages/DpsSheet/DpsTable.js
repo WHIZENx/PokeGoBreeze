@@ -1,16 +1,16 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 
-import pokemonData from '../../../data/pokemon.json';
-import combatData from '../../../data/combat.json';
-import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
-import weatherBoosts from '../../../data/weather_boosts.json';
-import { calculateAvgDPS, calculateCP, calculateStatsBettle, calculateStatsByTag, calculateTDO, getBarCharge, convertName } from "../../../components/Calculate/Calculate";
+import pokemonData from '../../data/pokemon.json';
+import combatData from '../../data/combat.json';
+import combatPokemonData from '../../data/combat_pokemon_go_list.json';
+import weatherBoosts from '../../data/weather_boosts.json';
+import { calculateAvgDPS, calculateCP, calculateStatsBettle, calculateStatsByTag, calculateTDO, getBarCharge, convertName, splitAndCapitalize } from "../../components/Calculate/Calculate";
 import DataTable from "react-data-table-component";
-import APIService from "../../../services/API.service";
+import APIService from "../../services/API.service";
 
-import loadingImg from '../../../assets/loading.png';
-import Type from "../../../components/Sprits/Type";
-import { Checkbox, FormControlLabel, Rating, Switch, styled } from "@mui/material";
+import loadingImg from '../../assets/loading.png';
+import Type from "../../components/Sprits/Type";
+import { Checkbox, FormControlLabel, Rating, Switch, styled, capitalize } from "@mui/material";
 import { Box } from "@mui/system";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
@@ -25,14 +25,6 @@ const LevelRating = styled(Rating)({
       color: '#ff3d47',
     },
 });
-
-const capitalize = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-const splitAndCapitalize = (string, splitBy) => {
-    return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(" ");
-};
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.pokemon.name.toLowerCase();
@@ -63,13 +55,13 @@ const columns = [
     {
         name: 'Pokemon Name',
         selector: row =>
-            <Link to={"/pokemon/"+row.pokemon.num} target="_blank" title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, "-")}`}>
+            <Link to={"/pokemon/"+row.pokemon.num} target="_blank" title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, "-", " ")}`}>
             {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
             {row.purified && <img height={25} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
             <img height={48} alt='img-pokemon' style={{marginRight: 10}}
             src={APIService.getPokeIconSprite(row.pokemon.sprite, true)}
             onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.pokemon.baseSpecies)}}></img>
-            {splitAndCapitalize(row.pokemon.name, "-")}</Link>
+            {splitAndCapitalize(row.pokemon.name, "-", " ")}</Link>
         ,
         sortable: true,
         minWidth: '300px',
@@ -77,16 +69,16 @@ const columns = [
     },
     {
         name: 'Fast Move',
-        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.fmove.name).id} target="_blank" title={`${splitAndCapitalize(row.fmove.name, "_")}`}>
-            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.fmove.name, "_")}</span>{row.elite.fmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link>,
+        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.fmove.name).id} target="_blank" title={`${splitAndCapitalize(row.fmove.name, "_", " ")}`}>
+            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.fmove.name, "_", " ")}</span>{row.elite.fmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: fmoveSort
     },
     {
         name: 'Charge Move',
-        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_")}`}>
-            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_").replaceAll(" Plus", "+")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.mShadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
+        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_", " ")}`}>
+            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_", " ").replaceAll(" Plus", "+")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.mShadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: cmoveSort
@@ -223,7 +215,7 @@ const DpsTable = (props) => {
         else {
             const result = dpsTable.filter(item => {
                 const boolFilterType = selectTypes.length === 0 || (selectTypes.includes(capitalize(item.fmove.type.toLowerCase())) && selectTypes.includes(capitalize(item.cmove.type.toLowerCase())));
-                const boolFilterPoke =  searchTerm === '' || splitAndCapitalize(item.pokemon.name, "-").toLowerCase().includes(searchTerm.toLowerCase()) || item.pokemon.num.toString().includes(searchTerm);
+                const boolFilterPoke =  searchTerm === '' || splitAndCapitalize(item.pokemon.name, "-", " ").toLowerCase().includes(searchTerm.toLowerCase()) || item.pokemon.num.toString().includes(searchTerm);
                 const boolOnlyShadow = enableShadow && item.shadow
                 const boolOnlyElite = enableElite && (item.elite.fmove || item.elite.cmove)
                 const boolOnlyMega = enableMega && item.pokemon.name.toLowerCase().includes("mega")

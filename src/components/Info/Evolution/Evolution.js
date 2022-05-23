@@ -21,7 +21,7 @@ import evoData from "../../../data/evolution_pokemon_go.json";
 
 import "./Evolution.css";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { computeBgColor, computeColor } from "../../Calculate/Calculate";
+import { computeBgColor, computeColor, splitAndCapitalize } from "../../Calculate/Calculate";
 
 const theme = createTheme({
     palette: {
@@ -122,14 +122,6 @@ const Evolution = (props) => {
             else getGmaxChain(props.id);
         });
     }, [props.evolution_url, props.form.form_name, getEvoChain, getGmaxChain, props.id]);
-
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const splitAndCapitalize = (string, join) => {
-        return string.split("-").map(text => capitalize(text)).join(join);
-    };
 
     const handlePokeID = (id) => {
         if (id !== props.id.toString()) {
@@ -259,7 +251,7 @@ const Evolution = (props) => {
                     <Fragment>
                     {form !== "" && !form.includes("mega") ?
                     <ThemeProvider theme={theme}>
-                        <Badge color="neutral" overlap="circular" badgeContent={splitAndCapitalize(form, " ")} anchorOrigin={{
+                        <Badge color="neutral" overlap="circular" badgeContent={splitAndCapitalize(form, "-", " ")} anchorOrigin={{
                             vertical: 'top',
                             horizontal: 'left',
                         }}>
@@ -286,7 +278,7 @@ const Evolution = (props) => {
                 <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
                 }
                 <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
-                <div><b className="link-title">{splitAndCapitalize(value.name, " ")}</b></div>
+                <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>
                 {value.baby && <span className="caption text-danger">(Baby)</span>}
                 {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
                 <p>{value.id === props.id && <span className="caption">Current</span>}</p>
@@ -326,11 +318,11 @@ const Evolution = (props) => {
                                 {values.map((value, index) => (
                                     <li id={"evo-"+evo+"-"+index} key={index} className='img-form-gender-group img-evo-group li-evo'>
                                         {props.onSetIDPoke ?
-                                        <div className="select-evo" onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, " ")}`}>
+                                        <div className="select-evo" onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, "-", " ")}`}>
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </div>
                                         :
-                                        <Link className="select-evo" to={"/pokemon/"+value.name} onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, " ")}`}>
+                                        <Link className="select-evo" to={"/pokemon/"+value.name} onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, "-", " ")}`}>
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </Link>
                                         }
