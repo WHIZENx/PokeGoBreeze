@@ -169,6 +169,7 @@ const FindBattle = () => {
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+name, { variant: 'error' });
+        enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+name, { variant: 'success' });
         setLoad(true);
         searchStatsPoke(result.level);
         setLoad(false);
@@ -344,10 +345,10 @@ const FindBattle = () => {
                                                     {item.battleLeague.little ?
                                                         <ul className="list-best-league">
                                                             <h6><img alt='pokemon-model' height={32} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img> <b>Little Cup</b></h6>
-                                                            <li>Rank: {item.battleLeague.little.rank}</li>
+                                                            <li>Rank: <b>#{item.battleLeague.little.rank}</b></li>
                                                             <li>CP: {item.battleLeague.little.CP}</li>
                                                             <li>Level: {item.battleLeague.little.level}</li>
-                                                            <li>Stats Prod (%): {item.battleLeague.little.ratio.toFixed(2)}</li>
+                                                            <li>Stats Prod (%): <span style={{backgroundColor: 'transparent'}} className={getTextColorRatio(item.battleLeague.little.ratio)}><b>{item.battleLeague.little.ratio.toFixed(2)}</b></span></li>
                                                             <li>
                                                                 <span className="d-flex align-items-center">
                                                                     <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
@@ -374,10 +375,10 @@ const FindBattle = () => {
                                                     {item.battleLeague.great ?
                                                     <ul className="list-best-league">
                                                         <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("great_league")}></img> <b>Great League</b></h6>
-                                                        <li>Rank: {item.battleLeague.great.rank}</li>
+                                                        <li>Rank: <b>#{item.battleLeague.great.rank}</b></li>
                                                         <li>CP: {item.battleLeague.great.CP}</li>
                                                         <li>Level: {item.battleLeague.great.level}</li>
-                                                        <li>Stats Prod (%): {item.battleLeague.great.ratio.toFixed(2)}</li>
+                                                        <li>Stats Prod (%): <span style={{backgroundColor: 'transparent'}} className={getTextColorRatio(item.battleLeague.great.ratio)}><b>{item.battleLeague.great.ratio.toFixed(2)}</b></span></li>
                                                         <li>
                                                             <span className="d-flex align-items-center">
                                                                 <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
@@ -405,10 +406,10 @@ const FindBattle = () => {
                                                     {item.battleLeague.ultra ?
                                                     <ul className="list-best-league">
                                                         <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("ultra_league")}></img> <b>Ultra League</b></h6>
-                                                        <li>Rank: {item.battleLeague.ultra.rank}</li>
+                                                        <li>Rank: <b>#{item.battleLeague.ultra.rank}</b></li>
                                                         <li>CP: {item.battleLeague.ultra.CP}</li>
                                                         <li>Level: {item.battleLeague.ultra.level}</li>
-                                                        <li>Stats Prod (%): {item.battleLeague.ultra.ratio.toFixed(2)}</li>
+                                                        <li>Stats Prod (%): <span style={{backgroundColor: 'transparent'}} className={getTextColorRatio(item.battleLeague.ultra.ratio)}><b>{item.battleLeague.ultra.ratio.toFixed(2)}</b></span></li>
                                                         <li>
                                                             <span className="d-flex align-items-center">
                                                                 <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
@@ -435,10 +436,10 @@ const FindBattle = () => {
                                                     {item.battleLeague.master ?
                                                     <ul className="list-best-league">
                                                         <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("master_league")}></img> <b>Master League</b></h6>
-                                                        <li>Rank: {item.battleLeague.master.rank}</li>
+                                                        <li>Rank: <b>#{item.battleLeague.master.rank}</b></li>
                                                         <li>CP: {item.battleLeague.master.CP}</li>
                                                         <li>Level: {item.battleLeague.master.level}</li>
-                                                        <li>Stats Prod (%): {item.battleLeague.master.ratio.toFixed(2)}</li>
+                                                        <li>Stats Prod (%): <span style={{backgroundColor: 'transparent'}} className={getTextColorRatio(item.battleLeague.master.ratio)}><b>{item.battleLeague.master.ratio.toFixed(2)}</b></span></li>
                                                         <li>
                                                             <span className="d-flex align-items-center">
                                                                 <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>

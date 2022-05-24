@@ -55,6 +55,6 @@
     background-color: rgb(236, 236, 200);
 }
 
-.rank-nice div b {
+.rank-nice div b, .rank-nice b {
     text-shadow: black 1px 1px;
 }
