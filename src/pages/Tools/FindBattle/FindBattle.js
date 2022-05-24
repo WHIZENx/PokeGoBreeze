@@ -113,9 +113,9 @@ const FindBattle = () => {
 
     const currEvoChain = useCallback((currId, form, arr) => {
         if (currId.length === 0) return arr;
-        let curr = evoData.find(item => currId.includes(item.id) && item.name.includes(form));
+        let curr = evoData.find(item => currId.includes(item.id) && (form === ""  || item.name.includes(form)));
         if (!arr.map(i => i.id).includes(curr.id)) arr.push(curr);
-        return currEvoChain(curr.evo_list.map(i => i.evo_to_id), arr)
+        return currEvoChain(curr.evo_list.map(i => i.evo_to_id), form, arr)
     }, []);
 
     const prevEvoChain = useCallback((obj, arr) => {
