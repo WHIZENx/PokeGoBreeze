@@ -424,14 +424,14 @@ export const typeCostPowerUp = (type) => {
 export const calStatsProd = (atk, def, sta, maxCP) => {
     let dataList = [];
     if (atk === 0 || def === 0 || sta === 0) return dataList;
-
+    let count = 0;
     for (let l = MIN_LEVEL; l <= MAX_LEVEL; l+=0.5) {
-        for (let i = MIN_IV; i <= MAX_IV; i++) {
-            let currCP = 0;
-            for (let j = MIN_IV; j <= MAX_IV; j++) {
-                for (let k = MIN_IV; k <= MAX_IV; k++) {
+        for (let i = MIN_IV; i <= MAX_IV; ++i) {
+            for (let j = MIN_IV; j <= MAX_IV; ++j) {
+                for (let k = MIN_IV; k <= MAX_IV; ++k) {
+                    count++;
                     const cp = calculateCP(atk+i, def+j, sta+k, l);
-                    if (currCP <= cp && (maxCP == null || cp <= maxCP)) {
+                    if (maxCP == null || cp <= maxCP) {
                         const statsATK = calculateStatsBettlePure(atk, i, l);
                         const statsDEF = calculateStatsBettlePure(def, j, l);
                         const statsSTA = calculateStatsBettlePure(sta, k, l);
@@ -442,14 +442,18 @@ export const calStatsProd = (atk, def, sta, maxCP) => {
                             stats: {statsATK: statsATK, statsDEF: statsDEF, statsSTA: statsSTA},
                             statsProds: statsATK*statsDEF*statsSTA,
                         });
-                        currCP = cp;
                     }
                 }
             }
         }
     }
 
-    const maxStatsProds = Math.max.apply(Math, dataList.map(item => { return item.statsProds; }));
+    let maxStatsProds = 0;
+    dataList.map(item => { return item.statsProds; }).forEach(value => {
+        if (value > maxStatsProds) maxStatsProds = value;
+    });
+
+    // const maxStatsProds = Math.max.apply(Math, dataList.map(item => { return item.statsProds; }));
     dataList = dataList.map(item => ({...item, ratio: item.statsProds*100/maxStatsProds}));
     dataList = dataList.sort((a,b) => a.statsProds - b.statsProds);
     dataList = dataList.map((item, index) => ({...item, rank: dataList.length-index}));
@@ -651,10 +655,10 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
     let dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, null);
 
     let battleLeague = {
-        little: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 500).find(item => item.CP === dataLittle.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        great: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 1500).find(item => item.CP === dataGreat.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        ultra: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 2500).find(item => item.CP === dataUltra.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        master: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null).find(item => item.CP === dataMaster.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV)
+        little: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 500).find(item => item.level === dataLittle.level && item.CP === dataLittle.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        great: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 1500).find(item => item.level === dataGreat.level && item.CP === dataGreat.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        ultra: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 2500).find(item => item.level === dataUltra.level && item.CP === dataUltra.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        master: calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null).find(item => item.level === dataMaster.level && item.CP === dataMaster.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV)
     }
 
     if (battleLeague.little) battleLeague.little = {...battleLeague.little, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.little.level)};
