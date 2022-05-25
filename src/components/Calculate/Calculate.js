@@ -424,12 +424,10 @@ export const typeCostPowerUp = (type) => {
 export const calStatsProd = (atk, def, sta, maxCP) => {
     let dataList = [];
     if (atk === 0 || def === 0 || sta === 0) return dataList;
-    let count = 0;
     for (let l = MIN_LEVEL; l <= MAX_LEVEL; l+=0.5) {
         for (let i = MIN_IV; i <= MAX_IV; ++i) {
             for (let j = MIN_IV; j <= MAX_IV; ++j) {
                 for (let k = MIN_IV; k <= MAX_IV; ++k) {
-                    count++;
                     const cp = calculateCP(atk+i, def+j, sta+k, l);
                     if (maxCP == null || cp <= maxCP) {
                         const statsATK = calculateStatsBettlePure(atk, i, l);

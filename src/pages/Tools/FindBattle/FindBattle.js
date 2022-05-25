@@ -9,7 +9,7 @@ import pokeImageList from '../../../data/assets_pokemon_go.json';
 import './FindBattle.css';
 import APIService from "../../../services/API.service";
 import { calculateStats, computeBgColor, computeColor, queryStatesEvoChain, splitAndCapitalize } from "../../../components/Calculate/Calculate";
-import { Accordion } from "react-bootstrap";
+import { Accordion, useAccordionButton } from "react-bootstrap";
 import { useSnackbar } from "notistack";
 
 import loading from '../../../assets/loading.png';
@@ -114,25 +114,27 @@ const FindBattle = () => {
     const currEvoChain = useCallback((currId, form, arr) => {
         if (currId.length === 0) return arr;
         let curr = evoData.find(item => currId.includes(item.id) && (form === ""  || item.name.includes(form)));
-        if (!arr.map(i => i.id).includes(curr.id)) arr.push(curr);
+        if (!arr.map(i => i.id).includes(curr.id)) arr.push({...curr, form: form});
         return currEvoChain(curr.evo_list.map(i => i.evo_to_id), form, arr)
     }, []);
 
-    const prevEvoChain = useCallback((obj, arr) => {
-        if (!arr.map(i => i.id).includes(obj.id)) arr.push(obj);
+    const prevEvoChain = useCallback((obj, defaultForm, arr) => {
+        if (!arr.map(i => i.id).includes(obj.id)) arr.push({...obj, form: defaultForm});
         obj.evo_list.forEach(i => {
             currEvoChain([i.evo_to_id], i.evo_to_form, arr)
         });
         let curr = evoData.filter(item => item.evo_list.find(i => obj.id === i.evo_to_id));
         if (curr.length === 0) return arr
-        else if (curr.length === 1) return prevEvoChain(curr[0], arr)
-        else return curr.map(item => prevEvoChain(item, arr));
+        else if (curr.length === 1) return prevEvoChain(curr[0], defaultForm, arr)
+        else return curr.map(item => prevEvoChain(item, defaultForm, arr));
     }, [currEvoChain]);
 
     const getEvoChain = useCallback((id) => {
+        setLoad(true);
         let curr = evoData.filter(item => item.evo_list.find(i => id === i.evo_to_id));
         if (curr.length === 0) curr = evoData.filter(item => id === item.id);
-        return curr.map(item => prevEvoChain(item, []));
+        let defaultForm = curr.reduce((a,b) => b.name.length > a.name.length ? a : b).name;
+        return curr.map(item => prevEvoChain(item, item.name.replace(defaultForm, "").slice(1), []));
     }, [prevEvoChain]);
 
     const searchStatsPoke = useCallback((level) => {
@@ -149,15 +151,15 @@ const FindBattle = () => {
         var evoBaseStats = [];
         arr.forEach(item => {
             item.forEach(value => {
-                if (value.id !== id) evoBaseStats.push({...Object.values(value.battleLeague).reduce((a, b) => !a || !b ? true : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] || !value.battleLeague[b] ? b : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)})
-                else currBastStats = {...Object.values(value.battleLeague).reduce((a, b) => !a || !b ? true : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] || !value.battleLeague[b] ? b : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)};
+                if (value.id !== id) evoBaseStats.push({...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)})
+                else currBastStats = {...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)};
             });
         });
         let bestLeague = evoBaseStats.filter(item => item.ratio > currBastStats.ratio);
         bestLeague = bestLeague.filter(item =>
-            (item.league === "great" && item.CP >= 500)
-            || (item.league === "ultra" && item.CP >= 1500)
-            || (item.league === "master" && item.CP >= 2500));
+            (item.league === "master" && item.CP > 2500)
+            || (item.league === "ultra" && item.CP > 1500)
+            || (item.league === "great" && item.CP > 500));
         if (bestLeague.length === 0) bestLeague = evoBaseStats.filter(item => item.ratio > currBastStats.ratio);
         if (bestLeague.length === 0) return setBestInLeague([currBastStats]);
         if (currBastStats.ratio >= 90) bestLeague.push(currBastStats);
@@ -169,8 +171,6 @@ const FindBattle = () => {
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+name, { variant: 'error' });
-        enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+name, { variant: 'success' });
-        setLoad(true);
         searchStatsPoke(result.level);
         setLoad(false);
     }, [searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);
@@ -186,10 +186,11 @@ const FindBattle = () => {
         catch {return null}
     };
 
-    const getCandyEvo = (item, id, candy) => {
-        let data = item.find(i => i.evo_list.find(e => e.evo_to_id === id))
+    const getCandyEvo = (item, evoId, candy) => {
+        if (evoId === id) return candy;
+        let data = item.find(i => i.evo_list.find(e => e.evo_to_id === evoId))
         if (!data) return candy;
-        let prevEvo = data.evo_list.find(e => e.evo_to_id === id);
+        let prevEvo = data.evo_list.find(e => e.evo_to_id === evoId);
         if (!prevEvo) return candy;
         candy += prevEvo.candyCost;
         return getCandyEvo(item, data.id, candy);
@@ -210,6 +211,16 @@ const FindBattle = () => {
         "nice"
         :
         "normal");
+    }
+
+    const LeaveToggle = ({ eventKey }) => {
+        const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
+
+        return (
+          <div className='accordion-footer' onClick={decoratedOnClick}>
+            <span className='text-danger'>Close <CloseIcon sx={{color: 'red'}}/></span>
+          </div>
+        );
     }
 
     return (
@@ -324,14 +335,18 @@ const FindBattle = () => {
                             </div>
                         ))}
                     </div>
-                    <Accordion style={{marginTop: '3%', marginBottom: '5%'}}>
-                        <Accordion.Item eventKey={0}>
-                            <Accordion.Header>
-                                <b>More information</b>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                                {evoChain.map((value, index) => (
-                                    <div className="row justify-content-center league-info-content" key={index} style={{margin:0}}>
+                    {evoChain.map((value, index) => (
+                        <Accordion key={index} style={{marginTop: '3%', marginBottom: '5%'}}>
+                            <div className="form-header">
+                                {value[0].form === "" ? "Normal" : splitAndCapitalize(value[0].form, "_", " ")}{" Form"}
+                            </div>
+                            <Accordion.Item eventKey={0}>
+                                <Accordion.Header>
+                                    <b>More information</b>
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                <div className='sub-body'>
+                                    <div className="row justify-content-center league-info-content" style={{margin:0}}>
                                         {value.sort((a,b) => a.id - b.id).map((item, index) => (
                                             <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{padding:0}}>
                                                 <img alt='pokemon-model' height={100} src={getImageList(item.id, item.name) ? APIService.getPokemonModel(getImageList(item.id, item.name)) : APIService.getPokeFullSprite(item.id)}></img>
@@ -467,10 +482,12 @@ const FindBattle = () => {
                                             </div>
                                         ))}
                                     </div>
-                                ))}
+                                </div>
+                                <LeaveToggle eventKey={index} />
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
+                    ))}
                 </div>
                 }
             </Fragment>

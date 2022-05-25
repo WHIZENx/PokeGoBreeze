@@ -22,6 +22,13 @@
     margin: 10px 5%;
 }
 
+.form-header {
+    padding: 1rem 1.25rem;
+    text-align: start;
+    font-weight: bolder;
+    background-color: lightgray;
+}
+
 .rank-max {
     color: red;
     background-color: rgb(236, 200, 200);
@@ -51,10 +58,10 @@
 }
 
 .rank-nice {
-    color: yellow;
+    color: orange;
     background-color: rgb(236, 236, 200);
 }
 
 .rank-nice div b, .rank-nice b {
-    text-shadow: black 1px 1px;
+    text-shadow: white 1px 1px;
 }
