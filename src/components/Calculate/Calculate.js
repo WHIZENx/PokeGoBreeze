@@ -645,7 +645,9 @@ export const rankMove = (move, type) => {
 }
 
 export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
-    let pokemon = Object.values(pokemonData).find(value => value.num === item.id);
+    let pokemon;
+    if (item.form === "") pokemon = Object.values(pokemonData).find(value => value.num === item.id && value.slug === item.name.toLowerCase());
+    else pokemon = Object.values(pokemonData).find(value => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
     let pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
     let dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 500);
     let dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 1500);

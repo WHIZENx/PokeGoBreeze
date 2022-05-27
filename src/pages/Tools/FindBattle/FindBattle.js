@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import Find from "../Find";
 
 import { Box, Slider, styled } from "@mui/material";
@@ -84,6 +84,7 @@ const FindBattle = () => {
 
     const [id, setId] = useState(1);
     const [name, setName] = useState('Bulbasaur');
+    const [form, setForm] = useState('Bulbasaur');
 
     const [searchCP, setSearchCP] = useState('');
 
@@ -112,8 +113,11 @@ const FindBattle = () => {
     }
 
     const currEvoChain = useCallback((currId, form, arr) => {
+        if (form === "GALARIAN") form = "GALAR";
         if (currId.length === 0) return arr;
-        let curr = evoData.find(item => currId.includes(item.id) && (form === ""  || item.name.includes(form)));
+        let curr;
+        if (form === "") curr = evoData.find(item => currId.includes(item.id) && form === item.form);
+        else curr = evoData.find(item => currId.includes(item.id) && item.form.includes(form));
         if (!arr.map(i => i.id).includes(curr.id)) arr.push({...curr, form: form});
         return currEvoChain(curr.evo_list.map(i => i.evo_to_id), form, arr)
     }, []);
@@ -123,7 +127,7 @@ const FindBattle = () => {
         obj.evo_list.forEach(i => {
             currEvoChain([i.evo_to_id], i.evo_to_form, arr)
         });
-        let curr = evoData.filter(item => item.evo_list.find(i => obj.id === i.evo_to_id));
+        let curr = evoData.filter(item => item.evo_list.find(i => obj.id === i.evo_to_id && i.evo_to_form === defaultForm));
         if (curr.length === 0) return arr
         else if (curr.length === 1) return prevEvoChain(curr[0], defaultForm, arr)
         else return curr.map(item => prevEvoChain(item, defaultForm, arr));
@@ -131,11 +135,14 @@ const FindBattle = () => {
 
     const getEvoChain = useCallback((id) => {
         setLoad(true);
-        let curr = evoData.filter(item => item.evo_list.find(i => id === i.evo_to_id));
-        if (curr.length === 0) curr = evoData.filter(item => id === item.id);
-        let defaultForm = curr.reduce((a,b) => b.name.length > a.name.length ? a : b).name;
-        return curr.map(item => prevEvoChain(item, item.name.replace(defaultForm, "").slice(1), []));
-    }, [prevEvoChain]);
+        let isForm = form.form.form_name.toUpperCase();
+        let curr = evoData.filter(item => item.evo_list.find(i => id === i.evo_to_id && isForm === i.evo_to_form));
+        if (curr.length === 0) {
+            if (isForm === "") curr = evoData.filter(item => id === item.id && isForm === item.form);
+            else curr = evoData.filter(item => id === item.id && item.form.includes(isForm));
+        }
+        return curr.map(item => prevEvoChain(item, isForm, []));
+    }, [prevEvoChain, form]);
 
     const searchStatsPoke = useCallback((level) => {
         let arr = []
@@ -146,7 +153,7 @@ const FindBattle = () => {
             });
             arr.push(tempArr);
         });
-        setEvoChain(arr);
+        setEvoChain(arr.map(item => item.sort((a,b) => a.battleLeague.master.cp - b.battleLeague.master.cp)));
         var currBastStats;
         var evoBaseStats = [];
         arr.forEach(item => {
@@ -171,13 +178,10 @@ const FindBattle = () => {
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+name, { variant: 'error' });
+        enqueueSnackbar('Search success at CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+name, { variant: 'success' });
         searchStatsPoke(result.level);
         setLoad(false);
     }, [searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);
-
-    useEffect(() => {
-        // console.log(name,statATK,statDEF,statSTA);
-    }, [name]);
 
     const getImageList = (id, name) => {
         let img = pokeImageList.find(item => item.id === id).image.find(item => name.includes(item.form));
@@ -225,7 +229,7 @@ const FindBattle = () => {
 
     return (
         <div className="container">
-            <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName}/>
+            <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} setForm={setForm}/>
             <h1 id ="main" className='center'>Find Stats Battle</h1>
             <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)} style={{marginBottom: 15}}>
                 <div className="form-group d-flex justify-content-center center">
