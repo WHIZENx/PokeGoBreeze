@@ -12,13 +12,13 @@ import TypeEffect from './pages/TypeEffect/TypeEffect';
 import Weather from './pages/Weather/Weather';
 import Pokemon from './pages/Pokemon/Pokemon';
 import FindTable from './pages/Tools/FindTable/FindTable';
-import Calculate from './pages/Tools/Calculate/Calculate';
+import CalculateStats from './pages/Tools/CalculateStats/CalculateStats';
 import Damage from './pages/Tools/BattleDamage/Damage';
 import DpsTable from './pages/DpsSheet/DpsTable';
 import Move from './pages/Move/Move';
 import Error from './pages/Error/Error';
 import Leagues from './pages/Leagues/Legues';
-import FindBattle from './pages/Tools/FindBattle/FindBattle';
+import SearchBattle from './pages/Tools/SearchBattle/SearchBattle';
 import StatsTable from './pages/Tools/StatsTable/Stats';
 
 const App = () => {
@@ -39,8 +39,8 @@ const App = () => {
               <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
               <Route path="/search-move" element={<SearchMove/>}></Route>
               <Route path="/find-cp-iv" element={<FindTable/>}></Route>
-              <Route path="/calculate-cp-iv" element={<Calculate/>}></Route>
-              <Route path="/find-battle-stats" element={<FindBattle/>}></Route>
+              <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
+              <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
               <Route path="/moves/:id" element={<Move/>}></Route>
               <Route path="/stats-table" element={<StatsTable/>}></Route>

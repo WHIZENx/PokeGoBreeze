@@ -27,8 +27,8 @@ const NavbarComponent = () => {
                     </NavDropdown>
                     <NavDropdown title="Tools" id="basic-nav-dropdown">
                         <Link className="dropdown-item" to="/find-cp-iv">Find IV&CP</Link>
-                        <Link className="dropdown-item" to="/calculate-cp-iv">Calculate IV&CP</Link>
-                        <Link className="dropdown-item" to="/find-battle-stats">Find Battle Stats</Link>
+                        <Link className="dropdown-item" to="/calculate-stats">Calculate Stats</Link>
+                        <Link className="dropdown-item" to="/search-battle-stats">Search Battle Leagues Stats</Link>
                         <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
                         <Link className="dropdown-item" to="/stats-table">Stats Table</Link>
                     </NavDropdown>

@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 
 import APIService from "../../../services/API.service";
 
-import './Calculate.css';
+import './CalculateStats.css';
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
@@ -174,7 +174,7 @@ const Calculate = () => {
         <Fragment>
             <div className="container element-top">
                 <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} urlEvo={urlEvo} setUrlEvo={setUrlEvo}/>
-                <h1 id ="main" className='center'>Calculate IV&CP</h1>
+                <h1 id ="main" className='center'>Calculate Stats</h1>
                 <form className="element-top" onSubmit={onCalculateStatsPoke.bind(this)}>
                     <div className="form-group d-flex justify-content-center center">
                         <Box sx={{ width: '50%', minWidth: 350 }}>

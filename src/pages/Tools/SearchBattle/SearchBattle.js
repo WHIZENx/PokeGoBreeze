@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import Find from "../Find";
 
 import { Box, Slider, styled } from "@mui/material";
@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import evoData from "../../../data/evolution_pokemon_go.json";
 import pokeImageList from '../../../data/assets_pokemon_go.json';
 
-import './FindBattle.css';
+import './SearchBattle.css';
 import APIService from "../../../services/API.service";
 import { calculateStats, computeBgColor, computeColor, queryStatesEvoChain, splitAndCapitalize } from "../../../components/Calculate/Calculate";
 import { Accordion, useAccordionButton } from "react-bootstrap";
@@ -84,7 +84,8 @@ const FindBattle = () => {
 
     const [id, setId] = useState(1);
     const [name, setName] = useState('Bulbasaur');
-    const [form, setForm] = useState('Bulbasaur');
+    const [form, setForm] = useState(null);
+    const [maxCP, setMaxCP] = useState(0);
 
     const [searchCP, setSearchCP] = useState('');
 
@@ -145,21 +146,23 @@ const FindBattle = () => {
     }, [prevEvoChain, form]);
 
     const searchStatsPoke = useCallback((level) => {
-        let arr = []
+        let arr = [];
         getEvoChain(id).forEach(item => {
             let tempArr = []
             item.forEach(value => {
-                tempArr.push(queryStatesEvoChain(value, level, ATKIv, DEFIv, STAIv))
+                let data = queryStatesEvoChain(value, level, ATKIv, DEFIv, STAIv);
+                if (data.id === id) setMaxCP(data.maxCP);
+                tempArr.push(data)
             });
-            arr.push(tempArr);
+            arr.push(tempArr.sort((a,b) => a.maxCP - b.maxCP));
         });
-        setEvoChain(arr.map(item => item.sort((a,b) => a.battleLeague.master.cp - b.battleLeague.master.cp)));
+        setEvoChain(arr);
         var currBastStats;
         var evoBaseStats = [];
         arr.forEach(item => {
             item.forEach(value => {
-                if (value.id !== id) evoBaseStats.push({...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)})
-                else currBastStats = {...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)};
+                if (value.id !== id) evoBaseStats.push({...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, maxCP: value.maxCP, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)})
+                else currBastStats = {...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, maxCP: value.maxCP, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)};
             });
         });
         let bestLeague = evoBaseStats.filter(item => item.ratio > currBastStats.ratio);
@@ -170,7 +173,7 @@ const FindBattle = () => {
         if (bestLeague.length === 0) bestLeague = evoBaseStats.filter(item => item.ratio > currBastStats.ratio);
         if (bestLeague.length === 0) return setBestInLeague([currBastStats]);
         if (currBastStats.ratio >= 90) bestLeague.push(currBastStats);
-        setBestInLeague(bestLeague.sort((a,b) => a.id - b.id));
+        setBestInLeague(bestLeague.sort((a,b) => a.maxCP - b.maxCP));
     }, [ATKIv, DEFIv, STAIv, getEvoChain, id]);
 
     const onSearchStatsPoke = useCallback((e) => {
@@ -182,6 +185,10 @@ const FindBattle = () => {
         searchStatsPoke(result.level);
         setLoad(false);
     }, [searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);
+
+    useEffect(() => {
+        document.title = "Search Battle Leagues Stats - Tool";
+    }, []);
 
     const getImageList = (id, name) => {
         let img = pokeImageList.find(item => item.id === id).image.find(item => name.includes(item.form));
@@ -230,7 +237,7 @@ const FindBattle = () => {
     return (
         <div className="container">
             <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} setForm={setForm}/>
-            <h1 id ="main" className='center'>Find Stats Battle</h1>
+            <h1 id ="main" className='center'>Search Battle Leagues Stats</h1>
             <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)} style={{marginBottom: 15}}>
                 <div className="form-group d-flex justify-content-center center">
                     <Box sx={{ width: '50%', minWidth: 350 }}>
@@ -351,11 +358,11 @@ const FindBattle = () => {
                                 <Accordion.Body>
                                 <div className='sub-body'>
                                     <div className="row justify-content-center league-info-content" style={{margin:0}}>
-                                        {value.sort((a,b) => a.id - b.id).map((item, index) => (
+                                        {value.map((item, index) => (
                                             <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{padding:0}}>
                                                 <img alt='pokemon-model' height={100} src={getImageList(item.id, item.name) ? APIService.getPokemonModel(getImageList(item.id, item.name)) : APIService.getPokeFullSprite(item.id)}></img>
                                                 <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</b></div>
-                                                {item.id < id ?
+                                                {item.maxCP < maxCP ?
                                                 <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Not Elidge</b></div>
                                                 :
                                                 <Fragment>

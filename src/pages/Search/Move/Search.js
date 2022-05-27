@@ -7,8 +7,8 @@ import combatData from '../../../data/combat.json';
 import './Search.css';
 
 const nameSort = (rowA, rowB) => {
-    const a = rowA.name.toLowerCase();
-    const b = rowB.name.toLowerCase();
+    const a = rowA.name.toLowerCase().replaceAll(" plus", "+");
+    const b = rowB.name.toLowerCase().replaceAll(" plus", "+");
     return a === b ? 0 : a > b ? 1 : -1;
 };
 
@@ -32,7 +32,7 @@ const columnsF = [
     },
     {
         name: 'Name',
-        selector: row => <Link to={"/moves/"+row.id} target="_blank">{splitAndCapitalize(row.name, "_", " ")}</Link>,
+        selector: row => <Link to={"/moves/"+row.id} target="_blank">{splitAndCapitalize(row.name, "_", " ").replaceAll(" Plus", "+")}</Link>,
         sortable: true,
         sortFunction: nameSort,
         width: '200px'

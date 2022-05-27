@@ -80,7 +80,7 @@ const columns = [
         selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_", " ")}`}>
             <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_", " ").replaceAll(" Plus", "+")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.mShadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
         sortable: true,
-        minWidth: '200px',
+        minWidth: '220px',
         sortFunction: cmoveSort
     },
     {
@@ -261,7 +261,7 @@ const DpsTable = (props) => {
                     }
                 </div>
                 <div className='row w-100' style={{margin: 0}}>
-                    <div className='col-xl border-input' style={{padding: 0}}>
+                    <div className='col-xxl border-input' style={{padding: 0}}>
                         <div className="input-group border-input">
                             <span className="input-group-text">Search name or ID</span>
                             <input type="text" className='form-control input-search' placeholder='Enter name or ID'
@@ -280,7 +280,7 @@ const DpsTable = (props) => {
                             <FormControlLabel control={<Switch onChange={(event, check) => setEnableMega(check)}/>} label="Mega"/>
                         </div>
                     </div>
-                    <div className='col-xl border-input' style={{padding: 0}}>
+                    <div className='col-xxl border-input' style={{padding: 0}}>
                         <div className='head-types'>Options</div>
                         <form className='w-100' onSubmit={onCalculateTable.bind(this)}>
                             <div className='border-input' style={{padding: 0}}>

@@ -33,7 +33,7 @@ const columns = [
         selector: row => <Link to={"/pokemon/"+row.num} target="_blank"><img height={48} alt='img-pokemon' style={{marginRight: 10}}
         src={APIService.getPokeIconSprite(row.sprite, true)}
         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}></img>
-        {splitAndCapitalize(row.name, "-", " ")}</Link>,
+        {row.name}</Link>,
         sortable: true,
         sortFunction: nameSort
     },
@@ -118,8 +118,9 @@ const Move = (props) => {
                                     <td colSpan="2">{move.pve_power}</td>
                                 </tr>
                                 <tr>
-                                    <td>PVE Power (Weather)</td>
-                                    <td colSpan="2">{move.pve_power*1.2} <span className="text-success d-inline-block caption">+{(move.pve_power*0.2).toFixed(2)}</span></td>
+                                    <td>PVE Power
+                                    <span className="caption">(Weather / STAB / Shadow Bonus)</span></td>
+                                    <td colSpan="2">{(move.pve_power*1.2).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pve_power*0.2).toFixed(2)}</span></td>
                                 </tr>
                                 <tr>
                                     <td>PVE Energy</td>
@@ -135,6 +136,11 @@ const Move = (props) => {
                                 <tr>
                                     <td>PVP Power</td>
                                     <td colSpan="2">{move.pvp_power}</td>
+                                </tr>
+                                <tr>
+                                    <td>PVE Power
+                                    <span className="caption">(STAB / Shadow Bonus)</span></td>
+                                    <td colSpan="2">{(move.pvp_power*1.2).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pvp_power*0.2).toFixed(2)}</span></td>
                                 </tr>
                                 <tr>
                                     <td>PVP Energy</td>
@@ -214,16 +220,19 @@ const Move = (props) => {
                                     <td>{((move.pve_power)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td>DPS (STAB)</td>
+                                    <td>DPS
+                                    <span className="caption">(Weather / STAB / Shadow Bonus)</span></td>
                                     <td>{((move.pve_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td>DPS (Weather)</td>
-                                    <td>{((move.pve_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
-                                </tr>
-                                <tr>
-                                    <td>DPS (STAB+Weather)</td>
+                                    <td>DPS
+                                    <span className="caption">(2 Effect Bonus)</span></td>
                                     <td>{((move.pve_power*1.2*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td>DPS
+                                    <span className="caption">(STAB+Weather+Shadow Bonus)</span></td>
+                                    <td>{((move.pve_power*1.2*1.2*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 {move.type_move === "FAST" &&<tr>
                                     <td>EPS</td>
@@ -235,7 +244,8 @@ const Move = (props) => {
                                     <td>{((move.pvp_power)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td>DPS (STAB)</td>
+                                    <td>DPS
+                                    <span className="caption">(STAB / Shadow Bonus)</span></td>
                                     <td>{((move.pvp_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
