@@ -4941,5 +4941,30 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0.01
+    },
+    {
+        "name": "SEED_FLARE",
+        "type": "GRASS",
+        "type_move": "CHARGE",
+        "pvp_power": 130.0,
+        "pvp_energy": -75,
+        "sound": "465-0_seed_flare",
+        "buffs": [
+            {
+                "type": "def",
+                "target": "target",
+                "power": -2,
+                "buffChance": 0.4
+            }
+        ],
+        "id": 369,
+        "pve_power": 120.0,
+        "pve_energy": -100,
+        "durationMs": 2700,
+        "damageWindowStartMs": 2500,
+        "damageWindowEndMs": 2600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     }
 ]

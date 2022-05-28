@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import Find from "../Find";
 
-import { Box, Slider, styled } from "@mui/material";
+import { Badge, Box } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import evoData from "../../../data/evolution_pokemon_go.json";
 import pokeImageList from '../../../data/assets_pokemon_go.json';
@@ -13,72 +13,8 @@ import { Accordion, useAccordionButton } from "react-bootstrap";
 import { useSnackbar } from "notistack";
 
 import loading from '../../../assets/loading.png';
-
-const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
-
-const PokeGoSlider = styled(Slider)(() => ({
-    color: '#ee9219',
-    height: 18,
-    padding: '13px 0',
-    '& .MuiSlider-thumb': {
-      height: 18,
-      width: 18,
-      backgroundColor: '#ee9219',
-      '&:hover, &.Mui-focusVisible, &.Mui-active': {
-        boxShadow: 'none',
-      },
-      '&:before': {
-        boxShadow: 'none',
-      },
-      '& .airbnb-bar': {
-        height: 12,
-        width: 1,
-        backgroundColor: 'currentColor',
-        marginLeft: 1,
-        marginRight: 1,
-      },
-    },
-    '& .MuiSlider-track': {
-      height: 18,
-      border: 'none',
-      borderTopRightRadius: '1px',
-      borderBottomRightRadius: '1px',
-    },
-    '& .MuiSlider-rail': {
-      color: 'lightgray',
-      opacity: 0.5,
-      height: 18,
-    },
-    '& .MuiSlider-valueLabel': {
-        lineHeight: 1.2,
-        fontSize: 12,
-        background: 'unset',
-        padding: 0,
-        width: 32,
-        height: 32,
-        borderRadius: '50% 50% 50% 0',
-        backgroundColor: '#ee9219',
-        transformOrigin: 'bottom left',
-        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
-        '&:before': { display: 'none' },
-        '&.MuiSlider-valueLabelOpen': {
-          transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
-        },
-        '& > *': {
-          transform: 'rotate(45deg)',
-        },
-    },
-    '& .MuiSlider-mark': {
-        backgroundColor: '#bfbfbf',
-        height: 13,
-        width: 1,
-        '&.MuiSlider-markActive': {
-          opacity: 1,
-          backgroundColor: '#fff',
-          height: 13
-        },
-    },
-}));
+import { Link } from "react-router-dom";
+import { marks, PokeGoSlider } from "../../../util/util";
 
 const FindBattle = () => {
 
@@ -142,6 +78,7 @@ const FindBattle = () => {
             if (isForm === "") curr = evoData.filter(item => id === item.id && isForm === item.form);
             else curr = evoData.filter(item => id === item.id && item.form.includes(isForm));
         }
+        if (curr.length === 0) curr = evoData.filter(item => id === item.id);
         return curr.map(item => prevEvoChain(item, isForm, []));
     }, [prevEvoChain, form]);
 
@@ -208,6 +145,7 @@ const FindBattle = () => {
     }
 
     const getTextColorRatio = (value) => {
+        value = parseFloat(value.toFixed(2))
         return "rank-"+
         (value === 100 ?
         "max"
@@ -317,7 +255,7 @@ const FindBattle = () => {
                     <div>
                         <h4 style={{textDecoration: 'underline'}}>Recommend Battle League</h4>
                         {bestInLeague.map((value, index) => (
-                            <div className="d-inline-block contain-poke-best-league border-best-poke" key={index}>
+                            <Link className="d-inline-block contain-poke-best-league border-best-poke" key={index} to={"/pokemon/"+value.id} title={`#${value.id} ${splitAndCapitalize(value.name, "_", " ")}`}>
                                 <div className="d-flex align-items-center h-100">
                                     <div className="border-best-poke h-100">
                                         <img className="poke-best-league" alt='pokemon-model' height={102} src={getImageList(value.id, value.name) ? APIService.getPokemonModel(getImageList(value.id, value.name)) : APIService.getPokeFullSprite(value.id)}></img>
@@ -343,7 +281,7 @@ const FindBattle = () => {
                                         <span className="caption text-black border-best-poke"><b>#{value.rank}</b></span>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                     {evoChain.map((value, index) => (
@@ -360,8 +298,12 @@ const FindBattle = () => {
                                     <div className="row justify-content-center league-info-content" style={{margin:0}}>
                                         {value.map((item, index) => (
                                             <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{padding:0}}>
-                                                <img alt='pokemon-model' height={100} src={getImageList(item.id, item.name) ? APIService.getPokemonModel(getImageList(item.id, item.name)) : APIService.getPokeFullSprite(item.id)}></img>
-                                                <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</b></div>
+                                                <Link to={"/pokemon/"+item.id} title={`#${item.id} ${splitAndCapitalize(item.name, "_", " ")}`}>
+                                                    <Badge color="primary" overlap="circular" badgeContent={index+1}>
+                                                        <img alt='pokemon-model' height={100} src={getImageList(item.id, item.name) ? APIService.getPokemonModel(getImageList(item.id, item.name)) : APIService.getPokeFullSprite(item.id)}></img>
+                                                    </Badge>
+                                                    <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</b></div>
+                                                </Link>
                                                 {item.maxCP < maxCP ?
                                                 <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Not Elidge</b></div>
                                                 :

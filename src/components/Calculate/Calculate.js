@@ -421,6 +421,12 @@ export const typeCostPowerUp = (type) => {
     };
 }
 
+export const sortStatsProd = (data) => {
+    // const maxStatsProds = Math.max.apply(Math, dataList.map(item => { return item.statsProds; }));
+    data = data.sort((a,b) => a.statsProds - b.statsProds);
+    return data.map((item, index) => ({...item, ratio: item.statsProds*100/data[data.length-1].statsProds, rank: data.length-index}));
+}
+
 export const calStatsProd = (atk, def, sta, maxCP, pure) => {
     let dataList = [];
     if (atk === 0 || def === 0 || sta === 0) return dataList;
@@ -447,30 +453,8 @@ export const calStatsProd = (atk, def, sta, maxCP, pure) => {
     }
 
     if (!pure) {
-        let maxStatsProds = 0;
-        dataList.map(item => { return item.statsProds; }).forEach(value => {
-            if (value > maxStatsProds) maxStatsProds = value;
-        });
-
-        // const maxStatsProds = Math.max.apply(Math, dataList.map(item => { return item.statsProds; }));
-        dataList = dataList.map(item => ({...item, ratio: item.statsProds*100/maxStatsProds}));
-        dataList = dataList.sort((a,b) => a.statsProds - b.statsProds);
-        dataList = dataList.map((item, index) => ({...item, rank: dataList.length-index}));
-        return dataList;
+        return sortStatsProd(dataList);
     } else return dataList;
-}
-
-export const calStatsProdPure = (data) => {
-    let maxStatsProds = 0;
-    data.map(item => { return item.statsProds; }).forEach(value => {
-        if (value > maxStatsProds) maxStatsProds = value;
-    });
-
-    // const maxStatsProds = Math.max.apply(Math, dataList.map(item => { return item.statsProds; }));
-    data = data.map(item => ({...item, ratio: item.statsProds*100/maxStatsProds}));
-    data = data.sort((a,b) => a.statsProds - b.statsProds);
-    data = data.map((item, index) => ({...item, rank: data.length-index}));
-    return data;
 }
 
 export const calculateStatsByTag = (baseStats, tag) => {
@@ -493,7 +477,7 @@ export const getTypeEffective = (typeMove, typesObj) => {
     return value_effective;
 }
 
-export const calculateDamagePVE = (atk, defObj, power, eff, pure) => {
+export const calculateDamagePVE = (atk, defObj, power, eff, pure, stab) => {
     let modifier;
     if (eff) {
         const isStab = eff.stab ? 1.2 : 1;
@@ -507,7 +491,10 @@ export const calculateDamagePVE = (atk, defObj, power, eff, pure) => {
         else if (eff.clevel === 2) isCharge += 0.5;
         else if (eff.clevel === 3) isCharge += 0.75;
         modifier = isStab * isWb * isFrind * isDodge * isCharge * isMega * isTrainer * eff.effective;
-    } else modifier = 1;
+    } else {
+        if (stab) modifier = 1.2;
+        else modifier = 1;
+    }
     if (pure) return (0.5 * power * (atk/defObj) * modifier) + 1
     return Math.floor(0.5 * power * (atk/defObj) * modifier) + 1
 }
@@ -529,8 +516,8 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, optio
     const CDur = cmove.durationMs/1000;
     const CDWS = cmove.damageWindowStartMs/1000;
 
-    let FMulti = (typePoke.includes(capitalize(fmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
-    let CMulti = (typePoke.includes(capitalize(cmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
+    const FMulti = (typePoke.includes(capitalize(fmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
+    const CMulti = (typePoke.includes(capitalize(cmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
 
     let y,FDmg,CDmg,FDmgBase,CDmgBase
     if (options === undefined) {
@@ -611,7 +598,8 @@ export const queryTopMove = (move) => {
                 if (!pokemonList) pokemonList = combatPoke.PURIFIED_MOVES.includes(move.name)
                 if (!pokemonList) pokemonList = combatPoke.ELITE_CINEMATIC_MOVES.includes(move.name);
             }
-            if (pokemonList) dataPri.push({num: value.num, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: calculateDamagePVE(calculateStatsBettlePure(calBaseATK(value.baseStats, true), 15, 40), 200, move.pve_power, null, true)});
+            const stab = value.types.includes(capitalize(move.type.toLowerCase()));
+            if (pokemonList) dataPri.push({num: value.num, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: calculateDamagePVE(calculateStatsBettlePure(calculateStatsByTag(value.baseStats, value.slug).atk, 15, 40), 200, move.pve_power, null, true, stab)});
         }
     });
     return dataPri;
@@ -671,12 +659,15 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
     let dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, null);
 
     let statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null, true);
+    let ultraStatsProd = sortStatsProd(statsProd.filter(item => item.CP <= 2500));
+    let greatStatsProd = sortStatsProd(ultraStatsProd.filter(item => item.CP <= 1500));
+    let littleStatsProd = sortStatsProd(greatStatsProd.filter(item => item.CP <= 500));
 
     let battleLeague = {
-        little: calStatsProdPure(statsProd.filter(item => item.CP <= 500)).find(item => item.level === dataLittle.level && item.CP === dataLittle.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        great: calStatsProdPure(statsProd.filter(item => item.CP <= 1500)).find(item => item.level === dataGreat.level && item.CP === dataGreat.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        ultra: calStatsProdPure(statsProd.filter(item => item.CP <= 2500)).find(item => item.level === dataUltra.level && item.CP === dataUltra.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        master: calStatsProdPure(statsProd).find(item => item.level === dataMaster.level && item.CP === dataMaster.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV)
+        little: littleStatsProd.find(item => item.level === dataLittle.level && item.CP === dataLittle.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        great: greatStatsProd.find(item => item.level === dataGreat.level && item.CP === dataGreat.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        ultra: ultraStatsProd.find(item => item.level === dataUltra.level && item.CP === dataUltra.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        master: sortStatsProd(statsProd).find(item => item.level === dataMaster.level && item.CP === dataMaster.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV)
     }
 
     if (battleLeague.little) battleLeague.little = {...battleLeague.little, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.little.level)};

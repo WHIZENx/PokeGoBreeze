@@ -11443,7 +11443,8 @@
         "CINEMATIC_MOVES": [
             "ENERGY_BALL",
             "GRASS_KNOT",
-            "SOLAR_BEAM"
+            "SOLAR_BEAM",
+            "SEED_FLARE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -11461,7 +11462,8 @@
         "CINEMATIC_MOVES": [
             "ENERGY_BALL",
             "GRASS_KNOT",
-            "SOLAR_BEAM"
+            "SOLAR_BEAM",
+            "SEED_FLARE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17985,10 +17987,14 @@
         "NAME": "NIHILEGO",
         "BASE_SPECIES": "NIHILEGO",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ACID_FAST",
+            "POUND_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "POWER_GEM",
+            "GUNK_SHOT",
+            "SLUDGE_BOMB",
+            "ROCK_SLIDE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],

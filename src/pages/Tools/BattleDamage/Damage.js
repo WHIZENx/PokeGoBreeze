@@ -1,4 +1,4 @@
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Rating, Select, styled, Switch } from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch } from "@mui/material";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { FormGroup } from "react-bootstrap";
@@ -14,15 +14,7 @@ import atk_logo from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import Find from "../Find";
 import StatsTable from "./StatsDamageTable";
-
-const LevelRating = styled(Rating)({
-    '& .MuiRating-iconFilled': {
-      color: '#ff3d47',
-    },
-    '& .MuiRating-iconHover': {
-      color: '#ff3d47',
-    },
-});
+import { LevelRating } from "../../../util/util";
 
 const labels = {
     0: '1.00',

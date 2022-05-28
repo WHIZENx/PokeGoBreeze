@@ -10,21 +10,13 @@ import APIService from "../../services/API.service";
 
 import loadingImg from '../../assets/loading.png';
 import Type from "../../components/Sprits/Type";
-import { Checkbox, FormControlLabel, Rating, Switch, styled, capitalize } from "@mui/material";
+import { Checkbox, FormControlLabel, Switch, capitalize } from "@mui/material";
 import { Box } from "@mui/system";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
 import './DpsTable.css';
 import { Link } from "react-router-dom";
-
-const LevelRating = styled(Rating)({
-    '& .MuiRating-iconFilled': {
-      color: '#ff3d47',
-    },
-    '& .MuiRating-iconHover': {
-      color: '#ff3d47',
-    },
-});
+import { LevelRating } from "../../util/util";
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.pokemon.name.toLowerCase();

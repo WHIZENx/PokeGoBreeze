@@ -184,7 +184,7 @@ const Pokemon = (props) => {
                     {props.prev && props.next ?
                     <Fragment>
                     {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
-                        <div className="d-flex justify-content-start align-items-center" onClick={() => props.onDecId()}  title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name)}`}>
+                        <div className="d-flex justify-content-start align-items-center" onClick={() => props.onDecId()}  title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>

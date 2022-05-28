@@ -1,4 +1,4 @@
-import { Box, FormControlLabel, Radio, RadioGroup, Slider, styled } from "@mui/material";
+import { Box, FormControlLabel, Radio } from "@mui/material";
 import { useCallback, useState } from "react";
 import { calculateStatsBettle, calculateStatsBettlePure } from "../../../components/Calculate/Calculate";
 import APIService from "../../../services/API.service";
@@ -6,25 +6,7 @@ import APIService from "../../../services/API.service";
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
-
-const LevelSlider = styled(Slider)(() => ({
-    '& .MuiSlider-mark': {
-        backgroundColor: 'currentColor',
-        height: 13,
-        width: 2,
-        '&.MuiSlider-markActive': {
-          opacity: 1,
-          backgroundColor: 'red',
-          height: 13
-        },
-    },
-}));
-
-const TypeRadioGroup = styled(RadioGroup)(() => ({
-    '&.MuiFormGroup-root, &.MuiFormGroup-row': {
-        display: 'block',
-    }
-}));
+import { LevelSlider, TypeRadioGroup } from "../../../util/util";
 
 const StatsTable = (props) => {
 

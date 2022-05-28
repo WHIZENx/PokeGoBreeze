@@ -12282,7 +12282,15 @@
     {
         "id": 793,
         "name": "NIHILEGO",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 793,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm793.icon",
+                "shiny": "Addressable Assets/pm793.s.icon"
+            }
+        ]
     },
     {
         "id": 794,
