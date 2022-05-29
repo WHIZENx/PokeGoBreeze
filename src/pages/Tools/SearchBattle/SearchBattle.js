@@ -121,7 +121,7 @@ const FindBattle = () => {
         enqueueSnackbar('Search success at CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+name+" "+splitAndCapitalize(form.form.form_name, "-", " "), { variant: 'success' });
         searchStatsPoke(result.level);
         setLoad(false);
-    }, [searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA, form.form.form_name]);
+    }, [searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA, form]);
 
     useEffect(() => {
         document.title = "Search Battle Leagues Stats - Tool";
