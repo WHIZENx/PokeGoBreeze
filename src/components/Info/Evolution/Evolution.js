@@ -322,7 +322,7 @@ const Evolution = (props) => {
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </div>
                                         :
-                                        <Link className="select-evo" to={"/pokemon/"+value.name} onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, "-", " ")}`}>
+                                        <Link className="select-evo" to={"/pokemon/"+value.id} onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, "-", " ")}`}>
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </Link>
                                         }

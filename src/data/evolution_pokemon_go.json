@@ -3544,7 +3544,7 @@
     },
     {
         "id": 150,
-        "name": "MEWTWO_A",
+        "name": "MEWTWO_ARMOR",
         "evo_list": [],
         "mega_evo": [],
         "purified": {
@@ -3555,7 +3555,7 @@
             "stardust": 100000,
             "candy": 100
         },
-        "form": "A"
+        "form": "ARMOR"
     },
     {
         "id": 151,

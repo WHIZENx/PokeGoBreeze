@@ -78,7 +78,7 @@ const FindBattle = () => {
             if (isForm === "") curr = evoData.filter(item => id === item.id && isForm === item.form);
             else curr = evoData.filter(item => id === item.id && item.form.includes(isForm));
         }
-        if (curr.length === 0) curr = evoData.filter(item => id === item.id);
+        if (curr.length === 0) curr = evoData.filter(item => id === item.id && item.form === "");
         return curr.map(item => prevEvoChain(item, isForm, []));
     }, [prevEvoChain, form]);
 
@@ -118,17 +118,18 @@ const FindBattle = () => {
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+name, { variant: 'error' });
-        enqueueSnackbar('Search success at CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+name, { variant: 'success' });
+        enqueueSnackbar('Search success at CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+name+" "+splitAndCapitalize(form.form.form_name, "-", " "), { variant: 'success' });
         searchStatsPoke(result.level);
         setLoad(false);
-    }, [searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);
+    }, [searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA, form.form.form_name]);
 
     useEffect(() => {
         document.title = "Search Battle Leagues Stats - Tool";
     }, []);
 
-    const getImageList = (id, name) => {
-        let img = pokeImageList.find(item => item.id === id).image.find(item => name.includes(item.form));
+    const getImageList = (id) => {
+        let isForm = form.form.form_name === "" ? "NORMAL" : form.form.form_name.replaceAll("-", "_").toUpperCase();
+        let img = pokeImageList.find(item => item.id === id).image.find(item => item.form.includes(isForm));
         if (!img) img = pokeImageList.find(item => item.id === id).image[0];
         try {return img.default}
         catch {return null}
@@ -253,13 +254,15 @@ const FindBattle = () => {
                 {evoChain.length > 0 && bestInLeague.length > 0 &&
                 <div className="center">
                     <div>
-                        <h4 style={{textDecoration: 'underline'}}>Recommend Battle League</h4>
+                        <h4 style={{textDecoration: 'underline'}}>
+                            Recommend Battle League
+                        </h4>
                         {bestInLeague.map((value, index) => (
                             <Link className="d-inline-block contain-poke-best-league border-best-poke" key={index} to={"/pokemon/"+value.id} title={`#${value.id} ${splitAndCapitalize(value.name, "_", " ")}`}>
                                 <div className="d-flex align-items-center h-100">
                                     <div className="border-best-poke h-100">
-                                        <img className="poke-best-league" alt='pokemon-model' height={102} src={getImageList(value.id, value.name) ? APIService.getPokemonModel(getImageList(value.id, value.name)) : APIService.getPokeFullSprite(value.id)}></img>
-                                        <span className="caption text-black border-best-poke"><b>#{value.id} {splitAndCapitalize(value.name, "_", " ")}</b></span>
+                                        <img className="poke-best-league" alt='pokemon-model' height={102} src={getImageList(value.id) ? APIService.getPokemonModel(getImageList(value.id)) : APIService.getPokeFullSprite(value.id)}></img>
+                                        <span className="caption text-black border-best-poke best-name"><b>#{value.id} {splitAndCapitalize(value.name, "_", " ")} {splitAndCapitalize(form.form.form_name, "-", " ")}</b></span>
                                     </div>
                                     <div className={"border-best-poke "+(getTextColorRatio(value.ratio))}>
                                         <div className="best-poke-desc border-best-poke">
@@ -287,7 +290,7 @@ const FindBattle = () => {
                     {evoChain.map((value, index) => (
                         <Accordion key={index} style={{marginTop: '3%', marginBottom: '5%'}}>
                             <div className="form-header">
-                                {value[0].form === "" ? "Normal" : splitAndCapitalize(value[0].form, "_", " ")}{" Form"}
+                                {value[0].form === "" ? "Normal" : splitAndCapitalize(value[0].form, "-", " ")}{" Form"}
                             </div>
                             <Accordion.Item eventKey={0}>
                                 <Accordion.Header>
@@ -300,9 +303,9 @@ const FindBattle = () => {
                                             <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{padding:0}}>
                                                 <Link to={"/pokemon/"+item.id} title={`#${item.id} ${splitAndCapitalize(item.name, "_", " ")}`}>
                                                     <Badge color="primary" overlap="circular" badgeContent={index+1}>
-                                                        <img alt='pokemon-model' height={100} src={getImageList(item.id, item.name) ? APIService.getPokemonModel(getImageList(item.id, item.name)) : APIService.getPokeFullSprite(item.id)}></img>
+                                                        <img alt='pokemon-model' height={100} src={getImageList(item.id) ? APIService.getPokemonModel(getImageList(item.id)) : APIService.getPokeFullSprite(item.id)}></img>
                                                     </Badge>
-                                                    <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</b></div>
+                                                    <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase(), "_", " ")} {splitAndCapitalize(form.form.form_name, "-", " ")}</b></div>
                                                 </Link>
                                                 {item.maxCP < maxCP ?
                                                 <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Not Elidge</b></div>

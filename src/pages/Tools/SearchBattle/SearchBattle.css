@@ -10,6 +10,10 @@
     padding: 13px;
 }
 
+.best-name {
+    padding: 0 5px;
+}
+
 .list-best-league li {
     padding-left: 2rem;
 }
