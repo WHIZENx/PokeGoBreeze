@@ -6,6 +6,8 @@ import pokemonCombatList from "../../data/combat_pokemon_go_list.json";
 import typeEffective from "../../data/type_effectiveness.json";
 import weatherBoosts from '../../data/weather_boosts.json';
 
+import Moment from 'moment';
+
 const DEFAULT_POKEMON_DEF_OBJ = 160;
 const DEFAULT_POKEMON_SHADOW = false;
 const DEFAULT_WEATHER_BOOSTS = false;
@@ -41,6 +43,10 @@ export const capitalize = (string) => {
 export const splitAndCapitalize = (string, splitBy, joinBy) => {
     return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(joinBy);
 };
+
+export const getTime = (value, notFull) => {
+    return notFull ? Moment((new Date(parseInt(value)))).format('DD MMMM YYYY') : Moment((new Date(parseInt(value)))).format('HH:mm DD MMMM YYYY')
+}
 
 export const regionList = {
     1: "Kanto",

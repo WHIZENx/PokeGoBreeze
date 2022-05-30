@@ -4,6 +4,7 @@ const POKE_API_URL = 'https://pokeapi.co/api/v2/';
 const POGO_API_URL = 'https://pogoapi.net/api/v1/';
 
 const POGO_PROD_ASSET_URL = 'https://storage.googleapis.com/prod-public-images/';
+const POGO_PRODHOLOHOLO_ASSET_URL = 'https://prodholoholo-public-images.nianticlabs.com/Stickers/';
 
 const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/';
 const POGO_SOUND_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Sounds/';
@@ -142,6 +143,10 @@ class APIService {
 
     getAssetPokeGo(image) {
         return `${POGO_PROD_ASSET_URL}${image}`;
+    }
+
+    getStickerPokeGo(sticker) {
+        return `${POGO_PRODHOLOHOLO_ASSET_URL}${sticker}`;
     }
 }
 

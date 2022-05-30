@@ -6,19 +6,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import leaguesData from '../../data/pokemon_go_leagues.json';
 import pokeImageList from '../../data/assets_pokemon_go.json';
 import APIService from '../../services/API.service';
-import Moment from 'moment';
 
 import './Leagues.css';
 import { Fragment, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { splitAndCapitalize } from '../../components/Calculate/Calculate';
+import { getTime, splitAndCapitalize } from '../../components/Calculate/Calculate';
 import { capitalize } from '@mui/material';
 
 const Leagues = () => {
-
-    const getTime = (value) => {
-        return Moment((new Date(parseInt(value)))).format('HH:mm DD MMMM YYYY')
-    }
 
     const getAssetPokeGo = (id, form) => {
         try {
@@ -44,9 +39,10 @@ const Leagues = () => {
 
     return (
         <div className='container' style={{padding: 15}}>
-            <h1 className='title-leagues' style={{marginBottom: 15}}>Battle Leagues List</h1>
-            <Accordion alwaysOpen>
-                {leaguesData.map((value, index) => (
+            <h2 className='title-leagues' style={{marginBottom: 15}}>Battle Leagues List</h2>
+            <span className="text-timestamp">* Update: {getTime(leaguesData.timestamp, true)}</span>
+            <Accordion alwaysOpen style={{marginTop: 15}}>
+                {leaguesData.data.map((value, index) => (
                     <Accordion.Item key={index} eventKey={index}>
                         <Accordion.Header>
                             <img style={{marginRight: 10}} alt='img-league' height={50} src={APIService.getAssetPokeGo(value.iconUrl)}></img>
@@ -61,7 +57,7 @@ const Leagues = () => {
                                 {value.league !== value.title && !value.title.includes("REMIX") ?
                                     <div className='league'>
                                         <img alt='img-league' height={140} src={APIService.getAssetPokeGo(
-                                            leaguesData.find(item => item.title === value.league).iconUrl
+                                            leaguesData.data.find(item => item.title === value.league).iconUrl
                                         )}>
                                         </img>
                                         <span className={'badge-league '+value.league.toLowerCase()}>
@@ -105,7 +101,7 @@ const Leagues = () => {
                                 }
                             </li>
                             {value.conditions.unique_type &&
-                            <li style={{fontWeight: 500}}>
+                            <li style={{fontWeight: 500}} className='unique-type'>
                                 <h6 className='title-leagues'>Unique Type</h6>
                                 <Type arr={value.conditions.unique_type}/>
                             </li>

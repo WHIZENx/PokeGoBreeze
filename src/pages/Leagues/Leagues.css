@@ -28,6 +28,10 @@
     border: 3.5px solid white;
 }
 
+li.unique-type ul {
+    padding: 0;
+}
+
 .great_league {
     background-image: linear-gradient(45deg, #2a3fa5 60%, #4b7ad6);
 }

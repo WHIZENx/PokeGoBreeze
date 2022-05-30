@@ -2549,7 +2549,7 @@
         "name": "CUBONE",
         "evo_list": [
             {
-                "evo_to_form": "",
+                "evo_to_form": "ALOLA",
                 "evo_to_id": 105,
                 "evo_to_name": "MAROWAK",
                 "candyCost": 50,
@@ -3544,7 +3544,7 @@
     },
     {
         "id": 150,
-        "name": "MEWTWO_ARMOR",
+        "name": "MEWTWO_A",
         "evo_list": [],
         "mega_evo": [],
         "purified": {
@@ -3555,7 +3555,7 @@
             "stardust": 100000,
             "candy": 100
         },
-        "form": "ARMOR"
+        "form": "A"
     },
     {
         "id": 151,

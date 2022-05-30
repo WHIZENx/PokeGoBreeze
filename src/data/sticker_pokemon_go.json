@@ -1,0 +1,2757 @@
+{
+    "timestamp": 1653903628000,
+    "data": [
+        {
+            "id": "ALOLAISHI_1",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "ALOLAISHI_2",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "ALOLAISHI_3",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "ALOLAISHI_4",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "AUDINO",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_audino.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "AUDINO.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "AUDINO.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "BIDOOFDAY_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_bidoofDay_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "BIDOOFDAY_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "BIDOOFDAY_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "BIDOOFDAY_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_bidoofDay_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "BIDOOFDAY_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "BIDOOFDAY_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "BIDOOFDAY_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_bidoofDay_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "BIDOOFDAY_3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "BIDOOFDAY_3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "CITYSPOTLIGHT",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_CitySpotlight.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DIAMONDPEARLCHIMCHAR",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_diamondPearlChimchar.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DIAMONDPEARLCHIMCHAR.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLCHIMCHAR.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLDIALGA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_diamondPearlDialga.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DIAMONDPEARLDIALGA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLDIALGA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLLUCARIO",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_diamondPearlLucario.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DIAMONDPEARLLUCARIO.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLLUCARIO.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLPALKIA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_diamondPearlPalkia.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DIAMONDPEARLPALKIA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLPALKIA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLPIPLUP",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_diamondPearlPiplup.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DIAMONDPEARLPIPLUP.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLPIPLUP.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLTURTWIG",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_diamondPearlTurtwig.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DIAMONDPEARLTURTWIG.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DIAMONDPEARLTURTWIG.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "DITTO_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_ditto_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DITTO_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_ditto_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DITTO_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_ditto_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DITTO_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_ditto_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DITTO_5",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_ditto_5.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DITTO_6",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_ditto_6.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_4.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_4.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_5",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_5.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_5.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_5.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_6",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_6.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_6.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_6.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_7",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_7.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_7.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_7.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_8",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_8.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_8.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_8.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_9",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_eeveeFriends_9.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "EEVEEFRIENDS_9.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "EEVEEFRIENDS_9.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_festivalOfTheLights21_v1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_festivalOfTheLights21_v2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_festivalOfTheLights21_v3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_festivalOfTheLights21_v4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V4.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FESTIVALOFTHELIGHTS21_V4.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FLABEBE_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_flabebe_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FLABEBE_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FLABEBE_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FLABEBE_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_flabebe_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FLABEBE_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FLABEBE_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FUNAWARI_04_312",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_04_312.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNAWARI_05_312",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_05_312.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNAWARI_06_312",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_06_312.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNAWARI_22_312",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_22_312.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNAWARI_22_312.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FUNAWARI_22_312.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FUNWARI_02_0608",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_funwari_02_0608.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNWARI_02_0608.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FUNWARI_02_0608.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FUNWARI_10",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_10.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNWARI_11_THANKU",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_11_thanku.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNWARI_12_02",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_12_02.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNWARI_18",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_18.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNWARI_20",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_funwari_20.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNWARI_20.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FUNWARI_20.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FUNWARI_35",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_funwari_35.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FUNWARI_PIDGEY_18",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_funwari_pidgey_18.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FURFROUHEART_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_furfrouHeart_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FURFROUHEART_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FURFROUHEART_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FURFROUHEART_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_furfrouHeart_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "FURFROUHEART_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "FURFROUHEART_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "GIFTTHANKYOU",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_GiftThankyou.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GIFTTHANKYOU.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "GIFTTHANKYOU.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "GOTOUR2021",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_goTour2021_29075.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_CHIKORITA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_chikorita.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_CYNDAQUIL",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_cyndaquil.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_HOOH",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_hooh.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_LUGIA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_lugia.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_TOGEPI",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_togepi.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "GOTOUR2022_TOTODILE",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_goTour2022_totodile.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN21_FUWARAID",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_halloween21_fuwaraid.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN21_FUWARAID.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN21_FUWARAID.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN21_GHOSTPIKA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_halloween21_ghostpika.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN21_GHOSTPIKA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN21_GHOSTPIKA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN21_PIKACHU",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_halloween21_pikachu.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN21_PIKACHU.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN21_PIKACHU.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN21_POCHAMA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_halloween21_pochama.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN21_POCHAMA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN21_POCHAMA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_BULB",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_Halloween_Bulb.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN_BULB.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_BULB.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_CHARM",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_Halloween_Charm.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN_CHARM.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_CHARM.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_GENGARMD",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_Halloween_GengarMD.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN_GENGARMD.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_GENGARMD.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_PIKA",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_Halloween_Pika.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN_PIKA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_PIKA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_SABLEYEMD",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_Halloween_SableyeMD.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN_SQU",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_Halloween_Squ.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HALLOWEEN_SQU.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HALLOWEEN_SQU.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOLIDAYEVENT21_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_holidayEvent21_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLIDAYEVENT21_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOLIDAYEVENT21_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOLIDAYEVENT21_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_holidayEvent21_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLIDAYEVENT21_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOLIDAYEVENT21_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOLIDAYEVENT21_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_holidayEvent21_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLIDAYEVENT21_3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOLIDAYEVENT21_3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOLIDAYEVENT21_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_holidayEvent21_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLIDAYEVENT21_4.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOLIDAYEVENT21_4.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOPPIP_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_hoppip_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOPPIP_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOPPIP_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOPPIP_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_hoppip_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOPPIP_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOPPIP_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOPPIP_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_hoppip_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOPPIP_3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOPPIP_3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOPPIP_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_hoppip_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOPPIP_4.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "HOPPIP_4.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "LENTILLAUNCH_CAMERA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_lentilLaunch_camera.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "LENTILLAUNCH_CAMERA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "LENTILLAUNCH_CAMERA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "LUVDISC",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_luvdisc.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "LUVDISC.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "LUVDISC.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "MEWTWO",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_mewtwo.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "MEW_LAUGH",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_mew_laugh.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_06_312",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_nagano_06_312.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_06_312.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_06_312.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_08",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_nagano_08.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_11",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_nagano_11.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_11.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_11.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_15",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_nagano_15.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_15_312",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_nagano_15_312.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_15_312.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_15_312.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_BATH",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_nagano_bath.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_BATH.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_BATH.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_MARILL",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_nagano_marill.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_MARILL.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_MARILL.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_YADON",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_nagano_yadon.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NAGANO_YADON.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NAGANO_YADON.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NEWPOKEMON2_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newPokemon2_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWPOKEMON2_15",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_newPokemon2_15.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWPOKEMON2_15.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NEWPOKEMON2_15.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "NEWPOKEMON2_33",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newPokemon2_33.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWPOKEMON_04",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_newPokemon_04.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWPOKEMON_20",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newPokemon_20.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWPOKEMON_37",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newPokemon_37.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWTEAMRASCAL",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newTeamRascal.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWTEAMRASCALPIKACHU_26",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newTeamRascalPikachu_26.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWYEARS22_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newYears22_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWYEARS22_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newYears22_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWYEARS22_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newYears22_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NEWYEARS22_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_newYears22_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NIA_LOGO",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_nia_logo.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NIGIYAKA_08_0508_312",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_nigiyaka_08_0508_312.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NIGIYAKA_16_0508_312",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_nigiyaka_16_0508_312.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "NYARTH_38",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_nyarth_38.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2021_GALARIANZIGZAGOON",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pgoFest2021_galarianZigzagoon.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2021_GALARIANZIGZAGOON.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2021_GALARIANZIGZAGOON.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2021_LOGO",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pgoFest2021_logo.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2021_MELOETTA_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pgoFest2021_meloetta_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2021_MELOETTA_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2021_MELOETTA_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2021_MELOETTA_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pgoFest2021_meloetta_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2021_MELOETTA_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2021_MELOETTA_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2021_PONYTA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pgoFest2021_ponyta.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2021_PONYTA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2021_PONYTA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2021_SHIRTICON",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pgoFest2021_shirtIcon.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2022_GROUDON",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2022_GROUDON.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_GROUDON.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_KIBAGO",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2022_KIBAGO.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_KIBAGO.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_KYOGRE",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2022_KYOGRE.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_KYOGRE.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_PIKACHU",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2022_PIKACHU.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_PIKACHU.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_POCHAMA",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2022_POCHAMA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_POCHAMA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_SHAYMIN",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGOFEST2022_SHAYMIN.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGOFEST2022_SHAYMIN.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PGO_FEST_2017",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_pgo_fest_2017.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGO_FEST_2018",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_pgo_fest_2018.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGO_FEST_2019",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_pgo_fest_2019.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGO_FEST_2020",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_pgo_fest_2020.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGO_FEST_2020_LOGO",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_pgo_fest_2020_logo.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGO_FEST_2022",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGO_FEST_2022_LOGO",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PGO_FEST_VICTINI_05",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_pgo_fest_victini_05.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PIKAAIRADVENTURE_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pikaairadventure_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PIKAAIRADVENTURE_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pikaairadventure_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PIKAAIRADVENTURE_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pikaairadventure_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PIKACHU_JOL",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_pikachu_JOL.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PIKA_14_THANKYOU",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_pika_14_thankyou.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "POKEMONCHATPALS2_04",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_pokemonChatPals2_04.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "POKEMONCHATPALS2_40",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_pokemonChatPals2_40.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "POKEMONCHATPALS2_40.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "POKEMONCHATPALS2_40.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PROJECTGUITAR_04",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_projectGuitar_04.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PROJECTGUITAR_07",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_projectGuitar_07.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PROJECTGUITAR_13",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_projectGuitar_13.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PROJECTGUITAR_25",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_projectGuitar_25.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PROJECTGUITAR_FROAKIE",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_projectGuitar_froakie.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PSYCHICSPEC21_INKAY",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_psychicSpec21_inkay.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PSYCHICSPEC21_INKAY.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PSYCHICSPEC21_INKAY.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PSYCHICSPEC21_INKAY2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_psychicSpec21_inkay2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "PSYCHICSPEC21_INKAY2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "PSYCHICSPEC21_INKAY2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SANDSHREW_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_sandshrew_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SANDSHREW_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_sandshrew_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SANDSHREW_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_sandshrew_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SANDSHREW_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_sandshrew_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SECRETSOFTHEJUNGLE_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_secretsOfTheJungle_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SECRETSOFTHEJUNGLE_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_secretsOfTheJungle_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SECRETSOFTHEJUNGLE_5",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_secretsOfTheJungle_5.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SECRETSOFTHEJUNGLE_6",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_secretsOfTheJungle_6.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SECRETSOFTHEJUNGLE_7",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_secretsOfTheJungle_7.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SECRETSOFTHEJUNGLE_8",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_secretsOfTheJungle_8.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SECRETSOFTHEJUNGLE_9",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_secretsOfTheJungle_9.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPHEAL_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spheal_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPHEAL_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPHEAL_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPHEAL_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spheal_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPHEAL_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPHEAL_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPHEAL_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spheal_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPHEAL_3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPHEAL_3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPHEAL_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spheal_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPHEAL_4.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPHEAL_4.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_EIEVUI",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spring_eievui.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPRING_EIEVUI.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_EIEVUI.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_HAPINAS",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spring_hapinas.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPRING_HAPINAS.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_HAPINAS.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_MIMIROL",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spring_mimirol.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPRING_MIMIROL.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_MIMIROL.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_NIMPHIA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spring_nimphia.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPRING_NIMPHIA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_NIMPHIA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_PIKACHU",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spring_pikachu.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPRING_PIKACHU.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_PIKACHU.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_PIPITO",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_spring_pipito.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SPRING_PIPITO.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SPRING_PIPITO.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "STUFFUL_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_stufful_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "STUFFUL_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "STUFFUL_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "STUFFUL_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_stufful_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "STUFFUL_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "STUFFUL_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "STUFFUL_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_stufful_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "STUFFUL_3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "STUFFUL_3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "STUFFUL_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_stufful_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "STUFFUL_4.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "STUFFUL_4.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_1",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SUMMER_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_2",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SUMMER_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_3",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SUMMER_3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_4",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SUMMER_4.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_4.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_5",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SUMMER_5.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_5.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_6",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SUMMER_6.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SUMMER_6.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_1",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_swordShield21_1.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SWORDSHIELD21_1.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_1.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_2",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_swordShield21_2.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SWORDSHIELD21_2.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_2.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_3",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_swordShield21_3.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SWORDSHIELD21_3.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_3.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_4",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_swordShield21_4.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SWORDSHIELD21_4.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_4.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_5",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_swordShield21_5.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "SWORDSHIELD21_5.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "SWORDSHIELD21_5.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "TL_BLANCHE",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_TL_Blanche.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "TL_BLANCHE.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "TL_BLANCHE.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "TL_CANDELA",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_TL_Candela.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "TL_CANDELA.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "TL_CANDELA.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "TL_SPARK",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_TL_Spark.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "TL_SPARK.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "TL_SPARK.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "TR_ARLO",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_TR_Arlo.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "TR_CLIFF",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_TR_Cliff.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "TR_SIERRA",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_TR_Sierra.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "WILLOW_BRONZE",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "WILLOW_GOLD",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "WILLOW_SILVER",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "YADON",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/sticker_yadon.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "YURUTTO_12",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_yurutto_12.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "YURUTTO_12.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "YURUTTO_12.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "YURUTTO_24",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_yurutto_24.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "YURUTTO_24.3",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "YURUTTO_24.5",
+            "maxCount": 0,
+            "stickerUrl": null,
+            "type": "SHOP"
+        },
+        {
+            "id": "YURUTTO_26",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_yurutto_26.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "YURUTTO_33",
+            "maxCount": 25,
+            "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_yurutto_33.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "YURUTTO_36",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_yurutto_36.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "YURUTTO_37",
+            "maxCount": 25,
+            "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_yurutto_37.png",
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        }
+    ]
+}

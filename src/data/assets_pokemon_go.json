@@ -11352,17 +11352,125 @@
     {
         "id": 669,
         "name": "FLABEBE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 669,
+                "form": "BLUE",
+                "default": "Addressable Assets/pm669.fBLUE.icon",
+                "shiny": "Addressable Assets/pm669.fBLUE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 669,
+                "form": "ORANGE",
+                "default": "Addressable Assets/pm669.fORANGE.icon",
+                "shiny": "Addressable Assets/pm669.fORANGE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 669,
+                "form": "RED",
+                "default": "Addressable Assets/pm669.fRED.icon",
+                "shiny": "Addressable Assets/pm669.fRED.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 669,
+                "form": "WHITE",
+                "default": "Addressable Assets/pm669.fWHITE.icon",
+                "shiny": "Addressable Assets/pm669.fWHITE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 669,
+                "form": "YELLOW",
+                "default": "Addressable Assets/pm669.fYELLOW.icon",
+                "shiny": "Addressable Assets/pm669.fYELLOW.s.icon"
+            }
+        ]
     },
     {
         "id": 670,
         "name": "FLOETTE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 670,
+                "form": "BLUE",
+                "default": "Addressable Assets/pm670.fBLUE.icon",
+                "shiny": "Addressable Assets/pm670.fBLUE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 670,
+                "form": "ORANGE",
+                "default": "Addressable Assets/pm670.fORANGE.icon",
+                "shiny": "Addressable Assets/pm670.fORANGE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 670,
+                "form": "RED",
+                "default": "Addressable Assets/pm670.fRED.icon",
+                "shiny": "Addressable Assets/pm670.fRED.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 670,
+                "form": "WHITE",
+                "default": "Addressable Assets/pm670.fWHITE.icon",
+                "shiny": "Addressable Assets/pm670.fWHITE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 670,
+                "form": "YELLOW",
+                "default": "Addressable Assets/pm670.fYELLOW.icon",
+                "shiny": "Addressable Assets/pm670.fYELLOW.s.icon"
+            }
+        ]
     },
     {
         "id": 671,
         "name": "FLORGES",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 671,
+                "form": "BLUE",
+                "default": "Addressable Assets/pm671.fBLUE.icon",
+                "shiny": "Addressable Assets/pm671.fBLUE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 671,
+                "form": "ORANGE",
+                "default": "Addressable Assets/pm671.fORANGE.icon",
+                "shiny": "Addressable Assets/pm671.fORANGE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 671,
+                "form": "RED",
+                "default": "Addressable Assets/pm671.fRED.icon",
+                "shiny": "Addressable Assets/pm671.fRED.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 671,
+                "form": "WHITE",
+                "default": "Addressable Assets/pm671.fWHITE.icon",
+                "shiny": "Addressable Assets/pm671.fWHITE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 671,
+                "form": "YELLOW",
+                "default": "Addressable Assets/pm671.fYELLOW.icon",
+                "shiny": "Addressable Assets/pm671.fYELLOW.s.icon"
+            }
+        ]
     },
     {
         "id": 672,
@@ -11419,7 +11527,78 @@
     {
         "id": 676,
         "name": "FURFROU",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "DANDY",
+                "default": "Addressable Assets/pm676.fDANDY.icon",
+                "shiny": "Addressable Assets/pm676.fDANDY.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "DEBUTANTE",
+                "default": "Addressable Assets/pm676.fDEBUTANTE.icon",
+                "shiny": "Addressable Assets/pm676.fDEBUTANTE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "DIAMOND",
+                "default": "Addressable Assets/pm676.fDIAMOND.icon",
+                "shiny": "Addressable Assets/pm676.fDIAMOND.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "HEART",
+                "default": "Addressable Assets/pm676.fHEART.icon",
+                "shiny": "Addressable Assets/pm676.fHEART.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "KABUKI",
+                "default": "Addressable Assets/pm676.fKABUKI.icon",
+                "shiny": "Addressable Assets/pm676.fKABUKI.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "LA_REINE",
+                "default": "Addressable Assets/pm676.fLA_REINE.icon",
+                "shiny": "Addressable Assets/pm676.fLA_REINE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "MATRON",
+                "default": "Addressable Assets/pm676.fMATRON.icon",
+                "shiny": "Addressable Assets/pm676.fMATRON.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "NATURAL",
+                "default": "Addressable Assets/pm676.fNATURAL.icon",
+                "shiny": "Addressable Assets/pm676.fNATURAL.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "PHARAOH",
+                "default": "Addressable Assets/pm676.fPHARAOH.icon",
+                "shiny": "Addressable Assets/pm676.fPHARAOH.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 676,
+                "form": "STAR",
+                "default": "Addressable Assets/pm676.fSTAR.icon",
+                "shiny": "Addressable Assets/pm676.fSTAR.s.icon"
+            }
+        ]
     },
     {
         "id": 677,
@@ -11683,7 +11862,15 @@
     {
         "id": 697,
         "name": "TYRANTRUM",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 697,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm697.icon",
+                "shiny": "Addressable Assets/pm697.s.icon"
+            }
+        ]
     },
     {
         "id": 698,
@@ -11760,7 +11947,15 @@
     {
         "id": 703,
         "name": "CARBINK",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 703,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm703.icon",
+                "shiny": "Addressable Assets/pm703.s.icon"
+            }
+        ]
     },
     {
         "id": 704,
@@ -11817,32 +12012,136 @@
     {
         "id": 708,
         "name": "PHANTUMP",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 708,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm708.icon",
+                "shiny": "Addressable Assets/pm708.s.icon"
+            }
+        ]
     },
     {
         "id": 709,
         "name": "TREVENANT",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 709,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm709.icon",
+                "shiny": "Addressable Assets/pm709.s.icon"
+            }
+        ]
     },
     {
         "id": 710,
         "name": "PUMPKABOO",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 710,
+                "form": "AVERAGE",
+                "default": "Addressable Assets/pm710.fAVERAGE.icon",
+                "shiny": "Addressable Assets/pm710.fAVERAGE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 710,
+                "form": "LARGE",
+                "default": "Addressable Assets/pm710.fLARGE.icon",
+                "shiny": "Addressable Assets/pm710.fLARGE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 710,
+                "form": "SMALL",
+                "default": "Addressable Assets/pm710.fSMALL.icon",
+                "shiny": "Addressable Assets/pm710.fSMALL.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 710,
+                "form": "SUPER",
+                "default": "Addressable Assets/pm710.fSUPER.icon",
+                "shiny": "Addressable Assets/pm710.fSUPER.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 710,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm710.icon",
+                "shiny": "Addressable Assets/pm710.s.icon"
+            }
+        ]
     },
     {
         "id": 711,
         "name": "GOURGEIST",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 711,
+                "form": "AVERAGE",
+                "default": "Addressable Assets/pm711.fAVERAGE.icon",
+                "shiny": "Addressable Assets/pm711.fAVERAGE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 711,
+                "form": "LARGE",
+                "default": "Addressable Assets/pm711.fLARGE.icon",
+                "shiny": "Addressable Assets/pm711.fLARGE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 711,
+                "form": "SMALL",
+                "default": "Addressable Assets/pm711.fSMALL.icon",
+                "shiny": "Addressable Assets/pm711.fSMALL.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 711,
+                "form": "SUPER",
+                "default": "Addressable Assets/pm711.fSUPER.icon",
+                "shiny": "Addressable Assets/pm711.fSUPER.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 711,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm711.icon",
+                "shiny": "Addressable Assets/pm711.s.icon"
+            }
+        ]
     },
     {
         "id": 712,
         "name": "BERGMITE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 712,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm712.icon",
+                "shiny": "Addressable Assets/pm712.s.icon"
+            }
+        ]
     },
     {
         "id": 713,
         "name": "AVALUGG",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 713,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm713.icon",
+                "shiny": "Addressable Assets/pm713.s.icon"
+            }
+        ]
     },
     {
         "id": 714,
@@ -11917,7 +12216,29 @@
     {
         "id": 720,
         "name": "HOOPA",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 720,
+                "form": "CONFINED",
+                "default": "Addressable Assets/pm720.fCONFINED.icon",
+                "shiny": null
+            },
+            {
+                "gender": 3,
+                "pokemonId": 720,
+                "form": "UNBOUND",
+                "default": "Addressable Assets/pm720.fUNBOUND.icon",
+                "shiny": null
+            },
+            {
+                "gender": 3,
+                "pokemonId": 720,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm720.icon",
+                "shiny": null
+            }
+        ]
     },
     {
         "id": 721,
@@ -11927,72 +12248,184 @@
     {
         "id": 722,
         "name": "ROWLET",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 722,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm722.icon",
+                "shiny": "Addressable Assets/pm722.s.icon"
+            }
+        ]
     },
     {
         "id": 723,
         "name": "DARTRIX",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 723,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm723.icon",
+                "shiny": "Addressable Assets/pm723.s.icon"
+            }
+        ]
     },
     {
         "id": 724,
         "name": "DECIDUEYE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 724,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm724.icon",
+                "shiny": "Addressable Assets/pm724.s.icon"
+            }
+        ]
     },
     {
         "id": 725,
         "name": "LITTEN",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 725,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm725.icon",
+                "shiny": "Addressable Assets/pm725.s.icon"
+            }
+        ]
     },
     {
         "id": 726,
         "name": "TORRACAT",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 726,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm726.icon",
+                "shiny": "Addressable Assets/pm726.s.icon"
+            }
+        ]
     },
     {
         "id": 727,
         "name": "INCINEROAR",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 727,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm727.icon",
+                "shiny": "Addressable Assets/pm727.s.icon"
+            }
+        ]
     },
     {
         "id": 728,
         "name": "POPPLIO",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 728,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm728.icon",
+                "shiny": "Addressable Assets/pm728.s.icon"
+            }
+        ]
     },
     {
         "id": 729,
         "name": "BRIONNE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 729,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm729.icon",
+                "shiny": "Addressable Assets/pm729.s.icon"
+            }
+        ]
     },
     {
         "id": 730,
         "name": "PRIMARINA",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 730,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm730.icon",
+                "shiny": "Addressable Assets/pm730.s.icon"
+            }
+        ]
     },
     {
         "id": 731,
         "name": "PIKIPEK",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 731,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm731.icon",
+                "shiny": "Addressable Assets/pm731.s.icon"
+            }
+        ]
     },
     {
         "id": 732,
         "name": "TRUMBEAK",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 732,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm732.icon",
+                "shiny": "Addressable Assets/pm732.s.icon"
+            }
+        ]
     },
     {
         "id": 733,
         "name": "TOUCANNON",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 733,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm733.icon",
+                "shiny": "Addressable Assets/pm733.s.icon"
+            }
+        ]
     },
     {
         "id": 734,
         "name": "YUNGOOS",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 734,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm734.icon",
+                "shiny": "Addressable Assets/pm734.s.icon"
+            }
+        ]
     },
     {
         "id": 735,
         "name": "GUMSHOOS",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 735,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm735.icon",
+                "shiny": "Addressable Assets/pm735.s.icon"
+            }
+        ]
     },
     {
         "id": 736,
@@ -12022,7 +12455,36 @@
     {
         "id": 741,
         "name": "ORICORIO",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 741,
+                "form": "BAILE",
+                "default": "Addressable Assets/pm741.fBAILE.icon",
+                "shiny": "Addressable Assets/pm741.fBAILE.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 741,
+                "form": "PAU",
+                "default": "Addressable Assets/pm741.fPAU.icon",
+                "shiny": "Addressable Assets/pm741.fPAU.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 741,
+                "form": "POMPOM",
+                "default": "Addressable Assets/pm741.fPOMPOM.icon",
+                "shiny": "Addressable Assets/pm741.fPOMPOM.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 741,
+                "form": "SENSU",
+                "default": "Addressable Assets/pm741.fSENSU.icon",
+                "shiny": "Addressable Assets/pm741.fSENSU.s.icon"
+            }
+        ]
     },
     {
         "id": 742,
@@ -12037,12 +12499,35 @@
     {
         "id": 744,
         "name": "ROCKRUFF",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 744,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm744.icon",
+                "shiny": "Addressable Assets/pm744.s.icon"
+            }
+        ]
     },
     {
         "id": 745,
         "name": "LYCANROC",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 745,
+                "form": "MIDDAY",
+                "default": "Addressable Assets/pm745.fMIDDAY.icon",
+                "shiny": "Addressable Assets/pm745.fMIDDAY.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 745,
+                "form": "MIDNIGHT",
+                "default": "Addressable Assets/pm745.fMIDNIGHT.icon",
+                "shiny": "Addressable Assets/pm745.fMIDNIGHT.s.icon"
+            }
+        ]
     },
     {
         "id": 746,
@@ -12072,22 +12557,54 @@
     {
         "id": 751,
         "name": "DEWPIDER",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 751,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm751.icon",
+                "shiny": "Addressable Assets/pm751.s.icon"
+            }
+        ]
     },
     {
         "id": 752,
         "name": "ARAQUANID",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 752,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm752.icon",
+                "shiny": "Addressable Assets/pm752.s.icon"
+            }
+        ]
     },
     {
         "id": 753,
         "name": "FOMANTIS",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 753,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm753.icon",
+                "shiny": "Addressable Assets/pm753.s.icon"
+            }
+        ]
     },
     {
         "id": 754,
         "name": "LURANTIS",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 754,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm754.icon",
+                "shiny": "Addressable Assets/pm754.s.icon"
+            }
+        ]
     },
     {
         "id": 755,
@@ -12102,22 +12619,54 @@
     {
         "id": 757,
         "name": "SALANDIT",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 757,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm757.icon",
+                "shiny": "Addressable Assets/pm757.s.icon"
+            }
+        ]
     },
     {
         "id": 758,
         "name": "SALAZZLE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 758,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm758.icon",
+                "shiny": "Addressable Assets/pm758.s.icon"
+            }
+        ]
     },
     {
         "id": 759,
         "name": "STUFFUL",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 759,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm759.icon",
+                "shiny": "Addressable Assets/pm759.s.icon"
+            }
+        ]
     },
     {
         "id": 760,
         "name": "BEWEAR",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 760,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm760.icon",
+                "shiny": "Addressable Assets/pm760.s.icon"
+            }
+        ]
     },
     {
         "id": 761,
@@ -12137,12 +12686,28 @@
     {
         "id": 764,
         "name": "COMFEY",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 764,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm764.icon",
+                "shiny": "Addressable Assets/pm764.s.icon"
+            }
+        ]
     },
     {
         "id": 765,
         "name": "ORANGURU",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 765,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm765.icon",
+                "shiny": "Addressable Assets/pm765.s.icon"
+            }
+        ]
     },
     {
         "id": 766,
@@ -12227,37 +12792,93 @@
     {
         "id": 782,
         "name": "JANGMO_O",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 782,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm782.icon",
+                "shiny": "Addressable Assets/pm782.s.icon"
+            }
+        ]
     },
     {
         "id": 783,
         "name": "HAKAMO_O",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 783,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm783.icon",
+                "shiny": "Addressable Assets/pm783.s.icon"
+            }
+        ]
     },
     {
         "id": 784,
         "name": "KOMMO_O",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 784,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm784.icon",
+                "shiny": "Addressable Assets/pm784.s.icon"
+            }
+        ]
     },
     {
         "id": 785,
         "name": "TAPU_KOKO",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 785,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm785.icon",
+                "shiny": "Addressable Assets/pm785.s.icon"
+            }
+        ]
     },
     {
         "id": 786,
         "name": "TAPU_LELE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 786,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm786.icon",
+                "shiny": "Addressable Assets/pm786.s.icon"
+            }
+        ]
     },
     {
         "id": 787,
         "name": "TAPU_BULU",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 787,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm787.icon",
+                "shiny": "Addressable Assets/pm787.s.icon"
+            }
+        ]
     },
     {
         "id": 788,
         "name": "TAPU_FINI",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 788,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm788.icon",
+                "shiny": "Addressable Assets/pm788.s.icon"
+            }
+        ]
     },
     {
         "id": 789,
@@ -12436,12 +13057,28 @@
     {
         "id": 819,
         "name": "SKWOVET",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 819,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm819.icon",
+                "shiny": "Addressable Assets/pm819.s.icon"
+            }
+        ]
     },
     {
         "id": 820,
         "name": "GREEDENT",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 820,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm820.icon",
+                "shiny": "Addressable Assets/pm820.s.icon"
+            }
+        ]
     },
     {
         "id": 821,
@@ -12496,12 +13133,28 @@
     {
         "id": 831,
         "name": "WOOLOO",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 831,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm831.icon",
+                "shiny": "Addressable Assets/pm831.s.icon"
+            }
+        ]
     },
     {
         "id": 832,
         "name": "DUBWOOL",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 832,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm832.icon",
+                "shiny": "Addressable Assets/pm832.s.icon"
+            }
+        ]
     },
     {
         "id": 833,
@@ -12731,7 +13384,15 @@
     {
         "id": 870,
         "name": "FALINKS",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 870,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm870.icon",
+                "shiny": "Addressable Assets/pm870.s.icon"
+            }
+        ]
     },
     {
         "id": 871,
@@ -12821,12 +13482,42 @@
     {
         "id": 888,
         "name": "ZACIAN",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 888,
+                "form": "HERO",
+                "default": "Addressable Assets/pm888.fHERO.icon",
+                "shiny": null
+            },
+            {
+                "gender": 3,
+                "pokemonId": 888,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm888.icon",
+                "shiny": null
+            }
+        ]
     },
     {
         "id": 889,
         "name": "ZAMAZENTA",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 889,
+                "form": "HERO",
+                "default": "Addressable Assets/pm889.fHERO.icon",
+                "shiny": null
+            },
+            {
+                "gender": 3,
+                "pokemonId": 889,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm889.icon",
+                "shiny": null
+            }
+        ]
     },
     {
         "id": 890,
@@ -12846,7 +13537,15 @@
     {
         "id": 893,
         "name": "ZARUDE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 893,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm893.icon",
+                "shiny": null
+            }
+        ]
     },
     {
         "id": 894,
