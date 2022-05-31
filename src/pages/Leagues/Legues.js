@@ -17,10 +17,9 @@ const Leagues = () => {
 
     const getAssetPokeGo = (id, form) => {
         try {
-            let data = APIService.getPokemonModel(pokeImageList.find(item => item.id === id).image.find(item => item.form === form).default);
-            return data ? data : APIService.getPokemonModel(pokeImageList.find(item => item.id === id).image[0].default);
-        }
-        catch {return APIService.getPokeFullSprite(id)}
+            let data = pokeImageList.find(item => item.id === id).image.find(item => item.form === form);
+            return data ? APIService.getPokemonModel(data.default) : APIService.getPokemonModel(pokeImageList.find(item => item.id === id).image[0].default);
+        } catch {return APIService.getPokeFullSprite(id)}
     }
 
     const LeaveToggle = ({ eventKey }) => {
@@ -46,8 +45,7 @@ const Leagues = () => {
                     <Accordion.Item key={index} eventKey={index}>
                         <Accordion.Header>
                             <img style={{marginRight: 10}} alt='img-league' height={50} src={APIService.getAssetPokeGo(value.iconUrl)}></img>
-                            <b className={value.enabled ? "" : "text-danger"}>{(value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title) ? "Seeker " : "") +
-                            splitAndCapitalize(value.title.toLowerCase(), "_", " ") +
+                            <b className={value.enabled ? "" : "text-danger"}>{(value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title) ? splitAndCapitalize(value.id.replace("VS_","").toLowerCase(), "_", " ") : splitAndCapitalize(value.title.toLowerCase(), "_", " ")) +
                             (value.id.includes("SAFARI_ZONE") ? ` ${value.id.split("_")[3]} ${capitalize(value.id.split("_")[4].toLowerCase())}` : "")}</b>
                         </Accordion.Header>
                         <Accordion.Body>
@@ -122,7 +120,7 @@ const Leagues = () => {
                                 <h6 className='title-leagues text-danger'>Ban List</h6>
                                 {value.conditions.banned.map((item, index) => (
                                     <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                        <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, "NORMAL")}></img>
+                                        <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
                                         <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
                                     </Link>
                                 ))}

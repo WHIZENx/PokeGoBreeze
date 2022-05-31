@@ -5,32 +5,32 @@
             "id": "ALOLAISHI_1",
             "maxCount": 25,
             "stickerUrl": null,
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 74,
+            "pokemonName": "GEODUDE",
             "type": "DEFAULT"
         },
         {
             "id": "ALOLAISHI_2",
             "maxCount": 25,
             "stickerUrl": null,
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 74,
+            "pokemonName": "GEODUDE",
             "type": "DEFAULT"
         },
         {
             "id": "ALOLAISHI_3",
             "maxCount": 25,
             "stickerUrl": null,
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 74,
+            "pokemonName": "GEODUDE",
             "type": "DEFAULT"
         },
         {
             "id": "ALOLAISHI_4",
             "maxCount": 25,
             "stickerUrl": null,
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 74,
+            "pokemonName": "GEODUDE",
             "type": "DEFAULT"
         },
         {
@@ -2269,8 +2269,8 @@
             "id": "STUFFUL_1",
             "maxCount": 25,
             "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_stufful_1.png",
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 759,
+            "pokemonName": "STUFFUL",
             "type": "DEFAULT"
         },
         {
@@ -2289,8 +2289,8 @@
             "id": "STUFFUL_2",
             "maxCount": 25,
             "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_stufful_2.png",
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 759,
+            "pokemonName": "STUFFUL",
             "type": "DEFAULT"
         },
         {
@@ -2309,8 +2309,8 @@
             "id": "STUFFUL_3",
             "maxCount": 25,
             "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_stufful_3.png",
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 759,
+            "pokemonName": "STUFFUL",
             "type": "DEFAULT"
         },
         {
@@ -2329,8 +2329,8 @@
             "id": "STUFFUL_4",
             "maxCount": 25,
             "stickerUrl": "https://prodholoholo-public-images.nianticlabs.com/Stickers/sticker_stufful_4.png",
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 759,
+            "pokemonName": "STUFFUL",
             "type": "DEFAULT"
         },
         {

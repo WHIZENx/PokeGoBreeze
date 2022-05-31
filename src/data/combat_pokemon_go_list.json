@@ -5928,6 +5928,17 @@
         "ELITE_CINEMATIC_MOVES": []
     },
     {
+        "ID": 235,
+        "NAME": "SMEARGLE",
+        "BASE_SPECIES": "SMEARGLE",
+        "QUICK_MOVES": [],
+        "CINEMATIC_MOVES": [],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
         "ID": 236,
         "NAME": "TYROGUE",
         "BASE_SPECIES": "TYROGUE",
