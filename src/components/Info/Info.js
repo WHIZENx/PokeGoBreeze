@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import TypeEffective from "../Effective/TypeEffective";
 import WeatherTypeEffective from "../Effective/WeatherTypeEffective";
-import Type from "../Sprits/Type";
+import Type from "../Sprites/Type";
 
 import typeEffective from '../../data/type_effectiveness.json';
 import weatherEffective from '../../data/weather_boosts.json';

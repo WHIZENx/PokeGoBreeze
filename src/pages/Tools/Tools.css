@@ -27,6 +27,7 @@
     height: 180px !important;
     width: 350px;
     white-space: nowrap;
+    overflow-x: auto;
 }
 
 .col-cal {

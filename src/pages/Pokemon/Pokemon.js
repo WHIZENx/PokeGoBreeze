@@ -69,8 +69,8 @@ const Pokemon = (props) => {
         setPokeData(dataPokeList);
         dataFromList = dataFromList.map(item => {
             return item.map(item => ({form: item, name: data.varieties.find(v => item.pokemon.name.includes(v.pokemon.name)).pokemon.name, default_name: data.name}))
-            .sort((a,b) => (a.form.id > b.form.id) ? 1 : ((b.form.id > a.form.id) ? -1 : 0));
-        }).sort((a,b) => (a[0].form.id > b[0].form.id) ? 1 : ((b[0].form.id > a[0].form.id) ? -1 : 0));
+            .sort((a,b) => a.form.id - b.form.id);
+        }).sort((a,b) => a[0].form.id - b[0].form.id);
         setFormList(dataFromList);
         const defaultFrom = dataFromList.map(item => item.find(item => item.form.is_default));
         const isDefaultForm = defaultFrom.find(item => item.form.id === data.id);

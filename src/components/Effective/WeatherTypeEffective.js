@@ -1,5 +1,5 @@
 import React from 'react';
-import Weather from '../Sprits/Weather';
+import Weather from '../Sprites/Weather';
 
 const WeatherTypeEffective = (props) => {
 

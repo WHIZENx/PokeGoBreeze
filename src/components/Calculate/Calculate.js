@@ -3,6 +3,7 @@ import combat from '../../data/combat.json';
 import candyData from '../../data/candy_pokemon_go.json';
 import pokemonData from '../../data/pokemon.json';
 import pokemonCombatList from "../../data/combat_pokemon_go_list.json";
+import pokemonAssets from '../../data/assets_pokemon_go.json';
 import typeEffective from "../../data/type_effectiveness.json";
 import weatherBoosts from '../../data/weather_boosts.json';
 
@@ -34,6 +35,15 @@ const getMultiFriendshipMulti = (level) => {
 
 const weatherMultiple = (weather, type) => {
     return weatherBoosts[weather].find(item => item === capitalize(type.toLowerCase())) ? 1.2 : 1;
+}
+
+export const getTypeEffective = (typeMove, typesObj) => {
+    let value_effective = 1;
+    typesObj.forEach(type => {
+        try {value_effective *= typeEffective[typeMove][capitalize(type.type.name)];}
+        catch {value_effective *= typeEffective[typeMove][type];}
+    });
+    return value_effective;
 }
 
 export const capitalize = (string) => {
@@ -83,6 +93,21 @@ export const computeColor = (id) => {
   return `rgb(${Math.round(255*data.PrimaryColor.r)}, ${Math.round(255*data.PrimaryColor.g)}, ${Math.round(255*data.PrimaryColor.b)}, ${data.PrimaryColor.a})`
 }
 
+export const findAssetForm = (id, name) => {
+    name = convertName(name).replaceAll("GALAR", "GALARIAN")
+    let pokemon = pokemonAssets.find(item => item.id === id);
+    if (pokemon.name === convertName(name)) {
+        let image = pokemon.image.find(item => item.form === "NORMAL")
+        if (image) return image.default;
+        image = pokemon.image.find(item => item.form === "STANDARD");
+        if (image) return image.default;
+        try {return pokemon.image[0].default;}
+        catch { return null }
+    }
+    try {return pokemon.image.find(item => convertName(name).replaceAll(pokemon.name+"_", "") === item.form).default;}
+    catch { return null; }
+}
+
 // Thank calculate algorithm from pokemongohub.net
 export const calBaseATK = (stats, nerf) => {
     const atk = stats.atk !== undefined ? stats.atk : stats.find(item => item.stat.name === "attack").base_stat;
@@ -128,7 +153,7 @@ export const calBaseSTA = (stats, nerf) => {
 }
 
 export const sortStatsPokemon = (states) => {
-    const attackRanking = Array.from(new Set(states.sort((a,b) => (a.baseStatsPokeGo.attack > b.baseStatsPokeGo.attack) ? 1 : ((b.baseStatsPokeGo.attack > a.baseStatsPokeGo.attack) ? -1 : 0))
+    const attackRanking = Array.from(new Set(states.sort((a,b) => a.baseStatsPokeGo.attack - b.baseStatsPokeGo.attack)
     .map(item => {
         return item.baseStatsPokeGo.attack;
     })));
@@ -139,7 +164,7 @@ export const sortStatsPokemon = (states) => {
         return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", attack: item.baseStatsPokeGo.attack, rank: attackRanking.length-attackRanking.indexOf(item.baseStatsPokeGo.attack)};
     });
 
-    const defenseRanking = Array.from(new Set(states.sort((a,b) => (a.baseStatsPokeGo.defense > b.baseStatsPokeGo.defense) ? 1 : ((b.baseStatsPokeGo.defense > a.baseStatsPokeGo.defense) ? -1 : 0))
+    const defenseRanking = Array.from(new Set(states.sort((a,b) => a.baseStatsPokeGo.defense - b.baseStatsPokeGo.defense)
     .map(item => {
         return item.baseStatsPokeGo.defense;
     })));
@@ -150,7 +175,7 @@ export const sortStatsPokemon = (states) => {
         return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", defense: item.baseStatsPokeGo.defense, rank: defenseRanking.length-defenseRanking.indexOf(item.baseStatsPokeGo.defense)};
     });
 
-    const staminaRanking = Array.from(new Set(states.sort((a,b) => (a.baseStatsPokeGo.stamina > b.baseStatsPokeGo.stamina) ? 1 : ((b.baseStatsPokeGo.stamina > a.baseStatsPokeGo.stamina) ? -1 : 0))
+    const staminaRanking = Array.from(new Set(states.sort((a,b) => a.baseStatsPokeGo.stamina - b.baseStatsPokeGo.stamina)
     .map(item => {
         return item.baseStatsPokeGo.stamina;
     })));
@@ -475,14 +500,6 @@ export const calculateStatsByTag = (baseStats, tag) => {
     };
 }
 
-export const getTypeEffective = (typeMove, typesObj) => {
-    let value_effective = 1;
-    typesObj.forEach(type => {
-        value_effective *= typeEffective[typeMove][capitalize(type.type.name)];
-    });
-    return value_effective;
-}
-
 export const calculateDamagePVE = (atk, defObj, power, eff, pure, stab) => {
     let modifier;
     if (eff) {
@@ -681,4 +698,59 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
     if (battleLeague.ultra) battleLeague.ultra = {...battleLeague.ultra, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.ultra.level)};
     if (battleLeague.master) battleLeague.master = {...battleLeague.master, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.master.level)};
     return {...item, battleLeague, maxCP: battleLeague.master.CP}
+}
+
+const queryMoveEncounter = (dataList, pokemon, stats, def, types, vf, cmove, felite, celite, shadow, purified) => {
+    cmove.forEach(vc => {
+        let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
+        let mc = combat.find(item => item.name === vc);
+
+        mf["elite"] = felite;
+        mc["elite"] = celite;
+        mc["shadow"] = shadow;
+        mc["purified"] = purified;
+
+        let bar = getBarCharge(true, mc.pve_energy)
+        let mfPower = (stats.atk/def)*mf.pve_power*(pokemon.types.includes(mf.type.toLowerCase()) ? 1.2 : 1)*(getTypeEffective(capitalize(mf.type.toLowerCase()), types))
+        let mcPower = (stats.atk/def)*mc.pve_power*(pokemon.types.includes(mc.type.toLowerCase()) ? 1.2 : 1)*(getTypeEffective(capitalize(mc.type.toLowerCase()), types))
+
+        let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
+        let dpsOff = ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive
+
+        dataList.push({
+            pokemon_id: pokemon.num,
+            pokemon_name: pokemon.name,
+            sum_of_DPS: dpsOff,
+            fmove: mf,
+            cmove: mc
+        })
+    });
+}
+
+const sortEncounterDPS = (data) => {
+    data = data.sort((a,b) => b.sum_of_DPS - a.sum_of_DPS);
+    return data.map((item, index) => ({...item, ratio: item.sum_of_DPS*100/data[0].sum_of_DPS}));
+}
+
+export const encounterPokemon = (def, types) => {
+    let dataList = [];
+    pokemonCombatList.forEach(value => {
+        let pokemon = Object.values(pokemonData).find(item => item.num === value.ID && convertName(item.name).includes(value.NAME));
+        if (value.QUICK_MOVES[0] !== "STRUGGLE" && value.CINEMATIC_MOVES[0] !== "STRUGGLE") {
+            let stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+            value.QUICK_MOVES.forEach(vf => {
+                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, false, false, false, false);
+                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, false, true, false, false);
+                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, false, false, true, false);
+                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, false, false, false, true);
+            });
+            value.ELITE_QUICK_MOVES.forEach(vf => {
+                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, true, false, false, false);
+                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, true, true, false);
+                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, true, false, true, false);
+                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, true, false, false, true);
+            });
+        }
+    });
+    return sortEncounterDPS(dataList);
 }

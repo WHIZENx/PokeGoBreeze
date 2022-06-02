@@ -1,0 +1,142 @@
+{
+    "timestamp": 1654054479000,
+    "data": {
+        "combat_options": [
+            {
+                "stab": 1.2,
+                "shadow_bonus": {
+                    "atk": 1.2,
+                    "def": 0.8333333
+                }
+            }
+        ],
+        "battle_options": [
+            {
+                "enemyAttackInterval": 1.5,
+                "stab": 1.2,
+                "shadow_bonus": {
+                    "atk": 1.2,
+                    "def": 0.8333333
+                }
+            }
+        ],
+        "throw_charge": {
+            "normal": 0.25,
+            "nice": 0.5,
+            "great": 0.75,
+            "excellent": 1.0
+        },
+        "buddy_friendship": {
+            "0": {
+                "level": 0,
+                "minNonCumulativePointsRequired": 0,
+                "unlockedTrading": []
+            },
+            "1": {
+                "level": 1,
+                "minNonCumulativePointsRequired": 1,
+                "unlockedTrading": [
+                    "MAP_DEPLOY",
+                    "EMOTION_INDICATOR"
+                ]
+            },
+            "2": {
+                "level": 2,
+                "minNonCumulativePointsRequired": 70,
+                "unlockedTrading": [
+                    "MAP_DEPLOY",
+                    "EMOTION_INDICATOR",
+                    "ENCOUNTER_CAMEO",
+                    "PICK_UP_CONSUMABLES"
+                ]
+            },
+            "3": {
+                "level": 3,
+                "minNonCumulativePointsRequired": 150,
+                "unlockedTrading": [
+                    "MAP_DEPLOY",
+                    "EMOTION_INDICATOR",
+                    "ENCOUNTER_CAMEO",
+                    "PICK_UP_CONSUMABLES",
+                    "PICK_UP_SOUVENIRS",
+                    "FIND_ATTRACTIVE_POIS"
+                ]
+            },
+            "4": {
+                "level": 4,
+                "minNonCumulativePointsRequired": 300,
+                "unlockedTrading": [
+                    "MAP_DEPLOY",
+                    "EMOTION_INDICATOR",
+                    "ENCOUNTER_CAMEO",
+                    "PICK_UP_CONSUMABLES",
+                    "PICK_UP_SOUVENIRS",
+                    "FIND_ATTRACTIVE_POIS",
+                    "BEST_BUDDY_ASSET",
+                    "CP_BOOST"
+                ]
+            }
+        },
+        "trainer_friendship": {
+            "0": {
+                "level": 0,
+                "atk_bonus": 1.05,
+                "unlockedTrading": [
+                    "REGULAR_IN_POKEDEX"
+                ]
+            },
+            "1": {
+                "level": 1,
+                "atk_bonus": 1.08,
+                "unlockedTrading": [
+                    "REGULAR_IN_POKEDEX",
+                    "SPECIAL_IN_POKEDEX",
+                    "REGULAR_NON_POKEDEX",
+                    "REGIONAL_NON_POKEDEX",
+                    "FORM_NON_POKEDEX",
+                    "LEGENDARY_NON_POKEDEX",
+                    "SHINY_NON_POKEDEX"
+                ]
+            },
+            "2": {
+                "level": 2,
+                "atk_bonus": 1.1,
+                "unlockedTrading": [
+                    "REGULAR_IN_POKEDEX",
+                    "SPECIAL_IN_POKEDEX",
+                    "REGULAR_NON_POKEDEX",
+                    "REGIONAL_NON_POKEDEX",
+                    "FORM_NON_POKEDEX",
+                    "LEGENDARY_NON_POKEDEX",
+                    "SHINY_NON_POKEDEX"
+                ]
+            },
+            "3": {
+                "level": 3,
+                "atk_bonus": 1.12,
+                "unlockedTrading": [
+                    "REGULAR_IN_POKEDEX",
+                    "SPECIAL_IN_POKEDEX",
+                    "REGULAR_NON_POKEDEX",
+                    "REGIONAL_NON_POKEDEX",
+                    "FORM_NON_POKEDEX",
+                    "LEGENDARY_NON_POKEDEX",
+                    "SHINY_NON_POKEDEX"
+                ]
+            },
+            "4": {
+                "level": 4,
+                "atk_bonus": 1.15,
+                "unlockedTrading": [
+                    "REGULAR_IN_POKEDEX",
+                    "SPECIAL_IN_POKEDEX",
+                    "REGULAR_NON_POKEDEX",
+                    "REGIONAL_NON_POKEDEX",
+                    "FORM_NON_POKEDEX",
+                    "LEGENDARY_NON_POKEDEX",
+                    "SHINY_NON_POKEDEX"
+                ]
+            }
+        }
+    }
+}

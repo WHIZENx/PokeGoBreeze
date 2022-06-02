@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Info from '../Info';
 
-import TableMove from '../../Move/Table/MoveTable'
+import TableMove from '../../Table/Move/MoveTable'
 import Stats from '../Stats/Stats'
 
 import './Form.css';
@@ -9,7 +9,8 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { capitalize, regionList, splitAndCapitalize } from '../../Calculate/Calculate';
+import { calBaseDEF, capitalize, regionList, splitAndCapitalize } from '../../Calculate/Calculate';
+import Encounter from '../../Table/Encounter/Encounter';
 
 const Form = (props) => {
 
@@ -137,6 +138,7 @@ const Form = (props) => {
                     </div>
                     <div className="col-md-7" style={{padding:0}}>
                         <TableMove data={dataPoke} form={currForm.form}/>
+                        <Encounter def={statDEF ? statDEF.defense : calBaseDEF(dataPoke.stats, true)} form={currForm.form}/>
                     </div>
                 </div>
             </Fragment>

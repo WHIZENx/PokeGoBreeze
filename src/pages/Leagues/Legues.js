@@ -1,4 +1,4 @@
-import Type from '../../components/Sprits/Type';
+import Type from '../../components/Sprites/Type';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';

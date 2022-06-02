@@ -3,10 +3,9 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { FormGroup } from "react-bootstrap";
 import { calculateDamagePVE, calculateStatsBettlePure, getTypeEffective } from "../../../components/Calculate/Calculate";
-import Move from "../../../components/Move/Move";
 
 import './Damage.css';
-import Type from "../../../components/Sprits/Type";
+import Type from "../../../components/Sprites/Type";
 import { Box } from "@mui/system";
 import DamageTable from "./DamageTable";
 
@@ -15,6 +14,7 @@ import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import Find from "../Find";
 import StatsTable from "./StatsDamageTable";
 import { LevelRating } from "../../../util/util";
+import Move from "../../../components/Table/Move";
 
 const labels = {
     0: '1.00',

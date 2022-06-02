@@ -33,8 +33,8 @@ const Tools = (props) => {
         setPokeData(dataPokeList);
         dataFromList = dataFromList.map(item => {
             return item.map(item => ({form: item, name: data.varieties.find(v => item.pokemon.name.includes(v.pokemon.name)).pokemon.name, default_name: data.name}))
-            .sort((a,b) => (a.form.id > b.form.id) ? 1 : ((b.form.id > a.form.id) ? -1 : 0));
-        }).sort((a,b) => (a[0].form.id > b[0].form.id) ? 1 : ((b[0].form.id > a[0].form.id) ? -1 : 0));
+            .sort((a,b) => a.form.id - b.form.id);
+        }).sort((a,b) => a[0].form.id - b[0].form.id);
         setFormList(dataFromList);
         const formDefault = dataFromList.map(item => {
             return item.find(item => item.form.is_default);
@@ -98,23 +98,21 @@ const Tools = (props) => {
             <div className="scroll-card">
                 {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
                     <Fragment>
-                    <div style={{overflowX: (formList.reduce((a,e) => a+e.length, 0) > 3)? "scroll" : "hidden"}}>
-                        {formList.map((value, index) => (
-                            <Fragment key={index}>
-                                {value.map((value, index) => (
-                                    <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
-                                        <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
-                                        <div>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</div>
-                                        {value.form.id === pokeID &&
-                                            <b><small>(Default)</small></b>
-                                        }
-                                    </button>
-                                ))
-                                }
-                            </Fragment>
-                        ))
-                        }
-                    </div>
+                    {formList.map((value, index) => (
+                        <Fragment key={index}>
+                            {value.map((value, index) => (
+                                <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
+                                    <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
+                                    <div>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</div>
+                                    {value.form.id === pokeID &&
+                                        <b><small>(Default)</small></b>
+                                    }
+                                </button>
+                            ))
+                            }
+                        </Fragment>
+                    ))
+                    }
                     </Fragment>
                 :   <div className='loading-group vertical-center'>
                         <img className="loading" width={40} height={40} alt='img-pokemon' src={loading}></img>
