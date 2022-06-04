@@ -91,29 +91,6 @@ const Evolution = (props) => {
         ]);
     }, [props.form.name]);
 
-    // const evoChain = useCallback((currId, arr, form) => {
-    //     if (currId.length === 0) return arr;
-    //     let currData = evoData.find(item => item.name.includes(form) && currId.includes(item.id));
-    //     if (!arr.map(i => i.id).includes(currData.id)) arr.push(currData);
-    //     return evoChain(currData.evo_list.map(i => i.evo_to_id), arr, form)
-    // }, []);
-
-    // const prevEvoChain = useCallback((currId, arr, form) => {
-    //     let currData = evoData.filter(item => item.evo_list.find(i => i.evo_to_form.includes(form) && currId.includes(i.evo_to_id)));
-    //     if (!arr.map(i => i.id).includes(currData.id)) arr.push(...currData);
-    //     if (arr.length === 0) {
-    //         currData = evoData.filter(item => item.name.includes(form) && currId.includes(item.id))
-    //         arr.push(...currData);
-    //     }
-    //     if (currData.length === 0) return arr;
-    //     currData.forEach(item => {
-    //         item.evo_list.forEach(i => {
-    //             evoChain([i.evo_to_id], arr, i.evo_to_form)
-    //         });
-    //     });
-    //     return currData.map(item => prevEvoChain([item.id], arr, form));
-    // }, [evoChain]);
-
     useEffect(() => {
         APIService.getFetchUrl(props.evolution_url)
         .then(res => {

@@ -153,7 +153,7 @@ const Form = (props) => {
                 <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} eqForm={props.formList.length === 1 && props.species.pokedex_numbers.length > 1}/>
                 </div>
                 <div className='col-xl' style={{padding:0}}>
-                    <Mega onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} formList={props.formList} id={props.id_default}/>
+                    <Mega formList={props.formList} id={props.id_default}/>
                 </div>
             </div>
             :

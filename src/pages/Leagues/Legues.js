@@ -13,6 +13,8 @@ import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize } from '../../components/Calculate/Calculate';
 import { capitalize } from '@mui/material';
 
+// import Carousel from 'react-bootstrap/Carousel'
+
 const Leagues = () => {
 
     const getAssetPokeGo = (id, form) => {
@@ -52,7 +54,7 @@ const Leagues = () => {
                             <div className='sub-body'>
                             <h4 className='title-leagues'>{splitAndCapitalize(value.id.toLowerCase(), "_", " ")}</h4>
                             <div className='center'>
-                                {value.league !== value.title && !value.title.includes("REMIX") ?
+                                {value.league !== value.title && !value.title.includes("REMIX") && !value.iconUrl.includes("pogo") ?
                                     <div className='league'>
                                         <img alt='img-league' height={140} src={APIService.getAssetPokeGo(
                                             leaguesData.data.find(item => item.title === value.league).iconUrl

@@ -47,30 +47,34 @@ const Encounter = (props) => {
                         <Fragment key={index}>
                             <tr>
                                 <td className="text-origin center">
-                                    <div>
-                                        <img alt="img-pokemon" height={64} src={findAssetForm(value.pokemon_id, value.pokemon_name) ?
-                                        APIService.getPokemonModel(findAssetForm(value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}></img>
-                                    </div>
-                                    <span className="caption text-black">#{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, "-", " ")}</span>
+                                    <Link to={"../pokemon/"+value.pokemon_id} target="_blank">
+                                        <div className="position-relative">
+                                            {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
+                                            {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
+                                            <img alt="img-pokemon" height={64} src={findAssetForm(value.pokemon_id, value.pokemon_name) ?
+                                            APIService.getPokemonModel(findAssetForm(value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}></img>
+                                        </div>
+                                        <span className="caption text-black">#{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, "-", " ")}</span>
+                                    </Link>
                                 </td>
                                 <td className="text-origin center">
-                                    <Link to={"../moves/"+value.fmove.id} target="_blank" className="d-block">
-                                        <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
+                                    <Link to={"../moves/"+value.fmove.id} target="_blank" className="d-grid">
+                                        <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
                                             <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}></img>
                                         </div>
                                         <span style={{marginRight: 5}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
-                                        <span style={{width: 'max-content'}}>
+                                        <span className="w-100">
                                             {value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
                                         </span>
                                     </Link>
                                 </td>
                                 <td className="text-origin center">
-                                    <Link to={"../moves/"+value.cmove.id} target="_blank" className="d-block">
-                                        <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
+                                    <Link to={"../moves/"+value.cmove.id} target="_blank" className="d-grid">
+                                        <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
                                             <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}></img>
                                         </div>
                                         <span style={{marginRight: 5}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
-                                        <span style={{width: 'max-content'}}>
+                                        <span className="w-100">
                                             {value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
                                             {value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}
                                             {value.cmove.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}

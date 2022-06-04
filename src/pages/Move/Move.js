@@ -65,7 +65,7 @@ const Move = (props) => {
         let move = moveData.find(item => item.id === parseInt(id));
         if (move) {
             setMove(move)
-            document.title =  `#${move.id} - ${splitAndCapitalize(move.name.toLowerCase(), "_", " ")}`;
+            document.title =  `#${move.id} - ${splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}`;
         }
         else {
             enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });

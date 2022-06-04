@@ -1,5 +1,5 @@
 {
-    "timestamp": 1653903640000,
+    "timestamp": 1654270668000,
     "data": [
         {
             "id": "GREAT",
@@ -1280,8 +1280,8 @@
             "enabled": true,
             "conditions": {
                 "timestamp": {
-                    "start": "1654362000000",
-                    "end": "1654477200000"
+                    "start": "1654286100000",
+                    "end": "1654491900000"
                 },
                 "unique_selected": true,
                 "unique_type": false,
@@ -1347,7 +1347,7 @@
                     }
                 ]
             },
-            "iconUrl": "premierball_sprite.png",
+            "iconUrl": "gofestCatch2022_icon.png",
             "league": "GREAT_LEAGUE"
         },
         {
@@ -7318,5 +7318,416 @@
             "iconUrl": "LeagueIcons/league_icon_ultra_pokemon_limit.png",
             "league": "ULTRA_LEAGUE"
         }
-    ]
+    ],
+    "seasons": {
+        "1": {
+            "season": 1,
+            "seasonEndTime": "1584129600000",
+            "rewards": null
+        },
+        "2": {
+            "season": 2,
+            "seasonEndTime": "1584130832000",
+            "rewards": null
+        },
+        "3": {
+            "season": 3,
+            "seasonEndTime": "1589227200000",
+            "rewards": null
+        },
+        "4": {
+            "season": 4,
+            "seasonEndTime": "1595880000000",
+            "rewards": null
+        },
+        "5": {
+            "season": 5,
+            "seasonEndTime": "1600113600000",
+            "rewards": null
+        },
+        "6": {
+            "season": 6,
+            "seasonEndTime": "1604955600000",
+            "rewards": null
+        },
+        "7": {
+            "season": 7,
+            "seasonEndTime": "1606770000000",
+            "rewards": null
+        },
+        "8": {
+            "season": 8,
+            "seasonEndTime": "1614632400000",
+            "rewards": null
+        },
+        "9": {
+            "season": 9,
+            "seasonEndTime": "1622491200000",
+            "rewards": null
+        },
+        "10": {
+            "season": 10,
+            "seasonEndTime": "1630353600000",
+            "rewards": null
+        },
+        "11": {
+            "season": 11,
+            "seasonEndTime": "1638219600000",
+            "rewards": null
+        },
+        "12": {
+            "season": 12,
+            "seasonEndTime": "1646168400000",
+            "rewards": null
+        },
+        "13": {
+            "season": 13,
+            "seasonEndTime": "1654113600000",
+            "rewards": null
+        },
+        "14": {
+            "season": 14,
+            "seasonEndTime": "1662062400000",
+            "rewards": {
+                "1": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 60,
+                        "name": "POLIWAG",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 60,
+                        "name": "POLIWAG",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 68,
+                        "name": "MACHAMP",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 68,
+                        "name": "MACHAMP",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 227,
+                        "name": "SKARMORY",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 227,
+                        "name": "SKARMORY",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 278,
+                        "name": "WINGULL",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 278,
+                        "name": "WINGULL",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 307,
+                        "name": "MEDITITE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 307,
+                        "name": "MEDITITE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 607,
+                        "name": "LITWICK",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 607,
+                        "name": "LITWICK",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 819,
+                        "name": "SKWOVET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 819,
+                        "name": "SKWOVET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "6": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "11": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 108,
+                        "name": "LICKITUNG",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 108,
+                        "name": "LICKITUNG",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 237,
+                        "name": "HITMONTOP",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 237,
+                        "name": "HITMONTOP",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 588,
+                        "name": "KARRABLAST",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 588,
+                        "name": "KARRABLAST",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 616,
+                        "name": "SHELMET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 616,
+                        "name": "SHELMET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "16": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 359,
+                        "name": "ABSOL",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 359,
+                        "name": "ABSOL",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 674,
+                        "name": "PANCHAM",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 674,
+                        "name": "PANCHAM",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 870,
+                        "name": "FALINKS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 870,
+                        "name": "FALINKS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "20": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 382,
+                        "name": "KYOGRE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 382,
+                        "name": "KYOGRE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "21": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "22": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "24": [
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "PREMIUM"
+                    }
+                ]
+            }
+        }
+    }
 }

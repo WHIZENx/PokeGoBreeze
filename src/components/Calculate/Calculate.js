@@ -540,7 +540,7 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, optio
     const CDWS = cmove.damageWindowStartMs/1000;
 
     const FMulti = (typePoke.includes(capitalize(fmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
-    const CMulti = (typePoke.includes(capitalize(cmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
+    const CMulti = (typePoke.includes(capitalize(cmove.type.toLowerCase())) ? 1.2 : 1)*cmove.accuracyChance
 
     let y,FDmg,CDmg,FDmgBase,CDmgBase
     if (options === undefined) {
@@ -711,8 +711,8 @@ const queryMoveEncounter = (dataList, pokemon, stats, def, types, vf, cmove, fel
         mc["purified"] = purified;
 
         let bar = getBarCharge(true, mc.pve_energy)
-        let mfPower = (stats.atk/def)*mf.pve_power*(pokemon.types.includes(mf.type.toLowerCase()) ? 1.2 : 1)*(getTypeEffective(capitalize(mf.type.toLowerCase()), types))
-        let mcPower = (stats.atk/def)*mc.pve_power*(pokemon.types.includes(mc.type.toLowerCase()) ? 1.2 : 1)*(getTypeEffective(capitalize(mc.type.toLowerCase()), types))
+        let mfPower = (0.5*(stats.atk/def)*mf.pve_power*(pokemon.types.includes(mf.type.toLowerCase()) ? 1.2 : 1)*(getTypeEffective(capitalize(mf.type.toLowerCase()), types))*(shadow ? 1.2 : 1))+1
+        let mcPower = (0.5*(stats.atk/def)*mc.pve_power*(pokemon.types.includes(mc.type.toLowerCase()) ? 1.2 : 1)*(getTypeEffective(capitalize(mc.type.toLowerCase()), types))*(shadow ? 1.2 : 1))+1
 
         let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
         let dpsOff = ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive
@@ -735,8 +735,8 @@ const sortEncounterDPS = (data) => {
 export const encounterPokemon = (def, types) => {
     let dataList = [];
     pokemonCombatList.forEach(value => {
-        let pokemon = Object.values(pokemonData).find(item => item.num === value.ID && convertName(item.name).includes(value.NAME));
         if (value.QUICK_MOVES[0] !== "STRUGGLE" && value.CINEMATIC_MOVES[0] !== "STRUGGLE") {
+            let pokemon = Object.values(pokemonData).find(item => item.num === value.ID && convertName(item.name).includes(value.NAME));
             let stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
             value.QUICK_MOVES.forEach(vf => {
                 queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, false, false, false, false);
