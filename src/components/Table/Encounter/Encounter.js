@@ -9,6 +9,7 @@ import './Encounter.css';
 const Encounter = (props) => {
 
     const [encounterList, setEncounterList] = useState([]);
+    const [open, setOpen] = useState(false);
     const encounterResult = useRef(null);
 
     const [startIndex, setStartIndex] = useState(0);
@@ -16,14 +17,18 @@ const Encounter = (props) => {
     let eachCounter = 10;
 
     useEffect(() => {
-        setStartIndex(0);
-        setEncounterList(encounterPokemon(props.def, props.form.types))
+        setOpen(false);
     }, [props.def, props.form])
 
     const listenScrollEvent = (ele) => {
         const scrollTop = ele.currentTarget.scrollTop;
         const fullHeight = ele.currentTarget.offsetHeight;
         if (scrollTop*0.8 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
+    }
+
+    const loadMetaData = () => {
+        setEncounterList(encounterPokemon(props.def, props.form.types));
+        setOpen(true);
     }
 
     return (
@@ -43,6 +48,8 @@ const Encounter = (props) => {
                     </tr>
                 </thead>
                 <tbody>
+                    {open ?
+                    <Fragment>
                     {encounterList.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
                         <Fragment key={index}>
                             <tr>
@@ -85,6 +92,16 @@ const Encounter = (props) => {
                             </tr>
                         </Fragment>
                     ))
+                    }
+                    </Fragment>
+                    :
+                    <Fragment>
+                        <tr style={{height: 627}}>
+                            <td className="text-origin center" colSpan={4}>
+                                <span onClick={() => loadMetaData()} className="link-url">Click to load all best pokemon encounter</span>
+                            </td>
+                        </tr>
+                    </Fragment>
                     }
                 </tbody>
             </table>

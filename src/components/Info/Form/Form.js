@@ -11,11 +11,12 @@ import Gender from '../Gender';
 import Mega from '../Mega/Mega';
 import { calBaseDEF, capitalize, regionList, splitAndCapitalize } from '../../Calculate/Calculate';
 import Encounter from '../../Table/Encounter/Encounter';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 const Form = (props) => {
 
-    const [searchParams] = useSearchParams();
+    const params = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const findFirst = useCallback(() => {
         return props.formList.map(item => {
@@ -30,10 +31,10 @@ const Form = (props) => {
     }, [props.formList, props.id_default]);
 
     const findForm = () => {
-        return props.formList.map(item => {
-            let curFrom = item.find(item => searchParams.get("form") && (item.form.form_name === searchParams.get("form").toLowerCase() || item.form.name.includes(searchParams.get("form").toLowerCase())));
-            return curFrom ? curFrom : item.find(item => item.form.is_default)
-        }).find(item => searchParams.get("form") ? item.form.form_name === searchParams.get("form").toLowerCase() || item.form.name.includes(searchParams.get("form").toLowerCase()) : item.id === props.id_default);
+        return props.formList.map(form => {
+            let curFrom = form.find(item => props.paramForm && (item.form.form_name === props.paramForm || item.form.name === item.default_name+"-"+props.paramForm));
+            return curFrom ? curFrom : form.find(item => item.form.is_default)
+        }).find(item => props.paramForm ? item.form.form_name === props.paramForm || item.form.name === item.default_name+"-"+props.paramForm : item.id === props.id_default);
     }
 
     const [currForm, setCurrForm] = useState(findForm());
@@ -82,8 +83,14 @@ const Form = (props) => {
     }, [filterFormList, props, currForm, dataPoke, findFirst, findDefaultForm])
 
     const changeForm = (e) => {
-        const findData = props.pokeData.find(item => e.currentTarget.value === item.name);
-        const findForm = props.formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
+        const [name, form] = e.currentTarget.value.split("=");
+        if (params.id) {
+            searchParams.set("form", form);
+            setSearchParams(searchParams);
+            props.onSetReForm(true)
+        }
+        const findData = props.pokeData.find(item => name === item.name);
+        const findForm = props.formList.map(item => item.find(item => item.form.name === name)).find(item => item);
         setCurrForm(findForm);
         let region = Object.values(regionList).find(item => findForm.form.form_name.includes(item.toLowerCase()));
         if (findForm.form.form_name !== "" && region) props.setRegion(region);
@@ -118,7 +125,7 @@ const Form = (props) => {
                     {props.formList.map((value, index) => (
                         <Fragment key={index}>
                             {value.map((value, index) => (
-                                <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
+                                <button value={value.form.name+"="+value.form.form_name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
                                     <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
                                     <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</p>
                                     {value.form.id === pokeID.current &&

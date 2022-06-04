@@ -5,7 +5,7 @@ import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
 import { calculateStatsByTag, computeBgColor, computeColor, regionList, sortStatsPokemon, splitAndCapitalize } from '../../components/Calculate/Calculate';
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import Form from "../../components/Info/Form/Form";
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
@@ -20,6 +20,7 @@ import Error from "../Error/Error";
 const Pokemon = (props) => {
 
     const params = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const initialize = useRef(false);
 
@@ -27,6 +28,7 @@ const Pokemon = (props) => {
     const [formList, setFormList] = useState([]);
 
     const [dataPri, setDataPri] = useState(null);
+    const [reForm, setReForm] = useState(false);
 
     // const [released, setReleased] = useState(null);
     const [data, setData] = useState(null);
@@ -54,7 +56,6 @@ const Pokemon = (props) => {
     }, []);
 
     const fetchMap = useCallback(async (data) => {
-        setFormName(splitAndCapitalize(data.name, "-", " "));
         setFormList([]);
         setPokeData([]);
         let dataPokeList = [];
@@ -72,12 +73,25 @@ const Pokemon = (props) => {
             .sort((a,b) => a.form.id - b.form.id);
         }).sort((a,b) => a[0].form.id - b[0].form.id);
         setFormList(dataFromList);
-        const defaultFrom = dataFromList.map(item => item.find(item => item.form.is_default));
-        const isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
+        let defaultFrom, isDefaultForm;
+        if (searchParams.get("form")) {
+            defaultFrom = dataFromList.find(value => value.find(item => item.form.form_name === searchParams.get("form").toLowerCase() || item.form.name === item.default_name+"-"+searchParams.get("form").toLowerCase()));
+            if (defaultFrom) isDefaultForm = defaultFrom[0];
+            else {
+                defaultFrom = dataFromList.map(value => value.find(item => item.form.is_default));
+                isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
+                searchParams.delete('form');
+                setSearchParams(searchParams);
+            }
+        } else {
+            defaultFrom = dataFromList.map(value => value.find(item => item.form.is_default));
+            isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
+        }
         if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name, "-", " "));
         else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name, "-", " "));
         setRegion(regionList[parseInt(data.generation.url.split("/")[6])]);
-    }, []);
+        setFormName(splitAndCapitalize(searchParams.get("form") ? isDefaultForm.form.name : data.name, "-", " "));
+    }, [searchParams, setSearchParams]);
 
     const queryPokemon = useCallback((id) => {
         APIService.getPokeSpicies(id)
@@ -112,9 +126,9 @@ const Pokemon = (props) => {
             initialize.current = true;
         } else {
             const id = params.id ? params.id.toLowerCase() : props.id;
-            queryPokemon(id);
+            if (!reForm) queryPokemon(id);
         }
-    }, [params.id, props.id, queryPokemon]);
+    }, [params.id, props.id, queryPokemon, reForm]);
 
     const getNumGen = (url) => {
         return "Gen " + url.split("/")[6]
@@ -143,7 +157,7 @@ const Pokemon = (props) => {
                     {params.id ?
                     <Fragment>
                     {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
-                        <Link className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
+                        <Link onClick={() => setReForm(false)} className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
@@ -161,7 +175,7 @@ const Pokemon = (props) => {
                         </Link>
                     </div>}
                     {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
-                        <Link className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(data.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
+                        <Link onClick={() => setReForm(false)} className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(data.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
                                     <b>#{data.id+1}</b>
@@ -334,6 +348,7 @@ const Pokemon = (props) => {
                                 <Form
                                     onSetPrev={props.onSetPrev}
                                     onSetNext={props.onSetNext}
+                                    onSetReForm={setReForm}
                                     setVersion={setVersionName}
                                     setRegion={setRegion}
                                     setWH={setWH}
@@ -345,7 +360,8 @@ const Pokemon = (props) => {
                                     ratio={pokeRatio}
                                     stats={stats}
                                     species={data}
-                                    onSetIDPoke={props.onSetIDPoke}/>
+                                    onSetIDPoke={props.onSetIDPoke}
+                                    paramForm={searchParams.get('form') && searchParams.get('form').toLowerCase()}/>
                                 <PokemonModel id={data.id} name={data.name}/>
                             </Fragment>
                         :
