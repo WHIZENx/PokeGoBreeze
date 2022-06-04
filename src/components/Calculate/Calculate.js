@@ -523,11 +523,11 @@ export const calculateDamagePVE = (atk, defObj, power, eff, pure, stab) => {
 }
 
 export const getBarCharge = (isRaid, energy) => {
+    energy = Math.abs(energy);
     if (isRaid) {
-        const bar = Math.ceil(100 / Math.abs(energy))
+        const bar = Math.ceil(100 / energy)
         return bar > 3 ? 3 : bar;
-    }
-    else return Math.abs(energy) > 50 ? 1 : 2;
+    } else return energy > 50 ? 1 : 2;
 }
 
 export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, options, shadow) => {
@@ -622,7 +622,7 @@ export const queryTopMove = (move) => {
                 if (!pokemonList) pokemonList = combatPoke.ELITE_CINEMATIC_MOVES.includes(move.name);
             }
             const stab = value.types.includes(capitalize(move.type.toLowerCase()));
-            if (pokemonList) dataPri.push({num: value.num, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: calculateDamagePVE(calculateStatsBettlePure(calculateStatsByTag(value.baseStats, value.slug).atk, 15, 40), 200, move.pve_power, null, true, stab)});
+            if (pokemonList) dataPri.push({num: value.num, forme: value.forme, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: calculateDamagePVE(calculateStatsBettlePure(calculateStatsByTag(value.baseStats, value.slug).atk, 15, 40), 200, move.pve_power, null, true, stab)});
         }
     });
     return dataPri;
@@ -697,7 +697,7 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
     if (battleLeague.great) battleLeague.great = {...battleLeague.great, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.great.level)};
     if (battleLeague.ultra) battleLeague.ultra = {...battleLeague.ultra, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.ultra.level)};
     if (battleLeague.master) battleLeague.master = {...battleLeague.master, ...calculateBetweenLevel(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.master.level)};
-    return {...item, battleLeague, maxCP: battleLeague.master.CP}
+    return {...item, battleLeague, maxCP: battleLeague.master.CP, form: pokemon.forme}
 }
 
 const queryMoveEncounter = (dataList, pokemon, stats, def, types, vf, cmove, felite, celite, shadow, purified) => {
@@ -720,6 +720,7 @@ const queryMoveEncounter = (dataList, pokemon, stats, def, types, vf, cmove, fel
         dataList.push({
             pokemon_id: pokemon.num,
             pokemon_name: pokemon.name,
+            pokemon_forme: pokemon.forme,
             sum_of_DPS: dpsOff,
             fmove: mf,
             cmove: mc

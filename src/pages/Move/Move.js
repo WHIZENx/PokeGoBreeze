@@ -30,7 +30,7 @@ const columns = [
     },
     {
         name: 'Name',
-        selector: row => <Link to={"/pokemon/"+row.num} target="_blank"><img height={48} alt='img-pokemon' style={{marginRight: 10}}
+        selector: row => <Link to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase()}`: ""}`} target="_blank"><img height={48} alt='img-pokemon' style={{marginRight: 10}}
         src={APIService.getPokeIconSprite(row.sprite, true)}
         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}></img>
         {row.name}</Link>,

@@ -11,16 +11,33 @@ import Gender from '../Gender';
 import Mega from '../Mega/Mega';
 import { calBaseDEF, capitalize, regionList, splitAndCapitalize } from '../../Calculate/Calculate';
 import Encounter from '../../Table/Encounter/Encounter';
+import { useSearchParams } from 'react-router-dom';
 
 const Form = (props) => {
 
-    const formDefault = useRef(props.formList.map(item => {
-        return item.find(item => item.form.is_default)
-    }));
+    const [searchParams] = useSearchParams();
 
-    const [currForm, setCurrForm] = useState(formDefault.current.find(item => item.id === props.id_default));
+    const findFirst = useCallback(() => {
+        return props.formList.map(item => {
+            return item.find(item => item.form.is_default)
+        })[0];
+    }, [props.formList]);
+
+    const findDefaultForm = useCallback(() => {
+        return props.formList.map(item => {
+            return item.find(item => item.form.is_default)
+        }).find(item => item.id === props.id_default);
+    }, [props.formList, props.id_default]);
+
+    const findForm = () => {
+        return props.formList.map(item => {
+            let curFrom = item.find(item => searchParams.get("form") && (item.form.form_name === searchParams.get("form").toLowerCase() || item.form.name.includes(searchParams.get("form").toLowerCase())));
+            return curFrom ? curFrom : item.find(item => item.form.is_default)
+        }).find(item => searchParams.get("form") ? item.form.form_name === searchParams.get("form").toLowerCase() || item.form.name.includes(searchParams.get("form").toLowerCase()) : item.id === props.id_default);
+    }
+
+    const [currForm, setCurrForm] = useState(findForm());
     const [dataPoke, setDataPoke] = useState(props.pokeData.find(item => item.id === props.id_default));
-
     const pokeID = useRef(null);
 
     const [statATK, setStatATK] = useState(null);
@@ -48,21 +65,21 @@ const Form = (props) => {
 
     useEffect(() => {
         if (!currForm) {
-            setCurrForm(formDefault.current[0]);
-            pokeID.current = formDefault.current[0].form.id;
+            setCurrForm(findFirst());
+            pokeID.current = findFirst().form.id;
         } else {
             setStatATK(filterFormList(props.stats.attack.ranking, props.id_default));
             setStatDEF(filterFormList(props.stats.defense.ranking, props.id_default));
             setStatSTA(filterFormList(props.stats.stamina.ranking, props.id_default));
             if (!pokeID.current) {
-                pokeID.current = currForm.form.id;
+                pokeID.current = findDefaultForm() ? currForm.form.id : findFirst().form.id;
             }
         }
         if (currForm && dataPoke && props.onSetPrev != null && props.onSetNext != null) {
             props.onSetPrev(true);
             props.onSetNext(true);
         }
-    }, [filterFormList, props, currForm, dataPoke, formDefault])
+    }, [filterFormList, props, currForm, dataPoke, findFirst, findDefaultForm])
 
     const changeForm = (e) => {
         const findData = props.pokeData.find(item => e.currentTarget.value === item.name);

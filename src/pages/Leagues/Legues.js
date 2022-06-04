@@ -42,6 +42,28 @@ const Leagues = () => {
         <div className='container' style={{padding: 15}}>
             <h2 className='title-leagues' style={{marginBottom: 15}}>Battle Leagues List</h2>
             <span className="text-timestamp">* Update: {getTime(leaguesData.timestamp, true)}</span>
+            {/* <div>
+                <Carousel interval={null}>
+                    {Object.entries(leaguesData.seasons["14"].rewards).map(([level, value]) => (
+                         <Carousel.Item key={level}>
+                            {value.filter(item => item.type === "FREE").map((item, index) => (
+                                <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                    <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
+                                    <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                                </Link>
+                            ))}
+                            <hr></hr>
+                            {value.filter(item => item.type === "PREMIUM").map((item, index) => (
+                                <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                    <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
+                                    <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                                </Link>
+                            ))}
+                        </Carousel.Item>
+                    ))
+                    }
+                </Carousel>
+            </div> */}
             <Accordion alwaysOpen style={{marginTop: 15}}>
                 {leaguesData.data.map((value, index) => (
                     <Accordion.Item key={index} eventKey={index}>

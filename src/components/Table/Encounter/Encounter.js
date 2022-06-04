@@ -47,7 +47,7 @@ const Encounter = (props) => {
                         <Fragment key={index}>
                             <tr>
                                 <td className="text-origin center">
-                                    <Link to={"../pokemon/"+value.pokemon_id} target="_blank">
+                                    <Link to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}`: ""}`} target="_blank">
                                         <div className="position-relative">
                                             {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
                                             {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}

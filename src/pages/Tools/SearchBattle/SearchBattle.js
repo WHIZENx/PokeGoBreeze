@@ -98,8 +98,8 @@ const FindBattle = () => {
         var evoBaseStats = [];
         arr.forEach(item => {
             item.forEach(value => {
-                if (value.id !== id) evoBaseStats.push({...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, maxCP: value.maxCP, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)})
-                else currBastStats = {...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, maxCP: value.maxCP, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)};
+                if (value.id !== id) evoBaseStats.push({...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, form: value.form, maxCP: value.maxCP, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)})
+                else currBastStats = {...Object.values(value.battleLeague).reduce((a, b) => !a ? b : !b ? a : a.ratio > b.ratio ? a : b), id: value.id, name: value.name, form: value.form, maxCP: value.maxCP, league: Object.keys(value.battleLeague).reduce((a, b) => !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b)};
             });
         });
         let bestLeague = evoBaseStats.filter(item => item.ratio > currBastStats.ratio);
@@ -258,7 +258,7 @@ const FindBattle = () => {
                             Recommend Battle League
                         </h4>
                         {bestInLeague.map((value, index) => (
-                            <Link className="d-inline-block contain-poke-best-league border-best-poke" key={index} to={"/pokemon/"+value.id} title={`#${value.id} ${splitAndCapitalize(value.name, "_", " ")}`}>
+                            <Link to={`/pokemon/${value.id}${value.form ? `?form=${value.form.toLowerCase()}`: ""}`} className="d-inline-block contain-poke-best-league border-best-poke" key={index} title={`#${value.id} ${splitAndCapitalize(value.name, "_", " ")}`}>
                                 <div className="d-flex align-items-center h-100">
                                     <div className="border-best-poke h-100">
                                         <img className="poke-best-league" alt='pokemon-model' height={102} src={getImageList(value.id) ? APIService.getPokemonModel(getImageList(value.id)) : APIService.getPokeFullSprite(value.id)}></img>
@@ -290,7 +290,7 @@ const FindBattle = () => {
                     {evoChain.map((value, index) => (
                         <Accordion key={index} style={{marginTop: '3%', marginBottom: '5%'}}>
                             <div className="form-header">
-                                {value[0].form === "" ? "Normal" : splitAndCapitalize(value[0].form, "-", " ")}{" Form"}
+                                {!value[0].form ? "Normal" : splitAndCapitalize(value[0].form, "-", " ")}{" Form"}
                             </div>
                             <Accordion.Item eventKey={0}>
                                 <Accordion.Header>
@@ -301,7 +301,7 @@ const FindBattle = () => {
                                     <div className="row justify-content-center league-info-content" style={{margin:0}}>
                                         {value.map((item, index) => (
                                             <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{padding:0}}>
-                                                <Link to={"/pokemon/"+item.id} title={`#${item.id} ${splitAndCapitalize(item.name, "_", " ")}`}>
+                                                <Link to={`/pokemon/${item.id}${item.form ? `?form=${item.form.toLowerCase()}`: ""}`} title={`#${item.id} ${splitAndCapitalize(item.name, "_", " ")}`}>
                                                     <Badge color="primary" overlap="circular" badgeContent={index+1}>
                                                         <img alt='pokemon-model' height={100} src={getImageList(item.id) ? APIService.getPokemonModel(getImageList(item.id)) : APIService.getPokeFullSprite(item.id)}></img>
                                                     </Badge>

@@ -47,7 +47,7 @@ const columns = [
     {
         name: 'Pokemon Name',
         selector: row =>
-            <Link to={"/pokemon/"+row.pokemon.num} target="_blank" title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, "-", " ")}`}>
+            <Link to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase()}`: ""}`} target="_blank" title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, "-", " ")}`}>
             {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
             {row.purified && <img height={25} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
             <img height={48} alt='img-pokemon' style={{marginRight: 10}}
@@ -131,21 +131,21 @@ const DpsTable = (props) => {
     const [enableElite, setEnableElite] = useState(false);
     const [enableMega, setEnableMega] = useState(false);
 
-    const {ELITE_MOVE, POKEMON_SHADOW, WEATHER_BOOSTS} = options;
+    const {ELITE_MOVE, POKEMON_SHADOW, WEATHER_BOOSTS, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ} = options;
 
     const addCPokeData = useCallback((movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
         movePoke.forEach(vc => {
-            let fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
-            let cmove = combatData.find(item => item.name === vc);
-            let stats = calculateStatsByTag(value.baseStats, value.slug);
+            const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
+            const cmove = combatData.find(item => item.name === vc);
+            const stats = calculateStatsByTag(value.baseStats, value.slug);
             const dps = calculateAvgDPS(fmove, cmove,
-                calculateStatsBettle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL),
-                calculateStatsBettle(stats.def, options.IV_DEF, options.POKEMON_LEVEL),
-                calculateStatsBettle(stats.sta, options.IV_HP, options.POKEMON_LEVEL),
-                getBarCharge(true, Math.abs(cmove.pve_energy)),
+                calculateStatsBettle(stats.atk, IV_ATK, POKEMON_LEVEL),
+                calculateStatsBettle(stats.def, IV_DEF, POKEMON_LEVEL),
+                calculateStatsBettle(stats.sta, IV_HP, POKEMON_LEVEL),
+                getBarCharge(true, cmove.pve_energy),
                 value.types, options, shadow);
-            const tdo = calculateTDO(calculateStatsBettle(stats.def, options.IV_DEF, options.POKEMON_LEVEL),
-            calculateStatsBettle(stats.sta, options.IV_HP, options.POKEMON_LEVEL), dps, shadow)
+            const tdo = calculateTDO(calculateStatsBettle(stats.def, IV_DEF, POKEMON_LEVEL),
+            calculateStatsBettle(stats.sta, IV_HP, POKEMON_LEVEL), dps, shadow)
             setDpsTable(oldArr => [...oldArr, {
                 pokemon: value,
                 fmove: fmove,
@@ -160,25 +160,25 @@ const DpsTable = (props) => {
                     fmove: felite,
                     cmove: celite
                 },
-                cp : calculateCP(stats.atk+options.IV_ATK, stats.def+options.IV_DEF, stats.sta+options.IV_HP, options.POKEMON_LEVEL)
+                cp : calculateCP(stats.atk+IV_ATK, stats.def+IV_DEF, stats.sta+IV_HP, POKEMON_LEVEL)
             }]);
         });
-    }, [options]);
+    }, [IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, options]);
 
     const addFPokeData = useCallback((combat, movePoke, value, felite) => {
         movePoke.forEach(vf => {
             addCPokeData(combat.CINEMATIC_MOVES, value, vf, false, false, felite, false);
-            if (options.POKEMON_SHADOW && !value.slug.includes("mega")) {
+            if (POKEMON_SHADOW && !value.slug.includes("mega")) {
                 if (combat.SHADOW_MOVES.length > 0) addCPokeData(combat.CINEMATIC_MOVES, value, vf, true, false, felite, false);
                 addCPokeData(combat.SHADOW_MOVES, value, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
                 addCPokeData(combat.PURIFIED_MOVES, value, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
             }
-            if (options.ELITE_MOVE) {
-                if (options.POKEMON_SHADOW && !value.slug.includes("mega") && combat.SHADOW_MOVES.length > 0) addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, true, false, felite, true);
+            if (ELITE_MOVE) {
+                if (POKEMON_SHADOW && !value.slug.includes("mega") && combat.SHADOW_MOVES.length > 0) addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, true, false, felite, true);
                 else addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, false, false, felite, true);
             }
         });
-    }, [addCPokeData, options.ELITE_MOVE, options.POKEMON_SHADOW]);
+    }, [addCPokeData, ELITE_MOVE, POKEMON_SHADOW]);
 
     const calculateDPSTable = useCallback(() => {
         let dataList = Object.values(pokemonData);
@@ -192,14 +192,14 @@ const DpsTable = (props) => {
                 else combatPoke = result;
                 if (combatPoke !== undefined) {
                     addFPokeData(combatPoke, combatPoke.QUICK_MOVES, value, false)
-                    if (options.ELITE_MOVE) {
+                    if (ELITE_MOVE) {
                         addFPokeData(combatPoke, combatPoke.ELITE_QUICK_MOVES, value, true)
                     }
                 }
             }
             if (index === dataList.length-1) setLoading(false);
         });
-    }, [addFPokeData, options.ELITE_MOVE]);
+    }, [addFPokeData, ELITE_MOVE]);
 
     useEffect(() => {
         document.title = "DPS&TDO Table - Battle Simulator";
@@ -317,19 +317,19 @@ const DpsTable = (props) => {
                             <div className='row border-input' style={{margin: 0}}>
                                 <Box className="col-5 input-group" style={{padding: 0}}>
                                     <span className="input-group-text">IV ATK</span>
-                                    <input defaultValue={options.IV_ATK} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
+                                    <input defaultValue={IV_ATK} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
                                     onInput={(e) => setOptions({
                                         ...options,
                                         IV_ATK: parseInt(e.target.value),
                                     })} name="IV_ATK" style={{width: 40}}></input>
                                     <span className="input-group-text">IV DEF</span>
-                                    <input defaultValue={options.IV_DEF} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
+                                    <input defaultValue={IV_DEF} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
                                     onInput={(e) => setOptions({
                                         ...options,
                                         IV_DEF: parseInt(e.target.value),
                                     })} name="IV_DEF" style={{width: 40}}></input>
                                     <span className="input-group-text">IV HP</span>
-                                    <input defaultValue={options.IV_HP} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
+                                    <input defaultValue={IV_HP} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
                                     onInput={(e) => setOptions({
                                         ...options,
                                         IV_HP: parseInt(e.target.value),
@@ -337,7 +337,7 @@ const DpsTable = (props) => {
                                     <div className="input-group-prepend">
                                         <label className="input-group-text">Levels</label>
                                     </div>
-                                    <select className="border-input form-control" defaultValue={options.POKEMON_LEVEL}
+                                    <select className="border-input form-control" defaultValue={POKEMON_LEVEL}
                                     onChange={(e) => setOptions({
                                         ...options,
                                         POKEMON_LEVEL: parseInt(e.target.value)})}>
@@ -349,7 +349,7 @@ const DpsTable = (props) => {
                                 </Box>
                                 <Box className="col-7 input-group" style={{padding: 0}}>
                                     <span className="input-group-text">DEF Target</span>
-                                    <input defaultValue={options.POKEMON_DEF_OBJ} type="number" className="form-control" placeholder="Defense target" min={1} required
+                                    <input defaultValue={POKEMON_DEF_OBJ} type="number" className="form-control" placeholder="Defense target" min={1} required
                                     onInput={(e) => setOptions({
                                         ...options,
                                         POKEMON_DEF_OBJ: parseInt(e.target.value),
@@ -389,7 +389,7 @@ const DpsTable = (props) => {
                                             defaultValue={0}
                                             max={4}
                                             size='large'
-                                            value={options.POKEMON_FRIEND_LEVEL}
+                                            value={POKEMON_FRIEND_LEVEL}
                                             emptyIcon={<FavoriteBorder fontSize="inherit" />}
                                             icon={<Favorite fontSize="inherit"
                                         />}/>

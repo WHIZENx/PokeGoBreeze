@@ -82,6 +82,7 @@ const Home = () => {
                     return {
                         id: item.num,
                         name: item.name,
+                        forme: item.forme,
                         types: item.types,
                         color: item.color.toLowerCase(),
                         sprite: item.sprite.toLowerCase(),
@@ -219,7 +220,7 @@ const Home = () => {
                                 {listOfPokemon.map((row, index) => (
                                     <StyledTableRow key={index}>
                                         <StyledTableCell component="th" scope="row">
-                                            <Link to={"pokemon/"+row.id} target="_blank">
+                                            <Link to={`/pokemon/${row.id}${row.forme ? `?form=${row.forme.toLowerCase()}`: ""}`} target="_blank">
                                             #{row.id} <img height={60} alt='img-pokemon'
                                             src={APIService.getPokeIconSprite(row.sprite, true)}
                                             onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}>
