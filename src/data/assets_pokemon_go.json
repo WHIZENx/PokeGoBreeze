@@ -299,6 +299,20 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_012_01",
                 "shiny": "pokemon_icon_012_01_shiny"
+            },
+            {
+                "pokemonId": 12,
+                "form": "FASHION_2021",
+                "gender": 2,
+                "default": "Addressable Assets/pm12.cFASHION_2021_NOEVOLVE.g2.icon",
+                "shiny": "Addressable Assets/pm12.cFASHION_2021_NOEVOLVE.g2.s.icon"
+            },
+            {
+                "pokemonId": 12,
+                "form": "FASHION_2021",
+                "gender": 1,
+                "default": "Addressable Assets/pm12.cFASHION_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm12.cFASHION_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -813,13 +827,6 @@
                 "shiny": "pokemon_icon_025_01_47_shiny"
             },
             {
-                "gender": 3,
-                "pokemonId": 25,
-                "form": "FALL_2020",
-                "default": "pokemon_icon_025_16",
-                "shiny": "pokemon_icon_025_16_shiny"
-            },
-            {
                 "pokemonId": 25,
                 "form": "FALL_2019",
                 "gender": 3,
@@ -856,24 +863,129 @@
             },
             {
                 "pokemonId": 25,
-                "form": "POPSTAR",
-                "gender": 3,
-                "default": "pokemon_icon_pm0025_00_pgo_popstar",
-                "shiny": "pokemon_icon_pm0025_00_pgo_popstar_shiny"
-            },
-            {
-                "pokemonId": 25,
-                "form": "ROCKSTAR",
-                "gender": 3,
-                "default": "pokemon_icon_pm0025_00_pgo_rockstar",
-                "shiny": "pokemon_icon_pm0025_00_pgo_rockstar_shiny"
-            },
-            {
-                "pokemonId": 25,
                 "form": "WINTER_2020",
                 "gender": 3,
                 "default": "pokemon_icon_pm0025_00_pgo_winter2020",
                 "shiny": "pokemon_icon_pm0025_00_pgo_winter2020_shiny"
+            },
+            {
+                "pokemonId": 25,
+                "form": "GOFEST_2022",
+                "gender": 2,
+                "default": "Addressable Assets/pm25.cGOFEST_2022_NOEVOLVE.g2.icon",
+                "shiny": "Addressable Assets/pm25.cGOFEST_2022_NOEVOLVE.g2.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "GOFEST_2022",
+                "gender": 1,
+                "default": "Addressable Assets/pm25.cGOFEST_2022_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm25.cGOFEST_2022_NOEVOLVE.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "HALLOWEEN_2021",
+                "gender": 2,
+                "default": "Addressable Assets/pm25.cHALLOWEEN_2021_NOEVOLVE.g2.icon",
+                "shiny": "Addressable Assets/pm25.cHALLOWEEN_2021_NOEVOLVE.g2.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "HALLOWEEN_2021",
+                "gender": 1,
+                "default": "Addressable Assets/pm25.cHALLOWEEN_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm25.cHALLOWEEN_2021_NOEVOLVE.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "ADVENTURE_HAT_2020",
+                "gender": 2,
+                "default": "Addressable Assets/pm25.fADVENTURE_HAT_2020.g2.icon",
+                "shiny": "Addressable Assets/pm25.fADVENTURE_HAT_2020.g2.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "ADVENTURE_HAT_2020",
+                "gender": 1,
+                "default": "Addressable Assets/pm25.fADVENTURE_HAT_2020.icon",
+                "shiny": "Addressable Assets/pm25.fADVENTURE_HAT_2020.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "COSTUME_2020",
+                "gender": 2,
+                "default": "Addressable Assets/pm25.fCOSTUME_2020.g2.icon",
+                "shiny": "Addressable Assets/pm25.fCOSTUME_2020.g2.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "COSTUME_2020",
+                "gender": 1,
+                "default": "Addressable Assets/pm25.fCOSTUME_2020.icon",
+                "shiny": "Addressable Assets/pm25.fCOSTUME_2020.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "FLYING_5TH_ANNIV",
+                "gender": 2,
+                "default": "Addressable Assets/pm25.fFLYING_5TH_ANNIV.g2.icon",
+                "shiny": "Addressable Assets/pm25.fFLYING_5TH_ANNIV.g2.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "FLYING_5TH_ANNIV",
+                "gender": 1,
+                "default": "Addressable Assets/pm25.fFLYING_5TH_ANNIV.icon",
+                "shiny": "Addressable Assets/pm25.fFLYING_5TH_ANNIV.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "FLYING_OKINAWA",
+                "gender": 2,
+                "default": "Addressable Assets/pm25.fFLYING_OKINAWA.g2.icon",
+                "shiny": "Addressable Assets/pm25.fFLYING_OKINAWA.g2.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "FLYING_OKINAWA",
+                "gender": 1,
+                "default": "Addressable Assets/pm25.fFLYING_OKINAWA.icon",
+                "shiny": "Addressable Assets/pm25.fFLYING_OKINAWA.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "KARIYUSHI",
+                "gender": 2,
+                "default": "Addressable Assets/pm25.fKARIYUSHI.g2.icon",
+                "shiny": "Addressable Assets/pm25.fKARIYUSHI.g2.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "KARIYUSHI",
+                "gender": 1,
+                "default": "Addressable Assets/pm25.fKARIYUSHI.icon",
+                "shiny": "Addressable Assets/pm25.fKARIYUSHI.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "POP_STAR",
+                "gender": 3,
+                "default": "Addressable Assets/pm25.fPOP_STAR.icon",
+                "shiny": "Addressable Assets/pm25.fPOP_STAR.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "ROCK_STAR",
+                "gender": 3,
+                "default": "Addressable Assets/pm25.fROCK_STAR.icon",
+                "shiny": "Addressable Assets/pm25.fROCK_STAR.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "VS_2019",
+                "gender": 3,
+                "default": "Addressable Assets/pm25.fVS_2019.icon",
+                "shiny": "Addressable Assets/pm25.fVS_2019.s.icon"
             }
         ]
     },
@@ -2276,6 +2388,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_100_00",
                 "shiny": "pokemon_icon_100_00_shiny"
+            },
+            {
+                "pokemonId": 100,
+                "form": "HISUIAN",
+                "gender": 3,
+                "default": "Addressable Assets/pm100.fHISUIAN.icon",
+                "shiny": "Addressable Assets/pm100.fHISUIAN.s.icon"
             }
         ]
     },
@@ -2289,6 +2408,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_101_00",
                 "shiny": "pokemon_icon_101_00_shiny"
+            },
+            {
+                "pokemonId": 101,
+                "form": "HISUIAN",
+                "gender": 3,
+                "default": "Addressable Assets/pm101.fHISUIAN.icon",
+                "shiny": "Addressable Assets/pm101.fHISUIAN.s.icon"
             }
         ]
     },
@@ -2784,6 +2910,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_131_00",
                 "shiny": "pokemon_icon_131_00_shiny"
+            },
+            {
+                "pokemonId": 131,
+                "form": "COSTUME_2020",
+                "gender": 3,
+                "default": "Addressable Assets/pm131.fCOSTUME_2020.icon",
+                "shiny": "Addressable Assets/pm131.fCOSTUME_2020.s.icon"
             }
         ]
     },
@@ -3270,6 +3403,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_163_00",
                 "shiny": "pokemon_icon_163_00_shiny"
+            },
+            {
+                "pokemonId": 163,
+                "form": "JAN_2022",
+                "gender": 3,
+                "default": "Addressable Assets/pm163.cJAN_2022_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm163.cJAN_2022_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -3523,6 +3663,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_176_00",
                 "shiny": "pokemon_icon_176_00_shiny"
+            },
+            {
+                "pokemonId": 176,
+                "form": "APRIL_2020",
+                "gender": 3,
+                "default": "Addressable Assets/pm176.cAPRIL_2020_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm176.cAPRIL_2020_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -3899,6 +4046,13 @@
                 "form": "GALARIAN",
                 "default": "pokemon_icon_199_31",
                 "shiny": "pokemon_icon_199_31_shiny"
+            },
+            {
+                "pokemonId": 199,
+                "form": "2022",
+                "gender": 3,
+                "default": "Addressable Assets/pm199.f2022.icon",
+                "shiny": "Addressable Assets/pm199.f2022.s.icon"
             }
         ]
     },
@@ -4114,6 +4268,20 @@
                 "form": "UNOWN_?",
                 "default": "pokemon_icon_201_38",
                 "shiny": "pokemon_icon_201_38_shiny"
+            },
+            {
+                "pokemonId": 201,
+                "form": "UNOWN_EXCLAMATION_POINT",
+                "gender": 3,
+                "default": "Addressable Assets/pm201.fUNOWN_EXCLAMATION_POINT.icon",
+                "shiny": "Addressable Assets/pm201.fUNOWN_EXCLAMATION_POINT.s.icon"
+            },
+            {
+                "pokemonId": 201,
+                "form": "UNOWN_QUESTION_MARK",
+                "gender": 3,
+                "default": "Addressable Assets/pm201.fUNOWN_QUESTION_MARK.icon",
+                "shiny": "Addressable Assets/pm201.fUNOWN_QUESTION_MARK.s.icon"
             }
         ]
     },
@@ -4247,6 +4415,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_208_01",
                 "shiny": "pokemon_icon_208_01_shiny"
+            },
+            {
+                "pokemonId": 208,
+                "form": "MEGA",
+                "gender": 3,
+                "default": "Addressable Assets/pm208.fMEGA.icon",
+                "shiny": "Addressable Assets/pm208.fMEGA.s.icon"
             }
         ]
     },
@@ -4359,6 +4534,20 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_215_01",
                 "shiny": "pokemon_icon_215_01_shiny"
+            },
+            {
+                "pokemonId": 215,
+                "form": "FASHION_2021",
+                "gender": 2,
+                "default": "Addressable Assets/pm215.cFASHION_2021_NOEVOLVE.g2.icon",
+                "shiny": "Addressable Assets/pm215.cFASHION_2021_NOEVOLVE.g2.s.icon"
+            },
+            {
+                "pokemonId": 215,
+                "form": "FASHION_2021",
+                "gender": 1,
+                "default": "Addressable Assets/pm215.cFASHION_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm215.cFASHION_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -4871,6 +5060,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_249_00",
                 "shiny": "pokemon_icon_249_00_shiny"
+            },
+            {
+                "pokemonId": 249,
+                "form": "S",
+                "gender": 3,
+                "default": "Addressable Assets/pm249.fS.icon",
+                "shiny": "Addressable Assets/pm249.fS.s.icon"
             }
         ]
     },
@@ -4884,6 +5080,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_250_00",
                 "shiny": "pokemon_icon_250_00_shiny"
+            },
+            {
+                "pokemonId": 250,
+                "form": "S",
+                "gender": 3,
+                "default": "Addressable Assets/pm250.fS.icon",
+                "shiny": "Addressable Assets/pm250.fS.s.icon"
             }
         ]
     },
@@ -5665,6 +5868,13 @@
                 "form": "MEGA",
                 "default": "pokemon_icon_302_51",
                 "shiny": "pokemon_icon_302_51_shiny"
+            },
+            {
+                "pokemonId": 302,
+                "form": "COSTUME_2020",
+                "gender": 3,
+                "default": "Addressable Assets/pm302.fCOSTUME_2020.icon",
+                "shiny": "Addressable Assets/pm302.fCOSTUME_2020.s.icon"
             }
         ]
     },
@@ -6123,6 +6333,69 @@
                 "form": "19",
                 "default": "pokemon_icon_327_19",
                 "shiny": "pokemon_icon_327_19_shiny"
+            },
+            {
+                "pokemonId": 327,
+                "form": "00",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f00.icon",
+                "shiny": "Addressable Assets/pm327.f00.s.icon"
+            },
+            {
+                "pokemonId": 327,
+                "form": "01",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f01.icon",
+                "shiny": "Addressable Assets/pm327.f01.s.icon"
+            },
+            {
+                "pokemonId": 327,
+                "form": "02",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f02.icon",
+                "shiny": "Addressable Assets/pm327.f02.s.icon"
+            },
+            {
+                "pokemonId": 327,
+                "form": "03",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f03.icon",
+                "shiny": "Addressable Assets/pm327.f03.s.icon"
+            },
+            {
+                "pokemonId": 327,
+                "form": "04",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f04.icon",
+                "shiny": "Addressable Assets/pm327.f04.s.icon"
+            },
+            {
+                "pokemonId": 327,
+                "form": "05",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f05.icon",
+                "shiny": "Addressable Assets/pm327.f05.s.icon"
+            },
+            {
+                "pokemonId": 327,
+                "form": "06",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f06.icon",
+                "shiny": "Addressable Assets/pm327.f06.s.icon"
+            },
+            {
+                "pokemonId": 327,
+                "form": "07",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f07.icon",
+                "shiny": "Addressable Assets/pm327.f07.s.icon"
+            },
+            {
+                "pokemonId": 327,
+                "form": "08",
+                "gender": 3,
+                "default": "Addressable Assets/pm327.f08.icon",
+                "shiny": "Addressable Assets/pm327.f08.s.icon"
             }
         ]
     },
@@ -6595,6 +6868,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_359_00",
                 "shiny": "pokemon_icon_359_00_shiny"
+            },
+            {
+                "pokemonId": 359,
+                "form": "MEGA",
+                "gender": 3,
+                "default": "Addressable Assets/pm359.fMEGA.icon",
+                "shiny": "Addressable Assets/pm359.fMEGA.s.icon"
             }
         ]
     },
@@ -6647,6 +6927,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_363_00",
                 "shiny": "pokemon_icon_363_00_shiny"
+            },
+            {
+                "pokemonId": 363,
+                "form": "HOLIDAY_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm363.cHOLIDAY_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm363.cHOLIDAY_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -6875,6 +7162,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_380_00",
                 "shiny": "pokemon_icon_380_00_shiny"
+            },
+            {
+                "pokemonId": 380,
+                "form": "MEGA",
+                "gender": 3,
+                "default": "Addressable Assets/pm380.fMEGA.icon",
+                "shiny": "Addressable Assets/pm380.fMEGA.s.icon"
             }
         ]
     },
@@ -6888,6 +7182,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_381_00",
                 "shiny": "pokemon_icon_381_00_shiny"
+            },
+            {
+                "pokemonId": 381,
+                "form": "MEGA",
+                "gender": 3,
+                "default": "Addressable Assets/pm381.fMEGA.icon",
+                "shiny": "Addressable Assets/pm381.fMEGA.s.icon"
             }
         ]
     },
@@ -6994,6 +7295,20 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_387_00",
                 "shiny": "pokemon_icon_387_00_shiny"
+            },
+            {
+                "pokemonId": 387,
+                "form": "GEMS_1_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm387.cGEMS_1_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm387.cGEMS_1_2021_NOEVOLVE.s.icon"
+            },
+            {
+                "pokemonId": 387,
+                "form": "GEMS_2_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm387.cGEMS_2_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm387.cGEMS_2_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -7033,6 +7348,20 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_390_00",
                 "shiny": "pokemon_icon_390_00_shiny"
+            },
+            {
+                "pokemonId": 390,
+                "form": "GEMS_1_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm390.cGEMS_1_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm390.cGEMS_1_2021_NOEVOLVE.s.icon"
+            },
+            {
+                "pokemonId": 390,
+                "form": "GEMS_2_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm390.cGEMS_2_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm390.cGEMS_2_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -7072,6 +7401,27 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_393_00",
                 "shiny": "pokemon_icon_393_00_shiny"
+            },
+            {
+                "pokemonId": 393,
+                "form": "GEMS_1_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm393.cGEMS_1_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm393.cGEMS_1_2021_NOEVOLVE.s.icon"
+            },
+            {
+                "pokemonId": 393,
+                "form": "GEMS_2_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm393.cGEMS_2_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm393.cGEMS_2_2021_NOEVOLVE.s.icon"
+            },
+            {
+                "pokemonId": 393,
+                "form": "HALLOWEEN_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm393.cHALLOWEEN_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm393.cHALLOWEEN_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -7676,6 +8026,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_426_00",
                 "shiny": "pokemon_icon_426_00_shiny"
+            },
+            {
+                "pokemonId": 426,
+                "form": "HALLOWEEN_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm426.cHALLOWEEN_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm426.cHALLOWEEN_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -7716,6 +8073,13 @@
                 "form": "MEGA",
                 "default": "pokemon_icon_428_51",
                 "shiny": "pokemon_icon_428_51_shiny"
+            },
+            {
+                "pokemonId": 428,
+                "form": "APRIL_2020",
+                "gender": 3,
+                "default": "Addressable Assets/pm428.cAPRIL_2020_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm428.cAPRIL_2020_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -8362,6 +8726,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_468_00",
                 "shiny": "pokemon_icon_468_00_shiny"
+            },
+            {
+                "pokemonId": 468,
+                "form": "APRIL_2020",
+                "gender": 3,
+                "default": "Addressable Assets/pm468.cAPRIL_2020_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm468.cAPRIL_2020_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -8415,6 +8786,13 @@
                 "gender": 3,
                 "default": "pokemon_icon_471_00_07",
                 "shiny": "pokemon_icon_471_00_07_shiny"
+            },
+            {
+                "pokemonId": 471,
+                "form": "HOLIDAY_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm471.cHOLIDAY_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm471.cHOLIDAY_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -9260,6 +9638,13 @@
                 "form": "NORMAL",
                 "default": "pokemon_icon_522_00",
                 "shiny": "pokemon_icon_522_00_shiny"
+            },
+            {
+                "pokemonId": 522,
+                "form": "FASHION_2021",
+                "gender": 3,
+                "default": "Addressable Assets/pm522.cFASHION_2021_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm522.cFASHION_2021_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -10281,6 +10666,13 @@
                 "form": "FEMALE",
                 "default": "pokemon_icon_593_01",
                 "shiny": "pokemon_icon_593_01_shiny"
+            },
+            {
+                "pokemonId": 593,
+                "form": "NORMAL",
+                "gender": 3,
+                "default": "Addressable Assets/pm593.icon",
+                "shiny": "Addressable Assets/pm593.s.icon"
             }
         ]
     },
@@ -11336,16 +11728,16 @@
             {
                 "gender": 1,
                 "pokemonId": 668,
-                "form": "NORMAL",
+                "form": "MALE",
                 "default": "pokemon_icon_668_00",
                 "shiny": "pokemon_icon_668_00_shiny"
             },
             {
-                "gender": 2,
                 "pokemonId": 668,
-                "form": "NORMAL",
-                "default": "pokemon_icon_668_01",
-                "shiny": "pokemon_icon_668_01_shiny"
+                "form": "FEMALE",
+                "gender": 2,
+                "default": "Addressable Assets/pm668.fFEMALE.icon",
+                "shiny": "Addressable Assets/pm668.fFEMALE.s.icon"
             }
         ]
     },
@@ -13311,6 +13703,13 @@
                 "form": "GALARIAN",
                 "default": "pokemon_icon_862_31",
                 "shiny": "pokemon_icon_862_31_shiny"
+            },
+            {
+                "pokemonId": 862,
+                "form": "NORMAL",
+                "gender": 3,
+                "default": "Addressable Assets/pm862.icon",
+                "shiny": "Addressable Assets/pm862.s.icon"
             }
         ]
     },
@@ -13324,6 +13723,13 @@
                 "form": "GALARIAN",
                 "default": "pokemon_icon_863_31",
                 "shiny": "pokemon_icon_863_31_shiny"
+            },
+            {
+                "pokemonId": 863,
+                "form": "NORMAL",
+                "gender": 3,
+                "default": "Addressable Assets/pm863.icon",
+                "shiny": "Addressable Assets/pm863.s.icon"
             }
         ]
     },
@@ -13342,6 +13748,13 @@
                 "form": "GALARIAN",
                 "default": "pokemon_icon_865_31",
                 "shiny": "pokemon_icon_865_31_shiny"
+            },
+            {
+                "pokemonId": 865,
+                "form": "NORMAL",
+                "gender": 3,
+                "default": "Addressable Assets/pm865.icon",
+                "shiny": "Addressable Assets/pm865.s.icon"
             }
         ]
     },
@@ -13355,6 +13768,13 @@
                 "form": "GALARIAN",
                 "default": "pokemon_icon_866_31",
                 "shiny": "pokemon_icon_866_31_shiny"
+            },
+            {
+                "pokemonId": 866,
+                "form": "NORMAL",
+                "gender": 3,
+                "default": "Addressable Assets/pm866.icon",
+                "shiny": "Addressable Assets/pm866.s.icon"
             }
         ]
     },
@@ -13363,11 +13783,11 @@
         "name": "RUNERIGUS",
         "image": [
             {
-                "gender": 3,
                 "pokemonId": 867,
-                "form": "GALARIAN",
-                "default": "pokemon_icon_867_31",
-                "shiny": "pokemon_icon_867_31_shiny"
+                "form": "NORMAL",
+                "gender": 3,
+                "default": "Addressable Assets/pm867.icon",
+                "shiny": "Addressable Assets/pm867.s.icon"
             }
         ]
     },

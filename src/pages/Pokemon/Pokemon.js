@@ -74,8 +74,10 @@ const Pokemon = (props) => {
         }).sort((a,b) => a[0].form.id - b[0].form.id);
         setFormList(dataFromList);
         let defaultFrom, isDefaultForm;
-        if (searchParams.get("form")) {
-            defaultFrom = dataFromList.find(value => value.find(item => item.form.form_name === searchParams.get("form").toLowerCase() || item.form.name === item.default_name+"-"+searchParams.get("form").toLowerCase()));
+        let form = searchParams.get("form");
+        if (form) {
+            if (data.id === 555 && form === "galar") form += "-standard"
+            defaultFrom = dataFromList.find(value => value.find(item => item.form.form_name === form.toLowerCase() || item.form.name === item.default_name+"-"+form.toLowerCase()));
             if (defaultFrom) isDefaultForm = defaultFrom[0];
             else {
                 defaultFrom = dataFromList.map(value => value.find(item => item.form.is_default));
@@ -90,7 +92,7 @@ const Pokemon = (props) => {
         if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name, "-", " "));
         else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name, "-", " "));
         setRegion(regionList[parseInt(data.generation.url.split("/")[6])]);
-        setFormName(splitAndCapitalize(searchParams.get("form") ? isDefaultForm.form.name : data.name, "-", " "));
+        setFormName(splitAndCapitalize(form ? isDefaultForm.form.name : data.name, "-", " "));
     }, [searchParams, setSearchParams]);
 
     const queryPokemon = useCallback((id) => {

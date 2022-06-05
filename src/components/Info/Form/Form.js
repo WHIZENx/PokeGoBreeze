@@ -31,10 +31,12 @@ const Form = (props) => {
     }, [props.formList, props.id_default]);
 
     const findForm = () => {
+        let form = props.paramForm;
+        if (props.id_default === 555 && form === "galar") form += "-standard"
         return props.formList.map(form => {
-            let curFrom = form.find(item => props.paramForm && (item.form.form_name === props.paramForm || item.form.name === item.default_name+"-"+props.paramForm));
+            let curFrom = form.find(item => form && (item.form.form_name === form || item.form.name === item.default_name+"-"+form));
             return curFrom ? curFrom : form.find(item => item.form.is_default)
-        }).find(item => props.paramForm ? item.form.form_name === props.paramForm || item.form.name === item.default_name+"-"+props.paramForm : item.id === props.id_default);
+        }).find(item => form ? item.form.form_name === form || item.form.name === item.default_name+"-"+form : item.id === props.id_default);
     }
 
     const [currForm, setCurrForm] = useState(findForm());

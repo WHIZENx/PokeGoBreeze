@@ -39647,7 +39647,7 @@
         ],
         "genderRatio": {
             "M": 1.0,
-            "F": 0
+            "F": 1.0
         },
         "baseStats": {
             "hp": 55,
@@ -39708,7 +39708,7 @@
         ],
         "genderRatio": {
             "M": 1.0,
-            "F": 0
+            "F": 1.0
         },
         "baseStats": {
             "hp": 100,
