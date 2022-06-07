@@ -4,7 +4,7 @@ import pokemonData from '../../data/pokemon.json';
 import combatData from '../../data/combat.json';
 import combatPokemonData from '../../data/combat_pokemon_go_list.json';
 import weatherBoosts from '../../data/weather_boosts.json';
-import { calculateAvgDPS, calculateCP, calculateStatsBettle, calculateStatsByTag, calculateTDO, getBarCharge, convertName, splitAndCapitalize } from "../../components/Calculate/Calculate";
+import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, calculateStatsBettlePure } from "../../components/Calculate/Calculate";
 import DataTable from "react-data-table-component";
 import APIService from "../../services/API.service";
 
@@ -77,19 +77,19 @@ const columns = [
     },
     {
         name: 'DPS',
-        selector: row => parseFloat(row.dps.toFixed(2)),
+        selector: row => parseFloat(row.dps.toFixed(3)),
         sortable: true,
         minWidth: '80px',
     },
     {
         name: 'TDO',
-        selector: row => parseFloat(row.tdo.toFixed(2)),
+        selector: row => parseFloat(row.tdo.toFixed(3)),
         sortable: true,
         minWidth: '100px',
     },
     {
         name: 'DPS^3*TDO',
-        selector: row => parseFloat(row.multiDpsTdo.toFixed(2)),
+        selector: row => parseFloat(row.multiDpsTdo.toFixed(3)),
         sortable: true,
         minWidth: '140px',
     },
@@ -110,7 +110,7 @@ const DpsTable = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [options, setOptions] = useState({
         delay: null,
-        specific: false,
+        specific: null,
         ELITE_MOVE: true,
         POKEMON_SHADOW: true,
         WEATHER_BOOSTS: false,
@@ -139,13 +139,14 @@ const DpsTable = (props) => {
             const cmove = combatData.find(item => item.name === vc);
             const stats = calculateStatsByTag(value.baseStats, value.slug);
             const dps = calculateAvgDPS(fmove, cmove,
-                calculateStatsBettle(stats.atk, IV_ATK, POKEMON_LEVEL),
-                calculateStatsBettle(stats.def, IV_DEF, POKEMON_LEVEL),
-                calculateStatsBettle(stats.sta, IV_HP, POKEMON_LEVEL),
-                getBarCharge(true, cmove.pve_energy),
-                value.types, options, shadow);
-            const tdo = calculateTDO(calculateStatsBettle(stats.def, IV_DEF, POKEMON_LEVEL),
-            calculateStatsBettle(stats.sta, IV_HP, POKEMON_LEVEL), dps, shadow)
+                calculateStatsBettlePure(stats.atk, IV_ATK, POKEMON_LEVEL),
+                calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
+                calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL),
+                value.types,
+                options,
+                shadow);
+            const tdo = calculateTDO(calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
+            calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL), dps, shadow)
             setDpsTable(oldArr => [...oldArr, {
                 pokemon: value,
                 fmove: fmove,

@@ -24,6 +24,34 @@ const MAX_LEVEL = 51;
 const MIN_IV = 0
 const MAX_IV = 15
 
+const RAID_BOSS_TIER = {
+    1: {
+        level: 20,
+        CPm: 0.61,
+        sta: 600
+    },
+    2: {
+        level: 25,
+        CPm: 0.6679,
+        sta: 1800
+    },
+    3: {
+        level: 30,
+        CPm: 0.7317,
+        sta: 3600
+    },
+    4: {
+        level: 40,
+        CPm: 0.7903,
+        sta: 9000
+    },
+    5: {
+        level: 40,
+        CPm: 0.79,
+        sta: 15000
+    }
+}
+
 const getMultiFriendshipMulti = (level) => {
     let dmg = 1;
     if (level === 1) dmg += 0.03;
@@ -213,6 +241,10 @@ export const sortStatsPokemon = (states) => {
 
 export const calculateCP = (atk, def, sta, level) => {
     return Math.floor(Math.max(10, (atk*(def**0.5)*(sta**0.5)*data.find(item => item.level === level).multiplier**2)/10))
+}
+
+export const calculateRaidCP = (atk, def, level) => {
+    return Math.floor(((atk+15)*Math.sqrt(def+15)*Math.sqrt(RAID_BOSS_TIER[level].sta))/10)
 }
 
 export const predictStat = (atk, def, sta, cp) => {
@@ -530,7 +562,7 @@ export const getBarCharge = (isRaid, energy) => {
     } else return energy > 50 ? 1 : 2;
 }
 
-export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, options, shadow) => {
+export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, typePoke, options, shadow) => {
     const FPow = fmove.pve_power;
     const CPow = cmove.pve_power;
     const FE = Math.abs(fmove.pve_energy);
@@ -538,6 +570,7 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, optio
     const FDur = fmove.durationMs/1000;
     const CDur = cmove.durationMs/1000;
     const CDWS = cmove.damageWindowStartMs/1000;
+    const bar = getBarCharge(true, cmove.pve_energy);
 
     const FMulti = (typePoke.includes(capitalize(fmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
     const CMulti = (typePoke.includes(capitalize(cmove.type.toLowerCase())) ? 1.2 : 1)*cmove.accuracyChance
@@ -579,7 +612,7 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, optio
         if (bar === 1) λ = 3;
         else if (bar === 2) λ = 1.5;
         else if (bar === 3) λ = 1;
-        x = 0.5*CE+0.5*FE+0.5*λ*options.FDmgenemy+options.CDmgenemy*λ+1
+        x += 0.5*λ*options.specific.FDmgenemy+options.specific.CDmgenemy*λ+1
     }
 
     const DPS0 = (FDPS*CEPS+CDPS*FEPS)/(CEPS+FEPS);
@@ -592,11 +625,8 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, bar, typePoke, optio
 
 export const calculateTDO = (Def, HP, dps, shadow) => {
     let y;
-    if (shadow === undefined) {
-        y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? 0.83333331 : 1));
-    } else {
-        y = 900/(Def*(shadow ? 0.83333331 : 1));
-    }
+    if (shadow === undefined) y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? 0.83333331 : 1));
+    else y = 900/(Def*(shadow ? 0.83333331 : 1));
     return HP/y*dps
 }
 
@@ -621,8 +651,22 @@ export const queryTopMove = (move) => {
                 if (!pokemonList) pokemonList = combatPoke.PURIFIED_MOVES.includes(move.name)
                 if (!pokemonList) pokemonList = combatPoke.ELITE_CINEMATIC_MOVES.includes(move.name);
             }
-            const stab = value.types.includes(capitalize(move.type.toLowerCase()));
-            if (pokemonList) dataPri.push({num: value.num, forme: value.forme, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: calculateDamagePVE(calculateStatsBettlePure(calculateStatsByTag(value.baseStats, value.slug).atk, 15, 40), 200, move.pve_power, null, true, stab)});
+            if (pokemonList) {
+                const stats = calculateStatsByTag(value.baseStats, value.slug);
+                let dps = calculateAvgDPS(move,
+                    move,
+                    calculateStatsBettlePure(stats.atk, MAX_IV, 40),
+                    calculateStatsBettlePure(stats.def, MAX_IV, 40),
+                    calculateStatsBettlePure(stats.sta, MAX_IV, 40),
+                    value.types
+                );
+                let tdo = calculateTDO(
+                    calculateStatsBettlePure(stats.def, MAX_IV, 40),
+                    calculateStatsBettlePure(stats.sta, MAX_IV, 40),
+                    dps
+                );
+                dataPri.push({num: value.num, forme: value.forme, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: dps, tdo: tdo});
+            }
         }
     });
     return dataPri;
@@ -700,7 +744,7 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
     return {...item, battleLeague, maxCP: battleLeague.master.CP, form: pokemon.forme}
 }
 
-const queryMoveEncounter = (dataList, pokemon, stats, def, types, vf, cmove, felite, celite, shadow, purified) => {
+const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felite, celite, shadow, purified) => {
     cmove.forEach(vc => {
         let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
         let mc = combat.find(item => item.name === vc);
@@ -721,37 +765,37 @@ const queryMoveEncounter = (dataList, pokemon, stats, def, types, vf, cmove, fel
             pokemon_id: pokemon.num,
             pokemon_name: pokemon.name,
             pokemon_forme: pokemon.forme,
-            sum_of_DPS: dpsOff,
+            dps: dpsOff,
             fmove: mf,
             cmove: mc
         })
     });
 }
 
-const sortEncounterDPS = (data) => {
-    data = data.sort((a,b) => b.sum_of_DPS - a.sum_of_DPS);
-    return data.map((item, index) => ({...item, ratio: item.sum_of_DPS*100/data[0].sum_of_DPS}));
+const sortCounterDPS = (data) => {
+    data = data.sort((a,b) => b.dps - a.dps);
+    return data.map((item, index) => ({...item, ratio: item.dps*100/data[0].dps}));
 }
 
-export const encounterPokemon = (def, types) => {
+export const counterPokemon = (def, types) => {
     let dataList = [];
     pokemonCombatList.forEach(value => {
         if (value.QUICK_MOVES[0] !== "STRUGGLE" && value.CINEMATIC_MOVES[0] !== "STRUGGLE") {
             let pokemon = Object.values(pokemonData).find(item => item.num === value.ID && convertName(item.name).includes(value.NAME));
             let stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
             value.QUICK_MOVES.forEach(vf => {
-                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, false, false, false, false);
-                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, false, true, false, false);
-                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, false, false, true, false);
-                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, false, false, false, true);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, false, false, false, false);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, false, true, false, false);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, false, false, true, false);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, false, false, false, true);
             });
             value.ELITE_QUICK_MOVES.forEach(vf => {
-                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, true, false, false, false);
-                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, true, true, false);
-                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, true, false, true, false);
-                queryMoveEncounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, true, false, false, true);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, true, false, false, false);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, true, true, false);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, true, false, true, false);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, true, false, false, true);
             });
         }
     });
-    return sortEncounterDPS(dataList);
+    return sortCounterDPS(dataList);
 }

@@ -1,36 +1,36 @@
-.table-encounter-container {
+.table-counter-container {
     height: 100%;
     max-height: 700px;
     overflow-y: auto;
     border: 1px solid #b8d4da;
 }
 
-.table-encounter {
+.table-counter {
     width: 100%;
     table-layout: -webkit-fixed;
     table-layout: fixed;
 }
 
-.table-encounter thead {
+.table-counter thead {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1;
 }
 
-.table-encounter thead tr th.table-sub-header {
+.table-counter thead tr th.table-sub-header {
     background-color: #f1f1ff !important;
     color: #0571c2;
     border: 1px solid #b8d4da;
 }
 
-.table-encounter thead tr th {
+.table-counter thead tr th {
     font-size: 16px;
     padding: 5px 10px 5px 10px;
     height: 35px;
 }
 
-.table-encounter tbody tr td {
+.table-counter tbody tr td {
     color: #0571c2;
     font-weight: bolder;
 }
@@ -45,6 +45,6 @@
     width: 30%;
 }
 
-.main-move-encounter {
+.main-move-counter {
     width: 25%;
 }

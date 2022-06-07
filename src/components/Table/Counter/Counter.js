@@ -2,15 +2,15 @@ import { capitalize } from "@mui/material";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
-import { encounterPokemon, findAssetForm, splitAndCapitalize } from "../../Calculate/Calculate";
+import { counterPokemon, findAssetForm, splitAndCapitalize } from "../../Calculate/Calculate";
 
-import './Encounter.css';
+import './Counter.css';
 
-const Encounter = (props) => {
+const Counter = (props) => {
 
-    const [encounterList, setEncounterList] = useState([]);
+    const [counterList, setCounterList] = useState([]);
     const [open, setOpen] = useState(false);
-    const encounterResult = useRef(null);
+    const counterResult = useRef(null);
 
     const [startIndex, setStartIndex] = useState(0);
     let firstInit = 20;
@@ -27,30 +27,30 @@ const Encounter = (props) => {
     }
 
     const loadMetaData = () => {
-        setEncounterList(encounterPokemon(props.def, props.form.types));
+        setCounterList(counterPokemon(props.def, props.form.types));
         setOpen(true);
     }
 
     return (
-        <div className="table-encounter-container" ref={encounterResult} onScroll={listenScrollEvent.bind(this)}>
-            <table className="table-info table-encounter">
+        <div className="table-counter-container" ref={counterResult} onScroll={listenScrollEvent.bind(this)}>
+            <table className="table-info table-counter">
                 <colgroup className="main-name" />
-                <colgroup className="main-move-encounter" />
-                <colgroup className="main-move-encounter" />
+                <colgroup className="main-move-counter" />
+                <colgroup className="main-move-counter" />
                 <colgroup />
                 <thead>
-                    <tr className="center"><th className="table-sub-header" colSpan="4">Best Pokemon Encounter</th></tr>
+                    <tr className="center"><th className="table-sub-header" colSpan="4">Best Pokemon Counter</th></tr>
                     <tr className="center">
                         <th className="table-column-head main-move-name">Pokemon</th>
-                        <th className="table-column-head main-move-encounter">Fast</th>
-                        <th className="table-column-head main-move-encounter">Charge</th>
+                        <th className="table-column-head main-move-counter">Fast</th>
+                        <th className="table-column-head main-move-counter">Charge</th>
                         <th className="table-column-head">%</th>
                     </tr>
                 </thead>
                 <tbody>
                     {open ?
                     <Fragment>
-                    {encounterList.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
+                    {counterList.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
                         <Fragment key={index}>
                             <tr>
                                 <td className="text-origin center">
@@ -69,7 +69,7 @@ const Encounter = (props) => {
                                         <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
                                             <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}></img>
                                         </div>
-                                        <span style={{marginRight: 5}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
+                                        <span style={{marginRight: 5, fontSize: '0.9rem'}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                                         <span className="w-100">
                                             {value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
                                         </span>
@@ -80,7 +80,7 @@ const Encounter = (props) => {
                                         <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
                                             <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}></img>
                                         </div>
-                                        <span style={{marginRight: 5}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
+                                        <span style={{marginRight: 5, fontSize: '0.9rem'}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                                         <span className="w-100">
                                             {value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
                                             {value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}
@@ -98,7 +98,7 @@ const Encounter = (props) => {
                     <Fragment>
                         <tr style={{height: 627}}>
                             <td className="text-origin center" colSpan={4}>
-                                <span onClick={() => loadMetaData()} className="link-url">Click to load all best pokemon encounter</span>
+                                <span onClick={() => loadMetaData()} className="link-url">Click to load all best pokemon counter</span>
                             </td>
                         </tr>
                     </Fragment>
@@ -109,4 +109,4 @@ const Encounter = (props) => {
     )
 }
 
-export default Encounter;
+export default Counter;

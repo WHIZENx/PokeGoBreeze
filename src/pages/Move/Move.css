@@ -48,3 +48,8 @@
 .buff-power {
     font-size: 14px;
 }
+
+.table-top-of-move {
+    max-width: 0;
+    overflow-x: auto;
+}

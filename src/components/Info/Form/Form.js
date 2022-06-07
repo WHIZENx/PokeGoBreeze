@@ -10,7 +10,7 @@ import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
 import { calBaseDEF, capitalize, regionList, splitAndCapitalize } from '../../Calculate/Calculate';
-import Encounter from '../../Table/Encounter/Encounter';
+import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 const Form = (props) => {
@@ -164,7 +164,7 @@ const Form = (props) => {
                     </div>
                     <div className="col-md-7" style={{padding:0}}>
                         <TableMove data={dataPoke} form={currForm.form}/>
-                        <Encounter def={statDEF ? statDEF.defense : calBaseDEF(dataPoke.stats, true)} form={currForm.form}/>
+                        <Counter def={statDEF ? statDEF.defense : calBaseDEF(dataPoke.stats, true)} form={currForm.form}/>
                     </div>
                 </div>
             </Fragment>

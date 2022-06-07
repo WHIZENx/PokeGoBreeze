@@ -25,8 +25,7 @@ const columns = [
         name: 'ID',
         selector: row => row.num,
         sortable: true,
-        width: '20%',
-        maxWidth: '100px',
+        minWidth: '40px',
     },
     {
         name: 'Name',
@@ -35,14 +34,20 @@ const columns = [
         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}></img>
         {row.name}</Link>,
         sortable: true,
+        minWidth: '250px',
         sortFunction: nameSort
     },
     {
         name: 'DPS',
         selector: row => parseFloat(row.dps.toFixed(2)),
         sortable: true,
-        width: '20%',
-        maxWidth: '200px',
+        minWidth: '80px',
+    },
+    {
+        name: 'TDO',
+        selector: row => parseFloat(row.tdo.toFixed(2)),
+        sortable: true,
+        minWidth: '80px',
     },
 ]
 
@@ -250,17 +255,19 @@ const Move = (props) => {
                                 </tr>
                                 <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
                                 <tr>
-                                    <td colSpan={2} style={{padding: 0}}><DataTable
-                                        columns={columns}
-                                        data={topList}
-                                        pagination
-                                        defaultSortFieldId={3}
-                                        defaultSortAsc={false}
-                                        highlightOnHover
-                                        striped
-                                        fixedHeader
-                                        fixedHeaderScrollHeight="35vh"
-                                    /></td>
+                                    <td className="table-top-of-move" colSpan={2} style={{padding: 0}}>
+                                        <DataTable
+                                            columns={columns}
+                                            data={topList}
+                                            pagination
+                                            defaultSortFieldId={4}
+                                            defaultSortAsc={false}
+                                            highlightOnHover
+                                            striped
+                                            fixedHeader
+                                            fixedHeaderScrollHeight="35vh"
+                                        />
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
