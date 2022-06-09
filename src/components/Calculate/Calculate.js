@@ -244,6 +244,11 @@ export const calculateCP = (atk, def, sta, level) => {
 }
 
 export const calculateRaidCP = (atk, def, level) => {
+    console.log(
+        Math.floor((atk+15)*RAID_BOSS_TIER[level].CPm),
+        Math.floor((def+15)*RAID_BOSS_TIER[level].CPm),
+        Math.floor(RAID_BOSS_TIER[level].sta/RAID_BOSS_TIER[level].CPm)
+    )
     return Math.floor(((atk+15)*Math.sqrt(def+15)*Math.sqrt(RAID_BOSS_TIER[level].sta))/10)
 }
 

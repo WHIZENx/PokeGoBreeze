@@ -9,7 +9,7 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { calBaseDEF, capitalize, regionList, splitAndCapitalize } from '../../Calculate/Calculate';
+import { calBaseDEF, calculateRaidCP, capitalize, regionList, splitAndCapitalize } from '../../Calculate/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
 
@@ -83,6 +83,8 @@ const Form = (props) => {
             props.onSetNext(true);
         }
     }, [filterFormList, props, currForm, dataPoke, findFirst, findDefaultForm])
+
+    if (statATK && statDEF) console.log(calculateRaidCP(statATK.attack, statDEF.defense, 5))
 
     const changeForm = (e) => {
         const [name, form] = e.currentTarget.value.split("=");

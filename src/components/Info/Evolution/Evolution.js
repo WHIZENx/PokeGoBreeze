@@ -233,26 +233,28 @@ const Evolution = (props) => {
                             horizontal: 'left',
                         }}>
                             <Badge color="primary" overlap="circular" badgeContent={evo+1}>
-                                <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={
-                                    value.gmax && form === "gmax" ? props.form.sprites.front_default : APIService.getPokeSprite(value.id)
-                                }></img>
+                                <img class="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
+                                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
                             </Badge>
                         </Badge>
                     </ThemeProvider>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1}>
-                        <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                        <img class="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
+                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
                     </Badge>
                     }
                     </Fragment>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1}>
-                        <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                        <img class="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
+                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
                     </Badge>
                 }
                 </Fragment>
                 :
-                <img id="img-pokemon" width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img>
+                <img class="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
+                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
                 }
                 <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
                 <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>

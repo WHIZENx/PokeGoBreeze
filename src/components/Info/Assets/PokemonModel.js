@@ -72,8 +72,14 @@ const PokemonModel = (props) => {
                 }
             </div>
             <h4 className="title-evo"><b>{"Sound of "+splitAndCapitalize(props.name, "_", " ")}</b></h4>
+            {/* <h6>Pokemon Origin:</h6>
             <audio className="w-100" controls style={{height: 30}}>
-                <source src={APIService.getSoundPokemon(props.id)} type="audio/wav"></source>
+                <source src={APIService.getSoundCryPokemon(props.name)} type="audio/aif"></source>
+                Your browser does not support the audio element.
+            </audio>
+            <h6>Pokemon GO:</h6> */}
+            <audio className="w-100" controls style={{height: 30}}>
+                <source src={APIService.getSoundPokemonGO(props.id)} type="audio/wav"></source>
                 Your browser does not support the audio element.
             </audio>
         </div>

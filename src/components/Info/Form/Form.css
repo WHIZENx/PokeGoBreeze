@@ -25,12 +25,8 @@
     display: inline-block;
     text-align: center;
     margin-right: 5%;
-    width: 96px;
+    width: auto;
     height: 130px;
-}
-
-.img-evo-group {
-    /* width: 120px !important; */
 }
 
 .btn-form {

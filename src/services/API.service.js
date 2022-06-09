@@ -10,9 +10,12 @@ const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_as
 const POGO_SOUND_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Sounds/';
 const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
-const POKE_ICON_SPRITES_API_URL = 'https://raw.githubusercontent.com/itsjavi/pokemon-assets/main/assets/img/pokemon/';
+const POKE_ICON_SPRITES_API_URL = 'https://raw.githubusercontent.com/waydelyle/pokemon-assets/master/assets/img/pokemon/';
 const POKE_ICON_SPRITES_TYPE_API_URL = 'https://raw.githubusercontent.com/apavlinovic/pokemon-go-imagery/master/Sprite/'
 const POKE_SPRITES_FULL_API_URL = 'https://assets.pokemon.com/assets/cms2/img/pokedex/detail/';
+
+const POKE_GIF_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Pokemon/';
+const POKE_SOUND_CRY_API_URL = 'https://raw.githubusercontent.com/Touched/pokedex-data/master/data/';
 
 class APIService {
 
@@ -104,6 +107,11 @@ class APIService {
         return `${POKE_ICON_SPRITES_API_URL}${name}.png`;
     }
 
+    getPokeGifSprite(name) {
+        name = name.replace("mega-x","megax").replace("mega-y","megay");
+        return `${POKE_GIF_SPRITES_API_URL}${name}.gif`
+    }
+
     getPokeOtherLeague(league) {
         return `${POGO_ASSET_API_URL}Combat/${league}.png`;
     }
@@ -132,7 +140,12 @@ class APIService {
         return item === "" ? `${POGO_ASSET_API_URL}Items/TroyKey.png` : `${POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
     }
 
-    getSoundPokemon(id) {
+    getSoundCryPokemon(name) {
+        name = name.toLowerCase().replaceAll("_","").replaceAll("-","");
+        return `${POKE_SOUND_CRY_API_URL}/${name}/cry.aif`;
+    }
+
+    getSoundPokemonGO(id) {
         id = id.toString().padStart(3, '0');
         return `${POGO_SOUND_API_URL}Pokemon Cries/pv${id}.wav`;
     }

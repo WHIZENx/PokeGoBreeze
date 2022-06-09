@@ -41,13 +41,13 @@ const columns = [
         name: 'DPS',
         selector: row => parseFloat(row.dps.toFixed(2)),
         sortable: true,
-        minWidth: '80px',
+        minWidth: '90px',
     },
     {
         name: 'TDO',
         selector: row => parseFloat(row.tdo.toFixed(2)),
         sortable: true,
-        minWidth: '80px',
+        minWidth: '90px',
     },
 ]
 
