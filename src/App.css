@@ -8,7 +8,21 @@
 }
 
 img.pokemon-sprite {
-    height: 4em;
+    width: 100%;
+    height: 96px;
+    object-fit: contain;
+}
+
+img.pokemon-sprite-counter {
+    width: 100%;
+    height: 64px;
+    object-fit: contain;
+}
+
+img.pokemon-sprite-model {
+    width: 100%;
+    height: 80px;
+    object-fit: contain;
 }
 
 .text-timestamp {
@@ -48,5 +62,5 @@ ul {
 }
 
 .img-search {
-    margin: 0 5px 0 5px;
+    margin: 0 5px;
 }

@@ -233,27 +233,27 @@ const Evolution = (props) => {
                             horizontal: 'left',
                         }}>
                             <Badge color="primary" overlap="circular" badgeContent={evo+1}>
-                                <img class="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
+                                <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
                                 onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
                             </Badge>
                         </Badge>
                     </ThemeProvider>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1}>
-                        <img class="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
+                        <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
                         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
                     </Badge>
                     }
                     </Fragment>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1}>
-                        <img class="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
+                        <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
                         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
                     </Badge>
                 }
                 </Fragment>
                 :
-                <img class="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
+                <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
                 onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
                 }
                 <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>

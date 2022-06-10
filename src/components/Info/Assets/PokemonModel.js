@@ -32,7 +32,7 @@ const PokemonModel = (props) => {
                 {pokeAssets.map((assets, index) => (
                     <div key={index} className="d-inline-block group-model center">
                         {assets.image.map((value, index) => (
-                        <div key={index} className="d-inline-block">
+                        <div key={index} className="d-inline-block" style={{width: value.gender === 3 ? '100%': 'auto'}}>
                             <div className='sub-group-model'>
                                 <div className='gender'>
                                     {value.gender === 3 ?
@@ -51,12 +51,12 @@ const PokemonModel = (props) => {
                                     }</Fragment>
                                     }
                                 </div>
-                                <div className='model center' style={{width: 100/(assets.image.length+assets.image.filter(item => item.shiny).length)+"%"}}>
-                                    <img alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.default)}></img>
+                                <div className='model center' style={{minWidth: value.shiny ? "50%" : "100%"}}>
+                                    <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.default)}></img>
                                     <span className='caption'>Default</span>
                                 </div>
-                                {value.shiny && <div className='model center' style={{width: 100/(assets.image.length+assets.image.filter(item => item.shiny).length)+"%"}}>
-                                    <img alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.shiny)}></img>
+                                {value.shiny && <div className='model center'>
+                                    <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.shiny)}></img>
                                     <span className='caption'>Shiny</span>
                                 </div>}
                             </div>

@@ -58,7 +58,7 @@ const Counter = (props) => {
                                         <div className="position-relative">
                                             {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
                                             {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
-                                            <img alt="img-pokemon" height={64} src={findAssetForm(value.pokemon_id, value.pokemon_name) ?
+                                            <img className="pokemon-sprite-counter" alt="img-pokemon" src={findAssetForm(value.pokemon_id, value.pokemon_name) ?
                                             APIService.getPokemonModel(findAssetForm(value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}></img>
                                         </div>
                                         <span className="caption text-black">#{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, "-", " ")}</span>
