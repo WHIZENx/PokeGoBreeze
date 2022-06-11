@@ -8,6 +8,7 @@ import typeEffective from "../../data/type_effectiveness.json";
 import weatherBoosts from '../../data/weather_boosts.json';
 
 import Moment from 'moment';
+import APIService from "../../services/API.service";
 
 const DEFAULT_POKEMON_DEF_OBJ = 160;
 const DEFAULT_POKEMON_SHADOW = false;
@@ -50,6 +51,25 @@ const RAID_BOSS_TIER = {
         CPm: 0.79,
         sta: 15000
     }
+}
+
+export const rankName = (rank) => {
+    if (rank === 21) return "Ace"
+    else if (rank === 22) return "Veteren"
+    else if (rank === 23) return "Expert"
+    else if (rank === 24) return "Legend"
+}
+
+export const rankIconName = (rank) => {
+    if (rank === 21) return APIService.getPokeOtherLeague("special_combat_rank_1");
+    else if (rank === 22) return APIService.getPokeOtherLeague("special_combat_rank_2");
+    else if (rank === 23) return APIService.getPokeOtherLeague("special_combat_rank_3");
+    else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4");
+}
+
+export const rankIconCenterName = (rank) => {
+    if (rank === 21 || rank === 22 || rank === 23) return APIService.getPokeOtherLeague("special_combat_rank_1_center");
+    else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4_center");
 }
 
 const getMultiFriendshipMulti = (level) => {

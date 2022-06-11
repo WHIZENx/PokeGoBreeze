@@ -41,6 +41,14 @@
     border: 1px solid #b8d4da;
 }
 
+.link-pokemon-sprite {
+    width: 100%;
+}
+
+.group-pokemon-sprite {
+    width: 64px;
+}
+
 .main-name {
     width: 30%;
 }

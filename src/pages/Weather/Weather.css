@@ -3,13 +3,9 @@
     z-index: 1;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     width: 300px;
+    height: max-content;
 }
 
-.result-weather {
-    height: 350px;
-}
-
-.result-weather ul {
-    margin: 0;
-    padding: 0;
+.result-type-weather {
+    height: 300px;
 }

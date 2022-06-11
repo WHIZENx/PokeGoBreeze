@@ -1,5 +1,5 @@
 import { capitalize } from "@mui/material";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
 import { counterPokemon, findAssetForm, splitAndCapitalize } from "../../Calculate/Calculate";
@@ -53,12 +53,14 @@ const Counter = (props) => {
                         <Fragment key={index}>
                             <tr>
                                 <td className="text-origin center">
-                                    <Link to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}`: ""}`} target="_blank">
-                                        <div className="position-relative">
-                                            {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
-                                            {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
-                                            <img className="pokemon-sprite-counter" alt="img-pokemon" src={findAssetForm(value.pokemon_id, value.pokemon_name) ?
-                                            APIService.getPokemonModel(findAssetForm(value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}></img>
+                                    <Link  to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}`: ""}`} target="_blank">
+                                        <div className="d-flex justify-content-center">
+                                            <div className="position-relative group-pokemon-sprite">
+                                                {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
+                                                {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
+                                                <img className="pokemon-sprite-counter" alt="img-pokemon" src={findAssetForm(value.pokemon_id, value.pokemon_name) ?
+                                                APIService.getPokemonModel(findAssetForm(value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}></img>
+                                            </div>
                                         </div>
                                         <span className="caption text-black">#{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, "-", " ")}</span>
                                     </Link>

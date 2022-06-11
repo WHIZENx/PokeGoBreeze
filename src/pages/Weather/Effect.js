@@ -58,7 +58,7 @@ const Effect = (prop) => {
                             <CardType value={currentTypePri}/>
                             </div>
                             {showTypePri &&
-                                <div className="result-type result-weather">
+                                <div className="result-type result-type-weather">
                                     <ul>
                                         {types.map((value, index) => (
                                             <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeTypePri.bind(this)}>
@@ -87,7 +87,7 @@ const Effect = (prop) => {
                             </div>
                             }
                             {showTypeSec &&
-                                <div className="result-type result-weather">
+                                <div className="result-type result-type-weather">
                                     <ul>
                                         {types.map((value, index) => (
                                             <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeTypeSec.bind(this)}>

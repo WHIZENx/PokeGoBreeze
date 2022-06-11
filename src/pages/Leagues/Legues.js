@@ -10,10 +10,8 @@ import APIService from '../../services/API.service';
 import './Leagues.css';
 import { Fragment, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize } from '../../components/Calculate/Calculate';
+import { getTime, rankIconCenterName, rankIconName, rankName, splitAndCapitalize } from '../../components/Calculate/Calculate';
 import { capitalize } from '@mui/material';
-
-// import Carousel from 'react-bootstrap/Carousel'
 
 const Leagues = () => {
 
@@ -42,28 +40,75 @@ const Leagues = () => {
         <div className='container' style={{padding: 15}}>
             <h2 className='title-leagues' style={{marginBottom: 15}}>Battle Leagues List</h2>
             <span className="text-timestamp">* Update: {getTime(leaguesData.timestamp, true)}</span>
-            {/* <div>
-                <Carousel interval={null}>
-                    {Object.entries(leaguesData.seasons["14"].rewards).map(([level, value]) => (
-                         <Carousel.Item key={level}>
-                            {value.filter(item => item.type === "FREE").map((item, index) => (
-                                <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                    <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
-                                    <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+            <div className='season-league'>
+                <div className='group-rank-league reward-league center'>
+                    <div className='rank-header'>Season 14</div>
+                    <span target="_blank" className='img-link'>
+                        <img className='pokemon-sprite-medium' alt='img-pokemon' src={APIService.getPokeOtherLeague("BattleIconColor")}></img>
+                        <span className='caption text-black'>Free</span>
+                    </span>
+                    <hr></hr>
+                    <span target="_blank" className='img-link' style={{paddingBottom: 20}}>
+                        <img className='pokemon-sprite-medium' alt='img-pokemon' src={APIService.getItemSprite("Item_1402")}></img>
+                        <span className='caption text-black'>Premium</span>
+                    </span>
+                </div>
+                {Object.entries(leaguesData.seasons["14"].rewards).map(([rank, value]) => (
+                    <Fragment key={rank}>
+                    {value.filter(item => item.type === "FREE" && item.guaranteedLimited).length > 0 && value.filter(item => item.type === "PREMIUM" && item.guaranteedLimited).length > 0 && ((
+                        <Fragment>
+                            <div className='group-rank-league center'>
+                            <div className='rank-header'>
+                                {parseInt(rank) >= 20 &&
+                                <div className='combat-league'>
+                                    <img className='main-combat-league' alt='img-pokemon' src={rankIconName(parseInt(rank))}></img>
+                                    <span className='combat-center-league'>
+                                        <img alt='img-league' height={10} src={rankIconCenterName(parseInt(rank))}></img>
+                                    </span>
+                                </div>
+                                }
+                                {parseInt(rank) < 21 ? "Rank "+rank : rankName(parseInt(rank))+" Rank"}
+                            </div>
+                            {value.filter(item => item.type === "FREE" && item.guaranteedLimited).map((item, index) => (
+                                <Link target="_blank" className='img-link center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                    <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                    <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                                    {item.guaranteedLimited && <span className='caption text-danger position-absolute text-guarantee'>Guarantee</span>}
                                 </Link>
                             ))}
                             <hr></hr>
-                            {value.filter(item => item.type === "PREMIUM").map((item, index) => (
-                                <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                    <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
-                                    <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                            {value.filter(item => item.type === "PREMIUM" && item.guaranteedLimited).map((item, index) => (
+                                <Link style={{paddingBottom: 20}} target="_blank" className='img-link center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                    <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                    <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                                    {item.guaranteedLimited && <span className='caption text-danger position-absolute text-guarantee'>Guarantee</span>}
                                 </Link>
                             ))}
-                        </Carousel.Item>
-                    ))
+                            </div>
+                        </Fragment>
+                    ))}
+                    {rank < 21 &&
+                    <div className='group-rank-league center'>
+                        <div className='rank-header'>Rank {rank}{parseInt(rank) === 20 ? "" : "-"+(parseInt(rank)+4)}</div>
+                        {value.filter((item, index, arr) => arr.findIndex(value => (value.id === item.id && value.type === "FREE")) === index).map((item, index) => (
+                            <Link target="_blank" className='img-link center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                            </Link>
+
+                        ))}
+                        <hr></hr>
+                        {value.filter((item, index, arr) => arr.findIndex(value => (value.id === item.id && value.type === "PREMIUM")) === index).map((item, index) => (
+                            <Link style={{paddingBottom: 20}} target="_blank" className='img-link center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                            </Link>
+                        ))}
+                    </div>
                     }
-                </Carousel>
-            </div> */}
+                    </Fragment>
+                ))}
+            </div>
             <Accordion alwaysOpen style={{marginTop: 15}}>
                 {leaguesData.data.map((value, index) => (
                     <Accordion.Item key={index} eventKey={index}>
@@ -86,7 +131,6 @@ const Leagues = () => {
                                             <div className="sub-badge">
                                                 <img alt='img-league' height={50} src={APIService.getAssetPokeGo(value.iconUrl)}></img>
                                             </div>
-
                                         </span>
                                     </div>
                                     :
@@ -132,9 +176,9 @@ const Leagues = () => {
                             <li style={{fontWeight: 500}}>
                                 <h6 className='title-leagues text-success'>White List</h6>
                                 {value.conditions.whiteList.map((item, index) => (
-                                    <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                        <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
-                                        <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                                    <Link target="_blank" className='img-link center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                        <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                        <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
                                     </Link>
                                 ))}
                             </li>
@@ -143,9 +187,9 @@ const Leagues = () => {
                             <li style={{fontWeight: 500}}>
                                 <h6 className='title-leagues text-danger'>Ban List</h6>
                                 {value.conditions.banned.map((item, index) => (
-                                    <Link target="_blank" className='img-whitelist center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                        <img alt='img-pokemon' height={48} src={getAssetPokeGo(item.id, item.form)}></img>
-                                        <span className='caption d-block'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                                    <Link target="_blank" className='img-link center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                        <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                        <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
                                     </Link>
                                 ))}
                             </li>
