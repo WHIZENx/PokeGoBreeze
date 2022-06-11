@@ -3,6 +3,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import pokemonData from '../../data/pokemon.json';
 import combatData from '../../data/combat.json';
 import combatPokemonData from '../../data/combat_pokemon_go_list.json';
+import typesData from '../../data/type_effectiveness.json';
 import weatherBoosts from '../../data/weather_boosts.json';
 import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, calculateStatsBettlePure } from "../../components/Calculate/Calculate";
 import DataTable from "react-data-table-component";
@@ -103,7 +104,7 @@ const columns = [
 
 const DpsTable = (props) => {
 
-    const types = ["Bug","Dark","Dragon","Electric","Fairy","Fighting","Fire","Flying","Ghost","Grass","Ground","Ice","Normal","Poison","Psychic","Rock","Steel","Water"]
+    const types = Object.keys(typesData);
 
     const [dpsTable, setDpsTable] = useState([]);
     const [dataFilter, setDataFilter] = useState([]);

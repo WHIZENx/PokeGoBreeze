@@ -10,11 +10,10 @@ const Counter = (props) => {
 
     const [counterList, setCounterList] = useState([]);
     const [open, setOpen] = useState(false);
-    const counterResult = useRef(null);
 
     const [startIndex, setStartIndex] = useState(0);
-    let firstInit = 20;
-    let eachCounter = 10;
+    const firstInit = 20;
+    const eachCounter = 10;
 
     useEffect(() => {
         setOpen(false);
@@ -32,7 +31,7 @@ const Counter = (props) => {
     }
 
     return (
-        <div className="table-counter-container" ref={counterResult} onScroll={listenScrollEvent.bind(this)}>
+        <div className="table-counter-container" onScroll={listenScrollEvent.bind(this)}>
             <table className="table-info table-counter">
                 <colgroup className="main-name" />
                 <colgroup className="main-move-counter" />

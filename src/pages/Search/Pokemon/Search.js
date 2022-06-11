@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, Fragment, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, Fragment, useCallback } from 'react';
 
 import './Search.css';
 
@@ -9,11 +9,9 @@ import pokeListName from '../../../data/pokemon_names.json';
 
 const Search = () => {
 
-    const cardHeight = 57;
-    const pageCardScroll = 10;
-
-    const searchResult = useRef(null);
-    const searchResultID = useRef(0);
+    const [startIndex, setStartIndex] = useState(0);
+    const firstInit = 20;
+    const eachCounter = 10;
 
     const [prev, setPrev] = useState(false);
     const [next, setNext] = useState(false);
@@ -26,7 +24,6 @@ const Search = () => {
     const [showResult, setShowResult] = useState(false);
 
     const [pokemonList, setPokemonList] = useState([]);
-    const currentPokemonListFilter = useRef([]);
     const [pokemonListFilter, setPokemonListFilter] = useState([]);
 
     useEffect(() => {
@@ -46,19 +43,14 @@ const Search = () => {
             pokeList.push(...Object.values(pokeListName).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));
             setPokemonList(pokeList);
         }
-
-        if (searchResult.current.scrollTop > (cardHeight*pageCardScroll)) searchResult.current.scrollTop = (cardHeight*pageCardScroll)-cardHeight;
-        searchResultID.current = 1;
         const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
-        currentPokemonListFilter.current = results;
-        setPokemonListFilter(currentPokemonListFilter.current.slice(0, 20));
-    }, [searchTerm, searchResult, pokemonList, pokeList]);
+        setPokemonListFilter(results);
+    }, [searchTerm, pokemonList, pokeList]);
 
     const listenScrollEvent = (ele) => {
-        let idScroll = Math.floor((ele.currentTarget.offsetHeight + ele.currentTarget.scrollTop) / (cardHeight*pageCardScroll));
-        if (idScroll <= searchResultID.current) return;
-        searchResultID.current = idScroll;
-        setPokemonListFilter([...pokemonListFilter, ...currentPokemonListFilter.current.slice(idScroll*pageCardScroll, idScroll*pageCardScroll+pageCardScroll)])
+        const scrollTop = ele.currentTarget.scrollTop;
+        const fullHeight = ele.currentTarget.offsetHeight;
+        if (scrollTop*1.1 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
     }
 
     const getInfoPoke = (value) => {
@@ -99,18 +91,6 @@ const Search = () => {
 
     return (
         <Fragment>
-            {/* <div className='group-prev-next'>
-                { id  > 1 && prev &&
-                <div className='btn-prev'>
-                    <span className="carousel-control-prev-icon previous" onClick={decId}></span>
-                </div>
-                }
-                { id  < pokeList.length && next &&
-                    <div className='btn-next'>
-                        <span className="carousel-control-next-icon next" onClick={incId}></span>
-                    </div>
-                }
-            </div> */}
         <div className="container element-top">
             <h1 id ="main" className='center'>Pokémon Info Search</h1>
             <div className="input-group mb-12 element-top">
@@ -120,18 +100,16 @@ const Search = () => {
                 <input type="text" className="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="Enter name or ID"
                 value={searchTerm} onInput={e => setSearchTerm(e.target.value)} onFocus={() => setShowResult(true)} onBlur={() => setShowResult(false)}></input>
             </div>
-            <div className="result" style={showResult ? {display: 'block'} : {display: 'none'}}>
-                <ul ref={searchResult}
-                    onScroll={listenScrollEvent.bind(this)}
-                    style={pokemonListFilter.length < pageCardScroll ? {height: pokemonListFilter.length*cardHeight, overflowY: 'hidden'} : {height: cardHeight*pageCardScroll, overflowY: 'scroll'}}>
-                    {pokemonListFilter.map((value, index) => (
-                        <li style={{height: cardHeight}} className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
+            <div className="result" style={{display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>
+                <Fragment>
+                    {pokemonListFilter.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
+                        <div className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
                             <b>#{value.id}</b>
                             <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}></img>
                             {value.name}
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </Fragment>
             </div>
             <Pokemon id={id} onSetIDPoke={setIDPoke} prev={prev} next={next} onIncId={incId} onDecId={decId} onSetPrev={handleSetPrev} onSetNext={handleSetNext} isSearch={true}/>
         </div>

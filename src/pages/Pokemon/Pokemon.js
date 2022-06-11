@@ -163,8 +163,8 @@ const Pokemon = (props) => {
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
-                            <div style={{cursor: "pointer"}}>
-                                <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}></img>
+                            <div style={{width: 60, cursor: "pointer"}}>
+                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}></img>
                             </div>
                             <div className="w-100" style={{cursor: "pointer"}}>
                                 <div style={{textAlign: "start"}}>
@@ -186,8 +186,8 @@ const Pokemon = (props) => {
                                     {splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}
                                 </div>
                             </div>
-                            <div style={{cursor: "pointer"}}>
-                                <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}></img>
+                            <div style={{width: 60, cursor: "pointer"}}>
+                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}></img>
                             </div>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateNextIcon fontSize="large"/></b>
@@ -204,8 +204,8 @@ const Pokemon = (props) => {
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
-                            <div style={{cursor: "pointer"}}>
-                                <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}></img>
+                            <div style={{width: 60, cursor: "pointer"}}>
+                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}></img>
                             </div>
                             <div className="w-100" style={{cursor: "pointer"}}>
                                 <div style={{textAlign: "start"}}>
@@ -227,8 +227,8 @@ const Pokemon = (props) => {
                                     {splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}
                                 </div>
                             </div>
-                            <div style={{cursor: "pointer"}}>
-                                <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}></img>
+                            <div style={{width: 60, cursor: "pointer"}}>
+                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}></img>
                             </div>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateNextIcon fontSize="large"/></b>
@@ -248,7 +248,7 @@ const Pokemon = (props) => {
                 <div className={'poke-container'+(props.isSearch ? "" : " container")}>
                     <div className="w-100 center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
                         <div className="d-inline-block img-desc">
-                            <img style={{verticalAlign: 'baseline'}} height={211} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
+                            <img className="pokemon-main-sprite" style={{verticalAlign: 'baseline'}} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
                         </div>
                         <div className="d-inline-block">
                             <table className="table-info table-desc">

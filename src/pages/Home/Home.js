@@ -10,6 +10,7 @@ import './Home.css'
 import { Link } from 'react-router-dom';
 
 import pokemonData from '../../data/pokemon.json';
+import typesData from '../../data/type_effectiveness.json';
 
 const StyledTableCell = styled(TableCell)(() => ({
     [`&.${tableCellClasses.head}`]: {
@@ -56,7 +57,7 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 const Home = () => {
 
-    const types = ["Bug","Dark","Dragon","Electric","Fairy","Fighting","Fire","Flying","Ghost","Grass","Ground","Ice","Normal","Poison","Psychic","Rock","Steel","Water"]
+    const types = Object.keys(typesData);
 
     const tableScrollID = useRef(1);
 

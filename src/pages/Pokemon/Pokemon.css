@@ -33,9 +33,11 @@
     overflow-y: hidden;
 }
 
-.img-desc img {
+.img-desc {
+    width: 210px;
+    height: 210px;
     border: 2px solid lightgray;
-    padding: 10px;
+    padding: 5px;
 }
 
 .text-gen {

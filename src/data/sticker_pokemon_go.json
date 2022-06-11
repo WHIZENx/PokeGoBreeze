@@ -1,5 +1,5 @@
 {
-    "timestamp": 1653903628000,
+    "timestamp": 1654943501000,
     "data": [
         {
             "id": "ALOLAISHI_1",
@@ -1136,6 +1136,54 @@
             "maxCount": 0,
             "stickerUrl": null,
             "type": "SHOP"
+        },
+        {
+            "id": "HOLOGRAPHIC_CHANCEY",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLOGRAPHIC_CHARMELEON",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLOGRAPHIC_IVYSAUR",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLOGRAPHIC_MELTAN",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLOGRAPHIC_PIKACHU",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "HOLOGRAPHIC_WARTORTLE",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": null,
+            "pokemonName": null,
+            "type": "DEFAULT"
         },
         {
             "id": "HOPPIP_1",

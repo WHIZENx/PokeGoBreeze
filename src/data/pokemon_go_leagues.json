@@ -1,5 +1,5 @@
 {
-    "timestamp": 1654337140000,
+    "timestamp": 1654943367000,
     "data": [
         {
             "id": "GREAT",
@@ -1170,6 +1170,10 @@
                     {
                         "id": 292,
                         "name": "SHEDINJA"
+                    },
+                    {
+                        "id": 323,
+                        "name": "CAMERUPT"
                     }
                 ]
             },
@@ -1276,7 +1280,7 @@
         },
         {
             "id": "VS_SEEKER_GREAT_CATCH_GOFEST2022",
-            "title": "GOFEST_2022_CATCH_CUP",
+            "title": "CATCH_CUP",
             "enabled": true,
             "conditions": {
                 "timestamp": {
@@ -1304,6 +1308,10 @@
                     {
                         "id": 292,
                         "name": "SHEDINJA"
+                    },
+                    {
+                        "id": 323,
+                        "name": "CAMERUPT"
                     },
                     {
                         "id": 385,
@@ -6778,6 +6786,10 @@
                     {
                         "id": 292,
                         "name": "SHEDINJA"
+                    },
+                    {
+                        "id": 323,
+                        "name": "CAMERUPT"
                     }
                 ]
             },
@@ -7638,15 +7650,15 @@
                 "20": [
                     {
                         "guaranteedLimited": false,
-                        "id": 382,
-                        "name": "KYOGRE",
+                        "id": 383,
+                        "name": "GROUDON",
                         "form": "NORMAL",
                         "type": "FREE"
                     },
                     {
                         "guaranteedLimited": false,
-                        "id": 382,
-                        "name": "KYOGRE",
+                        "id": 383,
+                        "name": "GROUDON",
                         "form": "NORMAL",
                         "type": "PREMIUM"
                     }

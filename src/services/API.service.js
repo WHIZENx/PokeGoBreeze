@@ -109,6 +109,8 @@ class APIService {
 
     getPokeGifSprite(name) {
         name = name.replace("mega-x","megax").replace("mega-y","megay");
+        if (!name.includes("mega") && name.includes("-m")) name = name.replace("-m", "");
+        if (name.includes("gengar")) name += "_2";
         return `${POKE_GIF_SPRITES_API_URL}${name}.gif`
     }
 

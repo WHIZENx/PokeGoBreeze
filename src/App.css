@@ -7,6 +7,18 @@
     color: #0000ee;
 }
 
+img.pokemon-main-sprite {
+    width: 100%;
+    height: 205px;
+    object-fit: contain;
+}
+
+img.pokemon-navigate-sprite {
+    width: 100%;
+    height: 60px;
+    object-fit: contain;
+}
+
 img.pokemon-sprite {
     width: 100%;
     height: 96px;
@@ -36,7 +48,17 @@ ul {
     list-style-type: none;
 }
 
-.result ul, .result-type ul, .result-weather ul, .result-tools ul, .result-move ul {
+.result {
+    position: absolute;
+    z-index: 3;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    width: 300px;
+    background-color: white;
+    max-height: 570px;
+    overflow-y: auto;
+}
+
+.result-type ul, .result-weather ul, .result-move ul {
     margin: 0;
     padding: 0;
     background-color: white;
@@ -64,3 +86,23 @@ ul {
 .img-search {
     margin: 0 5px;
 }
+
+.shadow-ic {background-color:#c184ec}
+.bug{background-color:#9cb820}
+.dark{background-color:#504843}
+.dragon{background-color:#7038f8}
+.electric,.elite-ic{background-color:#f8d030}
+.fighting{background-color:#c03028}
+.fire{background-color:#f08030}
+.flying{background-color:#9096f0}
+.fairy{background-color:#f09ad9}
+.ground{background-color:#e0b668}
+.ghost{background-color:#705898}
+.grass{background-color:#22c02a}
+.ice{background-color:#98d8d8}
+.normal,.purified-ic{background-color:#a8a8a8}
+.psychic{background-color:#f85888}
+.poison{background-color:#a040a0}
+.rock{background-color:#b8a038}
+.steel{background-color:#6d8f9c}
+.water{background-color:#6890f0}

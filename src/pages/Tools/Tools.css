@@ -2,12 +2,10 @@
     width: 300px !important;
 }
 
-.result-tools {
-    position: absolute;
-    width: 300px;
-    background-color: white;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0);
+.tools {
+    z-index: 0;
     margin-top: 38px;
+    box-shadow: 0 4px 8px 0 #000;
 }
 
 .selected {
