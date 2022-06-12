@@ -36,8 +36,7 @@ const Leagues = () => {
 
     useEffect(() => {
         document.title = "Battle Leagues List";
-        console.log(season)
-    }, [season]);
+    }, []);
 
     return (
         <div className='container' style={{padding: 15}}>

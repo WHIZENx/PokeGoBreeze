@@ -70,8 +70,8 @@ const Raid = (props) => {
                                     <td className="center">{calculateRaidStat(props.statDEF, tier)}</td>
                                 </tr>
                                 <tr>
-                                    <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
-                                    <td className="center">{calculateRaidStat(props.statSTA, tier)}</td>
+                                    <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>STA</td>
+                                    <td className="center">{Math.floor(RAID_BOSS_TIER[tier].sta/RAID_BOSS_TIER[tier].CPm)}</td>
                                 </tr>
                         </tbody>
                     </table>
