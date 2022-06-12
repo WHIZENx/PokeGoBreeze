@@ -7375,27 +7375,1700 @@
         "9": {
             "season": 9,
             "seasonEndTime": "1622491200000",
-            "rewards": null
+            "rewards": {
+                "1": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 38,
+                        "name": "NINETALES",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 38,
+                        "name": "NINETALES",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 61,
+                        "name": "POLIWHIRL",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 61,
+                        "name": "POLIWHIRL",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 67,
+                        "name": "MACHOKE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 67,
+                        "name": "MACHOKE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 68,
+                        "name": "MACHAMP",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 68,
+                        "name": "MACHAMP",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 168,
+                        "name": "ARIADOS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 168,
+                        "name": "ARIADOS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 302,
+                        "name": "SABLEYE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 302,
+                        "name": "SABLEYE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 459,
+                        "name": "SNOVER",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 459,
+                        "name": "SNOVER",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "5": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "10": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 454,
+                        "name": "TOXICROAK",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 454,
+                        "name": "TOXICROAK",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 618,
+                        "name": "STUNFISK",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 618,
+                        "name": "STUNFISK",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "15": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 227,
+                        "name": "SKARMORY",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 227,
+                        "name": "SKARMORY",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "20": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 889,
+                        "name": "ZAMAZENTA",
+                        "form": "HERO",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 889,
+                        "name": "ZAMAZENTA",
+                        "form": "HERO",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "22": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 443,
+                        "name": "GIBLE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 443,
+                        "name": "GIBLE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 443,
+                        "name": "GIBLE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 443,
+                        "name": "GIBLE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "23": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "24": [
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "PREMIUM"
+                    }
+                ]
+            }
         },
         "10": {
             "season": 10,
             "seasonEndTime": "1630353600000",
-            "rewards": null
+            "rewards": {
+                "1": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 5,
+                        "name": "CHARMELEON",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 5,
+                        "name": "CHARMELEON",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 6,
+                        "name": "CHARIZARD",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 6,
+                        "name": "CHARIZARD",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 30,
+                        "name": "NIDORINA",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 30,
+                        "name": "NIDORINA",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 97,
+                        "name": "HYPNO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 97,
+                        "name": "HYPNO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 302,
+                        "name": "SABLEYE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 302,
+                        "name": "SABLEYE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 574,
+                        "name": "GOTHITA",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 574,
+                        "name": "GOTHITA",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 577,
+                        "name": "SOLOSIS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 577,
+                        "name": "SOLOSIS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "6": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "11": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 112,
+                        "name": "RHYDON",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 112,
+                        "name": "RHYDON",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 426,
+                        "name": "DRIFBLIM",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 426,
+                        "name": "DRIFBLIM",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 537,
+                        "name": "SEISMITOAD",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 537,
+                        "name": "SEISMITOAD",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 607,
+                        "name": "LITWICK",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 607,
+                        "name": "LITWICK",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "16": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 143,
+                        "name": "SNORLAX",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 143,
+                        "name": "SNORLAX",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "20": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 488,
+                        "name": "CRESSELIA",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 488,
+                        "name": "CRESSELIA",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "22": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "23": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "24": [
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "PREMIUM"
+                    }
+                ]
+            }
         },
         "11": {
             "season": 11,
             "seasonEndTime": "1638219600000",
-            "rewards": null
+            "rewards": {
+                "1": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 153,
+                        "name": "BAYLEEF",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 153,
+                        "name": "BAYLEEF",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 156,
+                        "name": "QUILAVA",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 156,
+                        "name": "QUILAVA",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 159,
+                        "name": "CROCONAW",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 159,
+                        "name": "CROCONAW",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 167,
+                        "name": "SPINARAK",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 167,
+                        "name": "SPINARAK",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 170,
+                        "name": "CHINCHOU",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 170,
+                        "name": "CHINCHOU",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 184,
+                        "name": "AZUMARILL",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 184,
+                        "name": "AZUMARILL",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 668,
+                        "name": "PYROAR",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 668,
+                        "name": "PYROAR",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "6": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "11": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 164,
+                        "name": "NOCTOWL",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 164,
+                        "name": "NOCTOWL",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 205,
+                        "name": "FORRETRESS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 205,
+                        "name": "FORRETRESS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 410,
+                        "name": "SHIELDON",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 410,
+                        "name": "SHIELDON",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 435,
+                        "name": "SKUNTANK",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 435,
+                        "name": "SKUNTANK",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "16": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 246,
+                        "name": "LARVITAR",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 246,
+                        "name": "LARVITAR",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "22": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "23": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 633,
+                        "name": "DEINO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "24": [
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "PREMIUM"
+                    }
+                ]
+            }
         },
         "12": {
             "season": 12,
             "seasonEndTime": "1646168400000",
-            "rewards": null
+            "rewards": {
+                "1": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 35,
+                        "name": "CLEFAIRY",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 35,
+                        "name": "CLEFAIRY",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 169,
+                        "name": "CROBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 169,
+                        "name": "CROBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 200,
+                        "name": "MISDREAVUS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 200,
+                        "name": "MISDREAVUS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 307,
+                        "name": "MEDITITE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 307,
+                        "name": "MEDITITE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 529,
+                        "name": "DRILBUR",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 529,
+                        "name": "DRILBUR",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 731,
+                        "name": "PIKIPEK",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 731,
+                        "name": "PIKIPEK",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 734,
+                        "name": "YUNGOOS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 734,
+                        "name": "YUNGOOS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "6": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 137,
+                        "name": "PORYGON",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 137,
+                        "name": "PORYGON",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 722,
+                        "name": "ROWLET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 722,
+                        "name": "ROWLET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 725,
+                        "name": "LITTEN",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 725,
+                        "name": "LITTEN",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 728,
+                        "name": "POPPLIO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 728,
+                        "name": "POPPLIO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "11": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 349,
+                        "name": "FEEBAS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 349,
+                        "name": "FEEBAS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 408,
+                        "name": "CRANIDOS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 408,
+                        "name": "CRANIDOS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 708,
+                        "name": "PHANTUMP",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 708,
+                        "name": "PHANTUMP",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "16": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 246,
+                        "name": "LARVITAR",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 246,
+                        "name": "LARVITAR",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 744,
+                        "name": "ROCKRUFF",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 744,
+                        "name": "ROCKRUFF",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "20": [
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 785,
+                        "name": "TAPU_KOKO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 785,
+                        "name": "TAPU_KOKO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 786,
+                        "name": "TAPU_LELE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 786,
+                        "name": "TAPU_LELE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 787,
+                        "name": "TAPU_BULU",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 787,
+                        "name": "TAPU_BULU",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 788,
+                        "name": "TAPU_FINI",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 788,
+                        "name": "TAPU_FINI",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ]
+            }
         },
         "13": {
             "season": 13,
             "seasonEndTime": "1654113600000",
-            "rewards": null
+            "rewards": {
+                "1": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 60,
+                        "name": "POLIWAG",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 60,
+                        "name": "POLIWAG",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 68,
+                        "name": "MACHAMP",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 68,
+                        "name": "MACHAMP",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 227,
+                        "name": "SKARMORY",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 227,
+                        "name": "SKARMORY",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 278,
+                        "name": "WINGULL",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 278,
+                        "name": "WINGULL",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 307,
+                        "name": "MEDITITE",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 307,
+                        "name": "MEDITITE",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 607,
+                        "name": "LITWICK",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 607,
+                        "name": "LITWICK",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 819,
+                        "name": "SKWOVET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 819,
+                        "name": "SKWOVET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "6": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "11": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 108,
+                        "name": "LICKITUNG",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 108,
+                        "name": "LICKITUNG",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 237,
+                        "name": "HITMONTOP",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 237,
+                        "name": "HITMONTOP",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 588,
+                        "name": "KARRABLAST",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 588,
+                        "name": "KARRABLAST",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 616,
+                        "name": "SHELMET",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 616,
+                        "name": "SHELMET",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "16": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 359,
+                        "name": "ABSOL",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 359,
+                        "name": "ABSOL",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 674,
+                        "name": "PANCHAM",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 674,
+                        "name": "PANCHAM",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 870,
+                        "name": "FALINKS",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 870,
+                        "name": "FALINKS",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "20": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 383,
+                        "name": "GROUDON",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 383,
+                        "name": "GROUDON",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "21": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "22": [
+                    {
+                        "guaranteedLimited": false,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": false,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL",
+                        "type": "PREMIUM"
+                    }
+                ],
+                "24": [
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "FREE"
+                    },
+                    {
+                        "guaranteedLimited": true,
+                        "id": 25,
+                        "name": "PIKACHU",
+                        "form": "VS_2019",
+                        "type": "PREMIUM"
+                    }
+                ]
+            }
         },
         "14": {
             "season": 14,

@@ -82,9 +82,17 @@ li.unique-type ul {
 }
 
 .img-link {
-    width: 64px;
+    width: max-content;
     display: inline-block;
     margin: 5px;
+}
+
+.season-unavailable {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 41px);
+    font-weight: 500;
 }
 
 .accordion-body {
@@ -118,7 +126,7 @@ li.unique-type ul {
 
 .combat-center-league {
     position: absolute;
-    top: 45%;
+    top: 40%;
     left: 40%;
-    transform: translate(-30%, -45%);
+    transform: translate(-30%, -40%);
 }

@@ -25,7 +25,7 @@ const MAX_LEVEL = 51;
 const MIN_IV = 0
 const MAX_IV = 15
 
-const RAID_BOSS_TIER = {
+export const RAID_BOSS_TIER = {
     1: {
         level: 20,
         CPm: 0.61,
@@ -72,6 +72,15 @@ export const rankIconCenterName = (rank) => {
     else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4_center");
 }
 
+export const raidEgg = (tier, mega, legend) => {
+    if (tier === 1) return APIService.getRaidSprite("raid_egg_0_icon");
+    else if (tier === 3) return APIService.getRaidSprite("raid_egg_1_icon");
+    else if (tier === 5 && mega && legend) return APIService.getRaidSprite("raid_egg_4_icon");
+    else if (tier === 5 && mega) return APIService.getRaidSprite("raid_egg_3_icon");
+    else if (tier === 5) return APIService.getRaidSprite("raid_egg_2_icon");
+    else return APIService.getRaidSprite("ic_raid_small");
+}
+
 const getMultiFriendshipMulti = (level) => {
     let dmg = 1;
     if (level === 1) dmg += 0.03;
@@ -103,7 +112,7 @@ export const splitAndCapitalize = (string, splitBy, joinBy) => {
 };
 
 export const getTime = (value, notFull) => {
-    return notFull ? Moment((new Date(parseInt(value)))).format('DD MMMM YYYY') : Moment((new Date(parseInt(value)))).format('HH:mm DD MMMM YYYY')
+    return notFull ? Moment((new Date(parseInt(value)))).format('D MMMM YYYY') : Moment((new Date(parseInt(value)))).format('HH:mm D MMMM YYYY')
 }
 
 export const regionList = {
@@ -263,13 +272,12 @@ export const calculateCP = (atk, def, sta, level) => {
     return Math.floor(Math.max(10, (atk*(def**0.5)*(sta**0.5)*data.find(item => item.level === level).multiplier**2)/10))
 }
 
-export const calculateRaidCP = (atk, def, level) => {
-    // console.log(
-    //     Math.floor((atk+15)*RAID_BOSS_TIER[level].CPm),
-    //     Math.floor((def+15)*RAID_BOSS_TIER[level].CPm),
-    //     Math.floor(RAID_BOSS_TIER[level].sta/RAID_BOSS_TIER[level].CPm)
-    // )
-    return Math.floor(((atk+15)*Math.sqrt(def+15)*Math.sqrt(RAID_BOSS_TIER[level].sta))/10)
+export const calculateRaidStat = (stat, tier) => {
+    return Math.floor((stat+15)*RAID_BOSS_TIER[tier].CPm)
+}
+
+export const calculateRaidCP = (atk, def, tier) => {
+    return Math.floor(((atk+15)*Math.sqrt(def+15)*Math.sqrt(RAID_BOSS_TIER[tier].sta))/10)
 }
 
 export const predictStat = (atk, def, sta, cp) => {

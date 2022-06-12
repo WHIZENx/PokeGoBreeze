@@ -10658,15 +10658,15 @@
                 "gender": 1,
                 "pokemonId": 592,
                 "form": "MALE",
-                "default": "Addressable Assets/pm592.fFEMALE.icon",
-                "shiny": "Addressable Assets/pm592.fFEMALE.s.icon"
+                "default": "Addressable Assets/pm592.icon",
+                "shiny": "Addressable Assets/pm592.s.icon"
             },
             {
                 "gender": 2,
                 "pokemonId": 592,
                 "form": "FEMALE",
-                "default": "pokemon_icon_592_01",
-                "shiny": "pokemon_icon_592_01_shiny"
+                "default": "Addressable Assets/pm592.fFEMALE.icon",
+                "shiny": "Addressable Assets/pm592.fFEMALE.s.icon"
             }
         ]
     },
@@ -10678,22 +10678,15 @@
                 "gender": 1,
                 "pokemonId": 593,
                 "form": "MALE",
-                "default": "Addressable Assets/pm593.fFEMALE.icon",
-                "shiny": "Addressable Assets/pm593.fFEMALE.s.icon"
+                "default": "Addressable Assets/pm593.icon",
+                "shiny": "Addressable Assets/pm593.s.icon"
             },
             {
                 "gender": 2,
                 "pokemonId": 593,
                 "form": "FEMALE",
-                "default": "pokemon_icon_593_01",
-                "shiny": "pokemon_icon_593_01_shiny"
-            },
-            {
-                "pokemonId": 593,
-                "form": "NORMAL",
-                "gender": 3,
-                "default": "Addressable Assets/pm593.icon",
-                "shiny": "Addressable Assets/pm593.s.icon"
+                "default": "Addressable Assets/pm593.fFEMALE.icon",
+                "shiny": "Addressable Assets/pm593.fFEMALE.s.icon"
             }
         ]
     },
@@ -11416,8 +11409,8 @@
                 "gender": 3,
                 "pokemonId": 646,
                 "form": "NORMAL",
-                "default": "pokemon_icon_646_11",
-                "shiny": "pokemon_icon_646_11_shiny"
+                "default": "Addressable Assets/pm646.fNORMAL.icon",
+                "shiny": "Addressable Assets/pm646.fNORMAL.s.icon"
             },
             {
                 "gender": 3,
@@ -11483,8 +11476,8 @@
                 "gender": 3,
                 "pokemonId": 649,
                 "form": "NORMAL",
-                "default": "pokemon_icon_649_11",
-                "shiny": "pokemon_icon_649_11_shiny"
+                "default": "Addressable Assets/pm649.fNORMAL.icon",
+                "shiny": "Addressable Assets/pm649.fNORMAL.s.icon"
             },
             {
                 "gender": 3,
@@ -12034,15 +12027,15 @@
                 "gender": 1,
                 "pokemonId": 678,
                 "form": "MALE",
-                "default": "Addressable Assets/pm678.fFEMALE.icon",
-                "shiny": "Addressable Assets/pm678.fFEMALE.s.icon"
+                "default": "Addressable Assets/pm678.icon",
+                "shiny": "Addressable Assets/pm678.s.icon"
             },
             {
                 "gender": 2,
                 "pokemonId": 678,
                 "form": "FEMALE",
-                "default": "pokemon_icon_678_01",
-                "shiny": "pokemon_icon_678_01_shiny"
+                "default": "Addressable Assets/pm678.fFEMALE.icon",
+                "shiny": "Addressable Assets/pm678.fFEMALE.s.icon"
             }
         ]
     },

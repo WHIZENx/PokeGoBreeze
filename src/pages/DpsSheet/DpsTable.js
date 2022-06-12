@@ -18,6 +18,7 @@ import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import './DpsTable.css';
 import { Link } from "react-router-dom";
 import { LevelRating } from "../../util/util";
+import { Form } from "react-bootstrap";
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.pokemon.name.toLowerCase();
@@ -339,7 +340,7 @@ const DpsTable = (props) => {
                                     <div className="input-group-prepend">
                                         <label className="input-group-text">Levels</label>
                                     </div>
-                                    <select className="border-input form-control" defaultValue={POKEMON_LEVEL}
+                                    <Form.Select className="border-input form-control" defaultValue={POKEMON_LEVEL}
                                     onChange={(e) => setOptions({
                                         ...options,
                                         POKEMON_LEVEL: parseInt(e.target.value)})}>
@@ -347,7 +348,7 @@ const DpsTable = (props) => {
                                             <option key={index} value={value}>{value}</option>
                                         ))
                                         }
-                                    </select>
+                                    </Form.Select>
                                 </Box>
                                 <Box className="col-7 input-group" style={{padding: 0}}>
                                     <span className="input-group-text">DEF Target</span>
@@ -359,7 +360,7 @@ const DpsTable = (props) => {
                                     <div className="input-group-prepend">
                                         <label className="input-group-text">Weather Boosts</label>
                                     </div>
-                                    <select className="border-input form-control" defaultValue={WEATHER_BOOSTS}
+                                    <Form.Select className="border-input form-control" defaultValue={WEATHER_BOOSTS}
                                     onChange={(e) => setOptions({
                                         ...options,
                                         WEATHER_BOOSTS: e.target.value === "true" ? true : e.target.value === "false" ? false : e.target.value})}>
@@ -369,8 +370,7 @@ const DpsTable = (props) => {
                                             <option key={index} value={value}>{value}</option>
                                         ))
                                         }
-                                    </select>
-                                    {/* <FormControlLabel control={<Checkbox checked={WEATHER_BOOSTS} onChange={handleCheckbox} name="WEATHER_BOOSTS"/>} label="Weather Boosts" /> */}
+                                    </Form.Select>
                                     <Box sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',paddingLeft: 1,paddingRight: 1}}>
                                         <FormControlLabel control={<Switch onChange={(event, check) => {
                                                 setEnableFriend(check)

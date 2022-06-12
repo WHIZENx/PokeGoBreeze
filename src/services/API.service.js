@@ -59,6 +59,10 @@ class APIService {
         return `${POGO_ASSET_API_URL}Items/${item}.png`;
     }
 
+    getRaidSprite(name) {
+        return `${POGO_ASSET_API_URL}Raids/${name}.png`;
+    }
+
     getGenderSprite(sex) {
         return `${POGO_ASSET_API_URL}Pokedex/${sex.toLowerCase()}_l.png`;
     }
