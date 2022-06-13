@@ -116,10 +116,9 @@ const DpsTable = (props) => {
         ELITE_MOVE: true,
         POKEMON_SHADOW: true,
         WEATHER_BOOSTS: false,
-        POKEMON_FRIEND_LEVEL: 0,
+        TRAINER_FRIEND: false,
+        TRAINER_FRIEND_LEVEL: 0,
         POKEMON_DEF_OBJ: 160,
-        DAMAGE_MULTIPLY: 0.5,
-        DAMAGE_CONST: 1,
         IV_ATK: 15,
         IV_DEF: 15,
         IV_HP: 15,
@@ -128,12 +127,11 @@ const DpsTable = (props) => {
     const [loading, setLoading] = useState(true);
     const [selectTypes, setSelectTypes] = useState([]);
     const [enableDelay, setEnableDelay] = useState(false);
-    const [enableFriend, setEnableFriend] = useState(false);
     const [enableShadow, setEnableShadow] = useState(false);
     const [enableElite, setEnableElite] = useState(false);
     const [enableMega, setEnableMega] = useState(false);
 
-    const {ELITE_MOVE, POKEMON_SHADOW, WEATHER_BOOSTS, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ} = options;
+    const {ELITE_MOVE, POKEMON_SHADOW, WEATHER_BOOSTS, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, TRAINER_FRIEND, TRAINER_FRIEND_LEVEL, POKEMON_DEF_OBJ} = options;
 
     const addCPokeData = useCallback((movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
         movePoke.forEach(vc => {
@@ -373,14 +371,14 @@ const DpsTable = (props) => {
                                     </Form.Select>
                                     <Box sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',paddingLeft: 1,paddingRight: 1}}>
                                         <FormControlLabel control={<Switch onChange={(event, check) => {
-                                                setEnableFriend(check)
                                                 setOptions({
                                                     ...options,
+                                                    TRAINER_FRIEND: check,
                                                     POKEMON_FRIEND_LEVEL: 0,
                                                 });
                                             }}/>} label="Friendship Level:" />
                                             <LevelRating
-                                            disabled={!enableFriend}
+                                            disabled={!TRAINER_FRIEND}
                                             onChange={(event, value) => {
                                                 setOptions({
                                                     ...options,
@@ -391,7 +389,7 @@ const DpsTable = (props) => {
                                             defaultValue={0}
                                             max={4}
                                             size='large'
-                                            value={POKEMON_FRIEND_LEVEL}
+                                            value={TRAINER_FRIEND_LEVEL}
                                             emptyIcon={<FavoriteBorder fontSize="inherit" />}
                                             icon={<Favorite fontSize="inherit"
                                         />}/>

@@ -3,13 +3,6 @@ import APIService from '../../services/API.service'
 
 const Gender = (props) => {
 
-    // const calculateRatio = (sex, ratio) => {
-    //     let maleRatio = parseInt(ratio.charAt(0));
-    //     let femaleRatio = parseInt(ratio.charAt(3));
-    //     let sumAll = maleRatio+femaleRatio
-    //     return (sex.toLowerCase() === 'male') ? maleRatio*100/sumAll : femaleRatio*100/sumAll;
-    // }
-
     const calculateRatio = (sex, ratio) => {
         let maleRatio = ratio.M;
         let femaleRatio = ratio.F;

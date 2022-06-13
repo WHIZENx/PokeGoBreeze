@@ -2,7 +2,7 @@ import { useSnackbar } from "notistack";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useParams } from "react-router-dom";
-import { capitalize, getBarCharge, queryTopMove, splitAndCapitalize } from "../../components/Calculate/Calculate";
+import { capitalize, getBarCharge, queryTopMove, splitAndCapitalize, STAB_MULTIPLY } from "../../components/Calculate/Calculate";
 import TypeBar from "../../components/Sprites/TypeBar";
 
 import moveData from '../../data/combat.json';
@@ -125,7 +125,7 @@ const Move = (props) => {
                                 <tr>
                                     <td>PVE Power
                                     <span className="caption">(Weather / STAB / Shadow Bonus)</span></td>
-                                    <td colSpan="2">{(move.pve_power*1.2).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pve_power*0.2).toFixed(2)}</span></td>
+                                    <td colSpan="2">{(move.pve_power*STAB_MULTIPLY).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pve_power*0.2).toFixed(2)}</span></td>
                                 </tr>
                                 <tr>
                                     <td>PVE Energy</td>
@@ -145,7 +145,7 @@ const Move = (props) => {
                                 <tr>
                                     <td>PVE Power
                                     <span className="caption">(STAB / Shadow Bonus)</span></td>
-                                    <td colSpan="2">{(move.pvp_power*1.2).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pvp_power*0.2).toFixed(2)}</span></td>
+                                    <td colSpan="2">{(move.pvp_power*STAB_MULTIPLY).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pvp_power*0.2).toFixed(2)}</span></td>
                                 </tr>
                                 <tr>
                                     <td>PVP Energy</td>
@@ -227,17 +227,17 @@ const Move = (props) => {
                                 <tr>
                                     <td>DPS
                                     <span className="caption">(Weather / STAB / Shadow Bonus)</span></td>
-                                    <td>{((move.pve_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td>{((move.pve_power*STAB_MULTIPLY)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td>DPS
                                     <span className="caption">(2 Effect Bonus)</span></td>
-                                    <td>{((move.pve_power*1.2*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td>{((move.pve_power*Math.pow(STAB_MULTIPLY, 2))/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td>DPS
                                     <span className="caption">(STAB+Weather+Shadow Bonus)</span></td>
-                                    <td>{((move.pve_power*1.2*1.2*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td>{((move.pve_power*Math.pow(STAB_MULTIPLY, 3))/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 {move.type_move === "FAST" &&<tr>
                                     <td>EPS</td>
@@ -251,7 +251,7 @@ const Move = (props) => {
                                 <tr>
                                     <td>DPS
                                     <span className="caption">(STAB / Shadow Bonus)</span></td>
-                                    <td>{((move.pvp_power*1.2)/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td>{((move.pvp_power*STAB_MULTIPLY)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
                                 <tr>

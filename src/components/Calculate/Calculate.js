@@ -9,21 +9,30 @@ import weatherBoosts from '../../data/weather_boosts.json';
 
 import Moment from 'moment';
 import APIService from "../../services/API.service";
+import { getOption } from "../../options/options";
 
 const DEFAULT_POKEMON_DEF_OBJ = 160;
 const DEFAULT_POKEMON_SHADOW = false;
+const DEFAULT_TRAINER_FRIEND = false;
 const DEFAULT_WEATHER_BOOSTS = false;
 const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
 
 const DEFAULT_ENERYGY_PER_HP_LOST = 0.5;
 const DEFAULT_DAMAGE_MULTIPLY = 0.5;
 const DEFAULT_DAMAGE_CONST = 1;
+const DEFAULT_ENEMY_ATK_DELAY = 2;
 
 const MIN_LEVEL = 1;
 const MAX_LEVEL = 51;
 
-const MIN_IV = 0
-const MAX_IV = 15
+const MIN_IV = 0;
+const MAX_IV = 15;
+
+export const STAB_MULTIPLY = getOption("battle_options", "stab");
+
+/* Shadow exclusive bonus for Pokemon in battle */
+export const SHADOW_ATK_BONUS = getOption("combat_options", "shadow_bonus", "atk");
+export const SHADOW_DEF_BONUS = getOption("combat_options", "shadow_bonus", "def");
 
 export const RAID_BOSS_TIER = {
     1: {
@@ -50,6 +59,11 @@ export const RAID_BOSS_TIER = {
         level: 40,
         CPm: 0.79,
         sta: 15000
+    },
+    6: {
+        level: 40,
+        CPm: 0.79,
+        sta: 22500
     }
 }
 
@@ -72,26 +86,21 @@ export const rankIconCenterName = (rank) => {
     else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4_center");
 }
 
-export const raidEgg = (tier, mega, legend) => {
+export const raidEgg = (tier, mega) => {
     if (tier === 1) return APIService.getRaidSprite("raid_egg_0_icon");
     else if (tier === 3) return APIService.getRaidSprite("raid_egg_1_icon");
-    else if (tier === 5 && mega && legend) return APIService.getRaidSprite("raid_egg_4_icon");
     else if (tier === 5 && mega) return APIService.getRaidSprite("raid_egg_3_icon");
     else if (tier === 5) return APIService.getRaidSprite("raid_egg_2_icon");
+    else if (tier === 6) return APIService.getRaidSprite("raid_egg_4_icon");
     else return APIService.getRaidSprite("ic_raid_small");
 }
 
 const getMultiFriendshipMulti = (level) => {
-    let dmg = 1;
-    if (level === 1) dmg += 0.03;
-    else if (level === 2) dmg += 0.05;
-    else if (level === 3) dmg += 0.07;
-    else if (level === 4) dmg += 0.1;
-    return dmg;
+    return getOption("trainer_friendship", level.toString(), "atk_bonus");
 }
 
 const weatherMultiple = (weather, type) => {
-    return weatherBoosts[weather].find(item => item === capitalize(type.toLowerCase())) ? 1.2 : 1;
+    return weatherBoosts[weather].find(item => item === capitalize(type.toLowerCase())) ? STAB_MULTIPLY : 1;
 }
 
 export const getTypeEffective = (typeMove, typesObj) => {
@@ -165,7 +174,7 @@ export const findAssetForm = (id, name) => {
     catch { return null; }
 }
 
-// Thank calculate algorithm from pokemongohub.net
+/* Thank algorithm from pokemongohub.net */
 export const calBaseATK = (stats, nerf) => {
     const atk = stats.atk !== undefined ? stats.atk : stats.find(item => item.stat.name === "attack").base_stat;
     const spa = stats.spa !== undefined ? stats.spa : stats.find(item => item.stat.name === "special-attack").base_stat;
@@ -379,8 +388,8 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
         let between_xl_candy_diff = 0;
 
         if (type === "shadow") {
-            var atk_stat = calculateStatsBettle(atk, IVatk, to_lv+0.5, typeCostPowerUp(type).bonus.atk);
-            var def_stat = calculateStatsBettle(def, IVdef, to_lv+0.5, typeCostPowerUp(type).bonus.def);
+            var atk_stat = calculateStatsBettle(atk, IVatk, to_lv+0.5, SHADOW_ATK_BONUS);
+            var def_stat = calculateStatsBettle(def, IVdef, to_lv+0.5, SHADOW_DEF_BONUS);
 
             var atk_stat_diff = Math.abs(calculateStatsBettle(atk, IVatk, to_lv+0.5) - atk_stat);
             var def_stat_diff = Math.abs(calculateStatsBettle(def, IVdef, to_lv+0.5) - def_stat);
@@ -460,8 +469,8 @@ export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_l
             }
         }
 
-        let atk_stat = (type === "shadow") ? calculateStatsBettle(atk, IVatk, dataBettle.level, typeCostPowerUp(type).bonus.atk) : calculateStatsBettle(atk, IVatk, dataBettle.level);
-        let def_stat = (type === "shadow") ? calculateStatsBettle(def, IVdef, dataBettle.level, typeCostPowerUp(type).bonus.def) : calculateStatsBettle(def, IVdef, dataBettle.level);
+        let atk_stat = (type === "shadow") ? calculateStatsBettle(atk, IVatk, dataBettle.level, SHADOW_ATK_BONUS) : calculateStatsBettle(atk, IVatk, dataBettle.level);
+        let def_stat = (type === "shadow") ? calculateStatsBettle(def, IVdef, dataBettle.level, SHADOW_DEF_BONUS) : calculateStatsBettle(def, IVdef, dataBettle.level);
 
         dataBettle["rangeValue"] = calculateBetweenLevel(atk, def, sta, IVatk, IVdef, IVsta, from_lv, dataBettle.level, type);
         dataBettle["stats"] = {
@@ -492,10 +501,6 @@ export const typeCostPowerUp = (type) => {
         return {
             stadust: 1.2,
             candy: 1.2,
-            bonus: {
-                atk : 1.2,
-                def : 0.83333331
-            },
             type: type,
         }
     } else if (type === "purified") {
@@ -518,7 +523,6 @@ export const typeCostPowerUp = (type) => {
 }
 
 export const sortStatsProd = (data) => {
-    // const maxStatsProds = Math.max.apply(Math, dataList.map(item => { return item.statsProds; }));
     data = data.sort((a,b) => a.statsProds - b.statsProds);
     return data.map((item, index) => ({...item, ratio: item.statsProds*100/data[data.length-1].statsProds, rank: data.length-index}));
 }
@@ -568,19 +572,19 @@ export const calculateStatsByTag = (baseStats, tag) => {
 export const calculateDamagePVE = (atk, defObj, power, eff, pure, stab) => {
     let modifier;
     if (eff) {
-        const isStab = eff.stab ? 1.2 : 1;
-        const isWb = eff.wb ? 1.2 : 1;
+        const isStab = eff.stab ? STAB_MULTIPLY : 1;
+        const isWb = eff.wb ? STAB_MULTIPLY : 1;
         const isDodge = eff.dodge ? 0.25 : 1;
         const isMega = eff.mega ? eff.stab ? 1.3 : 1.1 : 1;
         const isTrainer = eff.trainer ? 1.3 : 1;
         const isFrind = getMultiFriendshipMulti(eff.flevel);
-        let isCharge = 0.25;
-        if (eff.clevel === 1) isCharge += 0.25;
-        else if (eff.clevel === 2) isCharge += 0.5;
-        else if (eff.clevel === 3) isCharge += 0.75;
+        let isCharge = getOption("throw_charge", "normal");
+        if (eff.clevel === 1) isCharge = getOption("throw_charge", "nice");
+        else if (eff.clevel === 2) isCharge = getOption("throw_charge", "great");
+        else if (eff.clevel === 3) isCharge = getOption("throw_charge", "excellent");
         modifier = isStab * isWb * isFrind * isDodge * isCharge * isMega * isTrainer * eff.effective;
     } else {
-        if (stab) modifier = 1.2;
+        if (stab) modifier = STAB_MULTIPLY;
         else modifier = 1;
     }
     if (pure) return (0.5 * power * (atk/defObj) * modifier) + 1
@@ -602,29 +606,31 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, typePoke, options, s
     const CE = Math.abs(cmove.pve_energy);
     const FDur = fmove.durationMs/1000;
     const CDur = cmove.durationMs/1000;
+    const FTYPE = capitalize(fmove.type.toLowerCase());
+    const CTYPE = capitalize(cmove.type.toLowerCase());
     const CDWS = cmove.damageWindowStartMs/1000;
     const bar = getBarCharge(true, cmove.pve_energy);
 
-    const FMulti = (typePoke.includes(capitalize(fmove.type.toLowerCase())) ? 1.2 : 1)*fmove.accuracyChance
-    const CMulti = (typePoke.includes(capitalize(cmove.type.toLowerCase())) ? 1.2 : 1)*cmove.accuracyChance
+    const FMulti = (typePoke.includes(FTYPE) ? STAB_MULTIPLY : 1)*fmove.accuracyChance;
+    const CMulti = (typePoke.includes(CTYPE) ? STAB_MULTIPLY : 1)*cmove.accuracyChance;
 
-    let y,FDmg,CDmg,FDmgBase,CDmgBase
-    if (options === undefined) {
-        FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(DEFAULT_POKEMON_SHADOW ? 1.2 : 1)*(DEFAULT_WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL)
-        CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(DEFAULT_POKEMON_SHADOW ? 1.2 : 1)*(DEFAULT_WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL)
+    let y,FDmg,CDmg,FDmgBase,CDmgBase;
+    if (options) {
+        FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(shadow ? SHADOW_ATK_BONUS : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, fmove.type) : options.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(options.TRAINER_FRIEND ? getMultiFriendshipMulti(options.TRAINER_FRIEND_LEVEL) : 1);
+        CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(shadow ? SHADOW_ATK_BONUS : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, cmove.type) : options.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(options.TRAINER_FRIEND ? getMultiFriendshipMulti(options.TRAINER_FRIEND_LEVEL) : 1);
 
-        FDmg = Math.floor(FDmgBase*Atk/DEFAULT_POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST
-        CDmg = Math.floor(CDmgBase*Atk/DEFAULT_POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST
+        FDmg = Math.floor(FDmgBase*(options.objTypes ? getTypeEffective(FTYPE, options.objTypes) : 1)*Atk/options.POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
+        CDmg = Math.floor(CDmgBase*(options.objTypes ? getTypeEffective(CTYPE, options.objTypes) : 1)*Atk/options.POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
 
-        y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? 0.83333331 : 1));
+        y = 900/(Def*(options.objTypes ? getTypeEffective(FTYPE, options.objTypes)*getTypeEffective(CTYPE, options.objTypes): 1)*(shadow ? SHADOW_DEF_BONUS : 1));
     } else {
-        FDmgBase = options.DAMAGE_MULTIPLY*FPow*FMulti*(shadow ? 1.2 : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, fmove.type) : options.WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(options.POKEMON_FRIEND_LEVEL)
-        CDmgBase = options.DAMAGE_MULTIPLY*CPow*CMulti*(shadow ? 1.2 : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, cmove.type) : options.WEATHER_BOOSTS ? 1.2 : 1)*getMultiFriendshipMulti(options.POKEMON_FRIEND_LEVEL)
+        FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(DEFAULT_POKEMON_SHADOW ? SHADOW_ATK_BONUS : 1)*(DEFAULT_WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(DEFAULT_TRAINER_FRIEND ? getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL) : 1);
+        CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(DEFAULT_POKEMON_SHADOW ? SHADOW_ATK_BONUS : 1)*(DEFAULT_WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(DEFAULT_TRAINER_FRIEND ? getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL) : 1);
 
-        FDmg = Math.floor(FDmgBase*Atk/options.POKEMON_DEF_OBJ)+options.DAMAGE_CONST
-        CDmg = Math.floor(CDmgBase*Atk/options.POKEMON_DEF_OBJ)+options.DAMAGE_CONST
+        FDmg = Math.floor(FDmgBase*Atk/DEFAULT_POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
+        CDmg = Math.floor(CDmgBase*Atk/DEFAULT_POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
 
-        y = 900/(Def*(shadow ? 0.83333331 : 1));
+        y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? SHADOW_DEF_BONUS : 1));
     }
 
     const FDPS = FDmg/(FDur+(options && options.delay ? options.delay.ftime : 0));
@@ -633,34 +639,40 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, typePoke, options, s
     const FEPS = FE/(FDur+(options && options.delay ? options.delay.ftime : 0));
 
     let CEPSM;
-    let x = 0.5*CE+0.5*FE;
-
-    if (bar === 1) CEPSM = 0.5*FE+0.5*y*CDWS;
+    if (CE === 100) CEPSM = 0.5*FE+0.5*y*CDWS;
     else CEPSM = 0;
 
     const CEPS = (CE+CEPSM)/(CDur+(options && options.delay ? options.delay.ctime : 0));
 
-    if (options !== undefined && options.specific) {
+    let x = 0.5*CE+0.5*FE;
+    if (options && options.specific) {
         let λ;
         if (bar === 1) λ = 3;
         else if (bar === 2) λ = 1.5;
         else if (bar === 3) λ = 1;
-        x += 0.5*λ*options.specific.FDmgenemy+options.specific.CDmgenemy*λ+1
+        x += 0.5*λ*options.specific.FDmgenemy+options.specific.CDmgenemy*λ+1;
     }
 
     const DPS0 = (FDPS*CEPS+CDPS*FEPS)/(CEPS+FEPS);
 
     let DPS;
     if (FDPS > CDPS) DPS = DPS0;
-    else DPS = Math.max(0, DPS0+((CDPS-FDPS)/(CEPS+FEPS)*(DEFAULT_ENERYGY_PER_HP_LOST-(x/HP))*y))
+    else DPS = Math.max(0, DPS0+((CDPS-FDPS)/(CEPS+FEPS)*(DEFAULT_ENERYGY_PER_HP_LOST-(x/HP))*y));
     return Math.max(FDPS, DPS);
 }
 
 export const calculateTDO = (Def, HP, dps, shadow) => {
     let y;
-    if (shadow === undefined) y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? 0.83333331 : 1));
-    else y = 900/(Def*(shadow ? 0.83333331 : 1));
-    return HP/y*dps
+    if (shadow) y = 900/(Def*(shadow ? SHADOW_DEF_BONUS : 1));
+    else y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? SHADOW_DEF_BONUS : 1));
+    return HP/y*dps;
+}
+
+export const calculateTDOWithMoveType = (ftype, ctype, objTypes, Def, HP, dps, isDef, shadow) => {
+    let y;
+    if (shadow) y = 900/(Def*(isDef ? getTypeEffective(ftype, objTypes)*getTypeEffective(ctype, objTypes): 1)*(shadow ? SHADOW_DEF_BONUS : 1));
+    else y = 900/(Def*(isDef ? getTypeEffective(ftype, objTypes)*getTypeEffective(ctype, objTypes): 1)*(DEFAULT_POKEMON_SHADOW ? SHADOW_DEF_BONUS : 1));
+    return HP/y*dps;
 }
 
 export const queryTopMove = (move) => {
@@ -705,39 +717,54 @@ export const queryTopMove = (move) => {
     return dataPri;
 }
 
-const queryMove = (dataList, vf, type, cmove, felite, celite, shadow, purified) => {
+const queryMove = (dataList, vf, atk, def, sta, type, cmove, felite, celite, shadow, purified) => {
     cmove.forEach(vc => {
         let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
         let mc = combat.find(item => item.name === vc);
-        let bar = getBarCharge(true, mc.pve_energy)
 
         mf["elite"] = felite;
         mc["elite"] = celite;
         mc["shadow"] = shadow;
         mc["purified"] = purified;
 
-        let mfPower = mf.pve_power*(type.includes(mf.type.toLowerCase()) ? 1.2 : 1)
-        let mcPower = mc.pve_power*(type.includes(mc.type.toLowerCase()) ? 1.2 : 1)
+        let options = {
+            delay: {
+                ftime: DEFAULT_ENEMY_ATK_DELAY,
+                ctime: DEFAULT_ENEMY_ATK_DELAY
+            },
+            POKEMON_DEF_OBJ: 160,
+            IV_ATK: 15,
+            IV_DEF: 15,
+            IV_HP: 15,
+            POKEMON_LEVEL: 40
+        }
 
-        let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
-        let defensive = (100/(mf.pve_energy/((mf.durationMs/1000) + 1.5))) + bar*(mc.durationMs/1000)
-        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: Number.isFinite(offensive) ? ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive : 1, defensive: Number.isFinite(defensive) ? ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/defensive : 1}})
+        let offensive = calculateAvgDPS(mf, mc,
+            calculateStatsBettle(atk, options.IV_ATK, options.POKEMON_LEVEL),
+            calculateStatsBettle(def, options.IV_DEF, options.POKEMON_LEVEL),
+            calculateStatsBettle(sta, options.IV_HP, options.POKEMON_LEVEL), type);
+        let defensive = calculateAvgDPS(mf, mc,
+            calculateStatsBettle(atk, options.IV_ATK, options.POKEMON_LEVEL),
+            calculateStatsBettle(def, options.IV_DEF, options.POKEMON_LEVEL),
+            calculateStatsBettle(sta, options.IV_HP, options.POKEMON_LEVEL), type, options);
+
+        dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: offensive, defensive: defensive}});
     });
 }
 
-export const rankMove = (move, type) => {
+export const rankMove = (move, atk, def, sta, type) => {
     let dataPri = []
     move.QUICK_MOVES.forEach(vf => {
-        queryMove(dataPri, vf, type, move.CINEMATIC_MOVES, false, false, false, false);
-        queryMove(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, false, true, false, false);
-        queryMove(dataPri, vf, type, move.SHADOW_MOVES, false, false, true, false);
-        queryMove(dataPri, vf, type, move.PURIFIED_MOVES, false, false, false, true);
+        queryMove(dataPri, vf, atk, def, sta, type, move.CINEMATIC_MOVES, false, false, false, false);
+        queryMove(dataPri, vf, atk, def, sta, type, move.ELITE_CINEMATIC_MOVES, false, true, false, false);
+        queryMove(dataPri, vf, atk, def, sta, type, move.SHADOW_MOVES, false, false, true, false);
+        queryMove(dataPri, vf, atk, def, sta, type, move.PURIFIED_MOVES, false, false, false, true);
     });
     move.ELITE_QUICK_MOVES.forEach(vf => {
-        queryMove(dataPri, vf, type, move.CINEMATIC_MOVES, true, false, false, false);
-        queryMove(dataPri, vf, type, move.ELITE_CINEMATIC_MOVES, true, true, false);
-        queryMove(dataPri, vf, type, move.SHADOW_MOVES, true, false, true, false);
-        queryMove(dataPri, vf, type, move.PURIFIED_MOVES, true, false, false, true);
+        queryMove(dataPri, vf, atk, def, sta, type, move.CINEMATIC_MOVES, true, false, false, false);
+        queryMove(dataPri, vf, atk, def, sta, type, move.ELITE_CINEMATIC_MOVES, true, true, false);
+        queryMove(dataPri, vf, atk, def, sta, type, move.SHADOW_MOVES, true, false, true, false);
+        queryMove(dataPri, vf, atk, def, sta, type, move.PURIFIED_MOVES, true, false, false, true);
     });
 
     return {
@@ -787,12 +814,26 @@ const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felit
         mc["shadow"] = shadow;
         mc["purified"] = purified;
 
-        let bar = getBarCharge(true, mc.pve_energy)
-        let mfPower = (0.5*(stats.atk/def)*mf.pve_power*(pokemon.types.includes(mf.type.toLowerCase()) ? 1.2 : 1)*(getTypeEffective(capitalize(mf.type.toLowerCase()), types))*(shadow ? 1.2 : 1))+1
-        let mcPower = (0.5*(stats.atk/def)*mc.pve_power*(pokemon.types.includes(mc.type.toLowerCase()) ? 1.2 : 1)*(getTypeEffective(capitalize(mc.type.toLowerCase()), types))*(shadow ? 1.2 : 1))+1
+        // let bar = getBarCharge(true, mc.pve_energy)
+        // let mfPower = (0.5*(stats.atk/def)*mf.pve_power*(pokemon.types.includes(mf.type.toLowerCase()) ? STAB_MULTIPLY : 1)*(getTypeEffective(capitalize(mf.type.toLowerCase()), types))*(shadow ? STAB_MULTIPLY : 1))+1;
+        // let mcPower = (0.5*(stats.atk/def)*mc.pve_power*(pokemon.types.includes(mc.type.toLowerCase()) ? STAB_MULTIPLY : 1)*(getTypeEffective(capitalize(mc.type.toLowerCase()), types))*(shadow ? STAB_MULTIPLY : 1))+1;
 
-        let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000)
-        let dpsOff = ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive
+        // let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000);
+        // let dpsOff = ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive;
+
+        let options = {
+            objTypes: types,
+            POKEMON_DEF_OBJ: calculateStatsBettle(def, 15, 40),
+            IV_ATK: 15,
+            IV_DEF: 15,
+            IV_HP: 15,
+            POKEMON_LEVEL: 40
+        }
+
+        let dpsOff = calculateAvgDPS(mf, mc,
+            calculateStatsBettle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL),
+            calculateStatsBettle(stats.def, options.IV_DEF, options.POKEMON_LEVEL),
+            calculateStatsBettle(stats.sta, options.IV_HP, options.POKEMON_LEVEL), pokemon.types, options);
 
         dataList.push({
             pokemon_id: pokemon.num,

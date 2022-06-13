@@ -34,23 +34,22 @@ const PokemonModel = (props) => {
                         {assets.image.map((value, index) => (
                         <div key={index} className="d-inline-block" style={{width: value.gender === 3 ? '100%': 'auto'}}>
                             <div className='sub-group-model'>
+                                {(gender.current.M !== 0 || gender.current.F !== 0) &&
                                 <div className='gender'>
                                     {value.gender === 3 ?
-                                        <Fragment>
-                                            {(gender.current.M !== 0 || gender.current.F !== 0) &&
-                                            <Fragment>
-                                                {gender.current.M !== 0 && <MaleIcon sx={{ color: 'blue' }}/>}
-                                                {gender.current.F !== 0 && <FemaleIcon sx={{ color: 'red' }}/>}
-                                            </Fragment>
-                                            }
-                                        </Fragment>
-                                    : <Fragment>{value.gender === 1 ?
+                                    <Fragment>
+                                        {gender.current.M !== 0 && <MaleIcon sx={{ color: 'blue' }}/>}
+                                        {gender.current.F !== 0 && <FemaleIcon sx={{ color: 'red' }}/>}
+                                    </Fragment>
+                                    :
+                                    <Fragment>{value.gender === 1 ?
                                         <MaleIcon sx={{ color: 'blue' }}/>
                                     :
                                         <FemaleIcon sx={{ color: 'red' }}/>
                                     }</Fragment>
                                     }
                                 </div>
+                                }
                                 <div className='model center' style={{minWidth: value.shiny ? "50%" : "100%"}}>
                                     <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.default)}></img>
                                     <span className='caption'>Default</span>

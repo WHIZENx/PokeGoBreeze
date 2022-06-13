@@ -1,6 +1,6 @@
 import { Box, FormControlLabel, Radio } from "@mui/material";
 import { useCallback, useState } from "react";
-import { calculateStatsBettle, calculateStatsBettlePure } from "../../../components/Calculate/Calculate";
+import { calculateStatsBettle, calculateStatsBettlePure, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../components/Calculate/Calculate";
 import APIService from "../../../services/API.service";
 
 import atk_logo from '../../../assets/attack.png';
@@ -15,8 +15,8 @@ const StatsTable = (props) => {
 
     const onHandleLevel = useCallback((e, v) => {
         props.setStatLevel(v);
-        if(props.setStatLvATK) props.setStatLvATK(calculateStatsBettlePure(props.statATK, 15, statLevel, statType === "shadow" ? 1.2 : 1));
-        if(props.setStatLvDEF) props.setStatLvDEF(calculateStatsBettlePure(props.statDEF, 15, statLevel, statType === "shadow" ? 0.8 : 1));
+        if(props.setStatLvATK) props.setStatLvATK(calculateStatsBettlePure(props.statATK, 15, statLevel, statType === "shadow" ? SHADOW_ATK_BONUS : 1));
+        if(props.setStatLvDEF) props.setStatLvDEF(calculateStatsBettlePure(props.statDEF, 15, statLevel, statType === "shadow" ? SHADOW_DEF_BONUS : 1));
         if(props.setStatLvSTA) props.setStatLvSTA(calculateStatsBettlePure(props.statSTA, 15, statLevel));
         setStatLevel(v);
     }, [props, statLevel, statType]);
@@ -68,11 +68,11 @@ const StatsTable = (props) => {
                             <tr className="center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
-                                    <td className="center">{calculateStatsBettle(props.statATK, 15, statLevel, statType === "shadow" ? 1.2 : 1)}</td>
+                                    <td className="center">{calculateStatsBettle(props.statATK, 15, statLevel, statType === "shadow" ? SHADOW_ATK_BONUS : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
-                                    <td className="center">{calculateStatsBettle(props.statDEF, 15, statLevel, statType === "shadow" ? 0.8 : 1)}</td>
+                                    <td className="center">{calculateStatsBettle(props.statDEF, 15, statLevel, statType === "shadow" ? SHADOW_DEF_BONUS : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>

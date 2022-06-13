@@ -1,25 +1,21 @@
 {
     "timestamp": 1654054479000,
     "data": {
-        "combat_options": [
-            {
-                "stab": 1.2,
-                "shadow_bonus": {
-                    "atk": 1.2,
-                    "def": 0.8333333
-                }
+        "combat_options": {
+            "stab": 1.2,
+            "shadow_bonus": {
+                "atk": 1.2,
+                "def": 0.8333333
             }
-        ],
-        "battle_options": [
-            {
-                "enemyAttackInterval": 1.5,
-                "stab": 1.2,
-                "shadow_bonus": {
-                    "atk": 1.2,
-                    "def": 0.8333333
-                }
+        },
+        "battle_options": {
+            "enemyAttackInterval": 1.5,
+            "stab": 1.2,
+            "shadow_bonus": {
+                "atk": 1.2,
+                "def": 0.8333333
             }
-        ],
+        },
         "throw_charge": {
             "normal": 0.25,
             "nice": 0.5,
