@@ -1,3 +1,13 @@
+.card-select-disabled {
+    background-color: #e9ecef;
+    cursor: default !important;
+}
+
+.card-select-enabled {
+    background-color: white;
+    cursor: pointer !important;
+}
+
 .card-pokemon-input {
     width: 100%;
     height: 38px;
@@ -5,23 +15,24 @@
 }
 
 .card-move-input {
-    cursor: pointer;
     width: 100%;
     height: 38px;
     border: 1px solid #ddd;
 }
 
-.input-pokemo-select {
+.input-pokemon-select {
     background-size: auto 36px !important;
     border: none;
-    height: 36px;
+    height: 38px;
     outline: none;
+    border-radius: 0;
 }
 
 .card-pokemon-select {
     width: 100%;
     border-top: 1px solid #ddd;
     padding-left: 23px;
+    padding-right: 15px;
     cursor: pointer;
 }
 
@@ -32,7 +43,7 @@
 .card-move {
     width: 100%;
     border-top: 1px solid #ddd;
-    padding: 10px;
+    padding: 5px;
     cursor: pointer;
 }
 
@@ -41,9 +52,9 @@
     position: absolute;
     z-index: 2;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    width: 280px;
-    max-height: 300px;
-    overflow-y: scroll;
+    width: max-content;
+    max-height: 274px;
+    overflow-y: auto;
     background-color: white;
 }
 
@@ -52,8 +63,8 @@
     position: absolute;
     z-index: 2;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    width: 280px;
-    max-height: auto;
-    overflow-y: scroll;
+    width: max-content;
+    max-height: 180px;
+    overflow-y: auto;
     background-color: white;
 }

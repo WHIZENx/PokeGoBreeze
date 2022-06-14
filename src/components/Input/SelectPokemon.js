@@ -5,7 +5,7 @@ import pokemonData from '../../data/pokemon.json';
 import { useState } from "react";
 
 import './Select.css';
-import { splitAndCapitalize } from "../Calculate/Calculate";
+import { calculateStatsByTag, DEFAULT_POKEMON_DEF_OBJ, splitAndCapitalize } from "../Calculate/Calculate";
 import APIService from "../../services/API.service";
 
 const SelectPokemon = (props) => {
@@ -21,28 +21,35 @@ const SelectPokemon = (props) => {
     const listenScrollEvent = (ele) => {
         const scrollTop = ele.currentTarget.scrollTop;
         const fullHeight = ele.currentTarget.offsetHeight;
-        if (scrollTop*1.1 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
+        if (scrollTop*1.2 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
     }
 
     const changePokemon = (value) => {
         setShowPokemon(false);
         if (props.setCurrentPokemon) props.setCurrentPokemon({...props.filters, targetPokemon: value});
+        if (props.setOptions) props.setOptions({...props.options,
+            POKEMON_DEF_OBJ: calculateStatsByTag(value.baseStats, value.slug).def,
+            objTypes: value.types
+            });
         setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
         setSearch(splitAndCapitalize(value.name, "-", " "));
+        if (props.clearData) props.clearData();
     }
 
     const removePokemon = () => {
         if (props.setCurrentPokemon) props.setCurrentPokemon({...props.filters, targetPokemon: null});
         setPokemonIcon(null);
         setSearch('');
+        if (props.setOptions) props.setOptions({...props.options, POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ, objTypes: null});
+        if (props.clearData) props.clearData();
     }
 
     return (
-        <div className=' d-flex justify-content-start'>
+        <div className='d-flex align-items-center form-control' style={{padding: 0, borderRadius: 0}}>
             <div className='card-pokemon-input' >
                 <div className="d-flex align-items-center">
                     {pokemonIcon && <span onClick={() => removePokemon()} style={{cursor: 'pointer'}}><CloseIcon sx={{color: 'red'}}/></span>}
-                    <input className="input-pokemo-select form-control shadow-none"
+                    <input className="input-pokemon-select form-control shadow-none"
                     onClick={() => setShowPokemon(true)}
                     onBlur={() => setShowPokemon(false)}
                     value={search}

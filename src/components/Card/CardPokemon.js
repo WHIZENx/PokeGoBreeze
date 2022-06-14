@@ -8,7 +8,7 @@ const CardPokemon = (props) => {
         <Fragment>
             {props.value &&
             <Fragment>
-                <div className='d-flex justify-content-start align-items-center w-100'>
+                <div className='d-flex align-items-center w-100'>
                     <img height={38} alt='pokemon-logo' style={{marginRight: 10}} src={APIService.getPokeIconSprite(props.value.sprite, true)}></img>
                     {splitAndCapitalize(props.value.name, "-", " ")}
                 </div>

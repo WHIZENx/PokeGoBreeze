@@ -11,7 +11,7 @@ import Moment from 'moment';
 import APIService from "../../services/API.service";
 import { getOption } from "../../options/options";
 
-const DEFAULT_POKEMON_DEF_OBJ = 160;
+export const DEFAULT_POKEMON_DEF_OBJ = 160;
 const DEFAULT_POKEMON_SHADOW = false;
 const DEFAULT_TRAINER_FRIEND = false;
 const DEFAULT_WEATHER_BOOSTS = false;
@@ -106,8 +106,8 @@ const weatherMultiple = (weather, type) => {
 export const getTypeEffective = (typeMove, typesObj) => {
     let value_effective = 1;
     typesObj.forEach(type => {
-        try {value_effective *= typeEffective[typeMove][capitalize(type.type.name)];}
-        catch {value_effective *= typeEffective[typeMove][type];}
+        try {value_effective *= typeEffective[capitalize(typeMove.toLowerCase())][capitalize(type.type.name.toLowerCase())];}
+        catch {value_effective *= typeEffective[capitalize(typeMove.toLowerCase())][capitalize(type.toLowerCase())];}
     });
     return value_effective;
 }
@@ -634,7 +634,8 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, typePoke, options, s
         FDmg = Math.floor(FDmgBase*(options.objTypes ? getTypeEffective(FTYPE, options.objTypes) : 1)*Atk/options.POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
         CDmg = Math.floor(CDmgBase*(options.objTypes ? getTypeEffective(CTYPE, options.objTypes) : 1)*Atk/options.POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
 
-        y = 900/(Def*(options.objTypes ? getTypeEffective(FTYPE, options.objTypes)*getTypeEffective(CTYPE, options.objTypes): 1)*(shadow ? SHADOW_DEF_BONUS : 1));
+        y = 900/(Def*(shadow ? SHADOW_DEF_BONUS : 1));
+        y *= options.objTypes ? getTypeEffective(FTYPE, options.objTypes)*getTypeEffective(CTYPE, options.objTypes) : 1;
     } else {
         FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(DEFAULT_POKEMON_SHADOW ? SHADOW_ATK_BONUS : 1)*(DEFAULT_WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(DEFAULT_TRAINER_FRIEND ? getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL) : 1);
         CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(DEFAULT_POKEMON_SHADOW ? SHADOW_ATK_BONUS : 1)*(DEFAULT_WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(DEFAULT_TRAINER_FRIEND ? getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL) : 1);
@@ -680,10 +681,11 @@ export const calculateTDO = (Def, HP, dps, shadow) => {
     return HP/y*dps;
 }
 
-export const calculateTDOWithMoveType = (ftype, ctype, objTypes, Def, HP, dps, isDef, shadow) => {
+export const calculateTDOWithMoveType = (ftype, ctype, objTypes, Def, HP, dps, shadow) => {
     let y;
-    if (shadow) y = 900/(Def*(isDef ? getTypeEffective(ftype, objTypes)*getTypeEffective(ctype, objTypes): 1)*(shadow ? SHADOW_DEF_BONUS : 1));
-    else y = 900/(Def*(isDef ? getTypeEffective(ftype, objTypes)*getTypeEffective(ctype, objTypes): 1)*(DEFAULT_POKEMON_SHADOW ? SHADOW_DEF_BONUS : 1));
+    if (shadow) y = 900/(Def*(shadow ? SHADOW_DEF_BONUS : 1));
+    else y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? SHADOW_DEF_BONUS : 1));
+    y *= getTypeEffective(ftype, objTypes)*getTypeEffective(ctype, objTypes);
     return HP/y*dps;
 }
 

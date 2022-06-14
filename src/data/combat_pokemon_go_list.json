@@ -17027,7 +17027,7 @@
         "NAME": "TOXAPEX",
         "BASE_SPECIES": "TOXAPEX",
         "QUICK_MOVES": [
-            "POISON_STING_FAST",
+            "POISON_JAB_FAST",
             "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
@@ -17854,132 +17854,6 @@
         "ELITE_CINEMATIC_MOVES": []
     },
     {
-        "ID": 774,
-        "NAME": "MINIOR_BLUE",
-        "BASE_SPECIES": "MINIOR",
-        "QUICK_MOVES": [
-            "ROLLOUT_FAST",
-            "TAKE_DOWN_FAST"
-        ],
-        "CINEMATIC_MOVES": [
-            "POWER_GEM",
-            "ANCIENT_POWER",
-            "ACROBATICS"
-        ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
-        "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
-    },
-    {
-        "ID": 774,
-        "NAME": "MINIOR_GREEN",
-        "BASE_SPECIES": "MINIOR",
-        "QUICK_MOVES": [
-            "ROLLOUT_FAST",
-            "TAKE_DOWN_FAST"
-        ],
-        "CINEMATIC_MOVES": [
-            "POWER_GEM",
-            "ANCIENT_POWER",
-            "ACROBATICS"
-        ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
-        "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
-    },
-    {
-        "ID": 774,
-        "NAME": "MINIOR_INDIGO",
-        "BASE_SPECIES": "MINIOR",
-        "QUICK_MOVES": [
-            "ROLLOUT_FAST",
-            "TAKE_DOWN_FAST"
-        ],
-        "CINEMATIC_MOVES": [
-            "POWER_GEM",
-            "ANCIENT_POWER",
-            "ACROBATICS"
-        ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
-        "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
-    },
-    {
-        "ID": 774,
-        "NAME": "MINIOR_ORANGE",
-        "BASE_SPECIES": "MINIOR",
-        "QUICK_MOVES": [
-            "ROLLOUT_FAST",
-            "TAKE_DOWN_FAST"
-        ],
-        "CINEMATIC_MOVES": [
-            "POWER_GEM",
-            "ANCIENT_POWER",
-            "ACROBATICS"
-        ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
-        "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
-    },
-    {
-        "ID": 774,
-        "NAME": "MINIOR_RED",
-        "BASE_SPECIES": "MINIOR",
-        "QUICK_MOVES": [
-            "ROLLOUT_FAST",
-            "TAKE_DOWN_FAST"
-        ],
-        "CINEMATIC_MOVES": [
-            "POWER_GEM",
-            "ANCIENT_POWER",
-            "ACROBATICS"
-        ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
-        "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
-    },
-    {
-        "ID": 774,
-        "NAME": "MINIOR_VIOLET",
-        "BASE_SPECIES": "MINIOR",
-        "QUICK_MOVES": [
-            "ROLLOUT_FAST",
-            "TAKE_DOWN_FAST"
-        ],
-        "CINEMATIC_MOVES": [
-            "POWER_GEM",
-            "ANCIENT_POWER",
-            "ACROBATICS"
-        ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
-        "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
-    },
-    {
-        "ID": 774,
-        "NAME": "MINIOR_YELLOW",
-        "BASE_SPECIES": "MINIOR",
-        "QUICK_MOVES": [
-            "ROLLOUT_FAST",
-            "TAKE_DOWN_FAST"
-        ],
-        "CINEMATIC_MOVES": [
-            "POWER_GEM",
-            "ANCIENT_POWER",
-            "ACROBATICS"
-        ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
-        "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
-    },
-    {
         "ID": 775,
         "NAME": "KOMALA",
         "BASE_SPECIES": "KOMALA",
@@ -18054,24 +17928,6 @@
     {
         "ID": 778,
         "NAME": "MIMIKYU_BUSTED",
-        "BASE_SPECIES": "MIMIKYU",
-        "QUICK_MOVES": [
-            "SHADOW_CLAW_FAST",
-            "CHARM_FAST"
-        ],
-        "CINEMATIC_MOVES": [
-            "SHADOW_SNEAK",
-            "PLAY_ROUGH",
-            "SHADOW_BALL"
-        ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
-        "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
-    },
-    {
-        "ID": 778,
-        "NAME": "MIMIKYU_DISGUISED",
         "BASE_SPECIES": "MIMIKYU",
         "QUICK_MOVES": [
             "SHADOW_CLAW_FAST",

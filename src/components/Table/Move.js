@@ -25,18 +25,18 @@ const Move = (props) => {
             setCountFM(simpleMove.length);
             resultFirst[0].CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
             resultFirst[0].ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
-            resultFirst[0].SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: value === "RETURN" ? false : true, purified: value === "RETURN" ? true : false})});
-            setResultMove(simpleMove);
-            return;
+            resultFirst[0].SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
+            resultFirst[0].PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
+            return setResultMove(simpleMove);
         };
         result.QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
         result.ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
         setCountFM(simpleMove.length);
         result.CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
         result.ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
-        result.SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: value === "RETURN" ? false : true, purified: value === "RETURN" ? true : false})});
-        setResultMove(simpleMove);
-        return;
+        result.SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
+        result.PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
+        return setResultMove(simpleMove);
     }, []);
 
     useEffect(() => {
@@ -61,7 +61,7 @@ const Move = (props) => {
                     <div className='card-input' tabIndex={ 0 } onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
                         <div className='card-select'>
                             {currentMove ?
-                            <CardType value={findType(currentMove.name)} name={splitAndCapitalize(currentMove.name.replaceAll("_FAST", ""), "_", " ")} elite={currentMove.elite} shadow={currentMove.shadow} purified={currentMove.purified}/>
+                            <CardType value={findType(currentMove.name)} name={splitAndCapitalize(currentMove.name.replaceAll("_PLUS","+").replaceAll("_FAST", ""), "_", " ")} elite={currentMove.elite} shadow={currentMove.shadow} purified={currentMove.purified}/>
                             :
                             <CardType />
                             }
@@ -81,7 +81,7 @@ const Move = (props) => {
                                                 }
                                                 {value !== currentMove &&
                                                 <li className="container card-pokemon" data-id={value.name} onMouseDown={changeMove.bind(this)}>
-                                                    <CardType value={findType(value.name)} name={splitAndCapitalize(value.name.replaceAll("_FAST", ""), "_", " ")} elite={value.elite} shadow={value.shadow}  purified={value.purified}/>
+                                                    <CardType value={findType(value.name)} name={splitAndCapitalize(value.name.replaceAll("_PLUS","+").replaceAll("_FAST", ""), "_", " ")} elite={value.elite} shadow={value.shadow}  purified={value.purified}/>
                                                 </li>
                                                 }
                                                 </Fragment>

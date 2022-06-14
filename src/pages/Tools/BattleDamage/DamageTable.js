@@ -70,7 +70,7 @@ const DamageTable = (props) => {
                         </tr>
                         <tr>
                             <td>Move name</td>
-                            <td>{props.result.move ? splitAndCapitalize(props.result.move.name, "_", " ") : "-"}</td>
+                            <td>{props.result.move ? splitAndCapitalize(props.result.move.name.replaceAll("_PLUS","+"), "_", " ") : "-"}</td>
                         </tr>
                         <tr>
                             <td>Move damage</td>
