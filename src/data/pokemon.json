@@ -46187,8 +46187,8 @@
             "Dragon"
         ],
         "genderRatio": {
-            "M": 0.5,
-            "F": 0.5
+            "M": 0.875,
+            "F": 0.125
         },
         "baseStats": {
             "hp": 58,
@@ -46239,8 +46239,8 @@
             "Dragon"
         ],
         "genderRatio": {
-            "M": 0.5,
-            "F": 0.5
+            "M": 0.875,
+            "F": 0.125
         },
         "baseStats": {
             "hp": 82,
@@ -46289,8 +46289,8 @@
             "Ice"
         ],
         "genderRatio": {
-            "M": 0.5,
-            "F": 0.5
+            "M": 0.875,
+            "F": 0.125
         },
         "baseStats": {
             "hp": 77,
@@ -46341,8 +46341,8 @@
             "Ice"
         ],
         "genderRatio": {
-            "M": 0.5,
-            "F": 0.5
+            "M": 0.875,
+            "F": 0.125
         },
         "baseStats": {
             "hp": 123,
@@ -54065,7 +54065,7 @@
         "isTransferable": true,
         "isDeployable": false,
         "isTradable": true,
-        "pokemonClass": "LEGENDARY",
+        "pokemonClass": "ULTRA_BEAST",
         "disableTransferToPokemonHome": false
     },
     "pheromosa": {
@@ -54115,7 +54115,7 @@
         "isTransferable": true,
         "isDeployable": false,
         "isTradable": true,
-        "pokemonClass": "LEGENDARY",
+        "pokemonClass": "ULTRA_BEAST",
         "disableTransferToPokemonHome": false
     },
     "xurkitree": {
@@ -54164,7 +54164,7 @@
         "isTransferable": true,
         "isDeployable": false,
         "isTradable": true,
-        "pokemonClass": "LEGENDARY",
+        "pokemonClass": "ULTRA_BEAST",
         "disableTransferToPokemonHome": false
     },
     "celesteela": {
@@ -54214,7 +54214,7 @@
         "isTransferable": true,
         "isDeployable": false,
         "isTradable": true,
-        "pokemonClass": "LEGENDARY",
+        "pokemonClass": "ULTRA_BEAST",
         "disableTransferToPokemonHome": false
     },
     "kartana": {
@@ -54264,7 +54264,7 @@
         "isTransferable": true,
         "isDeployable": false,
         "isTradable": true,
-        "pokemonClass": "LEGENDARY",
+        "pokemonClass": "ULTRA_BEAST",
         "disableTransferToPokemonHome": false
     },
     "guzzlord": {
@@ -54314,7 +54314,7 @@
         "isTransferable": true,
         "isDeployable": false,
         "isTradable": true,
-        "pokemonClass": "LEGENDARY",
+        "pokemonClass": "ULTRA_BEAST",
         "disableTransferToPokemonHome": false
     },
     "necrozma": {

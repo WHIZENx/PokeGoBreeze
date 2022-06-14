@@ -16737,10 +16737,13 @@
         "NAME": "GRUBBIN",
         "BASE_SPECIES": "GRUBBIN",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "BUG_BITE_FAST",
+            "SPARK_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "X_SCISSOR",
+            "VICE_GRIP",
+            "CRUNCH"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16752,10 +16755,13 @@
         "NAME": "CHARJABUG",
         "BASE_SPECIES": "CHARJABUG",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "BUG_BITE_FAST",
+            "SPARK_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "X_SCISSOR",
+            "DISCHARGE",
+            "CRUNCH"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16767,10 +16773,14 @@
         "NAME": "VIKAVOLT",
         "BASE_SPECIES": "VIKAVOLT",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "BUG_BITE_FAST",
+            "SPARK_FAST",
+            "MUD_SLAP_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "X_SCISSOR",
+            "DISCHARGE",
+            "CRUNCH"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16782,10 +16792,13 @@
         "NAME": "CRABRAWLER",
         "BASE_SPECIES": "CRABRAWLER",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ROCK_SMASH_FAST",
+            "PAYBACK"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "POWER_UP_PUNCH",
+            "CRABHAMMER",
+            "PAYBACK"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16797,10 +16810,14 @@
         "NAME": "CRABOMINABLE",
         "BASE_SPECIES": "CRABOMINABLE",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ROCK_SMASH_FAST",
+            "PAYBACK"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "POWER_UP_PUNCH",
+            "CRABHAMMER",
+            "PAYBACK",
+            "ICE_PUNCH"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16848,10 +16865,12 @@
         "NAME": "CUTIEFLY",
         "BASE_SPECIES": "CUTIEFLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "FAIRY_WIND_FAST",
+            "STRUGGLE_BUG_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "DAZZLING_GLEAM",
+            "BUG_BUZZ"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16863,10 +16882,12 @@
         "NAME": "RIBOMBEE",
         "BASE_SPECIES": "RIBOMBEE",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "FAIRY_WIND_FAST",
+            "STRUGGLE_BUG_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "DAZZLING_GLEAM",
+            "BUG_BUZZ"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16914,10 +16935,13 @@
         "NAME": "LYCANROC_DUSK",
         "BASE_SPECIES": "LYCANROC",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "CRUSH_CLAW",
+            "ROCK_THROW_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "STONE_EDGE",
+            "IRON_HEAD",
+            "CRUNCH"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16947,10 +16971,14 @@
         "NAME": "WISHIWASHI",
         "BASE_SPECIES": "WISHIWASHI",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "WATER_GUN_FAST",
+            "WATERFALL_FAST",
+            "IRON_TAIL_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "BRINE",
+            "SURF",
+            "AQUA_TAIL"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16962,10 +16990,14 @@
         "NAME": "WISHIWASHI_SCHOOL",
         "BASE_SPECIES": "WISHIWASHI",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "WATER_GUN_FAST",
+            "WATERFALL_FAST",
+            "IRON_TAIL_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "BRINE",
+            "SURF",
+            "AQUA_TAIL"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16977,10 +17009,13 @@
         "NAME": "MAREANIE",
         "BASE_SPECIES": "MAREANIE",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "POISON_STING_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "MUDDY_WATER",
+            "GUNK_SHOT",
+            "SLUDGE_WAVE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -16992,10 +17027,13 @@
         "NAME": "TOXAPEX",
         "BASE_SPECIES": "TOXAPEX",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "POISON_STING_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "MUDDY_WATER",
+            "GUNK_SHOT",
+            "SLUDGE_WAVE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17007,10 +17045,13 @@
         "NAME": "MUDBRAY",
         "BASE_SPECIES": "MUDBRAY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "MUD_SLAP_FAST",
+            "ROCK_SMASH_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "BULLDOZE",
+            "BODY_SLAM",
+            "EARTHQUAKE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17022,10 +17063,14 @@
         "NAME": "MUDSDALE",
         "BASE_SPECIES": "MUDSDALE",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "MUD_SLAP_FAST",
+            "ROCK_SMASH_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "BULLDOZE",
+            "BODY_SLAM",
+            "EARTHQUAKE",
+            "HEAVY_SLAM"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17110,10 +17155,12 @@
         "NAME": "MORELULL",
         "BASE_SPECIES": "MORELULL",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ASTONISH_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "GIGA_DRAIN",
+            "DAZZLING_GLEAM",
+            "SEED_BOMB"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17125,10 +17172,13 @@
         "NAME": "SHIINOTIC",
         "BASE_SPECIES": "SHIINOTIC",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ASTONISH_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "GIGA_DRAIN",
+            "MOONBLAST",
+            "SEED_BOMB",
+            "SLUDGE_BOMB"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17216,10 +17266,12 @@
         "NAME": "BOUNSWEET",
         "BASE_SPECIES": "BOUNSWEET",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "RAZOR_LEAF_FAST",
+            "CHARM_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "ENERGY_BALL",
+            "DRAINING_KISS"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17231,10 +17283,13 @@
         "NAME": "STEENEE",
         "BASE_SPECIES": "STEENEE",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "RAZOR_LEAF_FAST",
+            "CHARM_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "ENERGY_BALL",
+            "DRAINING_KISS",
+            "GRASS_KNOT"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17246,10 +17301,15 @@
         "NAME": "TSAREENA",
         "BASE_SPECIES": "TSAREENA",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "RAZOR_LEAF_FAST",
+            "CHARM_FAST",
+            "MAGICAL_LEAF_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "ENERGY_BALL",
+            "DRAINING_KISS",
+            "GRASS_KNOT",
+            "STOMP"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17298,10 +17358,14 @@
         "NAME": "PASSIMIAN",
         "BASE_SPECIES": "PASSIMIAN",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "COUNTER_FAST",
+            "ROCK_SMASH_FAST",
+            "TAKE_DOWN_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "BRICK_BREAK",
+            "CLOSE_COMBAT",
+            "SUPER_POWER"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17313,10 +17377,10 @@
         "NAME": "WIMPOD",
         "BASE_SPECIES": "WIMPOD",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "STRUGGLE_BUG_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "BUG_BUZZ"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17328,10 +17392,14 @@
         "NAME": "GOLISOPOD",
         "BASE_SPECIES": "GOLISOPOD",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "FURY_CUTTER_FAST",
+            "METAL_CLAW_FAST",
+            "WATERFALL_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "X_SCISSOR",
+            "AQUA_JET",
+            "AERIAL_ACE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17343,10 +17411,13 @@
         "NAME": "SANDYGAST",
         "BASE_SPECIES": "SANDYGAST",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ASTONISH_FAST",
+            "MUD_SHOT_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "SAND_TOMB",
+            "SHADOW_BALL",
+            "EARTH_POWER"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17358,10 +17429,13 @@
         "NAME": "PALOSSAND",
         "BASE_SPECIES": "PALOSSAND",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ASTONISH_FAST",
+            "MUD_SHOT_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "SAND_TOMB",
+            "SHADOW_BALL",
+            "EARTH_POWER"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17373,10 +17447,10 @@
         "NAME": "PYUKUMUKU",
         "BASE_SPECIES": "PYUKUMUKU",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "COUNTER_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "MIRROR_COAT"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17388,10 +17462,13 @@
         "NAME": "TYPE_NULL",
         "BASE_SPECIES": "TYPE_NULL",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17403,10 +17480,15 @@
         "NAME": "SILVALLY",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17418,10 +17500,15 @@
         "NAME": "SILVALLY_BUG",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17433,10 +17520,15 @@
         "NAME": "SILVALLY_DARK",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17448,10 +17540,15 @@
         "NAME": "SILVALLY_DRAGON",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17463,10 +17560,15 @@
         "NAME": "SILVALLY_ELECTRIC",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17478,10 +17580,15 @@
         "NAME": "SILVALLY_FAIRY",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17493,10 +17600,15 @@
         "NAME": "SILVALLY_FIGHTING",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17508,10 +17620,15 @@
         "NAME": "SILVALLY_FIRE",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17523,10 +17640,15 @@
         "NAME": "SILVALLY_FLYING",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17538,10 +17660,15 @@
         "NAME": "SILVALLY_GHOST",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17553,10 +17680,15 @@
         "NAME": "SILVALLY_GRASS",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17568,10 +17700,15 @@
         "NAME": "SILVALLY_GROUND",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17583,10 +17720,15 @@
         "NAME": "SILVALLY_ICE",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17598,10 +17740,15 @@
         "NAME": "SILVALLY_POISON",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17613,10 +17760,15 @@
         "NAME": "SILVALLY_PSYCHIC",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17628,10 +17780,15 @@
         "NAME": "SILVALLY_ROCK",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17643,10 +17800,15 @@
         "NAME": "SILVALLY_STEEL",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17658,10 +17820,15 @@
         "NAME": "SILVALLY_WATER",
         "BASE_SPECIES": "SILVALLY",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "TACKLE_FAST",
+            "TAKE_DOWN_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "TRI_ATTACK",
+            "IRON_HEAD",
+            "AERIAL_ACE",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17673,10 +17840,139 @@
         "NAME": "MINIOR",
         "BASE_SPECIES": "MINIOR",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ROLLOUT_FAST",
+            "TAKE_DOWN_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "POWER_GEM",
+            "ANCIENT_POWER",
+            "ACROBATICS"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 774,
+        "NAME": "MINIOR_BLUE",
+        "BASE_SPECIES": "MINIOR",
+        "QUICK_MOVES": [
+            "ROLLOUT_FAST",
+            "TAKE_DOWN_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "POWER_GEM",
+            "ANCIENT_POWER",
+            "ACROBATICS"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 774,
+        "NAME": "MINIOR_GREEN",
+        "BASE_SPECIES": "MINIOR",
+        "QUICK_MOVES": [
+            "ROLLOUT_FAST",
+            "TAKE_DOWN_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "POWER_GEM",
+            "ANCIENT_POWER",
+            "ACROBATICS"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 774,
+        "NAME": "MINIOR_INDIGO",
+        "BASE_SPECIES": "MINIOR",
+        "QUICK_MOVES": [
+            "ROLLOUT_FAST",
+            "TAKE_DOWN_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "POWER_GEM",
+            "ANCIENT_POWER",
+            "ACROBATICS"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 774,
+        "NAME": "MINIOR_ORANGE",
+        "BASE_SPECIES": "MINIOR",
+        "QUICK_MOVES": [
+            "ROLLOUT_FAST",
+            "TAKE_DOWN_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "POWER_GEM",
+            "ANCIENT_POWER",
+            "ACROBATICS"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 774,
+        "NAME": "MINIOR_RED",
+        "BASE_SPECIES": "MINIOR",
+        "QUICK_MOVES": [
+            "ROLLOUT_FAST",
+            "TAKE_DOWN_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "POWER_GEM",
+            "ANCIENT_POWER",
+            "ACROBATICS"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 774,
+        "NAME": "MINIOR_VIOLET",
+        "BASE_SPECIES": "MINIOR",
+        "QUICK_MOVES": [
+            "ROLLOUT_FAST",
+            "TAKE_DOWN_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "POWER_GEM",
+            "ANCIENT_POWER",
+            "ACROBATICS"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 774,
+        "NAME": "MINIOR_YELLOW",
+        "BASE_SPECIES": "MINIOR",
+        "QUICK_MOVES": [
+            "ROLLOUT_FAST",
+            "TAKE_DOWN_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "POWER_GEM",
+            "ANCIENT_POWER",
+            "ACROBATICS"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17688,10 +17984,13 @@
         "NAME": "KOMALA",
         "BASE_SPECIES": "KOMALA",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ROLLOUT_FAST",
+            "YAWN_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "PLAY_ROUGH",
+            "BULLDOZE",
+            "PAYBACK"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17703,10 +18002,13 @@
         "NAME": "TURTONATOR",
         "BASE_SPECIES": "TURTONATOR",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "EMBER_FAST",
+            "FIRE_SPIN_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "OVERHEAT",
+            "FLAMETHROWER",
+            "DRAGON_PULSE"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17718,10 +18020,13 @@
         "NAME": "TOGEDEMARU",
         "BASE_SPECIES": "TOGEDEMARU",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "THUNDER_SHOCK_FAST",
+            "SPARK_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "FELL_STINGER",
+            "WILD_CHARGE",
+            "GYRO_BALL"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17733,10 +18038,13 @@
         "NAME": "MIMIKYU",
         "BASE_SPECIES": "MIMIKYU",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "SHADOW_CLAW_FAST",
+            "CHARM_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "SHADOW_SNEAK",
+            "PLAY_ROUGH",
+            "SHADOW_BALL"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17748,10 +18056,31 @@
         "NAME": "MIMIKYU_BUSTED",
         "BASE_SPECIES": "MIMIKYU",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "SHADOW_CLAW_FAST",
+            "CHARM_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "SHADOW_SNEAK",
+            "PLAY_ROUGH",
+            "SHADOW_BALL"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 778,
+        "NAME": "MIMIKYU_DISGUISED",
+        "BASE_SPECIES": "MIMIKYU",
+        "QUICK_MOVES": [
+            "SHADOW_CLAW_FAST",
+            "CHARM_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "SHADOW_SNEAK",
+            "PLAY_ROUGH",
+            "SHADOW_BALL"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17763,10 +18092,14 @@
         "NAME": "BRUXISH",
         "BASE_SPECIES": "BRUXISH",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "WATER_GUN_FAST",
+            "CONFUSION_FAST",
+            "BITE_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "PSYCHIC_FANGS",
+            "AQUA_TAIL",
+            "CRUNCH"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17778,10 +18111,13 @@
         "NAME": "DRAMPA",
         "BASE_SPECIES": "DRAMPA",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "DRAGON_BREATH_FAST",
+            "EXTRASENSORY_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "OUTRAGE",
+            "DRAGON_PULSE",
+            "FLY"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -17793,10 +18129,13 @@
         "NAME": "DHELMISE",
         "BASE_SPECIES": "DHELMISE",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "ASTONISH_FAST",
+            "SHADOW_CLAW_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "POWER_WHIP",
+            "SHADOW_BALL",
+            "HEAVY_SLAM"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -18017,10 +18356,14 @@
         "NAME": "BUZZWOLE",
         "BASE_SPECIES": "BUZZWOLE",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "COUNTER_FAST",
+            "POISON_JAB_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "POWER_UP_PUNCH",
+            "FELL_STINGER",
+            "LUNGE",
+            "SUPER_POWER"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -18032,10 +18375,14 @@
         "NAME": "PHEROMOSA",
         "BASE_SPECIES": "PHEROMOSA",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "BUG_BITE_FAST",
+            "LOW_KICK_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "FOCUS_BLAST",
+            "BUG_BUZZ",
+            "LUNGE",
+            "CLOSE_COMBAT"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -18047,10 +18394,14 @@
         "NAME": "XURKITREE",
         "BASE_SPECIES": "XURKITREE",
         "QUICK_MOVES": [
-            "STRUGGLE"
+            "THUNDER_SHOCK_FAST",
+            "SPARK_FAST"
         ],
         "CINEMATIC_MOVES": [
-            "STRUGGLE"
+            "DISCHARGE",
+            "THUNDER",
+            "POWER_WHIP",
+            "DAZZLING_GLEAM"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],

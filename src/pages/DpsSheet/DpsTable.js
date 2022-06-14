@@ -19,6 +19,8 @@ import './DpsTable.css';
 import { Link } from "react-router-dom";
 import { LevelRating } from "../../util/util";
 import { Form } from "react-bootstrap";
+import SelectPokemon from "../../components/Input/SelectPokemon";
+import SelectMove from "../../components/Input/SelectMove";
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.pokemon.name.toLowerCase();
@@ -110,28 +112,37 @@ const DpsTable = (props) => {
     const [dpsTable, setDpsTable] = useState([]);
     const [dataFilter, setDataFilter] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [options, setOptions] = useState({
-        delay: null,
-        specific: null,
-        ELITE_MOVE: true,
-        POKEMON_SHADOW: true,
-        WEATHER_BOOSTS: false,
-        TRAINER_FRIEND: false,
-        TRAINER_FRIEND_LEVEL: 0,
-        POKEMON_DEF_OBJ: 160,
+
+    const [filters, setFilters] = useState({
+        onlyEliteMove: true,
+        onlyShadow: true,
+        enableShadow: false,
+        enableElite: false,
+        enableMega: false,
+        enableBest: false,
+        enableDelay: false,
+        targetPokemon: null,
+        bestOf: 3,
         IV_ATK: 15,
         IV_DEF: 15,
         IV_HP: 15,
         POKEMON_LEVEL: 40
     });
+
+    const {onlyEliteMove, onlyShadow, enableShadow, enableElite, enableMega, enableBest, enableDelay, bestOf, targetPokemon, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL} = filters;
+
+    const [options, setOptions] = useState({
+        delay: null,
+        specific: null,
+        WEATHER_BOOSTS: false,
+        TRAINER_FRIEND: false,
+        TRAINER_FRIEND_LEVEL: 0,
+        POKEMON_DEF_OBJ: 160,
+    });
+    const {WEATHER_BOOSTS, TRAINER_FRIEND, TRAINER_FRIEND_LEVEL, POKEMON_DEF_OBJ} = options;
+
     const [loading, setLoading] = useState(true);
     const [selectTypes, setSelectTypes] = useState([]);
-    const [enableDelay, setEnableDelay] = useState(false);
-    const [enableShadow, setEnableShadow] = useState(false);
-    const [enableElite, setEnableElite] = useState(false);
-    const [enableMega, setEnableMega] = useState(false);
-
-    const {ELITE_MOVE, POKEMON_SHADOW, WEATHER_BOOSTS, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, TRAINER_FRIEND, TRAINER_FRIEND_LEVEL, POKEMON_DEF_OBJ} = options;
 
     const addCPokeData = useCallback((movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
         movePoke.forEach(vc => {
@@ -169,17 +180,17 @@ const DpsTable = (props) => {
     const addFPokeData = useCallback((combat, movePoke, value, felite) => {
         movePoke.forEach(vf => {
             addCPokeData(combat.CINEMATIC_MOVES, value, vf, false, false, felite, false);
-            if (POKEMON_SHADOW && !value.slug.includes("mega")) {
+            if (onlyShadow && !value.slug.includes("mega")) {
                 if (combat.SHADOW_MOVES.length > 0) addCPokeData(combat.CINEMATIC_MOVES, value, vf, true, false, felite, false);
                 addCPokeData(combat.SHADOW_MOVES, value, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
                 addCPokeData(combat.PURIFIED_MOVES, value, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
             }
-            if (ELITE_MOVE) {
-                if (POKEMON_SHADOW && !value.slug.includes("mega") && combat.SHADOW_MOVES.length > 0) addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, true, false, felite, true);
+            if (onlyEliteMove) {
+                if (onlyShadow && !value.slug.includes("mega") && combat.SHADOW_MOVES.length > 0) addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, true, false, felite, true);
                 else addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, false, false, felite, true);
             }
         });
-    }, [addCPokeData, ELITE_MOVE, POKEMON_SHADOW]);
+    }, [addCPokeData, onlyEliteMove, onlyShadow]);
 
     const calculateDPSTable = useCallback(() => {
         let dataList = Object.values(pokemonData);
@@ -193,20 +204,29 @@ const DpsTable = (props) => {
                 else combatPoke = result;
                 if (combatPoke !== undefined) {
                     addFPokeData(combatPoke, combatPoke.QUICK_MOVES, value, false)
-                    if (ELITE_MOVE) {
+                    if (onlyEliteMove) {
                         addFPokeData(combatPoke, combatPoke.ELITE_QUICK_MOVES, value, true)
                     }
                 }
             }
             if (index === dataList.length-1) setLoading(false);
         });
-    }, [addFPokeData, ELITE_MOVE]);
+    }, [addFPokeData, onlyEliteMove]);
+
+    const filterBestOptions = (result, best) => {
+        best = best === 1 ? "dps" : best === 2 ? "tdo" : "multiDpsTdo";
+        const group = result.reduce((result, obj) => {
+            (result[obj.pokemon.name] = result[obj.pokemon.name] || []).push(obj);
+            return result;
+        }, {});
+        return Object.values(group).map(pokemon => pokemon.reduce((p, c) => p[best] > c[best] ? p : c));
+    };
 
     useEffect(() => {
         document.title = "DPS&TDO Table - Battle Simulator";
         if (dpsTable.length === 0) calculateDPSTable();
         else {
-            const result = dpsTable.filter(item => {
+            let result = dpsTable.filter(item => {
                 const boolFilterType = selectTypes.length === 0 || (selectTypes.includes(capitalize(item.fmove.type.toLowerCase())) && selectTypes.includes(capitalize(item.cmove.type.toLowerCase())));
                 const boolFilterPoke =  searchTerm === '' || splitAndCapitalize(item.pokemon.name, "-", " ").toLowerCase().includes(searchTerm.toLowerCase()) || item.pokemon.num.toString().includes(searchTerm);
                 const boolOnlyShadow = enableShadow && item.shadow
@@ -214,10 +234,11 @@ const DpsTable = (props) => {
                 const boolOnlyMega = enableMega && item.pokemon.name.toLowerCase().includes("mega")
                 if (enableShadow || enableElite || enableMega) return (boolFilterType && boolFilterPoke) && (boolOnlyShadow || boolOnlyElite || boolOnlyMega);
                 else return boolFilterType && boolFilterPoke;
-            })
+            });
+            if (enableBest) result = filterBestOptions(result, bestOf);
             setDataFilter(result);
         }
-    }, [calculateDPSTable, dpsTable, selectTypes, searchTerm, enableElite, enableShadow, enableMega]);
+    }, [calculateDPSTable, dpsTable, selectTypes, searchTerm, enableElite, enableShadow, enableMega, enableBest, bestOf]);
 
     const addTypeArr = (value) => {
         if (selectTypes.includes(value)) {
@@ -225,13 +246,6 @@ const DpsTable = (props) => {
         }
         return setSelectTypes(oldArr => [...oldArr, value]);
     }
-
-    const handleCheckbox = (event) => {
-        setOptions({
-          ...options,
-          [event.target.name]: event.target.checked,
-        });
-    };
 
     const onCalculateTable = useCallback((e) => {
         e.preventDefault();
@@ -262,15 +276,33 @@ const DpsTable = (props) => {
                             onInput={e => setSearchTerm(e.target.value)}></input>
                         </div>
                         <div className="input-group border-input">
-                            <span className="input-group-text">Showing</span>
-                            <FormControlLabel control={<Checkbox checked={POKEMON_SHADOW} onChange={handleCheckbox} name="POKEMON_SHADOW"/>} label="Shadow Pokemon" />
-                            <FormControlLabel control={<Checkbox checked={ELITE_MOVE} onChange={handleCheckbox} name="ELITE_MOVE"/>} label="Elite Move" />
+                            <span className="input-group-text">Only show</span>
+                            <FormControlLabel control={<Checkbox checked={onlyShadow} onChange={(event) => setFilters({...filters, onlyShadow: event.target.checked})}/>} label="Shadow Pokemon" />
+                            <FormControlLabel control={<Checkbox checked={onlyEliteMove} onChange={(event) => setFilters({...filters, onlyEliteMove: event.target.checked})}/>} label="Elite Move" />
                         </div>
                         <div className="input-group border-input">
                             <span className="input-group-text">Filter only by</span>
-                            <FormControlLabel control={<Switch onChange={(event, check) => setEnableShadow(check)}/>} label="Shadow"/>
-                            <FormControlLabel control={<Switch onChange={(event, check) => setEnableElite(check)}/>} label="Elite Moves"/>
-                            <FormControlLabel control={<Switch onChange={(event, check) => setEnableMega(check)}/>} label="Mega"/>
+                            <FormControlLabel control={<Switch checked={enableShadow} onChange={(event, check) => setFilters({...filters, enableShadow: check})}/>} label="Shadow"/>
+                            <FormControlLabel control={<Switch checked={enableElite} onChange={(event, check) => setFilters({...filters, enableElite: check})}/>} label="Elite Moves"/>
+                            <FormControlLabel control={<Switch checked={enableMega} onChange={(event, check) => setFilters({...filters, enableMega: check})}/>} label="Mega"/>
+                        </div>
+                        <div className="input-group border-input">
+                            <span className="input-group-text">Filter best movesets</span>
+                            <FormControlLabel control={<Switch checked={enableBest} onChange={(event, check) => setFilters({...filters, enableBest: check})}/>} label="Best moveset of"/>
+                            <Form.Select className="border-input form-control w-50" value={bestOf} disabled={!enableBest}
+                                onChange={(e) => setFilters({...filters, bestOf: parseInt(e.target.value)})}>
+                                    <option value={1}>DPS</option>
+                                    <option value={2}>TDO</option>
+                                    <option value={3}>DPS^3*TDO</option>
+                            </Form.Select>
+                        </div>
+                        <div className="input-group border-input">
+                            <span className="input-group-text">Target Pokemon</span>
+                            <SelectPokemon filters={filters} setCurrentPokemon={setFilters}/>
+                            <span className="input-group-text">Fast</span>
+                            <SelectMove pokemon={targetPokemon} moveType="FAST" />
+                            <span className="input-group-text">Charge</span>
+                            <SelectMove pokemon={targetPokemon} moveType="CHARGE"/>
                         </div>
                     </div>
                     <div className='col-xxl border-input' style={{padding: 0}}>
@@ -279,7 +311,7 @@ const DpsTable = (props) => {
                             <div className='border-input' style={{padding: 0}}>
                             <div className="input-group">
                             <FormControlLabel sx={{marginLeft: 1}} control={<Switch onChange={(event, check) => {
-                                setEnableDelay(check)
+                                setFilters({...filters, enableDelay: check});
                                     if (check) {
                                         setOptions({
                                             ...options,
@@ -319,28 +351,28 @@ const DpsTable = (props) => {
                                 <Box className="col-5 input-group" style={{padding: 0}}>
                                     <span className="input-group-text">IV ATK</span>
                                     <input defaultValue={IV_ATK} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
-                                    onInput={(e) => setOptions({
-                                        ...options,
+                                    onInput={(e) => setFilters({
+                                        ...filters,
                                         IV_ATK: parseInt(e.target.value),
                                     })} name="IV_ATK" style={{width: 40}}></input>
                                     <span className="input-group-text">IV DEF</span>
                                     <input defaultValue={IV_DEF} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
-                                    onInput={(e) => setOptions({
-                                        ...options,
+                                    onInput={(e) => setFilters({
+                                        ...filters,
                                         IV_DEF: parseInt(e.target.value),
                                     })} name="IV_DEF" style={{width: 40}}></input>
                                     <span className="input-group-text">IV HP</span>
                                     <input defaultValue={IV_HP} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
-                                    onInput={(e) => setOptions({
-                                        ...options,
+                                    onInput={(e) => setFilters({
+                                        ...filters,
                                         IV_HP: parseInt(e.target.value),
                                     })} name="IV_HP" style={{width: 40}}></input>
                                     <div className="input-group-prepend">
                                         <label className="input-group-text">Levels</label>
                                     </div>
                                     <Form.Select className="border-input form-control" defaultValue={POKEMON_LEVEL}
-                                    onChange={(e) => setOptions({
-                                        ...options,
+                                    onChange={(e) => setFilters({
+                                        ...filters,
                                         POKEMON_LEVEL: parseInt(e.target.value)})}>
                                         {Array.from({length:(51-1)/0.5+1},(_,i)=>1+(i*0.5)).map((value, index) => (
                                             <option key={index} value={value}>{value}</option>

@@ -4966,5 +4966,41 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0.01
+    },
+    {
+        "name": "FAIRY_WIND",
+        "type": "FAIRY",
+        "type_move": "FAST",
+        "pvp_power": 0.0,
+        "pvp_energy": 0,
+        "sound": "",
+        "buffs": [],
+        "id": 0,
+        "pve_power": 0.0,
+        "pve_energy": 0,
+        "durationMs": 10000,
+        "damageWindowStartMs": 1,
+        "damageWindowEndMs": 10000,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
+    },
+    {
+        "name": "CRUSH_CLAW",
+        "type": "NORMAL",
+        "type_move": "CHARGE",
+        "pvp_power": 0.0,
+        "pvp_energy": 0,
+        "sound": "306-0_crush_claw",
+        "buffs": [],
+        "id": 307,
+        "pve_power": 0.0,
+        "pve_energy": 0,
+        "durationMs": 1900,
+        "damageWindowStartMs": 1200,
+        "damageWindowEndMs": 1700,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     }
 ]

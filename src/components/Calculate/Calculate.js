@@ -289,6 +289,18 @@ export const calculateRaidCP = (atk, def, tier) => {
     return Math.floor(((atk+15)*Math.sqrt(def+15)*Math.sqrt(RAID_BOSS_TIER[tier].sta))/10)
 }
 
+export const calculateDmgOutput = (atk, dps) => {
+    return atk*dps;
+}
+
+export const calculateTankiness = (def, HP) => {
+    return def*HP;
+}
+
+export const calculateDuelAbility = (dmgOutput, tanki) => {
+    return dmgOutput*tanki;
+}
+
 export const predictStat = (atk, def, sta, cp) => {
     cp = parseInt(cp)
     let dataStat = {}
@@ -814,13 +826,6 @@ const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felit
         mc["shadow"] = shadow;
         mc["purified"] = purified;
 
-        // let bar = getBarCharge(true, mc.pve_energy)
-        // let mfPower = (0.5*(stats.atk/def)*mf.pve_power*(pokemon.types.includes(mf.type.toLowerCase()) ? STAB_MULTIPLY : 1)*(getTypeEffective(capitalize(mf.type.toLowerCase()), types))*(shadow ? STAB_MULTIPLY : 1))+1;
-        // let mcPower = (0.5*(stats.atk/def)*mc.pve_power*(pokemon.types.includes(mc.type.toLowerCase()) ? STAB_MULTIPLY : 1)*(getTypeEffective(capitalize(mc.type.toLowerCase()), types))*(shadow ? STAB_MULTIPLY : 1))+1;
-
-        // let offensive = (100/(mf.pve_energy/(mf.durationMs/1000))) + bar*(mc.durationMs/1000);
-        // let dpsOff = ((bar*mcPower)+((100/mf.pve_energy)*mfPower))/offensive;
-
         let options = {
             objTypes: types,
             POKEMON_DEF_OBJ: calculateStatsBettle(def, 15, 40),
@@ -856,6 +861,10 @@ export const counterPokemon = (def, types) => {
     pokemonCombatList.forEach(value => {
         if (value.QUICK_MOVES[0] !== "STRUGGLE" && value.CINEMATIC_MOVES[0] !== "STRUGGLE") {
             let pokemon = Object.values(pokemonData).find(item => item.num === value.ID && convertName(item.name).includes(value.NAME));
+            if (pokemon === undefined) {
+                console.log(value.ID, value.NAME);
+                return;
+            }
             let stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
             value.QUICK_MOVES.forEach(vf => {
                 queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, false, false, false, false);

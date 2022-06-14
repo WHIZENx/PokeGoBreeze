@@ -1,0 +1,59 @@
+.card-pokemon-input {
+    width: 100%;
+    height: 38px;
+    border: 1px solid #ddd;
+}
+
+.card-move-input {
+    cursor: pointer;
+    width: 100%;
+    height: 38px;
+    border: 1px solid #ddd;
+}
+
+.input-pokemo-select {
+    background-size: auto 36px !important;
+    border: none;
+    height: 36px;
+    outline: none;
+}
+
+.card-pokemon-select {
+    width: 100%;
+    border-top: 1px solid #ddd;
+    padding-left: 23px;
+    cursor: pointer;
+}
+
+.card-pokemon-select:hover, .card-move:hover {
+    background-color: lightgray;
+}
+
+.card-move {
+    width: 100%;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.result-pokemon {
+    text-align: start !important;
+    position: absolute;
+    z-index: 2;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    width: 280px;
+    max-height: 300px;
+    overflow-y: scroll;
+    background-color: white;
+}
+
+.result-move-select {
+    text-align: start !important;
+    position: absolute;
+    z-index: 2;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    width: 280px;
+    max-height: auto;
+    overflow-y: scroll;
+    background-color: white;
+}
