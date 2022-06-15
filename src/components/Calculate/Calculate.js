@@ -680,9 +680,7 @@ export const calculateTDO = (Def, HP, dps, shadow) => {
     return HP/y*dps;
 }
 
-export const calculateBattleDPS = (Attacker, Defender) => {
-    // Attacker = Gengar
-    // Defender = Giratina
+export const calculateBattleDPSDefender = (Attacker, Defender) => {
     const FPowDef = Defender.fmove.pve_power;
     const CPowDef = Defender.cmove.pve_power;
     const CEDef = Math.abs(Defender.cmove.pve_energy);
@@ -700,14 +698,14 @@ export const calculateBattleDPS = (Attacker, Defender) => {
     const FDmgBaseDef = DEFAULT_DAMAGE_MULTIPLY*FPowDef*FMultiDef*(Defender.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Defender.WEATHER_BOOSTS === "string" ? weatherMultiple(Defender.WEATHER_BOOSTS, FTYPEDef) : Defender.WEATHER_BOOSTS ? STAB_MULTIPLY : 1);
     const CDmgBaseDef = DEFAULT_DAMAGE_MULTIPLY*CPowDef*CMultiDef*(Defender.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Defender.WEATHER_BOOSTS === "string" ? weatherMultiple(Defender.WEATHER_BOOSTS, CTYPEDef) : Defender.WEATHER_BOOSTS ? STAB_MULTIPLY : 1);
 
-    const FDmgDef = Math.floor(FDmgBaseDef*Defender.atk*getTypeEffective(FTYPEDef, Defender.types)/Attacker.def)+DEFAULT_DAMAGE_CONST;
-    const CDmgDef = Math.floor(CDmgBaseDef*Defender.atk*getTypeEffective(CTYPEDef, Defender.types)/Attacker.def)+DEFAULT_DAMAGE_CONST;
+    const FDmgDef = Math.floor(FDmgBaseDef*Defender.atk*getTypeEffective(FTYPEDef, Defender.types)/(Attacker.def*(Attacker.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
+    const CDmgDef = Math.floor(CDmgBaseDef*Defender.atk*getTypeEffective(CTYPEDef, Defender.types)/(Attacker.def*(Attacker.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
 
     const DefDmg = lambdaMod*FDmgDef+CDmgDef;
-    const DPSDef = DefDmg/defDuration;
+    return DefDmg/defDuration;
+}
 
-    /* ------------------------------------------- */
-
+export const calculateBattleDPS = (Attacker, Defender, DPSDef) => {
     const FPow = Attacker.fmove.pve_power;
     const CPow = Attacker.cmove.pve_power;
     const FE = Math.abs(Attacker.fmove.pve_energy);
@@ -724,8 +722,8 @@ export const calculateBattleDPS = (Attacker, Defender) => {
     const FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(Attacker.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Attacker.WEATHER_BOOSTS === "string" ? weatherMultiple(Attacker.WEATHER_BOOSTS, FTYPE) : Attacker.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(Attacker.POKEMON_FRIEND ? getMultiFriendshipMulti(Attacker.POKEMON_FRIEND_LEVEL) : 1);
     const CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(Attacker.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Attacker.WEATHER_BOOSTS === "string" ? weatherMultiple(Attacker.WEATHER_BOOSTS, CTYPE) : Attacker.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(Attacker.POKEMON_FRIEND ? getMultiFriendshipMulti(Attacker.POKEMON_FRIEND_LEVEL) : 1);
 
-    const FDmg = Math.floor(FDmgBase*Attacker.atk*getTypeEffective(FTYPE, Attacker.types)/Defender.def)+DEFAULT_DAMAGE_CONST;
-    const CDmg = Math.floor(CDmgBase*Attacker.atk*getTypeEffective(CTYPE, Attacker.types)/Defender.def)+DEFAULT_DAMAGE_CONST;
+    const FDmg = Math.floor(FDmgBase*Attacker.atk*getTypeEffective(FTYPE, Attacker.types)/(Defender.def*(Defender.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
+    const CDmg = Math.floor(CDmgBase*Attacker.atk*getTypeEffective(CTYPE, Attacker.types)/(Defender.def*(Defender.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
 
     const FDPS = FDmg/FDur;
     const CDPS = CDmg/CDur;
@@ -777,8 +775,8 @@ export const calculateBattleDPS = (Attacker, Defender) => {
     return Math.max(FDPS, DPS, DPSSec);
 }
 
-export const TimeToKill = (HP, dps) => {
-    return HP/dps;
+export const TimeToKill = (HP, dpsDef) => {
+    return HP/dpsDef;
 }
 
 export const queryTopMove = (move) => {

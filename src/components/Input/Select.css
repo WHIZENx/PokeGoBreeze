@@ -40,6 +40,15 @@
     background-color: lightgray;
 }
 
+.remove-pokemon-select {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.remove-pokemon-select:hover {
+    opacity: 1;
+}
+
 .card-move {
     width: 100%;
     border-top: 1px solid #ddd;
@@ -68,6 +77,21 @@
     overflow-y: auto;
     background-color: white;
 }
+
+.select-down {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: calc(100% - 2px);
+    margin-top: 1px;
+    padding-right: 10px;
+    background-color: white;
+}
+
+.input-move.form-control:focus {
+    border-color: #FF0000;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
+  }
 
 @media screen and (max-width: 420px) {
     .result-pokemon {

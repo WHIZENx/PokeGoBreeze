@@ -37,7 +37,7 @@ const SelectMove = (props) => {
             result.QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
             result.ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
         } else {
-            result.CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+            result.CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
             result.ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
             result.SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
             result.PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
@@ -48,15 +48,13 @@ const SelectMove = (props) => {
 
     useEffect(() => {
         if (props.pokemon && !props.move) findMove(props.pokemon.num, props.pokemon.forme, props.moveType);
-        if (!props.pokemon) {
-            setResultMove(null);
-        };
+        if (!props.pokemon) setResultMove(null);
     }, [findMove, props.pokemon, props.moveType, props.move]);
 
     return (
-        <div className={'d-flex align-items-center form-control '+(props.pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0}}>
+        <div className={'d-flex align-items-center form-control '+(props.pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0, borderRadius: 0}}>
             <div className='card-move-input' tabIndex={ 0 } onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-                <CardMove value={props.move}/>
+                <CardMove value={props.move} show={props.pokemon ? true : false}/>
                 {showMove && resultMove &&
                     <div className="result-move-select">
                         <div>

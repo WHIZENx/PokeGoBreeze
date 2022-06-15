@@ -5,7 +5,7 @@ import pokemonData from '../../data/pokemon.json';
 import { useState } from "react";
 
 import './Select.css';
-import { calculateStatsByTag, DEFAULT_POKEMON_DEF_OBJ, splitAndCapitalize } from "../Calculate/Calculate";
+import { splitAndCapitalize } from "../Calculate/Calculate";
 import APIService from "../../services/API.service";
 
 const SelectPokemon = (props) => {
@@ -27,10 +27,8 @@ const SelectPokemon = (props) => {
     const changePokemon = (value) => {
         setShowPokemon(false);
         if (props.setCurrentPokemon) props.setCurrentPokemon(value);
-        if (props.setOptions) props.setOptions({...props.options,
-            POKEMON_DEF_OBJ: calculateStatsByTag(value.baseStats, value.slug).def,
-            objTypes: value.types
-            });
+        if (props.setFMovePokemon) props.setFMovePokemon(null);
+        if (props.setCMovePokemon) props.setCMovePokemon(null);
         setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
         setSearch(splitAndCapitalize(value.name, "-", " "));
         if (props.clearData) props.clearData();
@@ -42,7 +40,6 @@ const SelectPokemon = (props) => {
         if (props.setCMovePokemon) props.setCMovePokemon(null);
         setPokemonIcon(null);
         setSearch('');
-        if (props.setOptions) props.setOptions({...props.options, POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ, objTypes: null});
         if (props.clearData) props.clearData();
     }
 
@@ -50,7 +47,7 @@ const SelectPokemon = (props) => {
         <div className='d-flex align-items-center form-control' style={{padding: 0, borderRadius: 0}}>
             <div className='card-pokemon-input' >
                 <div className="d-flex align-items-center">
-                    {pokemonIcon && <span onClick={() => removePokemon()} style={{cursor: 'pointer'}}><CloseIcon sx={{color: 'red'}}/></span>}
+                    {pokemonIcon && <span onClick={() => removePokemon()} className="remove-pokemon-select"><CloseIcon sx={{color: 'red'}}/></span>}
                     <input className="input-pokemon-select form-control shadow-none"
                     onClick={() => setShowPokemon(true)}
                     onBlur={() => setShowPokemon(false)}

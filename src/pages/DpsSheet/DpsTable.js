@@ -5,7 +5,7 @@ import combatData from '../../data/combat.json';
 import combatPokemonData from '../../data/combat_pokemon_go_list.json';
 import typesData from '../../data/type_effectiveness.json';
 import weatherBoosts from '../../data/weather_boosts.json';
-import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, calculateStatsBettlePure, DEFAULT_POKEMON_DEF_OBJ, calculateBattleDPS } from "../../components/Calculate/Calculate";
+import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, calculateStatsBettlePure, DEFAULT_POKEMON_DEF_OBJ, calculateBattleDPS, TimeToKill, calculateBattleDPSDefender } from "../../components/Calculate/Calculate";
 import DataTable from "react-data-table-component";
 import APIService from "../../services/API.service";
 
@@ -153,25 +153,19 @@ const DpsTable = (props) => {
             const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
             const cmove = combatData.find(item => item.name === vc);
             const stats = calculateStatsByTag(value.baseStats, value.slug);
+            const statsAttacker = {
+                atk: calculateStatsBettlePure(stats.atk, IV_ATK, POKEMON_LEVEL),
+                def: calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
+                hp: calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL),
+                fmove: fmove,
+                cmove: cmove,
+                types: value.types,
+                shadow: shadow
+            }
 
-            const dps = calculateAvgDPS(fmove, cmove,
-                calculateStatsBettlePure(stats.atk, IV_ATK, POKEMON_LEVEL),
-                calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
-                calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL),
-                value.types,
-                options,
-                shadow);
-            // if (dataTargetPokemon) Def /= getTypeEffective(fmove.type, dataTargetPokemon.types)*getTypeEffective(cmove.type, dataTargetPokemon.types);
+            let dps, tdo;
             if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
                 const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.slug);
-                const statsAttacker = {
-                    atk: calculateStatsBettlePure(stats.atk, IV_ATK, POKEMON_LEVEL),
-                    def: calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
-                    hp: calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL),
-                    fmove: fmove,
-                    cmove: cmove,
-                    types: value.types
-                }
                 const statsDefender = {
                     atk: calculateStatsBettlePure(statsDef.atk, IV_ATK, POKEMON_LEVEL),
                     def: calculateStatsBettlePure(statsDef.def, IV_DEF, POKEMON_LEVEL),
@@ -180,20 +174,29 @@ const DpsTable = (props) => {
                     cmove: combatData.find(item => item.name === cmoveTargetPokemon.name),
                     types: dataTargetPokemon.types
                 }
-                calculateBattleDPS(statsAttacker, statsDefender);
+                const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
+                dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
+                tdo = dps*TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
+            } else {
+                dps = calculateAvgDPS(statsAttacker.fmove, statsAttacker.cmove,
+                    statsAttacker.atk,
+                    statsAttacker.def,
+                    statsAttacker.hp,
+                    statsAttacker.types,
+                    options,
+                    statsAttacker.shadow);
+                tdo = calculateTDO(statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
             }
-            const tdo = calculateTDO(calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
-            calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL), dps, shadow);
             setDpsTable(oldArr => [...oldArr, {
                 pokemon: value,
-                fmove: fmove,
-                cmove: cmove,
+                fmove: statsAttacker.fmove,
+                cmove: statsAttacker.cmove,
                 dps: dps,
                 tdo: tdo,
                 multiDpsTdo: Math.pow(dps,3)*tdo,
                 shadow: shadow,
-                purified: purified && purifiedMove && purifiedMove.includes(cmove.name),
-                mShadow: shadow && shadowMove && shadowMove.includes(cmove.name),
+                purified: purified && purifiedMove && purifiedMove.includes(statsAttacker.cmove.name),
+                mShadow: shadow && shadowMove && shadowMove.includes(statsAttacker.cmove.name),
                 elite: {
                     fmove: felite,
                     cmove: celite
@@ -340,15 +343,13 @@ const DpsTable = (props) => {
                                         <SelectPokemon clearData={clearData}
                                         setCurrentPokemon={setDataTargetPokemon}
                                         setFMovePokemon={setFmoveTargetPokemon}
-                                        setCMovePokemon={setCmoveTargetPokemon}
-                                        options={options}
-                                        setOptions={setOptions}/>
+                                        setCMovePokemon={setCmoveTargetPokemon}/>
                                     </div>
                                 </Box>
                                 <Box className="col-xl-4" style={{padding: 0}}>
                                     <div className="input-group">
                                         <span className="input-group-text">Fast Move</span>
-                                        <SelectMove clearData={clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFmoveTargetPokemon}  moveType="FAST"/>
+                                        <SelectMove clearData={clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFmoveTargetPokemon} moveType="FAST"/>
                                     </div>
                                 </Box>
                                 <Box className="col-xl-4" style={{padding: 0}}>
@@ -435,7 +436,7 @@ const DpsTable = (props) => {
                                 </Box>
                                 <Box className="col-7 input-group" style={{padding: 0}}>
                                     <span className="input-group-text">DEF Target</span>
-                                    <input value={POKEMON_DEF_OBJ} type="number" className="form-control" placeholder="Defense target" min={1} required
+                                    <input value={POKEMON_DEF_OBJ} type="number" className="form-control" placeholder="Defense target" min={1} disabled={dataTargetPokemon ? true : false} required
                                     onInput={(e) => setOptions({
                                         ...options,
                                         POKEMON_DEF_OBJ: parseInt(e.target.value),
