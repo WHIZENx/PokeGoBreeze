@@ -63,8 +63,20 @@
     position: absolute;
     z-index: 2;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    width: max-content;
+    width: auto; /* 275px; */
     max-height: 180px;
     overflow-y: auto;
     background-color: white;
+}
+
+@media screen and (max-width: 420px) {
+    .result-pokemon {
+        max-width: 250px;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .result-pokemon {
+        max-width: 230px;
+    }
 }

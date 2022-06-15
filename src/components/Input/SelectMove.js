@@ -7,19 +7,18 @@ import './Select.css';
 const SelectMove = (props) => {
 
     const [resultMove, setResultMove] = useState(null);
-    const [currentMove, setCurrentMove] = useState(null);
     const [showMove, setShowMove] = useState(false);
 
     const changeMove = (value) => {
         setShowMove(false);
-        if (props.setCurrentPokemon) props.setCurrentPokemon({...props.filters, targetPokemon: value});
-        setCurrentMove(value);
+        if (props.setMovePokemon) props.setMovePokemon(value);
+        if (props.clearData) props.clearData();
     }
 
     const findMove = useCallback((id, form, type) => {
         let resultFirst = data.filter(item => item.ID === id);
         form = form ? form.toLowerCase().replaceAll("-", "_").replaceAll("_standard", "").toUpperCase() : "";
-        let result = resultFirst.find(item => item.NAME === form);
+        let result = resultFirst.find(item => item.NAME.replace(item.BASE_SPECIES+"_", "") === form);
         let simpleMove = [];
         if (resultFirst.length === 1 || result == null) {
             if (type === "FAST") {
@@ -31,7 +30,7 @@ const SelectMove = (props) => {
                 resultFirst[0].SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
                 resultFirst[0].PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
             }
-            setCurrentMove(simpleMove[0]);
+            if (props.setMovePokemon) props.setMovePokemon(simpleMove[0]);
             return setResultMove(simpleMove);
         };
         if (type === "FAST") {
@@ -43,22 +42,21 @@ const SelectMove = (props) => {
             result.SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
             result.PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
         }
-        setCurrentMove(simpleMove[0]);
+        if (props.setMovePokemon) props.setMovePokemon(simpleMove[0]);
         return setResultMove(simpleMove);
-    }, []);
+    }, [props]);
 
     useEffect(() => {
-        if (props.pokemon) findMove(props.pokemon.num, props.pokemon.forme, props.moveType);
-        else {
-            setCurrentMove(null);
+        if (props.pokemon && !props.move) findMove(props.pokemon.num, props.pokemon.forme, props.moveType);
+        if (!props.pokemon) {
             setResultMove(null);
-        }
-    }, [findMove, props.pokemon, props.moveType]);
+        };
+    }, [findMove, props.pokemon, props.moveType, props.move]);
 
     return (
         <div className={'d-flex align-items-center form-control '+(props.pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0}}>
             <div className='card-move-input' tabIndex={ 0 } onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-                <CardMove value={currentMove}/>
+                <CardMove value={props.move}/>
                 {showMove && resultMove &&
                     <div className="result-move-select">
                         <div>

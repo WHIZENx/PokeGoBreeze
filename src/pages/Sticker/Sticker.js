@@ -5,8 +5,13 @@ import { getTime, splitAndCapitalize } from '../../components/Calculate/Calculat
 
 import './Sticker.css';
 import APIService from '../../services/API.service';
+import { useEffect } from "react";
 
 const Sticker = () => {
+
+    useEffect(() => {
+        document.title = "Stickers List";
+    }, []);
 
     return (
         <div className='container' style={{padding: 15}}>

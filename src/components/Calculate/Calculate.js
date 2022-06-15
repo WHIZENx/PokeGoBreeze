@@ -621,21 +621,19 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, typePoke, options, s
     const FTYPE = capitalize(fmove.type.toLowerCase());
     const CTYPE = capitalize(cmove.type.toLowerCase());
     const CDWS = cmove.damageWindowStartMs/1000;
-    const bar = getBarCharge(true, cmove.pve_energy);
 
     const FMulti = (typePoke.includes(FTYPE) ? STAB_MULTIPLY : 1)*fmove.accuracyChance;
     const CMulti = (typePoke.includes(CTYPE) ? STAB_MULTIPLY : 1)*cmove.accuracyChance;
 
     let y,FDmg,CDmg,FDmgBase,CDmgBase;
     if (options) {
-        FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(shadow ? SHADOW_ATK_BONUS : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, fmove.type) : options.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(options.TRAINER_FRIEND ? getMultiFriendshipMulti(options.TRAINER_FRIEND_LEVEL) : 1);
-        CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(shadow ? SHADOW_ATK_BONUS : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, cmove.type) : options.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(options.TRAINER_FRIEND ? getMultiFriendshipMulti(options.TRAINER_FRIEND_LEVEL) : 1);
+        FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(shadow ? SHADOW_ATK_BONUS : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, FTYPE) : options.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(options.TRAINER_FRIEND ? getMultiFriendshipMulti(options.TRAINER_FRIEND_LEVEL) : 1);
+        CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(shadow ? SHADOW_ATK_BONUS : 1)*(typeof options.WEATHER_BOOSTS === "string" ? weatherMultiple(options.WEATHER_BOOSTS, CTYPE) : options.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(options.TRAINER_FRIEND ? getMultiFriendshipMulti(options.TRAINER_FRIEND_LEVEL) : 1);
 
-        FDmg = Math.floor(FDmgBase*(options.objTypes ? getTypeEffective(FTYPE, options.objTypes) : 1)*Atk/options.POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
-        CDmg = Math.floor(CDmgBase*(options.objTypes ? getTypeEffective(CTYPE, options.objTypes) : 1)*Atk/options.POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
+        FDmg = Math.floor(FDmgBase*Atk*(options.objTypes ? getTypeEffective(FTYPE, options.objTypes) : 1)/options.POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
+        CDmg = Math.floor(CDmgBase*Atk*(options.objTypes ? getTypeEffective(CTYPE, options.objTypes) : 1)/options.POKEMON_DEF_OBJ)+DEFAULT_DAMAGE_CONST;
 
-        y = 900/(Def*(shadow ? SHADOW_DEF_BONUS : 1));
-        y *= options.objTypes ? getTypeEffective(FTYPE, options.objTypes)*getTypeEffective(CTYPE, options.objTypes) : 1;
+        y = 900/((Def/(options.objTypes ? getTypeEffective(FTYPE, options.objTypes)*getTypeEffective(CTYPE, options.objTypes) : 1))*(shadow ? SHADOW_DEF_BONUS : 1));
     } else {
         FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(DEFAULT_POKEMON_SHADOW ? SHADOW_ATK_BONUS : 1)*(DEFAULT_WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(DEFAULT_TRAINER_FRIEND ? getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL) : 1);
         CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(DEFAULT_POKEMON_SHADOW ? SHADOW_ATK_BONUS : 1)*(DEFAULT_WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(DEFAULT_TRAINER_FRIEND ? getMultiFriendshipMulti(DEFAULT_POKEMON_FRIEND_LEVEL) : 1);
@@ -659,6 +657,7 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, typePoke, options, s
 
     let x = 0.5*CE+0.5*FE;
     if (options && options.specific) {
+        const bar = getBarCharge(true, CE);
         let λ;
         if (bar === 1) λ = 3;
         else if (bar === 2) λ = 1.5;
@@ -681,12 +680,105 @@ export const calculateTDO = (Def, HP, dps, shadow) => {
     return HP/y*dps;
 }
 
-export const calculateTDOWithMoveType = (ftype, ctype, objTypes, Def, HP, dps, shadow) => {
-    let y;
-    if (shadow) y = 900/(Def*(shadow ? SHADOW_DEF_BONUS : 1));
-    else y = 900/(Def*(DEFAULT_POKEMON_SHADOW ? SHADOW_DEF_BONUS : 1));
-    y *= getTypeEffective(ftype, objTypes)*getTypeEffective(ctype, objTypes);
-    return HP/y*dps;
+export const calculateBattleDPS = (Attacker, Defender) => {
+    // Attacker = Gengar
+    // Defender = Giratina
+    const FPowDef = Defender.fmove.pve_power;
+    const CPowDef = Defender.cmove.pve_power;
+    const CEDef = Math.abs(Defender.cmove.pve_energy);
+    const FDurDef = Defender.fmove.durationMs/1000;
+    const CDurDef = Defender.cmove.durationMs/1000;
+    const FTYPEDef = capitalize(Defender.fmove.type.toLowerCase());
+    const CTYPEDef = capitalize(Defender.cmove.type.toLowerCase());
+
+    const FMultiDef = (Defender.types.includes(FTYPEDef) ? STAB_MULTIPLY : 1)*Defender.fmove.accuracyChance;
+    const CMultiDef = (Defender.types.includes(CTYPEDef) ? STAB_MULTIPLY : 1)*Defender.cmove.accuracyChance;
+
+    const lambdaMod = CEDef/100*3;
+    const defDuration = lambdaMod*(FDurDef+DEFAULT_ENEMY_ATK_DELAY)+(CDurDef+DEFAULT_ENEMY_ATK_DELAY);
+
+    const FDmgBaseDef = DEFAULT_DAMAGE_MULTIPLY*FPowDef*FMultiDef*(Defender.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Defender.WEATHER_BOOSTS === "string" ? weatherMultiple(Defender.WEATHER_BOOSTS, FTYPEDef) : Defender.WEATHER_BOOSTS ? STAB_MULTIPLY : 1);
+    const CDmgBaseDef = DEFAULT_DAMAGE_MULTIPLY*CPowDef*CMultiDef*(Defender.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Defender.WEATHER_BOOSTS === "string" ? weatherMultiple(Defender.WEATHER_BOOSTS, CTYPEDef) : Defender.WEATHER_BOOSTS ? STAB_MULTIPLY : 1);
+
+    const FDmgDef = Math.floor(FDmgBaseDef*Defender.atk*getTypeEffective(FTYPEDef, Defender.types)/Attacker.def)+DEFAULT_DAMAGE_CONST;
+    const CDmgDef = Math.floor(CDmgBaseDef*Defender.atk*getTypeEffective(CTYPEDef, Defender.types)/Attacker.def)+DEFAULT_DAMAGE_CONST;
+
+    const DefDmg = lambdaMod*FDmgDef+CDmgDef;
+    const DPSDef = DefDmg/defDuration;
+
+    /* ------------------------------------------- */
+
+    const FPow = Attacker.fmove.pve_power;
+    const CPow = Attacker.cmove.pve_power;
+    const FE = Math.abs(Attacker.fmove.pve_energy);
+    const CE = Math.abs(Attacker.cmove.pve_energy);
+    const FDur = Attacker.fmove.durationMs/1000;
+    const CDur = Attacker.cmove.durationMs/1000;
+    const FTYPE = capitalize(Attacker.fmove.type.toLowerCase());
+    const CTYPE = capitalize(Attacker.cmove.type.toLowerCase());
+    const CDWS = Attacker.cmove.damageWindowStartMs/1000;
+
+    const FMulti = (Attacker.types.includes(FTYPE) ? STAB_MULTIPLY : 1)*Attacker.fmove.accuracyChance;
+    const CMulti = (Attacker.types.includes(CTYPE) ? STAB_MULTIPLY : 1)*Attacker.cmove.accuracyChance;
+
+    const FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(Attacker.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Attacker.WEATHER_BOOSTS === "string" ? weatherMultiple(Attacker.WEATHER_BOOSTS, FTYPE) : Attacker.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(Attacker.POKEMON_FRIEND ? getMultiFriendshipMulti(Attacker.POKEMON_FRIEND_LEVEL) : 1);
+    const CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(Attacker.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Attacker.WEATHER_BOOSTS === "string" ? weatherMultiple(Attacker.WEATHER_BOOSTS, CTYPE) : Attacker.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(Attacker.POKEMON_FRIEND ? getMultiFriendshipMulti(Attacker.POKEMON_FRIEND_LEVEL) : 1);
+
+    const FDmg = Math.floor(FDmgBase*Attacker.atk*getTypeEffective(FTYPE, Attacker.types)/Defender.def)+DEFAULT_DAMAGE_CONST;
+    const CDmg = Math.floor(CDmgBase*Attacker.atk*getTypeEffective(CTYPE, Attacker.types)/Defender.def)+DEFAULT_DAMAGE_CONST;
+
+    const FDPS = FDmg/FDur;
+    const CDPS = CDmg/CDur;
+
+    let CEPSM;
+    if (CE === 100) CEPSM = 0.5*FE+0.5*DPSDef*CDWS;
+    else CEPSM = 0;
+
+    const FEPS = FE/FDur;
+    const CEPS = (CE+CEPSM)/CDur;
+
+    const x = 0.5*CE+0.5*FE;
+
+    const DPS0 = (FDPS*CEPS+CDPS*FEPS)/(CEPS+FEPS);
+
+    let DPS;
+    if (FDPS > CDPS) DPS = DPS0;
+    else DPS = Math.max(0, DPS0+((CDPS-FDPS)/(CEPS+FEPS)*(DEFAULT_ENERYGY_PER_HP_LOST-(x/Attacker.hp))*DPSDef));
+    DPS = Math.max(FDPS, DPS);
+
+    let DPSSec = 0;
+    if (Attacker.isDoubleCharge) {
+        const moveSec = Attacker.cmove2;
+        const CPowSec = moveSec.pve_power;
+        const CESec = Math.abs(moveSec.pve_energy);
+        const CTYPESec = capitalize(moveSec.type.toLowerCase());
+        const CDurSec = moveSec.durationMs/1000;
+        const CDWSSec = moveSec.damageWindowStartMs/1000;
+
+        const CMultiSec = (Attacker.types.includes(CTYPESec) ? STAB_MULTIPLY : 1)*moveSec.accuracyChance;
+
+        const CDmgBaseSec = DEFAULT_DAMAGE_MULTIPLY*CPowSec*CMultiSec*(Attacker.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Attacker.WEATHER_BOOSTS === "string" ? weatherMultiple(Attacker.WEATHER_BOOSTS, CTYPE) : Attacker.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(Attacker.POKEMON_FRIEND ? getMultiFriendshipMulti(Attacker.POKEMON_FRIEND_LEVEL) : 1);
+        const CDmgSec = Math.floor(CDmgBaseSec*Attacker.atk*getTypeEffective(CTYPESec, Attacker.types)/Defender.def)+DEFAULT_DAMAGE_CONST;
+        const CDPSSec = CDmgSec/CDurSec;
+
+        let CEPSMSec;
+        if (CESec === 100) CEPSMSec = 0.5*FE+0.5*DPSDef*CDWSSec;
+        else CEPSMSec = 0;
+
+        const CEPSSec = (CESec+CEPSMSec)/CDurSec;
+        const xSec = 0.5*CESec+0.5*FE;
+
+        const DPS0Sec = (FDPS*CEPSSec+CDPSSec*FEPS)/(CEPSSec+FEPS);
+
+        if (FDPS > CDPSSec) DPSSec = DPS0Sec;
+        else DPSSec = Math.max(0, DPS0Sec+((CDPSSec-FDPS)/(CEPSSec+FEPS)*(DEFAULT_ENERYGY_PER_HP_LOST-(xSec/Attacker.hp))*DPSDef));
+        DPSSec = Math.max(FDPS, DPSSec);
+    }
+    return Math.max(FDPS, DPS, DPSSec);
+}
+
+export const TimeToKill = (HP, dps) => {
+    return HP/dps;
 }
 
 export const queryTopMove = (move) => {

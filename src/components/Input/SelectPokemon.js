@@ -26,7 +26,7 @@ const SelectPokemon = (props) => {
 
     const changePokemon = (value) => {
         setShowPokemon(false);
-        if (props.setCurrentPokemon) props.setCurrentPokemon({...props.filters, targetPokemon: value});
+        if (props.setCurrentPokemon) props.setCurrentPokemon(value);
         if (props.setOptions) props.setOptions({...props.options,
             POKEMON_DEF_OBJ: calculateStatsByTag(value.baseStats, value.slug).def,
             objTypes: value.types
@@ -37,7 +37,9 @@ const SelectPokemon = (props) => {
     }
 
     const removePokemon = () => {
-        if (props.setCurrentPokemon) props.setCurrentPokemon({...props.filters, targetPokemon: null});
+        if (props.setCurrentPokemon) props.setCurrentPokemon(null);
+        if (props.setFMovePokemon) props.setFMovePokemon(null);
+        if (props.setCMovePokemon) props.setCMovePokemon(null);
         setPokemonIcon(null);
         setSearch('');
         if (props.setOptions) props.setOptions({...props.options, POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ, objTypes: null});
@@ -59,17 +61,15 @@ const SelectPokemon = (props) => {
                     style={{background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat`: "",
                     paddingLeft: pokemonIcon ? 56 : ""}}/>
                 </div>
-                {showPokemon &&
-                    <div className="result-pokemon" onScroll={listenScrollEvent.bind(this)}>
-                        <div>
-                            {Object.values(pokemonData).filter(item => item.num > 0 && (splitAndCapitalize(item.name, "-", " ").toLowerCase().includes(search.toLowerCase()) || item.num.toString().includes(search))).slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
-                                <div className="card-pokemon-select" key={ index } onMouseDown={() => changePokemon(value)}>
-                                    <CardPokemon value={value}/>
-                                </div>
-                            ))}
-                        </div>
+                <div className="result-pokemon" onScroll={(e) => listenScrollEvent(e)} style={{display: showPokemon ? "block" : "none"}}>
+                    <div>
+                        {Object.values(pokemonData).filter(item => item.num > 0 && item.num <= 898 && (splitAndCapitalize(item.name, "-", " ").toLowerCase().includes(search.toLowerCase()) || item.num.toString().includes(search))).slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
+                            <div className="card-pokemon-select" key={ index } onMouseDown={() => changePokemon(value)}>
+                                <CardPokemon value={value}/>
+                            </div>
+                        ))}
                     </div>
-                }
+                </div>
             </div>
         </div>
     )

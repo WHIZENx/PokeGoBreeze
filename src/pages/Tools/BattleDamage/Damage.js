@@ -137,7 +137,7 @@ const Damage = () => {
                 trainer: battleState.trainer,
                 flevel: enableFriend ? battleState.flevel : 0,
                 clevel: battleState.clevel,
-                effective: getTypeEffective(capitalize(move.type.toLowerCase()), formObj.form.types)
+                effective: getTypeEffective(move.type, formObj.form.types)
             };
             setResult(r => ({
                 ...r,

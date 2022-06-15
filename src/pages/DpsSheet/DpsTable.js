@@ -5,7 +5,7 @@ import combatData from '../../data/combat.json';
 import combatPokemonData from '../../data/combat_pokemon_go_list.json';
 import typesData from '../../data/type_effectiveness.json';
 import weatherBoosts from '../../data/weather_boosts.json';
-import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, calculateStatsBettlePure, calculateTDOWithMoveType, DEFAULT_POKEMON_DEF_OBJ, getTypeEffective } from "../../components/Calculate/Calculate";
+import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, calculateStatsBettlePure, DEFAULT_POKEMON_DEF_OBJ, calculateBattleDPS } from "../../components/Calculate/Calculate";
 import DataTable from "react-data-table-component";
 import APIService from "../../services/API.service";
 
@@ -113,15 +113,19 @@ const DpsTable = (props) => {
     const [dataFilter, setDataFilter] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const [dataTargetPokemon, setDataTargetPokemon] = useState(null);
+    const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(null);
+    const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(null);
+
     const [filters, setFilters] = useState({
         showEliteMove: true,
         showShadow: true,
+        showMega: true,
         enableShadow: false,
         enableElite: false,
         enableMega: false,
         enableBest: false,
         enableDelay: false,
-        targetPokemon: null,
         bestOf: 3,
         IV_ATK: 15,
         IV_DEF: 15,
@@ -129,7 +133,7 @@ const DpsTable = (props) => {
         POKEMON_LEVEL: 40
     });
 
-    const {showEliteMove, showShadow, enableShadow, enableElite, enableMega, enableBest, enableDelay, bestOf, targetPokemon, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL} = filters;
+    const {showEliteMove, showShadow, enableShadow, showMega, enableElite, enableMega, enableBest, enableDelay, bestOf, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL} = filters;
 
     const [options, setOptions] = useState({
         delay: null,
@@ -157,15 +161,29 @@ const DpsTable = (props) => {
                 value.types,
                 options,
                 shadow);
-            let tdo;
-            if (targetPokemon) {
-                tdo = calculateTDOWithMoveType(fmove.type, cmove.type, targetPokemon.types,
-                    calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
-                    calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL), dps, shadow);
-            } else {
-                tdo = calculateTDO(calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
-                    calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL), dps, shadow);
+            // if (dataTargetPokemon) Def /= getTypeEffective(fmove.type, dataTargetPokemon.types)*getTypeEffective(cmove.type, dataTargetPokemon.types);
+            if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
+                const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.slug);
+                const statsAttacker = {
+                    atk: calculateStatsBettlePure(stats.atk, IV_ATK, POKEMON_LEVEL),
+                    def: calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
+                    hp: calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL),
+                    fmove: fmove,
+                    cmove: cmove,
+                    types: value.types
+                }
+                const statsDefender = {
+                    atk: calculateStatsBettlePure(statsDef.atk, IV_ATK, POKEMON_LEVEL),
+                    def: calculateStatsBettlePure(statsDef.def, IV_DEF, POKEMON_LEVEL),
+                    hp: calculateStatsBettlePure(statsDef.sta, IV_HP, POKEMON_LEVEL),
+                    fmove: combatData.find(item => item.name === fmoveTargetPokemon.name.replaceAll("_FAST", "")),
+                    cmove: combatData.find(item => item.name === cmoveTargetPokemon.name),
+                    types: dataTargetPokemon.types
+                }
+                calculateBattleDPS(statsAttacker, statsDefender);
             }
+            const tdo = calculateTDO(calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
+            calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL), dps, shadow);
             setDpsTable(oldArr => [...oldArr, {
                 pokemon: value,
                 fmove: fmove,
@@ -183,7 +201,7 @@ const DpsTable = (props) => {
                 cp : calculateCP(stats.atk+IV_ATK, stats.def+IV_DEF, stats.sta+IV_HP, POKEMON_LEVEL)
             }]);
         });
-    }, [IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, options, targetPokemon]);
+    }, [IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, options, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
 
     const addFPokeData = useCallback((combat, movePoke, value, felite) => {
         movePoke.forEach(vf => {
@@ -206,9 +224,9 @@ const DpsTable = (props) => {
                     && item.BASE_SPECIES === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
                 );
                 let result = combatPoke.find(item => item.NAME === convertName(value.name));
-                if (result === undefined) combatPoke = combatPoke[0]
+                if (!result) combatPoke = combatPoke[0]
                 else combatPoke = result;
-                if (combatPoke !== undefined) {
+                if (combatPoke) {
                     addFPokeData(combatPoke, combatPoke.QUICK_MOVES, value, false);
                     addFPokeData(combatPoke, combatPoke.ELITE_QUICK_MOVES, value, true);
                 }
@@ -227,26 +245,31 @@ const DpsTable = (props) => {
     };
 
     useEffect(() => {
-        document.title = "DPS&TDO Table - Battle Simulator";
-        if (dpsTable.length === 0) calculateDPSTable();
-        else {
+        document.title = "DPS&TDO Table";
+        if (dpsTable.length === 0 && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon)
+            calculateDPSTable();
+        else if (!dataTargetPokemon && dpsTable.length === 0)
+            calculateDPSTable();
+        if (dpsTable.length > 0) {
             let result = dpsTable.filter(item => {
                 const boolFilterType = selectTypes.length === 0 || (selectTypes.includes(capitalize(item.fmove.type.toLowerCase())) && selectTypes.includes(capitalize(item.cmove.type.toLowerCase())));
                 const boolFilterPoke =  searchTerm === '' || splitAndCapitalize(item.pokemon.name, "-", " ").toLowerCase().includes(searchTerm.toLowerCase()) || item.pokemon.num.toString().includes(searchTerm);
 
-                const boolShowShadow = !showShadow && item.shadow
-                const boolShowElite = !showEliteMove && (item.elite.fmove || item.elite.cmove)
+                const boolShowShadow = !showShadow && item.shadow;
+                const boolShowElite = !showEliteMove && (item.elite.fmove || item.elite.cmove);
+                const boolShowMega = !showMega && item.pokemon.name.toLowerCase().includes("mega");
 
-                const boolOnlyShadow = enableShadow && item.shadow
-                const boolOnlyElite = enableElite && (item.elite.fmove || item.elite.cmove)
-                const boolOnlyMega = enableMega && item.pokemon.name.toLowerCase().includes("mega")
-                if (enableShadow || enableElite || enableMega) return (boolFilterType && boolFilterPoke && !(boolShowShadow || boolShowElite)) && (boolOnlyShadow || boolOnlyElite || boolOnlyMega);
-                else return boolFilterType && boolFilterPoke && !(boolShowShadow || boolShowElite);
+                const boolOnlyShadow = enableShadow && item.shadow;
+                const boolOnlyElite = enableElite && (item.elite.fmove || item.elite.cmove);
+                const boolOnlyMega = enableMega && item.pokemon.name.toLowerCase().includes("mega");
+                if (enableShadow || enableElite || enableMega) return (boolFilterType && boolFilterPoke && !(boolShowShadow || boolShowElite || boolShowMega)) && (boolOnlyShadow || boolOnlyElite || boolOnlyMega);
+                else return boolFilterType && boolFilterPoke && !(boolShowShadow || boolShowElite || boolShowMega);
             });
             if (enableBest) result = filterBestOptions(result, bestOf);
             setDataFilter(result);
         }
-    }, [calculateDPSTable, dpsTable, selectTypes, searchTerm, showShadow, showEliteMove, enableElite, enableShadow, enableMega, enableBest, bestOf]);
+    }, [calculateDPSTable, dpsTable, selectTypes, searchTerm, showShadow, showEliteMove, showMega, enableElite, enableShadow, enableMega, enableBest, bestOf,
+        dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
 
     const addTypeArr = (value) => {
         if (selectTypes.includes(value)) {
@@ -280,17 +303,18 @@ const DpsTable = (props) => {
                     }
                 </div>
                 <div className='row w-100' style={{margin: 0}}>
-                    <div className='col-xxl border-input' style={{padding: 0}}>
+                    <div className='col-xxl' style={{padding: 0}}>
                         <div className="input-group border-input">
                             <span className="input-group-text">Search name or ID</span>
                             <input type="text" className='form-control input-search' placeholder='Enter name or ID'
                             value={searchTerm}
                             onInput={e => setSearchTerm(e.target.value)}></input>
                         </div>
-                        <div className="input-group border-input">
+                        <div className="input-group">
                             <span className="input-group-text">Show</span>
                             <FormControlLabel control={<Checkbox checked={showShadow} onChange={(event, check) => setFilters({...filters, showShadow: check})}/>} label="Shadow Pokemon" />
                             <FormControlLabel control={<Checkbox checked={showEliteMove} onChange={(event, check) => setFilters({...filters, showEliteMove: check})}/>} label="Elite Move" />
+                            <FormControlLabel control={<Checkbox checked={showMega} onChange={(event, check) => setFilters({...filters, showMega: check})}/>} label="Mega" />
                         </div>
                         <div className="input-group border-input">
                             <span className="input-group-text">Filter only by</span>
@@ -298,10 +322,10 @@ const DpsTable = (props) => {
                             <FormControlLabel control={<Checkbox checked={enableElite} onChange={(event, check) => setFilters({...filters, enableElite: check})}/>} label="Elite Moves"/>
                             <FormControlLabel control={<Checkbox checked={enableMega} onChange={(event, check) => setFilters({...filters, enableMega: check})}/>} label="Mega"/>
                         </div>
-                        <div className="input-group border-input">
+                        <div className="input-group">
                             <span className="input-group-text">Filter best movesets</span>
                             <FormControlLabel control={<Switch checked={enableBest} onChange={(event, check) => setFilters({...filters, enableBest: check})}/>} label="Best moveset of"/>
-                            <Form.Select className="form-control w-50" value={bestOf} disabled={!enableBest}
+                            <Form.Select style={{borderRadius: 0}} className="form-control w-50" value={bestOf} disabled={!enableBest}
                                 onChange={(e) => setFilters({...filters, bestOf: parseInt(e.target.value)})}>
                                     <option value={1}>DPS</option>
                                     <option value={2}>TDO</option>
@@ -313,19 +337,24 @@ const DpsTable = (props) => {
                                 <Box className="col-xl-4" style={{padding: 0}}>
                                     <div className="input-group">
                                         <span className="input-group-text">Target Pokemon</span>
-                                        <SelectPokemon clearData={clearData} filters={filters} setCurrentPokemon={setFilters} options={options} setOptions={setOptions}/>
+                                        <SelectPokemon clearData={clearData}
+                                        setCurrentPokemon={setDataTargetPokemon}
+                                        setFMovePokemon={setFmoveTargetPokemon}
+                                        setCMovePokemon={setCmoveTargetPokemon}
+                                        options={options}
+                                        setOptions={setOptions}/>
                                     </div>
                                 </Box>
                                 <Box className="col-xl-4" style={{padding: 0}}>
                                     <div className="input-group">
                                         <span className="input-group-text">Fast Move</span>
-                                        <SelectMove pokemon={targetPokemon} moveType="FAST" />
+                                        <SelectMove clearData={clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFmoveTargetPokemon}  moveType="FAST"/>
                                     </div>
                                 </Box>
                                 <Box className="col-xl-4" style={{padding: 0}}>
                                     <div className="input-group">
                                         <span className="input-group-text">Charge Move</span>
-                                        <SelectMove pokemon={targetPokemon} moveType="CHARGE"/>
+                                        <SelectMove clearData={clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCmoveTargetPokemon} moveType="CHARGE"/>
                                     </div>
                                 </Box>
                             </div>
@@ -394,7 +423,7 @@ const DpsTable = (props) => {
                                     <div className="input-group-prepend">
                                         <label className="input-group-text">Levels</label>
                                     </div>
-                                    <Form.Select className="form-control" defaultValue={POKEMON_LEVEL}
+                                    <Form.Select style={{borderRadius: 0}} className="form-control" defaultValue={POKEMON_LEVEL}
                                     onChange={(e) => setFilters({
                                         ...filters,
                                         POKEMON_LEVEL: parseInt(e.target.value)})}>
@@ -414,7 +443,7 @@ const DpsTable = (props) => {
                                     <div className="input-group-prepend">
                                         <label className="input-group-text">Weather Boosts</label>
                                     </div>
-                                    <Form.Select className="form-control" defaultValue={WEATHER_BOOSTS}
+                                    <Form.Select style={{borderRadius: 0}} className="form-control" defaultValue={WEATHER_BOOSTS}
                                     onChange={(e) => setOptions({
                                         ...options,
                                         WEATHER_BOOSTS: e.target.value === "true" ? true : e.target.value === "false" ? false : e.target.value})}>

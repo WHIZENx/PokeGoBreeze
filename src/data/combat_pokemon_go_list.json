@@ -16793,7 +16793,7 @@
         "BASE_SPECIES": "CRABRAWLER",
         "QUICK_MOVES": [
             "ROCK_SMASH_FAST",
-            "PAYBACK"
+            "BUBBLE_FAST"
         ],
         "CINEMATIC_MOVES": [
             "POWER_UP_PUNCH",
@@ -16811,7 +16811,7 @@
         "BASE_SPECIES": "CRABOMINABLE",
         "QUICK_MOVES": [
             "ROCK_SMASH_FAST",
-            "PAYBACK"
+            "BUBBLE_FAST"
         ],
         "CINEMATIC_MOVES": [
             "POWER_UP_PUNCH",
@@ -16935,7 +16935,8 @@
         "NAME": "LYCANROC_DUSK",
         "BASE_SPECIES": "LYCANROC",
         "QUICK_MOVES": [
-            "CRUSH_CLAW",
+            "SUCKER_PUNCH_FAST",
+            "COUNTER_FAST",
             "ROCK_THROW_FAST"
         ],
         "CINEMATIC_MOVES": [
