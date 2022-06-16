@@ -56,7 +56,7 @@ ul {
 
 .result {
     position: absolute;
-    z-index: 3;
+    z-index: 4;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     width: 300px;
     background-color: white;
@@ -91,6 +91,27 @@ ul {
 
 .img-search {
     margin: 0 5px;
+}
+
+.loading-group-spin {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: 0.5;
+    z-index: 2;
+}
+
+.loading-spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2);
 }
 
 .shadow-ic {background-color:#c184ec}

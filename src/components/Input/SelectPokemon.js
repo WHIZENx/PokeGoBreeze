@@ -21,7 +21,7 @@ const SelectPokemon = (props) => {
     const listenScrollEvent = (ele) => {
         const scrollTop = ele.currentTarget.scrollTop;
         const fullHeight = ele.currentTarget.offsetHeight;
-        if (scrollTop*1.2 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
+        if (scrollTop*0.8 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
     }
 
     const changePokemon = (value) => {

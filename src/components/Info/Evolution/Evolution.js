@@ -84,21 +84,23 @@ const Evolution = (props) => {
         return data.map(item => getEvoChain(item.evolves_to))
     }, [props.formDefault, props.form, props.region]);
 
-    const getGmaxChain = useCallback((id) => {
+    const getGmaxChain = useCallback((id, form) => {
         setArrEvoList([
-            [{name: props.form.name.replace("-gmax", ""), id: id, baby: false, form: 'normal', gmax: true}],
-            [{name: props.form.name.replace("-gmax", ""), id: id, baby: false, form: 'gmax', gmax: true}]
+            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'normal', gmax: true}],
+            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'gmax', gmax: true}]
         ]);
-    }, [props.form.name]);
+    }, []);
 
     useEffect(() => {
-        APIService.getFetchUrl(props.evolution_url)
-        .then(res => {
-            setArrEvoList([]);
-            if (props.form.form_name !== "gmax") getEvoChain([res.data.chain]);
-            else getGmaxChain(props.id);
-        });
-    }, [props.evolution_url, props.form.form_name, getEvoChain, getGmaxChain, props.id]);
+        if (props.form) {
+            APIService.getFetchUrl(props.evolution_url)
+            .then(res => {
+                setArrEvoList([]);
+                if (props.form && props.form.form_name !== "gmax") getEvoChain([res.data.chain]);
+                else getGmaxChain(props.id, props.form);
+            });
+        }
+    }, [props.evolution_url, props.form, getEvoChain, getGmaxChain, props.id]);
 
     const handlePokeID = (id) => {
         if (id !== props.id.toString()) {
@@ -109,6 +111,7 @@ const Evolution = (props) => {
     };
 
     const setHeightEvo = () => {
+        if (arrEvoList.length === 0) return 180;
         let noEvo = arrEvoList.map(item => item.length).reduce((a, v) => a + v, 0) === 1 ? 25 : 0;
         const lengths = arrEvoList.map(item => item.length);
         const result = lengths.indexOf(Math.max(...lengths));
@@ -287,8 +290,6 @@ const Evolution = (props) => {
                     <span className="d-block caption">- <RestaurantIcon fontSize="small"/> : Buddy feed.</span>
                 </span>
             </span></h4>
-            { arrEvoList.length > 0 &&
-            <Fragment>
             <div className="evo-container scroll-form" style={{minHeight:setHeightEvo()}}>
                 <ul className="ul-evo">
                     {arrEvoList.map((values, evo) => (
@@ -314,8 +315,6 @@ const Evolution = (props) => {
                     }
                 </ul>
             </div>
-            </Fragment>
-            }
         </Fragment>
     )
 }

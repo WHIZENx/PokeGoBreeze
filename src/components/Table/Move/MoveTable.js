@@ -21,8 +21,8 @@ const TableMove = (props) => {
     }, [props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
     useEffect(() => {
-        findMove();
-    }, [findMove]);
+        if (props.data) findMove();
+    }, [findMove, props.data]);
 
     const renderMovesetTable = (value, max, type) => {
         return (

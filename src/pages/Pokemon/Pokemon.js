@@ -7,7 +7,7 @@ import './Pokemon.css';
 import { calculateStatsByTag, computeBgColor, computeColor, regionList, sortStatsPokemon, splitAndCapitalize } from '../../components/Calculate/Calculate';
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import Form from "../../components/Info/Form/Form";
+import Form from "../../components/Info/Form/FormNew";
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
@@ -41,6 +41,9 @@ const Pokemon = (props) => {
     const [formName, setFormName] = useState(null);
     const [isFound, setIsFound] = useState(true);
 
+    const [onChangeForm, setOnChangeForm] = useState(false);
+    const [spinner, setSpinner] = useState(false);
+
     const { enqueueSnackbar } = useSnackbar();
 
     const convertArrStats = (data) => {
@@ -56,8 +59,7 @@ const Pokemon = (props) => {
     }, []);
 
     const fetchMap = useCallback(async (data) => {
-        setFormList([]);
-        setPokeData([]);
+        setSpinner(true);
         let dataPokeList = [];
         let dataFromList = [];
         await Promise.all(data.varieties.map(async (value, index) => {
@@ -128,7 +130,7 @@ const Pokemon = (props) => {
             initialize.current = true;
         } else {
             const id = params.id ? params.id.toLowerCase() : props.id;
-            if (!reForm) queryPokemon(id);
+            queryPokemon(id);
         }
     }, [params.id, props.id, queryPokemon, reForm]);
 
@@ -245,7 +247,12 @@ const Pokemon = (props) => {
                     </Fragment>
                     }
                 </div>
-                <div className={'poke-container'+(props.isSearch ? "" : " container")}>
+                <div className={'position-relative poke-container'+(props.isSearch ? "" : " container")}>
+                    <div className='loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
+                    <div className="position-fixed loading-spin center" style={{display: spinner ? "block" : "none"}}>
+                        <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}></img>
+                        <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
+                    </div>
                     <div className="w-100 center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
                         <div className="d-inline-block img-desc">
                             <img className="pokemon-main-sprite" style={{verticalAlign: 'baseline'}} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
@@ -344,35 +351,27 @@ const Pokemon = (props) => {
                             </table>
                         </div>
                     </div>
-                    <div className='img-form-group' style={{textAlign: (initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length) ? null : 'center'}}>
-                    {initialize.current && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?
-                            <Fragment>
-                                <Form
-                                    onSetPrev={props.onSetPrev}
-                                    onSetNext={props.onSetNext}
-                                    onSetReForm={setReForm}
-                                    setVersion={setVersionName}
-                                    setRegion={setRegion}
-                                    setWH={setWH}
-                                    setFormName={setFormName}
-                                    id_default={data.id}
-                                    pokeData={pokeData}
-                                    pokemonRaito={pokeRatio}
-                                    formList={formList}
-                                    ratio={pokeRatio}
-                                    stats={stats}
-                                    species={data}
-                                    onSetIDPoke={props.onSetIDPoke}
-                                    paramForm={searchParams.get('form') && searchParams.get('form').toLowerCase()}/>
-                                <PokemonModel id={data.id} name={data.name}/>
-                            </Fragment>
-                        :
-                        <div className='loading-group'>
-                            <img className="loading" width={40} height={40} alt='img-pokemon' src={loading}></img>
-                            <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
-                        </div>
-                    }
-                    </div>
+                    <Form
+                        setSpinner={setSpinner}
+                        onChangeForm={onChangeForm}
+                        setOnChangeForm={setOnChangeForm}
+                        onSetPrev={props.onSetPrev}
+                        onSetNext={props.onSetNext}
+                        onSetReForm={setReForm}
+                        setVersion={setVersionName}
+                        setRegion={setRegion}
+                        setWH={setWH}
+                        setFormName={setFormName}
+                        id_default={data.id}
+                        pokeData={pokeData}
+                        pokemonRaito={pokeRatio}
+                        formList={formList}
+                        ratio={pokeRatio}
+                        stats={stats}
+                        species={data}
+                        onSetIDPoke={props.onSetIDPoke}
+                        paramForm={searchParams.get('form') && searchParams.get('form').toLowerCase()}/>
+                    <PokemonModel id={data.id} name={data.name}/>
                 </div>
                 </Fragment>
             }

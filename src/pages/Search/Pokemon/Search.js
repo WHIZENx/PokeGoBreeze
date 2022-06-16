@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, Fragment, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, Fragment } from 'react';
 
 import './Search.css';
 
@@ -62,7 +62,7 @@ const Search = () => {
         setTimeout(() => {
             setPrev(true);
             setNext(true);
-        }, 800);
+        }, 500);
     };
 
     const setIDPoke = (id) => {
@@ -79,15 +79,15 @@ const Search = () => {
         setId(id+1);
     }
 
-    const handleSetPrev = useCallback((bool) => {
-        if (bool) setTimeout(() => {setPrev(bool);}, 800);
+    const handleSetPrev = (bool) => {
+        if (bool) setTimeout(() => {setPrev(bool)}, 500);
         else setPrev(bool);
-    }, []);
+    }
 
-    const handleSetNext = useCallback((bool) => {
-        if (bool) setTimeout(() => {setNext(bool);}, 800);
+    const handleSetNext = (bool) => {
+        if (bool) setTimeout(() => {setNext(bool)}, 500);
         else setNext(bool);
-    }, []);
+    }
 
     return (
         <Fragment>

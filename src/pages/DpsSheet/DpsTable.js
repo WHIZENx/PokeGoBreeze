@@ -146,6 +146,7 @@ const DpsTable = (props) => {
     const {WEATHER_BOOSTS, TRAINER_FRIEND, TRAINER_FRIEND_LEVEL, POKEMON_DEF_OBJ} = options;
 
     const [finished, setFinished] = useState(false);
+    const [showSpinner, setShowSpinner] = useState(true);
     const [selectTypes, setSelectTypes] = useState([]);
 
     const addCPokeData = useCallback((dataList, movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
@@ -240,6 +241,7 @@ const DpsTable = (props) => {
             }
         });
         setFinished(true);
+        setShowSpinner(false);
         return dataList;
     }, [addFPokeData]);
 
@@ -254,10 +256,8 @@ const DpsTable = (props) => {
 
     useEffect(() => {
         document.title = "DPS&TDO Table";
-        if (!finished && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon)
-            setDpsTable(calculateDPSTable());
-        else if (!dataTargetPokemon && !finished)
-            setDpsTable(calculateDPSTable());
+        if (!finished && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) setDpsTable(calculateDPSTable());
+        else if (!dataTargetPokemon && !finished) setDpsTable(calculateDPSTable());
         if (finished) {
             let result = dpsTable.filter(item => {
                 const boolFilterType = selectTypes.length === 0 || (selectTypes.includes(capitalize(item.fmove.type.toLowerCase())) && selectTypes.includes(capitalize(item.cmove.type.toLowerCase())));
@@ -287,15 +287,14 @@ const DpsTable = (props) => {
     }
 
     const clearData = () => {
-        setTimeout(() => {
-            setFinished(false);
-        }, 200);
-    };
+        setShowSpinner(true);
+        setTimeout(() => {setFinished(false)}, 300);
+    }
 
     const onCalculateTable = useCallback((e) => {
         e.preventDefault();
         clearData();
-    }, []);
+    }, [])
 
     return (
         <Fragment>
@@ -493,8 +492,8 @@ const DpsTable = (props) => {
                 </div>
             </div>
             <div className="position-relative">
-                <div className='loading-group' style={{display: finished ? "none" : "block"}}></div>
-                <div className="loading-spin center" style={{display: finished ? "none" : "block"}}>
+                <div className='loading-group-spin' style={{display: !showSpinner ? "none" : "block"}}></div>
+                <div className="loading-spin center" style={{display: !showSpinner ? "none" : "block"}}>
                     <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}></img>
                     <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                 </div>

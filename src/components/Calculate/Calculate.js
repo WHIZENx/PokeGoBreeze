@@ -647,12 +647,8 @@ export const calculateAvgDPS = (fmove, cmove, Atk, Def, HP, typePoke, options, s
     const FDPS = FDmg/(FDur+(options && options.delay ? options.delay.ftime : 0));
     const CDPS = CDmg/(CDur+(options && options.delay ? options.delay.ctime : 0));
 
+    const CEPSM = CE === 100 ? 0.5*FE+0.5*y*CDWS : 0;
     const FEPS = FE/(FDur+(options && options.delay ? options.delay.ftime : 0));
-
-    let CEPSM;
-    if (CE === 100) CEPSM = 0.5*FE+0.5*y*CDWS;
-    else CEPSM = 0;
-
     const CEPS = (CE+CEPSM)/(CDur+(options && options.delay ? options.delay.ctime : 0));
 
     let x = 0.5*CE+0.5*FE;
@@ -728,10 +724,7 @@ export const calculateBattleDPS = (Attacker, Defender, DPSDef) => {
     const FDPS = FDmg/FDur;
     const CDPS = CDmg/CDur;
 
-    let CEPSM;
-    if (CE === 100) CEPSM = 0.5*FE+0.5*DPSDef*CDWS;
-    else CEPSM = 0;
-
+    const CEPSM = CE === 100 ? 0.5*FE+0.5*DPSDef*CDWS : 0;
     const FEPS = FE/FDur;
     const CEPS = (CE+CEPSM)/CDur;
 
@@ -759,11 +752,9 @@ export const calculateBattleDPS = (Attacker, Defender, DPSDef) => {
         const CDmgSec = Math.floor(CDmgBaseSec*Attacker.atk*getTypeEffective(CTYPESec, Defender.types)/(Defender.def*(Defender.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
         const CDPSSec = CDmgSec/CDurSec;
 
-        let CEPSMSec;
-        if (CESec === 100) CEPSMSec = 0.5*FE+0.5*DPSDef*CDWSSec;
-        else CEPSMSec = 0;
-
+        const CEPSMSec = CESec === 100 ? 0.5*FE+0.5*DPSDef*CDWSSec : 0;
         const CEPSSec = (CESec+CEPSMSec)/CDurSec;
+
         const xSec = 0.5*CESec+0.5*FE;
 
         const DPS0Sec = (FDPS*CEPSSec+CDPSSec*FEPS)/(CEPSSec+FEPS);
@@ -857,6 +848,7 @@ const queryMove = (dataList, vf, atk, def, sta, type, cmove, felite, celite, sha
 }
 
 export const rankMove = (move, atk, def, sta, type) => {
+    if (!move) return {data: []};
     let dataPri = []
     move.QUICK_MOVES.forEach(vf => {
         queryMove(dataPri, vf, atk, def, sta, type, move.CINEMATIC_MOVES, false, false, false, false);

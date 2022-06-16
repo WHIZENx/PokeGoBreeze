@@ -22,13 +22,13 @@ const Raid = (props) => {
                     <optgroup label="Normal Tiers">
                         <option value={1}>Tier 1</option>
                         <option value={3}>Tier 3</option>
-                        {!props.currForm.form.form_name.includes("mega") && <option value={5}>Tier 5</option>}
+                        {props.currForm && !props.currForm.form.form_name.includes("mega") && <option value={5}>Tier 5</option>}
                     </optgroup>
                     <optgroup label="Legacy Tiers">
                         <option value={2}>Tier 2</option>
                         <option value={4}>Tier 4</option>
                     </optgroup>
-                    {props.currForm.form.form_name.includes("mega") &&
+                    {props.currForm && props.currForm.form.form_name.includes("mega") &&
                     <Fragment>
                         {Object.values(pokemonData).find(item => item.num === props.id).pokemonClass ?
                         <optgroup label="Legendary Mega Tiers">
@@ -62,7 +62,7 @@ const Raid = (props) => {
             </div>
             <div className="row element-top container" style={{margin: 0}}>
                 <div className='col d-flex justify-content-center align-items-center' style={{marginBottom: 15}}>
-                    <img className={parseInt(tier) === 2 || parseInt(tier) === 4 ? "img-type-icon" : ""} alt="img-raid-egg" src={raidEgg(parseInt(tier), props.currForm.form.form_name.includes("mega"))}></img>
+                    <img className={parseInt(tier) === 2 || parseInt(tier) === 4 ? "img-type-icon" : ""} alt="img-raid-egg" src={raidEgg(parseInt(tier), props.currForm && props.currForm.form.form_name.includes("mega"))}></img>
                 </div>
                 <div className='col d-flex justify-content-center' style={{marginBottom: 15}}>
                     <table className="table-info">

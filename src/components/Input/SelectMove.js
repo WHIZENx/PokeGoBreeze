@@ -7,14 +7,13 @@ import { splitAndCapitalize } from "../Calculate/Calculate";
 
 const SelectMove = (props) => {
 
-    const [currentMove, setCurrentMove] = useState(null);
     const [resultMove, setResultMove] = useState(null);
     const [showMove, setShowMove] = useState(false);
 
     const changeMove = (value) => {
         setShowMove(false);
         const name = splitAndCapitalize(value.name.replaceAll("_PLUS","+").replace("_FAST", ""), "_", " ");
-        const currentName = splitAndCapitalize(currentMove.name.replaceAll("_PLUS","+").replace("_FAST", ""), "_", " ");
+        const currentName = splitAndCapitalize(props.move.name.replaceAll("_PLUS","+").replace("_FAST", ""), "_", " ");
         if (currentName !== name) {
             if (props.setMovePokemon) props.setMovePokemon(value);
             if (props.clearData) props.clearData();
@@ -36,7 +35,6 @@ const SelectMove = (props) => {
                 resultFirst[0].SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
                 resultFirst[0].PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
             }
-            setCurrentMove(simpleMove[0]);
             if (props.setMovePokemon) props.setMovePokemon(simpleMove[0]);
             return setResultMove(simpleMove);
         };
@@ -49,20 +47,19 @@ const SelectMove = (props) => {
             result.SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
             result.PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
         }
-        setCurrentMove(simpleMove[0]);
         if (props.setMovePokemon) props.setMovePokemon(simpleMove[0]);
         return setResultMove(simpleMove);
     }, [props]);
 
     useEffect(() => {
-        if (props.pokemon && !currentMove) findMove(props.pokemon.num, props.pokemon.forme, props.moveType);
+        if (props.pokemon && !props.move) findMove(props.pokemon.num, props.pokemon.forme, props.moveType);
         if (!props.pokemon) setResultMove(null);
-    }, [findMove, props.pokemon, props.moveType, currentMove]);
+    }, [findMove, props.pokemon, props.moveType, props.move]);
 
     return (
         <div className={'d-flex align-items-center form-control '+(props.pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0, borderRadius: 0}}>
             <div className='card-move-input' tabIndex={ 0 } onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-                <CardMove value={currentMove} show={props.pokemon ? true : false}/>
+                <CardMove value={props.move} show={props.pokemon ? true : false}/>
                 {showMove && resultMove &&
                     <div className="result-move-select">
                         <div>

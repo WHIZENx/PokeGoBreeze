@@ -11,19 +11,19 @@ import { splitAndCapitalize } from '../../Calculate/Calculate';
 
 const PokemonModel = (props) => {
 
-    const getImageList = useCallback(() => {
-        let model = pokeImageList.find(item => item.id === props.id);
+    const getImageList = useCallback((id) => {
+        let model = pokeImageList.find(item => item.id === id);
         return Array.from(new Set(model.image.map(item => item.form))).map(value => {
             return {form: value, image: model.image.filter(item => value === item.form)}
         });
-    }, [props.id]);
+    }, []);
 
     const [pokeAssets, setPokeAssets] = useState([]);
     const gender = useRef(Object.values(pokemonData).find(item => item.num === props.id).genderRatio);
 
     useEffect(() => {
-        if (pokeAssets.length === 0) setPokeAssets(getImageList());
-    }, [getImageList, pokeAssets.length]);
+        setPokeAssets(getImageList(props.id));
+    }, [getImageList, props.id]);
 
     return (
         <div>
