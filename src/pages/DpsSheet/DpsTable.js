@@ -9,7 +9,7 @@ import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, conver
 import DataTable from "react-data-table-component";
 import APIService from "../../services/API.service";
 
-import loadingImg from '../../assets/loading-small.png';
+import loadingImg from '../../assets/loading.png';
 import Type from "../../components/Sprites/Type";
 import { Checkbox, FormControlLabel, Switch, capitalize } from "@mui/material";
 import { Box } from "@mui/system";

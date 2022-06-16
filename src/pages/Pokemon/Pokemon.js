@@ -95,6 +95,7 @@ const Pokemon = (props) => {
         else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name, "-", " "));
         setRegion(regionList[parseInt(data.generation.url.split("/")[6])]);
         setFormName(splitAndCapitalize(form ? isDefaultForm.form.name : data.name, "-", " "));
+        setOnChangeForm(false);
     }, [searchParams, setSearchParams]);
 
     const queryPokemon = useCallback((id) => {

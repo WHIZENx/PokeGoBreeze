@@ -96,7 +96,7 @@ const Evolution = (props) => {
             APIService.getFetchUrl(props.evolution_url)
             .then(res => {
                 setArrEvoList([]);
-                if (props.form && props.form.form_name !== "gmax") getEvoChain([res.data.chain]);
+                if (props.form.form_name !== "gmax") getEvoChain([res.data.chain]);
                 else getGmaxChain(props.id, props.form);
             });
         }

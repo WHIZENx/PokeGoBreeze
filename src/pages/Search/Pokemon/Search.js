@@ -56,13 +56,9 @@ const Search = () => {
     const getInfoPoke = (value) => {
         const id = parseInt(value.currentTarget.dataset.id);
         setShowResult(false);
-        setPrev(false);
-        setNext(false);
         setId(id);
-        setTimeout(() => {
-            setPrev(true);
-            setNext(true);
-        }, 500);
+        setPrev(true);
+        setNext(true);
     };
 
     const setIDPoke = (id) => {
