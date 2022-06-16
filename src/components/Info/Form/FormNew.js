@@ -164,6 +164,7 @@ const Form = (props) => {
             <div className="row w-100" style={{margin:0}}>
                 <div className="col-md-5" style={{padding:0}}>
                     <Info data={dataPoke} currForm={currForm} />
+                    <h5 className='element-top'>- Raid:</h5>
                     <Raid
                     currForm={currForm}
                     id={props.id_default}

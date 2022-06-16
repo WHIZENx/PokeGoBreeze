@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { calculateRaidCP, calculateRaidStat, raidEgg, RAID_BOSS_TIER } from "../Calculate/Calculate";
 
@@ -10,27 +10,36 @@ import pokemonData from '../../data/pokemon.json';
 
 import './Raid.css';
 
-const Raid = (props) => {
+const Raid = ({setTierBoss, currForm, id, statATK, statDEF}) => {
 
     const [tier, setTier] = useState(1);
 
+    useEffect(() => {
+        if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes("mega")) setTier(5);
+        else if (parseInt(tier) === 5 &&
+            currForm && currForm.form.form_name.includes("mega") &&
+            Object.values(pokemonData).find(item => item.num === id).pokemonClass) setTier(6);
+        if (setTierBoss) setTierBoss(parseInt(tier));
+    }, [tier, currForm, id, setTierBoss]);
+
     return (
         <Fragment>
-            <h5 className='element-top'>- Raid:</h5>
             <div className="d-flex justify-content-center">
-                <Form.Select className="w-50" onChange={(e) => setTier(e.target.value)} value={tier}>
+                <Form.Select className="w-50" onChange={(e) => {
+                    setTier(e.target.value);
+                    }} value={tier}>
                     <optgroup label="Normal Tiers">
                         <option value={1}>Tier 1</option>
                         <option value={3}>Tier 3</option>
-                        {props.currForm && !props.currForm.form.form_name.includes("mega") && <option value={5}>Tier 5</option>}
+                        {currForm && !currForm.form.form_name.includes("mega") && <option value={5}>Tier 5</option>}
                     </optgroup>
                     <optgroup label="Legacy Tiers">
                         <option value={2}>Tier 2</option>
                         <option value={4}>Tier 4</option>
                     </optgroup>
-                    {props.currForm && props.currForm.form.form_name.includes("mega") &&
+                    {currForm && currForm.form.form_name.includes("mega") &&
                     <Fragment>
-                        {Object.values(pokemonData).find(item => item.num === props.id).pokemonClass ?
+                        {Object.values(pokemonData).find(item => item.num === id).pokemonClass ?
                         <optgroup label="Legendary Mega Tiers">
                             <option value={6}>Tier Mega</option>
                         </optgroup>
@@ -47,7 +56,7 @@ const Raid = (props) => {
                 <div className="col-4 center d-inline-block">
                     <h1>CP</h1>
                     <hr className="w-100"></hr>
-                    <h5>{calculateRaidCP(props.statATK, props.statDEF, tier)}</h5>
+                    <h5>{calculateRaidCP(statATK, statDEF, tier)}</h5>
                 </div>
                 <div className="col-4 center d-inline-block">
                     <h1>HP</h1>
@@ -62,7 +71,7 @@ const Raid = (props) => {
             </div>
             <div className="row element-top container" style={{margin: 0}}>
                 <div className='col d-flex justify-content-center align-items-center' style={{marginBottom: 15}}>
-                    <img className={parseInt(tier) === 2 || parseInt(tier) === 4 ? "img-type-icon" : ""} alt="img-raid-egg" src={raidEgg(parseInt(tier), props.currForm && props.currForm.form.form_name.includes("mega"))}></img>
+                    <img className={parseInt(tier) === 2 || parseInt(tier) === 4 ? "img-type-icon" : ""} alt="img-raid-egg" src={raidEgg(parseInt(tier), currForm && currForm.form.form_name.includes("mega"))}></img>
                 </div>
                 <div className='col d-flex justify-content-center' style={{marginBottom: 15}}>
                     <table className="table-info">
@@ -71,11 +80,11 @@ const Raid = (props) => {
                             <tr className="center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
-                                    <td className="center">{calculateRaidStat(props.statATK, tier)}</td>
+                                    <td className="center">{calculateRaidStat(statATK, tier)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
-                                    <td className="center">{calculateRaidStat(props.statDEF, tier)}</td>
+                                    <td className="center">{calculateRaidStat(statDEF, tier)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>STA</td>
@@ -83,11 +92,8 @@ const Raid = (props) => {
                                 </tr>
                         </tbody>
                     </table>
+                </div>
             </div>
-            </div>
-
-
-
         </Fragment>
     )
 }

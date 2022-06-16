@@ -31,6 +31,7 @@ const NavbarComponent = () => {
                         <Link className="dropdown-item" to="/search-battle-stats">Search Battle Leagues Stats</Link>
                         <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
                         <Link className="dropdown-item" to="/stats-table">Stats Table</Link>
+                        <Link className="dropdown-item" to="/raid-battle">Raid Battle</Link>
                     </NavDropdown>
                     <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Sheet</Link>
                     <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>

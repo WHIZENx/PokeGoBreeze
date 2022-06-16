@@ -21,6 +21,7 @@ import Leagues from './pages/Leagues/Legues';
 import SearchBattle from './pages/Tools/SearchBattle/SearchBattle';
 import StatsTable from './pages/Tools/StatsTable/Stats';
 import Sticker from './pages/Sticker/Sticker';
+import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
 
 const App = () => {
 
@@ -42,6 +43,7 @@ const App = () => {
               <Route path="/find-cp-iv" element={<FindTable/>}></Route>
               <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
               <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
+              <Route path="/raid-battle" element={<RaidBattle/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
               <Route path="/moves/:id" element={<Move/>}></Route>
               <Route path="/stats-table" element={<StatsTable/>}></Route>
