@@ -26,20 +26,23 @@ const SelectPokemon = (props) => {
 
     const changePokemon = (value) => {
         setShowPokemon(false);
-        if (props.setCurrentPokemon) props.setCurrentPokemon(value);
-        if (props.setFMovePokemon) props.setFMovePokemon(null);
-        if (props.setCMovePokemon) props.setCMovePokemon(null);
-        setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
-        setSearch(splitAndCapitalize(value.name, "-", " "));
-        if (props.clearData) props.clearData();
+        const name = splitAndCapitalize(value.name, "-", " ");
+        if (search !== name) {
+            setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
+            setSearch(name);
+            if (props.setCurrentPokemon) props.setCurrentPokemon(value);
+            if (props.setFMovePokemon) props.setFMovePokemon(null);
+            if (props.setCMovePokemon) props.setCMovePokemon(null);
+            if (props.clearData) props.clearData();
+        }
     }
 
     const removePokemon = () => {
+        setPokemonIcon(null);
+        setSearch('');
         if (props.setCurrentPokemon) props.setCurrentPokemon(null);
         if (props.setFMovePokemon) props.setFMovePokemon(null);
         if (props.setCMovePokemon) props.setCMovePokemon(null);
-        setPokemonIcon(null);
-        setSearch('');
         if (props.clearData) props.clearData();
     }
 

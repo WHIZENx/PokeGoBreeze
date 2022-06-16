@@ -133,7 +133,7 @@ const Damage = () => {
                 stab: findStabType(move.type.toLowerCase()),
                 wb: battleState.weather,
                 dodge: battleState.dodge,
-                mega: form.form.pokemon.name.includes("mega") ? true : false,
+                mega: form.form.pokemon.forme && form.form.pokemon.forme.toLowerCase().includes("mega") ? true : false,
                 trainer: battleState.trainer,
                 flevel: enableFriend ? battleState.flevel : 0,
                 clevel: battleState.clevel,

@@ -79,7 +79,7 @@ const Home = () => {
                 // let result = Object.values((await APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')).data);
                 let result = Object.values(pokemonData);
                 result = result.map(item => {
-                    let stats = calculateStatsByTag(item.baseStats, item.slug);
+                    let stats = calculateStatsByTag(item.baseStats, item.forme);
                     return {
                         id: item.num,
                         name: item.name,

@@ -570,7 +570,7 @@ export const calStatsProd = (atk, def, sta, maxCP, pure) => {
 }
 
 export const calculateStatsByTag = (baseStats, tag) => {
-    let checkNerf = tag.toLowerCase().includes("mega") ? false : true;
+    let checkNerf = tag && tag.toLowerCase().includes("mega") ? false : true;
     const atk  = calBaseATK(baseStats, checkNerf);
     const def  = calBaseDEF(baseStats, checkNerf);
     const sta  = tag !== "shedinja" ? calBaseSTA(baseStats, checkNerf) : 1;
@@ -698,8 +698,8 @@ export const calculateBattleDPSDefender = (Attacker, Defender) => {
     const FDmgBaseDef = DEFAULT_DAMAGE_MULTIPLY*FPowDef*FMultiDef*(Defender.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Defender.WEATHER_BOOSTS === "string" ? weatherMultiple(Defender.WEATHER_BOOSTS, FTYPEDef) : Defender.WEATHER_BOOSTS ? STAB_MULTIPLY : 1);
     const CDmgBaseDef = DEFAULT_DAMAGE_MULTIPLY*CPowDef*CMultiDef*(Defender.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Defender.WEATHER_BOOSTS === "string" ? weatherMultiple(Defender.WEATHER_BOOSTS, CTYPEDef) : Defender.WEATHER_BOOSTS ? STAB_MULTIPLY : 1);
 
-    const FDmgDef = Math.floor(FDmgBaseDef*Defender.atk*getTypeEffective(FTYPEDef, Defender.types)/(Attacker.def*(Attacker.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
-    const CDmgDef = Math.floor(CDmgBaseDef*Defender.atk*getTypeEffective(CTYPEDef, Defender.types)/(Attacker.def*(Attacker.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
+    const FDmgDef = Math.floor(FDmgBaseDef*Defender.atk*getTypeEffective(FTYPEDef, Attacker.types)/(Attacker.def*(Attacker.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
+    const CDmgDef = Math.floor(CDmgBaseDef*Defender.atk*getTypeEffective(CTYPEDef, Attacker.types)/(Attacker.def*(Attacker.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
 
     const DefDmg = lambdaMod*FDmgDef+CDmgDef;
     return DefDmg/defDuration;
@@ -722,8 +722,8 @@ export const calculateBattleDPS = (Attacker, Defender, DPSDef) => {
     const FDmgBase = DEFAULT_DAMAGE_MULTIPLY*FPow*FMulti*(Attacker.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Attacker.WEATHER_BOOSTS === "string" ? weatherMultiple(Attacker.WEATHER_BOOSTS, FTYPE) : Attacker.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(Attacker.POKEMON_FRIEND ? getMultiFriendshipMulti(Attacker.POKEMON_FRIEND_LEVEL) : 1);
     const CDmgBase = DEFAULT_DAMAGE_MULTIPLY*CPow*CMulti*(Attacker.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Attacker.WEATHER_BOOSTS === "string" ? weatherMultiple(Attacker.WEATHER_BOOSTS, CTYPE) : Attacker.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(Attacker.POKEMON_FRIEND ? getMultiFriendshipMulti(Attacker.POKEMON_FRIEND_LEVEL) : 1);
 
-    const FDmg = Math.floor(FDmgBase*Attacker.atk*getTypeEffective(FTYPE, Attacker.types)/(Defender.def*(Defender.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
-    const CDmg = Math.floor(CDmgBase*Attacker.atk*getTypeEffective(CTYPE, Attacker.types)/(Defender.def*(Defender.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
+    const FDmg = Math.floor(FDmgBase*Attacker.atk*getTypeEffective(FTYPE, Defender.types)/(Defender.def*(Defender.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
+    const CDmg = Math.floor(CDmgBase*Attacker.atk*getTypeEffective(CTYPE, Defender.types)/(Defender.def*(Defender.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
 
     const FDPS = FDmg/FDur;
     const CDPS = CDmg/CDur;
@@ -756,7 +756,7 @@ export const calculateBattleDPS = (Attacker, Defender, DPSDef) => {
         const CMultiSec = (Attacker.types.includes(CTYPESec) ? STAB_MULTIPLY : 1)*moveSec.accuracyChance;
 
         const CDmgBaseSec = DEFAULT_DAMAGE_MULTIPLY*CPowSec*CMultiSec*(Attacker.shadow ? SHADOW_ATK_BONUS : 1)*(typeof Attacker.WEATHER_BOOSTS === "string" ? weatherMultiple(Attacker.WEATHER_BOOSTS, CTYPE) : Attacker.WEATHER_BOOSTS ? STAB_MULTIPLY : 1)*(Attacker.POKEMON_FRIEND ? getMultiFriendshipMulti(Attacker.POKEMON_FRIEND_LEVEL) : 1);
-        const CDmgSec = Math.floor(CDmgBaseSec*Attacker.atk*getTypeEffective(CTYPESec, Attacker.types)/Defender.def)+DEFAULT_DAMAGE_CONST;
+        const CDmgSec = Math.floor(CDmgBaseSec*Attacker.atk*getTypeEffective(CTYPESec, Defender.types)/(Defender.def*(Defender.shadow ? SHADOW_DEF_BONUS : 1)))+DEFAULT_DAMAGE_CONST;
         const CDPSSec = CDmgSec/CDurSec;
 
         let CEPSMSec;
@@ -801,7 +801,7 @@ export const queryTopMove = (move) => {
                 if (!pokemonList) pokemonList = combatPoke.ELITE_CINEMATIC_MOVES.includes(move.name);
             }
             if (pokemonList) {
-                const stats = calculateStatsByTag(value.baseStats, value.slug);
+                const stats = calculateStatsByTag(value.baseStats, value.forme);
                 let dps = calculateAvgDPS(move,
                     move,
                     calculateStatsBettlePure(stats.atk, MAX_IV, 40),
@@ -883,7 +883,7 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
     if (item.form === "") pokemon = Object.values(pokemonData).find(value => value.num === item.id && value.slug === item.name.toLowerCase());
     else pokemon = Object.values(pokemonData).find(value => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
     if (!pokemon) pokemon = Object.values(pokemonData).find(value => value.num === item.id);
-    let pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+    let pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
     let dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 500);
     let dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 1500);
     let dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 2500);
@@ -957,7 +957,7 @@ export const counterPokemon = (def, types) => {
                 console.log(value.ID, value.NAME);
                 return;
             }
-            let stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+            let stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
             value.QUICK_MOVES.forEach(vf => {
                 queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, false, false, false, false);
                 queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, false, true, false, false);

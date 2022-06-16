@@ -9,7 +9,7 @@ import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, conver
 import DataTable from "react-data-table-component";
 import APIService from "../../services/API.service";
 
-import loadingImg from '../../assets/loading.png';
+import loadingImg from '../../assets/loading-small.png';
 import Type from "../../components/Sprites/Type";
 import { Checkbox, FormControlLabel, Switch, capitalize } from "@mui/material";
 import { Box } from "@mui/system";
@@ -145,14 +145,14 @@ const DpsTable = (props) => {
     });
     const {WEATHER_BOOSTS, TRAINER_FRIEND, TRAINER_FRIEND_LEVEL, POKEMON_DEF_OBJ} = options;
 
-    const [loading, setLoading] = useState(true);
+    const [finished, setFinished] = useState(false);
     const [selectTypes, setSelectTypes] = useState([]);
 
-    const addCPokeData = useCallback((movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
+    const addCPokeData = useCallback((dataList, movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
         movePoke.forEach(vc => {
             const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
             const cmove = combatData.find(item => item.name === vc);
-            const stats = calculateStatsByTag(value.baseStats, value.slug);
+            const stats = calculateStatsByTag(value.baseStats, value.forme);
             const statsAttacker = {
                 atk: calculateStatsBettlePure(stats.atk, IV_ATK, POKEMON_LEVEL),
                 def: calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
@@ -160,19 +160,23 @@ const DpsTable = (props) => {
                 fmove: fmove,
                 cmove: cmove,
                 types: value.types,
-                shadow: shadow
+                shadow: shadow,
+                WEATHER_BOOSTS: options.WEATHER_BOOSTS,
+                POKEMON_FRIEND: options.TRAINER_FRIEND,
+                POKEMON_FRIEND_LEVEL: options.TRAINER_FRIEND_LEVEL,
             }
 
             let dps, tdo;
             if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
-                const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.slug);
+                const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.forme);
                 const statsDefender = {
                     atk: calculateStatsBettlePure(statsDef.atk, IV_ATK, POKEMON_LEVEL),
                     def: calculateStatsBettlePure(statsDef.def, IV_DEF, POKEMON_LEVEL),
                     hp: calculateStatsBettlePure(statsDef.sta, IV_HP, POKEMON_LEVEL),
                     fmove: combatData.find(item => item.name === fmoveTargetPokemon.name.replaceAll("_FAST", "")),
                     cmove: combatData.find(item => item.name === cmoveTargetPokemon.name),
-                    types: dataTargetPokemon.types
+                    types: dataTargetPokemon.types,
+                    WEATHER_BOOSTS: options.WEATHER_BOOSTS
                 }
                 const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
                 dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
@@ -187,7 +191,7 @@ const DpsTable = (props) => {
                     statsAttacker.shadow);
                 tdo = calculateTDO(statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
             }
-            setDpsTable(oldArr => [...oldArr, {
+            dataList.push({
                 pokemon: value,
                 fmove: statsAttacker.fmove,
                 cmove: statsAttacker.cmove,
@@ -202,40 +206,41 @@ const DpsTable = (props) => {
                     cmove: celite
                 },
                 cp : calculateCP(stats.atk+IV_ATK, stats.def+IV_DEF, stats.sta+IV_HP, POKEMON_LEVEL)
-            }]);
+            });
         });
     }, [IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, options, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
 
-    const addFPokeData = useCallback((combat, movePoke, value, felite) => {
+    const addFPokeData = useCallback((dataList, combat, movePoke, pokemon, felite) => {
         movePoke.forEach(vf => {
-            addCPokeData(combat.CINEMATIC_MOVES, value, vf, false, false, felite, false);
-            if (!value.slug.includes("mega")) {
-                if (combat.SHADOW_MOVES.length > 0) addCPokeData(combat.CINEMATIC_MOVES, value, vf, true, false, felite, false);
-                addCPokeData(combat.SHADOW_MOVES, value, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
-                addCPokeData(combat.PURIFIED_MOVES, value, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
+            addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false);
+            if (!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) {
+                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false);
+                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
+                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
             }
-            if (!value.slug.includes("mega") && combat.SHADOW_MOVES.length > 0) addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, true, false, felite, true);
-            else addCPokeData(combat.ELITE_CINEMATIC_MOVES, value, vf, false, false, felite, true);
+            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true);
+            else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true);
         });
     }, [addCPokeData]);
 
     const calculateDPSTable = useCallback(() => {
-        let dataList = Object.values(pokemonData);
-        dataList.forEach(value => {
-            if (value.num > 0) {
-                let combatPoke = combatPokemonData.filter(item => item.ID === value.num
-                    && item.BASE_SPECIES === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
+        let dataList = [];
+        Object.values(pokemonData).forEach(pokemon => {
+            if (pokemon.num > 0) {
+                let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
+                    && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
                 );
-                let result = combatPoke.find(item => item.NAME === convertName(value.name));
+                let result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
                 if (!result) combatPoke = combatPoke[0]
                 else combatPoke = result;
                 if (combatPoke) {
-                    addFPokeData(combatPoke, combatPoke.QUICK_MOVES, value, false);
-                    addFPokeData(combatPoke, combatPoke.ELITE_QUICK_MOVES, value, true);
+                    addFPokeData(dataList, combatPoke, combatPoke.QUICK_MOVES, pokemon, false);
+                    addFPokeData(dataList, combatPoke, combatPoke.ELITE_QUICK_MOVES, pokemon, true);
                 }
             }
         });
-        setLoading(false);
+        setFinished(true);
+        return dataList;
     }, [addFPokeData]);
 
     const filterBestOptions = (result, best) => {
@@ -249,29 +254,29 @@ const DpsTable = (props) => {
 
     useEffect(() => {
         document.title = "DPS&TDO Table";
-        if (dpsTable.length === 0 && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon)
-            calculateDPSTable();
-        else if (!dataTargetPokemon && dpsTable.length === 0)
-            calculateDPSTable();
-        if (dpsTable.length > 0) {
+        if (!finished && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon)
+            setDpsTable(calculateDPSTable());
+        else if (!dataTargetPokemon && !finished)
+            setDpsTable(calculateDPSTable());
+        if (finished) {
             let result = dpsTable.filter(item => {
                 const boolFilterType = selectTypes.length === 0 || (selectTypes.includes(capitalize(item.fmove.type.toLowerCase())) && selectTypes.includes(capitalize(item.cmove.type.toLowerCase())));
                 const boolFilterPoke =  searchTerm === '' || splitAndCapitalize(item.pokemon.name, "-", " ").toLowerCase().includes(searchTerm.toLowerCase()) || item.pokemon.num.toString().includes(searchTerm);
 
                 const boolShowShadow = !showShadow && item.shadow;
                 const boolShowElite = !showEliteMove && (item.elite.fmove || item.elite.cmove);
-                const boolShowMega = !showMega && item.pokemon.name.toLowerCase().includes("mega");
+                const boolShowMega = !showMega && item.pokemon.forme && item.pokemon.forme.toLowerCase().includes("mega");
 
                 const boolOnlyShadow = enableShadow && item.shadow;
                 const boolOnlyElite = enableElite && (item.elite.fmove || item.elite.cmove);
-                const boolOnlyMega = enableMega && item.pokemon.name.toLowerCase().includes("mega");
+                const boolOnlyMega = enableMega && item.pokemon.forme && item.pokemon.forme.toLowerCase().includes("mega");
                 if (enableShadow || enableElite || enableMega) return (boolFilterType && boolFilterPoke && !(boolShowShadow || boolShowElite || boolShowMega)) && (boolOnlyShadow || boolOnlyElite || boolOnlyMega);
                 else return boolFilterType && boolFilterPoke && !(boolShowShadow || boolShowElite || boolShowMega);
             });
             if (enableBest) result = filterBestOptions(result, bestOf);
             setDataFilter(result);
         }
-    }, [calculateDPSTable, dpsTable, selectTypes, searchTerm, showShadow, showEliteMove, showMega, enableElite, enableShadow, enableMega, enableBest, bestOf,
+    }, [finished, calculateDPSTable, dpsTable, selectTypes, searchTerm, showShadow, showEliteMove, showMega, enableElite, enableShadow, enableMega, enableBest, bestOf,
         dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
 
     const addTypeArr = (value) => {
@@ -282,9 +287,10 @@ const DpsTable = (props) => {
     }
 
     const clearData = () => {
-        setDpsTable([]);
-        setLoading(true);
-    }
+        setTimeout(() => {
+            setFinished(false);
+        }, 200);
+    };
 
     const onCalculateTable = useCallback((e) => {
         e.preventDefault();
@@ -448,8 +454,7 @@ const DpsTable = (props) => {
                                     onChange={(e) => setOptions({
                                         ...options,
                                         WEATHER_BOOSTS: e.target.value === "true" ? true : e.target.value === "false" ? false : e.target.value})}>
-                                        <option value={false}>None</option>
-                                        <option value={true}>Extream</option>
+                                        <option value={false}>Extream</option>
                                         {Object.keys(weatherBoosts).map((value, index) => (
                                             <option key={index} value={value}>{value}</option>
                                         ))
@@ -486,24 +491,23 @@ const DpsTable = (props) => {
                         </form>
                     </div>
                 </div>
-
             </div>
-            <DataTable
-                columns={columns}
-                data={dataFilter}
-                pagination
-                defaultSortFieldId={7}
-                defaultSortAsc={false}
-                highlightOnHover
-                striped
-                progressPending={loading}
-                progressComponent={
-                <div className='loading-group'>
-                    <img className="loading" width={40} height={40} alt='img-pokemon' src={loadingImg}></img>
+            <div className="position-relative">
+                <div className='loading-group' style={{display: finished ? "none" : "block"}}></div>
+                <div className="loading-spin center" style={{display: finished ? "none" : "block"}}>
+                    <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}></img>
                     <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                 </div>
-                }
-            />
+                <DataTable
+                    columns={columns}
+                    data={dataFilter}
+                    pagination
+                    defaultSortFieldId={7}
+                    defaultSortAsc={false}
+                    highlightOnHover
+                    striped
+                />
+            </div>
         </Fragment>
     )
 }

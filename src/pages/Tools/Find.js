@@ -27,7 +27,7 @@ const Find = (props) => {
 
     const convertArrStats = (data) => {
         return Object.values(data).map(value => {
-            let stats = calculateStatsByTag(value.baseStats, value.slug);
+            let stats = calculateStatsByTag(value.baseStats, value.forme);
             return {id: value.num, name: value.slug, base_stats: value.baseStats,
             baseStatsPokeGo: {attack: stats.atk, defense: stats.def, stamina: stats.sta}}
         })
