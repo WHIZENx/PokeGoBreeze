@@ -90,9 +90,9 @@ const Calculate = () => {
         <Fragment>
             <div className="container element-top">
                 <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} urlEvo={urlEvo} setUrlEvo={setUrlEvo}/>
-                <h1 id ="main" className='center'>Calculate Stats</h1>
+                <h1 id ="main" className='text-center'>Calculate Stats</h1>
                 <form className="element-top" onSubmit={onCalculateStatsPoke.bind(this)}>
-                    <div className="form-group d-flex justify-content-center center">
+                    <div className="form-group d-flex justify-content-center text-center">
                         <Box sx={{ width: '50%', minWidth: 350 }}>
                             <div className="input-group mb-3">
                                 <div className="input-group-prepend">
@@ -103,7 +103,7 @@ const Calculate = () => {
                             </div>
                         </Box>
                     </div>
-                    <div className="form-group d-flex justify-content-center center">
+                    <div className="form-group d-flex justify-content-center text-center">
                         <Box sx={{ width: '50%', minWidth: 300 }}>
                             <div className="d-flex justify-content-between">
                                 <b>ATK</b>
@@ -152,7 +152,7 @@ const Calculate = () => {
                             />
                         </Box>
                     </div>
-                    <div className="d-flex justify-content-center center">
+                    <div className="d-flex justify-content-center text-center">
                         <TypeRadioGroup
                             row
                             aria-labelledby="row-types-group-label"
@@ -165,12 +165,12 @@ const Calculate = () => {
                             <FormControlLabel value="purified" control={<Radio />} label={<span><img height={32} alt="img-purified" src={APIService.getPokePurified()}></img> Purified</span>} />
                         </TypeRadioGroup>
                     </div>
-                    <div className="form-group d-flex justify-content-center center element-top">
+                    <div className="form-group d-flex justify-content-center text-center element-top">
                         <button type="submit" className="btn btn-primary">Calculate</button>
                     </div>
                 </form>
                 <div>
-                <div className="d-flex justify-content-center center" style={{height: 80}}>
+                <div className="d-flex justify-content-center text-center" style={{height: 80}}>
                     <Box sx={{ width: '60%', minWidth: 320 }}>
                         <div className="d-flex justify-content-between">
                                 <b>Level</b>
@@ -196,7 +196,7 @@ const Calculate = () => {
                             <div className="col" style={{padding: 0}}>
                                     <table className="table-info table-stats">
                                         <thead>
-                                            <tr className="center"><th colSpan="2">Simulate Power Up Pokémon</th></tr>
+                                            <tr className="text-center"><th colSpan="2">Simulate Power Up Pokémon</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr>
@@ -272,7 +272,7 @@ const Calculate = () => {
                                                 : "Unavailable" : "-"}
                                                 </td>
                                             </tr>
-                                            <tr className="center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
+                                            <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
                                                 <td>{statData ?
@@ -298,14 +298,14 @@ const Calculate = () => {
                                                 <td>{statData ? calculateStatsBettle(statSTA, pokeStats.IV.sta, statLevel) : "-"}</td>
                                             </tr>
                                             {/* <EvoChain id={id} url={urlEvo.url} /> */}
-                                            {/* <tr className="center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
+                                            {/* <tr className="text-center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
                                             {arrEvoList.map((value, index) => (
                                                 <Fragment key={index}>
                                                 {value.map((value, index) => (
                                                     <Fragment key={index}>
                                                         {parseInt(value.id) !== id &&
                                                             <Fragment>
-                                                                <tr className="center">
+                                                                <tr className="text-center">
                                                                     <td className="img-table-evo" colSpan="2"><img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img></td>
                                                                 </tr>
                                                                 <tr>
@@ -329,11 +329,11 @@ const Calculate = () => {
                                 </div>
                                 <div className="col" style={{padding: 0}}>
                                     <table className="table-info bettle-league">
-                                        <thead className="center">
+                                        <thead className="text-center">
                                             <tr><th colSpan="5">Recommend in Bettle League</th></tr>
                                         </thead>
                                         <tbody>
-                                            <tr className="center"><td className="table-sub-header" colSpan="4">
+                                            <tr className="text-center"><td className="table-sub-header" colSpan="4">
                                             <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img>
                                             <span className={dataLittleLeague ? dataLittleLeague.elidge ? null : "text-danger" : null}>Little Cup{dataLittleLeague ? dataLittleLeague.elidge ? "" : <span> (Not Elidge)</span>: ""}</span>
                                             </td></tr>
@@ -377,17 +377,17 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td>Stats</td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
                                                 {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type ==="shadow" ? "text-success" : ""}>{dataLittleLeague.stats.atk}</span> : "-"}
                                                 </td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
                                                 {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataLittleLeague.stats.def}</span> : "-"}
                                                 </td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
                                                 {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
-                                            <tr className="center"><td className="table-sub-header" colSpan="4">
+                                            <tr className="text-center"><td className="table-sub-header" colSpan="4">
                                                 <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("great_league")}></img>
                                                 <span className={dataGreatLeague ? dataGreatLeague.elidge ? null : "text-danger" : null}>Great League{dataGreatLeague ? dataGreatLeague.elidge ? "" : <span> (Not Elidge)</span>: ""}</span>
                                             </td></tr>
@@ -431,17 +431,17 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td>Stats</td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
                                                 {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type ==="shadow" ? "text-success" : ""}>{dataGreatLeague.stats.atk}</span> : "-"}
                                                 </td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
                                                 {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataGreatLeague.stats.def}</span> : "-"}
                                                 </td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
                                                 {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
-                                            <tr className="center"><td className="table-sub-header" colSpan="4">
+                                            <tr className="text-center"><td className="table-sub-header" colSpan="4">
                                                 <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("ultra_league")}></img>
                                                 <span className={dataUltraLeague ? dataUltraLeague.elidge ? null : "text-danger" : null}>Ultra League{dataUltraLeague ? dataUltraLeague.elidge ? "" : <span> (Not Elidge)</span> : ""}</span>
                                             </td></tr>
@@ -485,17 +485,17 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td>Stats</td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
                                                 {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type ==="shadow" ? "text-success" : ""}>{dataUltraLeague.stats.atk}</span> : "-"}
                                                 </td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
                                                 {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataUltraLeague.stats.def}</span> : "-"}
                                                 </td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
                                                 {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
-                                            <tr className="center"><td className="table-sub-header" colSpan="4">
+                                            <tr className="text-center"><td className="table-sub-header" colSpan="4">
                                                 <img style={{marginRight: 10}} alt='img-league' width={30} height={30} src={APIService.getPokeLeague("master_league")}></img>
                                                 Master League
                                             </td></tr>
@@ -539,13 +539,13 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td>Stats</td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>
                                                 {dataMasterLeague ? <span className={statData.type ==="shadow" ? "text-success" : ""}>{dataMasterLeague.stats.atk}</span> : "-"}
                                                 </td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>
                                                 {dataMasterLeague ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataMasterLeague.stats.def}</span> : "-"}
                                                 </td>
-                                                <td style={{textAlign: 'center'}}><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>
                                                 {dataMasterLeague ? dataMasterLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>

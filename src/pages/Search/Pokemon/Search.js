@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo, Fragment } from 'react';
 
-import './Search.css';
-
 import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
@@ -88,7 +86,7 @@ const Search = () => {
     return (
         <Fragment>
         <div className="container element-top">
-            <h1 id ="main" className='center'>Pokémon Info Search</h1>
+            <h1 id ="main" className='text-center'>Pokémon Info Search</h1>
             <div className="input-group mb-12 element-top">
                 <div className="input-group-prepend">
                     <span className="input-group-text" id="inputGroup-sizing-default">Search</span>

@@ -104,7 +104,7 @@ const Pokemon = (props) => {
             setPokeRatio(getRatioGender(dataPri, res.data.id));
             fetchMap(res.data);
             setData(res.data);
-            if (params.id) document.title =  `#${res.data.id} - ${splitAndCapitalize(res.data.name, "-", " ")}`;
+            if (params.id) document.title = `#${res.data.id} - ${splitAndCapitalize(res.data.name, "-", " ")}`;
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
@@ -250,11 +250,11 @@ const Pokemon = (props) => {
                 </div>
                 <div className={'position-relative poke-container'+(props.isSearch ? "" : " container")}>
                     <div className='loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
-                    <div className="position-fixed loading-spin center" style={{display: spinner ? "block" : "none"}}>
+                    <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
                         <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}></img>
                         <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                     </div>
-                    <div className="w-100 center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
+                    <div className="w-100 text-center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
                         <div className="d-inline-block img-desc">
                             <img className="pokemon-main-sprite" style={{verticalAlign: 'baseline'}} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
                         </div>
@@ -306,7 +306,7 @@ const Pokemon = (props) => {
                             <table className="table-info table-main">
                                 <thead></thead>
                                 <tbody>
-                                    <tr className="center">
+                                    <tr className="text-center">
                                         <td className="table-sub-header">Unlock third move</td>
                                         <td className="table-sub-header">Costs</td>
                                     </tr>
@@ -327,7 +327,7 @@ const Pokemon = (props) => {
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr className="center">
+                                    <tr className="text-center">
                                         <td className="table-sub-header">Purified</td>
                                         <td className="table-sub-header">Costs</td>
                                     </tr>

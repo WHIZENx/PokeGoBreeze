@@ -14,34 +14,54 @@ import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Raid from '../../Raid/Raid';
 
-const Form = (props) => {
+const Form = ({
+    setSpinner,
+    onChangeForm,
+    setOnChangeForm,
+    onSetPrev,
+    onSetNext,
+    onSetReForm,
+    setVersion,
+    setRegion,
+    setWH,
+    setFormName,
+    id_default,
+    pokeData,
+    pokemonRaito,
+    formList,
+    ratio,
+    stats,
+    species,
+    onSetIDPoke,
+    paramForm
+}) => {
 
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const findFirst = useCallback(() => {
-        return props.formList.map(item => {
+        return formList.map(item => {
             return item.find(item => item.form.is_default)
         })[0];
-    }, [props.formList]);
+    }, [formList]);
 
     const findDefaultForm = useCallback(() => {
-        return props.formList.map(item => {
+        return formList.map(item => {
             return item.find(item => item.form.is_default)
-        }).find(item => item.id === props.id_default);
-    }, [props.formList, props.id_default]);
+        }).find(item => item.id === id_default);
+    }, [formList, id_default]);
 
     const findForm = () => {
-        let form = props.paramForm;
-        if (props.id_default === 555 && form === "galar") form += "-standard"
-        return props.formList.map(form => {
+        let form = paramForm;
+        if (id_default === 555 && form === "galar") form += "-standard"
+        return formList.map(form => {
             let curFrom = form.find(item => form && (item.form.form_name === form || item.form.name === item.default_name+"-"+form));
             return curFrom ? curFrom : form.find(item => item.form.is_default)
-        }).find(item => form ? item.form.form_name === form || item.form.name === item.default_name+"-"+form : item.id === props.id_default);
+        }).find(item => form ? item.form.form_name === form || item.form.name === item.default_name+"-"+form : item.id === id_default);
     }
 
     const [currForm, setCurrForm] = useState(findForm());
-    const [dataPoke, setDataPoke] = useState(props.pokeData.find(item => item.id === props.id_default));
+    const [dataPoke, setDataPoke] = useState(pokeData.find(item => item.id === id_default));
     const pokeID = useRef(null);
 
     const [statATK, setStatATK] = useState(null);
@@ -62,61 +82,62 @@ const Form = (props) => {
         if (firstFilter) return firstFilter;
         const filterForm = stats.find(item => item.id === id &&
             filterFormName(currForm.form.form_name, item.form));
-        if (filterId.length === 1 && props.formList.length === 1 && !filterForm) return filterId[0];
-        else if (filterId.length === props.formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
+        if (filterId.length === 1 && formList.length === 1 && !filterForm) return filterId[0];
+        else if (filterId.length === formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
         else return filterForm;
-    }, [currForm, props.formList, filterFormName]);
+    }, [currForm, formList, filterFormName]);
 
     useEffect(() => {
         if (!currForm) {
             setCurrForm(findFirst());
             pokeID.current = findFirst().form.id;
         } else {
-            setStatATK(filterFormList(props.stats.attack.ranking, props.id_default));
-            setStatDEF(filterFormList(props.stats.defense.ranking, props.id_default));
-            setStatSTA(filterFormList(props.stats.stamina.ranking, props.id_default));
+            setStatATK(filterFormList(stats.attack.ranking, id_default));
+            setStatDEF(filterFormList(stats.defense.ranking, id_default));
+            setStatSTA(filterFormList(stats.stamina.ranking, id_default));
             if (!pokeID.current) {
                 pokeID.current = findDefaultForm() ? currForm.form.id : findFirst().form.id;
             }
         }
-        if (currForm && dataPoke && props.onSetPrev != null && props.onSetNext != null) {
-            props.onSetPrev(true);
-            props.onSetNext(true);
+        if (currForm && dataPoke && onSetPrev && onSetNext) {
+            onSetPrev(true);
+            onSetNext(true);
         }
-    }, [filterFormList, props, currForm, dataPoke, findFirst, findDefaultForm])
+    }, [filterFormList, currForm, dataPoke, findFirst, findDefaultForm,
+        id_default, onSetNext, onSetPrev, stats.attack.ranking, stats.defense.ranking, stats.stamina.ranking])
 
     const changeForm = (e) => {
         const [name, form] = e.currentTarget.value.split("=");
         if (params.id) {
             searchParams.set("form", form);
             setSearchParams(searchParams);
-            props.onSetReForm(true)
+            onSetReForm(true)
         }
-        const findData = props.pokeData.find(item => name === item.name);
-        const findForm = props.formList.map(item => item.find(item => item.form.name === name)).find(item => item);
+        const findData = pokeData.find(item => name === item.name);
+        const findForm = formList.map(item => item.find(item => item.form.name === name)).find(item => item);
         setCurrForm(findForm);
         let region = Object.values(regionList).find(item => findForm.form.form_name.includes(item.toLowerCase()));
-        if (findForm.form.form_name !== "" && region) props.setRegion(region);
-        else props.setRegion(regionList[parseInt(props.species.generation.url.split("/")[6])]);
-        props.setFormName(splitAndCapitalize(findForm.form.name, "-", " "));
+        if (findForm.form.form_name !== "" && region) setRegion(region);
+        else setRegion(regionList[parseInt(species.generation.url.split("/")[6])]);
+        setFormName(splitAndCapitalize(findForm.form.name, "-", " "));
         if (findData && findForm) {
             let oriForm = findData;
             oriForm.types = findForm.form.types;
             setDataPoke(oriForm);
-            props.setWH(prevWH => ({...prevWH, weight: oriForm.weight, height: oriForm.height}));
+            setWH(prevWH => ({...prevWH, weight: oriForm.weight, height: oriForm.height}));
         } else if (findForm) {
-            let oriForm = props.pokeData[0];
+            let oriForm = pokeData[0];
             oriForm.types = findForm.form.types;
             setDataPoke(oriForm);
-            props.setWH(prevWH => ({...prevWH, weight: oriForm.weight, height: oriForm.height}));
+            setWH(prevWH => ({...prevWH, weight: oriForm.weight, height: oriForm.height}));
         } else if (findData) {
             setDataPoke(findData);
-            props.setWH(prevWH => ({...prevWH, weight: findData.weight, height: findData.height}));
+            setWH(prevWH => ({...prevWH, weight: findData.weight, height: findData.height}));
         } else {
-            setDataPoke(props.pokeData[0]);
-            props.setWH(prevWH => ({...prevWH, weight: props.pokeData[0].weight, height: props.pokeData[0].height}));
+            setDataPoke(pokeData[0]);
+            setWH(prevWH => ({...prevWH, weight: pokeData[0].weight, height: pokeData[0].height}));
         }
-        props.setVersion(findForm.form.version_group.name);
+        setVersion(findForm.form.version_group.name);
     }
 
     return (
@@ -125,7 +146,7 @@ const Form = (props) => {
                 <div className='scroll-form'>
                 {currForm && pokeID.current &&
                     <Fragment>
-                    {props.formList.map((value, index) => (
+                    {formList.map((value, index) => (
                         <Fragment key={index}>
                             {value.map((value, index) => (
                                 <button value={value.form.name+"="+value.form.form_name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
@@ -145,18 +166,18 @@ const Form = (props) => {
                 </div>
             {dataPoke && currForm &&
             <Fragment>
-                {props.ratio.M !== 0 || props.ratio.F !== 0 ?
+                {ratio.M !== 0 || ratio.F !== 0 ?
                 <Fragment>
-                {props.ratio.M !== 0 && <Fragment><Gender ratio={props.ratio} sex='Male' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
-                {props.ratio.M !== 0 && props.ratio.F !== 0 && <hr></hr>}
-                {props.ratio.F !== 0 && <Fragment><Gender ratio={props.ratio} sex='Female' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+                {ratio.M !== 0 && <Fragment><Gender ratio={ratio} sex='Male' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
+                {ratio.M !== 0 && ratio.F !== 0 && <hr></hr>}
+                {ratio.F !== 0 && <Fragment><Gender ratio={ratio} sex='Female' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/></Fragment>}
                 </Fragment>
                 : <Gender sex='Genderless' default_m={currForm.form.sprites.front_default} shiny_m={currForm.form.sprites.front_shiny} default_f={currForm.form.sprites.front_female} shiny_f={currForm.form.sprites.front_shiny_female}/>
                 }
                 <Stats statATK={statATK}
                     statDEF={statDEF}
                     statSTA={statSTA}
-                    pokemonStats={props.stats}
+                    pokemonStats={stats}
                     stats={dataPoke}/>
                 <hr className='w-100'></hr>
                 <div className="row w-100" style={{margin:0}}>
@@ -164,7 +185,7 @@ const Form = (props) => {
                         <Info data={dataPoke} currForm={currForm} />
                         <Raid
                         currForm={currForm}
-                        id={props.id_default}
+                        id={id_default}
                         statATK={statATK ? statATK.attack : calBaseATK(dataPoke.stats, true)}
                         statDEF={statDEF ? statDEF.defense : calBaseDEF(dataPoke.stats, true)}/>
                     </div>
@@ -182,17 +203,17 @@ const Form = (props) => {
             {dataPoke && currForm &&
             <Fragment>
             <hr className="w-100"></hr>
-            {props.formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 && !currForm.form.form_name.includes("gmax") ?
+            {formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 && !currForm.form.form_name.includes("gmax") ?
             <div className='row w-100' style={{margin:0}}>
                 <div className='col-xl' style={{padding:0}}>
-                <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} eqForm={props.formList.length === 1 && props.species.pokedex_numbers.length > 1}/>
+                <Evolution onSetPrev={onSetPrev} onSetNext={onSetNext} onSetIDPoke={onSetIDPoke} evolution_url={species.evolution_chain.url} id={id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}/>
                 </div>
                 <div className='col-xl' style={{padding:0}}>
-                    <Mega formList={props.formList} id={props.id_default}/>
+                    <Mega formList={formList} id={id_default}/>
                 </div>
             </div>
             :
-            <Evolution onSetPrev={props.onSetPrev} onSetNext={props.onSetNext} onSetIDPoke={props.onSetIDPoke} evolution_url={props.species.evolution_chain.url} id={props.id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} region={regionList[parseInt(props.species.generation.url.split("/")[6])]}/>
+            <Evolution onSetPrev={onSetPrev} onSetNext={onSetNext} onSetIDPoke={onSetIDPoke} evolution_url={species.evolution_chain.url} id={id_default} form={currForm.form} formDefault={pokeID.current === currForm.form.id} region={regionList[parseInt(species.generation.url.split("/")[6])]}/>
             }
             </Fragment>
             }

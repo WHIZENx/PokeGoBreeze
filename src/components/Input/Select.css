@@ -78,6 +78,16 @@
     background-color: white;
 }
 
+.result-move-select-default {
+    position: absolute;
+    z-index: 2;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    width: 298px;
+    max-height: 50%;
+    overflow-y: auto;
+    background-color: white;
+}
+
 .select-down {
     position: absolute;
     top: 0;

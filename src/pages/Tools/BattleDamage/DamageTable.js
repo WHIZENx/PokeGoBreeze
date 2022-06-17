@@ -51,7 +51,7 @@ const DamageTable = (props) => {
                 <table className="table-info table-result">
                     <thead></thead>
                     <tbody>
-                        <tr className="center"><td className="table-sub-header" colSpan="2">Battle Result</td></tr>
+                        <tr className="text-center"><td className="table-sub-header" colSpan="2">Battle Result</td></tr>
                         <tr>
                             <td>Attacker</td>
                             <td>{props.result.objPoke ?

@@ -8,9 +8,7 @@ import sta_logo from '../../assets/stamina.png';
 
 import pokemonData from '../../data/pokemon.json';
 
-import './Raid.css';
-
-const Raid = ({setTierBoss, currForm, id, statATK, statDEF}) => {
+const Raid = ({setTierBoss, currForm, id, statATK, statDEF, setStatBossATK, setStatBossDEF, setStatBossHP}) => {
 
     const [tier, setTier] = useState(1);
 
@@ -20,7 +18,12 @@ const Raid = ({setTierBoss, currForm, id, statATK, statDEF}) => {
             currForm && currForm.form.form_name.includes("mega") &&
             Object.values(pokemonData).find(item => item.num === id).pokemonClass) setTier(6);
         if (setTierBoss) setTierBoss(parseInt(tier));
-    }, [tier, currForm, id, setTierBoss]);
+        if (setStatBossATK && setStatBossDEF && setStatBossHP) {
+            setStatBossATK(calculateRaidStat(statATK, tier));
+            setStatBossDEF(calculateRaidStat(statDEF, tier));
+            setStatBossHP(RAID_BOSS_TIER[tier].sta);
+        }
+    }, [tier, currForm, id, setTierBoss, setStatBossATK, setStatBossDEF, setStatBossHP, statATK, statDEF]);
 
     return (
         <Fragment>
@@ -53,17 +56,17 @@ const Raid = ({setTierBoss, currForm, id, statATK, statDEF}) => {
                 </Form.Select>
             </div>
             <div className="row w-100 element-top" style={{margin: 0}}>
-                <div className="col-4 center d-inline-block">
+                <div className="col-4 text-center d-inline-block">
                     <h1>CP</h1>
                     <hr className="w-100"></hr>
                     <h5>{calculateRaidCP(statATK, statDEF, tier)}</h5>
                 </div>
-                <div className="col-4 center d-inline-block">
+                <div className="col-4 text-center d-inline-block">
                     <h1>HP</h1>
                     <hr className="w-100"></hr>
                     <h5>{RAID_BOSS_TIER[tier].sta}</h5>
                 </div>
-                <div className="col-4 center d-inline-block">
+                <div className="col-4 text-center d-inline-block">
                     <h1>LEVEL</h1>
                     <hr className="w-100"></hr>
                     <h5>{RAID_BOSS_TIER[tier].level}</h5>
@@ -77,18 +80,18 @@ const Raid = ({setTierBoss, currForm, id, statATK, statDEF}) => {
                     <table className="table-info">
                         <thead></thead>
                         <tbody>
-                            <tr className="center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
+                            <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
-                                    <td className="center">{calculateRaidStat(statATK, tier)}</td>
+                                    <td className="text-center">{calculateRaidStat(statATK, tier)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
-                                    <td className="center">{calculateRaidStat(statDEF, tier)}</td>
+                                    <td className="text-center">{calculateRaidStat(statDEF, tier)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>STA</td>
-                                    <td className="center">{Math.floor(RAID_BOSS_TIER[tier].sta/RAID_BOSS_TIER[tier].CPm)}</td>
+                                    <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta/RAID_BOSS_TIER[tier].CPm)}</td>
                                 </tr>
                         </tbody>
                     </table>

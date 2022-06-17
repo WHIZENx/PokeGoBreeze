@@ -125,7 +125,7 @@ const Find = (props) => {
 
     const showPokemon = () => {
         return (
-            <div className="col d-flex justify-content-center center">
+            <div className="col d-flex justify-content-center text-center">
                 <div>
                 { pokeList.length > 0 && dataPri && stats &&
                     <Fragment>
@@ -139,7 +139,7 @@ const Find = (props) => {
 
     return (
         <div className="container element-top">
-            <h1 id ="main" className='center' style={{marginBottom: 15}}>{props.title ? props.title : "Pokémon GO Tools"}</h1>
+            <h1 id ="main" className='text-center' style={{marginBottom: 15}}>{props.title ? props.title : "Pokémon GO Tools"}</h1>
             <div className="row search-container">
             {props.swap ?
                 <Fragment>

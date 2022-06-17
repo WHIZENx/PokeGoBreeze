@@ -176,9 +176,9 @@ const FindBattle = () => {
     return (
         <div className="container">
             <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} setForm={setForm}/>
-            <h1 id ="main" className='center'>Search Battle Leagues Stats</h1>
+            <h1 id ="main" className='text-center'>Search Battle Leagues Stats</h1>
             <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)} style={{marginBottom: 15}}>
-                <div className="form-group d-flex justify-content-center center">
+                <div className="form-group d-flex justify-content-center text-center">
                     <Box sx={{ width: '50%', minWidth: 350 }}>
                         <div className="input-group mb-3">
                             <div className="input-group-prepend">
@@ -189,7 +189,7 @@ const FindBattle = () => {
                         </div>
                     </Box>
                 </div>
-                <div className="form-group d-flex justify-content-center center">
+                <div className="form-group d-flex justify-content-center text-center">
                     <Box sx={{ width: '50%', minWidth: 300 }}>
                         <div className="d-flex justify-content-between">
                             <b>ATK</b>
@@ -238,12 +238,12 @@ const FindBattle = () => {
                         />
                     </Box>
                 </div>
-                <div className="form-group d-flex justify-content-center center element-top">
+                <div className="form-group d-flex justify-content-center text-center element-top">
                     <button type="submit" className="btn btn-primary">Search</button>
                 </div>
             </form>
             {load ?
-                <div className="center" style={{padding: '2rem'}}>
+                <div className="text-center" style={{padding: '2rem'}}>
                     <div className='loading-group'>
                         <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}></img>
                         <span className='caption text-black' style={{fontSize: 20}}><b>Loading...</b></span>
@@ -252,9 +252,9 @@ const FindBattle = () => {
             :
             <Fragment>
                 {evoChain.length > 0 && bestInLeague.length > 0 &&
-                <div className="center">
+                <div className="text-center">
                     <div>
-                        <h4 style={{textDecoration: 'underline'}}>
+                        <h4 className="text-decoration-underline">
                             Recommend Battle League
                         </h4>
                         {bestInLeague.map((value, index) => (

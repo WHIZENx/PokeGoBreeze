@@ -99,8 +99,8 @@ const StatsTable = () => {
     return (
         <div className="container" style={{minHeight: 1650}}>
             <Find clearStats={clearStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName}/>
-            <h1 id ="main" className='center'>Stats Battle Table</h1>
-            <div className="center" style={{marginTop: 15, marginBottom: 15}}>
+            <h1 id ="main" className='text-center'>Stats Battle Table</h1>
+            <div className="text-center" style={{marginTop: 15, marginBottom: 15}}>
                 <button className={"btn btn-form"+(battleLeague === 500 ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(500)}>
                     <img alt='img-league' width={128} height={128} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img>
                     <div><b>Little Cup</b></div>
@@ -123,7 +123,7 @@ const StatsTable = () => {
                 </button>
             </div>
             <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)}>
-                <div className="form-group d-flex justify-content-center center">
+                <div className="form-group d-flex justify-content-center text-center">
                     <Box sx={{ width: '50%', minWidth: 350 }}>
                         <div className="input-group mb-3">
                             <div className="input-group-prepend">
@@ -134,7 +134,7 @@ const StatsTable = () => {
                         </div>
                     </Box>
                 </div>
-                <div className="form-group d-flex justify-content-center center">
+                <div className="form-group d-flex justify-content-center text-center">
                     <Box sx={{ width: '50%', minWidth: 300 }}>
                         <div className="d-flex justify-content-between">
                             <b>ATK</b>
@@ -183,7 +183,7 @@ const StatsTable = () => {
                         />
                     </Box>
                 </div>
-                <div className="form-group d-flex justify-content-center center element-top">
+                <div className="form-group d-flex justify-content-center text-center element-top">
                     <button type="button" className="btn btn-danger" style={{marginRight: 15}} onClick={() => clearStatsPoke()}>Clear</button>
                     <button type="submit" className="btn btn-primary">Search</button>
                 </div>

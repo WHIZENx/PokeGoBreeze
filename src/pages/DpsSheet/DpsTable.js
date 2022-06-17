@@ -105,7 +105,7 @@ const columns = [
     },
 ];
 
-const DpsTable = (props) => {
+const DpsTable = () => {
 
     const types = Object.keys(typesData);
 
@@ -298,7 +298,7 @@ const DpsTable = (props) => {
 
     return (
         <Fragment>
-            <div className='head-filter border-types center w-100'>
+            <div className='head-filter border-types text-center w-100'>
                 <div className='head-types'>Filter Moves By Types</div>
                 <div className='row w-100' style={{margin: 0}}>
                     {types.map((item, index) => (
@@ -319,7 +319,7 @@ const DpsTable = (props) => {
                             onInput={e => setSearchTerm(e.target.value)}></input>
                         </div>
                         <div className="input-group">
-                            <span className="input-group-text">Show</span>
+                            <span className="input-group-text">Filter show</span>
                             <FormControlLabel control={<Checkbox checked={showShadow} onChange={(event, check) => setFilters({...filters, showShadow: check})}/>} label="Shadow Pokemon" />
                             <FormControlLabel control={<Checkbox checked={showEliteMove} onChange={(event, check) => setFilters({...filters, showEliteMove: check})}/>} label="Elite Move" />
                             <FormControlLabel control={<Checkbox checked={showMega} onChange={(event, check) => setFilters({...filters, showMega: check})}/>} label="Mega" />
@@ -354,13 +354,13 @@ const DpsTable = (props) => {
                                 <Box className="col-xl-4" style={{padding: 0}}>
                                     <div className="input-group">
                                         <span className="input-group-text">Fast Move</span>
-                                        <SelectMove clearData={clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFmoveTargetPokemon} moveType="FAST"/>
+                                        <SelectMove inputType={"small"} clearData={clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFmoveTargetPokemon} moveType="FAST"/>
                                     </div>
                                 </Box>
                                 <Box className="col-xl-4" style={{padding: 0}}>
                                     <div className="input-group">
                                         <span className="input-group-text">Charge Move</span>
-                                        <SelectMove clearData={clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCmoveTargetPokemon} moveType="CHARGE"/>
+                                        <SelectMove inputType={"small"} clearData={clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCmoveTargetPokemon} moveType="CHARGE"/>
                                     </div>
                                 </Box>
                             </div>
@@ -493,7 +493,7 @@ const DpsTable = (props) => {
             </div>
             <div className="position-relative">
                 <div className='loading-group-spin' style={{display: !showSpinner ? "none" : "block"}}></div>
-                <div className="loading-spin center" style={{display: !showSpinner ? "none" : "block"}}>
+                <div className="loading-spin text-center" style={{display: !showSpinner ? "none" : "block"}}>
                     <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}></img>
                     <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                 </div>

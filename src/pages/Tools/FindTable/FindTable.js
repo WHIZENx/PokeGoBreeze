@@ -156,27 +156,27 @@ const FindTable = () => {
                     <p className="element-top">All of result: <b>{preIvArr.result.length}</b></p>
                     <p className="element-top">Average of percent: <b>{parseFloat(avgPercent.toFixed(2))}</b></p>
                     <p className="element-top">Average of HP: <b>{Math.round(avgHP)}</b></p>
-                    <div className="d-inline-block center four-star">
+                    <div className="d-inline-block text-center four-star">
                         <HundoRate name="hundo-rate" value={3} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{fourStar}</b></div>
                     </div>
-                    <div className="d-inline-block center three-star">
+                    <div className="d-inline-block text-center three-star">
                         <Rating name="three-rate" value={3} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{threeStar}</b></div>
                     </div>
-                    <div className="d-inline-block center two-star">
+                    <div className="d-inline-block text-center two-star">
                         <Rating name="two-rate" value={2} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{twoStar}</b></div>
                     </div>
-                    <div className="d-inline-block center one-star">
+                    <div className="d-inline-block text-center one-star">
                         <Rating name="one-rate" value={1} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{oneStar}</b></div>
                     </div>
-                    <div className="d-inline-block center zero-star">
+                    <div className="d-inline-block text-center zero-star">
                         <Rating name="zero-rate" value={0} max={3} readOnly />
                         <hr style={{margin: 0}}></hr>
                         <div><b>{zeroStar}</b></div>
@@ -194,7 +194,7 @@ const FindTable = () => {
                     conditionalRowStyles={conditionalRowStyles}
                     highlightOnHover
                 />
-                : <p className="element-top text-danger center">At CP: <b>{preIvArr.cp}</b> impossible found in <b>{name}</b></p>
+                : <p className="element-top text-danger text-center">At CP: <b>{preIvArr.cp}</b> impossible found in <b>{name}</b></p>
                 }
             </Fragment>
         )
@@ -267,7 +267,7 @@ const FindTable = () => {
         <Fragment>
             <div className="container element-top">
                 <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName}/>
-                <h1 id ="main" className='center'>Find IV</h1>
+                <h1 id ="main" className='text-center'>Find IV</h1>
                 <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
                     <Box sx={{ width: '50%', minWidth: 350 }}>
                         <div className="input-group mb-3">
@@ -277,7 +277,7 @@ const FindTable = () => {
                         <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
                         onInput={e => setSearchCP(e.target.value)}></input>
                         </div>
-                        <div className="btn-search d-flex justify-content-center center">
+                        <div className="btn-search d-flex justify-content-center text-center">
                             <button type="submit" className="btn btn-primary">Search</button>
                         </div>
                     </Box>
@@ -289,9 +289,9 @@ const FindTable = () => {
                     : <p>None</p>
                 }
                 <hr></hr>
-                <h1 id ="main" className='center'>Find CP</h1>
+                <h1 id ="main" className='text-center'>Find CP</h1>
                 <form id="formCP" className="element-top" onSubmit={onFindCP.bind(this)}>
-                    <div className="form-group d-flex justify-content-center center">
+                    <div className="form-group d-flex justify-content-center text-center">
                         <Box sx={{ width: '50%', minWidth: 300 }}>
                             <div className="d-flex justify-content-between">
                                 <b>ATK</b>
@@ -340,7 +340,7 @@ const FindTable = () => {
                             />
                         </Box>
                     </div>
-                    <div className="form-group d-flex justify-content-center center element-top">
+                    <div className="form-group d-flex justify-content-center text-center element-top">
                         <button type="submit" className="btn btn-primary">Search</button>
                     </div>
                 </form>

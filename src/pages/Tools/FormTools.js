@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import Stats from "../../components/Info/Stats/Stats";
 
-const FormTools = (props) => {
+const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats}) => {
 
-    const [dataPoke, setDataPoke] = useState(null);
+    const [currDataPoke, setCurrDataPoke] = useState(null);
 
     const [statATK, setStatATK] = useState(null);
     const [statDEF, setStatDEF] = useState(null);
@@ -23,39 +23,38 @@ const FormTools = (props) => {
     const filterFormList = useCallback((stats, id) => {
         const filterId = stats.filter(item => item.id === id);
         const filterForm = stats.find(item => item.id === id &&
-            filterFormName(props.currForm.form.form_name, item.form));
-        if (filterId.length === 1 && props.formList.length === 1 && !filterForm) return filterId[0];
-        else if (filterId.length === props.formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
+            filterFormName(currForm.form.form_name, item.form));
+        if (filterId.length === 1 && formList.length === 1 && !filterForm) return filterId[0];
+        else if (filterId.length === formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
         else return filterForm;
-    }, [props.currForm, filterFormName, props.formList.length]);
+    }, [currForm, filterFormName, formList.length]);
 
     useEffect(() => {
-        if (props.currForm && props.dataPoke) {
-            let formATK = filterFormList(props.stats.attack.ranking, props.id);
-            let formDEF = filterFormList(props.stats.defense.ranking, props.id);
-            let formSTA = filterFormList(props.stats.stamina.ranking, props.id);
+        if (currForm && dataPoke) {
+            let formATK = filterFormList(stats.attack.ranking, id);
+            let formDEF = filterFormList(stats.defense.ranking, id);
+            let formSTA = filterFormList(stats.stamina.ranking, id);
             setStatATK(formATK);
             setStatDEF(formDEF);
             setStatSTA(formSTA);
-            setDataPoke(props.dataPoke.find(item => item.id === props.id))
+            setCurrDataPoke(dataPoke.find(item => item.id === id))
 
             if (formATK && formDEF && formSTA) {
-                props.onSetStats("atk", formATK.attack)
-                props.onSetStats("def", formDEF.defense)
-                props.onSetStats("sta", formSTA.stamina)
-                if (props.setForm) props.setForm(props.currForm)
+                onSetStats("atk", formATK.attack)
+                onSetStats("def", formDEF.defense)
+                onSetStats("sta", formSTA.stamina)
+                if (setForm) setForm(currForm)
             }
         }
-    }, [props, filterFormList]);
+    }, [filterFormList, currForm, dataPoke, id, onSetStats, setForm, stats.attack.ranking, stats.defense.ranking, stats.stamina.ranking])
 
     return (
         <Stats statATK={statATK}
                 statDEF={statDEF}
                 statSTA={statSTA}
-                pokemonStats={props.stats}
-                stats={dataPoke}/>
+                pokemonStats={stats}
+                stats={currDataPoke}/>
     )
-
 }
 
 export default FormTools;

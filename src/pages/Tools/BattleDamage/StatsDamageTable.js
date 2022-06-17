@@ -8,30 +8,30 @@ import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
 import { LevelSlider, TypeRadioGroup } from "../../../util/util";
 
-const StatsTable = (props) => {
+const StatsTable = ({setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA}) => {
 
-    const [statLevel, setStatLevel] = useState(1);
-    const [statType, setStatType] = useState(null);
+    const [currStatLevel, setCurrStatLevel] = useState(1);
+    const [currStatType, setCurrStatType] = useState(null);
 
     const onHandleLevel = useCallback((e, v) => {
-        props.setStatLevel(v);
-        if(props.setStatLvATK) props.setStatLvATK(calculateStatsBettlePure(props.statATK, 15, statLevel, statType === "shadow" ? SHADOW_ATK_BONUS : 1));
-        if(props.setStatLvDEF) props.setStatLvDEF(calculateStatsBettlePure(props.statDEF, 15, statLevel, statType === "shadow" ? SHADOW_DEF_BONUS : 1));
-        if(props.setStatLvSTA) props.setStatLvSTA(calculateStatsBettlePure(props.statSTA, 15, statLevel));
         setStatLevel(v);
-    }, [props, statLevel, statType]);
+        if(setStatLvATK) setStatLvATK(calculateStatsBettlePure(statATK, 15, currStatLevel, currStatType === "shadow" ? SHADOW_ATK_BONUS : 1));
+        if(setStatLvDEF) setStatLvDEF(calculateStatsBettlePure(statDEF, 15, currStatLevel, currStatType === "shadow" ? SHADOW_DEF_BONUS : 1));
+        if(setStatLvSTA) setStatLvSTA(calculateStatsBettlePure(statSTA, 15, currStatLevel));
+        setCurrStatLevel(v);
+    }, [setStatLevel, setStatLvATK, setStatLvDEF, setStatLvSTA, statATK, statDEF, statSTA, currStatType, currStatLevel]);
 
     const onHandleType = useCallback(v => {
-        props.setStatType(v);
         setStatType(v);
-        props.setStatLevel(1);
+        setCurrStatType(v);
         setStatLevel(1);
-    }, [props]);
+        setCurrStatLevel(1);
+    }, [setStatType, setStatLevel]);
 
     return (
         <div className="container">
             <div>
-                <div className="d-flex justify-content-center center">
+                <div className="d-flex justify-content-center text-center">
                     <TypeRadioGroup
                         row
                         aria-labelledby="row-types-group-label"
@@ -43,40 +43,40 @@ const StatsTable = (props) => {
                         <FormControlLabel value="shadow" control={<Radio />} label={<span><img height={32} alt="img-shadow" src={APIService.getPokeShadow()}></img> Shadow</span>} />
                     </TypeRadioGroup>
                 </div>
-                <div className="d-flex justify-content-center center" style={{height: 80}}>
+                <div className="d-flex justify-content-center text-center" style={{height: 80}}>
                     <Box sx={{ width: '60%', minWidth: 320 }}>
                         <div className="d-flex justify-content-between">
                                 <b>Level</b>
-                                <b>{statLevel}</b>
+                                <b>{currStatLevel}</b>
                         </div>
                         <LevelSlider
                             aria-label="Level"
-                            value={statLevel}
+                            value={currStatLevel}
                             defaultValue={1}
                             valueLabelDisplay="off"
                             step={0.5}
                             min={1}
-                            max={statType === "lucky" ? 51 : 50}
+                            max={currStatType === "lucky" ? 51 : 50}
                             onChange={onHandleLevel}
                         />
                     </Box>
                 </div>
-                <div className="d-flex justify-content-center center">
+                <div className="d-flex justify-content-center text-center">
                     <table className="table-info" style={{width: '40%', minWidth: 270}}>
                         <thead></thead>
                         <tbody>
-                            <tr className="center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
+                            <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
-                                    <td className="center">{calculateStatsBettle(props.statATK, 15, statLevel, statType === "shadow" ? SHADOW_ATK_BONUS : 1)}</td>
+                                    <td className="text-center">{calculateStatsBettle(statATK, 15, currStatLevel, currStatType === "shadow" ? SHADOW_ATK_BONUS : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
-                                    <td className="center">{calculateStatsBettle(props.statDEF, 15, statLevel, statType === "shadow" ? SHADOW_DEF_BONUS : 1)}</td>
+                                    <td className="text-center">{calculateStatsBettle(statDEF, 15, currStatLevel, currStatType === "shadow" ? SHADOW_DEF_BONUS : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
-                                    <td className="center">{calculateStatsBettle(props.statSTA, 15, statLevel)}</td>
+                                    <td className="text-center">{calculateStatsBettle(statSTA, 15, currStatLevel)}</td>
                                 </tr>
                         </tbody>
                     </table>

@@ -33,7 +33,7 @@ const theme = createTheme({
     },
   });
 
-const Evolution = (props) => {
+const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, evolution_url, id, onSetIDPoke}) => {
 
     const [arrEvoList, setArrEvoList] = useState([]);
 
@@ -42,9 +42,9 @@ const Evolution = (props) => {
         let evoList = data.map(item => {
             return evoData.filter(e => e.id === parseInt(item.species.url.split("/")[6]));
         })[0];
-        let currForm = props.formDefault ?
-        props.form.form_name === "" && ["Alola", "Galar"].includes(props.region) ?
-        props.region : props.form.form_name : props.form.form_name;
+        let currForm = formDefault ?
+        forme.form_name === "" && ["Alola", "Galar"].includes(region) ?
+        region : forme.form_name : forme.form_name;
         if (evoList.length > 1) {
             let evoInJSON = evoList.find(item => item.name.includes(currForm.toUpperCase()));
             if (evoInJSON) {
@@ -61,7 +61,7 @@ const Evolution = (props) => {
             }
         } else {
             let evoInJSON = evoList.find(item => item.name.includes(currForm.toUpperCase()));
-            if (!evoInJSON && ["Alola", "Galar"].includes(props.region)) evoInJSON = evoList.find(item => item.name.includes(""))
+            if (!evoInJSON && ["Alola", "Galar"].includes(region)) evoInJSON = evoList.find(item => item.name.includes(""))
             if (evoInJSON) {
                 let evoInAPI = data.find(item => parseInt(item.species.url.split("/")[6]) === evoInJSON.id);
                 if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
@@ -69,7 +69,7 @@ const Evolution = (props) => {
                     evoInJSON.evo_list.forEach(value =>
                         data.forEach(item => {
                             item.evolves_to.forEach(i => {
-                                if (["kubfu", "rockruff"].includes(props.form.name) || value.evo_to_form.toLowerCase().replaceAll("_", "-") === currForm) tempArr.push({...i, form: value.evo_to_form.toLowerCase().replaceAll("_", "-")});
+                                if (["kubfu", "rockruff"].includes(forme.name) || value.evo_to_form.toLowerCase().replaceAll("_", "-") === currForm) tempArr.push({...i, form: value.evo_to_form.toLowerCase().replaceAll("_", "-")});
                             });
                         })
                     );
@@ -82,7 +82,7 @@ const Evolution = (props) => {
             return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby, form: item.form ? item.form : null}
         })]);
         return data.map(item => getEvoChain(item.evolves_to))
-    }, [props.formDefault, props.form, props.region]);
+    }, [formDefault, forme, region]);
 
     const getGmaxChain = useCallback((id, form) => {
         setArrEvoList([
@@ -92,22 +92,18 @@ const Evolution = (props) => {
     }, []);
 
     useEffect(() => {
-        if (props.form) {
-            APIService.getFetchUrl(props.evolution_url)
+        if (id && forme && evolution_url) {
+            APIService.getFetchUrl(evolution_url)
             .then(res => {
                 setArrEvoList([]);
-                if (props.form.form_name !== "gmax") getEvoChain([res.data.chain]);
-                else getGmaxChain(props.id, props.form);
+                if (forme.form_name !== "gmax") getEvoChain([res.data.chain]);
+                else getGmaxChain(id, forme);
             });
         }
-    }, [props.evolution_url, props.form, getEvoChain, getGmaxChain, props.id]);
+    }, [evolution_url, forme, getEvoChain, getGmaxChain, id]);
 
     const handlePokeID = (id) => {
-        if (id !== props.id.toString()) {
-            props.onSetPrev(false);
-            props.onSetNext(false);
-            props.onSetIDPoke(parseInt(id));
-        }
+        if (id !== id.toString()) onSetIDPoke(parseInt(id));
     };
 
     const setHeightEvo = () => {
@@ -144,7 +140,7 @@ const Evolution = (props) => {
     }
 
     const renderImageEvo = (value, chain, evo, index, evoCount) => {
-        let form = value.form ? value.form : props.form.form_name;
+        let form = value.form ? value.form : forme.form_name;
         let offsetY = 35;
         offsetY += value.baby ? 20 : 0
         offsetY += arrEvoList.length === 1 ? 20 : 0
@@ -227,7 +223,7 @@ const Evolution = (props) => {
                 start={`evo-${evo-1}-${chain.length > 1 ? 0 : index}`} end={`evo-${evo}-${chain.length > 1 ? index : 0}`} />}
                 {evoCount > 1 ?
                 <Fragment>
-                {(chain.length > 1) || (chain.length === 1 && props.form.form_name !== "") ?
+                {(chain.length > 1) || (chain.length === 1 && form.form_name !== "") ?
                     <Fragment>
                     {form !== "" && !form.includes("mega") ?
                     <ThemeProvider theme={theme}>
@@ -263,7 +259,7 @@ const Evolution = (props) => {
                 <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>
                 {value.baby && <span className="caption text-danger">(Baby)</span>}
                 {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
-                <p>{value.id === props.id && <span className="caption">Current</span>}</p>
+                <p>{value.id === id && <span className="caption">Current</span>}</p>
             </Fragment>
         )
     }
@@ -297,7 +293,7 @@ const Evolution = (props) => {
                             <ul className="ul-evo">
                                 {values.map((value, index) => (
                                     <li id={"evo-"+evo+"-"+index} key={index} className='img-form-gender-group img-evo-group li-evo'>
-                                        {props.onSetIDPoke ?
+                                        {onSetIDPoke ?
                                         <div className="select-evo" onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, "-", " ")}`}>
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </div>

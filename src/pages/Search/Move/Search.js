@@ -63,7 +63,7 @@ const Search = () => {
                     <table className="table-info table-movesets">
                         <thead></thead>
                         <tbody>
-                            <tr className="center"><td className="table-sub-header" colSpan="3">Fast move</td></tr>
+                            <tr className="text-center"><td className="table-sub-header" colSpan="3">Fast move</td></tr>
                             <tr><td className="data-table"><DataTable
                                 columns={columnsF}
                                 data={combatData.filter(item => item.type_move === "FAST")}
@@ -77,7 +77,7 @@ const Search = () => {
                     <table className="table-info table-movesets">
                         <thead></thead>
                         <tbody>
-                            <tr className="center"><td className="table-sub-header" colSpan="3">Charge move</td></tr>
+                            <tr className="text-center"><td className="table-sub-header" colSpan="3">Charge move</td></tr>
                             <tr><td className="data-table"><DataTable
                                 columns={columnsF}
                                 data={combatData.filter(item => item.type_move === "CHARGE")}

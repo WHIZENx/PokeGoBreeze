@@ -38,8 +38,8 @@ const Counter = (props) => {
                 <colgroup className="main-move-counter" />
                 <colgroup />
                 <thead>
-                    <tr className="center"><th className="table-sub-header" colSpan="4">Best Pokemon Counter</th></tr>
-                    <tr className="center">
+                    <tr className="text-center"><th className="table-sub-header" colSpan="4">Best Pokemon Counter</th></tr>
+                    <tr className="text-center">
                         <th className="table-column-head main-move-name">Pokemon</th>
                         <th className="table-column-head main-move-counter">Fast</th>
                         <th className="table-column-head main-move-counter">Charge</th>
@@ -52,7 +52,7 @@ const Counter = (props) => {
                     {counterList.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
                         <Fragment key={index}>
                             <tr>
-                                <td className="text-origin center">
+                                <td className="text-origin text-center">
                                     <Link  to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}`: ""}`} target="_blank">
                                         <div className="d-flex justify-content-center">
                                             <div className="position-relative group-pokemon-sprite">
@@ -65,7 +65,7 @@ const Counter = (props) => {
                                         <span className="caption text-black">#{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, "-", " ")}</span>
                                     </Link>
                                 </td>
-                                <td className="text-origin center">
+                                <td className="text-origin text-center">
                                     <Link to={"../moves/"+value.fmove.id} target="_blank" className="d-grid">
                                         <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
                                             <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}></img>
@@ -76,7 +76,7 @@ const Counter = (props) => {
                                         </span>
                                     </Link>
                                 </td>
-                                <td className="text-origin center">
+                                <td className="text-origin text-center">
                                     <Link to={"../moves/"+value.cmove.id} target="_blank" className="d-grid">
                                         <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
                                             <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}></img>
@@ -89,7 +89,7 @@ const Counter = (props) => {
                                         </span>
                                     </Link>
                                 </td>
-                                <td className="center">{value.ratio.toFixed(2)}</td>
+                                <td className="text-center">{value.ratio.toFixed(2)}</td>
                             </tr>
                         </Fragment>
                     ))
@@ -98,7 +98,7 @@ const Counter = (props) => {
                     :
                     <Fragment>
                         <tr style={{height: 627}}>
-                            <td className="text-origin center" colSpan={4}>
+                            <td className="text-origin text-center" colSpan={4}>
                                 <span onClick={() => loadMetaData()} className="link-url">Click to load all best pokemon counter</span>
                             </td>
                         </tr>

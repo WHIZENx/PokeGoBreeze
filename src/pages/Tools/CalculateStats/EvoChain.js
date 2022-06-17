@@ -25,14 +25,14 @@ const EvoChain = (props) => {
 
     return (
         <Fragment>
-            <tr className="center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
+            <tr className="text-center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
                 {arrEvoList.map((value, index) => (
                     <Fragment key={index}>
                     {value.map((value, index) => (
                         <Fragment key={index}>
                             {parseInt(value.id) !== props.id &&
                                 <Fragment>
-                                    <tr className="center">
+                                    <tr className="text-center">
                                         <td className="img-table-evo" colSpan="2"><img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img></td>
                                     </tr>
                                     <tr>

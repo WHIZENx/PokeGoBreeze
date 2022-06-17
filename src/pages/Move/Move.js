@@ -97,7 +97,7 @@ const Move = (props) => {
                 <div className="row" style={{margin: 0}}>
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-table">
-                            <thead className="center">
+                            <thead className="text-center">
                                 <tr><th colSpan="3">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")+" in Pokemon Go"}</th></tr>
                             </thead>
                             <tbody>
@@ -117,7 +117,7 @@ const Move = (props) => {
                                     <td>Move Type</td>
                                     <td colSpan="2"><b>{capitalize(move.type_move.toLowerCase())} Move</b></td>
                                 </tr>
-                                <tr className="center"><td className="table-sub-header" colSpan="3">PVE Stats</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="3">PVE Stats</td></tr>
                                 <tr>
                                     <td>PVE Power</td>
                                     <td colSpan="2">{move.pve_power}</td>
@@ -137,7 +137,7 @@ const Move = (props) => {
                                         <div style={{width: ((120-(5*(Math.max(1, getBarCharge(true, move.pve_energy)))))/getBarCharge(true, move.pve_energy))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
                                 </tr>}
-                                <tr className="center"><td className="table-sub-header" colSpan="3">PVP Stats</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="3">PVP Stats</td></tr>
                                 <tr>
                                     <td>PVP Power</td>
                                     <td colSpan="2">{move.pvp_power}</td>
@@ -159,7 +159,7 @@ const Move = (props) => {
                                 </tr>}
                                 {move.buffs.length > 0 &&
                                     <Fragment>
-                                    <tr className="center"><td className="table-sub-header" colSpan="3">PVP Buffs</td></tr>
+                                    <tr className="text-center"><td className="table-sub-header" colSpan="3">PVP Buffs</td></tr>
                                     {move.buffs.map((value, index) => (
                                         <tr key={index}>
                                             <td className="target-buff"><CircleIcon sx={{fontSize: "5px"}}/> {capitalize(value.target)}</td>
@@ -179,7 +179,7 @@ const Move = (props) => {
                                     </Fragment>
                                 }
 
-                                <tr className="center"><td className="table-sub-header" colSpan="3">Other Stats</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="3">Other Stats</td></tr>
                                 <tr>
                                     <td>Weather Boosts</td>
                                     <td colSpan="2"><img className="img-type-icon" height={25} alt="img-type" src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}></img></td>
@@ -200,7 +200,7 @@ const Move = (props) => {
                                     <td>Critical Chance</td>
                                     <td colSpan="2">{move.criticalChance*100}%</td>
                                 </tr>
-                                <tr className="center"><td className="table-sub-header" colSpan="3">Effect</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="3">Effect</td></tr>
                                 <tr>
                                     <td>Sound</td>
                                     <td colSpan="2">
@@ -215,11 +215,11 @@ const Move = (props) => {
                     </div>
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-damage-table">
-                            <thead className="center">
+                            <thead className="text-center">
                                 <tr><th colSpan="2">{"Damage "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")+" Simulator"}</th></tr>
                             </thead>
                             <tbody>
-                                <tr className="center"><td className="table-sub-header" colSpan="2">PVE Stats</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="2">PVE Stats</td></tr>
                                 <tr>
                                     <td>DPS</td>
                                     <td>{((move.pve_power)/(move.durationMs/1000)).toFixed(2)}</td>
@@ -243,7 +243,7 @@ const Move = (props) => {
                                     <td>EPS</td>
                                     <td>{((move.pve_energy)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>}
-                                <tr className="center"><td className="table-sub-header" colSpan="2">PVP Stats</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="2">PVP Stats</td></tr>
                                 <tr>
                                     <td>DPS</td>
                                     <td>{((move.pvp_power)/(move.durationMs/1000)).toFixed(2)}</td>
@@ -253,7 +253,7 @@ const Move = (props) => {
                                     <span className="caption">(STAB / Shadow Bonus)</span></td>
                                     <td>{((move.pvp_power*STAB_MULTIPLY)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
-                                <tr className="center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
                                 <tr>
                                     <td className="table-top-of-move" colSpan={2} style={{padding: 0}}>
                                         <DataTable

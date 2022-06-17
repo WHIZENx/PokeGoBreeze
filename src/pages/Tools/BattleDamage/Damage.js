@@ -182,13 +182,13 @@ const Damage = () => {
                 statATK={statATKObj} statDEF={statDEFObj} statSTA={statSTAObj} />
             </div>
         </div>
-        <h1 id ="main" className='center'>Battle Damage Calculate</h1>
+        <h1 id ="main" className='text-center'>Battle Damage Calculate</h1>
         <div className="d-flex justify-content-center">
             <div className="element-top container row" style={{marginBottom: 20}}>
                 <div className="col" style={{marginBottom: 15}}>
                     <form onSubmit={onCalculateDamagePoke.bind(this)}>
                         <div className="d-flex justify-content-center">
-                            <div className='row center' style={{width: 520}}>
+                            <div className='row text-center' style={{width: 520}}>
                                 <div className="col">
                                     <h5 className='text-success'>- Current Pokémon Type -</h5>
                                     {form &&  <Type arr={form.form.types.map(ele => ele.type.name)}/> }
@@ -199,7 +199,7 @@ const Damage = () => {
                                 </div>
                             </div>
                         </div>
-                        <Move text="Select Moves" type={0} id={id} form={form ? form.form.pokemon.name : name.toLowerCase()} setMove={setMove} move={move}/>
+                        <Move text="Select Moves" id={id} form={form ? form.form.pokemon.name : name.toLowerCase()} setMove={setMove} move={move}/>
                         <div className="element-top">
                             {move &&
                             <div style={{width: 300, margin: 'auto'}}>
@@ -211,7 +211,7 @@ const Damage = () => {
                                 </b></p>
                             </div>
                             }
-                            <div className="center">
+                            <div className="text-center">
                                 <FormGroup>
                                     <FormControlLabel control={<Checkbox checked={weather} onChange={handleCheckbox} name="weather"/>} label="Weather Boosts" />
                                     <FormControlLabel control={<Checkbox checked={dodge} onChange={handleCheckbox} name="dodge"/>} label="Dodge" />

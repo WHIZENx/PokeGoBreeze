@@ -51,7 +51,7 @@ const TableMove = (props) => {
                         </span>
                     </Link>
                 </td>
-                <td className="center">{Math.round(value.eDPS[type]*100/max)}</td>
+                <td className="text-center">{Math.round(value.eDPS[type]*100/max)}</td>
             </tr>
         )
     }
@@ -64,8 +64,8 @@ const TableMove = (props) => {
                         <colgroup className="main-move" />
                         <colgroup className="main-move" />
                         <thead>
-                            <tr className="center"><th className="table-sub-header" colSpan="3">Best Move ATK</th></tr>
-                            <tr className="center">
+                            <tr className="text-center"><th className="table-sub-header" colSpan="3">Best Move ATK</th></tr>
+                            <tr className="text-center">
                                 <th className="table-column-head main-move">Fast</th>
                                 <th className="table-column-head main-move">Charge</th>
                                 <th className="table-column-head">%</th>
@@ -84,8 +84,8 @@ const TableMove = (props) => {
                         <colgroup className="main-move" />
                         <colgroup className="main-move" />
                         <thead>
-                            <tr className="center"><th className="table-sub-header" colSpan="3">Best Move DEF</th></tr>
-                            <tr className="center">
+                            <tr className="text-center"><th className="table-sub-header" colSpan="3">Best Move DEF</th></tr>
+                            <tr className="text-center">
                                 <th className="table-column-head">Fast</th>
                                 <th className="table-column-head">Charge</th>
                                 <th className="table-column-head">%</th>
