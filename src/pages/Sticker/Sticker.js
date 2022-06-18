@@ -39,7 +39,7 @@ const Sticker = () => {
                             {pokeStickerList.data.filter(item => item.type === "DEFAULT").map((value, index) => (
                                 <div key={index} className="sticker-detail">
                                     {value.pokemonId ?
-                                    <Badge color="primary" overlap="circular" badgeContent="Pokemon">
+                                    <Badge color="primary" overlap="circular" badgeContent="Pokémon">
                                         <img height={64} alt='img-sticker' src={value.stickerUrl? value.stickerUrl : APIService.getPokeSprite(0)}></img>
                                     </Badge>
                                     :

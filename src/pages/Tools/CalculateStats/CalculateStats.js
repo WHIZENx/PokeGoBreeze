@@ -200,7 +200,7 @@ const Calculate = () => {
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>Pokemon Level</td>
+                                                <td>Pokémon Level</td>
                                                 <td>{statLevel && statData ? statLevel : "-"}</td>
                                             </tr>
                                             <tr>

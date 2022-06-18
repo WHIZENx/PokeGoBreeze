@@ -1,0 +1,59 @@
+.top-raid-group {
+    border: 1px solid #b8d4da;
+    white-space: nowrap;
+    overflow-x: auto;
+    margin-bottom: 15px;
+}
+
+.top-raid-pokemon {
+    width: 250px;
+    display: inline-block;
+    border: 1px solid #b8d4da;
+    padding: 10px;
+}
+
+.sprite-raid {
+    width: 128px;
+}
+
+.text-type-border {
+    margin-top: 5px;
+    margin-left: 42px;
+}
+
+.type-icon-border {
+    position: absolute;
+    left: 0;
+    border-radius: 50%;
+    padding: 8px;
+}
+
+.type-badge-border {
+    position: absolute;
+    top: -14px;
+    right: -25px;
+    transform: translate(5px, 5px);
+
+}
+
+.type-badge-border .type-icon-small {
+    box-shadow: 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.type-icon-border img {
+    border-radius: 50%;
+}
+
+.type-border {
+    margin-left: 35px;
+    width: max-content;
+    padding: 8px;
+    text-shadow: 1px 1px black;
+    color: white;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.type-border span {
+    margin: 0 8px;
+}

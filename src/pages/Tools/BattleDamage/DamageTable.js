@@ -93,7 +93,7 @@ const DamageTable = (props) => {
                             <td>{props.result.battleState ? props.result.battleState.trainer ? <DoneIcon sx={{color: 'green'}}/> : <CloseIcon sx={{color: 'red'}}/> : "-"}</td>
                         </tr>
                         <tr>
-                            <td>Pokemon Friendship level</td>
+                            <td>Pokémon Friendship level</td>
                             <td>{props.result.battleState ? props.result.battleState.flevel : "-"}</td>
                         </tr>
                         <tr>

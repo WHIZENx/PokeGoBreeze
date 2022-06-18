@@ -249,7 +249,7 @@ const Pokemon = (props) => {
                     }
                 </div>
                 <div className={'position-relative poke-container'+(props.isSearch ? "" : " container")}>
-                    <div className='loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
+                    <div className='position-fixed loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
                     <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
                         <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}></img>
                         <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>

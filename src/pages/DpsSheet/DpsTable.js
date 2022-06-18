@@ -49,7 +49,7 @@ const columns = [
         maxWidth: '120px',
     },
     {
-        name: 'Pokemon Name',
+        name: 'Pokémon Name',
         selector: row =>
             <Link to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase()}`: ""}`} target="_blank" title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, "-", " ")}`}>
             {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
@@ -320,7 +320,7 @@ const DpsTable = () => {
                         </div>
                         <div className="input-group">
                             <span className="input-group-text">Filter show</span>
-                            <FormControlLabel control={<Checkbox checked={showShadow} onChange={(event, check) => setFilters({...filters, showShadow: check})}/>} label="Shadow Pokemon" />
+                            <FormControlLabel control={<Checkbox checked={showShadow} onChange={(event, check) => setFilters({...filters, showShadow: check})}/>} label="Shadow Pokémon" />
                             <FormControlLabel control={<Checkbox checked={showEliteMove} onChange={(event, check) => setFilters({...filters, showEliteMove: check})}/>} label="Elite Move" />
                             <FormControlLabel control={<Checkbox checked={showMega} onChange={(event, check) => setFilters({...filters, showMega: check})}/>} label="Mega" />
                         </div>
@@ -344,7 +344,7 @@ const DpsTable = () => {
                             <div className='row w-100' style={{margin: 0}}>
                                 <Box className="col-xl-4" style={{padding: 0}}>
                                     <div className="input-group">
-                                        <span className="input-group-text">Target Pokemon</span>
+                                        <span className="input-group-text">Target Pokémon</span>
                                         <SelectPokemon clearData={clearData}
                                         setCurrentPokemon={setDataTargetPokemon}
                                         setFMovePokemon={setFmoveTargetPokemon}

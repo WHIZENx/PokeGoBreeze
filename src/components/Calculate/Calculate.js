@@ -30,7 +30,7 @@ const MAX_IV = 15;
 
 export const STAB_MULTIPLY = getOption("battle_options", "stab");
 
-/* Shadow exclusive bonus for Pokemon in battle */
+/* Shadow exclusive bonus for Pokémon in battle */
 export const SHADOW_ATK_BONUS = getOption("combat_options", "shadow_bonus", "atk");
 export const SHADOW_DEF_BONUS = getOption("combat_options", "shadow_bonus", "def");
 

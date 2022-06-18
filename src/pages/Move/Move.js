@@ -98,7 +98,7 @@ const Move = (props) => {
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-table">
                             <thead className="text-center">
-                                <tr><th colSpan="3">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")+" in Pokemon Go"}</th></tr>
+                                <tr><th colSpan="3">{"Stats "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")+" in Pokémon Go"}</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
@@ -253,7 +253,7 @@ const Move = (props) => {
                                     <span className="caption">(STAB / Shadow Bonus)</span></td>
                                     <td>{((move.pvp_power*STAB_MULTIPLY)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
-                                <tr className="text-center"><td className="table-sub-header" colSpan="2">{"Pokemon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="2">{"Pokémon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
                                 <tr>
                                     <td className="table-top-of-move" colSpan={2} style={{padding: 0}}>
                                         <DataTable

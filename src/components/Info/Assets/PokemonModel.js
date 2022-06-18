@@ -27,7 +27,7 @@ const PokemonModel = (props) => {
 
     return (
         <div>
-            <h4 className="title-evo"><b>{"Assets of "+splitAndCapitalize(props.name, "_", " ")+" in Pokemon Go"}</b> <img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img></h4>
+            <h4 className="title-evo"><b>{"Assets of "+splitAndCapitalize(props.name, "_", " ")+" in Pokémon Go"}</b> <img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img></h4>
             <div>
                 {pokeAssets.map((assets, index) => (
                     <div key={index} className="d-inline-block group-model text-center">
@@ -67,16 +67,16 @@ const PokemonModel = (props) => {
                 ))
                 }
                 {pokeAssets.length === 0 &&
-                <div style={{marginBottom: 15}}>Assets in Pokemon Go unavailable.</div>
+                <div style={{marginBottom: 15}}>Assets in Pokémon Go unavailable.</div>
                 }
             </div>
             <h4 className="title-evo"><b>{"Sound of "+splitAndCapitalize(props.name, "_", " ")}</b></h4>
-            {/* <h6>Pokemon Origin:</h6>
+            {/* <h6>Pokémon Origin:</h6>
             <audio className="w-100" controls style={{height: 30}}>
                 <source src={APIService.getSoundCryPokemon(props.name)} type="audio/aif"></source>
                 Your browser does not support the audio element.
             </audio>
-            <h6>Pokemon GO:</h6> */}
+            <h6>Pokémon GO:</h6> */}
             <audio className="w-100" controls style={{height: 30}}>
                 <source src={APIService.getSoundPokemonGO(props.id)} type="audio/wav"></source>
                 Your browser does not support the audio element.

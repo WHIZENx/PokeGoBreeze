@@ -6,11 +6,19 @@ import Find from "../Find";
 import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
-import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBettlePure, calculateStatsByTag, convertName, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
+import { calculateAvgDPS, calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBettlePure, calculateStatsByTag, convertName, DEFAULT_POKEMON_DEF_OBJ, findAssetForm, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
+import { Checkbox, FormControlLabel } from "@mui/material";
+
+import loadingImg from '../../../assets/loading.png';
+import './RaidBattle.css';
+import APIService from "../../../services/API.service";
+import Type from "../../../components/Sprites/Type";
+import TypeBadge from "../../../components/Sprites/TypeBadge";
 
 const RaidBattle = () => {
 
     const [id, setId] = useState(1);
+    const [name, setName] = useState('');
     const [form, setForm] = useState(null);
 
     const [statATK, setStatATK] = useState(0);
@@ -28,9 +36,15 @@ const RaidBattle = () => {
     const [resultFMove, setResultFMove] = useState(null);
     const [resultCMove, setResultCMove] = useState(null);
 
+    const [spinner, setSpinner] = useState(false);
+    const [weather, setWeather] = useState(false);
+    const [released, setReleased] = useState(true);
+
+    const [resultBoss, setResultBoss] = useState(null);
+    const [result, setResult] = useState([]);
+
     const clearData = () => {
-        setFMove(null);
-        setCMove(null);
+        setResult([]);
     }
 
     const onSetForm = (form) => {
@@ -70,7 +84,7 @@ const RaidBattle = () => {
         return setResultCMove(simpleMove);
     }, []);
 
-    const addCPokeData = useCallback((dataList, movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
+    const addCPokeData = (dataList, movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
         movePoke.forEach(vc => {
             const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
             const cmove = combatData.find(item => item.name === vc);
@@ -85,20 +99,20 @@ const RaidBattle = () => {
                 shadow: shadow,
                 WEATHER_BOOSTS: false,
             }
-
             const statsDefender = {
                 atk: statBossATK,
                 def: statBossDEF,
                 hp: statBossHP,
                 fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
                 cmove: combatData.find(item => item.name === cMove.name),
-                types: form.form.types,
-                WEATHER_BOOSTS: false
+                types: form.form.types.map(type => type.type.name),
+                WEATHER_BOOSTS: weather
             }
             const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
             const dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
             const ttk = TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
             const tdo = dps*ttk;
+
             dataList.push({
                 pokemon: value,
                 fmove: statsAttacker.fmove,
@@ -106,8 +120,8 @@ const RaidBattle = () => {
                 dps: dps,
                 tdo: tdo,
                 multiDpsTdo: Math.pow(dps,3)*tdo,
-                ttk: ttk,
-                death: Math.round(statsDefender.hp/tdo),
+                ttk: TimeToKill(Math.floor(statsDefender.hp), dps),
+                death: Math.floor(statsDefender.hp/tdo),
                 shadow: shadow,
                 purified: purified && purifiedMove && purifiedMove.includes(statsAttacker.cmove.name),
                 mShadow: shadow && shadowMove && shadowMove.includes(statsAttacker.cmove.name),
@@ -117,9 +131,9 @@ const RaidBattle = () => {
                 },
             });
         });
-    }, [cMove, fMove, form, statBossATK, statBossDEF, statBossHP]);
+    }
 
-    const addFPokeData = useCallback((dataList, combat, movePoke, pokemon, felite) => {
+    const addFPokeData = (dataList, combat, movePoke, pokemon, felite) => {
         movePoke.forEach(vf => {
             addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false);
             if (!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) {
@@ -130,12 +144,12 @@ const RaidBattle = () => {
             if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true);
             else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true);
         });
-    }, [addCPokeData]);
+    };
 
-    const calculateTopBatlle = useCallback(() => {
+    const calculateTopBatlle = () => {
         let dataList = []
         Object.values(pokemonData).forEach(pokemon => {
-            if (pokemon.num > 0) {
+            if (pokemon.num > 0 && pokemon.forme !== "Gmax") {
                 let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
                     && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
                 );
@@ -148,37 +162,94 @@ const RaidBattle = () => {
                 }
             }
         });
-        console.log(dataList);
-    }, [addFPokeData]);
+        const group = dataList.reduce((result, obj) => {
+            (result[obj.pokemon.name] = result[obj.pokemon.name] || []).push(obj);
+            return result;
+        }, {});
+        dataList = Object.values(group).map(pokemon => pokemon.reduce((p, c) => p.ttk > c.ttk ? c : p)).sort((a,b) => a.ttk - b.ttk);
+        setSpinner(false);
+        setResult(dataList);
+    }
+
+    const calculateBossBattle = () => {
+        const statsBoss = {
+            atk: statBossATK,
+            def: statBossDEF,
+            hp: statBossHP,
+            fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
+            cmove: combatData.find(item => item.name === cMove.name),
+            types: form.form.types.map(type => type.type.name),
+            WEATHER_BOOSTS: weather
+        }
+
+        const dps = calculateAvgDPS(statsBoss.fmove, statsBoss.cmove,
+            statsBoss.atk,
+            statsBoss.def,
+            statsBoss.hp,
+            statsBoss.types,
+            {
+                WEATHER_BOOSTS: weather,
+                POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ
+            },
+            false);
+        setResultBoss({
+            pokemon: form,
+            fmove: statsBoss.fmove,
+            cmove: statsBoss.cmove,
+            dps: dps,
+            purified: cMove.purified,
+            shadow: cMove.shadow,
+            elite: {
+                fmove: fMove.elite,
+                cmove: cMove.elite
+            }
+        });
+        calculateTopBatlle();
+    }
 
     useEffect(() => {
         document.title = "Raid Battle - Tools";
         if (form) findMove(id, form.form.name);
     }, [findMove, id, form]);
 
+    const handleCalculate = () => {
+        setSpinner(true);
+        setTimeout(() => {
+            calculateBossBattle();
+        }, 500);
+    }
+
     return (
         <Fragment>
-            <div className="row">
+            <div className='loading-group-spin position-fixed' style={{display: !spinner ? "none" : "block"}}></div>
+            <div className="loading-spin text-center position-fixed" style={{display: !spinner ? "none" : "block"}}>
+                <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}></img>
+                <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
+            </div>
+            <div className="row" style={{margin: 0, overflowX: "hidden"}}>
                 <div className="col-lg" style={{padding: 0}}>
-                    <Find title="Raid Boss" clearStats={clearData} setStatATK={setStatATK} setStatDEF={setStatDEF} setForm={onSetForm} setId={setId}/>
+                    <Find title="Raid Boss" clearStats={clearData} setStatATK={setStatATK} setStatDEF={setStatDEF} setForm={onSetForm} setName={setName} setId={setId}/>
                 </div>
                 <div className="col-lg d-flex justify-content-center align-items-center" style={{padding: 0}}>
-                    <div className="element-top container">
+                    <div className="element-top">
                         <h3 className="text-center text-decoration-underline">Select Boss Moveset</h3>
-                        <div className="row">
+                        <div className="row element-top">
                             <div className="col d-flex justify-content-center">
                                 <div>
-                                    <SelectMove result={resultFMove} move={fMove} setMovePokemon={setFMove}/>
+                                    <h6 className='text-center'><b>Fast Moves</b></h6>
+                                    <SelectMove clearData={clearData} result={resultFMove} move={fMove} setMovePokemon={setFMove}/>
                                 </div>
                             </div>
                             <div className="col d-flex justify-content-center">
                                 <div>
-                                    <SelectMove result={resultCMove} move={cMove} setMovePokemon={setCMove}/>
+                                    <h6 className='text-center'><b>Charge Moves</b></h6>
+                                    <SelectMove clearData={clearData} result={resultCMove} move={cMove} setMovePokemon={setCMove}/>
                                 </div>
                             </div>
                         </div>
                         <hr></hr>
                         <Raid
+                            clearData={clearData}
                             setTierBoss={setTier}
                             currForm={form}
                             id={id}
@@ -186,20 +257,66 @@ const RaidBattle = () => {
                             statDEF={statDEF}
                             setStatBossATK={setStatBossATK}
                             setStatBossDEF={setStatBossDEF}
-                            setStatBossHP={setStatBossHP}
-                            calculateTopBatlle={calculateTopBatlle}/>
+                            setStatBossHP={setStatBossHP}/>
+                        <hr></hr>
+                        <div className="row align-items-center element-top" style={{margin: 0}}>
+                            <div className="col d-flex justify-content-end">
+                            <FormControlLabel control={<Checkbox checked={weather} onChange={(event, check) => setWeather(check)}/>} label="Boss Weather Boost" />
+                            </div>
+                            <div className="col">
+                            <FormControlLabel control={<Checkbox checked={released} onChange={(event, check) => setReleased(check)}/>} label="Only Release in Pokémon GO" />
+                            </div>
+                        </div>
+                        <div className="text-center"><button className="btn btn-primary w-50" onClick={() => handleCalculate()}>Search</button></div>
+                    </div>
+                </div>
+            </div>
+            <hr></hr>
+            {result.length > 0 &&
+            <Fragment>
+                <div className="container">
+                    <div className="d-flex align-items-center">
+                        <h3 style={{marginRight: 15}}><b>#{id} {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()}</b></h3>
+                        <Type styled={true} arr={resultBoss.pokemon.form.types.map(type => type.type.name)} />
+                    </div>
+                    <span className="d-block element-top">Estimate DPS: <b>{resultBoss.dps.toFixed(2)}</b></span>
+                    <div>
+                        <div className="d-inline-block" style={{marginRight: 15}}>
+                            <TypeBadge title="Fast Move" move={resultBoss.fmove} elite={resultBoss.elite.fmove}/>
+                        </div>
+                        <div className="d-inline-block">
+                            <TypeBadge title="Charge Move" move={resultBoss.cmove} elite={resultBoss.elite.cmove} shadow={resultBoss.shadow} purified={resultBoss.purified} />
+                        </div>
+                    </div>
+                    <hr></hr>
+                    <h4 className="text-decoration-underline v">
+                        Top 10 Pokémon Raid {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()} Tier {tier}
+                    </h4>
+                    <div className="top-raid-group">
+                        {result.slice(0, 10).map((value, index) => (
+                            <div className="top-raid-pokemon" key={index}>
+                                <div className="d-flex justify-content-center w-100">
+                                    <div className="sprite-raid position-relative">
+                                        {value.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
+                                        <img className="pokemon-sprite-raid" alt="img-pokemon" src={findAssetForm(value.pokemon.num, value.pokemon.name) ?
+                                        APIService.getPokemonModel(findAssetForm(value.pokemon.num, value.pokemon.name)) : APIService.getPokeFullSprite(value.pokemon.num)}></img>
+                                    </div>
+                                </div>
+                                <span className="d-flex justify-content-center w-100"><b>#{value.pokemon.num} {splitAndCapitalize(value.pokemon.name, "-", " ")}</b></span>
+                                <span className="d-block element-top">DPS: <b>{value.dps.toFixed(2)}</b></span>
+                                <span className="d-block">Total Damage: <b>{value.tdo.toFixed(2)}</b></span>
+                                <span className="d-block">Death: <b className={value.death === 0 ? "text-success" : "text-danger"}>{value.death}</b></span>
+                                <span className="d-block">Time to Kill: <b>{value.ttk.toFixed(2)} sec</b></span>
+                                <hr></hr>
+                                <TypeBadge title="Fast Move" move={value.fmove} elite={value.elite.fmove}/>
+                                <TypeBadge title="Charge Move" move={value.cmove} elite={value.elite.cmove} shadow={value.mShadow} purified={value.purified} />
+                            </div>
+                        ))
+                        }
                     </div>
 
                 </div>
-            </div>
-            {form &&
-            <div className="text-center">
-                <div>
-                    <h4 className="text-decoration-underline">
-                        Top 10 Pokemon Raid {splitAndCapitalize(form.form.name, "-", " ")} Tier {tier}
-                    </h4>
-                </div>
-            </div>
+            </Fragment>
             }
         </Fragment>
     )

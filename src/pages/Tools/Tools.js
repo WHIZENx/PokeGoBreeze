@@ -5,6 +5,7 @@ import FormTools from "./FormTools";
 
 import loading from '../../assets/loading.png';
 import { splitAndCapitalize } from "../../components/Calculate/Calculate";
+import Type from "../../components/Sprites/Type";
 
 const Tools = (props) => {
 
@@ -94,6 +95,7 @@ const Tools = (props) => {
                     </div>
                 }
             </div>
+            <Type styled={true} arr={currForm ? currForm.form.types.map(type => type.type.name) : []}/>
             <h4><b>#{props.id} {currForm ? splitAndCapitalize(currForm.form.name, "-", " ") : props.name}</b></h4>
             <div className="scroll-card">
                 {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length ?

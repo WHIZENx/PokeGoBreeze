@@ -8,7 +8,7 @@ import sta_logo from '../../assets/stamina.png';
 
 import pokemonData from '../../data/pokemon.json';
 
-const Raid = ({setTierBoss, currForm, id, statATK, statDEF, setStatBossATK, setStatBossDEF, setStatBossHP}) => {
+const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBossATK, setStatBossDEF, setStatBossHP}) => {
 
     const [tier, setTier] = useState(1);
 
@@ -30,6 +30,7 @@ const Raid = ({setTierBoss, currForm, id, statATK, statDEF, setStatBossATK, setS
             <div className="d-flex justify-content-center">
                 <Form.Select className="w-50" onChange={(e) => {
                     setTier(e.target.value);
+                    if (clearData) clearData();
                     }} value={tier}>
                     <optgroup label="Normal Tiers">
                         <option value={1}>Tier 1</option>

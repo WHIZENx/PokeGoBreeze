@@ -38,9 +38,9 @@ const Counter = (props) => {
                 <colgroup className="main-move-counter" />
                 <colgroup />
                 <thead>
-                    <tr className="text-center"><th className="table-sub-header" colSpan="4">Best Pokemon Counter</th></tr>
+                    <tr className="text-center"><th className="table-sub-header" colSpan="4">Best Pokémon Counter</th></tr>
                     <tr className="text-center">
-                        <th className="table-column-head main-move-name">Pokemon</th>
+                        <th className="table-column-head main-move-name">Pokémon</th>
                         <th className="table-column-head main-move-counter">Fast</th>
                         <th className="table-column-head main-move-counter">Charge</th>
                         <th className="table-column-head">%</th>
