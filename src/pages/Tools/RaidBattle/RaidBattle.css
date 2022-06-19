@@ -16,44 +16,7 @@
     width: 128px;
 }
 
-.text-type-border {
-    margin-top: 5px;
-    margin-left: 42px;
-}
-
-.type-icon-border {
-    position: absolute;
-    left: 0;
-    border-radius: 50%;
-    padding: 8px;
-}
-
-.type-badge-border {
-    position: absolute;
-    top: -14px;
-    right: -25px;
-    transform: translate(5px, 5px);
-
-}
-
-.type-badge-border .type-icon-small {
-    box-shadow: 1px 1px rgba(0, 0, 0, 0.5);
-}
-
-.type-icon-border img {
-    border-radius: 50%;
-}
-
-.type-border {
-    margin-left: 35px;
-    width: max-content;
-    padding: 8px;
-    text-shadow: 1px 1px black;
-    color: white;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-}
-
-.type-border span {
-    margin: 0 8px;
+.sprite-raid:hover {
+    -webkit-filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
 }

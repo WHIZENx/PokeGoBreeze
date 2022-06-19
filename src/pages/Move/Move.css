@@ -4,6 +4,11 @@
     margin-left: 2%;
 }
 
+h1.text-move {
+    margin-bottom: 0px;
+    padding: 10px 15px 10px 0;
+}
+
 .move-img-desc {
     min-width: 100px !important;
     margin-right: 15px;

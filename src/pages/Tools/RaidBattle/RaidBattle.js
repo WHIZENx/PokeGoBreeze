@@ -2,18 +2,20 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import SelectMove from "../../../components/Input/SelectMove";
 import Raid from "../../../components/Raid/Raid";
 import Find from "../Find";
+import { Link } from "react-router-dom";
 
 import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
-import { calculateAvgDPS, calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBettlePure, calculateStatsByTag, convertName, DEFAULT_POKEMON_DEF_OBJ, findAssetForm, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { calculateAvgDPS, calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBettlePure, calculateStatsByTag, convertName, DEFAULT_POKEMON_DEF_OBJ, findAssetForm, RAID_BOSS_TIER, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
+import { Checkbox, FormControlLabel, Switch } from "@mui/material";
 
 import loadingImg from '../../../assets/loading.png';
 import './RaidBattle.css';
 import APIService from "../../../services/API.service";
 import Type from "../../../components/Sprites/Type";
 import TypeBadge from "../../../components/Sprites/TypeBadge";
+import SelectPokemon from "../../../components/Input/SelectPokemon";
 
 const RaidBattle = () => {
 
@@ -36,15 +38,31 @@ const RaidBattle = () => {
     const [resultFMove, setResultFMove] = useState(null);
     const [resultCMove, setResultCMove] = useState(null);
 
+    const [options, setOptions] = useState({
+        weatherBoss: false,
+        weatherCounter: false,
+        released: true,
+        enableTimeAllow: true
+    });
+
+    const {weatherBoss, weatherCounter, released, enableTimeAllow} = options;
+
     const [spinner, setSpinner] = useState(false);
-    const [weather, setWeather] = useState(false);
-    const [released, setReleased] = useState(true);
+    const [timeAllow, setTimeAllow] = useState(0);
 
     const [resultBoss, setResultBoss] = useState(null);
     const [result, setResult] = useState([]);
 
+    const [dataTargetPokemon, setDataTargetPokemon] = useState(null);
+    const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(null);
+    const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(null);
+
     const clearData = () => {
         setResult([]);
+    }
+
+    const clearDataTarget = () => {
+        return (weatherCounter, timeAllow)
     }
 
     const onSetForm = (form) => {
@@ -106,7 +124,7 @@ const RaidBattle = () => {
                 fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
                 cmove: combatData.find(item => item.name === cMove.name),
                 types: form.form.types.map(type => type.type.name),
-                WEATHER_BOOSTS: weather
+                WEATHER_BOOSTS: weatherBoss
             }
             const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
             const dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
@@ -179,7 +197,7 @@ const RaidBattle = () => {
             fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
             cmove: combatData.find(item => item.name === cMove.name),
             types: form.form.types.map(type => type.type.name),
-            WEATHER_BOOSTS: weather
+            WEATHER_BOOSTS: weatherBoss
         }
 
         const dps = calculateAvgDPS(statsBoss.fmove, statsBoss.cmove,
@@ -188,7 +206,7 @@ const RaidBattle = () => {
             statsBoss.hp,
             statsBoss.types,
             {
-                WEATHER_BOOSTS: weather,
+                WEATHER_BOOSTS: weatherBoss,
                 POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ
             },
             false);
@@ -251,6 +269,7 @@ const RaidBattle = () => {
                         <Raid
                             clearData={clearData}
                             setTierBoss={setTier}
+                            setTimeAllow={setTimeAllow}
                             currForm={form}
                             id={id}
                             statATK={statATK}
@@ -260,14 +279,23 @@ const RaidBattle = () => {
                             setStatBossHP={setStatBossHP}/>
                         <hr></hr>
                         <div className="row align-items-center element-top" style={{margin: 0}}>
-                            <div className="col d-flex justify-content-end">
-                            <FormControlLabel control={<Checkbox checked={weather} onChange={(event, check) => setWeather(check)}/>} label="Boss Weather Boost" />
+                            <div className="col-6 d-flex justify-content-end">
+                                <FormControlLabel control={<Checkbox checked={weatherBoss} onChange={(event, check) => setOptions({...options, weatherBoss: check})}/>} label="Boss Weather Boost" />
                             </div>
-                            <div className="col">
-                            <FormControlLabel control={<Checkbox checked={released} onChange={(event, check) => setReleased(check)}/>} label="Only Release in Pokémon GO" />
+                            <div className="col-6">
+                                <FormControlLabel control={<Checkbox checked={released} onChange={(event, check) => setOptions({...options, released: check})}/>} label="Only Release in Pokémon GO" />
                             </div>
                         </div>
-                        <div className="text-center"><button className="btn btn-primary w-50" onClick={() => handleCalculate()}>Search</button></div>
+                        <div className="row align-items-center element-top" style={{margin: 0}}>
+                            <div className="col-6 d-flex justify-content-end" style={{padding: 0}}>
+                                <FormControlLabel control={<Switch checked={enableTimeAllow} onChange={(event, check) => setOptions({...options, enableTimeAllow: check})}/>} label="Time Allow"/>
+                            </div>
+                            <div className="col-6" style={{padding: 0}}>
+                                <input type="number" className="form-control" value={RAID_BOSS_TIER[tier].timer} placeholder="Battle Time" aria-label="Battle Time" min={0} disabled={enableTimeAllow}
+                                    onInput={(e) => setTimeAllow(parseInt(e.target.value))}></input>
+                            </div>
+                        </div>
+                        <div className="text-center element-top"><button className="btn btn-primary w-50" onClick={() => handleCalculate()}>Search</button></div>
                     </div>
                 </div>
             </div>
@@ -275,32 +303,28 @@ const RaidBattle = () => {
             {result.length > 0 &&
             <Fragment>
                 <div className="container">
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex flex-wrap align-items-center">
                         <h3 style={{marginRight: 15}}><b>#{id} {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()}</b></h3>
                         <Type styled={true} arr={resultBoss.pokemon.form.types.map(type => type.type.name)} />
                     </div>
-                    <span className="d-block element-top">Estimate DPS: <b>{resultBoss.dps.toFixed(2)}</b></span>
-                    <div>
-                        <div className="d-inline-block" style={{marginRight: 15}}>
-                            <TypeBadge title="Fast Move" move={resultBoss.fmove} elite={resultBoss.elite.fmove}/>
-                        </div>
-                        <div className="d-inline-block">
-                            <TypeBadge title="Charge Move" move={resultBoss.cmove} elite={resultBoss.elite.cmove} shadow={resultBoss.shadow} purified={resultBoss.purified} />
-                        </div>
+                    {/* <span className="d-block element-top">Estimate DPS: <b>{resultBoss.dps.toFixed(2)}</b></span> */}
+                    <div className="d-inline-block" style={{marginRight: 15}}>
+                        <TypeBadge title="Fast Move" move={resultBoss.fmove} elite={resultBoss.elite.fmove}/>
+                    </div>
+                    <div className="d-inline-block">
+                        <TypeBadge title="Charge Move" move={resultBoss.cmove} elite={resultBoss.elite.cmove} shadow={resultBoss.shadow} purified={resultBoss.purified} />
                     </div>
                     <hr></hr>
-                    <h4 className="text-decoration-underline v">
-                        Top 10 Pokémon Raid {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()} Tier {tier}
-                    </h4>
+                    <h4>Top Counters (Level: 40 - 15/15/15)</h4>
                     <div className="top-raid-group">
                         {result.slice(0, 10).map((value, index) => (
                             <div className="top-raid-pokemon" key={index}>
                                 <div className="d-flex justify-content-center w-100">
-                                    <div className="sprite-raid position-relative">
+                                    <Link to={`/pokemon/${value.pokemon.num}${value.pokemon.forme ? `?form=${value.pokemon.forme.toLowerCase()}`: ""}`} className="sprite-raid position-relative">
                                         {value.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
                                         <img className="pokemon-sprite-raid" alt="img-pokemon" src={findAssetForm(value.pokemon.num, value.pokemon.name) ?
                                         APIService.getPokemonModel(findAssetForm(value.pokemon.num, value.pokemon.name)) : APIService.getPokeFullSprite(value.pokemon.num)}></img>
-                                    </div>
+                                    </Link>
                                 </div>
                                 <span className="d-flex justify-content-center w-100"><b>#{value.pokemon.num} {splitAndCapitalize(value.pokemon.name, "-", " ")}</b></span>
                                 <span className="d-block element-top">DPS: <b>{value.dps.toFixed(2)}</b></span>
@@ -308,13 +332,33 @@ const RaidBattle = () => {
                                 <span className="d-block">Death: <b className={value.death === 0 ? "text-success" : "text-danger"}>{value.death}</b></span>
                                 <span className="d-block">Time to Kill: <b>{value.ttk.toFixed(2)} sec</b></span>
                                 <hr></hr>
-                                <TypeBadge title="Fast Move" move={value.fmove} elite={value.elite.fmove}/>
-                                <TypeBadge title="Charge Move" move={value.cmove} elite={value.elite.cmove} shadow={value.mShadow} purified={value.purified} />
+                                <div className="container" style={{marginBottom: 15}}>
+                                    <TypeBadge title="Fast Move" move={value.fmove} elite={value.elite.fmove}/>
+                                    <TypeBadge title="Charge Move" move={value.cmove} elite={value.elite.cmove} shadow={value.mShadow} purified={value.purified} />
+                                </div>
                             </div>
                         ))
                         }
                     </div>
-
+                    <div style={{marginBottom: 500}}>
+                        <div className="progress position-relative">
+                            <div className="progress-bar bg-success" style={{width: '100%'}} role="progressbar" aria-valuenow={100} aria-valuemin="0" aria-valuemax="100"></div>
+                            <div className="box-text rank-text justify-content-end d-flex position-absolute">
+                                <span>HP: {statBossHP}</span>
+                            </div>
+                        </div>
+                        <div className="d-flex" style={{borderBottom: '2px solid lightgray'}}>
+                            <span className="input-group-text justify-content-center"><b>Pokémon Battle</b></span>
+                            <SelectPokemon clearData={clearDataTarget}
+                                            setCurrentPokemon={setDataTargetPokemon}
+                                            setFMovePokemon={setFmoveTargetPokemon}
+                                            setCMovePokemon={setCmoveTargetPokemon}/>
+                            <span className="input-group-text justify-content-center"><b>Fast Move</b></span>
+                            <SelectMove inputType={"small"} clearData={clearDataTarget} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFmoveTargetPokemon} moveType="FAST"/>
+                            <span className="input-group-text justify-content-center"><b>Charge Move</b></span>
+                            <SelectMove inputType={"small"} clearData={clearDataTarget} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCmoveTargetPokemon} moveType="CHARGE"/>
+                        </div>
+                    </div>
                 </div>
             </Fragment>
             }

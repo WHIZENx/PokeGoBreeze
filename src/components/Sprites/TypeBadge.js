@@ -1,12 +1,15 @@
 import { capitalize } from "@mui/material";
-import { Fragment } from "react";
+import { Link } from "react-router-dom";
 import APIService from "../../services/API.service";
 import { splitAndCapitalize } from "../Calculate/Calculate";
+
+import './TypeBadge.css';
+import combatData from '../../data/combat.json';
 
 const TypeBadge = (props) => {
 
     return (
-        <Fragment>
+        <Link target="_blank" to={"/moves/"+combatData.find(item => item.name === props.move.name).id} className="d-block type-badge-container">
             <span className="caption text-type-border">{props.title}</span>
             <div className="d-flex align-items-center position-relative">
                 <span className={props.move.type.toLowerCase()+" type-border position-relative"}>
@@ -23,7 +26,7 @@ const TypeBadge = (props) => {
                     <img style={{padding: 5, backgroundColor: 'black'}} width={35} height={35} alt="img-type-pokemon" src={APIService.getTypeHqSprite(capitalize(props.move.type.toLowerCase()))}></img>
                 </span>
             </div>
-        </Fragment>
+        </Link>
     )
 
 }

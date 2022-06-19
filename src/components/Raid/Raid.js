@@ -8,7 +8,7 @@ import sta_logo from '../../assets/stamina.png';
 
 import pokemonData from '../../data/pokemon.json';
 
-const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBossATK, setStatBossDEF, setStatBossHP}) => {
+const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBossATK, setStatBossDEF, setStatBossHP, setTimeAllow}) => {
 
     const [tier, setTier] = useState(1);
 
@@ -23,7 +23,8 @@ const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBo
             setStatBossDEF(calculateRaidStat(statDEF, tier));
             setStatBossHP(RAID_BOSS_TIER[tier].sta);
         }
-    }, [tier, currForm, id, setTierBoss, setStatBossATK, setStatBossDEF, setStatBossHP, statATK, statDEF]);
+        if (setTimeAllow) setTimeAllow(RAID_BOSS_TIER[tier].timer)
+    }, [tier, currForm, id, setTierBoss, setStatBossATK, setStatBossDEF, setStatBossHP, statATK, statDEF, setTimeAllow]);
 
     return (
         <Fragment>

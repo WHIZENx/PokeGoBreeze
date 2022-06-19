@@ -38,32 +38,38 @@ export const RAID_BOSS_TIER = {
     1: {
         level: 20,
         CPm: 0.61,
-        sta: 600
+        sta: 600,
+        timer: 180
     },
     2: {
         level: 25,
         CPm: 0.6679,
-        sta: 1800
+        sta: 1800,
+        timer: 180
     },
     3: {
         level: 30,
         CPm: 0.7317,
-        sta: 3600
+        sta: 3600,
+        timer: 180
     },
     4: {
         level: 40,
         CPm: 0.7903,
-        sta: 9000
+        sta: 9000,
+        timer: 180
     },
     5: {
         level: 40,
         CPm: 0.79,
-        sta: 15000
+        sta: 15000,
+        timer: 300
     },
     6: {
         level: 40,
         CPm: 0.79,
-        sta: 22500
+        sta: 22500,
+        timer: 300
     }
 }
 

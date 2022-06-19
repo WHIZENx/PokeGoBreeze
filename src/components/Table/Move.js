@@ -71,7 +71,7 @@ const Move = (props) => {
                                 <ul>
                                     {resultMove &&
                                         <Fragment>
-                                            {resultMove.map((value, index) => (
+                                            {resultMove.filter(value => value.name !== currentMove.name).map((value, index) => (
                                                 <Fragment key={ index }>
                                                 {index === 0 &&
                                                 <li className='card-header'><b>Fast Moves</b></li>
@@ -79,11 +79,9 @@ const Move = (props) => {
                                                 {index === countFM &&
                                                 <li className='card-header'><b>Charge Moves</b></li>
                                                 }
-                                                {value !== currentMove &&
                                                 <li className="container card-pokemon" data-id={value.name} onMouseDown={changeMove.bind(this)}>
                                                     <CardType value={findType(value.name)} name={splitAndCapitalize(value.name.replaceAll("_PLUS","+").replaceAll("_FAST", ""), "_", " ")} elite={value.elite} shadow={value.shadow}  purified={value.purified}/>
                                                 </li>
-                                                }
                                                 </Fragment>
                                             ))
                                             }

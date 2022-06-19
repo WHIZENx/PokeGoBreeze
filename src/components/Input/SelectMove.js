@@ -3,7 +3,6 @@ import CardMoveSmall from "../Card/CardMoveSmall";
 
 import data from '../../data/combat_pokemon_go_list.json';
 import './Select.css';
-import { splitAndCapitalize } from "../Calculate/Calculate";
 import CardMove from "../Card/CardMove";
 
 const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveType, inputType, result}) => {
@@ -13,12 +12,8 @@ const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveTyp
 
     const changeMove = (value) => {
         setShowMove(false);
-        const name = splitAndCapitalize(value.name.replaceAll("_PLUS","+").replace("_FAST", ""), "_", " ");
-        const currentName = splitAndCapitalize(move.name.replaceAll("_PLUS","+").replace("_FAST", ""), "_", " ");
-        if (currentName !== name) {
-            if (setMovePokemon) setMovePokemon(value);
-            if (clearData) clearData();
-        }
+        if (setMovePokemon) setMovePokemon(value);
+        if (clearData) clearData();
     }
 
     const findMove = useCallback((id, form, type) => {
@@ -68,7 +63,7 @@ const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveTyp
                     {showMove && resultMove &&
                         <div className="result-move-select">
                             <div>
-                                {resultMove.map((value, index) => (
+                                {resultMove.filter(value => value.name !== move.name).map((value, index) => (
                                     <div className="card-move" key={ index } onMouseDown={() => changeMove(value)}>
                                         <CardMoveSmall value={value}/>
                                     </div>
@@ -88,7 +83,7 @@ const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveTyp
                 {showMove &&
                     <div className="result-move-select-default">
                         <div>
-                            {resultMove.map((value, index) => (
+                            {resultMove.filter(value => value.name !== move.name).map((value, index) => (
                                 <div className="container card-pokemon" key={ index } onMouseDown={() => changeMove(value)}>
                                     <CardMove value={value}/>
                                 </div>
