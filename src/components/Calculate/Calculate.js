@@ -811,7 +811,7 @@ export const queryTopMove = (move) => {
                     calculateStatsBettlePure(stats.sta, MAX_IV, 40),
                     dps
                 );
-                dataPri.push({num: value.num, forme: value.forme, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, dps: dps, tdo: tdo});
+                dataPri.push({num: value.num, forme: value.forme, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, releasedGO: value.releasedGO, dps: dps, tdo: tdo});
             }
         }
     });
@@ -934,6 +934,7 @@ const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felit
             pokemon_id: pokemon.num,
             pokemon_name: pokemon.name,
             pokemon_forme: pokemon.forme,
+            releasedGO: pokemon.releasedGO,
             dps: dpsOff,
             fmove: mf,
             cmove: mc

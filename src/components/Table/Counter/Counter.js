@@ -1,4 +1,4 @@
-import { capitalize } from "@mui/material";
+import { capitalize, FormControlLabel, Switch } from "@mui/material";
 import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
@@ -9,15 +9,18 @@ import './Counter.css';
 const Counter = (props) => {
 
     const [counterList, setCounterList] = useState([]);
+    const [counterListFilter, setCounterListFilter] = useState([]);
     const [open, setOpen] = useState(false);
+
+    const [releasedGO, setReleaseGO] = useState(true);
 
     const [startIndex, setStartIndex] = useState(0);
     const firstInit = 20;
     const eachCounter = 10;
 
     useEffect(() => {
-        setOpen(false);
-    }, [props.def, props.form])
+        if (open && counterList.length > 0) setCounterListFilter(counterList.filter(pokemon => releasedGO ? pokemon.releasedGO : true));
+    }, [open, counterList, releasedGO])
 
     const listenScrollEvent = (ele) => {
         const scrollTop = ele.currentTarget.scrollTop;
@@ -38,7 +41,12 @@ const Counter = (props) => {
                 <colgroup className="main-move-counter" />
                 <colgroup />
                 <thead>
-                    <tr className="text-center"><th className="table-sub-header" colSpan="4">Best Pokémon Counter</th></tr>
+                    <tr className="text-center"><th className="table-sub-header" colSpan="4">
+                        <div className="input-group align-items-center justify-content-center">
+                            <span>Best Pokémon Counter</span>
+                            <FormControlLabel control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)}/>} label="Released in GO" disabled={!open}/>
+                        </div>
+                    </th></tr>
                     <tr className="text-center">
                         <th className="table-column-head main-move-name">Pokémon</th>
                         <th className="table-column-head main-move-counter">Fast</th>
@@ -49,7 +57,7 @@ const Counter = (props) => {
                 <tbody>
                     {open ?
                     <Fragment>
-                    {counterList.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
+                    {counterListFilter.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
                         <Fragment key={index}>
                             <tr>
                                 <td className="text-origin text-center">

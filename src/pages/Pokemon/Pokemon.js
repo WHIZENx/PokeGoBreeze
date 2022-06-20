@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import APIService from "../../services/API.service";
 
 import loading from '../../assets/loading.png';
@@ -22,12 +22,9 @@ const Pokemon = (props) => {
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const initialize = useRef(false);
-
     const [pokeData, setPokeData] = useState([]);
     const [formList, setFormList] = useState([]);
 
-    const [dataPri, setDataPri] = useState(null);
     const [reForm, setReForm] = useState(false);
 
     // const [released, setReleased] = useState(null);
@@ -46,16 +43,16 @@ const Pokemon = (props) => {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    const convertArrStats = (data) => {
-        return Object.values(data).map(value => {
+    const convertArrStats = () => {
+        return Object.values(pokemonData).map(value => {
             let stats = calculateStatsByTag(value.baseStats, value.forme);
             return {id: value.num, name: value.slug, base_stats: value.baseStats,
             baseStatsPokeGo: {attack: stats.atk, defense: stats.def, stamina: stats.sta}}
         })
     };
 
-    const getRatioGender = useCallback((data, id) => {
-        return Object.values(data).find(item => id === item.num).genderRatio;
+    const getRatioGender = useCallback((id) => {
+        return Object.values(pokemonData).find(item => id === item.num).genderRatio;
     }, []);
 
     const fetchMap = useCallback(async (data) => {
@@ -101,7 +98,7 @@ const Pokemon = (props) => {
     const queryPokemon = useCallback((id) => {
         APIService.getPokeSpicies(id)
         .then(res => {
-            setPokeRatio(getRatioGender(dataPri, res.data.id));
+            setPokeRatio(getRatioGender(res.data.id));
             fetchMap(res.data);
             setData(res.data);
             if (params.id) document.title = `#${res.data.id} - ${splitAndCapitalize(res.data.name, "-", " ")}`;
@@ -111,28 +108,30 @@ const Pokemon = (props) => {
             if (params.id) document.title = `#${params.id} - Not Found`;
             setIsFound(false);
         });
-    }, [enqueueSnackbar, getRatioGender, fetchMap, dataPri, params.id]);
+    }, [enqueueSnackbar, getRatioGender, fetchMap, params.id]);
 
     useEffect(() => {
-        if (!initialize.current) {
-            setStats(sortStatsPokemon(convertArrStats(pokemonData)));
-            setDataPri(pokemonData);
-            // APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
-            // .then(res => {
-                // setStats(sortStatsPokemon(convertArrStats(res.data)));
-                // setDataPri(res.data);
-            //     return APIService.getPokeJSON('released_pokemon.json');
-            // })
-            // APIService.getPokeJSON('released_pokemon.json')
-            // .then(res => {
-            //     setReleased(res.data);
-            // })
-            // .finally(initialize.current = true);
-            initialize.current = true;
-        } else {
-            const id = params.id ? params.id.toLowerCase() : props.id;
-            queryPokemon(id);
-        }
+        setStats(sortStatsPokemon(convertArrStats()));
+        const id = params.id ? params.id.toLowerCase() : props.id;
+        queryPokemon(id);
+        // if (!initialize.current) {
+        //     setStats(sortStatsPokemon(convertArrStats()));
+        //     // APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
+        //     // .then(res => {
+        //         // setStats(sortStatsPokemon(convertArrStats(res.data)));
+        //         // setDataPri(res.data);
+        //     //     return APIService.getPokeJSON('released_pokemon.json');
+        //     // })
+        //     // APIService.getPokeJSON('released_pokemon.json')
+        //     // .then(res => {
+        //     //     setReleased(res.data);
+        //     // })
+        //     // .finally(initialize.current = true);
+        //     initialize.current = true;
+        // } else {
+        //     const id = params.id ? params.id.toLowerCase() : props.id;
+        //     queryPokemon(id);
+        // }
     }, [params.id, props.id, queryPokemon, reForm]);
 
     const getNumGen = (url) => {
@@ -155,9 +154,6 @@ const Pokemon = (props) => {
             <Fragment>
             {data &&
                 <Fragment>
-                    {/* <h5 className='element-top text-danger'>* {splitAndCapitalize(data.name, "-", " ")} not release in Pokémon go
-                            <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
-                    </h5> */}
                 <div className="w-100 row prev-next-block sticky-top" style={{margin:0, height: 60}}>
                     {params.id ?
                     <Fragment>
@@ -255,6 +251,12 @@ const Pokemon = (props) => {
                         <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                     </div>
                     <div className="w-100 text-center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
+                        {Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName) &&
+                        !Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName).releasedGO &&
+                            <h5 className='text-danger'>* {splitAndCapitalize(data.name, "-", " ")} not released in Pokémon GO
+                            <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
+                            </h5>
+                        }
                         <div className="d-inline-block img-desc">
                             <img className="pokemon-main-sprite" style={{verticalAlign: 'baseline'}} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
                         </div>

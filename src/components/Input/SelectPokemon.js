@@ -49,7 +49,7 @@ const SelectPokemon = (props) => {
     return (
         <div className='d-flex align-items-center form-control' style={{padding: 0, borderRadius: 0}}>
             <div className='card-pokemon-input' >
-                <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center border-box">
                     {pokemonIcon && <span onClick={() => removePokemon()} className="remove-pokemon-select"><CloseIcon sx={{color: 'red'}}/></span>}
                     <input className="input-pokemon-select form-control shadow-none"
                     onClick={() => setShowPokemon(true)}

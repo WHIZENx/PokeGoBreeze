@@ -120,7 +120,7 @@ td h5, td h6 {
     text-align: start;
 }
 
-.table-info tbody tr.center td.table-sub-header:nth-child(2) {
+.table-info tbody tr.text-center td.table-sub-header:nth-child(2) {
     font-weight: bolder;
 }
 

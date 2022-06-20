@@ -53,6 +53,8 @@ const RaidBattle = () => {
     const [resultBoss, setResultBoss] = useState(null);
     const [result, setResult] = useState([]);
 
+    const [releasedGO, setReleaseGO] = useState(true);
+
     const [dataTargetPokemon, setDataTargetPokemon] = useState(null);
     const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(null);
     const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(null);
@@ -62,7 +64,7 @@ const RaidBattle = () => {
     }
 
     const clearDataTarget = () => {
-        return (weatherCounter, timeAllow)
+        return timeAllow;
     }
 
     const onSetForm = (form) => {
@@ -102,12 +104,12 @@ const RaidBattle = () => {
         return setResultCMove(simpleMove);
     }, []);
 
-    const addCPokeData = (dataList, movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
+    const addCPokeData = (dataList, movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove, pokemonTarget) => {
         movePoke.forEach(vc => {
             const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
             const cmove = combatData.find(item => item.name === vc);
             const stats = calculateStatsByTag(value.baseStats, value.forme);
-            const statsAttacker = {
+            const statsAttackerTemp = {
                 atk: calculateStatsBettlePure(stats.atk, 15, 40),
                 def: calculateStatsBettlePure(stats.def, 15, 40),
                 hp: calculateStatsBettlePure(stats.sta, 15, 40),
@@ -115,9 +117,9 @@ const RaidBattle = () => {
                 cmove: cmove,
                 types: value.types,
                 shadow: shadow,
-                WEATHER_BOOSTS: false,
+                WEATHER_BOOSTS: weatherCounter,
             }
-            const statsDefender = {
+            let statsDefender = {
                 atk: statBossATK,
                 def: statBossDEF,
                 hp: statBossHP,
@@ -126,6 +128,9 @@ const RaidBattle = () => {
                 types: form.form.types.map(type => type.type.name),
                 WEATHER_BOOSTS: weatherBoss
             }
+            const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
+            statsDefender = pokemonTarget ? statsAttacker : statsDefender;
+
             const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
             const dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
             const ttk = TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
@@ -151,23 +156,23 @@ const RaidBattle = () => {
         });
     }
 
-    const addFPokeData = (dataList, combat, movePoke, pokemon, felite) => {
+    const addFPokeData = (dataList, combat, movePoke, pokemon, felite, pokemonTarget) => {
         movePoke.forEach(vf => {
-            addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false);
+            addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false, pokemonTarget);
             if (!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) {
-                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false);
-                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
-                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
+                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false, pokemonTarget);
+                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES, pokemonTarget);
+                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES, pokemonTarget);
             }
-            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true);
-            else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true);
+            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true, pokemonTarget);
+            else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true, pokemonTarget);
         });
     };
 
-    const calculateTopBatlle = () => {
+    const calculateTopBatlle = (pokemonTarget) => {
         let dataList = []
         Object.values(pokemonData).forEach(pokemon => {
-            if (pokemon.num > 0 && pokemon.forme !== "Gmax") {
+            if (pokemon.forme !== "Gmax") {
                 let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
                     && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
                 );
@@ -175,8 +180,8 @@ const RaidBattle = () => {
                 if (!result) combatPoke = combatPoke[0]
                 else combatPoke = result;
                 if (combatPoke) {
-                    addFPokeData(dataList, combatPoke, combatPoke.QUICK_MOVES, pokemon, false);
-                    addFPokeData(dataList, combatPoke, combatPoke.ELITE_QUICK_MOVES, pokemon, true);
+                    addFPokeData(dataList, combatPoke, combatPoke.QUICK_MOVES, pokemon, false, pokemonTarget);
+                    addFPokeData(dataList, combatPoke, combatPoke.ELITE_QUICK_MOVES, pokemon, true, pokemonTarget);
                 }
             }
         });
@@ -185,11 +190,15 @@ const RaidBattle = () => {
             return result;
         }, {});
         dataList = Object.values(group).map(pokemon => pokemon.reduce((p, c) => p.ttk > c.ttk ? c : p)).sort((a,b) => a.ttk - b.ttk);
-        setSpinner(false);
-        setResult(dataList);
+        if (pokemonTarget) setResultBoss(dataList)
+        else {
+            setSpinner(false);
+            setResult(dataList);
+        }
     }
 
     const calculateBossBattle = () => {
+        // calculateTopBatlle(true)
         const statsBoss = {
             atk: statBossATK,
             def: statBossDEF,
@@ -222,7 +231,7 @@ const RaidBattle = () => {
                 cmove: cMove.elite
             }
         });
-        calculateTopBatlle();
+        calculateTopBatlle(false);
     }
 
     useEffect(() => {
@@ -303,21 +312,14 @@ const RaidBattle = () => {
             {result.length > 0 &&
             <Fragment>
                 <div className="container">
-                    <div className="d-flex flex-wrap align-items-center">
-                        <h3 style={{marginRight: 15}}><b>#{id} {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()}</b></h3>
-                        <Type styled={true} arr={resultBoss.pokemon.form.types.map(type => type.type.name)} />
+                    <div className="d-flex flex-wrap align-items-center justify-content-between">
+                        <h4>Top Counters (Level: 40 - 15/15/15)</h4>
+                        <div>
+                            <FormControlLabel control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)}/>} label="Released in GO"/>
+                        </div>
                     </div>
-                    {/* <span className="d-block element-top">Estimate DPS: <b>{resultBoss.dps.toFixed(2)}</b></span> */}
-                    <div className="d-inline-block" style={{marginRight: 15}}>
-                        <TypeBadge title="Fast Move" move={resultBoss.fmove} elite={resultBoss.elite.fmove}/>
-                    </div>
-                    <div className="d-inline-block">
-                        <TypeBadge title="Charge Move" move={resultBoss.cmove} elite={resultBoss.elite.cmove} shadow={resultBoss.shadow} purified={resultBoss.purified} />
-                    </div>
-                    <hr></hr>
-                    <h4>Top Counters (Level: 40 - 15/15/15)</h4>
                     <div className="top-raid-group">
-                        {result.slice(0, 10).map((value, index) => (
+                        {result.filter(value => releasedGO ? value.pokemon.releasedGO : true).slice(0, 10).map((value, index) => (
                             <div className="top-raid-pokemon" key={index}>
                                 <div className="d-flex justify-content-center w-100">
                                     <Link to={`/pokemon/${value.pokemon.num}${value.pokemon.forme ? `?form=${value.pokemon.forme.toLowerCase()}`: ""}`} className="sprite-raid position-relative">
@@ -340,14 +342,8 @@ const RaidBattle = () => {
                         ))
                         }
                     </div>
-                    <div style={{marginBottom: 500}}>
-                        <div className="progress position-relative">
-                            <div className="progress-bar bg-success" style={{width: '100%'}} role="progressbar" aria-valuenow={100} aria-valuemin="0" aria-valuemax="100"></div>
-                            <div className="box-text rank-text justify-content-end d-flex position-absolute">
-                                <span>HP: {statBossHP}</span>
-                            </div>
-                        </div>
-                        <div className="d-flex" style={{borderBottom: '2px solid lightgray'}}>
+                    <div className="row" style={{margin: 0}}>
+                        <div className="col-lg-5 justify-content-center" style={{margin: 0}}>
                             <span className="input-group-text justify-content-center"><b>Pokémon Battle</b></span>
                             <SelectPokemon clearData={clearDataTarget}
                                             setCurrentPokemon={setDataTargetPokemon}
@@ -358,7 +354,26 @@ const RaidBattle = () => {
                             <span className="input-group-text justify-content-center"><b>Charge Move</b></span>
                             <SelectMove inputType={"small"} clearData={clearDataTarget} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCmoveTargetPokemon} moveType="CHARGE"/>
                         </div>
+                        <div className="col-lg-7">
+                            <div className="d-flex flex-wrap align-items-center">
+                            <h3 style={{marginRight: 15}}><b>#{id} {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()} Tier {tier}</b></h3>
+                            <Type styled={true} arr={resultBoss.pokemon.form.types.map(type => type.type.name)} />
+                            </div>
+                            <div className="d-inline-block" style={{marginRight: 15}}>
+                                <TypeBadge title="Fast Move" move={resultBoss.fmove} elite={resultBoss.elite.fmove}/>
+                            </div>
+                            <div className="d-inline-block">
+                                <TypeBadge title="Charge Move" move={resultBoss.cmove} elite={resultBoss.elite.cmove} shadow={resultBoss.shadow} purified={resultBoss.purified} />
+                            </div>
+                            <div className="progress position-relative" style={{marginTop: 20, minWidth: 'auto'}}>
+                                <div className="progress-bar bg-success" style={{width: '100%'}} role="progressbar" aria-valuenow={100} aria-valuemin="0" aria-valuemax="100"></div>
+                                <div className="box-text rank-text justify-content-end d-flex position-absolute">
+                                    <span>HP: {statBossHP}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div style={{marginBottom: 500}}></div>
                 </div>
             </Fragment>
             }

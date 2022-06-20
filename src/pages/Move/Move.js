@@ -13,6 +13,7 @@ import './Move.css';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { FormControlLabel, Switch } from "@mui/material";
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.name.toLowerCase();
@@ -56,6 +57,7 @@ const Move = (props) => {
     const params = useParams();
 
     const [move, setMove] = useState(null);
+    const [releasedGO, setReleaseGO] = useState(true);
     const [topList, setTopList] = useState([]);
 
     const { enqueueSnackbar } = useSnackbar();
@@ -253,12 +255,17 @@ const Move = (props) => {
                                     <span className="caption">(STAB / Shadow Bonus)</span></td>
                                     <td>{((move.pvp_power*STAB_MULTIPLY)/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
-                                <tr className="text-center"><td className="table-sub-header" colSpan="2">{"Pokémon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</td></tr>
+                                <tr className="text-center"><td className="table-sub-header" colSpan="2">
+                                    <div className="input-group align-items-center justify-content-center">
+                                        <span>{"Pokémon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
+                                        <FormControlLabel control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)}/>} label="Released in GO"/>
+                                    </div>
+                                </td></tr>
                                 <tr>
                                     <td className="table-top-of-move" colSpan={2} style={{padding: 0}}>
                                         <DataTable
                                             columns={columns}
-                                            data={topList}
+                                            data={topList.filter(pokemon => releasedGO ? pokemon.releasedGO : true)}
                                             pagination
                                             defaultSortFieldId={4}
                                             defaultSortAsc={false}
