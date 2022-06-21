@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
-import { calculateAvgDPS, calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBettlePure, calculateStatsByTag, convertName, DEFAULT_POKEMON_DEF_OBJ, findAssetForm, RAID_BOSS_TIER, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
+import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBettlePure, calculateStatsByTag, convertName, findAssetForm, RAID_BOSS_TIER, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
 import { Checkbox, FormControlLabel, Switch } from "@mui/material";
 
 import loadingImg from '../../../assets/loading.png';
@@ -104,7 +104,7 @@ const RaidBattle = () => {
         return setResultCMove(simpleMove);
     }, []);
 
-    const addCPokeData = (dataList, movePoke, value, vf, shadow, purified, felite, celite, shadowMove, purifiedMove, pokemonTarget) => {
+    const addCPokeData = (dataList, movePoke, value, vf, shadow, purified, felite, celite, specialMove, pokemonTarget) => {
         movePoke.forEach(vc => {
             const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
             const cmove = combatData.find(item => item.name === vc);
@@ -129,11 +129,11 @@ const RaidBattle = () => {
                 WEATHER_BOOSTS: weatherBoss
             }
             const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
-            statsDefender = pokemonTarget ? statsAttacker : statsDefender;
+            statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
 
             const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
             const dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
-            const ttk = TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
+            const ttk = pokemonTarget ? timeAllow : TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
             const tdo = dps*ttk;
 
             dataList.push({
@@ -144,10 +144,11 @@ const RaidBattle = () => {
                 tdo: tdo,
                 multiDpsTdo: Math.pow(dps,3)*tdo,
                 ttk: TimeToKill(Math.floor(statsDefender.hp), dps),
+                hpRemain: Math.floor(statsDefender.hp)-(Math.min(ttk, TimeToKill(Math.floor(statsDefender.hp), dps)))*dps,
                 death: Math.floor(statsDefender.hp/tdo),
                 shadow: shadow,
-                purified: purified && purifiedMove && purifiedMove.includes(statsAttacker.cmove.name),
-                mShadow: shadow && shadowMove && shadowMove.includes(statsAttacker.cmove.name),
+                purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
+                mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
                 elite: {
                     fmove: felite,
                     cmove: celite
@@ -158,14 +159,14 @@ const RaidBattle = () => {
 
     const addFPokeData = (dataList, combat, movePoke, pokemon, felite, pokemonTarget) => {
         movePoke.forEach(vf => {
-            addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false, pokemonTarget);
+            addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false, null, pokemonTarget);
             if (!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) {
-                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false, pokemonTarget);
-                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES, pokemonTarget);
-                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES, pokemonTarget);
+                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, pokemonTarget);
+                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, pokemonTarget);
+                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.PURIFIED_MOVES, pokemonTarget);
             }
-            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true, pokemonTarget);
-            else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true, pokemonTarget);
+            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true, combat.SHADOW_MOVES, pokemonTarget);
+            else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true, null, pokemonTarget);
         });
     };
 
@@ -190,7 +191,20 @@ const RaidBattle = () => {
             return result;
         }, {});
         dataList = Object.values(group).map(pokemon => pokemon.reduce((p, c) => p.ttk > c.ttk ? c : p)).sort((a,b) => a.ttk - b.ttk);
-        if (pokemonTarget) setResultBoss(dataList)
+        if (pokemonTarget) {
+            const sortedDPS = dataList.sort((a, b) => a.dps - b.dps);
+            const sortedTDO = dataList.sort((a, b) => a.tdo - b.tdo);
+            const sortedHP = dataList.sort((a, b) => a.hpRemain - b.hpRemain);
+            let result = {
+                minDPS: sortedDPS[0].dps,
+                maxDPS: sortedDPS[dataList.length-1].dps,
+                minTDO: sortedTDO[0].tdo,
+                maxTDO: sortedTDO[dataList.length-1].tdo,
+                minHP: sortedHP[0].hpRemain,
+                maxHP: sortedHP[dataList.length-1].hpRemain
+            }
+            setResultBoss(result)
+        }
         else {
             setSpinner(false);
             setResult(dataList);
@@ -198,39 +212,7 @@ const RaidBattle = () => {
     }
 
     const calculateBossBattle = () => {
-        // calculateTopBatlle(true)
-        const statsBoss = {
-            atk: statBossATK,
-            def: statBossDEF,
-            hp: statBossHP,
-            fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
-            cmove: combatData.find(item => item.name === cMove.name),
-            types: form.form.types.map(type => type.type.name),
-            WEATHER_BOOSTS: weatherBoss
-        }
-
-        const dps = calculateAvgDPS(statsBoss.fmove, statsBoss.cmove,
-            statsBoss.atk,
-            statsBoss.def,
-            statsBoss.hp,
-            statsBoss.types,
-            {
-                WEATHER_BOOSTS: weatherBoss,
-                POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ
-            },
-            false);
-        setResultBoss({
-            pokemon: form,
-            fmove: statsBoss.fmove,
-            cmove: statsBoss.cmove,
-            dps: dps,
-            purified: cMove.purified,
-            shadow: cMove.shadow,
-            elite: {
-                fmove: fMove.elite,
-                cmove: cMove.elite
-            }
-        });
+        calculateTopBatlle(true)
         calculateTopBatlle(false);
     }
 
@@ -296,10 +278,10 @@ const RaidBattle = () => {
                             </div>
                         </div>
                         <div className="row align-items-center element-top" style={{margin: 0}}>
-                            <div className="col-6 d-flex justify-content-end" style={{padding: 0}}>
+                            <div className="col-6 d-flex justify-content-end" style={{paddingRight: 0}}>
                                 <FormControlLabel control={<Switch checked={enableTimeAllow} onChange={(event, check) => setOptions({...options, enableTimeAllow: check})}/>} label="Time Allow"/>
                             </div>
-                            <div className="col-6" style={{padding: 0}}>
+                            <div className="col-6" style={{paddingLeft: 0}}>
                                 <input type="number" className="form-control" value={RAID_BOSS_TIER[tier].timer} placeholder="Battle Time" aria-label="Battle Time" min={0} disabled={enableTimeAllow}
                                     onInput={(e) => setTimeAllow(parseInt(e.target.value))}></input>
                             </div>
@@ -357,13 +339,13 @@ const RaidBattle = () => {
                         <div className="col-lg-7">
                             <div className="d-flex flex-wrap align-items-center">
                             <h3 style={{marginRight: 15}}><b>#{id} {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()} Tier {tier}</b></h3>
-                            <Type styled={true} arr={resultBoss.pokemon.form.types.map(type => type.type.name)} />
+                            <Type styled={true} arr={form.form.types.map(type => type.type.name)} />
                             </div>
                             <div className="d-inline-block" style={{marginRight: 15}}>
-                                <TypeBadge title="Fast Move" move={resultBoss.fmove} elite={resultBoss.elite.fmove}/>
+                                <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite}/>
                             </div>
                             <div className="d-inline-block">
-                                <TypeBadge title="Charge Move" move={resultBoss.cmove} elite={resultBoss.elite.cmove} shadow={resultBoss.shadow} purified={resultBoss.purified} />
+                                <TypeBadge title="Charge Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
                             </div>
                             <div className="progress position-relative" style={{marginTop: 20, minWidth: 'auto'}}>
                                 <div className="progress-bar bg-success" style={{width: '100%'}} role="progressbar" aria-valuenow={100} aria-valuemin="0" aria-valuemax="100"></div>
@@ -371,6 +353,12 @@ const RaidBattle = () => {
                                     <span>HP: {statBossHP}</span>
                                 </div>
                             </div>
+                            <span className="d-block element-top">DPS: <b>{resultBoss.minDPS.toFixed(2)} - {resultBoss.maxDPS.toFixed(2)}</b></span>
+                            <span className="d-block">Average DPS: <b>{((resultBoss.minDPS+resultBoss.maxDPS)/2).toFixed(2)}</b></span>
+                            <span className="d-block">Total Damage: <b>{resultBoss.minTDO.toFixed(2)} - {resultBoss.maxTDO.toFixed(2)}</b></span>
+                            <span className="d-block">Average Total Damage: <b>{((resultBoss.minTDO+resultBoss.maxTDO)/2).toFixed(2)}</b></span>
+                            <span className="d-block">HP Remaining: <b>{Math.round(resultBoss.minHP)} - {Math.round(resultBoss.maxHP)}</b></span>
+                            <span className="d-block">Average HP Remaining: <b>{Math.round((resultBoss.minHP+resultBoss.maxHP)/2)}</b></span>
                         </div>
                     </div>
                     <div style={{marginBottom: 500}}></div>

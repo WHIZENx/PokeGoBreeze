@@ -150,7 +150,7 @@ const DpsTable = () => {
     const [showSpinner, setShowSpinner] = useState(true);
     const [selectTypes, setSelectTypes] = useState([]);
 
-    const addCPokeData = useCallback((dataList, movePoke, pokemon, vf, shadow, purified, felite, celite, shadowMove, purifiedMove) => {
+    const addCPokeData = useCallback((dataList, movePoke, pokemon, vf, shadow, purified, felite, celite, specialMove) => {
         movePoke.forEach(vc => {
             const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
             const cmove = combatData.find(item => item.name === vc);
@@ -201,8 +201,8 @@ const DpsTable = () => {
                 tdo: tdo,
                 multiDpsTdo: Math.pow(dps,3)*tdo,
                 shadow: shadow,
-                purified: purified && purifiedMove && purifiedMove.includes(statsAttacker.cmove.name),
-                mShadow: shadow && shadowMove && shadowMove.includes(statsAttacker.cmove.name),
+                purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
+                mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
                 elite: {
                     fmove: felite,
                     cmove: celite
@@ -216,11 +216,11 @@ const DpsTable = () => {
         movePoke.forEach(vf => {
             addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false);
             if (!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) {
-                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false);
-                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
-                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.SHADOW_MOVES, combat.PURIFIED_MOVES);
+                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES);
+                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES);
+                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.PURIFIED_MOVES);
             }
-            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true);
+            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true, combat.SHADOW_MOVES);
             else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true);
         });
     }, [addCPokeData]);
