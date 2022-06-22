@@ -24,3 +24,8 @@
 .border-box {
     border-bottom: 2px solid lightgray;
 }
+
+.stats-boss {
+    border: 2px solid lightgray;
+    padding: 1rem;
+}

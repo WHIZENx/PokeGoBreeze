@@ -22,7 +22,7 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
 
     const filterFormList = useCallback((stats, id) => {
         const filterId = stats.filter(item => item.id === id);
-        const filterForm = stats.find(item => item.id === id &&
+        const filterForm = stats.find(item => item.id === id && item.form !== "a" &&
             filterFormName(currForm.form.form_name, item.form));
         if (filterId.length === 1 && formList.length === 1 && !filterForm) return filterId[0];
         else if (filterId.length === formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
