@@ -74,7 +74,7 @@ const Find = (props) => {
         setId(id);
         if (props.setId) props.setId(id);
         if (props.setName) props.setName(pokeList.find(item => item.id === id).name);
-        props.clearStats();
+        if (props.clearStats) props.clearStats();
     };
 
     const handleSetStats = (type, value) => {
@@ -88,6 +88,7 @@ const Find = (props) => {
             setId(id-1);
             if (props.setId) props.setId(id-1);
             if (props.setName) props.setName(pokeList.find(item => item.id === id-1).name);
+            if (props.clearStats) props.clearStats();
         }, 300);
         props.clearStats();
     }
@@ -97,6 +98,7 @@ const Find = (props) => {
             setId(id+1);
             if (props.setId) props.setId(id+1);
             if (props.setName) props.setName(pokeList.find(item => item.id === id+1).name);
+            if (props.clearStats) props.clearStats();
         }, 300);
         props.clearStats();
     }
@@ -105,7 +107,7 @@ const Find = (props) => {
         return (
             <div className="col d-flex justify-content-center" style={{height: Math.min(eachCounter, pokemonListFilter.slice(0, firstInit + eachCounter*startIndex).length+1)*cardHeight, maxHeight: eachCounter*cardHeight}}>
                 <div className="btn-group-search">
-                    <input type="text" className="form-control" aria-label="search" aria-describedby="input-search" placeholder="Enter name or ID"
+                    <input type="text" className="form-control" aria-label="search" aria-describedby="input-search" placeholder="Enter Name or ID"
                     value={searchTerm} onInput={e => setSearchTerm(e.target.value)}></input>
                 </div>
                 <div className="result tools" onScroll={listenScrollEvent.bind(this)}>

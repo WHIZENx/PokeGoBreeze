@@ -171,7 +171,7 @@ const Home = () => {
                 <div className='row w-100' style={{margin: 0}}>
                     <div className='col border-input' style={{padding: 0}}>
                         <div className='head-types'>Search Name or ID</div>
-                        <input type="text" className='w-100 form-control input-search' placeholder='Enter name or ID'
+                        <input type="text" className='w-100 form-control input-search' placeholder='Enter Name or ID'
                         value={searchTerm}
                         onInput={e => setSearchTerm(e.target.value)}></input>
                     </div>

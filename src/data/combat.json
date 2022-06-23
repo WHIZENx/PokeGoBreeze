@@ -5002,5 +5002,23 @@
         "accuracyChance": 1.0,
         "criticalChance": 0,
         "staminaLossScalar": 0.01
+    },
+    {
+        "name": "BRUTAL_SWING",
+        "type": "DARK",
+        "type_move": "CHARGE",
+        "pvp_power": 65.0,
+        "pvp_energy": -40,
+        "sound": "276-0_super_power",
+        "buffs": [],
+        "id": 367,
+        "pve_power": 65.0,
+        "pve_energy": -33,
+        "durationMs": 1900,
+        "damageWindowStartMs": 1200,
+        "damageWindowEndMs": 1600,
+        "accuracyChance": 1.0,
+        "criticalChance": 0,
+        "staminaLossScalar": 0.01
     }
 ]

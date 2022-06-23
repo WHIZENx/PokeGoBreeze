@@ -91,7 +91,7 @@ const Search = () => {
                 <div className="input-group-prepend">
                     <span className="input-group-text" id="inputGroup-sizing-default">Search</span>
                 </div>
-                <input type="text" className="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="Enter name or ID"
+                <input type="text" className="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="Enter Name or ID"
                 value={searchTerm} onInput={e => setSearchTerm(e.target.value)} onFocus={() => setShowResult(true)} onBlur={() => setShowResult(false)}></input>
             </div>
             <div className="result" style={{display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>

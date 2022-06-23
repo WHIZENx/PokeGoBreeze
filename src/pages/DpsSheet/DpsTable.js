@@ -315,7 +315,7 @@ const DpsTable = () => {
                     <div className='col-xxl' style={{padding: 0}}>
                         <div className="input-group border-input">
                             <span className="input-group-text">Search name or ID</span>
-                            <input type="text" className='form-control input-search' placeholder='Enter name or ID'
+                            <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
                             value={searchTerm}
                             onInput={e => setSearchTerm(e.target.value)}></input>
                         </div>

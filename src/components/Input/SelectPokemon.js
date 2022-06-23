@@ -33,6 +33,11 @@ const SelectPokemon = (props) => {
             if (props.setCurrentPokemon) props.setCurrentPokemon(value);
             if (props.setFMovePokemon) props.setFMovePokemon(null);
             if (props.setCMovePokemon) props.setCMovePokemon(null);
+
+            if (props.setDataList) props.setDataList(value);
+            if (props.setFMoveList) props.setFMoveList(null);
+            if (props.setCMoveList) props.setCMoveList(null);
+
             if (props.clearData) props.clearData();
         }
     }
@@ -43,6 +48,11 @@ const SelectPokemon = (props) => {
         if (props.setCurrentPokemon) props.setCurrentPokemon(null);
         if (props.setFMovePokemon) props.setFMovePokemon(null);
         if (props.setCMovePokemon) props.setCMovePokemon(null);
+
+        if (props.setDataList) props.setDataList(null);
+        if (props.setFMoveList) props.setFMoveList(null);
+        if (props.setCMoveList) props.setCMoveList(null);
+
         if (props.clearData) props.clearData();
     }
 
@@ -57,7 +67,7 @@ const SelectPokemon = (props) => {
                     value={search}
                     type="text"
                     onInput={(e) => setSearch(e.target.value)}
-                    placeholder="Enter name or ID"
+                    placeholder="Enter Name or ID"
                     style={{background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat`: "",
                     paddingLeft: pokemonIcon ? 56 : ""}}/>
                 </div>

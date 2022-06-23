@@ -29,3 +29,32 @@
     border: 2px solid lightgray;
     padding: 1rem;
 }
+
+.line-dps {
+    color: yellow;
+    margin-left: 1px;
+}
+
+.line-left, .line-right {
+    position: absolute;
+    top: -10px;
+}
+
+.line-dps span.line-left {
+    left: -1.5px;
+}
+
+.line-dps span.line-right {
+    right: -1.5px;
+}
+
+.line-dps hr {
+    position: absolute;
+    margin: 0;
+    opacity: 1;
+    height: 2px;
+}
+
+.dps-text {
+    margin-left: 1%;
+}
