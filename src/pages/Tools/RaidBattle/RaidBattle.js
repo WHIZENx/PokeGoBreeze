@@ -60,9 +60,14 @@ const RaidBattle = () => {
 
     const [releasedGO, setReleaseGO] = useState(true);
 
-    const [pokemonBattle, setPokemonBattle] = useState([]);
+    const initDataPoke = {
+        dataTargetPokemon: null,
+        fmoveTargetPokemon: null,
+        cmoveTargetPokemon: null,
+        index: 0
+    }
+    const [pokemonBattle, setPokemonBattle] = useState([initDataPoke]);
 
-    const [countPokemonBattle, setCountPokemonBattle] = useState(1);
     const [countPokemonBattleId, setCountPokemonBattleId] = useState(0);
 
     const resetData = () => {
@@ -72,6 +77,8 @@ const RaidBattle = () => {
 
     const clearData = () => {
         setResult([]);
+        setPokemonBattle([initDataPoke]);
+        setCountPokemonBattleId(0);
     }
 
     const clearDataTarget = () => {
@@ -439,20 +446,20 @@ const RaidBattle = () => {
                     </div>
                     <div className="row" style={{marginLeft: 0, marginRight: 0, marginBottom: 15}}>
                         <div className="col-lg-5 justify-content-center" style={{marginBottom: 20}}>
-                            {[...Array(countPokemonBattle).keys()].map((value, index) => (
+                            {pokemonBattle.map((pokemon, index) => (
                                 <div className={index === 0 ? "" : "element-top"} key={index}>
-                                    {pokemonBattle[index] && pokemonBattle[index].index}
-                                    <PokemonRaid index={pokemonBattle[index] ? pokemonBattle[index].index : countPokemonBattleId} clearData={clearDataTarget} data={pokemonBattle} setData={setPokemonBattle}/>
-                                    {index > 0 && <button className="btn btn-danger w-100" onClick={() => {
-                                        setPokemonBattle([...pokemonBattle].filter(item => item.index !== pokemonBattle[index].index));
-                                        setCountPokemonBattle(countPokemonBattle-1);
-                                    }}>Delete Pokemon</button>}
+                                    <PokemonRaid id={index} clearData={clearDataTarget} pokemon={pokemon} data={pokemonBattle} setData={setPokemonBattle}/>
                                 </div>
                             ))}
-                            <button className="btn btn-primary w-100 element-top" onClick={() => {
-                                setCountPokemonBattle(countPokemonBattle+1);
-                                setCountPokemonBattleId(countPokemonBattleId+1);
-                            }}>Add Pokemon</button>
+                            <div className="d-flex flex-wrap justify-content-center element-top">
+                                {pokemonBattle.length > 1 && <button className="btn btn-danger" style={{marginRight: 10}} onClick={() => {
+                                    setPokemonBattle(pokemonBattle.splice(0, pokemonBattle.length-1));
+                                }}>Delete Pokemon</button>}
+                                <button className="btn btn-primary" onClick={() => {
+                                    setCountPokemonBattleId(countPokemonBattleId+1);
+                                    setPokemonBattle(prevPokemon => [...prevPokemon, {...initDataPoke, index: countPokemonBattleId+1}]);
+                                }}>Add Pokemon</button>
+                            </div>
                             {/* <span className="input-group-text justify-content-center"><b>Pokémon Battle</b></span>
                             <SelectPokemon clearData={clearDataTarget}
                                             setCurrentPokemon={setDataTargetPokemon}

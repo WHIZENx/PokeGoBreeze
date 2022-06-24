@@ -95,8 +95,10 @@ const Tools = (props) => {
                     </div>
                 }
             </div>
-            <div style={{height: 64}}>
-                {currForm && <Type styled={true} arr={currForm.form.types.map(type => type.type.name)}/>}
+            <div className="element-top" style={{height: 64}}>
+                {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length &&
+                    <Type styled={true} arr={currForm.form.types.map(type => type.type.name)}/>
+                }
             </div>
             <h4><b>#{props.id} {currForm ? splitAndCapitalize(currForm.form.name, "-", " ") : props.name}</b></h4>
             <div className="scroll-card">
