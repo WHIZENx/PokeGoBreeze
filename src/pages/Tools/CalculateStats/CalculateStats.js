@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { calculateBettleLeague, calculateBetweenLevel, calculateStats, calculateStatsBettle, computeBgColor, computeColor } from "../../../components/Calculate/Calculate";
+import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle, computeBgColor, computeColor } from "../../../components/Calculate/Calculate";
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import { useSnackbar } from "notistack";
 
@@ -12,7 +12,6 @@ import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
 import Find from "../Find";
 import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from "../../../util/util";
-// import EvoChain from "./EvoChain";
 
 const Calculate = () => {
 
@@ -66,10 +65,10 @@ const Calculate = () => {
         setPokeStats(result);
         setStatLevel(result.level);
         setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
-        setDataLittleLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 500, typePoke));
-        setDataGreatLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 1500, typePoke));
-        setDataUltraLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 2500, typePoke));
-        setDataMasterLeague(calculateBettleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, null, typePoke));
+        setDataLittleLeague(calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 500, typePoke));
+        setDataGreatLeague(calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 1500, typePoke));
+        setDataUltraLeague(calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 2500, typePoke));
+        setDataMasterLeague(calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, null, typePoke));
     }, [enqueueSnackbar, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
 
     useEffect(() => {
@@ -277,7 +276,7 @@ const Calculate = () => {
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
                                                 <td>{statData ?
                                                 statData.type !== "shadow" ?
-                                                calculateStatsBettle(statATK, pokeStats.IV.atk, statLevel)
+                                                calculateStatsBattle(statATK, pokeStats.IV.atk, statLevel, true)
                                                 : <Fragment>
                                                     {statData.atk_stat}{statData.atk_stat_diff > 0 && <span className="text-success" style={{fontWeight: 500}}> (+{statData.atk_stat_diff})</span>}
                                                 </Fragment>
@@ -287,7 +286,7 @@ const Calculate = () => {
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
                                                 <td>{statData ?
                                                 statData.type !== "shadow" ?
-                                                calculateStatsBettle(statDEF, pokeStats.IV.def, statLevel)
+                                                calculateStatsBattle(statDEF, pokeStats.IV.def, statLevel, true)
                                                 : <Fragment>
                                                     {statData.def_stat}{statData.def_stat_diff > 0 && <span className="text-danger" style={{fontWeight: 500}}> (-{statData.def_stat_diff})</span>}
                                                 </Fragment>
@@ -295,7 +294,7 @@ const Calculate = () => {
                                             </tr>
                                             <tr>
                                                 <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
-                                                <td>{statData ? calculateStatsBettle(statSTA, pokeStats.IV.sta, statLevel) : "-"}</td>
+                                                <td>{statData ? calculateStatsBattle(statSTA, pokeStats.IV.sta, statLevel, true) : "-"}</td>
                                             </tr>
                                             {/* <EvoChain id={id} url={urlEvo.url} /> */}
                                             {/* <tr className="text-center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
@@ -328,9 +327,9 @@ const Calculate = () => {
                                     </table>
                                 </div>
                                 <div className="col" style={{padding: 0}}>
-                                    <table className="table-info bettle-league">
+                                    <table className="table-info battle-league">
                                         <thead className="text-center">
-                                            <tr><th colSpan="5">Recommend in Bettle League</th></tr>
+                                            <tr><th colSpan="5">Recommend in Battle League</th></tr>
                                         </thead>
                                         <tbody>
                                             <tr className="text-center"><td className="table-sub-header" colSpan="4">

@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
-import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBettlePure, calculateStatsByTag, convertName, findAssetForm, RAID_BOSS_TIER, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
+import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBattle, calculateStatsByTag, convertName, findAssetForm, RAID_BOSS_TIER, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
 import { Checkbox, FormControlLabel, Switch } from "@mui/material";
 
 import loadingImg from '../../../assets/loading.png';
@@ -121,9 +121,9 @@ const RaidBattle = () => {
             const cmove = combatData.find(item => item.name === vc);
             const stats = calculateStatsByTag(value.baseStats, value.forme);
             const statsAttackerTemp = {
-                atk: calculateStatsBettlePure(stats.atk, 15, 40),
-                def: calculateStatsBettlePure(stats.def, 15, 40),
-                hp: calculateStatsBettlePure(stats.sta, 15, 40),
+                atk: calculateStatsBattle(stats.atk, 15, 40),
+                def: calculateStatsBattle(stats.def, 15, 40),
+                hp: calculateStatsBattle(stats.sta, 15, 40),
                 fmove: fmove,
                 cmove: cmove,
                 types: value.types,
@@ -239,9 +239,9 @@ const RaidBattle = () => {
     //     const cmove = combatData.find(item => item.name === cmoveTargetPokemon.name);
     //     const stats = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.forme);
     //     const statsAttacker = {
-    //         atk: calculateStatsBettlePure(stats.atk, 15, 40),
-    //         def: calculateStatsBettlePure(stats.def, 15, 40),
-    //         hp: calculateStatsBettlePure(stats.sta, 15, 40),
+    //         atk: calculateStatsBattle(stats.atk, 15, 40),
+    //         def: calculateStatsBattle(stats.def, 15, 40),
+    //         hp: calculateStatsBattle(stats.sta, 15, 40),
     //         fmove: fmove,
     //         cmove: cmove,
     //         types: dataTargetPokemon.types,

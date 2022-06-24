@@ -2,7 +2,7 @@ import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, 
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { FormGroup } from "react-bootstrap";
-import { calculateDamagePVE, calculateStatsBettlePure, getTypeEffective, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../components/Calculate/Calculate";
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../components/Calculate/Calculate";
 
 import './Damage.css';
 import Type from "../../../components/Sprites/Type";
@@ -77,9 +77,9 @@ const Damage = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        if (statATK !== 0) setStatLvATK(calculateStatsBettlePure(statATK, 15, statLevel, statType === "shadow" ? SHADOW_ATK_BONUS : 1));
-        if (statDEFObj !== 0) setStatLvDEFObj(calculateStatsBettlePure(statDEFObj, 15, statLevelObj, statTypeObj === "shadow" ? SHADOW_DEF_BONUS : 1));
-        if (statSTAObj !== 0) setStatLvSTAObj(calculateStatsBettlePure(statSTAObj, 15, statLevelObj));
+        if (statATK !== 0) setStatLvATK(calculateStatsBattle(statATK, 15, statLevel, false, statType === "shadow" ? SHADOW_ATK_BONUS : 1));
+        if (statDEFObj !== 0) setStatLvDEFObj(calculateStatsBattle(statDEFObj, 15, statLevelObj, false, statTypeObj === "shadow" ? SHADOW_DEF_BONUS : 1));
+        if (statSTAObj !== 0) setStatLvSTAObj(calculateStatsBattle(statSTAObj, 15, statLevelObj));
         document.title = "Damage Simulator - Battle Simulator";
     }, [statATK, statLevel, statType, statATKObj, statDEF, statDEFObj, statLevelObj, statSTA, statSTAObj, statTypeObj])
 

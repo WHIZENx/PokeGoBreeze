@@ -1,6 +1,6 @@
 import { Box, FormControlLabel, Radio } from "@mui/material";
 import { useCallback, useState } from "react";
-import { calculateStatsBettle, calculateStatsBettlePure, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../components/Calculate/Calculate";
+import { calculateStatsBattle, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../components/Calculate/Calculate";
 import APIService from "../../../services/API.service";
 
 import atk_logo from '../../../assets/attack.png';
@@ -15,9 +15,9 @@ const StatsTable = ({setStatType, setStatLevel, statATK, statDEF, statSTA, setSt
 
     const onHandleLevel = useCallback((e, v) => {
         setStatLevel(v);
-        if(setStatLvATK) setStatLvATK(calculateStatsBettlePure(statATK, 15, currStatLevel, currStatType === "shadow" ? SHADOW_ATK_BONUS : 1));
-        if(setStatLvDEF) setStatLvDEF(calculateStatsBettlePure(statDEF, 15, currStatLevel, currStatType === "shadow" ? SHADOW_DEF_BONUS : 1));
-        if(setStatLvSTA) setStatLvSTA(calculateStatsBettlePure(statSTA, 15, currStatLevel));
+        if(setStatLvATK) setStatLvATK(calculateStatsBattle(statATK, 15, currStatLevel, false, currStatType === "shadow" ? SHADOW_ATK_BONUS : 1));
+        if(setStatLvDEF) setStatLvDEF(calculateStatsBattle(statDEF, 15, currStatLevel, false, currStatType === "shadow" ? SHADOW_DEF_BONUS : 1));
+        if(setStatLvSTA) setStatLvSTA(calculateStatsBattle(statSTA, 15, currStatLevel));
         setCurrStatLevel(v);
     }, [setStatLevel, setStatLvATK, setStatLvDEF, setStatLvSTA, statATK, statDEF, statSTA, currStatType, currStatLevel]);
 
@@ -68,15 +68,15 @@ const StatsTable = ({setStatType, setStatLevel, statATK, statDEF, statSTA, setSt
                             <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
-                                    <td className="text-center">{calculateStatsBettle(statATK, 15, currStatLevel, currStatType === "shadow" ? SHADOW_ATK_BONUS : 1)}</td>
+                                    <td className="text-center">{calculateStatsBattle(statATK, 15, currStatLevel, true, currStatType === "shadow" ? SHADOW_ATK_BONUS : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
-                                    <td className="text-center">{calculateStatsBettle(statDEF, 15, currStatLevel, currStatType === "shadow" ? SHADOW_DEF_BONUS : 1)}</td>
+                                    <td className="text-center">{calculateStatsBattle(statDEF, 15, currStatLevel, true, currStatType === "shadow" ? SHADOW_DEF_BONUS : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP</td>
-                                    <td className="text-center">{calculateStatsBettle(statSTA, 15, currStatLevel)}</td>
+                                    <td className="text-center">{calculateStatsBattle(statSTA, 15, currStatLevel, true)}</td>
                                 </tr>
                         </tbody>
                     </table>

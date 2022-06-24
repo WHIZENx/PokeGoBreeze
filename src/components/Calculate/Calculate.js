@@ -406,11 +406,11 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
         let between_xl_candy_diff = 0;
 
         if (type === "shadow") {
-            var atk_stat = calculateStatsBettle(atk, IVatk, to_lv+0.5, SHADOW_ATK_BONUS);
-            var def_stat = calculateStatsBettle(def, IVdef, to_lv+0.5, SHADOW_DEF_BONUS);
+            var atk_stat = calculateStatsBattle(atk, IVatk, to_lv+0.5, true, SHADOW_ATK_BONUS);
+            var def_stat = calculateStatsBattle(def, IVdef, to_lv+0.5, true, SHADOW_DEF_BONUS);
 
-            var atk_stat_diff = Math.abs(calculateStatsBettle(atk, IVatk, to_lv+0.5) - atk_stat);
-            var def_stat_diff = Math.abs(calculateStatsBettle(def, IVdef, to_lv+0.5) - def_stat);
+            var atk_stat_diff = Math.abs(calculateStatsBattle(atk, IVatk, to_lv+0.5) - atk_stat, true);
+            var def_stat_diff = Math.abs(calculateStatsBattle(def, IVdef, to_lv+0.5) - def_stat, true);
         }
 
         data.forEach(ele => {
@@ -447,56 +447,51 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
     }
 }
 
-export const calculateStatsBettle = (base, iv, level, addition) => {
-    let result = (base+iv)*data.find(item => item.level === level).multiplier
-    if (addition) return Math.floor(result*addition)
-    return Math.floor(result)
-}
-
-export const calculateStatsBettlePure = (base, iv, level, addition) => {
-    let result = (base+iv)*data.find(item => item.level === level).multiplier
-    if (addition) return result*addition
+export const calculateStatsBattle = (base, iv, level, floor, addition) => {
+    let result = (base+iv)*data.find(item => item.level === level).multiplier;
+    if (addition) result *= addition;
+    if (floor) Math.floor(result);
     return result
 }
 
-export const calculateBettleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, currCP, maxCp, type) => {
+export const calculateBattleLeague = (atk, def, sta, IVatk, IVdef, IVsta, from_lv, currCP, maxCp, type) => {
     let level = MAX_LEVEL;
     if (type !== "lucky") level -= 1;
     if (maxCp && currCP > maxCp) {
         return {elidge: false}
     } else {
-        let dataBettle = {};
+        let dataBattle = {};
 
-        dataBettle["elidge"] = true;
-        dataBettle["maxCP"] = maxCp;
-        dataBettle["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
-        dataBettle["cp"] = 0;
-        dataBettle["limit"] = true;
-        dataBettle["level"] = null;
+        dataBattle["elidge"] = true;
+        dataBattle["maxCP"] = maxCp;
+        dataBattle["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
+        dataBattle["cp"] = 0;
+        dataBattle["limit"] = true;
+        dataBattle["level"] = null;
         if (maxCp == null) {
-            dataBettle["level"] = level;
-            dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, level);
-            dataBettle.limit = false;
+            dataBattle["level"] = level;
+            dataBattle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, level);
+            dataBattle.limit = false;
         } else {
             for (let i = MIN_LEVEL; i <= level; i+=0.5) {
-                if (dataBettle.cp < calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) && calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) <= maxCp) {
-                    dataBettle["level"] = i;
-                    dataBettle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i);
-                    dataBettle.limit = false;
+                if (dataBattle.cp < calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) && calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i) <= maxCp) {
+                    dataBattle["level"] = i;
+                    dataBattle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i);
+                    dataBattle.limit = false;
                 };
             }
         }
 
-        let atk_stat = (type === "shadow") ? calculateStatsBettle(atk, IVatk, dataBettle.level, SHADOW_ATK_BONUS) : calculateStatsBettle(atk, IVatk, dataBettle.level);
-        let def_stat = (type === "shadow") ? calculateStatsBettle(def, IVdef, dataBettle.level, SHADOW_DEF_BONUS) : calculateStatsBettle(def, IVdef, dataBettle.level);
+        let atk_stat = (type === "shadow") ? calculateStatsBattle(atk, IVatk, dataBattle.level, true, SHADOW_ATK_BONUS) : calculateStatsBattle(atk, IVatk, dataBattle.level, true);
+        let def_stat = (type === "shadow") ? calculateStatsBattle(def, IVdef, dataBattle.level, true, SHADOW_DEF_BONUS) : calculateStatsBattle(def, IVdef, dataBattle.level, true);
 
-        dataBettle["rangeValue"] = calculateBetweenLevel(atk, def, sta, IVatk, IVdef, IVsta, from_lv, dataBettle.level, type);
-        dataBettle["stats"] = {
+        dataBattle["rangeValue"] = calculateBetweenLevel(atk, def, sta, IVatk, IVdef, IVsta, from_lv, dataBattle.level, type);
+        dataBattle["stats"] = {
             atk : atk_stat,
             def : def_stat,
-            sta : calculateStatsBettle(sta, IVsta, dataBettle.level)
+            sta : calculateStatsBattle(sta, IVsta, dataBattle.level, true)
         }
-        return dataBettle
+        return dataBattle
     }
 }
 
@@ -554,9 +549,9 @@ export const calStatsProd = (atk, def, sta, maxCP, pure) => {
                 for (let k = MIN_IV; k <= MAX_IV; ++k) {
                     const cp = calculateCP(atk+i, def+j, sta+k, l);
                     if (maxCP == null || cp <= maxCP) {
-                        const statsATK = calculateStatsBettlePure(atk, i, l);
-                        const statsDEF = calculateStatsBettlePure(def, j, l);
-                        const statsSTA = calculateStatsBettlePure(sta, k, l);
+                        const statsATK = calculateStatsBattle(atk, i, l);
+                        const statsDEF = calculateStatsBattle(def, j, l);
+                        const statsSTA = calculateStatsBattle(sta, k, l);
                         dataList.push({
                             IV: {atk: i, def: j, sta: k},
                             CP: cp,
@@ -801,14 +796,14 @@ export const queryTopMove = (move) => {
                 const stats = calculateStatsByTag(value.baseStats, value.forme);
                 let dps = calculateAvgDPS(move,
                     move,
-                    calculateStatsBettlePure(stats.atk, MAX_IV, 40),
-                    calculateStatsBettlePure(stats.def, MAX_IV, 40),
-                    calculateStatsBettlePure(stats.sta, MAX_IV, 40),
+                    calculateStatsBattle(stats.atk, MAX_IV, 40),
+                    calculateStatsBattle(stats.def, MAX_IV, 40),
+                    calculateStatsBattle(stats.sta, MAX_IV, 40),
                     value.types
                 );
                 let tdo = calculateTDO(
-                    calculateStatsBettlePure(stats.def, MAX_IV, 40),
-                    calculateStatsBettlePure(stats.sta, MAX_IV, 40),
+                    calculateStatsBattle(stats.def, MAX_IV, 40),
+                    calculateStatsBattle(stats.sta, MAX_IV, 40),
                     dps
                 );
                 dataPri.push({num: value.num, forme: value.forme, name: splitAndCapitalize(value.name, "-", " "), baseSpecies: value.baseSpecies, sprite: value.sprite, releasedGO: value.releasedGO, dps: dps, tdo: tdo});
@@ -841,13 +836,13 @@ const queryMove = (dataList, vf, atk, def, sta, type, cmove, felite, celite, sha
         }
 
         let offensive = calculateAvgDPS(mf, mc,
-            calculateStatsBettle(atk, options.IV_ATK, options.POKEMON_LEVEL),
-            calculateStatsBettle(def, options.IV_DEF, options.POKEMON_LEVEL),
-            calculateStatsBettle(sta, options.IV_HP, options.POKEMON_LEVEL), type);
+            calculateStatsBattle(atk, options.IV_ATK, options.POKEMON_LEVEL, true),
+            calculateStatsBattle(def, options.IV_DEF, options.POKEMON_LEVEL, true),
+            calculateStatsBattle(sta, options.IV_HP, options.POKEMON_LEVEL, true), type);
         let defensive = calculateAvgDPS(mf, mc,
-            calculateStatsBettle(atk, options.IV_ATK, options.POKEMON_LEVEL),
-            calculateStatsBettle(def, options.IV_DEF, options.POKEMON_LEVEL),
-            calculateStatsBettle(sta, options.IV_HP, options.POKEMON_LEVEL), type, options);
+            calculateStatsBattle(atk, options.IV_ATK, options.POKEMON_LEVEL, true),
+            calculateStatsBattle(def, options.IV_DEF, options.POKEMON_LEVEL, true),
+            calculateStatsBattle(sta, options.IV_HP, options.POKEMON_LEVEL, true), type, options);
 
         dataList.push({fmove: mf, cmove: mc, eDPS: {offensive: offensive, defensive: defensive}});
     });
@@ -918,7 +913,7 @@ const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felit
 
         let options = {
             objTypes: types,
-            POKEMON_DEF_OBJ: calculateStatsBettle(def, 15, 40),
+            POKEMON_DEF_OBJ: calculateStatsBattle(def, 15, 40, true),
             IV_ATK: 15,
             IV_DEF: 15,
             IV_HP: 15,
@@ -926,9 +921,9 @@ const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felit
         }
 
         let dpsOff = calculateAvgDPS(mf, mc,
-            calculateStatsBettle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL),
-            calculateStatsBettle(stats.def, options.IV_DEF, options.POKEMON_LEVEL),
-            calculateStatsBettle(stats.sta, options.IV_HP, options.POKEMON_LEVEL), pokemon.types, options);
+            calculateStatsBattle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL, true),
+            calculateStatsBattle(stats.def, options.IV_DEF, options.POKEMON_LEVEL, true),
+            calculateStatsBattle(stats.sta, options.IV_HP, options.POKEMON_LEVEL, true), pokemon.types, options);
 
         dataList.push({
             pokemon_id: pokemon.num,

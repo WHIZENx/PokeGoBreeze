@@ -5,7 +5,7 @@ import combatData from '../../data/combat.json';
 import combatPokemonData from '../../data/combat_pokemon_go_list.json';
 import typesData from '../../data/type_effectiveness.json';
 import weatherBoosts from '../../data/weather_boosts.json';
-import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, calculateStatsBettlePure, DEFAULT_POKEMON_DEF_OBJ, calculateBattleDPS, TimeToKill, calculateBattleDPSDefender } from "../../components/Calculate/Calculate";
+import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, DEFAULT_POKEMON_DEF_OBJ, calculateBattleDPS, TimeToKill, calculateBattleDPSDefender, calculateStatsBattle } from "../../components/Calculate/Calculate";
 import DataTable from "react-data-table-component";
 import APIService from "../../services/API.service";
 
@@ -156,9 +156,9 @@ const DpsTable = () => {
             const cmove = combatData.find(item => item.name === vc);
             const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
             const statsAttacker = {
-                atk: calculateStatsBettlePure(stats.atk, IV_ATK, POKEMON_LEVEL),
-                def: calculateStatsBettlePure(stats.def, IV_DEF, POKEMON_LEVEL),
-                hp: calculateStatsBettlePure(stats.sta, IV_HP, POKEMON_LEVEL),
+                atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
+                def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
+                hp: calculateStatsBattle(stats.sta, IV_HP, POKEMON_LEVEL),
                 fmove: fmove,
                 cmove: cmove,
                 types: pokemon.types,
@@ -172,9 +172,9 @@ const DpsTable = () => {
             if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
                 const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.forme);
                 const statsDefender = {
-                    atk: calculateStatsBettlePure(statsDef.atk, IV_ATK, POKEMON_LEVEL),
-                    def: calculateStatsBettlePure(statsDef.def, IV_DEF, POKEMON_LEVEL),
-                    hp: calculateStatsBettlePure(statsDef.sta, IV_HP, POKEMON_LEVEL),
+                    atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
+                    def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
+                    hp: calculateStatsBattle(statsDef.sta, IV_HP, POKEMON_LEVEL),
                     fmove: combatData.find(item => item.name === fmoveTargetPokemon.name.replaceAll("_FAST", "")),
                     cmove: combatData.find(item => item.name === cmoveTargetPokemon.name),
                     types: dataTargetPokemon.types,
