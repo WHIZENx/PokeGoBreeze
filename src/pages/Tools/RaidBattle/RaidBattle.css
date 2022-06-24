@@ -31,25 +31,26 @@
 }
 
 .line-dps {
-    color: yellow;
+    color: orange;
     margin-left: 1px;
+    height: 15px
 }
 
 .line-left, .line-right {
     position: absolute;
-    top: -10px;
+    top: -13px;
 }
 
 .line-dps span.line-left {
-    left: -1.5px;
+    left: -1.6px;
 }
 
 .line-dps span.line-right {
-    right: -1.5px;
+    right: -1.6px;
 }
 
 .line-dps hr {
-    position: absolute;
+    /* position: absolute; */
     margin: 0;
     opacity: 1;
     height: 2px;
@@ -57,4 +58,28 @@
 
 .dps-text {
     margin-left: 1%;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.count-pokemon {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 8px 15px;
+    margin: 0 15px;
+}
+
+.click-none {
+    cursor: auto !important;
+    color: lightgray !important;
+}
+
+.flag-pokemon {
+    margin-top: 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white !important;
+    width: fit-content;
 }

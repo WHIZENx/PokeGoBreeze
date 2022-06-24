@@ -1,5 +1,5 @@
 {
-    "timestamp": 1654943501000,
+    "timestamp": 1656096822000,
     "data": [
         {
             "id": "ALOLAISHI_1",
@@ -119,6 +119,38 @@
             "stickerUrl": "https://storage.googleapis.com/prod-public-images/Stickers/sticker_CitySpotlight.png",
             "pokemonId": null,
             "pokemonName": null,
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DEINO_1",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": 633,
+            "pokemonName": "DEINO",
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DEINO_2",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": 633,
+            "pokemonName": "DEINO",
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DEINO_3",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": 633,
+            "pokemonName": "DEINO",
+            "type": "DEFAULT"
+        },
+        {
+            "id": "DEINO_4",
+            "maxCount": 25,
+            "stickerUrl": null,
+            "pokemonId": 633,
+            "pokemonName": "DEINO",
             "type": "DEFAULT"
         },
         {

@@ -1,3 +1,4 @@
+import { Badge } from "@mui/material";
 import { useState } from "react";
 import SelectMove from "../Input/SelectMove";
 import SelectPokemon from "../Input/SelectPokemon";
@@ -31,15 +32,15 @@ const PokemonRaid = (props) => {
 
     return (
         <div>
-            <span className="input-group-text justify-content-center"><b>Pokémon Battle</b></span>
+            <span className="input-group-text justify-content-center"><Badge color="primary" overlap="circular" badgeContent={props.id+1} /> <b style={{marginLeft: 15}}>Pokémon Battle</b></span>
             <SelectPokemon clearData={props.clearData}
-                            setDataList={setDataPokemon}
-                            setFMoveList={setFMovePokemon}
-                            setCMoveList={setCMovePokemon}/>
+                            setCurrentPokemon={setDataPokemon}
+                            setFMovePokemon={setFMovePokemon}
+                            setCMovePokemon={setCMovePokemon}/>
             <span className="input-group-text justify-content-center"><b>Fast Move</b></span>
-            <SelectMove inputType={"small"} clearData={props.clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMoveList={setFMovePokemon} moveType="FAST"/>
+            <SelectMove inputType={"small"} clearData={props.clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFMovePokemon} moveType="FAST"/>
             <span className="input-group-text justify-content-center"><b>Charge Move</b></span>
-            <SelectMove inputType={"small"} clearData={props.clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMoveList={setCMovePokemon} moveType="CHARGE"/>
+            <SelectMove inputType={"small"} clearData={props.clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCMovePokemon} moveType="CHARGE"/>
         </div>
     )
 }

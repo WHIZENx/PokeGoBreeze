@@ -19,6 +19,10 @@ import TypeBadge from "../../../components/Sprites/TypeBadge";
 import atk_logo from '../../../assets/attack.png';
 import PokemonRaid from "../../../components/Raid/PokemonRaid";
 
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { useSnackbar } from "notistack";
+
 const RaidBattle = () => {
 
     const [id, setId] = useState(1);
@@ -69,6 +73,8 @@ const RaidBattle = () => {
     const [pokemonBattle, setPokemonBattle] = useState([initDataPoke]);
 
     const [countPokemonBattleId, setCountPokemonBattleId] = useState(0);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const resetData = () => {
         clearData();
@@ -241,72 +247,107 @@ const RaidBattle = () => {
         calculateTopBatlle(false);
     }
 
-    // const calculateAtkBatlle = useCallback(() => {
-    //     const fmove = combatData.find(item => item.name === fmoveTargetPokemon.name.replaceAll("_FAST", ""));
-    //     const cmove = combatData.find(item => item.name === cmoveTargetPokemon.name);
-    //     const stats = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.forme);
-    //     const statsAttacker = {
-    //         atk: calculateStatsBattle(stats.atk, 15, 40),
-    //         def: calculateStatsBattle(stats.def, 15, 40),
-    //         hp: calculateStatsBattle(stats.sta, 15, 40),
-    //         fmove: fmove,
-    //         cmove: cmove,
-    //         types: dataTargetPokemon.types,
-    //         shadow: false,
-    //         WEATHER_BOOSTS: weatherCounter,
-    //     }
-    //     const statsDefender = {
-    //         atk: statBossATK,
-    //         def: statBossDEF,
-    //         hp: statBossHP,
-    //         fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
-    //         cmove: combatData.find(item => item.name === cMove.name),
-    //         types: form.form.types.map(type => type.type.name),
-    //         WEATHER_BOOSTS: weatherBoss
-    //     }
+    const queryAtkBatlle = (pokemon, dpsAtkPlus, HpRemain) => {
+        const fmove = combatData.find(item => item.name === pokemon.fmoveTargetPokemon.name.replaceAll("_FAST", ""));
+        const cmove = combatData.find(item => item.name === pokemon.cmoveTargetPokemon.name);
+        const stats = calculateStatsByTag(pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.forme);
+        const statsAttacker = {
+            atk: calculateStatsBattle(stats.atk, 15, 40),
+            def: calculateStatsBattle(stats.def, 15, 40),
+            hp: calculateStatsBattle(stats.sta, 15, 40),
+            fmove: fmove,
+            cmove: cmove,
+            types: pokemon.dataTargetPokemon.types,
+            shadow: false,
+            WEATHER_BOOSTS: weatherCounter,
+        }
+        const statsDefender = {
+            atk: statBossATK,
+            def: statBossDEF,
+            hp: statBossHP-HpRemain,
+            fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
+            cmove: combatData.find(item => item.name === cMove.name),
+            types: form.form.types.map(type => type.type.name),
+            WEATHER_BOOSTS: weatherBoss
+        }
 
-    //     const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
-    //     const dpsAtk = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
+        const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
+        let dpsAtk = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
+        if (dpsAtkPlus) dpsAtk += dpsAtkPlus;
 
-    //     const ttkAtk = enableTimeAllow ? Math.min(timeAllow, TimeToKill(Math.floor(statsDefender.hp), dpsAtk)) : TimeToKill(Math.floor(statsDefender.hp), dpsAtk); // Time to Attacker kill Defender
-    //     const ttkDef = enableTimeAllow ? Math.min(timeAllow, TimeToKill(Math.floor(statsAttacker.hp), dpsDef)) : TimeToKill(Math.floor(statsAttacker.hp), dpsDef); // Time to Defender kill Attacker
+        const ttkAtk = enableTimeAllow ? Math.min(timeAllow, TimeToKill(Math.floor(statsDefender.hp), dpsAtk)) : TimeToKill(Math.floor(statsDefender.hp), dpsAtk); // Time to Attacker kill Defender
+        const ttkDef = enableTimeAllow ? Math.min(timeAllow, TimeToKill(Math.floor(statsAttacker.hp), dpsDef)) : TimeToKill(Math.floor(statsAttacker.hp), dpsDef); // Time to Defender kill Attacker
 
-    //     const timeKill = Math.min(ttkAtk, ttkDef);
+        const timeKill = Math.min(ttkAtk, ttkDef);
 
-    //     const tdoAtk = dpsAtk*(enableTimeAllow ? timeKill : ttkDef);
-    //     const tdoDef = dpsDef*(enableTimeAllow ? timeKill : ttkAtk);
+        const tdoAtk = dpsAtk*(enableTimeAllow ? timeKill : ttkDef);
+        const tdoDef = dpsDef*(enableTimeAllow ? timeKill : ttkAtk);
 
-    //     const flag = ttkDef > ttkAtk; // true=Win, false=Loss
+        const flag = ttkDef > ttkAtk; // true=Win, false=Loss
 
-    //     console.log(timeKill, flag, dpsDef, dpsAtk)
+        // console.log(timeKill, flag, dpsDef, dpsAtk)
 
-    //     setResultAtk({
-    //         pokemon: dataTargetPokemon,
-    //         fmove: statsAttacker.fmove,
-    //         cmove: statsAttacker.cmove,
-    //         dpsDef: dpsDef,
-    //         dpsAtk: dpsAtk,
-    //         tdoAtk: tdoAtk,
-    //         tdoDef: tdoDef,
-    //         multiDpsTdo: Math.pow(dpsAtk,3)*tdoAtk,
-    //         ttkAtk: ttkAtk,
-    //         ttkDef: ttkDef,
-    //         attackHp: Math.floor(statsAttacker.hp),
-    //         attackHpRemain: Math.floor(statsAttacker.hp)-(enableTimeAllow ? timeKill : ttkDef)*dpsDef,
-    //         defendHpRemain: Math.floor(statsDefender.hp)-(enableTimeAllow ? timeKill : ttkAtk)*dpsAtk,
-    //         death: Math.floor(statsDefender.hp/tdoAtk),
-    //         flag: flag
-    //     });
-    // }, [enableTimeAllow, cMove, cmoveTargetPokemon, dataTargetPokemon, fMove, fmoveTargetPokemon, form, statBossATK, statBossDEF, statBossHP, timeAllow, weatherBoss, weatherCounter])
+        return {
+            pokemon: pokemon.dataTargetPokemon,
+            fmove: statsAttacker.fmove,
+            cmove: statsAttacker.cmove,
+            dpsDef: dpsDef,
+            dpsAtk: dpsAtk-dpsAtkPlus,
+            tdoAtk: tdoAtk,
+            tdoDef: tdoDef,
+            multiDpsTdo: Math.pow(dpsAtk,3)*tdoAtk,
+            ttkAtk: ttkAtk,
+            ttkDef: ttkDef,
+            attackHp: Math.floor(statsAttacker.hp),
+            attackHpRemain: Math.floor(statsAttacker.hp)-(enableTimeAllow ? timeKill : ttkDef)*dpsDef,
+            defendHpRemain: Math.floor(statsDefender.hp)-(enableTimeAllow ? timeKill : ttkAtk)*dpsAtk,
+            deathCount: Math.floor(statsDefender.hp/tdoAtk),
+            flag: flag,
+            death: Math.floor(statsAttacker.hp)-(enableTimeAllow ? timeKill : ttkDef)*dpsDef === 0 ? true : false
+        };
+    }
+
+    const calculateAtkBatlle = (data) => {
+        const pokemon = data.filter(pokemon => pokemon.dataTargetPokemon);
+        if (pokemon.length === 0) {
+            enqueueSnackbar('Please select Pokemon to raid battle!', { variant: 'error' });
+            return;
+        }
+
+        let dataList = {
+            pokemon: [],
+            summary: {
+                dps: 0,
+                tdo: 0,
+                ttk: 0
+            }
+        }
+        data.forEach(pokemon => {
+            if (pokemon.dataTargetPokemon) {
+                const result = queryAtkBatlle(pokemon, dataList.summary.dps, dataList.summary.tdo);
+                dataList.pokemon.push(result);
+                dataList.summary.dps += result.dpsAtk;
+                dataList.summary.tdo += result.tdoAtk
+                dataList.summary.ttk += result.ttkAtk
+
+                if (enableTimeAllow) {
+                    dataList.summary.tdo = Math.min(statBossHP, dataList.summary.tdo);
+                    dataList.summary.ttk = Math.min(timeAllow, dataList.summary.ttk);
+                }
+            }
+        });
+        dataList.pokemon = dataList.pokemon.map(pokemon => {
+            return {...pokemon, tdo: (statBossHP/(dataList.summary.dps)*pokemon.dpsAtk)}
+        })
+        console.log(dataList)
+        setResultAtk(dataList);
+    }
 
     useEffect(() => {
         document.title = "Raid Battle - Tools";
-        if (form) {
-            // if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon && !resultAtk) calculateAtkBatlle();
-            if (!initialize.current) {
-                findMove(id, form.form.name);
-                initialize.current = true;
-            }
+        if (form && !initialize.current) {
+            findMove(id, form.form.name);
+            initialize.current = true;
         }
     }, [findMove, id, form, resultAtk]);
 
@@ -320,32 +361,34 @@ const RaidBattle = () => {
     }
 
     const calculateHpBar = () => {
-        const dps = pokemonBattle && resultAtk ?  Math.round(resultAtk.dpsAtk)*100/statBossHP : 0;
-        const percent = pokemonBattle && resultAtk ? Math.round(resultAtk.defendHpRemain)*100/statBossHP : 100;
+        const dps = resultAtk ?  Math.round(resultAtk.summary.dps)*100/statBossHP : 0;
+        const percent = resultAtk ? (statBossHP-Math.round(resultAtk.summary.tdo))*100/statBossHP : 100;
         return (
+            <Fragment>
             <div className="progress position-relative" style={{marginTop: 20, minWidth: 'auto'}}>
                 <div className="progress-bar bg-success" style={{width: percent+'%'}} role="progressbar" aria-valuenow={percent} aria-valuemin="0" aria-valuemax="100"></div>
                 <div className="progress-bar bg-danger" style={{width: (100-percent)+'%'}} role="progressbar" aria-valuenow={100-percent} aria-valuemin="0" aria-valuemax="100"></div>
-                <div className="box-text rank-text justify-content-end d-flex position-absolute">
-                    <span>HP: {pokemonBattle && resultAtk ? `${Math.round(resultAtk.defendHpRemain)} / ${statBossHP}` : `${statBossHP}`}</span>
-                </div>
-                {pokemonBattle && resultAtk &&
+                {resultAtk &&
                 <div className="justify-content-start align-items-center d-flex position-absolute h-100 w-100">
-                    <div className="line-dps position-relative" style={{width: `calc(${dps}% + 2px`}}>
-                        <span className="line-left"><b>|</b></span>
-                        <hr className="w-100"></hr>
-                        <span className="line-right"><b>|</b></span>
-                    </div>
-                    <span className="box-text dps-text">
-                        <span>DPS: {Math.round(resultAtk.dpsAtk)}</span>
+                    <span className="position-absolute box-text dps-text">
+                        <span>DPS: {Math.round(resultAtk.summary.dps)}</span>
                     </span>
                 </div>
                 }
+                <div className="box-text rank-text justify-content-end d-flex position-absolute">
+                    <span>HP: {resultAtk ? `${statBossHP-Math.round(resultAtk.summary.tdo)} / ${statBossHP}` : `${statBossHP}`}</span>
+                </div>
             </div>
+            {resultAtk &&
+            <div className="line-dps position-relative" style={{width: `${dps}%`}}>
+                <span className="line-left"><b>|</b></span>
+                <hr className="w-100"></hr>
+                <span className="line-right"><b>|</b></span>
+            </div>
+            }
+            </Fragment>
         )
     }
-
-    console.log(pokemonBattle)
 
     return (
         <Fragment>
@@ -451,24 +494,23 @@ const RaidBattle = () => {
                                     <PokemonRaid id={index} clearData={clearDataTarget} pokemon={pokemon} data={pokemonBattle} setData={setPokemonBattle}/>
                                 </div>
                             ))}
-                            <div className="d-flex flex-wrap justify-content-center element-top">
-                                {pokemonBattle.length > 1 && <button className="btn btn-danger" style={{marginRight: 10}} onClick={() => {
-                                    setPokemonBattle(pokemonBattle.splice(0, pokemonBattle.length-1));
-                                }}>Delete Pokemon</button>}
-                                <button className="btn btn-primary" onClick={() => {
+                            <div className="text-center element-top">
+                                <button  className="btn btn-primary" onClick={() => calculateAtkBatlle(pokemonBattle)}>
+                                    Raid Battle
+                                </button>
+                            </div>
+                            <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
+                                <RemoveCircleIcon className={"cursor-pointer link-danger "+(pokemonBattle.length > 1 ? "" : "click-none")} fontSize="large" onClick={() => {
+                                    if (pokemonBattle.length > 1) setPokemonBattle(pokemonBattle.splice(0, pokemonBattle.length-1));
+                                }}/>
+                                <div className="count-pokemon">
+                                    {pokemonBattle.length}
+                                </div>
+                                <AddCircleIcon className="cursor-pointer link-success" fontSize="large" onClick={() => {
                                     setCountPokemonBattleId(countPokemonBattleId+1);
                                     setPokemonBattle(prevPokemon => [...prevPokemon, {...initDataPoke, index: countPokemonBattleId+1}]);
-                                }}>Add Pokemon</button>
+                                }}/>
                             </div>
-                            {/* <span className="input-group-text justify-content-center"><b>Pokémon Battle</b></span>
-                            <SelectPokemon clearData={clearDataTarget}
-                                            setCurrentPokemon={setDataTargetPokemon}
-                                            setFMovePokemon={setFmoveTargetPokemon}
-                                            setCMovePokemon={setCmoveTargetPokemon}/>
-                            <span className="input-group-text justify-content-center"><b>Fast Move</b></span>
-                            <SelectMove inputType={"small"} clearData={clearDataTarget} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFmoveTargetPokemon} moveType="FAST"/>
-                            <span className="input-group-text justify-content-center"><b>Charge Move</b></span>
-                            <SelectMove inputType={"small"} clearData={clearDataTarget} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCmoveTargetPokemon} moveType="CHARGE"/> */}
                         </div>
                         <div className="col-lg-7 stats-boss h-100">
                             <div className="d-flex flex-wrap align-items-center">
@@ -482,37 +524,52 @@ const RaidBattle = () => {
                                 <TypeBadge title="Charge Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
                             </div>
                             {calculateHpBar()}
-                            {/* <h5 className="text-decoration-underline">{pokemonBattle.length > 0 ? splitAndCapitalize(pokemonBattle.dataTargetPokemon.name, "-", " ") : "Pokemon"} at (Level: 40 - 15/15/15)</h5> */}
+                            <h5 className="text-decoration-underline">Pokemon at (Level: 40 - 15/15/15)</h5>
                             <div className="row" style={{margin: 0}}>
-                                {pokemonBattle && resultAtk ?
+                                {resultAtk ?
                                 <Fragment>
                                 <div className="col-lg-6" style={{marginBottom: 20}}>
-                                    <div className="d-flex justify-content-center align-items-center">
-                                        <img style={{marginRight: 10}} alt="atk" width={20} height={20} src={atk_logo}></img>
-                                        <h4 style={{margin: 0}}>{splitAndCapitalize(form.form.name, "-", " ")}</h4>
-                                    </div>
-                                    <span className="d-block element-top">DPS: <b>{resultAtk.dpsAtk.toFixed(2)}</b></span>
-                                    <span className="d-block">Total Damage Output: <b>{resultAtk.tdoAtk.toFixed(2)}</b></span>
-                                    <span className="d-block">HP Remaining: <b>{Math.round(resultAtk.attackHp)} - <span className="text-warning">{Math.min(Math.round(resultAtk.attackHp), Math.round(resultAtk.attackHp)-Math.round(resultAtk.attackHpRemain))}</span> = <span className={Math.round(resultAtk.attackHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.round(resultAtk.attackHpRemain))}</span></b></span>
-                                    <span className="d-block">Time to Kill: <b>{resultAtk.ttkAtk.toFixed(2)} sec</b></span>
-                                    <hr></hr>
-                                    <div className="d-flex justify-content-center">
-                                        <h5 className={resultAtk.ttkDef > resultAtk.ttkAtk ? "text-success" : "text-danger"}>{resultAtk.ttkDef > resultAtk.ttkAtk ? "Win" : "Loss"}</h5>
-                                    </div>
+                                    {resultAtk.pokemon.map((pokemon, index) => (
+                                        <Fragment key={index}>
+                                            <div className="d-flex justify-content-center align-items-center">
+                                                <img style={{marginRight: 10}} alt="atk" width={20} height={20} src={atk_logo}></img>
+                                                <h4 style={{margin: 0}}>{splitAndCapitalize(pokemon.pokemon.name, "-", " ")}</h4>
+                                            </div>
+                                            <span className="d-flex justify-content-center">
+                                                <span className={"flag-pokemon caption "+(pokemon.death ? "bg-danger" : "bg-success")}>{pokemon.death ? "Dead": "Alive"}</span>
+                                            </span>
+                                            <span className="d-block element-top">DPS: <b>{pokemon.dpsAtk.toFixed(2)}</b></span>
+                                            <span className="d-block">Total Damage Output: <b>{pokemon.tdoAtk.toFixed(2)}</b></span>
+                                            <span className="d-block">HP Remaining: <b>{Math.round(pokemon.attackHp)} - <span className="text-warning">{Math.min(Math.round(pokemon.attackHp), Math.round(pokemon.attackHp)-Math.round(pokemon.attackHpRemain))}</span> = <span className={Math.round(pokemon.attackHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.round(pokemon.attackHpRemain))}</span></b></span>
+                                            <span className="d-block">Boss HP Remaining: <b><span className={Math.round(pokemon.defendHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.round(pokemon.defendHpRemain))}</span></b></span>
+                                            {pokemon.death && <span className="d-block">Time to Death: <b>{pokemon.ttkDef.toFixed(2)} sec</b></span>}
+                                            <hr></hr>
+                                            {/* <div className="d-flex justify-content-center">
+                                                <h5 className={pokemon.ttkDef > pokemon.ttkAtk ? "text-success" : "text-danger"}>{pokemon.ttkDef > pokemon.ttkAtk ? "Win" : "Loss"}</h5>
+                                            </div> */}
+                                        </Fragment>
+                                    ))}
                                 </div>
                                 <div className="col-lg-6" style={{marginBottom: 20}}>
                                     <div className="d-flex justify-content-center align-items-center">
                                         <img className="img-type-icon" style={{marginRight: 10}} alt="atk" width={20} height={20} src={APIService.getRaidSprite("ic_raid_small")}></img>
-                                        <h4 style={{margin: 0}}>{splitAndCapitalize(resultAtk.pokemon.name, "-", " ")}</h4>
+                                        <h4 style={{margin: 0}}>{splitAndCapitalize(form.form.name, "-", " ")}</h4>
                                     </div>
-                                    <span className="d-block element-top">DPS: <b>{resultAtk.dpsDef.toFixed(2)}</b></span>
+                                    {/* {resultAtk.pokemon.map((pokemon, index) => (
+                                        <Fragment>
+                                            <span className="d-block element-top">DPS: <b>{pokemon.dpsAtk.toFixed(2)}</b></span>
+                                            <span className="d-block">Total Damage Output: <b>{pokemon.tdoAtk.toFixed(2)}</b></span>
+                                            <span className="d-block">HP Remaining: <b>{Math.round(pokemon.attackHp)} - <span className="text-warning">{Math.min(Math.round(pokemon.attackHp), Math.round(pokemon.attackHp)-Math.round(pokemon.attackHpRemain))}</span> = <span className={Math.round(pokemon.attackHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.round(pokemon.attackHpRemain))}</span></b></span>
+                                        </Fragment>
+                                    ))} */}
+                                    {/* <span className="d-block element-top">DPS: <b>{resultAtk.sum.dpsDef.toFixed(2)}</b></span>
                                     <span className="d-block">Total Damage Output: <b>{resultAtk.tdoDef.toFixed(2)}</b></span>
                                     <span className="d-block">HP Remaining: <b><span className={Math.round(resultAtk.defendHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.round(resultAtk.defendHpRemain)}</span></b></span>
                                     <span className="d-block">Time to Kill: <b>{resultAtk.ttkDef.toFixed(2)} sec</b></span>
                                     <hr></hr>
                                     <div className="d-flex justify-content-center">
                                         <h5 className={resultAtk.ttkDef < resultAtk.ttkAtk ? "text-success" : "text-danger"}>{resultAtk.ttkDef < resultAtk.ttkAtk ? "Win" : "Loss"}</h5>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 </Fragment>
                                 :
@@ -526,7 +583,7 @@ const RaidBattle = () => {
                                     <span className="d-block">Boss Average HP Remaining: <b>{Math.round((resultBoss.minHP+resultBoss.maxHP)/2)}</b></span>
                                 </div>
                                 <div className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center" style={{marginBottom: 20}}>
-                                    <h2 style={{margin: 0}}>Suggested players</h2>
+                                    <h2 className="text-center" style={{margin: 0}}>Suggested players</h2>
                                     <hr className="w-100"></hr>
                                     <div className="d-inline-block text-center">
                                         <h3 className="d-block" style={{margin: 0}}>{Math.ceil(statBossHP/(statBossHP-Math.round(resultBoss.minHP)))}</h3>

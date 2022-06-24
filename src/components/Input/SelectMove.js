@@ -5,7 +5,7 @@ import data from '../../data/combat_pokemon_go_list.json';
 import './Select.css';
 import CardMove from "../Card/CardMove";
 
-const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveType, inputType, result, setMoveList}) => {
+const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveType, inputType, result}) => {
 
     const [resultMove, setResultMove] = useState(null);
     const [showMove, setShowMove] = useState(false);
@@ -13,7 +13,6 @@ const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveTyp
     const changeMove = (value) => {
         setShowMove(false);
         if (setMovePokemon) setMovePokemon(value);
-        if (setMoveList) setMoveList(value);
         if (clearData) clearData();
     }
 
@@ -33,7 +32,6 @@ const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveTyp
                 resultFirst[0].PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
             }
             if (setMovePokemon) setMovePokemon(simpleMove[0]);
-            if (setMoveList) setMoveList(simpleMove[0]);
             return setResultMove(simpleMove);
         };
         if (type === "FAST") {
@@ -46,9 +44,8 @@ const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveTyp
             result.PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
         }
         if (setMovePokemon) setMovePokemon(simpleMove[0]);
-        if (setMoveList) setMoveList(simpleMove[0]);
         return setResultMove(simpleMove);
-    }, [setMovePokemon, setMoveList]);
+    }, [setMovePokemon]);
 
     useEffect(() => {
         if (result) setResultMove(result);

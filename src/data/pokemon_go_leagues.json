@@ -1,5 +1,5 @@
 {
-    "timestamp": 1654943367000,
+    "timestamp": 1656098170000,
     "data": [
         {
             "id": "GREAT",
@@ -1172,8 +1172,8 @@
                         "name": "SHEDINJA"
                     },
                     {
-                        "id": 323,
-                        "name": "CAMERUPT"
+                        "id": 793,
+                        "name": "NIHILEGO"
                     }
                 ]
             },
@@ -1308,10 +1308,6 @@
                     {
                         "id": 292,
                         "name": "SHEDINJA"
-                    },
-                    {
-                        "id": 323,
-                        "name": "CAMERUPT"
                     },
                     {
                         "id": 385,
@@ -1961,7 +1957,7 @@
                     }
                 ]
             },
-            "iconUrl": "premierball_sprite.png",
+            "iconUrl": "LeagueIcons/fossil_gblcup.png",
             "league": "GREAT_LEAGUE"
         },
         {
@@ -6786,10 +6782,6 @@
                     {
                         "id": 292,
                         "name": "SHEDINJA"
-                    },
-                    {
-                        "id": 323,
-                        "name": "CAMERUPT"
                     }
                 ]
             },
@@ -9323,15 +9315,15 @@
                 "20": [
                     {
                         "guaranteedLimited": false,
-                        "id": 383,
-                        "name": "GROUDON",
+                        "id": 150,
+                        "name": "MEWTWO",
                         "form": "NORMAL",
                         "type": "FREE"
                     },
                     {
                         "guaranteedLimited": false,
-                        "id": 383,
-                        "name": "GROUDON",
+                        "id": 150,
+                        "name": "MEWTWO",
                         "form": "NORMAL",
                         "type": "PREMIUM"
                     }

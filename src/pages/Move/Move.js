@@ -119,6 +119,13 @@ const Move = (props) => {
                                     <td>Move Type</td>
                                     <td colSpan="2"><b>{capitalize(move.type_move.toLowerCase())} Move</b></td>
                                 </tr>
+                                <tr>
+                                    <td>Weather Boosts</td>
+                                    <td colSpan="2">
+                                        <img style={{marginRight: 15}} className="img-type-icon" height={25} alt="img-type" src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}></img>
+                                        <span className="d-inline-block caption">{getWeatherEffective(move.type)}</span>
+                                    </td>
+                                </tr>
                                 <tr className="text-center"><td className="table-sub-header" colSpan="3">PVE Stats</td></tr>
                                 <tr>
                                     <td>PVE Power</td>
@@ -182,10 +189,6 @@ const Move = (props) => {
                                 }
 
                                 <tr className="text-center"><td className="table-sub-header" colSpan="3">Other Stats</td></tr>
-                                <tr>
-                                    <td>Weather Boosts</td>
-                                    <td colSpan="2"><img className="img-type-icon" height={25} alt="img-type" src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}></img></td>
-                                </tr>
                                 <tr>
                                     <td>Animation Duration</td>
                                     <td colSpan="2">{move.durationMs} ms ({move.durationMs/1000} sec)</td>

@@ -33,11 +33,6 @@ const SelectPokemon = (props) => {
             if (props.setCurrentPokemon) props.setCurrentPokemon(value);
             if (props.setFMovePokemon) props.setFMovePokemon(null);
             if (props.setCMovePokemon) props.setCMovePokemon(null);
-
-            if (props.setDataList) props.setDataList(value);
-            if (props.setFMoveList) props.setFMoveList(null);
-            if (props.setCMoveList) props.setCMoveList(null);
-
             if (props.clearData) props.clearData();
         }
     }
@@ -48,11 +43,6 @@ const SelectPokemon = (props) => {
         if (props.setCurrentPokemon) props.setCurrentPokemon(null);
         if (props.setFMovePokemon) props.setFMovePokemon(null);
         if (props.setCMovePokemon) props.setCMovePokemon(null);
-
-        if (props.setDataList) props.setDataList(null);
-        if (props.setFMoveList) props.setFMoveList(null);
-        if (props.setCMoveList) props.setCMoveList(null);
-
         if (props.clearData) props.clearData();
     }
 

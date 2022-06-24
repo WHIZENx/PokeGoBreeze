@@ -14550,7 +14550,9 @@
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
         "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
+        "ELITE_CINEMATIC_MOVES": [
+            "BRUTAL_SWING"
+        ]
     },
     {
         "ID": 636,
