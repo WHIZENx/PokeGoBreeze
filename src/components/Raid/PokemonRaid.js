@@ -5,9 +5,9 @@ import SelectPokemon from "../Input/SelectPokemon";
 
 const PokemonRaid = (props) => {
 
-    const [dataTargetPokemon, setDataTargetPokemon] = useState(null);
-    const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(null);
-    const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(null);
+    const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
+    const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(props.pokemon.fmoveTargetPokemon);
+    const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(props.pokemon.cmoveTargetPokemon);
 
     const setDataPokemon = (value) => {
         const item =  props.data.find(poke => poke.index === props.pokemon.index);
@@ -34,13 +34,14 @@ const PokemonRaid = (props) => {
         <div>
             <span className="input-group-text justify-content-center"><Badge color="primary" overlap="circular" badgeContent={props.id+1} /> <b style={{marginLeft: 15}}>Pokémon Battle</b></span>
             <SelectPokemon clearData={props.clearData}
+                            pokemon={dataTargetPokemon}
                             setCurrentPokemon={setDataPokemon}
                             setFMovePokemon={setFMovePokemon}
                             setCMovePokemon={setCMovePokemon}/>
             <span className="input-group-text justify-content-center"><b>Fast Move</b></span>
-            <SelectMove inputType={"small"} clearData={props.clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFMovePokemon} moveType="FAST"/>
+            <SelectMove selected={true} inputType={"small"} clearData={props.clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFMovePokemon} moveType="FAST"/>
             <span className="input-group-text justify-content-center"><b>Charge Move</b></span>
-            <SelectMove inputType={"small"} clearData={props.clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCMovePokemon} moveType="CHARGE"/>
+            <SelectMove selected={true} inputType={"small"} clearData={props.clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCMovePokemon} moveType="CHARGE"/>
         </div>
     )
 }

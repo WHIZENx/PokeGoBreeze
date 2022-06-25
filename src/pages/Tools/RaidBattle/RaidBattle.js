@@ -8,7 +8,7 @@ import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
 import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBattle, calculateStatsByTag, convertName, findAssetForm, RAID_BOSS_TIER, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
-import { Checkbox, FormControlLabel, Switch } from "@mui/material";
+import { Badge, Checkbox, FormControlLabel, Switch } from "@mui/material";
 
 import loadingImg from '../../../assets/loading.png';
 import './RaidBattle.css';
@@ -19,9 +19,13 @@ import TypeBadge from "../../../components/Sprites/TypeBadge";
 import atk_logo from '../../../assets/attack.png';
 import PokemonRaid from "../../../components/Raid/PokemonRaid";
 
+import AddIcon from '@mui/icons-material/Add';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import EditIcon from '@mui/icons-material/Edit';
+
 import { useSnackbar } from "notistack";
+import { Button, Modal } from "react-bootstrap";
 
 const RaidBattle = () => {
 
@@ -64,15 +68,31 @@ const RaidBattle = () => {
 
     const [releasedGO, setReleaseGO] = useState(true);
 
+    const [show, setShow] = useState(false);
+
+    const handleSave = () => {
+        trainerBattle[trainerBattleId] = pokemonBattle;
+        setTrainerBattle(trainerBattle);
+
+        setShow(false);
+    }
+
+    const handleShow = (pokemons, id) => {
+        setShow(true);
+        setTrainerBattleId(id);
+        setPokemonBattle(pokemons);
+    }
+
     const initDataPoke = {
         dataTargetPokemon: null,
         fmoveTargetPokemon: null,
         cmoveTargetPokemon: null,
         index: 0
     }
-    const [pokemonBattle, setPokemonBattle] = useState([initDataPoke]);
+    const [trainerBattle, setTrainerBattle] = useState([[initDataPoke]]);
 
-    const [countPokemonBattleId, setCountPokemonBattleId] = useState(0);
+    const [trainerBattleId, setTrainerBattleId] = useState(null);
+    const [pokemonBattle, setPokemonBattle] = useState([]);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -83,8 +103,7 @@ const RaidBattle = () => {
 
     const clearData = () => {
         setResult([]);
-        setPokemonBattle([initDataPoke]);
-        setCountPokemonBattleId(0);
+        setTrainerBattle([[initDataPoke]]);
     }
 
     const clearDataTarget = () => {
@@ -310,7 +329,7 @@ const RaidBattle = () => {
     const calculateAtkBatlle = (data) => {
         const pokemon = data.filter(pokemon => pokemon.dataTargetPokemon);
         if (pokemon.length === 0) {
-            enqueueSnackbar('Please select Pokemon to raid battle!', { variant: 'error' });
+            enqueueSnackbar('Please select Pokémon to raid battle!', { variant: 'error' });
             return;
         }
 
@@ -489,26 +508,45 @@ const RaidBattle = () => {
                     </div>
                     <div className="row" style={{marginLeft: 0, marginRight: 0, marginBottom: 15}}>
                         <div className="col-lg-5 justify-content-center" style={{marginBottom: 20}}>
-                            {pokemonBattle.map((pokemon, index) => (
-                                <div className={index === 0 ? "" : "element-top"} key={index}>
-                                    <PokemonRaid id={index} clearData={clearDataTarget} pokemon={pokemon} data={pokemonBattle} setData={setPokemonBattle}/>
+                            {trainerBattle.map((pokemons, index) => (
+                                <div className="trainer-battle d-flex align-items-center" key={index}>
+                                    <Badge color="primary" overlap="circular" badgeContent={"Trainer "+(index+1)} anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}>
+                                    <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel((index%294)+1)}></img>
+                                    </Badge>
+                                    <button className="btn btn-primary" style={{marginRight: 10}} onClick={() => handleShow(pokemons, index)}>
+                                        <EditIcon fontSize="large"/>
+                                    </button>
+                                    <div className="pokemon-battle-group">
+                                    {pokemons.map((pokemon, index) => (
+                                        <div key={index} className="pokemon-battle">
+                                            {pokemon.dataTargetPokemon ?
+                                            <span><img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, true)}></img></span>
+                                            :
+                                            <span><AddIcon fontSize="large" sx={{color: 'lightgray'}}/></span>
+                                            }
+                                        </div>
+                                    ))}
+                                    </div>
                                 </div>
-                            ))}
+                            ))
+                            }
                             <div className="text-center element-top">
-                                <button  className="btn btn-primary" onClick={() => calculateAtkBatlle(pokemonBattle)}>
+                                <button  className="btn btn-primary" onClick={() => calculateAtkBatlle(trainerBattle)}>
                                     Raid Battle
                                 </button>
                             </div>
                             <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
-                                <RemoveCircleIcon className={"cursor-pointer link-danger "+(pokemonBattle.length > 1 ? "" : "click-none")} fontSize="large" onClick={() => {
-                                    if (pokemonBattle.length > 1) setPokemonBattle(pokemonBattle.splice(0, pokemonBattle.length-1));
+                                <RemoveCircleIcon className={"cursor-pointer link-danger "+(trainerBattle.length > 1 ? "" : "click-none")} fontSize="large" onClick={() => {
+                                    if (trainerBattle.length > 1) setTrainerBattle(prevTrainer => [...prevTrainer.splice(0, prevTrainer.length-1)]);
                                 }}/>
                                 <div className="count-pokemon">
-                                    {pokemonBattle.length}
+                                    {trainerBattle.length}
                                 </div>
                                 <AddCircleIcon className="cursor-pointer link-success" fontSize="large" onClick={() => {
-                                    setCountPokemonBattleId(countPokemonBattleId+1);
-                                    setPokemonBattle(prevPokemon => [...prevPokemon, {...initDataPoke, index: countPokemonBattleId+1}]);
+                                    setTrainerBattle(prevTrainer => [...prevTrainer, [initDataPoke]]);
                                 }}/>
                             </div>
                         </div>
@@ -524,7 +562,7 @@ const RaidBattle = () => {
                                 <TypeBadge title="Charge Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
                             </div>
                             {calculateHpBar()}
-                            <h5 className="text-decoration-underline">Pokemon at (Level: 40 - 15/15/15)</h5>
+                            <h5 className="text-decoration-underline">Pokémon at (Level: 40 - 15/15/15)</h5>
                             <div className="row" style={{margin: 0}}>
                                 {resultAtk ?
                                 <Fragment>
@@ -607,6 +645,47 @@ const RaidBattle = () => {
                 </div>
             </Fragment>
             }
+            <Modal show={show} backdrop="static" keyboard={false} centered>
+                <Modal.Header closeButton>
+                <Modal.Title>Trainer #{trainerBattleId !== null ? trainerBattleId+1 : 0}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div style={{overflowY: "auto", maxHeight: "60vh"}}>
+                    {trainerBattleId !== null &&
+                    <Fragment>
+                        {pokemonBattle.map((pokemon, index) => (
+                        <div className={""+(index === 0 ? "" : "element-top")} key={index}>
+                            <PokemonRaid id={index} pokemon={pokemon} data={pokemonBattle} setData={setPokemonBattle}/>
+                        </div>
+                        ))}
+                    </Fragment>
+                    }
+                    </div>
+                    <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
+                    <RemoveCircleIcon className={"cursor-pointer link-danger "+(pokemonBattle.length > 1 ? "" : "click-none")} fontSize="large" onClick={() => {
+                        if (pokemonBattle.length > 1) {
+                            setPokemonBattle(prevPokemon => [...prevPokemon.splice(0, pokemonBattle.length-1)]);
+                            console.log(pokemonBattle.length)
+                            trainerBattle[trainerBattleId] = [...trainerBattle[trainerBattleId].splice(0, trainerBattle[trainerBattleId].length)];
+                            // setTrainerBattle(trainerBattle);
+                        }
+                    }}/>
+                    <div className="count-pokemon">
+                        {pokemonBattle.length}
+                    </div>
+                    <AddCircleIcon className="cursor-pointer link-success" fontSize="large" onClick={() => {
+                        setPokemonBattle(prevPokemon => [...prevPokemon, {...initDataPoke, index: prevPokemon.length+1}]);
+                        trainerBattle[trainerBattleId] = [...pokemonBattle, {...initDataPoke, index: pokemonBattle.length+1}];
+                        setTrainerBattle(trainerBattle);
+                    }}/>
+                </div>
+                </Modal.Body>
+                <Modal.Footer>
+                <Button variant="primary" onClick={handleSave}>
+                    Close
+                </Button>
+                </Modal.Footer>
+            </Modal>
         </Fragment>
     )
 }

@@ -11,7 +11,7 @@ const NavbarComponent = () => {
         <Navbar style={{zIndex: 5}} collapseOnSelect bg="dark" expand="lg" variant="dark">
             <Link className="navbar-brand" to="/">
                 <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{marginLeft: 10, marginRight: 10}}></img>
-                PokeGoBreeze
+                PokéGoBreeze
             </Link>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">

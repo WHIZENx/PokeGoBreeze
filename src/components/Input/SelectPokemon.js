@@ -14,9 +14,9 @@ const SelectPokemon = (props) => {
     const firstInit = 20;
     const eachCounter = 10;
 
-    const [pokemonIcon, setPokemonIcon] = useState(null);
+    const [pokemonIcon, setPokemonIcon] = useState(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : null);
     const [showPokemon, setShowPokemon] = useState(false);
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState(props.pokemon ? splitAndCapitalize(props.pokemon.name, "-", " ") : '');
 
     const listenScrollEvent = (ele) => {
         const scrollTop = ele.currentTarget.scrollTop;
@@ -47,7 +47,7 @@ const SelectPokemon = (props) => {
     }
 
     return (
-        <div className='d-flex align-items-center form-control' style={{padding: 0, borderRadius: 0}}>
+        <div className='position-relative d-flex align-items-center form-control' style={{padding: 0, borderRadius: 0}}>
             <div className='card-pokemon-input' >
                 <div className="d-flex align-items-center border-box">
                     {pokemonIcon && <span onClick={() => removePokemon()} className="remove-pokemon-select"><CloseIcon sx={{color: 'red'}}/></span>}

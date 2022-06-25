@@ -15,6 +15,7 @@ const POKE_ICON_SPRITES_TYPE_API_URL = 'https://raw.githubusercontent.com/apavli
 const POKE_SPRITES_FULL_API_URL = 'https://assets.pokemon.com/assets/cms2/img/pokedex/detail/';
 
 const POKE_GIF_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Pokemon/';
+const POKE_TRAINER_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Trainers/';
 const POKE_SOUND_CRY_API_URL = 'https://raw.githubusercontent.com/Touched/pokedex-data/master/data/';
 
 class APIService {
@@ -29,6 +30,11 @@ class APIService {
 
     getPokemonModel(item) {
         return `${POGO_ASSET_API_URL}Pokemon/${item}.png`;
+    }
+
+    getTrainerModel(id) {
+        id = id.toString().padStart(3, '0');
+        return `${POKE_TRAINER_SPRITES_API_URL}${id}.png`;
     }
 
     getPokemonGoIcon(icon) {

@@ -6,10 +6,40 @@
 }
 
 .top-raid-pokemon {
-    width: 250px;
+    min-width: 250px;
     display: inline-block;
     border: 1px solid #b8d4da;
     padding: 10px;
+}
+
+.trainer-battle {
+    width: 100%;
+    border: 1px solid #b8d4da;
+    padding: 10px;
+    margin-bottom: 10px;
+
+}
+
+.pokemon-battle {
+    display: inline-block;
+    border: 1px solid #b8d4da;
+}
+
+.pokemon-battle span {
+    display: flex;
+    width: 45px;
+    height: 45px;
+    padding: 5px;
+}
+
+img.pokemon-sprite-battle {
+    width: 100%;
+    object-fit: contain;
+}
+
+.pokemon-battle-group {
+    white-space: nowrap;
+    overflow-y: auto;
 }
 
 .sprite-raid {
