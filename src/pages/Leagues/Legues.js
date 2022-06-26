@@ -216,7 +216,11 @@ const Leagues = () => {
                                 <h6 className='title-leagues text-success'>White List</h6>
                                 {value.conditions.whiteList.map((item, index) => (
                                     <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                        <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                        <div className="d-flex justify-content-center">
+                                            <span style={{width: 64}}>
+                                                <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                            </span>
+                                        </div>
                                         <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
                                     </Link>
                                 ))}
@@ -227,7 +231,11 @@ const Leagues = () => {
                                 <h6 className='title-leagues text-danger'>Ban List</h6>
                                 {value.conditions.banned.map((item, index) => (
                                     <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                        <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                        <div className="d-flex justify-content-center">
+                                            <span style={{width: 64}}>
+                                                <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
+                                            </span>
+                                        </div>
                                         <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
                                     </Link>
                                 ))}
