@@ -10,24 +10,18 @@ const PokemonRaid = (props) => {
     const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(props.pokemon.cmoveTargetPokemon);
 
     const setDataPokemon = (value) => {
-        const item =  props.data.find(poke => poke.index === props.pokemon.index);
-        item.dataTargetPokemon = value;
+        props.data[props.id].dataTargetPokemon = value;
         setDataTargetPokemon(props.pokemon.dataTargetPokemon);
-        props.setData(props.data);
     }
 
     const setFMovePokemon = (value) => {
-        const item =  props.data.find(poke => poke.index === props.pokemon.index);
-        item.fmoveTargetPokemon = value;
+        props.data[props.id].fmoveTargetPokemon = value;
         setFmoveTargetPokemon(value);
-        props.setData(props.data);
     }
 
     const setCMovePokemon = (value) => {
-        const item =  props.data.find(poke => poke.index === props.pokemon.index);
-        item.cmoveTargetPokemon = value;
+        props.data[props.id].cmoveTargetPokemon = value;
         setCmoveTargetPokemon(value);
-        props.setData(props.data);
     }
 
     return (

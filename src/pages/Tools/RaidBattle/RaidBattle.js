@@ -16,16 +16,16 @@ import APIService from "../../../services/API.service";
 import Type from "../../../components/Sprites/Type";
 import TypeBadge from "../../../components/Sprites/TypeBadge";
 
-import atk_logo from '../../../assets/attack.png';
 import PokemonRaid from "../../../components/Raid/PokemonRaid";
 
 import AddIcon from '@mui/icons-material/Add';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EditIcon from '@mui/icons-material/Edit';
+import TimerIcon from '@mui/icons-material/Timer';
 
 import { useSnackbar } from "notistack";
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 
 const RaidBattle = () => {
 
@@ -86,8 +86,7 @@ const RaidBattle = () => {
     const initDataPoke = {
         dataTargetPokemon: null,
         fmoveTargetPokemon: null,
-        cmoveTargetPokemon: null,
-        index: 0
+        cmoveTargetPokemon: null
     }
     const [trainerBattle, setTrainerBattle] = useState([[initDataPoke]]);
 
@@ -283,7 +282,7 @@ const RaidBattle = () => {
         const statsDefender = {
             atk: statBossATK,
             def: statBossDEF,
-            hp: statBossHP-HpRemain,
+            hp: HpRemain,
             fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
             cmove: combatData.find(item => item.name === cMove.name),
             types: form.form.types.map(type => type.type.name),
@@ -326,40 +325,54 @@ const RaidBattle = () => {
         };
     }
 
-    const calculateAtkBatlle = (data) => {
-        const pokemon = data.filter(pokemon => pokemon.dataTargetPokemon);
-        if (pokemon.length === 0) {
+    const calculateTrainerBatlle = (trainer) => {
+        const trainerNoPokemon = trainer.filter(pokemons => pokemons.filter(pokemon => !pokemon.dataTargetPokemon).length > 0);
+        if (trainerNoPokemon.length > 0) {
             enqueueSnackbar('Please select Pokémon to raid battle!', { variant: 'error' });
             return;
         }
-
-        let dataList = {
-            pokemon: [],
-            summary: {
-                dps: 0,
-                tdo: 0,
-                ttk: 0
-            }
-        }
-        data.forEach(pokemon => {
-            if (pokemon.dataTargetPokemon) {
-                const result = queryAtkBatlle(pokemon, dataList.summary.dps, dataList.summary.tdo);
-                dataList.pokemon.push(result);
-                dataList.summary.dps += result.dpsAtk;
-                dataList.summary.tdo += result.tdoAtk
-                dataList.summary.ttk += result.ttkAtk
-
-                if (enableTimeAllow) {
-                    dataList.summary.tdo = Math.min(statBossHP, dataList.summary.tdo);
-                    dataList.summary.ttk = Math.min(timeAllow, dataList.summary.ttk);
+        let turn = []
+        trainer.forEach((pokemons, id) => {
+            pokemons.forEach((pokemon, index) => {
+                turn[index] = turn[index] ?? [];
+                turn[index].push({...trainer[id][index], trainerId: id})
+            })
+        })
+        let result = [];
+        let ttk = 0, bossHp = statBossHP, currentBossHp = statBossHP;
+        turn.forEach(group => {
+            let dataList = {
+                pokemon: [],
+                summary: {
+                    dps: 0,
+                    tdo: 0,
+                    ttk: ttk,
+                    bossHp: bossHp
                 }
             }
+            group.forEach(pokemon => {
+                if (pokemon.dataTargetPokemon) {
+                    const result = queryAtkBatlle(pokemon, dataList.summary.dps, dataList.summary.bossHp);
+                    currentBossHp = result.defendHpRemain;
+                    dataList.pokemon.push({...result, trainerId: pokemon.trainerId});
+                    dataList.summary.dps += result.dpsAtk;
+                    dataList.summary.tdo += result.tdoAtk;
+                    dataList.summary.ttk += currentBossHp === 0 ? 0 : result.ttkAtk;
+
+                    if (enableTimeAllow) {
+                        dataList.summary.tdo = Math.min(statBossHP, dataList.summary.tdo);
+                        dataList.summary.ttk = Math.min(timeAllow, dataList.summary.ttk);
+                    }
+                }
+            });
+            dataList.pokemon = dataList.pokemon.map(pokemon => {
+                return {...pokemon, tdo: (dataList.summary.tdo/(dataList.summary.dps)*pokemon.dpsAtk)}
+            })
+            bossHp -= dataList.summary.tdo;
+            ttk = dataList.summary.ttk;
+            result.push(dataList);
         });
-        dataList.pokemon = dataList.pokemon.map(pokemon => {
-            return {...pokemon, tdo: (statBossHP/(dataList.summary.dps)*pokemon.dpsAtk)}
-        })
-        console.log(dataList)
-        setResultAtk(dataList);
+        setResultAtk(result);
     }
 
     useEffect(() => {
@@ -368,7 +381,7 @@ const RaidBattle = () => {
             findMove(id, form.form.name);
             initialize.current = true;
         }
-    }, [findMove, id, form, resultAtk]);
+    }, [findMove, id, form]);
 
     const handleCalculate = () => {
         setSpinner(true);
@@ -379,33 +392,36 @@ const RaidBattle = () => {
         }, 500);
     }
 
-    const calculateHpBar = () => {
-        const dps = resultAtk ?  Math.round(resultAtk.summary.dps)*100/statBossHP : 0;
-        const percent = resultAtk ? (statBossHP-Math.round(resultAtk.summary.tdo))*100/statBossHP : 100;
+    const calculateHpBar = (bossHp, tdo, sumDps) => {
+        const dps = Math.round(sumDps)*100/bossHp;
+        const percent = (bossHp-Math.round(tdo))*100/bossHp;
         return (
             <Fragment>
-            <div className="progress position-relative" style={{marginTop: 20, minWidth: 'auto'}}>
-                <div className="progress-bar bg-success" style={{width: percent+'%'}} role="progressbar" aria-valuenow={percent} aria-valuemin="0" aria-valuemax="100"></div>
-                <div className="progress-bar bg-danger" style={{width: (100-percent)+'%'}} role="progressbar" aria-valuenow={100-percent} aria-valuemin="0" aria-valuemax="100"></div>
-                {resultAtk &&
+            <div className="progress position-relative">
+                <div className="progress-bar bg-success" style={{marginTop: 0, width: percent+'%'}} role="progressbar" aria-valuenow={percent} aria-valuemin="0" aria-valuemax="100"></div>
+                <div className="progress-bar bg-danger" style={{marginTop: 0, width: (100-percent)+'%'}} role="progressbar" aria-valuenow={100-percent} aria-valuemin="0" aria-valuemax="100"></div>
                 <div className="justify-content-start align-items-center d-flex position-absolute h-100 w-100">
-                    <span className="position-absolute box-text dps-text">
-                        <span>DPS: {Math.round(resultAtk.summary.dps)}</span>
-                    </span>
+                    <div className="line-dps position-relative" style={{width: `calc(${dps}% + 2px`}}>
+                        <span className="line-left"><b>|</b></span>
+                        <hr className="w-100"></hr>
+                        <span className="line-right"><b>|</b></span>
+                        <div className="caption text-dps">DPS</div>
+                    </div>
                 </div>
-                }
                 <div className="box-text rank-text justify-content-end d-flex position-absolute">
-                    <span>HP: {resultAtk ? `${statBossHP-Math.round(resultAtk.summary.tdo)} / ${statBossHP}` : `${statBossHP}`}</span>
+                    <span>HP: {`${bossHp-Math.round(tdo)} / ${bossHp}`}</span>
                 </div>
             </div>
-            {resultAtk &&
-            <div className="line-dps position-relative" style={{width: `${dps}%`}}>
-                <span className="line-left"><b>|</b></span>
-                <hr className="w-100"></hr>
-                <span className="line-right"><b>|</b></span>
-            </div>
-            }
             </Fragment>
+        )
+    }
+
+    const resultBattle = (bossHp, ttk) => {
+        const status = ttk === timeAllow ? 1 : bossHp === 0 ? 0 : 2;
+        return (
+            <td colSpan={3} className={"text-center bg-"+(status === 0 ? "success" : "danger")}>
+                <span className="text-white">{status === 0 ? "WIN" : status === 1 ? "TIME OUT": "LOSS"}</span>
+            </td>
         )
     }
 
@@ -534,7 +550,7 @@ const RaidBattle = () => {
                             ))
                             }
                             <div className="text-center element-top">
-                                <button  className="btn btn-primary" onClick={() => calculateAtkBatlle(trainerBattle)}>
+                                <button  className="btn btn-primary" onClick={() => calculateTrainerBatlle(trainerBattle)}>
                                     Raid Battle
                                 </button>
                             </div>
@@ -561,57 +577,8 @@ const RaidBattle = () => {
                             <div className="d-inline-block">
                                 <TypeBadge title="Charge Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
                             </div>
-                            {calculateHpBar()}
-                            <h5 className="text-decoration-underline">Pokémon at (Level: 40 - 15/15/15)</h5>
+                            <hr></hr>
                             <div className="row" style={{margin: 0}}>
-                                {resultAtk ?
-                                <Fragment>
-                                <div className="col-lg-6" style={{marginBottom: 20}}>
-                                    {resultAtk.pokemon.map((pokemon, index) => (
-                                        <Fragment key={index}>
-                                            <div className="d-flex justify-content-center align-items-center">
-                                                <img style={{marginRight: 10}} alt="atk" width={20} height={20} src={atk_logo}></img>
-                                                <h4 style={{margin: 0}}>{splitAndCapitalize(pokemon.pokemon.name, "-", " ")}</h4>
-                                            </div>
-                                            <span className="d-flex justify-content-center">
-                                                <span className={"flag-pokemon caption "+(pokemon.death ? "bg-danger" : "bg-success")}>{pokemon.death ? "Dead": "Alive"}</span>
-                                            </span>
-                                            <span className="d-block element-top">DPS: <b>{pokemon.dpsAtk.toFixed(2)}</b></span>
-                                            <span className="d-block">Total Damage Output: <b>{pokemon.tdoAtk.toFixed(2)}</b></span>
-                                            <span className="d-block">HP Remaining: <b>{Math.round(pokemon.attackHp)} - <span className="text-warning">{Math.min(Math.round(pokemon.attackHp), Math.round(pokemon.attackHp)-Math.round(pokemon.attackHpRemain))}</span> = <span className={Math.round(pokemon.attackHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.round(pokemon.attackHpRemain))}</span></b></span>
-                                            <span className="d-block">Boss HP Remaining: <b><span className={Math.round(pokemon.defendHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.round(pokemon.defendHpRemain))}</span></b></span>
-                                            {pokemon.death && <span className="d-block">Time to Death: <b>{pokemon.ttkDef.toFixed(2)} sec</b></span>}
-                                            <hr></hr>
-                                            {/* <div className="d-flex justify-content-center">
-                                                <h5 className={pokemon.ttkDef > pokemon.ttkAtk ? "text-success" : "text-danger"}>{pokemon.ttkDef > pokemon.ttkAtk ? "Win" : "Loss"}</h5>
-                                            </div> */}
-                                        </Fragment>
-                                    ))}
-                                </div>
-                                <div className="col-lg-6" style={{marginBottom: 20}}>
-                                    <div className="d-flex justify-content-center align-items-center">
-                                        <img className="img-type-icon" style={{marginRight: 10}} alt="atk" width={20} height={20} src={APIService.getRaidSprite("ic_raid_small")}></img>
-                                        <h4 style={{margin: 0}}>{splitAndCapitalize(form.form.name, "-", " ")}</h4>
-                                    </div>
-                                    {/* {resultAtk.pokemon.map((pokemon, index) => (
-                                        <Fragment>
-                                            <span className="d-block element-top">DPS: <b>{pokemon.dpsAtk.toFixed(2)}</b></span>
-                                            <span className="d-block">Total Damage Output: <b>{pokemon.tdoAtk.toFixed(2)}</b></span>
-                                            <span className="d-block">HP Remaining: <b>{Math.round(pokemon.attackHp)} - <span className="text-warning">{Math.min(Math.round(pokemon.attackHp), Math.round(pokemon.attackHp)-Math.round(pokemon.attackHpRemain))}</span> = <span className={Math.round(pokemon.attackHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.round(pokemon.attackHpRemain))}</span></b></span>
-                                        </Fragment>
-                                    ))} */}
-                                    {/* <span className="d-block element-top">DPS: <b>{resultAtk.sum.dpsDef.toFixed(2)}</b></span>
-                                    <span className="d-block">Total Damage Output: <b>{resultAtk.tdoDef.toFixed(2)}</b></span>
-                                    <span className="d-block">HP Remaining: <b><span className={Math.round(resultAtk.defendHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.round(resultAtk.defendHpRemain)}</span></b></span>
-                                    <span className="d-block">Time to Kill: <b>{resultAtk.ttkDef.toFixed(2)} sec</b></span>
-                                    <hr></hr>
-                                    <div className="d-flex justify-content-center">
-                                        <h5 className={resultAtk.ttkDef < resultAtk.ttkAtk ? "text-success" : "text-danger"}>{resultAtk.ttkDef < resultAtk.ttkAtk ? "Win" : "Loss"}</h5>
-                                    </div> */}
-                                </div>
-                                </Fragment>
-                                :
-                                <Fragment>
                                 <div className="col-lg-6" style={{marginBottom: 20}}>
                                     <span className="d-block element-top">DPS: <b>{resultBoss.minDPS.toFixed(2)} - {resultBoss.maxDPS.toFixed(2)}</b></span>
                                     <span className="d-block">Average DPS: <b>{((resultBoss.minDPS+resultBoss.maxDPS)/2).toFixed(2)}</b></span>
@@ -637,15 +604,81 @@ const RaidBattle = () => {
                                         <span className="caption text-success">Easy</span>
                                     </div>
                                 </div>
-                                </Fragment>
-                                }
                             </div>
+                            <hr></hr>
+                            <h5 className="text-decoration-underline">Pokémon at (Level: 40 - 15/15/15)</h5>
+                            {resultAtk &&
+                                <ul className="element-top" style={{listStyleType: 'initial'}}>
+                                    {resultAtk.map((result, turn) => (
+                                        <li style={{marginBottom: 15}} key={turn}>
+                                            <h4><b>Pokémon Round {turn+1}</b></h4>
+                                            <div className="w-100" style={{overflowX: 'auto'}}>
+                                                <table className="table-info table-round-battle">
+                                                    <thead className="text-center">
+                                                        <tr className="table-header">
+                                                            <th>Trainer ID</th>
+                                                            <th>Pokémon</th>
+                                                            <th>DPS</th>
+                                                            <th>TDO</th>
+                                                            <th>TTD</th>
+                                                            <th>HP Remain</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="text-center">
+                                                    {result.pokemon.map((data, index) => (
+                                                        <tr key={index}>
+                                                            <td>#{data.trainerId+1}</td>
+                                                            <td>
+                                                                <div className="d-flex align-items-center table-pokemon">
+                                                                    <img className="pokemon-sprite-battle" height={36} alt="img-pokemon" src={APIService.getPokeIconSprite(data.pokemon.sprite, true)}></img>
+                                                                    <span className="caption">{splitAndCapitalize(data.pokemon.name, "-", " ")}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>{data.dpsAtk.toFixed(2)}</td>
+                                                            <td>{Math.round(data.tdo) === 0 ? "-" : data.tdo.toFixed(2)}</td>
+                                                            <td>{Math.round(data.attackHpRemain) === 0 ? data.ttkDef.toFixed(2) : "-"}</td>
+                                                            <td><b><span className={Math.round(data.attackHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.round(data.attackHpRemain))}</span></b></td>
+                                                        </tr>
+                                                    ))}
+                                                    {((turn > 0 && Math.round(result.summary.tdo) > 0 && result.summary.ttk < timeAllow) || (turn === 0)) &&
+                                                    <tr>
+                                                        <td colSpan={6}>
+                                                            {calculateHpBar(Math.floor(result.summary.bossHp.toFixed(2)), Math.floor(result.summary.tdo), result.summary.dps)}
+                                                        </td>
+                                                    </tr>
+                                                    }
+                                                    <tr className="text-summary">
+                                                        <td colSpan={2}>
+                                                            Total DPS: {result.summary.dps.toFixed(2)}
+                                                        </td>
+                                                        <td className="text-center" colSpan={2}>
+                                                            Total TDO: {result.summary.tdo.toFixed(2)}
+                                                        </td>
+                                                        <td colSpan={2}>
+                                                            Boss HP Remain: {Math.floor(result.summary.bossHp-result.summary.tdo)}
+                                                        </td>
+                                                    </tr>
+                                                    {((turn > 0 && Math.round(result.summary.tdo) > 0 && result.summary.ttk < timeAllow) || (turn === 0)) &&
+                                                    <tr className="text-summary">
+                                                        <td colSpan={3}>
+                                                            <TimerIcon /> Time To Battle Remain: {result.summary.ttk.toFixed(2)}
+                                                        </td>
+                                                        {resultBattle(Math.floor(result.summary.bossHp-result.summary.tdo), result.summary.ttk)}
+                                                    </tr>
+                                                    }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            }
                         </div>
                     </div>
                 </div>
             </Fragment>
             }
-            <Modal show={show} backdrop="static" keyboard={false} centered>
+            <Modal show={show} onHide={handleSave} centered>
                 <Modal.Header closeButton>
                 <Modal.Title>Trainer #{trainerBattleId !== null ? trainerBattleId+1 : 0}</Modal.Title>
                 </Modal.Header>
@@ -655,7 +688,7 @@ const RaidBattle = () => {
                     <Fragment>
                         {pokemonBattle.map((pokemon, index) => (
                         <div className={""+(index === 0 ? "" : "element-top")} key={index}>
-                            <PokemonRaid id={index} pokemon={pokemon} data={pokemonBattle} setData={setPokemonBattle}/>
+                            <PokemonRaid id={index} trainerId={trainerBattleId} pokemon={pokemon} data={pokemonBattle}/>
                         </div>
                         ))}
                     </Fragment>
@@ -664,27 +697,20 @@ const RaidBattle = () => {
                     <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
                     <RemoveCircleIcon className={"cursor-pointer link-danger "+(pokemonBattle.length > 1 ? "" : "click-none")} fontSize="large" onClick={() => {
                         if (pokemonBattle.length > 1) {
-                            setPokemonBattle(prevPokemon => [...prevPokemon.splice(0, pokemonBattle.length-1)]);
-                            console.log(pokemonBattle.length)
-                            trainerBattle[trainerBattleId] = [...trainerBattle[trainerBattleId].splice(0, trainerBattle[trainerBattleId].length)];
-                            // setTrainerBattle(trainerBattle);
+                            const deletePokemon = pokemonBattle.splice(0, pokemonBattle.length-1);
+                            setPokemonBattle(deletePokemon);
+                            trainerBattle[trainerBattleId] = deletePokemon;
                         }
                     }}/>
                     <div className="count-pokemon">
                         {pokemonBattle.length}
                     </div>
                     <AddCircleIcon className="cursor-pointer link-success" fontSize="large" onClick={() => {
-                        setPokemonBattle(prevPokemon => [...prevPokemon, {...initDataPoke, index: prevPokemon.length+1}]);
-                        trainerBattle[trainerBattleId] = [...pokemonBattle, {...initDataPoke, index: pokemonBattle.length+1}];
-                        setTrainerBattle(trainerBattle);
+                        setPokemonBattle(prevPokemon => [...prevPokemon, {initDataPoke}]);
+                        trainerBattle[trainerBattleId] = [...pokemonBattle, {initDataPoke}];
                     }}/>
                 </div>
                 </Modal.Body>
-                <Modal.Footer>
-                <Button variant="primary" onClick={handleSave}>
-                    Close
-                </Button>
-                </Modal.Footer>
             </Modal>
         </Fragment>
     )

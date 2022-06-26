@@ -33,7 +33,8 @@
 }
 
 img.pokemon-sprite-battle {
-    width: 100%;
+    margin-right: 10px;
+    width: 36px;
     object-fit: contain;
 }
 
@@ -61,33 +62,37 @@ img.pokemon-sprite-battle {
 }
 
 .line-dps {
-    color: orange;
+    color: yellow;
     margin-left: 1px;
-    height: 15px
 }
 
 .line-left, .line-right {
     position: absolute;
-    top: -13px;
+    top: -10px;
 }
 
 .line-dps span.line-left {
-    left: -1.6px;
+    left: -1.5px;
 }
 
 .line-dps span.line-right {
-    right: -1.6px;
+    right: -1.5px;
 }
 
 .line-dps hr {
-    /* position: absolute; */
+    position: absolute;
     margin: 0;
     opacity: 1;
     height: 2px;
 }
 
-.dps-text {
-    margin-left: 1%;
+.line-dps div.text-dps {
+    position: absolute;
+    color: yellow;
+    top: -15.5px;
+    left: calc(50% - 7.5px);
+    font-size: 8px;
+    font-weight: 500;
 }
 
 .cursor-pointer {
@@ -112,4 +117,34 @@ img.pokemon-sprite-battle {
     border-radius: 5px;
     color: white !important;
     width: fit-content;
+}
+
+.table-round-battle thead tr.table-header th {
+    background-color: #f1f1ff!important;
+    border: 1px solid #b8d4da;
+    color: #0571c2;
+}
+
+.table-round-battle thead tr th {
+    font-size: 16px;
+    height: 35px;
+    padding: 5px 10px;
+}
+
+.table-round-battle tbody tr td:nth-child(1) {
+    width: auto;
+    min-width: auto;
+    background-color: white;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+}
+
+.table-info tbody tr td .table-pokemon {
+    width: max-content;
+    height: 36px;
+}
+
+.text-summary {
+    font-weight: bold;
 }
