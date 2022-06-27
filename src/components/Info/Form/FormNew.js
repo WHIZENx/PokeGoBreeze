@@ -56,7 +56,7 @@ const Form = ({
         if (id_default === 555 && form === "galar") form += "-standard"
         return formList.map(form => {
             let curFrom = form.find(item => form && (item.form.form_name === form || item.form.name === item.default_name+"-"+form));
-            return curFrom ? curFrom : form.find(item => item.form.is_default)
+            return curFrom ?? form.find(item => item.form.is_default)
         }).find(item => form ? item.form.form_name === form || item.form.name === item.default_name+"-"+form : item.id === id_default);
     }, [formList, id_default, paramForm]);
 
@@ -93,7 +93,7 @@ const Form = ({
 
     useEffect(() => {
         if (!onChangeForm || (!currForm && id_default && pokeData && formList.length > 0 && pokeData.length > 0)) {
-            setCurrForm(findForm() ? findForm() : findFirst());
+            setCurrForm(findForm() ?? findFirst());
             setPokeID(findFirst() ? findFirst().form.id : id_default);
             setDataPoke(pokeData.find(item => item.id === id_default));
         }

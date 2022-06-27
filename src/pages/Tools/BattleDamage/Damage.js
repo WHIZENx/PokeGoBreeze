@@ -199,7 +199,7 @@ const Damage = () => {
                                 </div>
                             </div>
                         </div>
-                        <Move text="Select Moves" id={id} form={form ? form.form.pokemon.name : name.toLowerCase()} setMove={setMove} move={move}/>
+                        <Move text="Select Moves" id={id} selectDefault={true} form={form ? form.form.pokemon.name : name.toLowerCase()} setMove={setMove} move={move}/>
                         <div className="element-top">
                             {move &&
                             <div style={{width: 300, margin: 'auto'}}>

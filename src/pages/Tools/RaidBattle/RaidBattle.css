@@ -16,7 +16,7 @@
     width: 100%;
     border: 1px solid #b8d4da;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 
 }
 
@@ -147,4 +147,25 @@ img.pokemon-sprite-battle {
 
 .text-summary {
     font-weight: bold;
+}
+
+.ic-copy {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    padding: 3px 8px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.ic-copy-small {
+    position: absolute;
+    padding: 3px 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    right: 5px;
+}
+
+.ic-copy:hover, .ic-copy-small {
+    background-color: #076dbb !important;
 }

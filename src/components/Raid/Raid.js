@@ -76,7 +76,7 @@ const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBo
             </div>
             <div className="row element-top container" style={{margin: 0}}>
                 <div className='col d-flex justify-content-center align-items-center' style={{marginBottom: 15}}>
-                    <img className={parseInt(tier) === 2 || parseInt(tier) === 4 ? "img-type-icon" : ""} alt="img-raid-egg" src={raidEgg(parseInt(tier), currForm && currForm.form.form_name.includes("mega"))}></img>
+                    <img className={parseInt(tier) === 2 ? "img-type-icon" : ""} alt="img-raid-egg" src={raidEgg(parseInt(tier), currForm && currForm.form.form_name.includes("mega"))}></img>
                 </div>
                 <div className='col d-flex justify-content-center' style={{marginBottom: 15}}>
                     <table className="table-info">

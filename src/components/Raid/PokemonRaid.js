@@ -3,6 +3,8 @@ import { useState } from "react";
 import SelectMove from "../Input/SelectMove";
 import SelectPokemon from "../Input/SelectPokemon";
 
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+
 const PokemonRaid = (props) => {
 
     const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
@@ -26,7 +28,14 @@ const PokemonRaid = (props) => {
 
     return (
         <div>
-            <span className="input-group-text justify-content-center"><Badge color="primary" overlap="circular" badgeContent={props.id+1} /> <b style={{marginLeft: 15}}>Pokémon Battle</b></span>
+            <span className="input-group-text justify-content-center position-relative">
+                <Badge color="primary" overlap="circular" badgeContent={props.id+1} /> <b style={{marginLeft: 15}}>Pokémon Battle</b>
+                {props.onCopyPokemon &&
+                <span className="ic-copy-small bg-primary text-white" title="Copy" onClick={() => props.onCopyPokemon(props.id)}>
+                    <ContentCopyIcon sx={{fontSize: 16}}/>
+                </span>
+                }
+            </span>
             <SelectPokemon clearData={props.clearData}
                             pokemon={dataTargetPokemon}
                             setCurrentPokemon={setDataPokemon}

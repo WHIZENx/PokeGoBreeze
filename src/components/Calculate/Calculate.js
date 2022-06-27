@@ -95,6 +95,7 @@ export const rankIconCenterName = (rank) => {
 export const raidEgg = (tier, mega) => {
     if (tier === 1) return APIService.getRaidSprite("raid_egg_0_icon");
     else if (tier === 3) return APIService.getRaidSprite("raid_egg_1_icon");
+    else if (tier === 4) return APIService.getRaidSprite("raid_egg_5_icon");
     else if (tier === 5 && mega) return APIService.getRaidSprite("raid_egg_3_icon");
     else if (tier === 5) return APIService.getRaidSprite("raid_egg_2_icon");
     else if (tier === 6) return APIService.getRaidSprite("raid_egg_4_icon");
@@ -182,13 +183,13 @@ export const findAssetForm = (id, name) => {
 
 /* Thank algorithm from pokemongohub.net */
 export const calBaseATK = (stats, nerf) => {
-    const atk = stats.atk !== undefined ? stats.atk : stats.find(item => item.stat.name === "attack").base_stat;
-    const spa = stats.spa !== undefined ? stats.spa : stats.find(item => item.stat.name === "special-attack").base_stat;
+    const atk = stats.atk ?? stats.find(item => item.stat.name === "attack").base_stat;
+    const spa = stats.spa ?? stats.find(item => item.stat.name === "special-attack").base_stat;
 
     const lower = Math.min(atk, spa);
     const higher = Math.max(atk, spa);
 
-    const speed = stats.spe !== undefined ? stats.spe : stats.find(item => item.stat.name === "speed").base_stat;
+    const speed = stats.spe ?? stats.find(item => item.stat.name === "speed").base_stat;
 
     const scaleATK = Math.round(2*((7/8)*higher+(1/8)*lower));
     const speedMod = 1+(speed-75)/500;
@@ -199,13 +200,13 @@ export const calBaseATK = (stats, nerf) => {
 }
 
 export const calBaseDEF = (stats, nerf) => {
-    const def = stats.def !== undefined ? stats.def : stats.find(item => item.stat.name === "defense").base_stat;
-    const spd = stats.spd !== undefined ? stats.spd : stats.find(item => item.stat.name === "special-defense").base_stat;
+    const def = stats.def ?? stats.find(item => item.stat.name === "defense").base_stat;
+    const spd = stats.spd ?? stats.find(item => item.stat.name === "special-defense").base_stat;
 
     const lower = Math.min(def, spd);
     const higher = Math.max(def, spd);
 
-    const speed = stats.spe !== undefined ? stats.spe : stats.find(item => item.stat.name === "speed").base_stat;
+    const speed = stats.spe ?? stats.find(item => item.stat.name === "speed").base_stat;
 
     const scaleDEF = Math.round(2*((5/8)*higher+(3/8)*lower));
     const speedMod = 1+(speed-75)/500;
@@ -216,7 +217,7 @@ export const calBaseDEF = (stats, nerf) => {
 }
 
 export const calBaseSTA = (stats, nerf) => {
-    const hp = stats.hp !== undefined ? stats.hp : stats.find(item => item.stat.name === "hp").base_stat;
+    const hp = stats.hp ?? stats.find(item => item.stat.name === "hp").base_stat;
 
     const baseSTA = Math.floor(hp * 1.75 + 50);
     if (!nerf) return baseSTA;

@@ -71,7 +71,7 @@ const Move = (props) => {
                                 <ul>
                                     {resultMove &&
                                         <Fragment>
-                                            {resultMove.filter(value => value.name !== currentMove.name).map((value, index) => (
+                                            {resultMove.filter(value => props.selectDefault || (!props.selectDefault && value.name !== currentMove.name) ).map((value, index) => (
                                                 <Fragment key={ index }>
                                                 {index === 0 &&
                                                 <li className='card-header'><b>Fast Moves</b></li>

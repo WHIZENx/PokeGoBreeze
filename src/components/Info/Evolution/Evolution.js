@@ -79,7 +79,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
             }
         }
         setArrEvoList(oldArr => [...oldArr, data.map(item => {
-            return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby, form: item.form ? item.form : null}
+            return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby, form: item.form ?? null}
         })]);
         return data.map(item => getEvoChain(item.evolves_to))
     }, [formDefault, forme, region]);
@@ -140,7 +140,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     }
 
     const renderImageEvo = (value, chain, evo, index, evoCount) => {
-        let form = value.form ? value.form : forme.form_name;
+        let form = value.form ?? forme.form_name;
         let offsetY = 35;
         offsetY += value.baby ? 20 : 0
         offsetY += arrEvoList.length === 1 ? 20 : 0

@@ -3129,6 +3129,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm143.icon",
                 "shiny": "Addressable Assets/pm143.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 143,
+                "form": "GOFEST_2022",
+                "default": "Addressable Assets/pm143.cGOFEST_2022_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm143.cGOFEST_2022_NOEVOLVE.s.icon"
             }
         ]
     },
@@ -3142,6 +3149,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm144.icon",
                 "shiny": "Addressable Assets/pm144.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 144,
+                "form": "GALARIAN",
+                "default": "Addressable Assets/pm144.fGALARIAN.icon",
+                "shiny": "Addressable Assets/pm144.fGALARIAN.s.icon"
             }
         ]
     },
@@ -3155,6 +3169,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm145.icon",
                 "shiny": "Addressable Assets/pm145.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 145,
+                "form": "GALARIAN",
+                "default": "Addressable Assets/pm145.fGALARIAN.icon",
+                "shiny": "Addressable Assets/pm145.fGALARIAN.s.icon"
             }
         ]
     },
@@ -3168,6 +3189,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm146.icon",
                 "shiny": "Addressable Assets/pm146.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 146,
+                "form": "GALARIAN",
+                "default": "Addressable Assets/pm146.fGALARIAN.icon",
+                "shiny": "Addressable Assets/pm146.fGALARIAN.s.icon"
             }
         ]
     },
@@ -4090,182 +4118,189 @@
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_A",
-                "default": "Addressable Assets/pm201.fUNOWN_A.icon",
-                "shiny": "Addressable Assets/pm201.fUNOWN_A.s.icon"
-            },
-            {
-                "gender": 3,
-                "pokemonId": 201,
-                "form": "UNOWN_B",
+                "form": "B",
                 "default": "Addressable Assets/pm201.fUNOWN_B.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_B.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_C",
+                "form": "C",
                 "default": "Addressable Assets/pm201.fUNOWN_C.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_C.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_D",
+                "form": "D",
                 "default": "Addressable Assets/pm201.fUNOWN_D.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_D.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_E",
+                "form": "E",
+                "default": "Addressable Assets/pm201.fUNOWN_E.icon",
+                "shiny": "Addressable Assets/pm201.fUNOWN_E.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 201,
+                "form": "EXCLAMATION_POINT",
                 "default": "Addressable Assets/pm201.fUNOWN_EXCLAMATION_POINT.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_EXCLAMATION_POINT.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_F",
+                "form": "F",
                 "default": "Addressable Assets/pm201.fUNOWN_F.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_F.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_G",
+                "form": "G",
                 "default": "Addressable Assets/pm201.fUNOWN_G.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_G.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_H",
+                "form": "H",
                 "default": "Addressable Assets/pm201.fUNOWN_H.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_H.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_I",
+                "form": "I",
                 "default": "Addressable Assets/pm201.fUNOWN_I.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_I.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_J",
+                "form": "J",
                 "default": "Addressable Assets/pm201.fUNOWN_J.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_J.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_K",
+                "form": "K",
                 "default": "Addressable Assets/pm201.fUNOWN_K.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_K.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_L",
+                "form": "L",
                 "default": "Addressable Assets/pm201.fUNOWN_L.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_L.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_M",
+                "form": "M",
                 "default": "Addressable Assets/pm201.fUNOWN_M.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_M.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_N",
+                "form": "N",
                 "default": "Addressable Assets/pm201.fUNOWN_N.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_N.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_O",
+                "form": "O",
                 "default": "Addressable Assets/pm201.fUNOWN_O.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_O.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_P",
+                "form": "P",
                 "default": "Addressable Assets/pm201.fUNOWN_P.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_P.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_Q",
+                "form": "Q",
+                "default": "Addressable Assets/pm201.fUNOWN_Q.icon",
+                "shiny": "Addressable Assets/pm201.fUNOWN_Q.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 201,
+                "form": "QUESTION_MARK",
                 "default": "Addressable Assets/pm201.fUNOWN_QUESTION_MARK.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_QUESTION_MARK.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_R",
+                "form": "R",
                 "default": "Addressable Assets/pm201.fUNOWN_R.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_R.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_S",
+                "form": "S",
                 "default": "Addressable Assets/pm201.fUNOWN_S.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_S.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_T",
+                "form": "T",
                 "default": "Addressable Assets/pm201.fUNOWN_T.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_T.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_U",
+                "form": "U",
                 "default": "Addressable Assets/pm201.fUNOWN_U.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_U.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_V",
+                "form": "V",
                 "default": "Addressable Assets/pm201.fUNOWN_V.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_V.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_W",
+                "form": "W",
                 "default": "Addressable Assets/pm201.fUNOWN_W.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_W.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_X",
+                "form": "X",
                 "default": "Addressable Assets/pm201.fUNOWN_X.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_X.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_Y",
+                "form": "Y",
                 "default": "Addressable Assets/pm201.fUNOWN_Y.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_Y.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 201,
-                "form": "UNOWN_Z",
+                "form": "Z",
                 "default": "Addressable Assets/pm201.fUNOWN_Z.icon",
                 "shiny": "Addressable Assets/pm201.fUNOWN_Z.s.icon"
             },
@@ -7971,16 +8006,16 @@
             {
                 "gender": 3,
                 "pokemonId": 422,
-                "form": "WEST",
-                "default": "Addressable Assets/pm422.fWEST_SEA.icon",
-                "shiny": "Addressable Assets/pm422.fWEST_SEA.s.icon"
+                "form": "EAST_SEA",
+                "default": "Addressable Assets/pm422.fEAST_SEA.icon",
+                "shiny": "Addressable Assets/pm422.fEAST_SEA.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 422,
-                "form": "EAST",
-                "default": "Addressable Assets/pm422.fEAST_SEA.icon",
-                "shiny": "Addressable Assets/pm422.fEAST_SEA.s.icon"
+                "form": "WEST_SEA",
+                "default": "Addressable Assets/pm422.fWEST_SEA.icon",
+                "shiny": "Addressable Assets/pm422.fWEST_SEA.s.icon"
             }
         ]
     },
@@ -7991,16 +8026,16 @@
             {
                 "gender": 3,
                 "pokemonId": 423,
-                "form": "WEST",
-                "default": "Addressable Assets/pm423.fWEST_SEA.icon",
-                "shiny": "Addressable Assets/pm423.fWEST_SEA.s.icon"
+                "form": "EAST_SEA",
+                "default": "Addressable Assets/pm423.fEAST_SEA.icon",
+                "shiny": "Addressable Assets/pm423.fEAST_SEA.s.icon"
             },
             {
                 "gender": 3,
                 "pokemonId": 423,
-                "form": "EAST",
-                "default": "Addressable Assets/pm423.fEAST_SEA.icon",
-                "shiny": "Addressable Assets/pm423.fEAST_SEA.s.icon"
+                "form": "WEST_SEA",
+                "default": "Addressable Assets/pm423.fWEST_SEA.icon",
+                "shiny": "Addressable Assets/pm423.fWEST_SEA.s.icon"
             }
         ]
     },
@@ -10120,9 +10155,9 @@
             {
                 "gender": 3,
                 "pokemonId": 555,
-                "form": "GALARIAN",
-                "default": "Addressable Assets/pm555.fGALARIAN_ZEN.icon",
-                "shiny": "Addressable Assets/pm555.fGALARIAN_ZEN.s.icon"
+                "form": "GALARIAN_STANDARD",
+                "default": "Addressable Assets/pm555.fGALARIAN_STANDARD.icon",
+                "shiny": "Addressable Assets/pm555.fGALARIAN_STANDARD.s.icon"
             },
             {
                 "gender": 3,
@@ -13362,17 +13397,41 @@
     {
         "id": 794,
         "name": "BUZZWOLE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 794,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm794.icon",
+                "shiny": "Addressable Assets/pm794.s.icon"
+            }
+        ]
     },
     {
         "id": 795,
         "name": "PHEROMOSA",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 795,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm795.icon",
+                "shiny": "Addressable Assets/pm795.s.icon"
+            }
+        ]
     },
     {
         "id": 796,
         "name": "XURKITREE",
-        "image": []
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 796,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm796.icon",
+                "shiny": "Addressable Assets/pm796.s.icon"
+            }
+        ]
     },
     {
         "id": 797,

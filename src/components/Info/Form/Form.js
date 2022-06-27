@@ -56,7 +56,7 @@ const Form = ({
         if (id_default === 555 && form === "galar") form += "-standard"
         return formList.map(form => {
             let curFrom = form.find(item => form && (item.form.form_name === form || item.form.name === item.default_name+"-"+form));
-            return curFrom ? curFrom : form.find(item => item.form.is_default)
+            return curFrom ?? form.find(item => item.form.is_default)
         }).find(item => form ? item.form.form_name === form || item.form.name === item.default_name+"-"+form : item.id === id_default);
     }
 
