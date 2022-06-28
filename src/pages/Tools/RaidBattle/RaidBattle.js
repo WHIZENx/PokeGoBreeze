@@ -8,7 +8,7 @@ import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
 
-import { convertName, splitAndCapitalize } from "../../../util/Util";
+import { convertName, splitAndCapitalize } from "../../../util/Utils";
 import { findAssetForm } from '../../../util/Compute';
 import { RAID_BOSS_TIER } from '../../../util/Constants';
 import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBattle, calculateStatsByTag, TimeToKill } from '../../../util/Calculate';

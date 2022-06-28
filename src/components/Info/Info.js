@@ -5,7 +5,7 @@ import Type from "../Sprites/Type";
 
 import typeEffective from '../../data/type_effectiveness.json';
 import weatherEffective from '../../data/weather_boosts.json';
-import { splitAndCapitalize } from "../../util/Util";
+import { splitAndCapitalize } from "../../util/Utils";
 
 const Info = (props) => {
 

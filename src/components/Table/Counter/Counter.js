@@ -2,7 +2,7 @@ import { capitalize, FormControlLabel, Switch } from "@mui/material";
 import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
-import { splitAndCapitalize } from "../../../util/Util";
+import { splitAndCapitalize } from "../../../util/Utils";
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 

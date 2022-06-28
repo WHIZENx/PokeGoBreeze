@@ -5,7 +5,7 @@ import pokemonData from '../../data/pokemon.json';
 import { useEffect, useState } from "react";
 
 import './Select.css';
-import { splitAndCapitalize } from "../../util/Util";
+import { splitAndCapitalize } from "../../util/Utils";
 import APIService from "../../services/API.service";
 
 const SelectPokemon = (props) => {

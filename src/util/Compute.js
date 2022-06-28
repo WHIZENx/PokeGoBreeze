@@ -2,7 +2,7 @@ import candyData from '../data/candy_pokemon_go.json';
 import pokemonAssets from '../data/assets_pokemon_go.json';
 
 import APIService from "../services/API.service";
-import { convertName } from "../util/Util";
+import { convertName } from "./Utils";
 
 export const rankName = (rank) => {
     if (rank === 21) return "Ace"

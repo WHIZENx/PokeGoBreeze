@@ -4,7 +4,7 @@ import APIService from "../../services/API.service";
 import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
-import { splitAndCapitalize } from '../../util/Util';
+import { splitAndCapitalize } from '../../util/Utils';
 import { computeBgColor, computeColor } from '../../util/Compute';
 import { regionList } from '../../util/Constants';
 import { calculateStatsByTag, sortStatsPokemon } from '../../util/Calculate';

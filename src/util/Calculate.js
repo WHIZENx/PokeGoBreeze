@@ -6,7 +6,7 @@ import typeEffective from "../data/type_effectiveness.json";
 import weatherBoosts from '../data/weather_boosts.json';
 import { DEFAULT_DAMAGE_CONST, DEFAULT_DAMAGE_MULTIPLY, DEFAULT_ENEMY_ATK_DELAY, DEFAULT_ENERYGY_PER_HP_LOST, DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_FRIEND_LEVEL, DEFAULT_POKEMON_SHADOW, DEFAULT_TRAINER_FRIEND, DEFAULT_WEATHER_BOOSTS, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY, typeCostPowerUp } from "./Constants";
 import { getOption } from "../options/options";
-import { capitalize, convertName, splitAndCapitalize } from "./Util";
+import { capitalize, convertName, splitAndCapitalize } from "./Utils";
 
 const getMultiFriendshipMulti = (level) => {
     return getOption("trainer_friendship", level.toString(), "atk_bonus");

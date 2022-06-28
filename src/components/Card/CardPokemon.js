@@ -1,6 +1,6 @@
 import { Fragment } from "react"
 import APIService from "../../services/API.service"
-import { splitAndCapitalize } from "../../util/Util"
+import { splitAndCapitalize } from "../../util/Utils"
 
 const CardPokemon = (props) => {
 
