@@ -9,7 +9,7 @@ import pokeImageList from '../../../data/assets_pokemon_go.json';
 import './SearchBattle.css';
 import APIService from "../../../services/API.service";
 
-import { splitAndCapitalize } from "../../../util/Util";
+import { splitAndCapitalize } from "../../../util/Utils";
 import { computeBgColor, computeColor } from '../../../util/Compute';
 import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
 
@@ -18,7 +18,7 @@ import { useSnackbar } from "notistack";
 
 import loading from '../../../assets/loading.png';
 import { Link } from "react-router-dom";
-import { marks, PokeGoSlider } from "../../../util/Util";
+import { marks, PokeGoSlider } from "../../../util/Utils";
 
 const FindBattle = () => {
 

@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Radio } from "@mui/material";
 import { useCallback, useState } from "react";
 
-import { LevelSlider, TypeRadioGroup } from "../../../util/Util";
+import { LevelSlider, TypeRadioGroup } from "../../../util/Utils";
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateStatsBattle } from '../../../util/Calculate';
 

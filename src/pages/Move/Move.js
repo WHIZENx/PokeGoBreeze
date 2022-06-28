@@ -3,7 +3,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useParams } from "react-router-dom";
 
-import { capitalize, splitAndCapitalize } from '../../util/Util';
+import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { STAB_MULTIPLY } from '../../util/Constants';
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 

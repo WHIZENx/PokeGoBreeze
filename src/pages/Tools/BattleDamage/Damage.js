@@ -3,7 +3,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { FormGroup } from "react-bootstrap";
 
-import { LevelRating } from "../../../util/Util";
+import { LevelRating } from "../../../util/Utils";
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 

@@ -9,7 +9,7 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { capitalize, splitAndCapitalize } from '../../../util/Util';
+import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { regionList } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';

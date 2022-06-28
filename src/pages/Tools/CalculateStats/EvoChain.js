@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { splitAndCapitalize } from "../../../util/Util";
+import { splitAndCapitalize } from "../../../util/Utils";
 import APIService from "../../../services/API.service";
 
 const EvoChain = (props) => {

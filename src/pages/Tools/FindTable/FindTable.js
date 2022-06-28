@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 
-import { HundoRate, marks, PokeGoSlider } from "../../../util/Util";
+import { HundoRate, marks, PokeGoSlider } from "../../../util/Utils";
 import { calculateCP, predictCPList, predictStat } from "../../../util/Calculate";
 
 import DataTable from 'react-data-table-component';

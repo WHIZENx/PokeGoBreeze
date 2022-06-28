@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 
-import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from "../../../util/Util";
+import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from "../../../util/Utils";
 import { computeBgColor, computeColor } from '../../../util/Compute';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/Calculate';
 

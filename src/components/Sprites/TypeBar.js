@@ -1,5 +1,5 @@
 import APIService from '../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../util/Util';
+import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import './TypeBar.css'
 
 const TypeBar = (props) => {

@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
 
-import { marks, PokeGoSlider } from "../../../util/Util";
+import { marks, PokeGoSlider } from "../../../util/Utils";
 import { calStatsProd } from "../../../util/Calculate";
 
 import APIService from "../../../services/API.service";
