@@ -1,7 +1,8 @@
 import { RadioGroup, Rating, Slider, styled } from "@mui/material";
 import Moment from 'moment';
+import { MAX_IV } from "./Constants";
 
-export const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
+export const marks = [...Array(MAX_IV+1).keys()].map(n => {return {value: n, label: n.toString()}});
 
 export const PokeGoSlider = styled(Slider)(() => ({
     color: '#ee9219',

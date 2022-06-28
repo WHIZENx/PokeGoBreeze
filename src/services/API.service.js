@@ -158,9 +158,8 @@ class APIService {
         return `${POKE_SOUND_CRY_API_URL}/${name}/cry.aif`;
     }
 
-    getSoundPokemonGO(id) {
-        id = id.toString().padStart(3, '0');
-        return `${POGO_SOUND_API_URL}Pokemon Cries/pv${id}.wav`;
+    getSoundPokemonGO(path) {
+        return `${POGO_SOUND_API_URL}Pokemon Cries/Addressable Assets/${path}.wav`;
     }
 
     getSoundMove(sound) {

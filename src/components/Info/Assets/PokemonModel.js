@@ -77,10 +77,22 @@ const PokemonModel = (props) => {
                 Your browser does not support the audio element.
             </audio>
             <h6>Pokémon GO:</h6> */}
-            <audio className="w-100" controls style={{height: 30}}>
-                <source src={APIService.getSoundPokemonGO(props.id)} type="audio/wav"></source>
-                Your browser does not support the audio element.
-            </audio>
+            {pokeImageList.find(item => item.id === props.id).sound.cry.length === 0 ?
+            <div>Sound in Pokémon Go unavailable.</div>
+            :
+            <ul style={{margin: 0}}>
+                {pokeImageList.find(item => item.id === props.id).sound.cry.map((value, index) => (
+                    <li key={index}>
+                        <h6>Form: {splitAndCapitalize(value.form, "_", " ")}</h6>
+                        <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100" controls style={{height: 30}}>
+                            <source type="audio/wav"></source>
+                            Your browser does not support the audio element.
+                        </audio>
+                    </li>
+                ))
+                }
+            </ul>
+            }
         </div>
     )
 }

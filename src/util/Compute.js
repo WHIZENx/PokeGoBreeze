@@ -47,12 +47,18 @@ export const computeColor = (id) => {
 
 export const findAssetForm = (id, name) => {
     name = convertName(name).replaceAll("GALAR", "GALARIAN")
-    let pokemon = pokemonAssets.find(item => item.id === id);
-    if (pokemon.name === convertName(name)) {
+    const pokemon = pokemonAssets.find(item => item.id === id);
+    const standard = pokemon.image.filter(item => item.form.includes("STANDARD"));
+    if (pokemon.name === convertName(name) || standard.length > 0) {
         let image = pokemon.image.find(item => item.form === "NORMAL")
         if (image) return image.default;
-        image = pokemon.image.find(item => item.form === "STANDARD");
-        if (image) return image.default;
+        if (standard.length > 0) {
+            if (name.includes("GALARIAN")) {
+                if (name.includes("ZEN")) return pokemon.image.find(item => item.form.includes("GALARIAN_ZEN")).default
+                return pokemon.image.find(item => item.form.includes("GALARIAN")).default
+            } else if (name.includes("ZEN")) return pokemon.image.find(item => !item.form.includes("GALARIAN") && item.form.includes("ZEN")).default
+            else return pokemon.image.find(item => item.form === "STANDARD").default;
+        }
         try {return pokemon.image[0].default;}
         catch { return null }
     }

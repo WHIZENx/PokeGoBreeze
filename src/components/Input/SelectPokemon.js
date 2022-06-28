@@ -27,7 +27,8 @@ const SelectPokemon = (props) => {
     const changePokemon = (value) => {
         setShowPokemon(false);
         const name = splitAndCapitalize(value.name, "-", " ");
-        if (search !== name) {
+        const iconName = pokemonIcon ? splitAndCapitalize(pokemonIcon.split("/")[9].replace(".png", ""), "-", " ") : "";
+        if (iconName !== name) {
             setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
             setSearch(name);
             if (props.setCurrentPokemon) props.setCurrentPokemon(value);
