@@ -1,9 +1,12 @@
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
-import { calStatsProd } from "../../../components/Calculate/Calculate";
+
+import { marks, PokeGoSlider } from "../../../util/Util";
+import { calStatsProd } from "../../../util/Calculate";
+
 import APIService from "../../../services/API.service";
-import { marks, PokeGoSlider } from "../../../util/util";
+
 import Find from "../Find";
 
 const columnsStats = [

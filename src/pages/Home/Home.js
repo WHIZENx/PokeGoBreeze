@@ -3,7 +3,8 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import Type from '../../components/Sprites/Type';
 import APIService from '../../services/API.service';
 
-import { calculateCP, calculateStatsByTag, splitAndCapitalize } from '../../components/Calculate/Calculate';
+import { splitAndCapitalize } from '../../util/Util';
+import { calculateCP, calculateStatsByTag } from '../../util/Calculate';
 
 import loading from '../../assets/loading.png';
 import './Home.css'

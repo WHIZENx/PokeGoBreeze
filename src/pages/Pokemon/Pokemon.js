@@ -4,7 +4,11 @@ import APIService from "../../services/API.service";
 import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
-import { calculateStatsByTag, computeBgColor, computeColor, regionList, sortStatsPokemon, splitAndCapitalize } from '../../components/Calculate/Calculate';
+import { splitAndCapitalize } from '../../util/Util';
+import { computeBgColor, computeColor } from '../../util/Compute';
+import { regionList } from '../../util/Constants';
+import { calculateStatsByTag, sortStatsPokemon } from '../../util/Calculate';
+
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import Form from "../../components/Info/Form/FormNew";

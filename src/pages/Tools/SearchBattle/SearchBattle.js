@@ -8,13 +8,17 @@ import pokeImageList from '../../../data/assets_pokemon_go.json';
 
 import './SearchBattle.css';
 import APIService from "../../../services/API.service";
-import { calculateStats, computeBgColor, computeColor, queryStatesEvoChain, splitAndCapitalize } from "../../../components/Calculate/Calculate";
+
+import { splitAndCapitalize } from "../../../util/Util";
+import { computeBgColor, computeColor } from '../../../util/Compute';
+import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
+
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { useSnackbar } from "notistack";
 
 import loading from '../../../assets/loading.png';
 import { Link } from "react-router-dom";
-import { marks, PokeGoSlider } from "../../../util/util";
+import { marks, PokeGoSlider } from "../../../util/Util";
 
 const FindBattle = () => {
 

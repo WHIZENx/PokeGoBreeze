@@ -10,8 +10,8 @@ import APIService from '../../services/API.service';
 import './Leagues.css';
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, rankIconCenterName, rankIconName, rankName, splitAndCapitalize } from '../../components/Calculate/Calculate';
-import { capitalize } from '@mui/material';
+import { getTime, splitAndCapitalize, capitalize } from '../../util/Util';
+import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';
 
 const Leagues = () => {
 
@@ -118,10 +118,10 @@ const Leagues = () => {
                         <div className='rank-header'>Rank {rank}{parseInt(rank) === 20 ? "" : "-"+(parseInt(rank)+4)}</div>
                         {value.filter((item, index, arr) => arr.findIndex(value => (value.id === item.id && value.type === "FREE")) === index).map((item, index) => (
                             <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                <div className='w-100 d-flex justify-content-center'>
-                                    <div className='group-pokemon-sprite'>
+                                <div className='d-flex justify-content-center'>
+                                    <span className='group-pokemon-sprite'>
                                         <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
-                                    </div>
+                                    </span>
                                 </div>
                                 <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")} {item.form !== "NORMAL" && splitAndCapitalize(item.form, "_", " ")}</span>
                             </Link>
@@ -129,10 +129,10 @@ const Leagues = () => {
                         <hr></hr>
                         {value.filter((item, index, arr) => arr.findIndex(value => (value.id === item.id && value.type === "PREMIUM")) === index).map((item, index) => (
                             <Link style={{paddingBottom: 20}} target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
-                                <div className='w-100 d-flex justify-content-center'>
-                                    <div className='group-pokemon-sprite'>
+                                <div className='d-flex justify-content-center'>
+                                    <span className='group-pokemon-sprite'>
                                         <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}></img>
-                                    </div>
+                                    </span>
                                 </div>
                                 <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")} {item.form !== "NORMAL" && splitAndCapitalize(item.form, "_", " ")}</span>
                             </Link>
@@ -154,7 +154,7 @@ const Leagues = () => {
                         <Accordion.Header>
                             <img style={{marginRight: 10}} alt='img-league' height={50} src={APIService.getAssetPokeGo(value.iconUrl)}></img>
                             <b className={value.enabled ? "" : "text-danger"}>{(value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title) ? splitAndCapitalize(value.id.replace("VS_","").toLowerCase(), "_", " ") : splitAndCapitalize(value.title.toLowerCase(), "_", " ")) +
-                            (value.id.includes("SAFARI_ZONE") ? ` ${value.id.split("_")[3]} ${capitalize(value.id.split("_")[4].toLowerCase())}` : "")}</b>
+                            (value.id.includes("SAFARI_ZONE") ? ` ${value.id.split("_")[3]} ${capitalize(value.id.split("_")[4].toLowerCase())}` : "")} {leaguesData.allowLeagues.includes(value.id) && <span className='d-inline-block caption text-success'>(Opened)</span>}</b>
                         </Accordion.Header>
                         <Accordion.Body>
                             <div className='sub-body'>

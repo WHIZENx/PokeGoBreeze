@@ -1,106 +1,12 @@
-import data from "../../data/cp_multiplier.json";
-import combat from '../../data/combat.json';
-import candyData from '../../data/candy_pokemon_go.json';
-import pokemonData from '../../data/pokemon.json';
-import pokemonCombatList from "../../data/combat_pokemon_go_list.json";
-import pokemonAssets from '../../data/assets_pokemon_go.json';
-import typeEffective from "../../data/type_effectiveness.json";
-import weatherBoosts from '../../data/weather_boosts.json';
-
-import Moment from 'moment';
-import APIService from "../../services/API.service";
-import { getOption } from "../../options/options";
-
-export const DEFAULT_POKEMON_DEF_OBJ = 160;
-const DEFAULT_POKEMON_SHADOW = false;
-const DEFAULT_TRAINER_FRIEND = false;
-const DEFAULT_WEATHER_BOOSTS = false;
-const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
-
-const DEFAULT_ENERYGY_PER_HP_LOST = 0.5;
-const DEFAULT_DAMAGE_MULTIPLY = 0.5;
-const DEFAULT_DAMAGE_CONST = 1;
-const DEFAULT_ENEMY_ATK_DELAY = 2;
-
-const MIN_LEVEL = 1;
-const MAX_LEVEL = 51;
-
-const MIN_IV = 0;
-const MAX_IV = 15;
-
-export const STAB_MULTIPLY = getOption("battle_options", "stab");
-
-/* Shadow exclusive bonus for Pokémon in battle */
-export const SHADOW_ATK_BONUS = getOption("combat_options", "shadow_bonus", "atk");
-export const SHADOW_DEF_BONUS = getOption("combat_options", "shadow_bonus", "def");
-
-export const RAID_BOSS_TIER = {
-    1: {
-        level: 20,
-        CPm: 0.61,
-        sta: 600,
-        timer: 180
-    },
-    2: {
-        level: 25,
-        CPm: 0.6679,
-        sta: 1800,
-        timer: 180
-    },
-    3: {
-        level: 30,
-        CPm: 0.7317,
-        sta: 3600,
-        timer: 180
-    },
-    4: {
-        level: 40,
-        CPm: 0.7903,
-        sta: 9000,
-        timer: 180
-    },
-    5: {
-        level: 40,
-        CPm: 0.79,
-        sta: 15000,
-        timer: 300
-    },
-    6: {
-        level: 40,
-        CPm: 0.79,
-        sta: 22500,
-        timer: 300
-    }
-}
-
-export const rankName = (rank) => {
-    if (rank === 21) return "Ace"
-    else if (rank === 22) return "Veteren"
-    else if (rank === 23) return "Expert"
-    else if (rank === 24) return "Legend"
-}
-
-export const rankIconName = (rank) => {
-    if (rank === 21) return APIService.getPokeOtherLeague("special_combat_rank_1");
-    else if (rank === 22) return APIService.getPokeOtherLeague("special_combat_rank_2");
-    else if (rank === 23) return APIService.getPokeOtherLeague("special_combat_rank_3");
-    else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4");
-}
-
-export const rankIconCenterName = (rank) => {
-    if (rank === 21 || rank === 22 || rank === 23) return APIService.getPokeOtherLeague("special_combat_rank_1_center");
-    else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4_center");
-}
-
-export const raidEgg = (tier, mega) => {
-    if (tier === 1) return APIService.getRaidSprite("raid_egg_0_icon");
-    else if (tier === 3) return APIService.getRaidSprite("raid_egg_1_icon");
-    else if (tier === 4) return APIService.getRaidSprite("raid_egg_5_icon");
-    else if (tier === 5 && mega) return APIService.getRaidSprite("raid_egg_3_icon");
-    else if (tier === 5) return APIService.getRaidSprite("raid_egg_2_icon");
-    else if (tier === 6) return APIService.getRaidSprite("raid_egg_4_icon");
-    else return APIService.getRaidSprite("ic_raid_small");
-}
+import data from "../data/cp_multiplier.json";
+import combat from '../data/combat.json';
+import pokemonData from '../data/pokemon.json';
+import pokemonCombatList from "../data/combat_pokemon_go_list.json";
+import typeEffective from "../data/type_effectiveness.json";
+import weatherBoosts from '../data/weather_boosts.json';
+import { DEFAULT_DAMAGE_CONST, DEFAULT_DAMAGE_MULTIPLY, DEFAULT_ENEMY_ATK_DELAY, DEFAULT_ENERYGY_PER_HP_LOST, DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_FRIEND_LEVEL, DEFAULT_POKEMON_SHADOW, DEFAULT_TRAINER_FRIEND, DEFAULT_WEATHER_BOOSTS, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY, typeCostPowerUp } from "./Constants";
+import { getOption } from "../options/options";
+import { capitalize, convertName, splitAndCapitalize } from "./Util";
 
 const getMultiFriendshipMulti = (level) => {
     return getOption("trainer_friendship", level.toString(), "atk_bonus");
@@ -119,67 +25,6 @@ export const getTypeEffective = (typeMove, typesObj) => {
     return value_effective;
 }
 
-export const capitalize = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-export const splitAndCapitalize = (string, splitBy, joinBy) => {
-    return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(joinBy);
-};
-
-export const getTime = (value, notFull) => {
-    return notFull ? Moment((new Date(parseInt(value)))).format('D MMMM YYYY') : Moment((new Date(parseInt(value)))).format('HH:mm D MMMM YYYY')
-}
-
-export const regionList = {
-    1: "Kanto",
-    2: "Johto",
-    3: "Hoenn",
-    4: "Sinnoh",
-    5: "Unova",
-    6: "Kalos",
-    7: "Alola",
-    8: "Galar",
-}
-
-export const convertName = (text) => {
-    return text.toUpperCase()
-    .replaceAll("-", "_")
-    .replaceAll("NIDORAN_F", "NIDORAN_FEMALE")
-    .replaceAll("NIDORAN_M", "NIDORAN_MALE")
-    .replaceAll("’", "")
-    .replaceAll(".", "")
-    .replaceAll(":", "")
-    .replaceAll(" ", "_")
-    .replaceAll("É", "E")
-};
-
-export const computeBgColor = (id) => {
-    let data = candyData.find(item => item.familyGroup.map(value => value.id).includes(id));
-    if (!data) data = candyData.find(item => item.familyId === 0);
-    return `rgb(${Math.round(255*data.SecondaryColor.r)}, ${Math.round(255*data.SecondaryColor.g)}, ${Math.round(255*data.SecondaryColor.b)}, ${data.SecondaryColor.a})`
-}
-
-export const computeColor = (id) => {
-  let data = candyData.find(item => item.familyGroup.map(value => value.id).includes(id));
-  if (!data) data = candyData.find(item => item.familyId === 0);
-  return `rgb(${Math.round(255*data.PrimaryColor.r)}, ${Math.round(255*data.PrimaryColor.g)}, ${Math.round(255*data.PrimaryColor.b)}, ${data.PrimaryColor.a})`
-}
-
-export const findAssetForm = (id, name) => {
-    name = convertName(name).replaceAll("GALAR", "GALARIAN")
-    let pokemon = pokemonAssets.find(item => item.id === id);
-    if (pokemon.name === convertName(name)) {
-        let image = pokemon.image.find(item => item.form === "NORMAL")
-        if (image) return image.default;
-        image = pokemon.image.find(item => item.form === "STANDARD");
-        if (image) return image.default;
-        try {return pokemon.image[0].default;}
-        catch { return null }
-    }
-    try {return pokemon.image.find(item => convertName(name).replaceAll(pokemon.name+"_", "") === item.form).default;}
-    catch { return null; }
-}
 
 /* Thank algorithm from pokemongohub.net */
 export const calBaseATK = (stats, nerf) => {
@@ -510,31 +355,7 @@ export const findCPforLeague = (atk, def, sta, IVatk, IVdef, IVsta, level, maxCP
     }
 }
 
-export const typeCostPowerUp = (type) => {
-    if (type === "shadow") {
-        return {
-            stadust: 1.2,
-            candy: 1.2,
-            type: type,
-        }
-    } else if (type === "purified") {
-        return {
-            stadust: 0.9,
-            candy: 0.9,
-            type: type,
-        }
-    } else if (type === "lucky") {
-        return {
-            stadust: 0.5,
-            candy: 1,
-            type: type,
-        }
-    } else return {
-        stadust: 1,
-        candy: 1,
-        type: type,
-    };
-}
+
 
 export const sortStatsProd = (data) => {
     data = data.sort((a,b) => a.statsProds - b.statsProds);

@@ -1,5 +1,9 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle, computeBgColor, computeColor } from "../../../components/Calculate/Calculate";
+
+import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from "../../../util/Util";
+import { computeBgColor, computeColor } from '../../../util/Compute';
+import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/Calculate';
+
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import { useSnackbar } from "notistack";
 
@@ -11,7 +15,6 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
 import Find from "../Find";
-import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from "../../../util/util";
 
 const Calculate = () => {
 

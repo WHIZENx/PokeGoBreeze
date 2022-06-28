@@ -2,7 +2,10 @@ import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, 
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { FormGroup } from "react-bootstrap";
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../components/Calculate/Calculate";
+
+import { LevelRating } from "../../../util/Util";
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 
 import './Damage.css';
 import Type from "../../../components/Sprites/Type";
@@ -13,7 +16,7 @@ import atk_logo from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import Find from "../Find";
 import StatsTable from "./StatsDamageTable";
-import { LevelRating } from "../../../util/util";
+
 import Move from "../../../components/Table/Move";
 
 const labels = {

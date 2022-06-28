@@ -2,7 +2,11 @@ import { useSnackbar } from "notistack";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useParams } from "react-router-dom";
-import { capitalize, getBarCharge, queryTopMove, splitAndCapitalize, STAB_MULTIPLY } from "../../components/Calculate/Calculate";
+
+import { capitalize, splitAndCapitalize } from '../../util/Util';
+import { STAB_MULTIPLY } from '../../util/Constants';
+import { getBarCharge, queryTopMove } from '../../util/Calculate';
+
 import TypeBar from "../../components/Sprites/TypeBar";
 
 import moveData from '../../data/combat.json';

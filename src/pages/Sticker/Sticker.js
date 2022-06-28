@@ -1,7 +1,7 @@
 import { Badge } from "@mui/material";
 
 import pokeStickerList from '../../data/sticker_pokemon_go.json';
-import { getTime, splitAndCapitalize } from '../../components/Calculate/Calculate';
+import { getTime, splitAndCapitalize } from '../../util/Util';
 
 import './Sticker.css';
 import APIService from '../../services/API.service';

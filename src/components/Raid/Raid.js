@@ -1,6 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
-import { calculateRaidCP, calculateRaidStat, raidEgg, RAID_BOSS_TIER } from "../Calculate/Calculate";
+
+import { raidEgg } from '../../util/Compute';
+import { RAID_BOSS_TIER } from '../../util/Constants';
+import { calculateRaidCP, calculateRaidStat } from '../../util/Calculate';
 
 import atk_logo from '../../assets/attack.png';
 import def_logo from '../../assets/defense.png';

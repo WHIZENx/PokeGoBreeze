@@ -1,7 +1,7 @@
 import { capitalize } from "@mui/material";
 import { Link } from "react-router-dom";
 import APIService from "../../services/API.service";
-import { splitAndCapitalize } from "../Calculate/Calculate";
+import { splitAndCapitalize } from "../../util/Util";
 
 import './TypeBadge.css';
 import combatData from '../../data/combat.json';

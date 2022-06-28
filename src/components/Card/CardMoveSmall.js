@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import APIService from '../../services/API.service'
-import { capitalize, splitAndCapitalize } from '../Calculate/Calculate';
+import { capitalize, splitAndCapitalize } from '../../util/Util';
 
 import combat from '../../data/combat.json';
 

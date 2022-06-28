@@ -4,7 +4,7 @@ import APIService from "../../services/API.service";
 import FormTools from "./FormTools";
 
 import loading from '../../assets/loading.png';
-import { splitAndCapitalize } from "../../components/Calculate/Calculate";
+import { splitAndCapitalize } from "../../util/Util";
 import Type from "../../components/Sprites/Type";
 
 const Tools = (props) => {

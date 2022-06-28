@@ -107,7 +107,7 @@ img.pokemon-sprite-battle {
 }
 
 .click-none {
-    cursor: auto !important;
+    cursor: not-allowed !important;
     color: lightgray !important;
 }
 
@@ -149,21 +149,27 @@ img.pokemon-sprite-battle {
     font-weight: bold;
 }
 
-.ic-copy {
+.ic-group {
     position: absolute;
     top: -10px;
     right: -10px;
+}
+
+.ic-copy, .ic-remove {
     padding: 3px 8px;
     border-radius: 50%;
     cursor: pointer;
 }
 
-.ic-copy-small {
+.ic-group-small {
     position: absolute;
+    right: 5px;
+}
+
+.ic-copy-small, .ic-remove-small {
     padding: 3px 8px;
     border-radius: 50%;
     cursor: pointer;
-    right: 5px;
 }
 
 .ic-copy:hover, .ic-copy-small {

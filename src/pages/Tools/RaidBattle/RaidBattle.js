@@ -7,7 +7,12 @@ import { Link } from "react-router-dom";
 import pokemonData from '../../../data/pokemon.json';
 import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
-import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBattle, calculateStatsByTag, convertName, findAssetForm, RAID_BOSS_TIER, splitAndCapitalize, TimeToKill } from "../../../components/Calculate/Calculate";
+
+import { convertName, splitAndCapitalize } from "../../../util/Util";
+import { findAssetForm } from '../../../util/Compute';
+import { RAID_BOSS_TIER } from '../../../util/Constants';
+import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBattle, calculateStatsByTag, TimeToKill } from '../../../util/Calculate';
+
 import { Badge, Checkbox, FormControlLabel, Switch } from "@mui/material";
 
 import loadingImg from '../../../assets/loading.png';
@@ -24,9 +29,12 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import TimerIcon from '@mui/icons-material/Timer';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useSnackbar } from "notistack";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
+
+import update from 'immutability-helper';
 
 const RaidBattle = () => {
 
@@ -71,10 +79,13 @@ const RaidBattle = () => {
 
     const [show, setShow] = useState(false);
 
-    const handleSave = () => {
-        trainerBattle[trainerBattleId] = pokemonBattle;
-        setTrainerBattle(trainerBattle);
+    const handleClose = () => {
+        setTrainerBattle(update(trainerBattle, {[trainerBattleId] : {pokemons: {$set: tempPokemonBattle}}}));
+        setShow(false);
+    }
 
+    const handleSave = () => {
+        setTrainerBattle(update(trainerBattle, {[trainerBattleId] : {pokemons: {$set: pokemonBattle}}}));
         setShow(false);
     }
 
@@ -82,6 +93,7 @@ const RaidBattle = () => {
         setShow(true);
         setTrainerBattleId(id);
         setPokemonBattle(pokemons);
+        setTempPokemonBattle(Array.from(pokemons));
     }
 
     const initDataPoke = {
@@ -89,10 +101,17 @@ const RaidBattle = () => {
         fmoveTargetPokemon: null,
         cmoveTargetPokemon: null
     }
-    const [trainerBattle, setTrainerBattle] = useState([[initDataPoke]]);
+    const initTrainer = {
+        pokemons: [initDataPoke],
+        trainerId: 1
+    }
+
+    const [trainerBattle, setTrainerBattle] = useState([initTrainer]);
 
     const [trainerBattleId, setTrainerBattleId] = useState(null);
     const [pokemonBattle, setPokemonBattle] = useState([]);
+    const [tempPokemonBattle, setTempPokemonBattle] = useState([]);
+    const [countTrainer, setCountTrainer] = useState(1);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -115,8 +134,11 @@ const RaidBattle = () => {
     }
 
     const onCopyPokemon = (index) => {
-        setPokemonBattle(prevPokemon => [...prevPokemon, prevPokemon[index]]);
-        trainerBattle[trainerBattleId] = [...pokemonBattle, pokemonBattle[index]];
+        setPokemonBattle(update(pokemonBattle, {$push: [pokemonBattle[index]]}));
+    }
+
+    const onRemovePokemon = (index) => {
+        setPokemonBattle(update(pokemonBattle, {$splice: [[index, 1]]}))
     }
 
     const findMove = useCallback((id, form, type) => {
@@ -320,12 +342,12 @@ const RaidBattle = () => {
             ttkAtk: ttkAtk,
             ttkDef: ttkDef,
             timer: timeKill,
-            atkHpRemain: Math.floor(statsAttacker.hp)-tdoDef,
             defHpRemain: Math.floor(statsDefender.hp)-tdoAtk,
         }
     }
 
-    const calculateTrainerBatlle = (trainer) => {
+    const calculateTrainerBatlle = (trainerBattle) => {
+        const trainer = trainerBattle.map(trainer => trainer.pokemons);
         const trainerNoPokemon = trainer.filter(pokemons => pokemons.filter(pokemon => !pokemon.dataTargetPokemon).length > 0);
         if (trainerNoPokemon.length > 0) {
             enqueueSnackbar('Please select Pokémon to raid battle!', { variant: 'error' });
@@ -346,8 +368,10 @@ const RaidBattle = () => {
             let dataList = {
                 pokemon: [],
                 summary: {
-                    dps: 0,
-                    tdo: 0,
+                    dpsAtk: 0,
+                    dpsDef: 0,
+                    tdoAtk: 0,
+                    tdoDef: 0,
                     timer: timer,
                     bossHp: Math.max(0, bossHp)
                 }
@@ -363,29 +387,31 @@ const RaidBattle = () => {
                 }
             })
 
+            dataList.summary.tdoAtk = Math.min(dataList.summary.bossHp, dataList.pokemon.reduce((prev, curr) => prev + curr.tdoAtk, 0));
+            dataList.summary.dpsAtk = dataList.pokemon.reduce((prev, curr) => prev + curr.dpsAtk, 0);
+            dataList.summary.tdoDef = dataList.pokemon.reduce((prev, curr) => prev + curr.tdoDef, 0);
+            dataList.summary.dpsDef = dataList.pokemon.reduce((prev, curr) => prev + curr.dpsDef, 0);
 
-            dataList.summary.tdo = Math.min(dataList.summary.bossHp, dataList.pokemon.reduce((prev, curr) => prev + curr.tdoAtk, 0));
-            dataList.summary.dps = dataList.pokemon.reduce((prev, curr) => prev + curr.dpsAtk, 0);
-            const sumDpsDef = dataList.pokemon.reduce((prev, curr) => prev + curr.dpsDef, 0);
             const sumHp = dataList.pokemon.reduce((prev, curr) => prev + curr.hp, 0);
 
-            const ttkAtk = enableTimeAllow ? Math.min(timeAllow-timer, TimeToKill(Math.floor(dataList.summary.bossHp), dataList.summary.dps)) : TimeToKill(Math.floor(dataList.summary.bossHp), dataList.summary.dps);
-            const ttkDef = enableTimeAllow ? Math.min(timeAllow-timer, TimeToKill(Math.floor(sumHp), sumDpsDef)) : TimeToKill(Math.floor(sumHp), sumDpsDef);
-
+            const ttkAtk = enableTimeAllow ? Math.min(timeAllow-timer, TimeToKill(Math.floor(dataList.summary.bossHp), dataList.summary.dpsAtk)) : TimeToKill(Math.floor(dataList.summary.bossHp), dataList.summary.dpsAtk);
+            const ttkDef = enableTimeAllow ? Math.min(timeAllow-timer, TimeToKill(Math.floor(sumHp), dataList.summary.dpsDef)) : TimeToKill(Math.floor(sumHp), dataList.summary.dpsDef);
             const timeKill = Math.min(ttkAtk, ttkDef);
-            const tdoAtk = dataList.summary.dps*(enableTimeAllow ? timeKill : ttkDef);
-            const tdoDef = sumDpsDef*(enableTimeAllow ? timeKill : ttkAtk);
 
-            console.log(ttkAtk, ttkDef, tdoAtk, tdoDef)
-
-            bossHp -= dataList.summary.tdo;
+            bossHp -= dataList.summary.tdoAtk;
             timer += timeKill;
             dataList.summary.timer = timer;
 
             dataList.pokemon = dataList.pokemon.map(pokemon => {
-                return {...pokemon, tdoAtk: dataList.summary.tdo/dataList.summary.dps*pokemon.dpsAtk}
+                const tdoAtk = dataList.summary.tdoAtk/dataList.summary.dpsAtk*pokemon.dpsAtk;
+                return {...pokemon,
+                    tdoAtk: tdoAtk,
+                    atkHpRemain: dataList.summary.tdoAtk >= dataList.summary.bossHp ?
+                    Math.max(0, Math.floor(pokemon.hp)-Math.min(timeKill, pokemon.ttkDef)*pokemon.dpsDef)
+                    :
+                    Math.max(0, Math.floor(pokemon.hp)-Math.max(timeKill, pokemon.ttkDef)*pokemon.dpsDef),
+                }
             });
-
             result.push(dataList);
         });
         setResultRaid(result);
@@ -432,8 +458,8 @@ const RaidBattle = () => {
         )
     }
 
-    const resultBattle = (bossHp, ttk) => {
-        const status = ttk === timeAllow ? 1 : bossHp === 0 ? 0 : 2;
+    const resultBattle = (bossHp, timer) => {
+        const status = enableTimeAllow && timer >= timeAllow ? 1 : bossHp === 0 ? 0 : 2;
         return (
             <td colSpan={3} className={"text-center bg-"+(status === 0 ? "success" : "danger")}>
                 <span className="text-white">{status === 0 ? "WIN" : status === 1 ? "TIME OUT": "LOSS"}</span>
@@ -540,19 +566,19 @@ const RaidBattle = () => {
                     </div>
                     <div className="row" style={{marginLeft: 0, marginRight: 0, marginBottom: 15}}>
                         <div className="col-lg-5 justify-content-center" style={{marginBottom: 20}}>
-                            {trainerBattle.map((pokemons, index) => (
+                            {trainerBattle.map((trainer, index) => (
                                 <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
                                     <Badge color="primary" overlap="circular" badgeContent={"Trainer "+(index+1)} anchorOrigin={{
                                         vertical: 'top',
                                         horizontal: 'left',
                                     }}>
-                                    <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel((index%294)+1)}></img>
+                                    <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel(trainer.trainerId%294)}></img>
                                     </Badge>
-                                    <button className="btn btn-primary" style={{marginRight: 10}} onClick={() => handleShow(pokemons, index)}>
+                                    <button className="btn btn-primary" style={{marginRight: 10}} onClick={() => handleShow(trainer.pokemons, index)}>
                                         <EditIcon fontSize="small"/>
                                     </button>
                                     <div className="pokemon-battle-group">
-                                    {pokemons.map((pokemon, index) => (
+                                    {trainer.pokemons.map((pokemon, index) => (
                                         <div key={index} className="pokemon-battle">
                                             {pokemon.dataTargetPokemon ?
                                             <span><img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, true)}></img></span>
@@ -562,9 +588,22 @@ const RaidBattle = () => {
                                         </div>
                                     ))}
                                     </div>
-                                    <span className="ic-copy bg-primary text-white" title="Copy" onClick={() => setTrainerBattle(prevTrainer => [...prevTrainer, prevTrainer[index]])}>
-                                        <ContentCopyIcon sx={{fontSize: 14}}/>
+                                    <span className="d-flex ic-group">
+                                        <span className="ic-copy bg-primary text-white" title="Copy" style={{marginRight: 5}}
+                                        onClick={() => {
+                                            setCountTrainer(countTrainer+1);
+                                            setTrainerBattle(update(trainerBattle, {$push: [{...trainerBattle[index], trainerId: countTrainer+1}]}));
+                                        }}>
+                                            <ContentCopyIcon sx={{fontSize: 14}}/>
+                                        </span>
+                                        <span className={"ic-remove text-white "+(index > 0 ? "bg-danger" : "click-none bg-secondary")} title="Remove"
+                                        onClick={() => {
+                                            if (index > 0) setTrainerBattle(update(trainerBattle, {$splice: [[index, 1]]}))
+                                            }}>
+                                            <DeleteIcon sx={{fontSize: 14}}/>
+                                        </span>
                                     </span>
+
                                 </div>
                             ))
                             }
@@ -575,13 +614,14 @@ const RaidBattle = () => {
                             </div>
                             <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
                                 <RemoveCircleIcon className={"cursor-pointer link-danger "+(trainerBattle.length > 1 ? "" : "click-none")} fontSize="large" onClick={() => {
-                                    if (trainerBattle.length > 1) setTrainerBattle(prevTrainer => [...prevTrainer.splice(0, prevTrainer.length-1)]);
+                                    if (trainerBattle.length > 1) setTrainerBattle(update(trainerBattle, {$splice: [[trainerBattle.length-1]]}));
                                 }}/>
                                 <div className="count-pokemon">
                                     {trainerBattle.length}
                                 </div>
                                 <AddCircleIcon className="cursor-pointer link-success" fontSize="large" onClick={() => {
-                                    setTrainerBattle(prevTrainer => [...prevTrainer, [initDataPoke]]);
+                                    setCountTrainer(countTrainer+1);
+                                    setTrainerBattle(update(trainerBattle, {$push: [{...initTrainer, trainerId: countTrainer+1}]}));
                                 }}/>
                             </div>
                         </div>
@@ -660,30 +700,30 @@ const RaidBattle = () => {
                                                             <td><b><span className={Math.floor(data.atkHpRemain) === 0 ? "text-danger" : "text-success"}>{Math.max(0, Math.floor(data.atkHpRemain))}</span> / {Math.floor(data.hp)}</b></td>
                                                         </tr>
                                                     ))}
-                                                    {((turn > 0 && Math.floor(result.summary.tdo) > 0 && result.summary.timer < timeAllow) || (turn === 0)) &&
+                                                    {(((turn > 0 && Math.floor(result.summary.tdoAtk) > 0) || (turn === 0)) || (!enableTimeAllow && result.summary.timer <= timeAllow)) &&
                                                     <tr>
                                                         <td colSpan={6}>
-                                                            {calculateHpBar(result.summary.bossHp, result.summary.tdo, result.summary.dps)}
+                                                            {calculateHpBar(result.summary.bossHp, result.summary.tdoAtk, result.summary.dpsAtk)}
                                                         </td>
                                                     </tr>
                                                     }
                                                     <tr className="text-summary">
                                                         <td colSpan={2}>
-                                                            Total DPS: {result.summary.dps.toFixed(2)}
+                                                            Total DPS: {result.summary.dpsAtk.toFixed(2)}
                                                         </td>
                                                         <td className="text-center" colSpan={2}>
-                                                            Total TDO: {result.summary.tdo.toFixed(2)}
+                                                            Total TDO: {result.summary.tdoAtk.toFixed(2)}
                                                         </td>
                                                         <td colSpan={2}>
-                                                            Boss HP Remain: {Math.floor(result.summary.bossHp-result.summary.tdo)}
+                                                            Boss HP Remain: {Math.floor(result.summary.bossHp-result.summary.tdoAtk)}
                                                         </td>
                                                     </tr>
-                                                    {((turn > 0 && Math.floor(result.summary.tdo) > 0 && result.summary.timer < timeAllow) || (turn === 0)) &&
+                                                    {(((turn > 0 && Math.floor(result.summary.tdoAtk) > 0) || (turn === 0)) || (!enableTimeAllow && result.summary.timer <= timeAllow)) &&
                                                     <tr className="text-summary">
                                                         <td colSpan={3}>
                                                             <TimerIcon /> Time To Battle Remain: {result.summary.timer.toFixed(2)} {enableTimeAllow && `/ ${timeAllow}`}
                                                         </td>
-                                                        {resultBattle(Math.floor(result.summary.bossHp-result.summary.tdo), result.summary.timer)}
+                                                        {resultBattle(Math.floor(result.summary.bossHp-result.summary.tdoAtk), result.summary.timer)}
                                                     </tr>
                                                     }
                                                     </tbody>
@@ -699,7 +739,7 @@ const RaidBattle = () => {
                 </div>
             </Fragment>
             }
-            <Modal show={show} onHide={handleSave} centered>
+            <Modal show={show} onHide={handleClose} centered>
                 <Modal.Header closeButton>
                 <Modal.Title>Trainer #{trainerBattleId !== null ? trainerBattleId+1 : 0}</Modal.Title>
                 </Modal.Header>
@@ -709,7 +749,7 @@ const RaidBattle = () => {
                     <Fragment>
                         {pokemonBattle.map((pokemon, index) => (
                         <div className={""+(index === 0 ? "" : "element-top")} key={index}>
-                            <PokemonRaid id={index} trainerId={trainerBattleId} pokemon={pokemon} data={pokemonBattle} onCopyPokemon={onCopyPokemon}/>
+                            <PokemonRaid controls={true} id={index} pokemon={pokemon} data={pokemonBattle} setData={setPokemonBattle} onCopyPokemon={onCopyPokemon} onRemovePokemon={onRemovePokemon}/>
                         </div>
                         ))}
                     </Fragment>
@@ -718,20 +758,21 @@ const RaidBattle = () => {
                     <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
                     <RemoveCircleIcon className={"cursor-pointer link-danger "+(pokemonBattle.length > 1 ? "" : "click-none")} fontSize="large" onClick={() => {
                         if (pokemonBattle.length > 1) {
-                            const deletePokemon = pokemonBattle.splice(0, pokemonBattle.length-1);
-                            setPokemonBattle(deletePokemon);
-                            trainerBattle[trainerBattleId] = deletePokemon;
+                            setPokemonBattle(update(pokemonBattle, {$splice: [[pokemonBattle.length-1]]}));
                         }
                     }}/>
                     <div className="count-pokemon">
                         {pokemonBattle.length}
                     </div>
                     <AddCircleIcon className="cursor-pointer link-success" fontSize="large" onClick={() => {
-                        setPokemonBattle(prevPokemon => [...prevPokemon, {initDataPoke}]);
-                        trainerBattle[trainerBattleId] = [...pokemonBattle, {initDataPoke}];
+                        setPokemonBattle(update(pokemonBattle, {$push: [initDataPoke]}));
                     }}/>
                 </div>
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>Close</Button>
+                    <Button variant="primary" onClick={handleSave}>Save changes</Button>
+                </Modal.Footer>
             </Modal>
         </Fragment>
     )

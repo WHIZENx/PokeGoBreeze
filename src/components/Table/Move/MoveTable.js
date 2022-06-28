@@ -1,5 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { capitalize, convertName, rankMove, splitAndCapitalize } from "../../Calculate/Calculate";
+import { capitalize, convertName, splitAndCapitalize } from "../../../util/Util";
+import { rankMove } from '../../../util/Calculate';
 
 import pokemonCombatList from "../../../data/combat_pokemon_go_list.json";
 

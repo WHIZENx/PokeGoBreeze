@@ -1,12 +1,15 @@
 import { Box, FormControlLabel, Radio } from "@mui/material";
 import { useCallback, useState } from "react";
-import { calculateStatsBattle, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../components/Calculate/Calculate";
+
+import { LevelSlider, TypeRadioGroup } from "../../../util/Util";
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { calculateStatsBattle } from '../../../util/Calculate';
+
 import APIService from "../../../services/API.service";
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
-import { LevelSlider, TypeRadioGroup } from "../../../util/util";
 
 const StatsTable = ({setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA}) => {
 

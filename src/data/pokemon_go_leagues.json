@@ -1,5 +1,9 @@
 {
     "timestamp": 1656098170000,
+    "allowLeagues": [
+        "VS_SEEKER_GREAT",
+        "VS_SEEKER_GREAT_RETRO"
+    ],
     "data": [
         {
             "id": "GREAT",

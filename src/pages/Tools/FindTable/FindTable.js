@@ -1,5 +1,8 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { calculateCP, predictCPList, predictStat } from "../../../components/Calculate/Calculate";
+
+import { HundoRate, marks, PokeGoSlider } from "../../../util/Util";
+import { calculateCP, predictCPList, predictStat } from "../../../util/Calculate";
+
 import DataTable from 'react-data-table-component';
 import data from "../../../data/cp_multiplier.json";
 
@@ -7,7 +10,7 @@ import '../Tools.css';
 import { useSnackbar } from "notistack";
 import { Box, Rating } from "@mui/material";
 import Find from "../Find";
-import { HundoRate, marks, PokeGoSlider } from "../../../util/util";
+
 
 const columnsIV = [
     {

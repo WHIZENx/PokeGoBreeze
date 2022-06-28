@@ -7,7 +7,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.css';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../Calculate/Calculate';
+import { splitAndCapitalize } from '../../../util/Util';
 
 const PokemonModel = (props) => {
 

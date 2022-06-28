@@ -1,4 +1,5 @@
 import { RadioGroup, Rating, Slider, styled } from "@mui/material";
+import Moment from 'moment';
 
 export const marks = [...Array(16).keys()].map(n => {return {value: n, label: n.toString()}});
 
@@ -99,3 +100,27 @@ export const HundoRate = styled(Rating)(() => ({
         color: 'red',
     },
 }));
+
+export const capitalize = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export const splitAndCapitalize = (string, splitBy, joinBy) => {
+  return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(joinBy);
+};
+
+export const getTime = (value, notFull) => {
+  return notFull ? Moment((new Date(parseInt(value)))).format('D MMMM YYYY') : Moment((new Date(parseInt(value)))).format('HH:mm D MMMM YYYY')
+}
+
+export const convertName = (text) => {
+  return text.toUpperCase()
+  .replaceAll("-", "_")
+  .replaceAll("NIDORAN_F", "NIDORAN_FEMALE")
+  .replaceAll("NIDORAN_M", "NIDORAN_MALE")
+  .replaceAll("’", "")
+  .replaceAll(".", "")
+  .replaceAll(":", "")
+  .replaceAll(" ", "_")
+  .replaceAll("É", "E")
+};

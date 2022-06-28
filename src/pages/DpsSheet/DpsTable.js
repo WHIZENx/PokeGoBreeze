@@ -5,7 +5,10 @@ import combatData from '../../data/combat.json';
 import combatPokemonData from '../../data/combat_pokemon_go_list.json';
 import typesData from '../../data/type_effectiveness.json';
 import weatherBoosts from '../../data/weather_boosts.json';
-import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, convertName, splitAndCapitalize, DEFAULT_POKEMON_DEF_OBJ, calculateBattleDPS, TimeToKill, calculateBattleDPSDefender, calculateStatsBattle } from "../../components/Calculate/Calculate";
+import { LevelRating, convertName, splitAndCapitalize } from "../../util/Util";
+import { DEFAULT_POKEMON_DEF_OBJ } from '../../util/Constants';
+import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, calculateBattleDPS, TimeToKill, calculateBattleDPSDefender, calculateStatsBattle } from '../../util/Calculate';
+
 import DataTable from "react-data-table-component";
 import APIService from "../../services/API.service";
 
@@ -17,7 +20,6 @@ import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
 import './DpsTable.css';
 import { Link } from "react-router-dom";
-import { LevelRating } from "../../util/util";
 import { Form } from "react-bootstrap";
 import SelectPokemon from "../../components/Input/SelectPokemon";
 import SelectMove from "../../components/Input/SelectMove";

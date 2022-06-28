@@ -2,10 +2,10 @@ import CardPokemon from "../Card/CardPokemon";
 import CloseIcon from '@mui/icons-material/Close';
 
 import pokemonData from '../../data/pokemon.json';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import './Select.css';
-import { splitAndCapitalize } from "../Calculate/Calculate";
+import { splitAndCapitalize } from "../../util/Util";
 import APIService from "../../services/API.service";
 
 const SelectPokemon = (props) => {
@@ -31,8 +31,8 @@ const SelectPokemon = (props) => {
             setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
             setSearch(name);
             if (props.setCurrentPokemon) props.setCurrentPokemon(value);
-            if (props.setFMovePokemon) props.setFMovePokemon(null);
-            if (props.setCMovePokemon) props.setCMovePokemon(null);
+            if (props.selected && props.setFMovePokemon) props.setFMovePokemon(null);
+            if (props.selected && props.setCMovePokemon) props.setCMovePokemon(null);
             if (props.clearData) props.clearData();
         }
     }
@@ -45,6 +45,11 @@ const SelectPokemon = (props) => {
         if (props.setCMovePokemon) props.setCMovePokemon(null);
         if (props.clearData) props.clearData();
     }
+
+    useEffect(() => {
+        setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : null);
+        setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name, "-", " ") : '');
+    }, [props.pokemon])
 
     return (
         <div className='position-relative d-flex align-items-center form-control' style={{padding: 0, borderRadius: 0}}>

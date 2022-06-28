@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { calBaseATK, calBaseDEF, calBaseSTA } from '../../Calculate/Calculate';
+import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 
 import './Stats.css';
 

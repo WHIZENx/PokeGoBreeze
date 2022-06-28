@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import data from '../../data/combat_pokemon_go_list.json';
 import combat from '../../data/combat.json';
 import CardType from '../Card/CardType';
-import { splitAndCapitalize } from '../Calculate/Calculate';
+import { splitAndCapitalize } from '../../util/Util';
 
 const Move = (props) => {
     const [countFM, setCountFM] = useState(0);

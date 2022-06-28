@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import APIService from "../../services/API.service";
-import { capitalize, splitAndCapitalize } from "../Calculate/Calculate";
+import { capitalize, splitAndCapitalize } from "../../util/Util";
 
 import combat from '../../data/combat.json';
 

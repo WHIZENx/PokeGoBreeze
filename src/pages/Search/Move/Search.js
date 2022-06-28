@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
-import { capitalize, splitAndCapitalize } from "../../../components/Calculate/Calculate";
+import { capitalize, splitAndCapitalize } from "../../../util/Util";
 import combatData from '../../../data/combat.json';
 
 import types from '../../../data/type_effectiveness.json';

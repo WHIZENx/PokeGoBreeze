@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import evoData from "../../../data/evolution_pokemon_go.json";
 import APIService from "../../../services/API.service";
-import { splitAndCapitalize } from "../../Calculate/Calculate";
+import { splitAndCapitalize } from "../../../util/Util";
 
 import './Mega.css';
 
