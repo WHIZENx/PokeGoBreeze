@@ -63,23 +63,23 @@ const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBo
             <div className="row w-100 element-top" style={{margin: 0}}>
                 <div className="col-4 text-center d-inline-block">
                     <h1>CP</h1>
-                    <hr className="w-100"></hr>
+                    <hr className="w-100"/>
                     <h5>{calculateRaidCP(statATK, statDEF, tier)}</h5>
                 </div>
                 <div className="col-4 text-center d-inline-block">
                     <h1>HP</h1>
-                    <hr className="w-100"></hr>
+                    <hr className="w-100"/>
                     <h5>{RAID_BOSS_TIER[tier].sta}</h5>
                 </div>
                 <div className="col-4 text-center d-inline-block">
                     <h1>LEVEL</h1>
-                    <hr className="w-100"></hr>
+                    <hr className="w-100"/>
                     <h5>{RAID_BOSS_TIER[tier].level}</h5>
                 </div>
             </div>
             <div className="row element-top container" style={{margin: 0}}>
                 <div className='col d-flex justify-content-center align-items-center' style={{marginBottom: 15}}>
-                    <img className={parseInt(tier) === 2 ? "img-type-icon" : ""} alt="img-raid-egg" src={raidEgg(parseInt(tier), currForm && currForm.form.form_name.includes("mega"))}></img>
+                    <img className={parseInt(tier) === 2 ? "img-type-icon" : ""} alt="img-raid-egg" src={raidEgg(parseInt(tier), currForm && currForm.form.form_name.includes("mega"))}/>
                 </div>
                 <div className='col d-flex justify-content-center' style={{marginBottom: 15}}>
                     <table className="table-info">
@@ -87,15 +87,15 @@ const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBo
                         <tbody>
                             <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                             <tr>
-                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>ATK</td>
+                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}/>ATK</td>
                                 <td className="text-center">{calculateRaidStat(statATK, tier)}</td>
                             </tr>
                             <tr>
-                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>DEF</td>
+                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>DEF</td>
                                 <td className="text-center">{calculateRaidStat(statDEF, tier)}</td>
                             </tr>
                             <tr>
-                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>STA</td>
+                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>STA</td>
                                 <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta/RAID_BOSS_TIER[tier].CPm)}</td>
                             </tr>
                         </tbody>

@@ -12,7 +12,7 @@ const Gender = (props) => {
     return (
         <div className='element-top'>
             <div className='img-gender'>
-                <img width={40} height={40} alt='img-pokemon-sex' src={APIService.getGenderSprite(props.sex)}></img>
+                <img width={40} height={40} alt='img-pokemon-sex' src={APIService.getGenderSprite(props.sex)}/>
             </div>
             <div className='ratio-gender'>
                 { props.ratio ? <h6>{props.sex} ratio: {calculateRatio(props.sex, props.ratio)}%</h6>
@@ -22,13 +22,13 @@ const Gender = (props) => {
                 <li className='img-form-gender-group'>
                     <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ?
                         props.default_m ?? props.default_f ?? APIService.getPokeSprite(0) :
-                        props.default_f ?? props.default_m ?? APIService.getPokeSprite(0)}></img>
+                        props.default_f ?? props.default_m ?? APIService.getPokeSprite(0)}/>
                     <span className="caption">Default</span>
                 </li>
                 <li className='img-group'>
                     <img width={96} height={96} alt='img-pokemon' src={(props.sex.toLowerCase() === 'male') ?
                         props.shiny_m ?? props.shiny_f ?? APIService.getPokeSprite(0) :
-                        props.shiny_f ?? props.shiny_m ?? APIService.getPokeSprite(0) }></img>
+                        props.shiny_f ?? props.shiny_m ?? APIService.getPokeSprite(0) }/>
                     <span className="caption">Shiny</span>
                 </li>
             </ul>

@@ -8,12 +8,10 @@ import { counterPokemon } from '../../../util/Calculate';
 
 import './Counter.css';
 
-const Counter = (props) => {
+const Counter = ({def, form, changeForm, setLoadCounter}) => {
 
     const [counterList, setCounterList] = useState([]);
-    const [counterListFilter, setCounterListFilter] = useState([]);
     const [open, setOpen] = useState(false);
-
     const [releasedGO, setReleaseGO] = useState(true);
 
     const [startIndex, setStartIndex] = useState(0);
@@ -21,8 +19,8 @@ const Counter = (props) => {
     const eachCounter = 10;
 
     useEffect(() => {
-        if (open && counterList.length > 0) setCounterListFilter(counterList.filter(pokemon => releasedGO ? pokemon.releasedGO : true));
-    }, [open, counterList, releasedGO])
+        if (changeForm) setOpen(false);
+    }, [changeForm])
 
     const listenScrollEvent = (ele) => {
         const scrollTop = ele.currentTarget.scrollTop;
@@ -31,7 +29,7 @@ const Counter = (props) => {
     }
 
     const loadMetaData = () => {
-        setCounterList(counterPokemon(props.def, props.form.types));
+        setCounterList(counterPokemon(def, form.types));
         setOpen(true);
     }
 
@@ -59,17 +57,17 @@ const Counter = (props) => {
                 <tbody>
                     {open ?
                     <Fragment>
-                    {counterListFilter.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
+                    {counterList.filter(pokemon => releasedGO ? pokemon.releasedGO : true).slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
                         <Fragment key={index}>
                             <tr>
                                 <td className="text-origin text-center">
                                     <Link  to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}`: ""}`} target="_blank">
                                         <div className="d-flex justify-content-center">
                                             <div className="position-relative group-pokemon-sprite">
-                                                {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
-                                                {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
+                                                {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                                                {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}/>}
                                                 <img className="pokemon-sprite-counter" alt="img-pokemon" src={findAssetForm(value.pokemon_id, value.pokemon_name) ?
-                                                APIService.getPokemonModel(findAssetForm(value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}></img>
+                                                APIService.getPokemonModel(findAssetForm(value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}/>
                                             </div>
                                         </div>
                                         <span className="caption text-black">#{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, "-", " ")}</span>
@@ -78,7 +76,7 @@ const Counter = (props) => {
                                 <td className="text-origin text-center">
                                     <Link to={"../moves/"+value.fmove.id} target="_blank" className="d-grid">
                                         <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
-                                            <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}></img>
+                                            <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}/>
                                         </div>
                                         <span style={{marginRight: 5, fontSize: '0.9rem'}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                                         <span className="w-100">
@@ -89,7 +87,7 @@ const Counter = (props) => {
                                 <td className="text-origin text-center">
                                     <Link to={"../moves/"+value.cmove.id} target="_blank" className="d-grid">
                                         <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
-                                            <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}></img>
+                                            <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}/>
                                         </div>
                                         <span style={{marginRight: 5, fontSize: '0.9rem'}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                                         <span className="w-100">

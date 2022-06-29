@@ -36,7 +36,7 @@ const columns = [
         name: 'Name',
         selector: row => <Link to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase()}`: ""}`} target="_blank"><img height={48} alt='img-pokemon' style={{marginRight: 10}}
         src={APIService.getPokeIconSprite(row.sprite, true)}
-        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}></img>
+        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}/>
         {row.name}</Link>,
         sortable: true,
         minWidth: '250px',
@@ -99,7 +99,7 @@ const Move = (props) => {
                     <h1 className="text-move"><b>{splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</b></h1>
                     <TypeBar type={move.type}/>
                 </div>
-                <hr></hr>
+                <hr/>
                 <div className="row" style={{margin: 0}}>
                     <div className="col" style={{padding: 0}}>
                         <table className="table-info move-table">
@@ -126,7 +126,7 @@ const Move = (props) => {
                                 <tr>
                                     <td>Weather Boosts</td>
                                     <td colSpan="2">
-                                        <img style={{marginRight: 15}} className="img-type-icon" height={25} alt="img-type" src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}></img>
+                                        <img style={{marginRight: 15}} className="img-type-icon" height={25} alt="img-type" src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}/>
                                         <span className="d-inline-block caption">{getWeatherEffective(move.type)}</span>
                                     </td>
                                 </tr>

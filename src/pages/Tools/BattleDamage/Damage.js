@@ -18,6 +18,7 @@ import Find from "../Find";
 import StatsTable from "./StatsDamageTable";
 
 import Move from "../../../components/Table/Move";
+import { findStabType } from "../../../util/Compute";
 
 const labels = {
     0: '1.00',
@@ -80,10 +81,13 @@ const Damage = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
+        document.title = "Damage Simulator - Battle Simulator";
+    }, []);
+
+    useEffect(() => {
         if (statATK !== 0) setStatLvATK(calculateStatsBattle(statATK, 15, statLevel, false, statType === "shadow" ? SHADOW_ATK_BONUS : 1));
         if (statDEFObj !== 0) setStatLvDEFObj(calculateStatsBattle(statDEFObj, 15, statLevelObj, false, statTypeObj === "shadow" ? SHADOW_DEF_BONUS : 1));
         if (statSTAObj !== 0) setStatLvSTAObj(calculateStatsBattle(statSTAObj, 15, statLevelObj));
-        document.title = "Damage Simulator - Battle Simulator";
     }, [statATK, statLevel, statType, statATKObj, statDEF, statDEFObj, statLevelObj, statSTA, statSTAObj, statTypeObj])
 
     const clearData = () => {
@@ -125,15 +129,11 @@ const Damage = () => {
         setFormObj(form);
     }
 
-    const findStabType = useCallback((type) => {
-        return form.form.types.find(item => item.type.name === type.toLowerCase()) ? true : false;
-    }, [form]);
-
     const onCalculateDamagePoke = useCallback((e) => {
         e.preventDefault();
         if (move) {
             let eff = {
-                stab: findStabType(move.type.toLowerCase()),
+                stab: findStabType(form.form.types.map(item => item.type.name), move.type),
                 wb: battleState.weather,
                 dodge: battleState.dodge,
                 mega: form.form.pokemon.forme && form.form.pokemon.forme.toLowerCase().includes("mega") ? true : false,
@@ -158,7 +158,7 @@ const Damage = () => {
         } else {
             enqueueSnackbar('Please select move for pokémon!', { variant: 'error' });
         }
-    }, [enqueueSnackbar, enableFriend, battleState, move, form, formObj, statLvATK, statLvDEFObj, statLvSTAObj, findStabType, statType, statTypeObj, statLevel, statLevelObj]);
+    }, [enqueueSnackbar, enableFriend, battleState, move, form, formObj, statLvATK, statLvDEFObj, statLvSTAObj, statType, statTypeObj, statLevel, statLevelObj]);
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -175,12 +175,12 @@ const Damage = () => {
         <Fragment>
         <div className="row battle-game">
             <div className="col-lg border-window">
-                <Find title="Current Pokémon" clearStats={clearMove} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName} setForm={onSetForm} setId={setId}/>
+                <Find title="Attacker Pokémon" clearStats={clearMove} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName} setForm={onSetForm} setId={setId}/>
                 <StatsTable setStatLvATK={setStatLvATK} setStatLevel={setStatLevel} setStatType={setStatType}
                 statATK={statATK} statDEF={statDEF} statSTA={statSTA} />
             </div>
             <div className="col-lg border-window">
-                <Find title="Object Pokémon" swap={true} clearStats={clearData} setStatATK={setStatATKObj} setStatDEF={setStatDEFObj} setStatSTA={setStatSTAObj} setForm={onSetFormObj}/>
+                <Find title="Defender Pokémon" swap={true} clearStats={clearData} setStatATK={setStatATKObj} setStatDEF={setStatDEFObj} setStatSTA={setStatSTAObj} setForm={onSetFormObj}/>
                 <StatsTable setStatLvDEF={setStatLvDEFObj} setStatLvSTA={setStatLvSTAObj} setStatLevel={setStatLevelObj} setStatType={setStatTypeObj}
                 statATK={statATKObj} statDEF={statDEFObj} statSTA={statSTAObj} />
             </div>
@@ -208,9 +208,9 @@ const Damage = () => {
                             <div style={{width: 300, margin: 'auto'}}>
                                 <p>- Move Ability Type: <b>{capitalize(move.type_move.toLowerCase())}</b></p>
                                 <p>- Move Type: <span className={"type-icon-small "+move.type.toLowerCase()}>{capitalize(move.type.toLowerCase())}</span></p>
-                                {findStabType(move.type.toLowerCase())}
+                                {findStabType(form.form.types.map(item => item.type.name), move.type)}
                                 <p>- Damage: <b>{move.pve_power}
-                                {findStabType(move.type) && <span className={"caption-small text-success"}> (x1.2)</span>}
+                                {findStabType(form.form.types.map(item => item.type.name), move.type) && <span className={"caption-small text-success"}> (x1.2)</span>}
                                 </b></p>
                             </div>
                             }
@@ -267,7 +267,7 @@ const Damage = () => {
                                         </Select>
                                     </FormControl>
                                 </Box>
-                                <button type="submit" className="btn btn-primary element-top"><img alt="atk" width={20} height={20} src={atk_logo}></img> Battle</button>
+                                <button type="submit" className="btn btn-primary element-top"><img alt="atk" width={20} height={20} src={atk_logo}/> Battle</button>
                             </div>
                         </div>
                     </form>

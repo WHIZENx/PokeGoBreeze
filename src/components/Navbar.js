@@ -10,7 +10,7 @@ const NavbarComponent = () => {
     return (
         <Navbar style={{zIndex: 5}} collapseOnSelect bg="dark" expand="lg" variant="dark">
             <Link className="navbar-brand" to="/">
-                <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{marginLeft: 10, marginRight: 10}}></img>
+                <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{marginLeft: 10, marginRight: 10}}/>
                 PokéGoBreeze
             </Link>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -27,11 +27,13 @@ const NavbarComponent = () => {
                     </NavDropdown>
                     <NavDropdown title="Tools" id="basic-nav-dropdown">
                         <Link className="dropdown-item" to="/find-cp-iv">Find IV&CP</Link>
-                        <Link className="dropdown-item" to="/calculate-stats">Calculate Stats</Link>
                         <Link className="dropdown-item" to="/search-battle-stats">Search Battle Leagues Stats</Link>
-                        <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
                         <Link className="dropdown-item" to="/stats-table">Stats Table</Link>
                         <Link className="dropdown-item" to="/raid-battle">Raid Battle</Link>
+                        <NavDropdown.Divider />
+                        <Link className="dropdown-item" to="/calculate-stats">Calculate Stats</Link>
+                        <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
+                        <Link className="dropdown-item" to="/calculate-raid">Calculate Raid Stats</Link>
                     </NavDropdown>
                     <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Sheet</Link>
                     <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>

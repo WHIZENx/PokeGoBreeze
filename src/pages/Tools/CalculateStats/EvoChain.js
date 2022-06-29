@@ -33,7 +33,7 @@ const EvoChain = (props) => {
                             {parseInt(value.id) !== props.id &&
                                 <Fragment>
                                     <tr className="text-center">
-                                        <td className="img-table-evo" colSpan="2"><img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}></img></td>
+                                        <td className="img-table-evo" colSpan="2"><img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}/></td>
                                     </tr>
                                     <tr>
                                         <td>Name</td>

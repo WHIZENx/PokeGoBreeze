@@ -45,13 +45,13 @@ const Defender = (prop) => {
 
     const changeTypePri = (value) => {
         setShowTypePri(false)
-        setCurrentTypePri(value.currentTarget.dataset.id);
+        setCurrentTypePri(value);
         getTypeEffective();
     }
 
     const changeTypeSec = (value) => {
         setShowTypeSec(false)
-        setCurrentTypeSec(value.currentTarget.dataset.id);
+        setCurrentTypeSec(value);
         getTypeEffective();
     }
 
@@ -75,7 +75,7 @@ const Defender = (prop) => {
                                 <div className="result-type">
                                     <ul>
                                         {types.map((value, index) => (
-                                            <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeTypePri.bind(this)}>
+                                            <li className="container card-pokemon" key={ index } onMouseDown={() => changeTypePri(value)}>
                                                 <CardType value={value}/>
                                             </li>
                                         ))}
@@ -104,7 +104,7 @@ const Defender = (prop) => {
                                 <div className="result-type">
                                     <ul>
                                         {types.map((value, index) => (
-                                            <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeTypeSec.bind(this)}>
+                                            <li className="container card-pokemon" key={ index } onMouseDown={() => changeTypeSec(value)}>
                                                 <CardType value={value}/>
                                             </li>
                                         ))}

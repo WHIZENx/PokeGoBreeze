@@ -23,7 +23,7 @@ const Affect = (prop) => {
 
     const changeWeather = (value) => {
         setShowWeather(false)
-        setCurrentWeather(value.currentTarget.dataset.id);
+        setCurrentWeather(value);
         getWeatherEffective();
     }
 
@@ -40,7 +40,7 @@ const Affect = (prop) => {
                         <div className="result-weather">
                             <ul>
                                 {weathers.map((value, index) => (
-                                    <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeWeather.bind(this)}>
+                                    <li className="container card-pokemon" key={ index } onMouseDown={() => changeWeather(value)}>
                                         <CardWeather value={value}/>
                                     </li>
                                 ))}

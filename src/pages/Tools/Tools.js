@@ -78,18 +78,18 @@ const Tools = (props) => {
                 {props.id > 1 &&
                     <div style={{cursor: 'pointer'}} onClick={() => props.onSetPrev()}>
                         <div>
-                            <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id-1)}></img>
+                            <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id-1)}/>
                         </div>
                         <span><b><span style={{color: 'red', fontSize: 20}}>{"<"}</span> #{props.id-1}</b></span>
                     </div>
                 }
             </div>
-            <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id)}></img>
+            <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id)}/>
             <div className="d-inline-block" style={{width: 60, height: 60}}>
                 {props.id < props.count &&
                     <div style={{cursor: 'pointer'}} onClick={() => props.onSetNext()}>
                         <div>
-                            <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id+1)}></img>
+                            <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id+1)}/>
                         </div>
                         <span><b>#{props.id+1} <span style={{color: 'red', fontSize: 20}}>{">"}</span></b></span>
                     </div>
@@ -108,7 +108,7 @@ const Tools = (props) => {
                         <Fragment key={index}>
                             {value.map((value, index) => (
                                 <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
-                                    <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
+                                    <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}/>
                                     <div>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</div>
                                     {value.form.id === pokeID &&
                                         <b><small>(Default)</small></b>
@@ -121,12 +121,12 @@ const Tools = (props) => {
                     }
                     </Fragment>
                 :   <div className='loading-group vertical-center'>
-                        <img className="loading" width={40} height={40} alt='img-pokemon' src={loading}></img>
+                        <img className="loading" width={40} height={40} alt='img-pokemon' src={loading}/>
                         <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                     </div>
                 }
             </div>
-            <FormTools setForm={props.setForm} id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
+            <FormTools raid={props.raid} tier={props.tier} setTier={props.setTier} setForm={props.setForm} id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
         </Fragment>
     )
 }

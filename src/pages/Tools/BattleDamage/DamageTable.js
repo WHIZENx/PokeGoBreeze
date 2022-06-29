@@ -56,16 +56,16 @@ const DamageTable = (props) => {
                             <td>Attacker</td>
                             <td>{props.result.objPoke ?
                             <Fragment>
-                                {props.result.type === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}></img>}
-                                {props.result.type === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}></img>}
+                                {props.result.type === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}/>}
+                                {props.result.type === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}/>}
                             {splitAndCapitalize(props.result.currPoke.form.pokemon.name, "-", " ")} <span className='d-inline-block caption'>(LV. {props.result.currLevel})</span></Fragment> : "-"}</td>
                         </tr>
                         <tr>
                             <td>Target</td>
                             <td>{props.result.objPoke ?
                             <Fragment>
-                            {props.result.typeObj === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}></img>}
-                            {props.result.typeObj === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}></img>}
+                            {props.result.typeObj === "lucky" && <img height={20} style={{marginRight: 8}} alt="img-lucky" src={APIService.getPokeLucky()}/>}
+                            {props.result.typeObj === "shadow" && <img height={20} style={{marginRight: 8}} alt="img-shadow" src={APIService.getPokeShadow()}/>}
                             {splitAndCapitalize(props.result.objPoke.form.pokemon.name, "-", " ")} <span className='d-inline-block caption'>(LV. {props.result.objLevel})</span></Fragment> : "-"}</td>
                         </tr>
                         <tr>
@@ -105,11 +105,11 @@ const DamageTable = (props) => {
                             <td>{props.result.battleState ? <span className={'eff-'+eff[props.result.battleState.effective].style}>{"x"+eff[props.result.battleState.effective].label}</span> : "-"}</td>
                         </tr>
                         <tr>
-                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}></img>Damage Taken</td>
+                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}/>Damage Taken</td>
                             <td>{props.result.damage ? <b>{props.result.damage}</b> : "-"}</td>
                         </tr>
                         <tr>
-                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}></img>Damage Reduced</td>
+                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>Damage Reduced</td>
                             <td>{props.result.damage ?
                             <Fragment>
                             {props.result.damage < props.result.move.pve_power ?
@@ -120,7 +120,7 @@ const DamageTable = (props) => {
                             </Fragment> : "-"}</td>
                         </tr>
                         <tr>
-                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}></img>HP Object remaining</td>
+                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>HP Object remaining</td>
                             <td>{props.result.hp ? <b>{Math.floor(props.result.hp - props.result.damage)}
                             {Math.floor(props.result.hp - props.result.damage) > 0 ?
                             <span className='caption-small text-success'> (Alive)</span>

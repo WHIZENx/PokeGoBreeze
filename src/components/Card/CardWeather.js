@@ -5,7 +5,7 @@ const CardWeather = (props) => {
 
     return (
         <Fragment>
-            <img height={64} alt='type-logo' style={{marginRight: 10}} src={APIService.getWeatherSprite(props.value)}></img>
+            <img height={64} alt='type-logo' style={{marginRight: 10}} src={APIService.getWeatherSprite(props.value)}/>
             <b>{props.value}</b>
         </Fragment>
     );

@@ -25,7 +25,7 @@ const TypeBadge = (props) => {
                     <span>{splitAndCapitalize(props.move.name.replaceAll("_FAST", "").replaceAll("_PLUS", "+"), "_", " ")}</span>
                 </span>
                 <span className={move.type.toLowerCase()+" type-icon-border"}>
-                    <img style={{padding: 5, backgroundColor: 'black'}} width={35} height={35} alt="img-type-pokemon" src={APIService.getTypeHqSprite(capitalize(move.type.toLowerCase()))}></img>
+                    <img style={{padding: 5, backgroundColor: 'black'}} width={35} height={35} alt="img-type-pokemon" src={APIService.getTypeHqSprite(capitalize(move.type.toLowerCase()))}/>
                 </span>
             </div>
         </Link>

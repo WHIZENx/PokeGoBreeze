@@ -22,6 +22,7 @@ import SearchBattle from './pages/Tools/SearchBattle/SearchBattle';
 import StatsTable from './pages/Tools/StatsTable/Stats';
 import Sticker from './pages/Sticker/Sticker';
 import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
+import CalculateRaid from './pages/Tools/CalculateRaid/CalculateRaid';
 
 const App = () => {
 
@@ -40,14 +41,15 @@ const App = () => {
               <Route path="/weather-boosts" element={<Weather />}></Route>
               <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
               <Route path="/search-move" element={<SearchMove/>}></Route>
+              <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
+              <Route path="/moves/:id" element={<Move/>}></Route>
               <Route path="/find-cp-iv" element={<FindTable/>}></Route>
               <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
               <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
-              <Route path="/raid-battle" element={<RaidBattle/>}></Route>
-              <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
-              <Route path="/moves/:id" element={<Move/>}></Route>
               <Route path="/stats-table" element={<StatsTable/>}></Route>
               <Route path="/damage-calculate" element={<Damage/>}></Route>
+              <Route path="/raid-battle" element={<RaidBattle/>}></Route>
+              <Route path="/calculate-raid" element={<CalculateRaid/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
               <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
               <Route path="/stickers" element={<Sticker/>}></Route>

@@ -31,7 +31,7 @@ const TableMove = (props) => {
                 <td className="text-origin">
                     <Link to={"../moves/"+value.fmove.id} target="_blank" className="d-block">
                         <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
-                            <img width={20} height={20} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}></img>
+                            <img width={20} height={20} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}/>
                         </div>
                         <span style={{marginRight: 5}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                         <span style={{width: 'max-content'}}>
@@ -42,7 +42,7 @@ const TableMove = (props) => {
                 <td className="text-origin">
                     <Link to={"../moves/"+value.cmove.id} target="_blank" className="d-block">
                         <div className="d-inline-block" style={{verticalAlign: "text-bottom", marginRight: 5}}>
-                            <img width={20} height={20} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}></img>
+                            <img width={20} height={20} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}/>
                         </div>
                         <span style={{marginRight: 5}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                         <span style={{width: 'max-content'}}>

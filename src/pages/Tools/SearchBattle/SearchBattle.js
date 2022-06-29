@@ -183,7 +183,7 @@ const FindBattle = () => {
         <Fragment>
             <div className='loading-group-spin position-fixed' style={{display: !spinner ? "none" : "block"}}></div>
             <div className="loading-spin text-center position-fixed" style={{display: !spinner ? "none" : "block"}}>
-                <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}></img>
+                <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
                 <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
             </div>
             <div className="container">
@@ -198,7 +198,7 @@ const FindBattle = () => {
                                     <span className="input-group-text">CP</span>
                                 </div>
                             <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
-                            onInput={e => setSearchCP(e.target.value)}></input>
+                            onInput={e => setSearchCP(e.target.value)}/>
                             </div>
                         </Box>
                     </div>
@@ -266,7 +266,7 @@ const FindBattle = () => {
                                 <Link to={`/pokemon/${value.id}${value.form ? `?form=${value.form.toLowerCase()}`: ""}`} className="d-inline-block contain-poke-best-league border-best-poke" key={index} title={`#${value.id} ${splitAndCapitalize(value.name, "_", " ")}`}>
                                     <div className="d-flex align-items-center h-100">
                                         <div className="border-best-poke h-100">
-                                            <img className="poke-best-league" alt='pokemon-model' height={102} src={getImageList(value.id) ? APIService.getPokemonModel(getImageList(value.id)) : APIService.getPokeFullSprite(value.id)}></img>
+                                            <img className="poke-best-league" alt='pokemon-model' height={102} src={getImageList(value.id) ? APIService.getPokemonModel(getImageList(value.id)) : APIService.getPokeFullSprite(value.id)}/>
                                             <span className="caption text-black border-best-poke best-name"><b>#{value.id} {splitAndCapitalize(value.name, "_", " ")} {splitAndCapitalize(form.form.form_name, "-", " ")}</b></span>
                                         </div>
                                         <div className={"border-best-poke "+(getTextColorRatio(value.ratio))}>
@@ -282,7 +282,7 @@ const FindBattle = () => {
                                                     APIService.getPokeLeague("ultra_league")
                                                     :
                                                     APIService.getPokeLeague("master_league")
-                                                }></img>
+                                                }/>
                                                 <div><b>{value.ratio.toFixed(2)}</b></div>
                                                 <span className="caption">CP: {value.CP}</span>
                                             </div>
@@ -308,7 +308,7 @@ const FindBattle = () => {
                                                 <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{padding:0}}>
                                                     <Link to={`/pokemon/${item.id}${item.form ? `?form=${item.form.toLowerCase()}`: ""}`} title={`#${item.id} ${splitAndCapitalize(item.name, "_", " ")}`}>
                                                         <Badge color="primary" overlap="circular" badgeContent={index+1}>
-                                                            <img alt='pokemon-model' height={100} src={getImageList(item.id) ? APIService.getPokemonModel(getImageList(item.id)) : APIService.getPokeFullSprite(item.id)}></img>
+                                                            <img alt='pokemon-model' height={100} src={getImageList(item.id) ? APIService.getPokemonModel(getImageList(item.id)) : APIService.getPokeFullSprite(item.id)}/>
                                                         </Badge>
                                                         <div><b>#{item.id} {splitAndCapitalize(item.name.toLowerCase(), "_", " ")} {splitAndCapitalize(form.form.form_name, "-", " ")}</b></div>
                                                     </Link>
@@ -316,11 +316,11 @@ const FindBattle = () => {
                                                     <div className="text-danger"><b><CloseIcon sx={{color: 'red'}}/> Not Elidge</b></div>
                                                     :
                                                     <Fragment>
-                                                    <hr></hr>
+                                                    <hr/>
                                                     <div className="element-top d-flex justify-content-center" style={{textAlign: 'start'}}>
                                                         {item.battleLeague.little ?
                                                             <ul className="list-best-league">
-                                                                <h6><img alt='pokemon-model' height={32} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img> <b>Little Cup</b></h6>
+                                                                <h6><img alt='pokemon-model' height={32} src={APIService.getPokeOtherLeague("GBL_littlecup")}/> <b>Little Cup</b></h6>
                                                                 <li>Rank: <b>#{item.battleLeague.little.rank}</b></li>
                                                                 <li>CP: {item.battleLeague.little.CP}</li>
                                                                 <li>Level: {item.battleLeague.little.level}</li>
@@ -338,11 +338,11 @@ const FindBattle = () => {
                                                                         {item.battleLeague.little.result_between_xl_candy}
                                                                     </span>
                                                                 </li>
-                                                                <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img> {item.battleLeague.little.result_between_stadust}</li>
+                                                                <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/> {item.battleLeague.little.result_between_stadust}</li>
                                                             </ul>
                                                         :
                                                         <div>
-                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeOtherLeague("GBL_littlecup")}></img> <b>Little Cup</b></h6>
+                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeOtherLeague("GBL_littlecup")}/> <b>Little Cup</b></h6>
                                                             <b style={{padding: '1rem'}} className="text-danger"><CloseIcon sx={{color: 'red'}}/> Not Elidge</b>
                                                         </div>
                                                         }
@@ -350,7 +350,7 @@ const FindBattle = () => {
                                                     <div className="element-top d-flex justify-content-center" style={{textAlign: 'start'}}>
                                                         {item.battleLeague.great ?
                                                         <ul className="list-best-league">
-                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("great_league")}></img> <b>Great League</b></h6>
+                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("great_league")}/> <b>Great League</b></h6>
                                                             <li>Rank: <b>#{item.battleLeague.great.rank}</b></li>
                                                             <li>CP: {item.battleLeague.great.CP}</li>
                                                             <li>Level: {item.battleLeague.great.level}</li>
@@ -368,11 +368,11 @@ const FindBattle = () => {
                                                                     {item.battleLeague.great.result_between_xl_candy}
                                                                 </span>
                                                             </li>
-                                                            <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img> {item.battleLeague.great.result_between_stadust}</li>
+                                                            <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/> {item.battleLeague.great.result_between_stadust}</li>
                                                         </ul>
                                                         :
                                                         <div>
-                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("great_league")}></img> <b>Little Cup</b></h6>
+                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("great_league")}/> <b>Little Cup</b></h6>
                                                             <b style={{padding: '1rem'}} className="text-danger"><CloseIcon sx={{color: 'red'}}/> Not Elidge</b>
                                                         </div>
 
@@ -381,7 +381,7 @@ const FindBattle = () => {
                                                     <div className="element-top d-flex justify-content-center" style={{textAlign: 'start'}}>
                                                         {item.battleLeague.ultra ?
                                                         <ul className="list-best-league">
-                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("ultra_league")}></img> <b>Ultra League</b></h6>
+                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("ultra_league")}/> <b>Ultra League</b></h6>
                                                             <li>Rank: <b>#{item.battleLeague.ultra.rank}</b></li>
                                                             <li>CP: {item.battleLeague.ultra.CP}</li>
                                                             <li>Level: {item.battleLeague.ultra.level}</li>
@@ -399,11 +399,11 @@ const FindBattle = () => {
                                                                     {item.battleLeague.ultra.result_between_xl_candy}
                                                                 </span>
                                                             </li>
-                                                            <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img> {item.battleLeague.ultra.result_between_stadust}</li>
+                                                            <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/> {item.battleLeague.ultra.result_between_stadust}</li>
                                                         </ul>
                                                         :
                                                         <div>
-                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("ultra_league")}></img> <b>Little Cup</b></h6>
+                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("ultra_league")}/> <b>Little Cup</b></h6>
                                                             <b style={{padding: '1rem'}} className="text-danger"><CloseIcon sx={{color: 'red'}}/> Not Elidge</b>
                                                         </div>
                                                         }
@@ -411,7 +411,7 @@ const FindBattle = () => {
                                                     <div className="element-top d-flex justify-content-center" style={{textAlign: 'start'}}>
                                                         {item.battleLeague.master ?
                                                         <ul className="list-best-league">
-                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("master_league")}></img> <b>Master League</b></h6>
+                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("master_league")}/> <b>Master League</b></h6>
                                                             <li>Rank: <b>#{item.battleLeague.master.rank}</b></li>
                                                             <li>CP: {item.battleLeague.master.CP}</li>
                                                             <li>Level: {item.battleLeague.master.level}</li>
@@ -429,11 +429,11 @@ const FindBattle = () => {
                                                                     {item.battleLeague.master.result_between_xl_candy}
                                                                 </span>
                                                             </li>
-                                                            <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img> {item.battleLeague.master.result_between_stadust}</li>
+                                                            <li><img style={{marginRight: 5}} alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/> {item.battleLeague.master.result_between_stadust}</li>
                                                         </ul>
                                                         :
                                                         <div>
-                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("master_league")}></img> <b>Little Cup</b></h6>
+                                                            <h6><img alt='pokemon-model' height={32} src={APIService.getPokeLeague("master_league")}/> <b>Little Cup</b></h6>
                                                             <b style={{padding: '1rem'}} className="text-danger"><CloseIcon sx={{color: 'red'}}/> Not Elidge</b>
                                                         </div>
                                                         }

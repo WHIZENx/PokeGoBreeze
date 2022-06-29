@@ -27,7 +27,7 @@ const PokemonModel = (props) => {
 
     return (
         <div>
-            <h4 className="title-evo"><b>{"Assets of "+splitAndCapitalize(props.name, "_", " ")+" in Pokémon Go"}</b> <img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img></h4>
+            <h4 className="title-evo"><b>{"Assets of "+splitAndCapitalize(props.name, "_", " ")+" in Pokémon Go"}</b> <img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/></h4>
             <div>
                 {pokeAssets.map((assets, index) => (
                     <div key={index} className="d-inline-block group-model text-center">
@@ -51,11 +51,11 @@ const PokemonModel = (props) => {
                                 </div>
                                 }
                                 <div className='model text-center' style={{minWidth: value.shiny ? "50%" : "100%"}}>
-                                    <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.default)}></img>
+                                    <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.default)}/>
                                     <span className='caption'>Default</span>
                                 </div>
                                 {value.shiny && <div className='model text-center'>
-                                    <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.shiny)}></img>
+                                    <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.shiny)}/>
                                     <span className='caption'>Shiny</span>
                                 </div>}
                             </div>

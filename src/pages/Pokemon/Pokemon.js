@@ -1,13 +1,13 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import APIService from "../../services/API.service";
 
 import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
-import { splitAndCapitalize } from '../../util/Utils';
+import { convertArrStats, splitAndCapitalize } from '../../util/Utils';
 import { computeBgColor, computeColor } from '../../util/Compute';
 import { regionList } from '../../util/Constants';
-import { calculateStatsByTag, sortStatsPokemon } from '../../util/Calculate';
+import { sortStatsPokemon } from '../../util/Calculate';
 
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -31,9 +31,8 @@ const Pokemon = (props) => {
 
     const [reForm, setReForm] = useState(false);
 
-    // const [released, setReleased] = useState(null);
     const [data, setData] = useState(null);
-    const [stats, setStats] = useState(null);
+    const stats = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
     const [pokeRatio, setPokeRatio] = useState(null);
 
     const [version, setVersion] = useState(null);
@@ -46,14 +45,6 @@ const Pokemon = (props) => {
     const [spinner, setSpinner] = useState(false);
 
     const { enqueueSnackbar } = useSnackbar();
-
-    const convertArrStats = () => {
-        return Object.values(pokemonData).map(value => {
-            let stats = calculateStatsByTag(value.baseStats, value.forme);
-            return {id: value.num, name: value.slug, base_stats: value.baseStats,
-            baseStatsPokeGo: {attack: stats.atk, defense: stats.def, stamina: stats.sta}}
-        })
-    };
 
     const getRatioGender = useCallback((id) => {
         return Object.values(pokemonData).find(item => id === item.num).genderRatio;
@@ -115,7 +106,6 @@ const Pokemon = (props) => {
     }, [enqueueSnackbar, getRatioGender, fetchMap, params.id]);
 
     useEffect(() => {
-        setStats(sortStatsPokemon(convertArrStats()));
         const id = params.id ? params.id.toLowerCase() : props.id;
         queryPokemon(id);
         // if (!initialize.current) {
@@ -126,15 +116,8 @@ const Pokemon = (props) => {
         //         // setDataPri(res.data);
         //     //     return APIService.getPokeJSON('released_pokemon.json');
         //     // })
-        //     // APIService.getPokeJSON('released_pokemon.json')
-        //     // .then(res => {
-        //     //     setReleased(res.data);
-        //     // })
         //     // .finally(initialize.current = true);
         //     initialize.current = true;
-        // } else {
-        //     const id = params.id ? params.id.toLowerCase() : props.id;
-        //     queryPokemon(id);
         // }
     }, [params.id, props.id, queryPokemon, reForm]);
 
@@ -167,7 +150,7 @@ const Pokemon = (props) => {
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
                             <div style={{width: 60, cursor: "pointer"}}>
-                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}></img>
+                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}/>
                             </div>
                             <div className="w-100" style={{cursor: "pointer"}}>
                                 <div style={{textAlign: "start"}}>
@@ -190,7 +173,7 @@ const Pokemon = (props) => {
                                 </div>
                             </div>
                             <div style={{width: 60, cursor: "pointer"}}>
-                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}></img>
+                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}/>
                             </div>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateNextIcon fontSize="large"/></b>
@@ -208,7 +191,7 @@ const Pokemon = (props) => {
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
                             <div style={{width: 60, cursor: "pointer"}}>
-                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}></img>
+                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id-1)}/>
                             </div>
                             <div className="w-100" style={{cursor: "pointer"}}>
                                 <div style={{textAlign: "start"}}>
@@ -231,7 +214,7 @@ const Pokemon = (props) => {
                                 </div>
                             </div>
                             <div style={{width: 60, cursor: "pointer"}}>
-                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}></img>
+                                <img className="pokemon-navigate-sprite" alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id+1)}/>
                             </div>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateNextIcon fontSize="large"/></b>
@@ -241,7 +224,7 @@ const Pokemon = (props) => {
                     </Fragment>
                     :
                     <div className='loading-group'>
-                        <img className="loading" width={20} height={20} alt='img-pokemon' src={loading}></img>
+                        <img className="loading" width={20} height={20} alt='img-pokemon' src={loading}/>
                         <span className='caption text-black' style={{fontSize: 14}}><b>Loading...</b></span>
                     </div>
                     }
@@ -251,18 +234,18 @@ const Pokemon = (props) => {
                 <div className={'position-relative poke-container'+(props.isSearch ? "" : " container")}>
                     <div className='position-fixed loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
                     <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
-                        <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}></img>
+                        <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
                         <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                     </div>
                     <div className="w-100 text-center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
                         {Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName) &&
                         !Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName).releasedGO &&
                             <h5 className='text-danger'>* {splitAndCapitalize(data.name, "-", " ")} not released in Pokémon GO
-                            <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}></img>
+                            <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/>
                             </h5>
                         }
                         <div className="d-inline-block img-desc">
-                            <img className="pokemon-main-sprite" style={{verticalAlign: 'baseline'}} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}></img>
+                            <img className="pokemon-main-sprite" style={{verticalAlign: 'baseline'}} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}/>
                         </div>
                         <div className="d-inline-block">
                             <table className="table-info table-desc">
@@ -317,7 +300,7 @@ const Pokemon = (props) => {
                                         <td className="table-sub-header">Costs</td>
                                     </tr>
                                     <tr className="info-costs">
-                                        <td><img alt="img-cost-info" width={100} src={APIService.getItemSprite("Item_1202")}></img></td>
+                                        <td><img alt="img-cost-info" width={100} src={APIService.getItemSprite("Item_1202")}/></td>
                                         <td style={{padding:0}}>
                                             <div className="d-flex align-items-center row-extra td-costs">
                                                 <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(data.id), marginRight: 5}}>
@@ -327,7 +310,7 @@ const Pokemon = (props) => {
                                             </div>
                                             <div className="row-extra">
                                                 <div className="d-inline-flex justify-content-center" style={{width: 20, marginRight: 5}}>
-                                                    <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>
+                                                    <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/>
                                                 </div>
                                                 <span>{getCostModifier(data.id).thirdMove.stardust ? `x${getCostModifier(data.id).thirdMove.stardust}` : "Unavailable"}</span>
                                             </div>
@@ -338,7 +321,7 @@ const Pokemon = (props) => {
                                         <td className="table-sub-header">Costs</td>
                                     </tr>
                                     <tr className="info-costs">
-                                        <td><img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()}></img></td>
+                                        <td><img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()}/></td>
                                         <td style={{padding:0}}>
                                             <div className="d-flex align-items-center row-extra td-costs">
                                                 <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(data.id), marginRight: 5}}>
@@ -348,7 +331,7 @@ const Pokemon = (props) => {
                                             </div>
                                             <div className="row-extra">
                                                 <div className="d-inline-flex justify-content-center" style={{width: 20, marginRight: 5}}>
-                                                    <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}></img>
+                                                    <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/>
                                                 </div>
                                                 <span>{getCostModifier(data.id).purified.stardust ? `x${getCostModifier(data.id).purified.stardust}` : "Unavailable"}</span>
                                             </div>
@@ -374,7 +357,7 @@ const Pokemon = (props) => {
                         pokemonRaito={pokeRatio}
                         formList={formList}
                         ratio={pokeRatio}
-                        stats={stats}
+                        stats={stats.current}
                         species={data}
                         onSetIDPoke={props.onSetIDPoke}
                         paramForm={searchParams.get('form') && searchParams.get('form').toLowerCase()}/>

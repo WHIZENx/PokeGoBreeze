@@ -26,6 +26,9 @@ const Search = () => {
 
     useEffect(() => {
         document.title = "Pokémon - Search"
+    }, []);
+
+    useEffect(() => {
         // const fetchMyAPI = async () => {
         //     if (pokeList.length === 0) {
         //         const res = await APIService.getPokeJSON('pokemon_names.json');
@@ -52,9 +55,8 @@ const Search = () => {
     }
 
     const getInfoPoke = (value) => {
-        const id = parseInt(value.currentTarget.dataset.id);
         setShowResult(false);
-        setId(id);
+        setId(value.id);
         setPrev(true);
         setNext(true);
     };
@@ -92,14 +94,14 @@ const Search = () => {
                     <span className="input-group-text" id="inputGroup-sizing-default">Search</span>
                 </div>
                 <input type="text" className="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="Enter Name or ID"
-                value={searchTerm} onInput={e => setSearchTerm(e.target.value)} onFocus={() => setShowResult(true)} onBlur={() => setShowResult(false)}></input>
+                value={searchTerm} onInput={e => setSearchTerm(e.target.value)} onFocus={() => setShowResult(true)} onBlur={() => setShowResult(false)}/>
             </div>
             <div className="result" style={{display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>
                 <Fragment>
                     {pokemonListFilter.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
-                        <div className="container card-pokemon" key={ index } onMouseDown={getInfoPoke.bind(this)} data-id={value.id}>
+                        <div className="container card-pokemon" key={ index } onMouseDown={() => getInfoPoke(value)}>
                             <b>#{value.id}</b>
-                            <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}></img>
+                            <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}/>
                             {value.name}
                         </div>
                     ))}

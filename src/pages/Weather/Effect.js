@@ -31,13 +31,13 @@ const Effect = (prop) => {
 
     const changeTypePri = (value) => {
         setShowTypePri(false)
-        setCurrentTypePri(value.currentTarget.dataset.id);
+        setCurrentTypePri(value);
         getWeatherEffective();
     }
 
     const changeTypeSec = (value) => {
         setShowTypeSec(false)
-        setCurrentTypeSec(value.currentTarget.dataset.id);
+        setCurrentTypeSec(value);
         getWeatherEffective();
     }
 
@@ -61,7 +61,7 @@ const Effect = (prop) => {
                                 <div className="result-type result-type-weather">
                                     <ul>
                                         {types.map((value, index) => (
-                                            <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeTypePri.bind(this)}>
+                                            <li className="container card-pokemon" key={ index } onMouseDown={() => changeTypePri(value)}>
                                                 <CardType value={value}/>
                                             </li>
                                         ))}
@@ -90,7 +90,7 @@ const Effect = (prop) => {
                                 <div className="result-type result-type-weather">
                                     <ul>
                                         {types.map((value, index) => (
-                                            <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeTypeSec.bind(this)}>
+                                            <li className="container card-pokemon" key={ index } onMouseDown={() => changeTypeSec(value)}>
                                                 <CardType value={value}/>
                                             </li>
                                         ))}

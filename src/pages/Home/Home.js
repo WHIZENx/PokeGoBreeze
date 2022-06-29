@@ -74,6 +74,9 @@ const Home = () => {
 
     useEffect(() => {
         document.title = "Pokedex - Home";
+    }, []);
+
+    useEffect(() => {
         const fetchMyAPI = async () => {
             if (pokeList.length === 0) {
                 // const result = await Promise.all([...Array(startPokemon).keys()].map(async (n) => (await APIService.getPokeInfo(n+1)).data));
@@ -174,7 +177,7 @@ const Home = () => {
                         <div className='head-types'>Search Name or ID</div>
                         <input type="text" className='w-100 form-control input-search' placeholder='Enter Name or ID'
                         value={searchTerm}
-                        onInput={e => setSearchTerm(e.target.value)}></input>
+                        onInput={e => setSearchTerm(e.target.value)}/>
                     </div>
                     <div className='col border-input' style={{padding: 0}}>
                         <div className='head-types'>Maximum CP</div>
@@ -184,7 +187,7 @@ const Home = () => {
                         onInput={e => {
                             if (e.target.value === '') setSearchMaxCP(e.target.value)
                             else setSearchMaxCP(parseInt(e.target.value))
-                        }}></input>
+                        }}/>
                     </div>
                 </div>
             </div>
@@ -258,7 +261,7 @@ const Home = () => {
                             <StyledTableRow>
                                 <StyledTableCell align="center" component="td" colSpan={7} sx={{height: window.innerHeight/2}}>
                                     <div className='loading-group'>
-                                        <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}></img>
+                                        <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
                                         <span className='caption text-black' style={{fontSize: 20}}><b>Loading...</b></span>
                                     </div>
                                 </StyledTableCell>

@@ -10,7 +10,7 @@ const TypeEffective = (props) => {
         return (
             <ul className='element-top'>
                 <li className='img-group' key={ 0 }>
-                    <img height={50} alt='img-pokemon' src={APIService.getPokeSprite(0)}></img>
+                    <img height={50} alt='img-pokemon' src={APIService.getPokeSprite(0)}/>
                     <span className='caption text-black'>None</span>
                 </li>
             </ul>

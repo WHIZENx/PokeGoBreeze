@@ -18,7 +18,7 @@ const Weather = () => {
             {weatherBoosts && typeEffective &&
             <Fragment>
                 <div className="container-fluid"><Affect weathers={weatherBoosts}/></div>
-                <hr style={{marginTop: 15, marginBottom: 15}}></hr>
+                <hr style={{marginTop: 15, marginBottom: 15}}/>
                 <div className="container w-75"><Effect weathers={weatherBoosts} types={typeEffective}/></div>
             </Fragment>
             }

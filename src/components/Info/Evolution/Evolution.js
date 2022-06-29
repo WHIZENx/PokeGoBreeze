@@ -178,8 +178,8 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                                 </span>}
                                 {data.quest.onlyDaytime && <span className="caption"><WbSunnyIcon fontSize="small" /></span>}
                                 {data.quest.onlyNighttime && <span className="caption"><DarkModeIcon fontSize="small" /></span>}
-                                {data.quest.evolutionItemRequirement && <img alt='img-item-required' height={20} src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}></img>}
-                                {data.quest.lureItemRequirement && <img alt='img-troy-required' height={20} src={APIService.getItemTroy(data.quest.lureItemRequirement)}></img>}
+                                {data.quest.evolutionItemRequirement && <img alt='img-item-required' height={20} src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}/>}
+                                {data.quest.lureItemRequirement && <img alt='img-troy-required' height={20} src={APIService.getItemTroy(data.quest.lureItemRequirement)}/>}
                                 {data.quest.onlyUpsideDown && <span className="caption"><SecurityUpdateIcon fontSize="small" /></span>}
                                 {data.quest.condition && <span className="caption">
                                     {data.quest.condition.desc === "THROW_TYPE" &&
@@ -192,7 +192,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                                     <div className="d-flex align-items-center" style={{marginTop: 5}}>
                                         {data.quest.condition.pokemonType.map((value, index) => (
                                             <img key={index} alt='img-stardust' height={20} src={APIService.getTypeSprite(value)}
-                                            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}></img>
+                                            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}/>
                                         ))}
                                         <span style={{marginLeft: 2}}>{`x${data.quest.goal}`}</span>
                                     </div>
@@ -234,27 +234,27 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                         }}>
                             <Badge color="primary" overlap="circular" badgeContent={evo+1}>
                                 <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
+                                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
                             </Badge>
                         </Badge>
                     </ThemeProvider>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1}>
                         <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
+                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
                     </Badge>
                     }
                     </Fragment>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1}>
                         <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
+                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
                     </Badge>
                 }
                 </Fragment>
                 :
                 <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}></img>
+                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
                 }
                 <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
                 <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>
@@ -271,17 +271,17 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
             <span className="tooltips-info">
                 <InfoOutlinedIcon color="primary"/>
                 <span className="info-evo">
-                <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}></img> : Candy of pokemon.</span>
+                <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}/> : Candy of pokemon.</span>
                     <span className="d-block caption">- <QuestionMarkIcon fontSize="small"/> : Random evolution.</span>
                     <span className="d-block caption">- <MaleIcon fontSize="small" />/<FemaleIcon fontSize="small" /> : Only once gender can evolution.</span>
                     <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /> : Walk together with buddy.</span>
                     <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/> : Buddy walk with trainer.</span>
                     <span className="d-block caption">- <WbSunnyIcon fontSize="small" /> : Evolution during at day.</span>
                     <span className="d-block caption">- <DarkModeIcon fontSize="small" /> : Evolution during at night.</span>
-                    <span className="d-block caption">- <img alt='img-troy-required' height={20} src={APIService.getItemTroy("")}></img> : Evolution in lure module.</span>
+                    <span className="d-block caption">- <img alt='img-troy-required' height={20} src={APIService.getItemTroy("")}/> : Evolution in lure module.</span>
                     <span className="d-block caption">- <SecurityUpdateIcon fontSize="small" /> : Evolution at upside down phone.</span>
                     <span className="d-block caption">- <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.</span>
-                    <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getPokeSprite(0)}></img> : Catch pokemon with type.</span>
+                    <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getPokeSprite(0)}/> : Catch pokemon with type.</span>
                     <span className="d-block caption">- <SportsMartialArtsIcon fontSize="small" /> : Win raid.</span>
                     <span className="d-block caption">- <FavoriteIcon fontSize="small" sx={{color:'red'}}/> : Evolution with affection points.</span>
                     <span className="d-block caption">- <RestaurantIcon fontSize="small"/> : Buddy feed.</span>

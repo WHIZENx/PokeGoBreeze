@@ -419,6 +419,9 @@ const RaidBattle = () => {
 
     useEffect(() => {
         document.title = "Raid Battle - Tools";
+    }, []);
+
+    useEffect(() => {
         if (form && !initialize.current) {
             findMove(id, form.form.name);
             initialize.current = true;
@@ -445,7 +448,7 @@ const RaidBattle = () => {
                 <div className="justify-content-start align-items-center d-flex position-absolute h-100 w-100">
                     <div className="line-dps position-relative" style={{width: `calc(${dps}% + 2px`}}>
                         <span className="line-left"><b>|</b></span>
-                        <hr className="w-100"></hr>
+                        <hr className="w-100"/>
                         <span className="line-right"><b>|</b></span>
                         <div className="caption text-dps">DPS</div>
                     </div>
@@ -471,7 +474,7 @@ const RaidBattle = () => {
         <Fragment>
             <div className='loading-group-spin position-fixed' style={{display: !spinner ? "none" : "block"}}></div>
             <div className="loading-spin text-center position-fixed" style={{display: !spinner ? "none" : "block"}}>
-                <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}></img>
+                <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}/>
                 <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
             </div>
             <div className="row" style={{margin: 0, overflowX: "hidden"}}>
@@ -495,7 +498,7 @@ const RaidBattle = () => {
                                 </div>
                             </div>
                         </div>
-                        <hr></hr>
+                        <hr/>
                         <Raid
                             clearData={clearData}
                             setTierBoss={setTier}
@@ -507,7 +510,7 @@ const RaidBattle = () => {
                             setStatBossATK={setStatBossATK}
                             setStatBossDEF={setStatBossDEF}
                             setStatBossHP={setStatBossHP}/>
-                        <hr></hr>
+                        <hr/>
                         <div className="row align-items-center element-top" style={{margin: 0}}>
                             <div className="col-6 d-flex justify-content-end">
                                 <FormControlLabel control={<Checkbox checked={weatherBoss} onChange={(event, check) => setOptions({...options, weatherBoss: check})}/>} label="Boss Weather Boost" />
@@ -522,14 +525,14 @@ const RaidBattle = () => {
                             </div>
                             <div className="col-6" style={{paddingLeft: 0}}>
                                 <input type="number" className="form-control" value={RAID_BOSS_TIER[tier].timer} placeholder="Battle Time" aria-label="Battle Time" min={0} disabled={!enableTimeAllow}
-                                    onInput={(e) => setTimeAllow(parseInt(e.target.value))}></input>
+                                    onInput={(e) => setTimeAllow(parseInt(e.target.value))}/>
                             </div>
                         </div>
                         <div className="text-center element-top"><button className="btn btn-primary w-50" onClick={() => handleCalculate()}>Search</button></div>
                     </div>
                 </div>
             </div>
-            <hr></hr>
+            <hr/>
             {result.length > 0 &&
             <Fragment>
                 <div className="container">
@@ -544,9 +547,9 @@ const RaidBattle = () => {
                             <div className="top-raid-pokemon" key={index}>
                                 <div className="d-flex justify-content-center w-100">
                                     <Link to={`/pokemon/${value.pokemon.num}${value.pokemon.forme ? `?form=${value.pokemon.forme.toLowerCase()}`: ""}`} className="sprite-raid position-relative">
-                                        {value.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
+                                        {value.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                                         <img className="pokemon-sprite-raid" alt="img-pokemon" src={findAssetForm(value.pokemon.num, value.pokemon.name) ?
-                                        APIService.getPokemonModel(findAssetForm(value.pokemon.num, value.pokemon.name)) : APIService.getPokeFullSprite(value.pokemon.num)}></img>
+                                        APIService.getPokemonModel(findAssetForm(value.pokemon.num, value.pokemon.name)) : APIService.getPokeFullSprite(value.pokemon.num)}/>
                                     </Link>
                                 </div>
                                 <span className="d-flex justify-content-center w-100"><b>#{value.pokemon.num} {splitAndCapitalize(value.pokemon.name, "-", " ")}</b></span>
@@ -555,7 +558,7 @@ const RaidBattle = () => {
                                 <span className="d-block">Death: <b className={value.death === 0 ? "text-success" : "text-danger"}>{value.death}</b></span>
                                 <span className="d-block">Time to Kill <span className="d-inline-block caption">(Boss)</span>: <b>{value.ttkAtk.toFixed(2)} sec</b></span>
                                 <span className="d-block">Time is Killed: <b>{value.ttkDef.toFixed(2)} sec</b></span>
-                                <hr></hr>
+                                <hr/>
                                 <div className="container" style={{marginBottom: 15}}>
                                     <TypeBadge title="Fast Move" move={value.fmove} elite={value.elite.fmove}/>
                                     <TypeBadge title="Charge Move" move={value.cmove} elite={value.elite.cmove} shadow={value.mShadow} purified={value.purified} />
@@ -572,7 +575,7 @@ const RaidBattle = () => {
                                         vertical: 'top',
                                         horizontal: 'left',
                                     }}>
-                                    <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel(trainer.trainerId%294)}></img>
+                                    <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel(trainer.trainerId%294)}/>
                                     </Badge>
                                     <button className="btn btn-primary" style={{marginRight: 10}} onClick={() => handleShow(trainer.pokemons, index)}>
                                         <EditIcon fontSize="small"/>
@@ -581,7 +584,7 @@ const RaidBattle = () => {
                                     {trainer.pokemons.map((pokemon, index) => (
                                         <div key={index} className="pokemon-battle">
                                             {pokemon.dataTargetPokemon ?
-                                            <span><img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, true)}></img></span>
+                                            <span><img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, true)}/></span>
                                             :
                                             <span><AddIcon fontSize="large" sx={{color: 'lightgray'}}/></span>
                                             }
@@ -636,7 +639,7 @@ const RaidBattle = () => {
                             <div className="d-inline-block">
                                 <TypeBadge title="Charge Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
                             </div>
-                            <hr></hr>
+                            <hr/>
                             <div className="row" style={{margin: 0}}>
                                 <div className="col-lg-6" style={{marginBottom: 20}}>
                                     <span className="d-block element-top">DPS: <b>{resultBoss.minDPS.toFixed(2)} - {resultBoss.maxDPS.toFixed(2)}</b></span>
@@ -648,7 +651,7 @@ const RaidBattle = () => {
                                 </div>
                                 <div className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center" style={{marginBottom: 20}}>
                                     <h2 className="text-center" style={{margin: 0}}>Suggested players</h2>
-                                    <hr className="w-100"></hr>
+                                    <hr className="w-100"/>
                                     <div className="d-inline-block text-center">
                                         <h3 className="d-block" style={{margin: 0}}>{Math.ceil(statBossHP/(statBossHP-Math.round(resultBoss.minHP)))}</h3>
                                         {Math.ceil(statBossHP/(statBossHP-Math.round(resultBoss.minHP))) === 1 ?
@@ -666,7 +669,7 @@ const RaidBattle = () => {
                             </div>
                             {resultRaid &&
                             <Fragment>
-                            <hr></hr>
+                            <hr/>
                             <h5 className="text-decoration-underline">Pokémon at (Level: 40 - 15/15/15)</h5>
                                 <ul className="element-top" style={{listStyleType: 'initial'}}>
                                     {resultRaid.map((result, turn) => (
@@ -690,7 +693,7 @@ const RaidBattle = () => {
                                                             <td>#{data.trainerId+1}</td>
                                                             <td>
                                                                 <div className="d-flex align-items-center table-pokemon">
-                                                                    <img className="pokemon-sprite-battle" height={36} alt="img-pokemon" src={APIService.getPokeIconSprite(data.pokemon.sprite, true)}></img>
+                                                                    <img className="pokemon-sprite-battle" height={36} alt="img-pokemon" src={APIService.getPokeIconSprite(data.pokemon.sprite, true)}/>
                                                                     <span className="caption">{splitAndCapitalize(data.pokemon.name, "-", " ")}</span>
                                                                 </div>
                                                             </td>

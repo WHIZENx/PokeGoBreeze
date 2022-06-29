@@ -68,6 +68,9 @@ const Search = () => {
 
     useEffect(() => {
         document.title = "Moves - Search";
+    }, []);
+
+    useEffect(() => {
         setResultFMove(combatData.filter(item => item.type_move === "FAST")
         .filter(move => (splitAndCapitalize(move.name, "_", " ").replaceAll(" Plus", "+").toLowerCase().includes(fMoveName.toLowerCase()) || move.id.toString().includes(fMoveName)) &&
         (fMoveType === '' || fMoveType === capitalize(move.type.toLowerCase()))))
@@ -98,7 +101,7 @@ const Search = () => {
                                     <div className="col-4">
                                     <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
                                         value={fMoveName}
-                                        onInput={e => setFilters({...filters, fMoveName: e.target.value})}></input>
+                                        onInput={e => setFilters({...filters, fMoveName: e.target.value})}/>
                                     </div>
                                 </div>
                             </td></tr>
@@ -132,7 +135,7 @@ const Search = () => {
                                     <div className="col-4">
                                     <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
                                         value={cMoveName}
-                                        onInput={e => setFilters({...filters, cMoveName: e.target.value})}></input>
+                                        onInput={e => setFilters({...filters, cMoveName: e.target.value})}/>
                                     </div>
                                 </div>
                             </td></tr>

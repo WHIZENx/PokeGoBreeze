@@ -296,7 +296,7 @@ export const calculateBetweenLevel = (atk, def, sta, IVatk, IVdef, IVsta, from_l
 export const calculateStatsBattle = (base, iv, level, floor, addition) => {
     let result = (base+iv)*data.find(item => item.level === level).multiplier;
     if (addition) result *= addition;
-    if (floor) Math.floor(result);
+    if (floor) return Math.floor(result);
     return result
 }
 
@@ -404,7 +404,7 @@ export const calculateStatsByTag = (baseStats, tag) => {
     };
 }
 
-export const calculateDamagePVE = (atk, defObj, power, eff, pure, stab) => {
+export const calculateDamagePVE = (atk, defObj, power, eff, notPure, stab) => {
     let modifier;
     if (eff) {
         const isStab = eff.stab ? STAB_MULTIPLY : 1;
@@ -412,8 +412,8 @@ export const calculateDamagePVE = (atk, defObj, power, eff, pure, stab) => {
         const isDodge = eff.dodge ? 0.25 : 1;
         const isMega = eff.mega ? eff.stab ? 1.3 : 1.1 : 1;
         const isTrainer = eff.trainer ? 1.3 : 1;
-        const isFrind = getMultiFriendshipMulti(eff.flevel);
-        let isCharge = getOption("throw_charge", "normal");
+        const isFrind = eff.flevel ? getMultiFriendshipMulti(eff.flevel) : 1;
+        let isCharge = eff.clevel ? getOption("throw_charge", "normal") : 1;
         if (eff.clevel === 1) isCharge = getOption("throw_charge", "nice");
         else if (eff.clevel === 2) isCharge = getOption("throw_charge", "great");
         else if (eff.clevel === 3) isCharge = getOption("throw_charge", "excellent");
@@ -422,7 +422,7 @@ export const calculateDamagePVE = (atk, defObj, power, eff, pure, stab) => {
         if (stab) modifier = STAB_MULTIPLY;
         else modifier = 1;
     }
-    if (pure) return (0.5 * power * (atk/defObj) * modifier) + 1
+    if (notPure) return (0.5 * power * (atk/defObj) * modifier) + 1
     return Math.floor(0.5 * power * (atk/defObj) * modifier) + 1
 }
 

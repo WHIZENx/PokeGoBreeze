@@ -37,7 +37,7 @@ const Attacker = (prop) => {
 
     const changeType = (value) => {
         setShowType(false)
-        setCurrentType(value.currentTarget.dataset.id);
+        setCurrentType(value);
         getTypeEffective();
     }
 
@@ -54,7 +54,7 @@ const Attacker = (prop) => {
                         <div className="result-type">
                             <ul>
                                 {types.map((value, index) => (
-                                    <li className="container card-pokemon" key={ index } data-id={value} onMouseDown={changeType.bind(this)}>
+                                    <li className="container card-pokemon" key={ index } onMouseDown={() => changeType(value)}>
                                         <CardType value={value}/>
                                     </li>
                                 ))}

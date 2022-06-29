@@ -33,11 +33,11 @@ const Mega = (props) => {
                     {arrEvoList.map((value, evo) => (
                         <li key={evo} className='img-form-gender-group li-evo' style={{width: 'fit-content', height: 'fit-content'}}>
                             <img id="img-pokemon" height="96" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                            onError={(e) => {e.onerror=null; e.target.src=`${value.sprites.front_default}`}}></img>
+                            onError={(e) => {e.onerror=null; e.target.src=`${value.sprites.front_default}`}}/>
                             <div id="id-pokemon" style={{color: 'black'}}><b>#{props.id}</b></div>
                             <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>
-                            <span className="caption">First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite("ic_mega")}></img><b>x{getQuestEvo(value.name).firstMegaEvolution}</b></span>
-                            <span className="caption">Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite("ic_mega")}></img><b>x{getQuestEvo(value.name).megaEvolution}</b></span>
+                            <span className="caption">First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite("ic_mega")}/><b>x{getQuestEvo(value.name).firstMegaEvolution}</b></span>
+                            <span className="caption">Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite("ic_mega")}/><b>x{getQuestEvo(value.name).megaEvolution}</b></span>
                         </li>
                     ))
                     }

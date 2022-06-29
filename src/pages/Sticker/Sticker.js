@@ -24,7 +24,7 @@ const Sticker = () => {
                         <div className='sticker-group'>
                         {pokeStickerList.data.filter(item => item.type === "SHOP").map((value, index) => (
                             <div key={index} className="sticker-detail">
-                                <img height={64} alt='img-sticker' src={value.stickerUrl? value.stickerUrl : APIService.getPokeSprite(0)}></img>
+                                <img height={64} alt='img-sticker' src={value.stickerUrl? value.stickerUrl : APIService.getPokeSprite(0)}/>
                                 <span className='caption'>{splitAndCapitalize(value.id.toLowerCase(), "_", "")}</span>
                             </div>
                         ))
@@ -40,10 +40,10 @@ const Sticker = () => {
                                 <div key={index} className="sticker-detail">
                                     {value.pokemonId ?
                                     <Badge color="primary" overlap="circular" badgeContent="Pokémon">
-                                        <img height={64} alt='img-sticker' src={value.stickerUrl? value.stickerUrl : APIService.getPokeSprite(0)}></img>
+                                        <img height={64} alt='img-sticker' src={value.stickerUrl? value.stickerUrl : APIService.getPokeSprite(0)}/>
                                     </Badge>
                                     :
-                                    <img height={64} alt='img-sticker' src={value.stickerUrl? value.stickerUrl : APIService.getPokeSprite(0)}></img>}
+                                    <img height={64} alt='img-sticker' src={value.stickerUrl? value.stickerUrl : APIService.getPokeSprite(0)}/>}
                                     <span className='caption'>{splitAndCapitalize(value.id.toLowerCase(), "_", "")}</span>
                                 </div>
                             ))

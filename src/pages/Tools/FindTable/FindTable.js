@@ -161,27 +161,27 @@ const FindTable = () => {
                     <p className="element-top">Average of HP: <b>{Math.round(avgHP)}</b></p>
                     <div className="d-inline-block text-center four-star">
                         <HundoRate name="hundo-rate" value={3} max={3} readOnly />
-                        <hr style={{margin: 0}}></hr>
+                        <hr style={{margin: 0}}/>
                         <div><b>{fourStar}</b></div>
                     </div>
                     <div className="d-inline-block text-center three-star">
                         <Rating name="three-rate" value={3} max={3} readOnly />
-                        <hr style={{margin: 0}}></hr>
+                        <hr style={{margin: 0}}/>
                         <div><b>{threeStar}</b></div>
                     </div>
                     <div className="d-inline-block text-center two-star">
                         <Rating name="two-rate" value={2} max={3} readOnly />
-                        <hr style={{margin: 0}}></hr>
+                        <hr style={{margin: 0}}/>
                         <div><b>{twoStar}</b></div>
                     </div>
                     <div className="d-inline-block text-center one-star">
                         <Rating name="one-rate" value={1} max={3} readOnly />
-                        <hr style={{margin: 0}}></hr>
+                        <hr style={{margin: 0}}/>
                         <div><b>{oneStar}</b></div>
                     </div>
                     <div className="d-inline-block text-center zero-star">
                         <Rating name="zero-rate" value={0} max={3} readOnly />
-                        <hr style={{margin: 0}}></hr>
+                        <hr style={{margin: 0}}/>
                         <div><b>{zeroStar}</b></div>
                     </div>
                     </Fragment>
@@ -278,7 +278,7 @@ const FindTable = () => {
                             <span className="input-group-text">CP</span>
                         </div>
                         <input required value={searchCP} type="number" min={10} className="form-control" aria-label="cp" aria-describedby="input-cp" placeholder="Enter CP"
-                        onInput={e => setSearchCP(e.target.value)}></input>
+                        onInput={e => setSearchCP(e.target.value)}/>
                         </div>
                         <div className="btn-search d-flex justify-content-center text-center">
                             <button type="submit" className="btn btn-primary">Search</button>
@@ -291,7 +291,7 @@ const FindTable = () => {
                     </Fragment>
                     : <p>None</p>
                 }
-                <hr></hr>
+                <hr/>
                 <h1 id ="main" className='text-center'>Find CP</h1>
                 <form id="formCP" className="element-top" onSubmit={onFindCP.bind(this)}>
                     <div className="form-group d-flex justify-content-center text-center">
@@ -353,7 +353,7 @@ const FindTable = () => {
                     </Fragment>
                     : <p>None</p>
                 }
-                <hr></hr>
+                <hr/>
                 <div className="element-top">
                     {findMinMax()}
                 </div>

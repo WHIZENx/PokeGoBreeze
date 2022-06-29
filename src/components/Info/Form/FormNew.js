@@ -159,10 +159,10 @@ const Form = ({
                         <Fragment key={index}>
                             {value.map((value, index) => (
                                 <button key={index} className={"btn btn-form "+((currForm && pokeID === currForm.form.id && value.form.id === currForm.form.id) || (currForm && pokeID !== currForm.form.id && value.form.id === currForm.form.id) ? "form-selected" : "")} onClick={() => changeForm(value.form.name, value.form.form_name)}>
-                                    <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}></img>
+                                    <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}/>
                                     <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</p>
                                     {value.form.id === pokeID &&
-                                        <b><small className=''> (Default)</small></b>
+                                        <b><small>(Default)</small></b>
                                     }
                                 </button>
                             ))
@@ -175,7 +175,7 @@ const Form = ({
             {ratio.M !== 0 || ratio.F !== 0 ?
             <Fragment>
             {ratio.M !== 0 && <Fragment><Gender ratio={ratio} sex='Male' default_m={currForm && currForm.form.sprites.front_default} shiny_m={currForm && currForm.form.sprites.front_shiny} default_f={currForm && currForm.form.sprites.front_female} shiny_f={currForm && currForm.form.sprites.front_shiny_female}/></Fragment>}
-            {ratio.M !== 0 && ratio.F !== 0 && <hr></hr>}
+            {ratio.M !== 0 && ratio.F !== 0 && <hr/>}
             {ratio.F !== 0 && <Fragment><Gender ratio={ratio} sex='Female' default_m={currForm && currForm.form.sprites.front_default} shiny_m={currForm && currForm.form.sprites.front_shiny} default_f={currForm && currForm.form.sprites.front_female} shiny_f={currForm && currForm.form.sprites.front_shiny_female}/></Fragment>}
             </Fragment>
             : <Gender sex='Genderless' default_m={currForm && currForm.form.sprites.front_default} shiny_m={currForm && currForm.form.sprites.front_shiny} default_f={currForm && currForm.form.sprites.front_female} shiny_f={currForm && currForm.form.sprites.front_shiny_female}/>
@@ -185,7 +185,7 @@ const Form = ({
                 statSTA={statSTA}
                 pokemonStats={stats}
                 stats={dataPoke}/>
-            <hr className='w-100'></hr>
+            <hr className='w-100'/>
             <div className="row w-100" style={{margin:0}}>
                 <div className="col-md-5" style={{padding:0}}>
                     <Info data={dataPoke} currForm={currForm} />
@@ -201,10 +201,10 @@ const Form = ({
                     statATK={statATK ? statATK.attack : calBaseATK((dataPoke ? dataPoke.stats : defaultStats), true)}
                     statDEF={statDEF ? statDEF.defense : calBaseDEF((dataPoke ? dataPoke.stats : defaultStats), true)}
                     statSTA={statSTA ? statSTA.stamina : calBaseSTA((dataPoke ? dataPoke.stats : defaultStats), true)}/>
-                    <Counter def={statDEF ? statDEF.defense : calBaseDEF((dataPoke ? dataPoke.stats : defaultStats), true)} form={currForm && currForm.form}/>
+                    <Counter changeForm={changeForm} def={statDEF ? statDEF.defense : calBaseDEF((dataPoke ? dataPoke.stats : defaultStats), true)} form={currForm && currForm.form}/>
                 </div>
             </div>
-            <hr className="w-100"></hr>
+            <hr className="w-100"/>
             {formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 && currForm && !currForm.form.form_name.includes("gmax") ?
             <div className='row w-100' style={{margin:0}}>
                 <div className='col-xl' style={{padding:0}}>

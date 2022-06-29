@@ -14,7 +14,7 @@ const Error = () => {
 
     return (
         <div className='d-block position-relative'>
-            <div className="error-img"><img alt="error-img" src={error}></img></div>
+            <div className="error-img"><img alt="error-img" src={error}/></div>
             <div className="error-desc">
                 <div className='desc'>
                     <h1 className='desc-head'><b>404</b></h1>

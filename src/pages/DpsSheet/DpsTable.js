@@ -6,7 +6,7 @@ import combatPokemonData from '../../data/combat_pokemon_go_list.json';
 import typesData from '../../data/type_effectiveness.json';
 import weatherBoosts from '../../data/weather_boosts.json';
 import { LevelRating, convertName, splitAndCapitalize } from "../../util/Utils";
-import { DEFAULT_POKEMON_DEF_OBJ } from '../../util/Constants';
+import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../util/Constants';
 import { calculateAvgDPS, calculateCP, calculateStatsByTag, calculateTDO, calculateBattleDPS, TimeToKill, calculateBattleDPSDefender, calculateStatsBattle } from '../../util/Calculate';
 
 import DataTable from "react-data-table-component";
@@ -54,11 +54,11 @@ const columns = [
         name: 'Pokémon Name',
         selector: row =>
             <Link to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase()}`: ""}`} target="_blank" title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, "-", " ")}`}>
-            {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}></img>}
-            {row.purified && <img height={25} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}></img>}
+            {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+            {row.purified && <img height={25} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}/>}
             <img height={48} alt='img-pokemon' style={{marginRight: 10}}
             src={APIService.getPokeIconSprite(row.pokemon.sprite, true)}
-            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.pokemon.baseSpecies)}}></img>
+            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.pokemon.baseSpecies)}}/>
             {splitAndCapitalize(row.pokemon.name, "-", " ")}</Link>
         ,
         sortable: true,
@@ -68,7 +68,7 @@ const columns = [
     {
         name: 'Fast Move',
         selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.fmove.name).id} target="_blank" title={`${splitAndCapitalize(row.fmove.name, "_", " ")}`}>
-            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.fmove.name, "_", " ")}</span>{row.elite.fmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link>,
+            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}/> <div><span className="text-b-ic">{splitAndCapitalize(row.fmove.name, "_", " ")}</span>{row.elite.fmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link>,
         sortable: true,
         minWidth: '200px',
         sortFunction: fmoveSort
@@ -76,7 +76,7 @@ const columns = [
     {
         name: 'Charge Move',
         selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_", " ")}`}>
-            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}></img> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_", " ").replaceAll(" Plus", "+")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.mShadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
+            <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}/> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_", " ").replaceAll(" Plus", "+")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.mShadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
         sortable: true,
         minWidth: '220px',
         sortFunction: cmoveSort
@@ -257,6 +257,9 @@ const DpsTable = () => {
 
     useEffect(() => {
         document.title = "DPS&TDO Table";
+    }, []);
+
+    useEffect(() => {
         if (!finished && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) setDpsTable(calculateDPSTable());
         else if (!dataTargetPokemon && !finished) setDpsTable(calculateDPSTable());
         if (finished) {
@@ -319,7 +322,7 @@ const DpsTable = () => {
                             <span className="input-group-text">Search name or ID</span>
                             <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
                             value={searchTerm}
-                            onInput={e => setSearchTerm(e.target.value)}></input>
+                            onInput={e => setSearchTerm(e.target.value)}/>
                         </div>
                         <div className="input-group">
                             <span className="input-group-text">Filter show</span>
@@ -409,7 +412,7 @@ const DpsTable = () => {
                                             ftime: parseInt(e.target.value),
                                             ctime: options.delay.ctime,
                                         }
-                                    })}></input>
+                                    })}/>
                                     <span className="input-group-text">Charge Move Time</span>
                                     <input type="number" className="form-control" style={{height:42}} placeholder="Delay time (sec)" aria-label="Charge Move Time" min={0} disabled={!enableDelay} required={enableDelay}
                                     onInput={(e) => setOptions({
@@ -418,7 +421,7 @@ const DpsTable = () => {
                                             ftime: options.delay.ftime,
                                             ctime: parseInt(e.target.value),
                                         }
-                                })}></input>
+                                })}/>
                             </div>
                             <div className='row' style={{margin: 0}}>
                                 <Box className="col-5 input-group" style={{padding: 0}}>
@@ -427,19 +430,19 @@ const DpsTable = () => {
                                     onInput={(e) => setFilters({
                                         ...filters,
                                         IV_ATK: parseInt(e.target.value),
-                                    })} name="IV_ATK" style={{width: 40}}></input>
+                                    })} name="IV_ATK" style={{width: 40}}/>
                                     <span className="input-group-text">IV DEF</span>
                                     <input defaultValue={IV_DEF} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
                                     onInput={(e) => setFilters({
                                         ...filters,
                                         IV_DEF: parseInt(e.target.value),
-                                    })} name="IV_DEF" style={{width: 40}}></input>
+                                    })} name="IV_DEF" style={{width: 40}}/>
                                     <span className="input-group-text">IV HP</span>
                                     <input defaultValue={IV_HP} type="number" className="form-control" placeholder="0-15" min={0} max={15} required
                                     onInput={(e) => setFilters({
                                         ...filters,
                                         IV_HP: parseInt(e.target.value),
-                                    })} name="IV_HP" style={{width: 40}}></input>
+                                    })} name="IV_HP" style={{width: 40}}/>
                                     <div className="input-group-prepend">
                                         <label className="input-group-text">Levels</label>
                                     </div>
@@ -447,7 +450,7 @@ const DpsTable = () => {
                                     onChange={(e) => setFilters({
                                         ...filters,
                                         POKEMON_LEVEL: parseInt(e.target.value)})}>
-                                        {Array.from({length:(51-1)/0.5+1},(_,i)=>1+(i*0.5)).map((value, index) => (
+                                        {Array.from({length:(MAX_LEVEL-MIN_LEVEL)/0.5+1},(_,i)=>1+(i*0.5)).map((value, index) => (
                                             <option key={index} value={value}>{value}</option>
                                         ))
                                         }
@@ -459,7 +462,7 @@ const DpsTable = () => {
                                     onInput={(e) => setOptions({
                                         ...options,
                                         POKEMON_DEF_OBJ: parseInt(e.target.value),
-                                    })} name="POKEMON_DEF_OBJ"></input>
+                                    })} name="POKEMON_DEF_OBJ"/>
                                     <div className="input-group-prepend">
                                         <label className="input-group-text">Weather Boosts</label>
                                     </div>
@@ -508,7 +511,7 @@ const DpsTable = () => {
             <div className="position-relative">
                 <div className='loading-group-spin' style={{display: !showSpinner ? "none" : "block"}}></div>
                 <div className="loading-spin text-center" style={{display: !showSpinner ? "none" : "block"}}>
-                    <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}></img>
+                    <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}/>
                     <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                 </div>
                 <DataTable

@@ -66,3 +66,7 @@ export const findAssetForm = (id, name) => {
     catch { return null; }
 }
 
+export const findStabType = (types, findType) => {
+    return types.find(type => type.toLowerCase() === findType.toLowerCase()) ? true : false;
+};
+

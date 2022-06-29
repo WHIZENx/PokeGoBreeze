@@ -16,10 +16,10 @@ const Type = (props) => {
                 <li style={props.style} className='img-group' key={ index }>
                     {props.height ?
                         <img width={props.height} height={props.height} alt='img-pokemon' src={APIService.getTypeSprite(value)}
-                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}></img>
+                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}/>
                         :
                         <Fragment>
-                            <img width={36} height={36} alt='img-pokemon' src={APIService.getTypeSprite(value)}></img>
+                            <img width={36} height={36} alt='img-pokemon' src={APIService.getTypeSprite(value)}/>
                             <span className='caption text-black'>{capitalize(value)}</span>
                         </Fragment>
                     }
