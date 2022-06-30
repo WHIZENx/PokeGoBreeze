@@ -104,7 +104,7 @@ const StatsTable = () => {
 
     return (
         <div className="container" style={{minHeight: 1650}}>
-            <Find clearStats={clearStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName}/>
+            <Find hide={true} clearStats={clearStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName}/>
             <h1 id ="main" className='text-center'>Stats Battle Table</h1>
             <div className="text-center" style={{marginTop: 15, marginBottom: 15}}>
                 <button className={"btn btn-form"+(battleLeague === 500 ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(500)}>

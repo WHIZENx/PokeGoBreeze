@@ -91,7 +91,7 @@ const Calculate = () => {
     return (
         <Fragment>
             <div className="container element-top">
-                <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} urlEvo={urlEvo} setUrlEvo={setUrlEvo}/>
+                <Find hide={true} clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} urlEvo={urlEvo} setUrlEvo={setUrlEvo}/>
                 <h1 id ="main" className='text-center'>Calculate Stats</h1>
                 <form className="element-top" onSubmit={onCalculateStatsPoke.bind(this)}>
                     <div className="form-group d-flex justify-content-center text-center">

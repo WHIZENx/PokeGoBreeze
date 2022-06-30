@@ -113,7 +113,7 @@ const Find = (props) => {
                 <div>
                 { pokeList.length > 0 && dataPri && stats.current &&
                     <Fragment>
-                        <Tools raid={props.raid} tier={props.tier} setTier={props.setTier} setForm={props.setForm} count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats.current} onHandleSetStats={handleSetStats} onClearArrStats={props.clearStats} onSetPrev={decId} onSetNext={incId} setUrlEvo={props.setUrlEvo}/>
+                        <Tools hide={props.hide} raid={props.raid} tier={props.tier} setTier={props.setTier} setForm={props.setForm} count={pokeList.length} id={id} name={pokeList.find(item => item.id === id).name} data={dataPri} stats={stats.current} onHandleSetStats={handleSetStats} onClearArrStats={props.clearStats} onSetPrev={decId} onSetNext={incId} setUrlEvo={props.setUrlEvo}/>
                     </Fragment>
                 }
                 </div>

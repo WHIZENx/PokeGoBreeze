@@ -269,7 +269,7 @@ const FindTable = () => {
     return (
         <Fragment>
             <div className="container element-top">
-                <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName}/>
+                <Find hide={true} clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName}/>
                 <h1 id ="main" className='text-center'>Find IV</h1>
                 <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
                     <Box sx={{ width: '50%', minWidth: 350 }}>

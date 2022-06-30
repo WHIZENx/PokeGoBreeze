@@ -479,7 +479,7 @@ const RaidBattle = () => {
             </div>
             <div className="row" style={{margin: 0, overflowX: "hidden"}}>
                 <div className="col-lg" style={{padding: 0}}>
-                    <Find title="Raid Boss" clearStats={resetData} setStatATK={setStatATK} setStatDEF={setStatDEF} setForm={onSetForm} setName={setName} setId={setId}/>
+                    <Find hide={true} title="Raid Boss" clearStats={resetData} setStatATK={setStatATK} setStatDEF={setStatDEF} setForm={onSetForm} setName={setName} setId={setId}/>
                 </div>
                 <div className="col-lg d-flex justify-content-center align-items-center" style={{padding: 0}}>
                     <div className="element-top">

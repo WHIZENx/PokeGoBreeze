@@ -175,12 +175,12 @@ const Damage = () => {
         <Fragment>
         <div className="row battle-game">
             <div className="col-lg border-window">
-                <Find title="Attacker Pokémon" clearStats={clearMove} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName} setForm={onSetForm} setId={setId}/>
+                <Find hide={true} title="Attacker Pokémon" clearStats={clearMove} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName} setForm={onSetForm} setId={setId}/>
                 <StatsTable setStatLvATK={setStatLvATK} setStatLevel={setStatLevel} setStatType={setStatType}
                 statATK={statATK} statDEF={statDEF} statSTA={statSTA} />
             </div>
             <div className="col-lg border-window">
-                <Find title="Defender Pokémon" swap={true} clearStats={clearData} setStatATK={setStatATKObj} setStatDEF={setStatDEFObj} setStatSTA={setStatSTAObj} setForm={onSetFormObj}/>
+                <Find hide={true} title="Defender Pokémon" swap={true} clearStats={clearData} setStatATK={setStatATKObj} setStatDEF={setStatDEFObj} setStatSTA={setStatSTAObj} setForm={onSetFormObj}/>
                 <StatsTable setStatLvDEF={setStatLvDEFObj} setStatLvSTA={setStatLvSTAObj} setStatLevel={setStatLevelObj} setStatType={setStatTypeObj}
                 statATK={statATKObj} statDEF={statDEFObj} statSTA={statSTAObj} />
             </div>

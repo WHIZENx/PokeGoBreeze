@@ -87,16 +87,20 @@ const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBo
                         <tbody>
                             <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                             <tr>
-                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}/>ATK</td>
+                                <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={atk_logo}/>ATK</td>
                                 <td className="text-center">{calculateRaidStat(statATK, tier)}</td>
                             </tr>
                             <tr>
-                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>DEF</td>
+                                <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={def_logo}/>DEF</td>
                                 <td className="text-center">{calculateRaidStat(statDEF, tier)}</td>
                             </tr>
                             <tr>
-                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>STA</td>
+                                <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={sta_logo}/>STA</td>
                                 <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta/RAID_BOSS_TIER[tier].CPm)}</td>
+                            </tr>
+                            <tr>
+                                <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={sta_logo}/>HP</td>
+                                <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta)}</td>
                             </tr>
                         </tbody>
                     </table>

@@ -188,7 +188,7 @@ const FindBattle = () => {
             </div>
             <div className="container">
 
-                <Find clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} setForm={setForm}/>
+                <Find hide={true} clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} setForm={setForm}/>
                 <h1 id ="main" className='text-center'>Search Battle Leagues Stats</h1>
                 <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)} style={{marginBottom: 15}}>
                     <div className="form-group d-flex justify-content-center text-center">

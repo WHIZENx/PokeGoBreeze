@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import Stats from "../../components/Info/Stats/Stats";
-import { calBaseATK, calBaseDEF, calculateRaidStat } from "../../util/Calculate";
+import { calculateRaidStat } from "../../util/Calculate";
 
 import { Form } from "react-bootstrap";
 import { RAID_BOSS_TIER } from "../../util/Constants";
@@ -11,7 +11,7 @@ import sta_logo from '../../assets/stamina.png';
 
 import pokemonData from '../../data/pokemon.json';
 
-const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats, raid, tier, setTier}) => {
+const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats, raid, tier, setTier, hide}) => {
 
     const [currDataPoke, setCurrDataPoke] = useState(null);
     const [currTier, setCurrTier] = useState(tier);
@@ -55,27 +55,28 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
 
     useEffect(() => {
         if (currForm && dataPoke) {
-            let formATK = filterFormList(stats.attack.ranking, id);
-            let formDEF = filterFormList(stats.defense.ranking, id);
-            let formSTA = filterFormList(stats.stamina.ranking, id);
-            setStatATK(formATK);
-            setStatDEF(formDEF);
-            setStatSTA(formSTA);
-            setCurrDataPoke(dataPoke.find(item => item.id === id))
+            const formATK = filterFormList(stats.attack.ranking, id);
+            const formDEF = filterFormList(stats.defense.ranking, id);
+            const formSTA = filterFormList(stats.stamina.ranking, id);
+
+            setStatATK(raid && tier && hide ? {attack: calculateRaidStat(formATK.attack, tier)} : formATK);
+            setStatDEF(raid && tier && hide ? {defense: calculateRaidStat(formDEF.defense, tier)} : formDEF);
+            setStatSTA(raid && tier && hide ? {stamina: RAID_BOSS_TIER[tier].sta} : formSTA);
+            setCurrDataPoke(dataPoke.find(item => item.id === id));
 
             if (formATK && formDEF && formSTA) {
-                onSetStats("atk", formATK.attack)
-                onSetStats("def", formDEF.defense)
-                onSetStats("sta", formSTA.stamina)
+                onSetStats("atk", raid && tier && hide ? calculateRaidStat(formATK.attack, tier) : formATK.attack)
+                onSetStats("def", raid && tier && hide ? calculateRaidStat(formATK.defense, tier) : formDEF.defense)
+                onSetStats("sta", raid && tier && hide ? RAID_BOSS_TIER[tier].sta : formSTA.stamina)
                 if (setForm) setForm(currForm)
             }
         }
-    }, [filterFormList, currForm, dataPoke, id, onSetStats, setForm, stats.attack.ranking, stats.defense.ranking, stats.stamina.ranking])
+    }, [filterFormList, currForm, dataPoke, id, onSetStats, setForm, stats.attack.ranking, stats.defense.ranking, stats.stamina.ranking, raid, tier, hide])
 
     return (
         <Fragment>
             {raid ?
-            <div style={{marginBottom: 15}}>
+            <div className="element-top" style={{marginBottom: 15}}>
                 <Form.Select className="w-100" onChange={(e) => {
                     setCurrTier(e.target.value);
                     if (setTier) setTier(e.target.value);
@@ -108,16 +109,20 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
                     <tbody>
                         <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                         <tr>
-                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}/>ATK</td>
-                            <td className="text-center">{calculateRaidStat(currDataPoke || statATK ? statATK ? statATK.attack : calBaseATK(currDataPoke, true) : 0, tier)}</td>
+                            <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={atk_logo}/>ATK</td>
+                            <td className="text-center">{statATK ? statATK.attack : 0}</td>
                         </tr>
                         <tr>
-                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>DEF</td>
-                            <td className="text-center">{calculateRaidStat(currDataPoke || statDEF ? statDEF ? statDEF.defense : calBaseDEF(currDataPoke, true) : 0, tier)}</td>
+                            <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={def_logo}/>DEF</td>
+                            <td className="text-center">{statDEF ? statDEF.defense : 0}</td>
                         </tr>
                         <tr>
-                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>STA</td>
-                            <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta/RAID_BOSS_TIER[tier].CPm)}</td>
+                            <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={sta_logo}/>STA</td>
+                            <td className="text-center">{statSTA ? Math.floor(statSTA.stamina/RAID_BOSS_TIER[tier].CPm) : 0}</td>
+                        </tr>
+                        <tr>
+                            <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={sta_logo}/>HP</td>
+                            <td className="text-center">{RAID_BOSS_TIER[tier].sta}</td>
                         </tr>
                     </tbody>
                 </table>

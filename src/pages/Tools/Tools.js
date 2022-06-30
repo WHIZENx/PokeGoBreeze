@@ -4,13 +4,17 @@ import APIService from "../../services/API.service";
 import FormTools from "./FormTools";
 
 import loading from '../../assets/loading.png';
-import { splitAndCapitalize } from "../../util/Utils";
+import { splitAndCapitalize, TypeRadioGroup } from "../../util/Utils";
 import Type from "../../components/Sprites/Type";
+import { FormControlLabel, Radio } from "@mui/material";
 
 const Tools = (props) => {
 
     const [pokeData, setPokeData] = useState([]);
     const [formList, setFormList] = useState([]);
+
+    const [typePoke, setTypePoke] = useState(props.raid ? "boss" : "pokemon");
+    const [tier, setTier] = useState(props.tier ?? 1);
 
     const [data, setData] = useState(null);
 
@@ -72,6 +76,11 @@ const Tools = (props) => {
         props.onClearArrStats();
     }
 
+    const onSetTier = (tier) => {
+        if (props.setTier) props.setTier(tier);
+        setTier(tier);
+    }
+
     return (
         <Fragment>
             <div className="d-inline-block" style={{width: 60, height: 60}}>
@@ -126,7 +135,24 @@ const Tools = (props) => {
                     </div>
                 }
             </div>
-            <FormTools raid={props.raid} tier={props.tier} setTier={props.setTier} setForm={props.setForm} id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
+            {!props.hide &&
+                <div className="d-flex justify-content-center text-center">
+                    <TypeRadioGroup
+                        row
+                        aria-labelledby="row-types-group-label"
+                        name="row-types-group"
+                        value={typePoke}
+                        onChange={(e) => setTypePoke(e.target.value)}>
+                            <FormControlLabel value="pokemon" control={<Radio />} label={<span><img height={32} alt="img-pokemon" src={APIService.getItemSprite("pokeball_sprite")}/> Pokemon Stats</span>} />
+                        <FormControlLabel value="boss" control={<Radio />} label={<span><img className="img-type-icon" height={32} alt="img-boss" src={APIService.getRaidSprite("ic_raid_small")}/> Boss Stats</span>} />
+                    </TypeRadioGroup>
+                </div>
+            }
+            <div className="row">
+                <div className="col-sm-6"></div>
+                <div className="col-sm-6"></div>
+            </div>
+            <FormTools hide={props.hide} raid={typePoke === "pokemon" ? false : true} tier={tier} setTier={onSetTier} setForm={props.setForm} id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
         </Fragment>
     )
 }

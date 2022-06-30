@@ -14,7 +14,7 @@ import { calculateDamagePVE, calculateRaidStat, calculateStatsBattle, getTypeEff
 const CalculateRaid = () => {
 
     const [id, setId] = useState(1);
-    const [name, setName] = useState('');
+    const [name, setName] = useState('Bulbasaur');
     const [form, setForm] = useState(null);
     const [move, setMove] = useState(null);
 
@@ -35,7 +35,7 @@ const CalculateRaid = () => {
     const [tier, setTier] = useState(1);
 
     const [idBoss, setIdBoss] = useState(1);
-    const [nameBoss, setNameBoss] = useState('');
+    const [nameBoss, setNameBoss] = useState('Bulbasaur');
     const [formBoss, setFormBoss] = useState(null);
     const [moveBoss, setMoveBoss] = useState(null);
 
@@ -144,13 +144,13 @@ const CalculateRaid = () => {
     }
 
     const computeBulk = (count, lv) => {
-        return Math.max(0, Math.ceil((calculateStatsBattle(statSTA, STAIv, lv, true) - count*calculateDamagePVE(calculateRaidStat(statBossATK, tier), calculateStatsBattle(statDEF, DEFIv, lv, true), fMove.pve_power, {
-            effective: getTypeEffective(fMove.type, form.form.types.map(item => item.type.name)),
-            stab: findStabType(formBoss.form.types.map(item => item.type.name), fMove.type),
-            wb: weaterBoosts
-        }, false)) / calculateDamagePVE(calculateRaidStat(statBossATK, tier), calculateStatsBattle(statDEF, DEFIv, lv, true), cMove.pve_power, {
+        return Math.max(0, Math.ceil((calculateStatsBattle(statSTA, STAIv, lv, true) - count*calculateDamagePVE(calculateRaidStat(statBossATK, tier), calculateStatsBattle(statDEF, DEFIv, lv, true), cMove.pve_power, {
             effective: getTypeEffective(cMove.type, form.form.types.map(item => item.type.name)),
             stab: findStabType(formBoss.form.types.map(item => item.type.name), cMove.type),
+            wb: weaterBoosts
+        }, false)) / calculateDamagePVE(calculateRaidStat(statBossATK, tier), calculateStatsBattle(statDEF, DEFIv, lv, true), fMove.pve_power, {
+            effective: getTypeEffective(fMove.type, form.form.types.map(item => item.type.name)),
+            stab: findStabType(formBoss.form.types.map(item => item.type.name), fMove.type),
             wb: weaterBoosts
         }, false)));
     }
@@ -170,18 +170,18 @@ const CalculateRaid = () => {
             }
             lv++;
         }
-        // const maxLength = Math.max(...dataList.map(item => item.length))
-        // console.log(maxLength)
-        // setResultBulkPointDef({data: dataList, atk: name, def: nameBoss, tier: tier});
+        const maxLength = Math.max(...dataList.map(item => item.length))
+        dataList = dataList.map(item => item.concat(Array(maxLength-item.length).fill(0)));
+        setResultBulkPointDef({data: dataList, atk: name, def: nameBoss, tier: tier, maxLength: maxLength});
     }
 
     return (
         <Fragment>
         <div className="row" style={{margin: 0, overflowX: "hidden"}}>
             <div className="col-lg" style={{padding: 0}}>
-                <Find title="Attacker Pokémon" clearStats={resetData} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setForm={onSetForm} setName={setName} setId={setId}/>
+                <Find hide={true} title="Attacker Pokémon" clearStats={resetData} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setForm={onSetForm} setName={setName} setId={setId}/>
             </div>
-            <div className="col-lg d-flex justify-content-center align-items-center" style={{padding: 0}}>
+            <div className="col-lg d-flex justify-content-center" style={{padding: 0}}>
                 <Find swap={true} raid={true} tier={tier} setTier={setTier} title="Boss Pokémon" clearStats={resetData} setStatATK={setStatBossATK} setStatDEF={setStatBossDEF} setForm={onSetFormBoss} setName={setNameBoss} setId={setIdBoss}/>
             </div>
         </div>
@@ -209,6 +209,20 @@ const CalculateRaid = () => {
                         </div>
                         <div className="col-lg-8" style={{overflowX: 'auto'}}>
                             <h3>Attacker Breakpoint{resultBreakPointAtk && `: ${resultBreakPointAtk.atk} Raid ${resultBreakPointAtk.def} Tier ${resultBreakPointAtk.tier}`}</h3>
+                            <table className="table-info table-raid-cal" style={{width: 'max-content'}}>
+                                <thead className="text-center">
+                                    <tr className="table-header">
+                                        <th></th>
+                                        <th>IV</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-center">
+                                    <tr>
+                                        <td>Level</td>
+                                        <td className="text-iv-bulk">Damage ATK stat to Attacker</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <table className="table-info table-raid-cal">
                                 <thead className="text-center">
                                     <tr className="table-header">
@@ -258,6 +272,20 @@ const CalculateRaid = () => {
                         </div>
                         <div className="col-lg-8" style={{overflowX: 'auto'}}>
                             <h3>Defender Breakpoint{resultBreakPointDef && `: ${resultBreakPointDef.atk} Raid ${resultBreakPointDef.def} Tier ${resultBreakPointDef.tier}`}</h3>
+                            <table className="table-info table-raid-cal" style={{width: 'max-content'}}>
+                                <thead className="text-center">
+                                    <tr className="table-header">
+                                        <th></th>
+                                        <th>IV</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-center">
+                                    <tr>
+                                        <td>Level</td>
+                                        <td className="text-iv-bulk">Damage ATK stat to Defender</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <table className="table-info table-raid-cal">
                                 <thead className="text-center">
                                     <tr className="table-header">
@@ -284,6 +312,20 @@ const CalculateRaid = () => {
                             </table>
                             <hr />
                             <h3>Stamina Breakpoint{resultBreakPointDef && `: ${resultBreakPointDef.atk} Raid ${resultBreakPointDef.def} Tier ${resultBreakPointDef.tier}`}</h3>
+                            <table className="table-info table-raid-cal" style={{width: 'max-content'}}>
+                                <thead className="text-center">
+                                    <tr className="table-header">
+                                        <th></th>
+                                        <th>IV</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-center">
+                                    <tr>
+                                        <td>Level</td>
+                                        <td className="text-iv-bulk">HP remain of Defender</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <table className="table-info table-raid-cal">
                                 <thead className="text-center">
                                     <tr className="table-header">
@@ -382,14 +424,34 @@ const CalculateRaid = () => {
                         </div>
                         <div className="col-lg-8" style={{overflowX: 'auto'}}>
                             <h3>Bulkpoint{resultBulkpointDef && `: ${resultBulkpointDef.atk} Raid ${resultBulkpointDef.def} Tier ${resultBulkpointDef.tier}`}</h3>
+                            <table className="table-info table-raid-cal" style={{width: 'max-content'}}>
+                                <thead className="text-center">
+                                    <tr className="table-header">
+                                        <th></th>
+                                        <th>Number of Charge attacks to defeat defender</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-center">
+                                    <tr>
+                                        <td>Level</td>
+                                        <td className="text-iv-bulk">Number of Quick attacks to defeat defender</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <table className="table-info table-raid-cal">
                                 <thead className="text-center">
                                     <tr className="table-header">
+                                        <th></th>
                                         {resultBulkpointDef ?
-                                        <></>
+                                        <Fragment>
+                                        {[...Array(resultBulkpointDef.maxLength).keys()].map((value, index) => (
+                                            <th key={index}>
+                                                {index}
+                                            </th>
+                                        ))}
+                                        </Fragment>
                                         :
                                         <Fragment>
-                                        <th></th>
                                         {[...Array(11).keys()].map((value, index) => (
                                             <th key={index}>
                                                 {value}
@@ -405,7 +467,13 @@ const CalculateRaid = () => {
                                     <tr key={i}>
                                         <td>{level}</td>
                                         {resultBulkpointDef ?
-                                        <></>
+                                        <Fragment>
+                                        {resultBulkpointDef.data[i].map((value, index) => (
+                                            <td className="text-iv-bulk" key={index}>
+                                                {value}
+                                            </td>
+                                        ))}
+                                        </Fragment>
                                         :
                                         <Fragment>
                                             {[...Array(12).keys()].map((iv, index) => (
