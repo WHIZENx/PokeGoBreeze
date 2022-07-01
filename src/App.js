@@ -22,7 +22,7 @@ import SearchBattle from './pages/Tools/SearchBattle/SearchBattle';
 import StatsTable from './pages/Tools/StatsTable/Stats';
 import Sticker from './pages/Sticker/Sticker';
 import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
-import CalculateRaid from './pages/Tools/CalculateRaid/CalculateRaid';
+import CalculatePoint from './pages/Tools/CalculatePoint/CalculatePoint';
 
 const App = () => {
 
@@ -49,7 +49,7 @@ const App = () => {
               <Route path="/stats-table" element={<StatsTable/>}></Route>
               <Route path="/damage-calculate" element={<Damage/>}></Route>
               <Route path="/raid-battle" element={<RaidBattle/>}></Route>
-              <Route path="/calculate-raid" element={<CalculateRaid/>}></Route>
+              <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
               <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
               <Route path="/stickers" element={<Sticker/>}></Route>

@@ -31,6 +31,12 @@ img.pokemon-sprite-medium {
     object-fit: contain;
 }
 
+img.pokemon-sprite-large {
+    width: 100%;
+    height: 96px;
+    object-fit: contain;
+}
+
 img.pokemon-sprite-counter {
     width: 100%;
     height: 64px;

@@ -11,7 +11,7 @@ import sta_logo from '../../assets/stamina.png';
 
 import pokemonData from '../../data/pokemon.json';
 
-const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats, raid, tier, setTier, hide}) => {
+const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide}) => {
 
     const [currDataPoke, setCurrDataPoke] = useState(null);
     const [currTier, setCurrTier] = useState(tier);
@@ -59,15 +59,15 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
             const formDEF = filterFormList(stats.defense.ranking, id);
             const formSTA = filterFormList(stats.stamina.ranking, id);
 
-            setStatATK(raid && tier && hide ? {attack: calculateRaidStat(formATK.attack, tier)} : formATK);
-            setStatDEF(raid && tier && hide ? {defense: calculateRaidStat(formDEF.defense, tier)} : formDEF);
-            setStatSTA(raid && tier && hide ? {stamina: RAID_BOSS_TIER[tier].sta} : formSTA);
+            setStatATK(raid && tier && !hide ? {attack: calculateRaidStat(formATK.attack, tier)} : formATK);
+            setStatDEF(raid && tier && !hide ? {defense: calculateRaidStat(formDEF.defense, tier)} : formDEF);
+            setStatSTA(raid && tier && !hide ? {stamina: RAID_BOSS_TIER[tier].sta} : formSTA);
             setCurrDataPoke(dataPoke.find(item => item.id === id));
 
             if (formATK && formDEF && formSTA) {
-                onSetStats("atk", raid && tier && hide ? calculateRaidStat(formATK.attack, tier) : formATK.attack)
-                onSetStats("def", raid && tier && hide ? calculateRaidStat(formATK.defense, tier) : formDEF.defense)
-                onSetStats("sta", raid && tier && hide ? RAID_BOSS_TIER[tier].sta : formSTA.stamina)
+                onSetStats("atk", raid && tier && !hide ? calculateRaidStat(formATK.attack, tier) : formATK.attack)
+                onSetStats("def", raid && tier && !hide ? calculateRaidStat(formDEF.defense, tier) : formDEF.defense)
+                onSetStats("sta", raid && tier && !hide ? RAID_BOSS_TIER[tier].sta : formSTA.stamina)
                 if (setForm) setForm(currForm)
             }
         }
@@ -80,6 +80,7 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
                 <Form.Select className="w-100" onChange={(e) => {
                     setCurrTier(e.target.value);
                     if (setTier) setTier(e.target.value);
+                    if (onClearStats) onClearStats(true);
                     }} value={currTier}>
                     <optgroup label="Normal Tiers">
                         <option value={1}>Tier 1</option>

@@ -20,6 +20,7 @@
 .table-raid-cal thead tr th:nth-child(1) {
     background-color: white !important;
     width: 75px !important;
+    min-width: 75px !important;
 }
 
 .table-raid-cal tbody tr td:nth-child(1) {
@@ -29,6 +30,16 @@
     text-align: center;
     color: black;
     font-weight: bold;
+}
+
+.sticky-left {
+    position: sticky;
+    left: 0;
+}
+
+.sticky-table-left tbody tr td:nth-child(1) {
+    position: sticky;
+    left: 0;
 }
 
 .table-raid-cal tbody tr td {
@@ -44,4 +55,10 @@
 
 .text-iv-bulk {
     font-weight: initial;
+}
+
+.border-type-stat {
+    border: 1px solid lightgray;
+    padding: 10px;
+    margin: 10px 0;
 }

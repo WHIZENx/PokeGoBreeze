@@ -33,7 +33,7 @@ const NavbarComponent = () => {
                         <NavDropdown.Divider />
                         <Link className="dropdown-item" to="/calculate-stats">Calculate Stats</Link>
                         <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
-                        <Link className="dropdown-item" to="/calculate-raid">Calculate Raid Stats</Link>
+                        <Link className="dropdown-item" to="/calculate-point">Calculate Point Stats</Link>
                     </NavDropdown>
                     <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Sheet</Link>
                     <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>

@@ -73,7 +73,7 @@ const Tools = (props) => {
     const changeForm = (e) => {
         const findForm = formList.map(item => item.find(item => item.form.name === e.currentTarget.value)).find(item => item);
         setCurrForm(findForm);
-        props.onClearArrStats();
+        props.onClearStats();
     }
 
     const onSetTier = (tier) => {
@@ -142,8 +142,12 @@ const Tools = (props) => {
                         aria-labelledby="row-types-group-label"
                         name="row-types-group"
                         value={typePoke}
-                        onChange={(e) => setTypePoke(e.target.value)}>
-                            <FormControlLabel value="pokemon" control={<Radio />} label={<span><img height={32} alt="img-pokemon" src={APIService.getItemSprite("pokeball_sprite")}/> Pokemon Stats</span>} />
+                        onChange={(e) => {
+                            setTypePoke(e.target.value);
+                            if (props.setRaid) props.setRaid(e.target.value === "pokemon" ? false : true);
+                            if (props.onClearStats) props.onClearStats(true);
+                        }}>
+                        <FormControlLabel value="pokemon" control={<Radio />} label={<span><img height={32} alt="img-pokemon" src={APIService.getItemSprite("pokeball_sprite")}/> Pokémon Stats</span>} />
                         <FormControlLabel value="boss" control={<Radio />} label={<span><img className="img-type-icon" height={32} alt="img-boss" src={APIService.getRaidSprite("ic_raid_small")}/> Boss Stats</span>} />
                     </TypeRadioGroup>
                 </div>
@@ -152,7 +156,7 @@ const Tools = (props) => {
                 <div className="col-sm-6"></div>
                 <div className="col-sm-6"></div>
             </div>
-            <FormTools hide={props.hide} raid={typePoke === "pokemon" ? false : true} tier={tier} setTier={onSetTier} setForm={props.setForm} id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats}/>
+            <FormTools hide={props.hide} raid={typePoke === "pokemon" ? false : true} tier={tier} setTier={onSetTier} setForm={props.setForm} id={props.id} dataPoke={pokeData} currForm={currForm} formList={formList} stats={props.stats} onSetStats={props.onHandleSetStats} onClearStats={props.onClearStats}/>
         </Fragment>
     )
 }
