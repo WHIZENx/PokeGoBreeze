@@ -31,6 +31,7 @@ const CalculatePoint = () => {
     const [STAIv, setSTAIv] = useState(0);
 
     const [weaterBoosts, setWeaterBoosts] = useState(false);
+    const [pvpDmg, setPvpDmg] = useState(false);
 
     const [statDefATK, setStatDefATK] = useState(0);
     const [statDefDEF, setStatDefDEF] = useState(0);
@@ -99,10 +100,10 @@ const CalculatePoint = () => {
         for (let i = MIN_LEVEL; i <= MAX_LEVEL; i+=0.5) {
             dataList[lv] = dataList[lv] ?? [];
             for (let j = MIN_IV; j <= MAX_IV; j+=1) {
-                const result = calculateDamagePVE(calculateStatsBattle(statATK, j, i, true), statDefDEF, move.pve_power, {
+                const result = calculateDamagePVE(calculateStatsBattle(statATK, j, i, true), statDefDEF, !isRaid && pvpDmg ? move.pvp_power : move.pve_power, {
                     effective: getTypeEffective(move.type, formDef.form.types.map(item => item.type.name)),
                     stab: findStabType(form.form.types.map(item => item.type.name), move.type),
-                    wb: weaterBoosts
+                    wb: (!pvpDmg || isRaid) && weaterBoosts
                 }, false);
                 dataList[lv].push(result)
                 group.push(result)
@@ -125,10 +126,10 @@ const CalculatePoint = () => {
             dataListDef[lv] = dataListDef[lv] ?? [];
             dataListSta[lv] = dataListSta[lv] ?? [];
             for (let j = MIN_IV; j <= MAX_IV; j+=1) {
-                const resultDef = calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, j, i, true), moveDef.pve_power, {
+                const resultDef = calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, j, i, true), !isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power, {
                     effective: getTypeEffective(moveDef.type, form.form.types.map(item => item.type.name)),
                     stab: findStabType(formDef.form.types.map(item => item.type.name), moveDef.type),
-                    wb: weaterBoosts
+                    wb: (!pvpDmg || isRaid) && weaterBoosts
                 }, false);
                 dataListDef[lv].push(resultDef);
                 groupDef.push(resultDef);
@@ -161,14 +162,14 @@ const CalculatePoint = () => {
     }
 
     const computeBulk = (count, lv) => {
-        return Math.max(0, Math.ceil((calculateStatsBattle(statSTA, STAIv, lv, true) - count*calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, DEFIv, lv, true), cMove.pve_power, {
+        return Math.max(0, Math.ceil((calculateStatsBattle(statSTA, STAIv, lv, true) - count*calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, DEFIv, lv, true), !isRaid && pvpDmg ? cMove.pvp_power : cMove.pve_power, {
             effective: getTypeEffective(cMove.type, form.form.types.map(item => item.type.name)),
             stab: findStabType(formDef.form.types.map(item => item.type.name), cMove.type),
-            wb: weaterBoosts
-        }, false)) / calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, DEFIv, lv, true), fMove.pve_power, {
+            wb: (!pvpDmg || isRaid) && weaterBoosts
+        }, false)) / calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, DEFIv, lv, true), !isRaid && pvpDmg ? fMove.pvp_power : fMove.pve_power, {
             effective: getTypeEffective(fMove.type, form.form.types.map(item => item.type.name)),
             stab: findStabType(formDef.form.types.map(item => item.type.name), fMove.type),
-            wb: weaterBoosts
+            wb: (!pvpDmg || isRaid) && weaterBoosts
         }, false)));
     }
 
@@ -239,7 +240,8 @@ const CalculatePoint = () => {
                         <div className="col-lg-4">
                             <h2 className="text-center text-decoration-underline">Attacker move</h2>
                             <Move text="Select Moves" id={id} selectDefault={true} form={form ? form.form.pokemon.name : name.toLowerCase()} setMove={setMove} move={move}/>
-                            <FormControlLabel control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)}/>} label="Weater Boosts"/>
+                            <FormControlLabel control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)}/>} label="Weater Boosts" disabled={pvpDmg && !isRaid}/>
+                            <FormControlLabel control={<Checkbox checked={pvpDmg} onChange={(event, check) => setPvpDmg(check)}/>} label="PVP stats" disabled={isRaid}/>
                             {move &&
                             <div style={{width: 300, margin: 'auto'}}>
                                 <p>- Move Ability Type: <b>{capitalize(move.type_move.toLowerCase())}</b></p>
@@ -305,7 +307,8 @@ const CalculatePoint = () => {
                         <div className="col-lg-4">
                             <h2 className="text-center text-decoration-underline">Defender move</h2>
                             <Move text="Select Moves" id={idDef} selectDefault={true} form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()} setMove={setMoveDef} move={moveDef}/>
-                            <FormControlLabel control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)}/>} label="Weater Boosts"/>
+                            <FormControlLabel control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)}/>} label="Weater Boosts" disabled={pvpDmg}/>
+                            <FormControlLabel control={<Checkbox checked={pvpDmg} onChange={(event, check) => setPvpDmg(check)}/>} label="PVP stats" disabled={isRaid}/>
                             {moveDef &&
                             <div style={{width: 300, margin: 'auto'}}>
                                 <p>- Move Ability Type: <b>{capitalize(moveDef.type_move.toLowerCase())}</b></p>
@@ -438,7 +441,8 @@ const CalculatePoint = () => {
                                 </div>
                                 }
                             </div>
-                            <FormControlLabel control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)}/>} label="Weater Boosts"/>
+                            <FormControlLabel control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)}/>} label="Weater Boosts" disabled={pvpDmg}/>
+                            <FormControlLabel control={<Checkbox checked={pvpDmg} onChange={(event, check) => setPvpDmg(check)}/>} label="PVP stats" disabled={isRaid}/>
                             <hr/>
                             <h2 className="text-center text-decoration-underline">Attacker stats</h2>
                             <div>
