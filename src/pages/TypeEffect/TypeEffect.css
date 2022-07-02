@@ -14,6 +14,7 @@
 }
 
 .card-select {
+    position: relative;
     padding: 10px;
 }
 
@@ -26,8 +27,10 @@
 
 .remove-close {
     filter: invert(19%) sepia(82%) saturate(7008%) hue-rotate(357deg) brightness(102%) contrast(114%);
-    float: right;
-    margin-top: 20px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .result-type {

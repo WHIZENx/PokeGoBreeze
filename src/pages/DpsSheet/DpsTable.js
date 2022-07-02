@@ -363,6 +363,7 @@ const DpsTable = () => {
                                     <div className="input-group">
                                         <span className="input-group-text">Target Pokémon</span>
                                         <SelectPokemon clearData={clearData}
+                                        selected={true}
                                         setCurrentPokemon={setDataTargetPokemon}
                                         setFMovePokemon={setFmoveTargetPokemon}
                                         setCMovePokemon={setCmoveTargetPokemon}/>
