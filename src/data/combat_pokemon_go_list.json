@@ -12007,8 +12007,12 @@
             "HYPER_FANG",
             "GRASS_KNOT"
         ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
         "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },
@@ -12025,8 +12029,12 @@
             "HYPER_FANG",
             "GRASS_KNOT"
         ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
         "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },
@@ -12098,8 +12106,12 @@
             "PLAY_ROUGH",
             "DARK_PULSE"
         ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
         "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },
@@ -12117,8 +12129,12 @@
             "DARK_PULSE",
             "PAYBACK"
         ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
         "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },
@@ -13514,8 +13530,12 @@
             "BUBBLE_BEAM",
             "BRAVE_BIRD"
         ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
         "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },
@@ -13532,8 +13552,12 @@
             "BUBBLE_BEAM",
             "HURRICANE"
         ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
         "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },
@@ -13697,8 +13721,12 @@
             "BODY_SLAM",
             "GRASS_KNOT"
         ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
         "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },
@@ -13715,8 +13743,12 @@
             "SLUDGE_BOMB",
             "GRASS_KNOT"
         ],
-        "SHADOW_MOVES": [],
-        "PURIFIED_MOVES": [],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
         "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },

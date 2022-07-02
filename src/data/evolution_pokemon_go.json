@@ -10344,7 +10344,10 @@
             }
         ],
         "mega_evo": [],
-        "purified": {},
+        "purified": {
+            "stardust": 1000,
+            "candy": 1
+        },
         "thirdMove": {
             "stardust": 10000,
             "candy": 25
@@ -10356,7 +10359,10 @@
         "name": "WATCHOG",
         "evo_list": [],
         "mega_evo": [],
-        "purified": {},
+        "purified": {
+            "stardust": 1000,
+            "candy": 1
+        },
         "thirdMove": {
             "stardust": 10000,
             "candy": 25
@@ -10428,7 +10434,10 @@
             }
         ],
         "mega_evo": [],
-        "purified": {},
+        "purified": {
+            "stardust": 1000,
+            "candy": 1
+        },
         "thirdMove": {
             "stardust": 10000,
             "candy": 25
@@ -10440,7 +10449,10 @@
         "name": "LIEPARD",
         "evo_list": [],
         "mega_evo": [],
-        "purified": {},
+        "purified": {
+            "stardust": 1000,
+            "candy": 1
+        },
         "thirdMove": {
             "stardust": 10000,
             "candy": 25
@@ -11729,7 +11741,10 @@
             }
         ],
         "mega_evo": [],
-        "purified": {},
+        "purified": {
+            "stardust": 1000,
+            "candy": 1
+        },
         "thirdMove": {
             "stardust": 50000,
             "candy": 50
@@ -11741,7 +11756,10 @@
         "name": "SWANNA",
         "evo_list": [],
         "mega_evo": [],
-        "purified": {},
+        "purified": {
+            "stardust": 1000,
+            "candy": 1
+        },
         "thirdMove": {
             "stardust": 50000,
             "candy": 50
@@ -12009,7 +12027,10 @@
             }
         ],
         "mega_evo": [],
-        "purified": {},
+        "purified": {
+            "stardust": 1000,
+            "candy": 1
+        },
         "thirdMove": {
             "stardust": 50000,
             "candy": 50
@@ -12021,7 +12042,10 @@
         "name": "AMOONGUSS",
         "evo_list": [],
         "mega_evo": [],
-        "purified": {},
+        "purified": {
+            "stardust": 1000,
+            "candy": 1
+        },
         "thirdMove": {
             "stardust": 50000,
             "candy": 50

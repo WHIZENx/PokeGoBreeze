@@ -24,6 +24,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { capitalize, splitAndCapitalize } from "../../../util/Utils";
 import { computeBgColor, computeColor } from "../../../util/Compute";
 
+import { OverlayTrigger } from "react-bootstrap";
+import PopoverConfig from "../../../components/Popover/PopoverConfig";
+
 const theme = createTheme({
     palette: {
       neutral: {
@@ -268,25 +271,31 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     return (
         <Fragment>
             <h4 className="title-evo"><b>Evolution Chain</b>
-            <span className="tooltips-info">
-                <InfoOutlinedIcon color="primary"/>
-                <span className="info-evo">
-                <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}/> : Candy of pokemon.</span>
-                    <span className="d-block caption">- <QuestionMarkIcon fontSize="small"/> : Random evolution.</span>
-                    <span className="d-block caption">- <MaleIcon fontSize="small" />/<FemaleIcon fontSize="small" /> : Only once gender can evolution.</span>
-                    <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /> : Walk together with buddy.</span>
-                    <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/> : Buddy walk with trainer.</span>
-                    <span className="d-block caption">- <WbSunnyIcon fontSize="small" /> : Evolution during at day.</span>
-                    <span className="d-block caption">- <DarkModeIcon fontSize="small" /> : Evolution during at night.</span>
-                    <span className="d-block caption">- <img alt='img-troy-required' height={20} src={APIService.getItemTroy("")}/> : Evolution in lure module.</span>
-                    <span className="d-block caption">- <SecurityUpdateIcon fontSize="small" /> : Evolution at upside down phone.</span>
-                    <span className="d-block caption">- <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.</span>
-                    <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getPokeSprite(0)}/> : Catch pokemon with type.</span>
-                    <span className="d-block caption">- <SportsMartialArtsIcon fontSize="small" /> : Win raid.</span>
-                    <span className="d-block caption">- <FavoriteIcon fontSize="small" sx={{color:'red'}}/> : Evolution with affection points.</span>
-                    <span className="d-block caption">- <RestaurantIcon fontSize="small"/> : Buddy feed.</span>
+            <OverlayTrigger
+                    placement='auto'
+                    overlay={<PopoverConfig id="popover-info-evo">
+                        <span className="info-evo">
+                            <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}/> : Candy of pokemon.</span>
+                            <span className="d-block caption">- <QuestionMarkIcon fontSize="small"/> : Random evolution.</span>
+                            <span className="d-block caption">- <MaleIcon fontSize="small" />/<FemaleIcon fontSize="small" /> : Only once gender can evolution.</span>
+                            <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /> : Walk together with buddy.</span>
+                            <span className="d-block caption">- <DirectionsWalkIcon fontSize="small"/> : Buddy walk with trainer.</span>
+                            <span className="d-block caption">- <WbSunnyIcon fontSize="small" /> : Evolution during at day.</span>
+                            <span className="d-block caption">- <DarkModeIcon fontSize="small" /> : Evolution during at night.</span>
+                            <span className="d-block caption">- <img alt='img-troy-required' height={20} src={APIService.getItemTroy("")}/> : Evolution in lure module.</span>
+                            <span className="d-block caption">- <SecurityUpdateIcon fontSize="small" /> : Evolution at upside down phone.</span>
+                            <span className="d-block caption">- <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.</span>
+                            <span className="d-block caption">- <img alt='img-stardust' height={20} src={APIService.getPokeSprite(0)}/> : Catch pokemon with type.</span>
+                            <span className="d-block caption">- <SportsMartialArtsIcon fontSize="small" /> : Win raid.</span>
+                            <span className="d-block caption">- <FavoriteIcon fontSize="small" sx={{color:'red'}}/> : Evolution with affection points.</span>
+                            <span className="d-block caption">- <RestaurantIcon fontSize="small"/> : Buddy feed.</span>
+                        </span>
+                    </PopoverConfig>}>
+                <span className="tooltips-info">
+                    <InfoOutlinedIcon color="primary"/>
                 </span>
-            </span></h4>
+            </OverlayTrigger>
+            </h4>
             <div className="evo-container scroll-form" style={{minHeight:setHeightEvo()}}>
                 <ul className="ul-evo">
                     {arrEvoList.map((values, evo) => (

@@ -160,6 +160,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm5.icon",
                 "shiny": "Addressable Assets/pm5.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 5,
+                "form": "JAN_2020",
+                "default": "Addressable Assets/pm5.cJAN_2020_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm5.cJAN_2020_NOEVOLVE.s.icon"
             }
         ],
         "sound": {
@@ -202,6 +209,13 @@
                 "gender": 3,
                 "default": "Addressable Assets/pm6.fCOPY_2019.icon",
                 "shiny": null
+            },
+            {
+                "gender": 3,
+                "pokemonId": 6,
+                "form": "JAN_2020",
+                "default": "Addressable Assets/pm6.cJAN_2020_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm6.cJAN_2020_NOEVOLVE.s.icon"
             }
         ],
         "sound": {
@@ -1212,6 +1226,20 @@
                 "gender": 2,
                 "default": "Addressable Assets/pm25.cTCG_2022_NOEVOLVE.g2.icon",
                 "shiny": "Addressable Assets/pm25.cTCG_2022_NOEVOLVE.g2.s.icon"
+            },
+            {
+                "gender": 2,
+                "pokemonId": 25,
+                "form": "ANNIVERSARY_2022",
+                "default": "Addressable Assets/pm25.cANNIVERSARY_2022_NOEVOLVE.g2.icon",
+                "shiny": "Addressable Assets/pm25.cANNIVERSARY_2022_NOEVOLVE.g2.s.icon"
+            },
+            {
+                "pokemonId": 25,
+                "form": "ANNIVERSARY_2022",
+                "gender": 1,
+                "default": "Addressable Assets/pm25.cANNIVERSARY_2022_NOEVOLVE.icon",
+                "shiny": "Addressable Assets/pm25.cANNIVERSARY_2022_NOEVOLVE.s.icon"
             }
         ],
         "sound": {

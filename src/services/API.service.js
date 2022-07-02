@@ -170,6 +170,10 @@ class APIService {
         return image.includes("gofestCatch2022") ? `${POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/${image}` : `${POGO_PROD_ASSET_URL}${image}`;
     }
 
+    getSticker(sticker) {
+        return `${POGO_ASSET_API_URL}Stickers/sticker_${sticker}.png`;
+    }
+
     getStickerPokeGo(sticker) {
         return `${POGO_PRODHOLOHOLO_ASSET_URL}Stickers/${sticker}`;
     }

@@ -11980,7 +11980,7 @@
         "isDeployable": false,
         "isTradable": true,
         "pokemonClass": "LEGENDARY",
-        "disableTransferToPokemonHome": true
+        "disableTransferToPokemonHome": false
     },
     "mewtwomegax": {
         "num": 150,

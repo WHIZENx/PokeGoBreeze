@@ -9,7 +9,7 @@
 .sticker-container {
     margin: 15px 0;
     border: 1px solid #b8d4da;
-    max-height: 80vh;
+    max-height: 75vh;
     overflow-y: auto;
 }
 
@@ -24,8 +24,18 @@
     background-color: #409ff1;
     color: #f1ffff;
     border-bottom: 1px solid #b8d4da;
+    z-index: 2;
 }
 
 .sticker-container h5 span {
     margin-left: 15px;
+}
+
+.icon-shop {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    padding: 5px;
+    background-color: orangered;
+    border-radius: 50%;
 }

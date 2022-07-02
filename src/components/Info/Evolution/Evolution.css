@@ -32,25 +32,6 @@
     cursor: pointer;
 }
 
-.tooltips-info:hover .info-evo {
-    visibility: visible;
-}
-
-.tooltips-info .info-evo {
-    visibility: hidden;
-    width: 260px;
-    position: absolute;
-    padding: 8px;
-    background-color: cornsilk;
-    z-index: 5;
-    bottom: 100%;
-    left: 50%;
-    margin-left: calc(-260px/2);
-    border-radius: 3%;
-    margin-bottom: 3px;
-    cursor: auto !important;
-}
-
 .info-evo span {
     margin-bottom: 5px;
 }
@@ -59,13 +40,6 @@
     margin-bottom: 0;
 }
 
-.tooltips-info .info-evo::after {
-    content: " ";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: cornsilk transparent transparent transparent;
+#popover-info-evo {
+    background-color: cornsilk;
 }
