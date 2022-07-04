@@ -25,7 +25,6 @@ export const getTypeEffective = (typeMove, typesObj) => {
     return value_effective;
 }
 
-
 /* Thank algorithm from pokemongohub.net */
 export const calBaseATK = (stats, nerf) => {
     const atk = stats.atk ?? stats.find(item => item.stat.name === "attack").base_stat;
@@ -354,8 +353,6 @@ export const findCPforLeague = (atk, def, sta, IVatk, IVdef, IVsta, level, maxCP
         level: l
     }
 }
-
-
 
 export const sortStatsProd = (data) => {
     data = data.sort((a,b) => a.statsProds - b.statsProds);

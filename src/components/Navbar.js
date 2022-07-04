@@ -34,10 +34,9 @@ const NavbarComponent = () => {
                         <Link className="dropdown-item" to="/calculate-stats">Calculate Stats</Link>
                         <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
                         <Link className="dropdown-item" to="/calculate-point">Calculate Point Stats</Link>
-                        <NavDropdown.Divider />
-                        <Link className="dropdown-item" to="/pvp-stats">PVP Stats</Link>
                     </NavDropdown>
                     <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Sheet</Link>
+                    <Link className="nav-link" to="/pvp-stats">PVP Stats</Link>
                     <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>
                     <Link className="nav-link" to="/stickers">Stickers</Link>
                 </Nav>

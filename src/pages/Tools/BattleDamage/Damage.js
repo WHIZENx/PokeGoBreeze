@@ -8,7 +8,7 @@ import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 
 import './Damage.css';
-import Type from "../../../components/Sprites/Type";
+import Type from "../../../components/Sprites/Type/Type";
 import { Box } from "@mui/system";
 import DamageTable from "./DamageTable";
 

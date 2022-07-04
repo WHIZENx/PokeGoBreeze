@@ -1,0 +1,42 @@
+.stats-border {
+    border: 1px solid lightgray;
+    padding: 4rem 4.5rem;
+    width: fit-content;
+    height: fit-content;
+}
+
+.leader-text {
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.attacker-text {
+    left: 10px;
+    top: 25%;
+    transform: translateY(-25%);
+}
+
+.consistance-text {
+    left: 10px;
+    bottom: 25%;
+    transform: translateY(25%);
+}
+
+.closer-text {
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.charger-text {
+    right: 20px;
+    bottom: 25%;
+    transform: translateY(25%);
+}
+
+.switch-text {
+    right: 20px;
+    top: 25%;
+    transform: translateY(-25%);
+}

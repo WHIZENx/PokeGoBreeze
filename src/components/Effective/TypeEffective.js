@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
-import Type from '../Sprites/Type';
+import Type from '../Sprites/Type/Type';
 
 const TypeEffective = (props) => {
 

@@ -7,7 +7,7 @@ import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { STAB_MULTIPLY } from '../../util/Constants';
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
-import TypeBar from "../../components/Sprites/TypeBar";
+import TypeBar from "../../components/Sprites/TypeBar/TypeBar";
 
 import moveData from '../../data/combat.json';
 import weathers from '../../data/weather_boosts.json';

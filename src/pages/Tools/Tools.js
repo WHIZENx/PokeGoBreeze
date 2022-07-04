@@ -5,7 +5,7 @@ import FormTools from "./FormTools";
 
 import loading from '../../assets/loading.png';
 import { splitAndCapitalize, TypeRadioGroup } from "../../util/Utils";
-import Type from "../../components/Sprites/Type";
+import Type from "../../components/Sprites/Type/Type";
 import { FormControlLabel, Radio } from "@mui/material";
 
 const Tools = (props) => {

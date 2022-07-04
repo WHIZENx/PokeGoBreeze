@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import APIService from '../../services/API.service'
+import APIService from '../../../services/API.service'
 
 const Type = (props) => {
 

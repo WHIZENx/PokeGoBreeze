@@ -18,8 +18,8 @@ import { Badge, Checkbox, FormControlLabel, Switch } from "@mui/material";
 import loadingImg from '../../../assets/loading.png';
 import './RaidBattle.css';
 import APIService from "../../../services/API.service";
-import Type from "../../../components/Sprites/Type";
-import TypeBadge from "../../../components/Sprites/TypeBadge";
+import Type from "../../../components/Sprites/Type/Type";
+import TypeBadge from "../../../components/Sprites/TypeBadge/TypeBadge";
 
 import PokemonRaid from "../../../components/Raid/PokemonRaid";
 

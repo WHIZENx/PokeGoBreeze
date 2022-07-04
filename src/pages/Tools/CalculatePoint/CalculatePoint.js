@@ -149,7 +149,7 @@ const CalculatePoint = () => {
     const computeColorTone = (data) => {
         let colorTone = {};
         let r = 50, g = 255, b = 100;
-        const diff = Math.max(2, 20-(data.length/2))
+        const diff = Math.max(1, 20-(data.length/2))
         data.forEach((value, index) => {
             colorTone[value.toString()] = {}
             colorTone[value.toString()]["number"] = value;

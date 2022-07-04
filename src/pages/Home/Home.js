@@ -1,6 +1,6 @@
 import { Table, TableContainer, TableHead, TableRow, TableBody, TableCell, tableCellClasses, styled } from '@mui/material';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import Type from '../../components/Sprites/Type';
+import Type from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 
 import { splitAndCapitalize } from '../../util/Utils';
