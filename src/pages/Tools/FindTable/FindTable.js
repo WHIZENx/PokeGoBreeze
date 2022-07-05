@@ -6,10 +6,10 @@ import { calculateCP, predictCPList, predictStat } from "../../../util/Calculate
 import DataTable from 'react-data-table-component';
 import data from "../../../data/cp_multiplier.json";
 
-import '../Tools.css';
+import '../../../components/Select/Find/Tools.css';
 import { useSnackbar } from "notistack";
 import { Box, Rating } from "@mui/material";
-import Find from "../Find";
+import Find from "../../../components/Select/Find/Find";
 
 
 const columnsIV = [

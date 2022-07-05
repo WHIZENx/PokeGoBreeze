@@ -1,11 +1,11 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { sortStatsPokemon } from "../../util/Calculate";
-import APIService from "../../services/API.service";
+import { sortStatsPokemon } from "../../../util/Calculate";
+import APIService from "../../../services/API.service";
 import Tools from "./Tools";
 
-import pokemonData from '../../data/pokemon.json';
-import pokeListName from '../../data/pokemon_names.json';
-import { convertArrStats } from "../../util/Utils";
+import pokemonData from '../../../data/pokemon.json';
+import pokeListName from '../../../data/pokemon_names.json';
+import { convertArrStats } from "../../../util/Utils";
 
 const Find = (props) => {
 

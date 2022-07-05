@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import './Hexagon.css';
 
-const Hexagon = (props) => {
+const Hexagon = ({setDefaultStats, ...props}) => {
 
     const hexBorderSize = props.size ?? 0;
     const hexSize = hexBorderSize/2;
@@ -41,8 +41,8 @@ const Hexagon = (props) => {
         const ctx = canvasId.getContext('2d');
         ctx.beginPath();
         for (let i = 1; i <= 6; i++) {
-            const end = getHexConerCord(center, hexSize, i);
-            ctx.moveTo(hexSize, hexSize);
+            const end = getHexConerCord(center, hexSize-2, i);
+            ctx.moveTo(hexSize-2, hexSize-2);
             ctx.lineTo(end.x, end.y);
         }
         ctx.strokeStyle = "lightgray";
@@ -52,23 +52,24 @@ const Hexagon = (props) => {
 
     const drawStatsHex = useCallback((canvasId, center, stat) => {
         const stats = {
-            "0": (stat.switch || 0)*hexSize/100,
+            "0": (stat.switching || 0)*hexSize/100,
             "1": (stat.charger || 0)*hexSize/100,
             "2": (stat.closer || 0)*hexSize/100,
             "3": (stat.cons || 0)*hexSize/100,
             "4": (stat.atk || 0)*hexSize/100,
             "5": (stat.lead || 0)*hexSize/100,
-            "6": (stat.switch || 0)*hexSize/100
+            "6": (stat.switching || 0)*hexSize/100
         };
         const ctx = canvasId.getContext('2d');
-        const start = getHexConerCord(center, stats["0"], 0);
+        const start = getHexConerCord(center, Math.min(stats["0"], 100), 0);
         ctx.beginPath();
         ctx.moveTo(start.x, start.y);
         for (let i = 1; i <= 6; i++) {
-            const end = getHexConerCord(center, stats[i.toString()], i);
+            const end = getHexConerCord(center, Math.min(stats[i.toString()], 100), i);
             ctx.lineTo(end.x, end.y);
         }
         ctx.lineTo(start.x, start.y);
+        ctx.lineWidth = 2;
         ctx.fillStyle = "#a3eca3";
         ctx.fill();
         ctx.strokeStyle = "green";
@@ -77,14 +78,37 @@ const Hexagon = (props) => {
     }, [getHexConerCord, hexSize]);
 
     useEffect(() => {
-        const ctx = canvasHex.current.getContext('2d');
-        ctx.beginPath();
-        ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
-        drawInitHex(canvasHex.current, { x: hexBorderSize/2, y: hexBorderSize/2 });
-        drawInitLineHex(canvasHex.current, { x: hexBorderSize/2, y: hexBorderSize/2 });
-        drawStatsHex(canvasHex.current, { x: hexBorderSize/2, y: hexBorderSize/2 }, props.stats);
-        setInitHex(true);
-    }, [canvasHex, drawInitHex, drawInitLineHex, initHex, drawStatsHex, hexBorderSize, props.stats]);
+        if (props.lead !== props.stats.lead ||
+            props.charger !== props.stats.charger ||
+            props.closer !== props.stats.closer ||
+            props.cons !== props.stats.cons ||
+            props.atk !== props.stats.atk ||
+            props.switching !== props.stats.switching) {
+            var interval
+            if (props.animation) {
+                interval = setInterval(() => {
+                    setDefaultStats({...props.defaultStats, ...{
+                        lead: Math.min(props.lead+(props.stats.lead/30), props.stats.lead),
+                        charger: Math.min(props.charger+(props.stats.charger/30), props.stats.charger),
+                        closer: Math.min(props.closer+(props.stats.closer/30), props.stats.closer),
+                        cons: Math.min(props.cons+(props.stats.cons/30), props.stats.cons),
+                        atk: Math.min(props.atk+(props.stats.atk/30), props.stats.atk),
+                        switching: Math.min(props.switching+(props.stats.switching/30), props.stats.switching)
+                    }})
+                }, 5)
+            }
+
+            const ctx = canvasHex.current.getContext('2d');
+            ctx.beginPath();
+            ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
+            drawInitHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 });
+            drawInitLineHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 });
+            drawStatsHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 }, props.animation ? props.defaultStats : props.stats);
+            setInitHex(true);
+        }
+        return () => clearInterval(interval);
+    }, [drawInitHex, drawInitLineHex, drawStatsHex, hexBorderSize, setDefaultStats, props.animation, props.stats,
+        props.atk, props.charger, props.closer, props.cons, props.defaultStats, props.lead, props.switching]);
 
     return (
         <div className="position-relative stats-border">
@@ -116,13 +140,13 @@ const Hexagon = (props) => {
                     <b>Charger</b>
                 </div>
                 <div className="position-absolute text-center switch-text">
-                    {(props.stats.switch || 0).toFixed(1)}
+                    {(props.stats.switching || 0).toFixed(1)}
                     <br/>
                     <b>Switch</b>
                 </div>
                 </Fragment>
             }
-            <canvas ref={canvasHex} width={hexBorderSize} height={hexBorderSize}></canvas>
+            <canvas ref={canvasHex} width={hexBorderSize} height={hexBorderSize+4}></canvas>
         </div>
     )
 }

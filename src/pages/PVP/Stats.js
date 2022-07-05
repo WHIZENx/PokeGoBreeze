@@ -1,44 +1,112 @@
-import Find from "../Tools/Find";
+import SelectFind from "../../components/Select/Select/SelectFind";
 
 import './Stats.css';
 import Hexagon from "../../components/Sprites/Hexagon/Hexagon";
 import { useState } from "react";
-import { calculateTankiness } from "../../util/Calculate";
+
+import { convertNameRanking } from '../../util/Utils';
+
+import rankingAttackers from '../../data/pvp/attackers/rankings-1500.json';
+import rankingChargers from '../../data/pvp/chargers/rankings-1500.json';
+import rankingClosers from '../../data/pvp/closers/rankings-1500.json';
+import rankingConsistency from '../../data/pvp/consistency/rankings-1500.json';
+import rankingLeads from '../../data/pvp/leads/rankings-1500.json';
+import rankingSwitches from '../../data/pvp/switches/rankings-1500.json';
+
+import rankingOverAll from '../../data/pvp/overall/rankings-1500.json';
 
 const Stats = () => {
 
-    const initStats = {
-        lead: 85,
-        atk: 70,
-        cons: 65,
-        closer: 50,
-        charger: 40,
-        switch: 75
-    }
+    const [defaultStats, setDefaultStats] = useState({
+        lead: 0,
+        atk: 0,
+        cons: 0,
+        closer: 0,
+        charger: 0,
+        switching: 0
+    });
 
-    const [id, setId] = useState(1);
-    const [name, setName] = useState('Bulbasaur');
+    const {lead, atk, cons, closer, charger, switching} = defaultStats;
+
+    const [initStats, setInitStats] = useState({
+        lead: 0,
+        atk: 0,
+        cons: 0,
+        closer: 0,
+        charger: 0,
+        switching: 0
+    });
+
     const [form, setForm] = useState(null);
-
-    const [statATK, setStatATK] = useState(0);
-    const [statDEF, setStatDEF] = useState(0);
-    const [statSTA, setStatSTA] = useState(0);
+    const [ability, setAbility] = useState(null);
 
     const clearData = () => {
-        console.log(id, name, form, statATK, statDEF, statSTA)
+        onClearStats();
+        setForm(null);
+        setAbility(null);
+        console.log(form)
     }
 
     const onSetForm = (form) => {
         setForm(form);
+        const atk = rankingAttackers.find(pokemon => pokemon.speciesId === convertNameRanking(form.slug));
+        const charger = rankingChargers.find(pokemon => pokemon.speciesId === convertNameRanking(form.slug));
+        const closer = rankingClosers.find(pokemon => pokemon.speciesId === convertNameRanking(form.slug));
+        const consistency = rankingConsistency.find(pokemon => pokemon.speciesId === convertNameRanking(form.slug));
+        const lead = rankingLeads.find(pokemon => pokemon.speciesId === convertNameRanking(form.slug));
+        const switching = rankingSwitches.find(pokemon => pokemon.speciesId === convertNameRanking(form.slug));
+        setAbility({
+            attacker: atk,
+            charger: charger,
+            closer: closer,
+            consistency: consistency,
+            lead: lead,
+            switching: switching
+        });
+        setInitStats({
+            lead: lead.score,
+            atk: atk.score,
+            cons: consistency.score,
+            closer: closer.score,
+            charger: charger.score,
+            switching: switching.score
+        })
+    }
+
+    const onClearStats = () => {
+        setDefaultStats({
+            lead: 0,
+            atk: 0,
+            cons: 0,
+            closer: 0,
+            charger: 0,
+            switching: 0
+        });
+        setInitStats({
+            lead: 0,
+            atk: 0,
+            cons: 0,
+            closer: 0,
+            charger: 0,
+            switching: 0
+        })
     }
 
     return (
         <div className="container">
             <div className="d-flex flex-wrap w-100">
-                <Find hide={true} title="PVP Pokémon Stats" clearStats={clearData} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setForm={onSetForm} setName={setName} setId={setId}/>
-                <Hexagon size={200} stats={initStats}/>
-                {statATK && statDEF && statSTA &&
-                <span>Tanki: {calculateTankiness(statDEF, statSTA)}</span>
+                <SelectFind data={rankingOverAll} title="PVP Pokémon Stats" clearData={clearData} setForm={onSetForm}/>
+                {ability &&
+                <>
+                    <Hexagon animation={true} size={200} defaultStats={defaultStats}
+                    setDefaultStats={setDefaultStats}
+                    lead={lead} atk={atk} cons={cons} closer={closer} charger={charger} switching={switching}
+                    stats={initStats}/>
+                    <Hexagon animation={false} size={200} defaultStats={defaultStats}
+                    setDefaultStats={setDefaultStats}
+                    lead={lead} atk={atk} cons={cons} closer={closer} charger={charger} switching={switching}
+                    stats={initStats}/>
+                </>
                 }
             </div>
         </div>

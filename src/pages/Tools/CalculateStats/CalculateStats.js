@@ -14,7 +14,7 @@ import './CalculateStats.css';
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
-import Find from "../Find";
+import Find from "../../../components/Select/Find/Find";
 
 const Calculate = () => {
 

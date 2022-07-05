@@ -1,11 +1,11 @@
 import { useSnackbar } from "notistack";
 import { Fragment, useCallback, useEffect, useState } from "react";
-import APIService from "../../services/API.service";
+import APIService from "../../../services/API.service";
 import FormTools from "./FormTools";
 
-import loading from '../../assets/loading.png';
-import { splitAndCapitalize, TypeRadioGroup } from "../../util/Utils";
-import Type from "../../components/Sprites/Type/Type";
+import loading from '../../../assets/loading.png';
+import { splitAndCapitalize, TypeRadioGroup } from "../../../util/Utils";
+import Type from "../../Sprites/Type/Type";
 import { FormControlLabel, Radio } from "@mui/material";
 
 const Tools = (props) => {

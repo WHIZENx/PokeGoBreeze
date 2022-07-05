@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import Find from "../Find";
+import Find from "../../../components/Select/Find/Find";
 
 import { Badge, Box } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';

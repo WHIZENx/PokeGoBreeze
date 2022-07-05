@@ -1,8 +1,6 @@
 .stats-border {
     border: 1px solid lightgray;
     padding: 4rem 4.5rem;
-    width: fit-content;
-    height: fit-content;
 }
 
 .leader-text {

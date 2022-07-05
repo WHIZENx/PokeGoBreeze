@@ -7,7 +7,7 @@ import { calStatsProd } from "../../../util/Calculate";
 
 import APIService from "../../../services/API.service";
 
-import Find from "../Find";
+import Find from "../../../components/Select/Find/Find";
 
 const columnsStats = [
     {

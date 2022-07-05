@@ -127,6 +127,13 @@ export const convertName = (text) => {
   .replaceAll("É", "E")
 };
 
+export const convertNameRanking = (text) => {
+  return text.toLowerCase()
+  .replaceAll("-", "_")
+  .replaceAll("galar", "galarian")
+  .replaceAll("alola", "alolan")
+};
+
 export const convertArrStats = (data) => {
   return Object.values(data).map(value => {
       let stats = calculateStatsByTag(value.baseStats, value.forme);

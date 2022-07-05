@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import SelectMove from "../../../components/Input/SelectMove";
 import Raid from "../../../components/Raid/Raid";
-import Find from "../Find";
+import Find from "../../../components/Select/Find/Find";
 import { Link } from "react-router-dom";
 
 import pokemonData from '../../../data/pokemon.json';

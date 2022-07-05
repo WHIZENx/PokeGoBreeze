@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from "react";
-import Find from "../Find";
+import Find from "../../../components/Select/Find/Find";
 
 import { Tabs, Tab } from "react-bootstrap";
 

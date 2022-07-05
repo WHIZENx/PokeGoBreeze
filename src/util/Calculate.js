@@ -787,3 +787,5 @@ export const counterPokemon = (def, types) => {
     });
     return sortCounterDPS(dataList);
 }
+
+/* ------------- PVP Calculate ------------- */

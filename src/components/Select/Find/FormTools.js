@@ -1,15 +1,15 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import Stats from "../../components/Info/Stats/Stats";
-import { calculateRaidStat } from "../../util/Calculate";
+import Stats from "../../Info/Stats/Stats";
+import { calculateRaidStat } from "../../../util/Calculate";
 
 import { Form } from "react-bootstrap";
-import { RAID_BOSS_TIER } from "../../util/Constants";
+import { RAID_BOSS_TIER } from "../../../util/Constants";
 
-import atk_logo from '../../assets/attack.png';
-import def_logo from '../../assets/defense.png';
-import sta_logo from '../../assets/stamina.png';
+import atk_logo from '../../../assets/attack.png';
+import def_logo from '../../../assets/defense.png';
+import sta_logo from '../../../assets/stamina.png';
 
-import pokemonData from '../../data/pokemon.json';
+import pokemonData from '../../../data/pokemon.json';
 
 const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide}) => {
 

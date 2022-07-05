@@ -156,7 +156,7 @@ const Move = (props) => {
                                     <td colSpan="2">{move.pvp_power}</td>
                                 </tr>
                                 <tr>
-                                    <td>PVE Power
+                                    <td>PVP Power
                                     <span className="caption">(STAB / Shadow Bonus)</span></td>
                                     <td colSpan="2">{(move.pvp_power*STAB_MULTIPLY).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pvp_power*0.2).toFixed(2)}</span></td>
                                 </tr>

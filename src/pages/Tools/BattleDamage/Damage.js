@@ -14,7 +14,7 @@ import DamageTable from "./DamageTable";
 
 import atk_logo from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
-import Find from "../Find";
+import Find from "../../../components/Select/Find/Find";
 import StatsTable from "./StatsDamageTable";
 
 import Move from "../../../components/Table/Move";
