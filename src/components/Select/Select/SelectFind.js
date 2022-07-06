@@ -49,7 +49,7 @@ const SelectFind = (props) => {
     }
 
     return (
-        <div>
+        <div style={{width: 'fit-content'}}>
             <div className="input-group border-input">
                 <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
                 value={search}

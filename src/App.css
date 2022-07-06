@@ -13,6 +13,12 @@ img.pokemon-main-sprite {
     object-fit: contain;
 }
 
+img.pokemon-sprite-accordion {
+    width: 100%;
+    height: 50px;
+    object-fit: contain;
+}
+
 img.pokemon-navigate-sprite {
     width: 100%;
     height: 60px;
@@ -126,7 +132,7 @@ ul {
 .bug{background-color:#9cb820}
 .dark{background-color:#504843}
 .dragon{background-color:#7038f8}
-.electric,.elite-ic{background-color:#f8d030}
+.electric,.elite-ic,.score-ic{background-color:#f8d030}
 .fighting{background-color:#c03028}
 .fire{background-color:#f08030}
 .flying{background-color:#9096f0}

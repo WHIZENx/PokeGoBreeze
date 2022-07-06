@@ -8,10 +8,11 @@ import combatData from '../../../data/combat.json';
 
 const TypeBadge = (props) => {
 
-    const move = combatData.find(item => item.name === props.move.name.replaceAll("_FAST", ""));
+    var move = props.move;
+    if (!props.find) move = combatData.find(item => item.name === props.move.name.replaceAll("_FAST", ""));
 
     return (
-        <Link target="_blank" to={"/moves/"+move.id} className="d-block type-badge-container">
+        <Link target="_blank" to={"/moves/"+move.id} className="d-block type-badge-container" style={props.style}>
             <span className="caption text-type-border">{props.title}</span>
             <div className="d-flex align-items-center position-relative">
                 <span className={move.type.toLowerCase()+" type-border position-relative"}>

@@ -100,11 +100,11 @@ li.unique-type ul {
     font-weight: 500;
 }
 
-.accordion-body {
+.league-body.accordion-body {
     padding: 0 !important;
 }
 
-.accordion-body div.sub-body {
+.league-body.accordion-body div.sub-body {
     padding: 1rem 1.25rem;
 }
 

@@ -10,11 +10,11 @@ const Type = (props) => {
     }
 
     return (
-        <ul className='element-top' style={props.styled && { padding: 0, margin: 0 }}>
+        <ul className={props.block ? '': 'element-top'} style={props.styled && { padding: 0, margin: 0 }}>
             {props.text && <p>{props.text}</p>}
             {props.arr.map((value, index) => (
                 <li style={props.style} className='img-group' key={ index }>
-                    {props.height ?
+                    {props.hideText ?
                         <img width={props.height} height={props.height} alt='img-pokemon' src={APIService.getTypeSprite(value)}
                         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}/>
                         :

@@ -156,7 +156,7 @@ const Leagues = () => {
                             <b className={value.enabled ? "" : "text-danger"}>{(value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title) ? splitAndCapitalize(value.id.replace("VS_","").toLowerCase(), "_", " ") : splitAndCapitalize(value.title.toLowerCase(), "_", " ")) +
                             (value.id.includes("SAFARI_ZONE") ? ` ${value.id.split("_")[3]} ${capitalize(value.id.split("_")[4].toLowerCase())}` : "")} {leaguesData.allowLeagues.includes(value.id) && <span className='d-inline-block caption text-success'>(Opened)</span>}</b>
                         </Accordion.Header>
-                        <Accordion.Body>
+                        <Accordion.Body className='league-body'>
                             <div className='sub-body'>
                             <h4 className='title-leagues'>{splitAndCapitalize(value.id.toLowerCase(), "_", " ")}</h4>
                             <div className='text-center'>

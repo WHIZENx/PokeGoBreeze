@@ -235,7 +235,7 @@ const Home = () => {
                                         <StyledTableCell align="center" component="td">
                                             <div style={{width: '100%', height: '100%', backgroundColor: row.color}}>
                                         </div></StyledTableCell>
-                                        <StyledTableCell align="center" component="td"><Type style={{marginBottom: 0}} styled={true} height={40} arr={row.types}/></StyledTableCell>
+                                        <StyledTableCell align="center" component="td"><Type hideText={true} block={true} style={{marginBottom: 0}} styled={true} height={40} arr={row.types}/></StyledTableCell>
                                         <StyledTableCell align="center" component="td">{row.minCP}</StyledTableCell>
                                         <StyledTableCell align="center" component="td">{row.maxCP_40}</StyledTableCell>
                                         <StyledTableCell align="center" component="td">{row.maxCP_50}</StyledTableCell>

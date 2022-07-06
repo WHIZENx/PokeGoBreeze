@@ -134,6 +134,36 @@ export const convertNameRanking = (text) => {
   .replaceAll("alola", "alolan")
 };
 
+export const convertNameRankingToForm = (text) => {
+  let form = "";
+  if (text.includes("_")) form = ` (${capitalize(text.split("_")[1])})`;
+  return text + form;
+}
+
+export const convertNameRankingToOri = (text, form) => {
+  const formOri = form;
+  if (formOri.includes("(") && formOri.includes(")")) form = "-"+form.split(" (")[1].replace(")", "").toLowerCase();
+  text = text.toLowerCase()
+  .replaceAll("_", "-")
+  .replaceAll("galarian", "galar")
+  .replaceAll("alolan", "alola")
+  .replace("-xs", "")
+  .replace("female", "f")
+  .replace("male", "m")
+  .replace("-sea", "")
+  .replace("cherrim-sunny", "cherrim-sunshine")
+  .replace("-5th-anniversary", "")
+  .replace("-shadow", "")
+  if (text.includes("standard")) form = "-standard";
+  return formOri.includes("(") && formOri.includes(")") &&
+  form !== "-sunshine" &&
+  form !== "-jr" &&
+  form !== "-small" &&
+  form !== "-large" &&
+  form !== "-average" &&
+  form !== "-super" ? text.replaceAll(form.toLowerCase(), "") : text;
+};
+
 export const convertArrStats = (data) => {
   return Object.values(data).map(value => {
       let stats = calculateStatsByTag(value.baseStats, value.forme);

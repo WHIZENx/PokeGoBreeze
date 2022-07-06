@@ -235,21 +235,21 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                             vertical: 'top',
                             horizontal: 'left',
                         }}>
-                            <Badge color="primary" overlap="circular" badgeContent={evo+1}>
+                            <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
                                 <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
                                 onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
                             </Badge>
                         </Badge>
                     </ThemeProvider>
                     :
-                    <Badge color="primary" overlap="circular" badgeContent={evo+1}>
+                    <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
                         <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
                         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
                     </Badge>
                     }
                     </Fragment>
                     :
-                    <Badge color="primary" overlap="circular" badgeContent={evo+1}>
+                    <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
                         <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
                         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
                     </Badge>

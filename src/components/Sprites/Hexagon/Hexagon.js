@@ -30,6 +30,7 @@ const Hexagon = ({setDefaultStats, ...props}) => {
             const end = getHexConerCord(center, hexSize, i);
             ctx.lineTo(end.x, end.y);
         }
+        ctx.lineWidth = 1;
         ctx.fillStyle = "#dddddd80";
         ctx.fill();
         ctx.strokeStyle = "gray";
@@ -77,6 +78,12 @@ const Hexagon = ({setDefaultStats, ...props}) => {
         ctx.closePath();
     }, [getHexConerCord, hexSize]);
 
+    const loop = (type, startStat, endStat) => {
+        return type === 1 ? Math.min(startStat+(endStat/30), endStat)
+        : endStat > startStat ? Math.min(startStat+(endStat/30), endStat)
+        : Math.max(startStat-(endStat/30), endStat)
+    }
+
     useEffect(() => {
         if (props.lead !== props.stats.lead ||
             props.charger !== props.stats.charger ||
@@ -88,12 +95,12 @@ const Hexagon = ({setDefaultStats, ...props}) => {
             if (props.animation) {
                 interval = setInterval(() => {
                     setDefaultStats({...props.defaultStats, ...{
-                        lead: Math.min(props.lead+(props.stats.lead/30), props.stats.lead),
-                        charger: Math.min(props.charger+(props.stats.charger/30), props.stats.charger),
-                        closer: Math.min(props.closer+(props.stats.closer/30), props.stats.closer),
-                        cons: Math.min(props.cons+(props.stats.cons/30), props.stats.cons),
-                        atk: Math.min(props.atk+(props.stats.atk/30), props.stats.atk),
-                        switching: Math.min(props.switching+(props.stats.switching/30), props.stats.switching)
+                        lead: loop(props.animation, props.lead, props.stats.lead),
+                        charger: loop(props.animation, props.charger, props.stats.charger),
+                        closer: loop(props.animation, props.closer, props.stats.closer),
+                        cons: loop(props.animation, props.cons, props.stats.cons),
+                        atk: loop(props.animation, props.atk, props.stats.atk),
+                        switching: loop(props.animation, props.switching, props.stats.switching)
                     }})
                 }, 5)
             }
@@ -109,6 +116,45 @@ const Hexagon = ({setDefaultStats, ...props}) => {
         return () => clearInterval(interval);
     }, [drawInitHex, drawInitLineHex, drawStatsHex, hexBorderSize, setDefaultStats, props.animation, props.stats,
         props.atk, props.charger, props.closer, props.cons, props.defaultStats, props.lead, props.switching]);
+
+    const onPlayAnimaion = () => {
+        var interval;
+        clearInterval(interval);
+
+        let defaultStats = {
+            lead: 0,
+            atk: 0,
+            cons: 0,
+            closer: 0,
+            charger: 0,
+            switching: 0
+        }
+
+        interval = setInterval(() => {
+            defaultStats = {
+                lead: loop(1, defaultStats.lead, props.stats.lead),
+                charger: loop(1, defaultStats.charger, props.stats.charger),
+                closer: loop(1, defaultStats.closer, props.stats.closer),
+                cons: loop(1, defaultStats.cons, props.stats.cons),
+                atk: loop(1, defaultStats.atk, props.stats.atk),
+                switching: loop(1, defaultStats.switching, props.stats.switching)
+            };
+
+            const ctx = canvasHex.current.getContext('2d');
+            ctx.beginPath();
+            ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
+            drawInitHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 });
+            drawInitLineHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 });
+            drawStatsHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 }, defaultStats);
+
+            if (defaultStats.lead === props.stats.lead &&
+                defaultStats.charger === props.stats.charger &&
+                defaultStats.closer === props.stats.closer &&
+                defaultStats.cons === props.stats.cons &&
+                defaultStats.atk === props.stats.atk &&
+                defaultStats.switching === props.stats.switching) clearInterval(interval);
+        }, 10)
+    }
 
     return (
         <div className="position-relative stats-border">
@@ -146,7 +192,7 @@ const Hexagon = ({setDefaultStats, ...props}) => {
                 </div>
                 </Fragment>
             }
-            <canvas ref={canvasHex} width={hexBorderSize} height={hexBorderSize+4}></canvas>
+            <canvas onClick={() => onPlayAnimaion()} ref={canvasHex} width={hexBorderSize} height={hexBorderSize+4}></canvas>
         </div>
     )
 }

@@ -23,7 +23,7 @@ import StatsTable from './pages/Tools/StatsTable/Stats';
 import Sticker from './pages/Sticker/Sticker';
 import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
 import CalculatePoint from './pages/Tools/CalculatePoint/CalculatePoint';
-import Stats from './pages/PVP/Stats';
+import PVP from './pages/PVP/PVP';
 
 const App = () => {
 
@@ -37,9 +37,9 @@ const App = () => {
         <BrowserRouter>
             <NavbarComponent />
             <Routes>
-              <Route path="/" element={<Home />}></Route>
-              <Route path="/type-effective" element={<TypeEffect />}></Route>
-              <Route path="/weather-boosts" element={<Weather />}></Route>
+              <Route path="/" element={<Home/>}></Route>
+              <Route path="/type-effective" element={<TypeEffect/>}></Route>
+              <Route path="/weather-boosts" element={<Weather/>}></Route>
               <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
               <Route path="/search-move" element={<SearchMove/>}></Route>
               <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
@@ -51,7 +51,10 @@ const App = () => {
               <Route path="/damage-calculate" element={<Damage/>}></Route>
               <Route path="/raid-battle" element={<RaidBattle/>}></Route>
               <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
-              <Route path="/pvp-stats" element={<Stats/>}></Route>
+              <Route path="/pvp/500" element={<PVP cp={500}/>}></Route>
+              <Route path="/pvp/1500" element={<PVP cp={1500}/>}></Route>
+              <Route path="/pvp/2500" element={<PVP cp={2500}/>}></Route>
+              <Route path="/pvp/10000" element={<PVP cp={10000}/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
               <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
               <Route path="/stickers" element={<Sticker/>}></Route>
