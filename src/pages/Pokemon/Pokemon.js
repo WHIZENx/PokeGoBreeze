@@ -20,6 +20,7 @@ import evoData from '../../data/evolution_pokemon_go.json';
 import pokeListName from '../../data/pokemon_names.json';
 import PokemonModel from "../../components/Info/Assets/PokemonModel";
 import Error from "../Error/Error";
+import { Alert } from "react-bootstrap";
 
 const Pokemon = (props) => {
 
@@ -59,7 +60,6 @@ const Pokemon = (props) => {
             const poke_form = await Promise.all(poke_info.forms.map(async (item) => (await APIService.getFetchUrl(item.url)).data));
             dataPokeList.push(poke_info);
             dataFromList.push(poke_form);
-            if (poke_info.id === data.id) setWH(prevWH => ({...prevWH, weight: poke_info.weight, height: poke_info.height}));
         }));
         setPokeData(dataPokeList);
         dataFromList = dataFromList.map(item => {
@@ -67,11 +67,13 @@ const Pokemon = (props) => {
             .sort((a,b) => a.form.id - b.form.id);
         }).sort((a,b) => a[0].form.id - b[0].form.id);
         setFormList(dataFromList);
-        let defaultFrom, isDefaultForm;
+        let defaultFrom, isDefaultForm, defaultData;
         let form = searchParams.get("form");
+
         if (form) {
             if (data.id === 555 && form === "galar") form += "-standard"
             defaultFrom = dataFromList.find(value => value.find(item => item.form.form_name === form.toLowerCase() || item.form.name === item.default_name+"-"+form.toLowerCase()));
+
             if (defaultFrom) isDefaultForm = defaultFrom[0];
             else {
                 defaultFrom = dataFromList.map(value => value.find(item => item.form.is_default));
@@ -83,12 +85,14 @@ const Pokemon = (props) => {
             defaultFrom = dataFromList.map(value => value.find(item => item.form.is_default));
             isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
         }
+        defaultData = dataPokeList.find(value => value.name === isDefaultForm.form.name);
+        setWH(prevWH => ({...prevWH, weight: defaultData.weight, height: defaultData.height}));
         if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name, "-", " "));
         else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name, "-", " "));
-        setRegion(regionList[parseInt(data.generation.url.split("/")[6])]);
+        if (!params.id) setRegion(regionList[parseInt(data.generation.url.split("/")[6])]);
         setFormName(splitAndCapitalize(form ? isDefaultForm.form.name : data.name, "-", " "));
         setOnChangeForm(false);
-    }, [searchParams, setSearchParams]);
+    }, [searchParams, setSearchParams, params.id]);
 
     const queryPokemon = useCallback((id) => {
         APIService.getPokeSpicies(id)
@@ -240,9 +244,14 @@ const Pokemon = (props) => {
                     <div className="w-100 text-center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
                         {Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName) &&
                         !Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName).releasedGO &&
-                            <h5 className='text-danger'>* {splitAndCapitalize(data.name, "-", " ")} not released in Pokémon GO
-                            <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/>
-                            </h5>
+                            // <h5 className='text-danger'>* {splitAndCapitalize(data.name, "-", " ")} not released in Pokémon GO
+                            // <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/>
+                            // </h5>
+                            <Alert variant="danger">
+                                <h5 className='text-danger' style={{margin: 0}}>* <b>{formName}</b> not released in Pokémon GO
+                                <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/>
+                                </h5>
+                            </Alert>
                         }
                         <div className="d-inline-block img-desc">
                             <img className="pokemon-main-sprite" style={{verticalAlign: 'baseline'}} alt="img-full-pokemon" src={APIService.getPokeFullSprite(data.id)}/>
@@ -349,8 +358,10 @@ const Pokemon = (props) => {
                         onSetNext={props.onSetNext}
                         onSetReForm={setReForm}
                         setVersion={setVersionName}
+                        region={region}
                         setRegion={setRegion}
                         setWH={setWH}
+                        formName={formName}
                         setFormName={setFormName}
                         id_default={data.id}
                         pokeData={pokeData}

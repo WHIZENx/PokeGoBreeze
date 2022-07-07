@@ -51,10 +51,7 @@ const App = () => {
               <Route path="/damage-calculate" element={<Damage/>}></Route>
               <Route path="/raid-battle" element={<RaidBattle/>}></Route>
               <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
-              <Route path="/pvp/500" element={<PVP cp={500}/>}></Route>
-              <Route path="/pvp/1500" element={<PVP cp={1500}/>}></Route>
-              <Route path="/pvp/2500" element={<PVP cp={2500}/>}></Route>
-              <Route path="/pvp/10000" element={<PVP cp={10000}/>}></Route>
+              <Route path="/pvp/:cp/:type" element={<PVP/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
               <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
               <Route path="/stickers" element={<Sticker/>}></Route>

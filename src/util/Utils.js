@@ -111,6 +111,10 @@ export const splitAndCapitalize = (string, splitBy, joinBy) => {
   return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(joinBy);
 };
 
+export const reversedCapitalize = (string, splitBy, joinBy) => {
+  return string.replaceAll(joinBy, splitBy).toLowerCase();
+};
+
 export const getTime = (value, notFull) => {
   return notFull ? Moment((new Date(parseInt(value)))).format('D MMMM YYYY') : Moment((new Date(parseInt(value)))).format('HH:mm D MMMM YYYY')
 }

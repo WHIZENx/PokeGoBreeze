@@ -17131,7 +17131,7 @@
         "forme": null,
         "changesFrom": null,
         "cannotDynamax": true,
-        "releasedGO": false,
+        "releasedGO": true,
         "isTransferable": true,
         "isDeployable": true,
         "isTradable": true,

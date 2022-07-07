@@ -38,10 +38,10 @@ const NavbarComponent = () => {
                     </NavDropdown>
                     <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Table</Link>
                     <NavDropdown title="PVP Simulator">
-                        <Link className="dropdown-item" to="/pvp/500"><img width={25} height={25} alt="logo-league" src={APIService.getPokeOtherLeague("GBL_littlecup")}/> Little Cup</Link>
-                        <Link className="dropdown-item" to="/pvp/1500"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("great_league")}/> Great League</Link>
-                        <Link className="dropdown-item" to="/pvp/2500"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("ultra_league")}/> Ultra League</Link>
-                        <Link className="dropdown-item" to="/pvp/10000"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("master_league")}/> Master League</Link>
+                        <a className="dropdown-item" href="/pvp/500/overall"><img width={25} height={25} alt="logo-league" src={APIService.getPokeOtherLeague("GBL_littlecup")}/> Little Cup</a>
+                        <a className="dropdown-item" href="/pvp/1500/overall"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("great_league")}/> Great League</a>
+                        <a className="dropdown-item" href="/pvp/2500/overall"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("ultra_league")}/> Ultra League</a>
+                        <a className="dropdown-item" href="/pvp/10000/overall"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("master_league")}/> Master League</a>
                     </NavDropdown>
                     <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>
                     <Link className="nav-link" to="/stickers">Stickers</Link>

@@ -105,7 +105,7 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
                     </Fragment>
                     :
                     <Fragment>
-                        <tr style={{height: 627}}>
+                        <tr className="counter-none">
                             <td className="text-origin text-center" colSpan={4}>
                                 <span onClick={() => loadMetaData()} className="link-url">Click to load all best pokemon counter</span>
                             </td>

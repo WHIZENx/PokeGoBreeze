@@ -12,35 +12,34 @@ import { convertNameRankingToOri, splitAndCapitalize, convertArrStats } from '..
 import { calculateStatsByTag, sortStatsPokemon } from '../../util/Calculate';
 import { Accordion } from 'react-bootstrap';
 
-import ranking500OverAll from '../../data/pvp/overall/rankings-500.json';
-import ranking1500OverAll from '../../data/pvp/overall/rankings-1500.json';
-import ranking2500OverAll from '../../data/pvp/overall/rankings-2500.json';
-import ranking10000OverAll from '../../data/pvp/overall/rankings-10000.json';
-
 import APIService from '../../services/API.service';
 import { findAssetForm } from "../../util/Compute";
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
 
-const PVP = ({cp}) => {
+import update from 'immutability-helper';
+import { useParams } from 'react-router-dom';
 
-    const findRanking = (cp, type) => {
-        if (cp === 500) return ranking500OverAll;
-        else if (cp === 1500) return ranking1500OverAll;
-        else if (cp === 2500) return ranking2500OverAll;
-        else if (cp === 10000) return ranking10000OverAll;
-    }
+const PVP = () => {
 
-    const [rankingOverAll, setRankingOverAll] = useState(null);
+    const params = useParams();
+
+    const [rankingData, setRankingData] = useState(null);
+    const [countRank, setCountRank] = useState(null);
 
     const [search, setSearch] = useState('');
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
 
     useEffect(() => {
-        setRankingOverAll(findRanking(cp));
-    }, [cp])
+        const fetchMyAPI = async () => {
+            const file = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data;
+            setRankingData(file);
+            setCountRank(file.map(i => false));
+        }
+        fetchMyAPI();
+    }, [params.cp, params.type]);
 
     const convertNameRankingToForm = (name) => {
-        return rankingOverAll.find(pokemon => pokemon.speciesId === name).speciesName;
+        return rankingData.find(pokemon => pokemon.speciesId === name).speciesName;
     }
 
     const renderItem = (data, key) => {
@@ -50,12 +49,15 @@ const PVP = ({cp}) => {
         const form = findAssetForm(pokemon.num, pokemon.name);
 
         const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
-        const scores = rankingOverAll.find(pokemon => pokemon.speciesId === data.speciesId).scores;
+        const scores = rankingData.find(pokemon => pokemon.speciesId === data.speciesId).scores;
 
         let fmoveData = data.moveset[0], cMoveDataPri = data.moveset[1], cMoveDataSec = data.moveset[2];
         if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
         if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
         if (cMoveDataSec === "FUTURE_SIGHT") cMoveDataSec = "FUTURESIGHT";
+        if (cMoveDataPri === "TECHNO_BLAST_DOUSE") cMoveDataPri = "TECHNO_BLAST_WATER";
+        if (cMoveDataSec === "TECHNO_BLAST_DOUSE") cMoveDataSec = "TECHNO_BLAST_WATER";
+
         let fmove = combatData.find(item => item.name === fmoveData);
         const cmovePri = combatData.find(item => item.name === cMoveDataPri);
         if (cMoveDataSec) var cmoveSec = combatData.find(item => item.name === cMoveDataSec);
@@ -64,7 +66,10 @@ const PVP = ({cp}) => {
 
         return (
             <Accordion.Item eventKey={key}>
-                <Accordion.Header>
+                <Accordion.Header onClick={() => {
+                if (countRank[key]) setTimeout(() => {setCountRank(update(countRank, {[key]: {$set: false}}))}, 500)
+                else setCountRank(update(countRank, {[key]: {$set: true}}))
+                }}>
                     <span className="d-inline-block position-relative" style={{width: 50, marginRight: '2rem'}}>
                         {data.speciesName.includes("(Shadow)") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                         <img alt='img-league' className="pokemon-sprite-accordion" src={form ?  APIService.getPokemonModel(form) : APIService.getPokeFullSprite(id)}/>
@@ -77,15 +82,17 @@ const PVP = ({cp}) => {
                     </div>
                 </Accordion.Header>
                 <Accordion.Body className="ranking-body">
+                    {true &&
+                    <Fragment>
                     <div className="w-100 ranking-info element-top">
-                        <div className="d-flex flex-flow align-items-center">
+                        <div className="d-flex flex-wrap align-items-center">
                             <h3 style={{marginRight: 15}}><b>#{id} {splitAndCapitalize(name, "-", " ")}</b></h3>
                             <Type block={true} style={{marginBottom: 0}} styled={true} arr={pokemon.types} />
                         </div>
                         <div className="d-flex flex-wrap element-top">
                             <TypeBadge find={true} title="Fast Move" style={{marginRight: 15}} move={fmove}/>
                             <TypeBadge find={true} title="Primary Charge Move" style={{marginRight: 10}} move={cmovePri}/>
-                            {data.moveset[2] && <TypeBadge find={true} title="Secondary Charge Move" move={cmoveSec}/>}
+                            {cMoveDataSec && <TypeBadge find={true} title="Secondary Charge Move" move={cmoveSec}/>}
                         </div>
                         <hr />
                         <div className="row" style={{margin: 0}}>
@@ -112,7 +119,7 @@ const PVP = ({cp}) => {
                                         <span className="ranking-score score-ic">Rating</span>
                                     </div>
                                 </div>
-                                {data.counters.sort((a,b) => b.rating-a.rating).map((counter, index) => (
+                                {data.counters.sort((a,b) => a.rating-b.rating).map((counter, index) => (
                                     <div className="list-item-ranking" key={index}>
                                         {renderItemList(counter, index)}
                                         <div style={{marginRight: 15}}>
@@ -122,27 +129,53 @@ const PVP = ({cp}) => {
                                 ))}
                             </div>
                         </div>
-                        <h4 className="element-top" style={{marginRight: 15}}><b>Overall Stats</b></h4>
+                        <hr />
                     </div>
-                    <div className="row w-100">
+                    {scores ?
+                    <div className="row w-100" style={{margin: 0}}>
                         <div className="col-lg-4 d-flex justify-content-center element-top">
-                            <Hexagon animation={0} size={200}
-                            stats={{
-                                lead: scores[0],
-                                atk: scores[4],
-                                cons: scores[5],
-                                closer: scores[1],
-                                charger: scores[3],
-                                switching: scores[2]
-                            }}/>
+                            <div>
+                                <h5><b>Overall Performance</b></h5>
+                                <Hexagon animation={0} size={200}
+                                stats={{
+                                    lead: scores[0],
+                                    atk: scores[4],
+                                    cons: scores[5],
+                                    closer: scores[1],
+                                    charger: scores[3],
+                                    switching: scores[2]
+                                }}/>
+                            </div>
                         </div>
-                        <div className="col-lg-8 container">
+                        <div className="col-lg-8 container status-ranking element-top">
+                            <div>
+                                <h5><b>Overall Stats</b></h5>
+                                <Stats statATK={statsRanking.current.attack.ranking.find(i => i.attack === stats.atk)}
+                                    statDEF={statsRanking.current.defense.ranking.find(i => i.defense === stats.def)}
+                                    statSTA={statsRanking.current.stamina.ranking.find(i => i.stamina === stats.sta)}
+                                    pokemonStats={statsRanking.current}/>
+                            </div>
+                            <div>
+                                <h5><b>Top rank league</b></h5>
+                            </div>
+                        </div>
+                    </div>
+                    :
+                    <div className="w-100 container status-ranking element-top">
+                        <div>
+                            <h5><b>Overall Stats</b></h5>
                             <Stats statATK={statsRanking.current.attack.ranking.find(i => i.attack === stats.atk)}
                                 statDEF={statsRanking.current.defense.ranking.find(i => i.defense === stats.def)}
                                 statSTA={statsRanking.current.stamina.ranking.find(i => i.stamina === stats.sta)}
                                 pokemonStats={statsRanking.current}/>
                         </div>
+                        <div>
+                            <h5><b>Top rank league</b></h5>
+                        </div>
                     </div>
+                    }
+                    </Fragment>
+                    }
                 </Accordion.Body>
             </Accordion.Item>
         )
@@ -171,29 +204,34 @@ const PVP = ({cp}) => {
 
     return (
         <div className="container">
-            <div>
-                {rankingOverAll &&
-                <Fragment>
-                    <div className="input-group border-input element-top">
-                        <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
-                        value={search}
-                        onInput={e => setSearch(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <Accordion alwaysOpen className="ranking-container">
-                            {rankingOverAll
-                            .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
-                            .sort((a,b) => b.score-a.score).slice(0, 2000).map((value, index) => (
-                                <Fragment key={index}>
-                                    {renderItem(value, index)}
-                                </Fragment>
-                            ))}
-                        </Accordion>
-                    </div>
-                </Fragment>
-                }
+            <div className='d-flex flex-wrap element-top ranking-link-group'>
+                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall`}>Overall</a>
+                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads`}>Leads</a>
+                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers`}>Closers</a>
+                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/${params.cp}/switches`}>Switches</a>
+                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/${params.cp}/chargers`}>Chargers</a>
+                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/${params.cp}/attackers`}>Attackers</a>
+                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency`}>Consistency</a>
             </div>
+            <div className="input-group border-input">
+                <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
+                value={search}
+                onInput={e => setSearch(e.target.value)}
+                />
+            </div>
+            {rankingData &&
+                <div>
+                    <Accordion alwaysOpen className="ranking-container">
+                        {rankingData
+                        .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
+                        .sort((a,b) => b.score-a.score).slice(0, 1).map((value, index) => (
+                            <Fragment key={index}>
+                                {renderItem(value, index)}
+                            </Fragment>
+                        ))}
+                    </Accordion>
+                </div>
+            }
         </div>
     )
 }

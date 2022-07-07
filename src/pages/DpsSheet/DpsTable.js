@@ -156,6 +156,7 @@ const DpsTable = () => {
         movePoke.forEach(vc => {
             const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
             const cmove = combatData.find(item => item.name === vc);
+
             const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
             const statsAttacker = {
                 atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),

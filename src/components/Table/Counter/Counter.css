@@ -7,6 +7,7 @@
 
 .table-counter {
     width: 100%;
+    height: 100%;
     table-layout: -webkit-fixed;
     table-layout: fixed;
 }
@@ -39,6 +40,10 @@
     background-color: #f1ffff !important;
     color: black !important;
     border: 1px solid #b8d4da;
+}
+
+.counter-none {
+    height: 600px;
 }
 
 .link-pokemon-sprite {

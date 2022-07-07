@@ -9,7 +9,7 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
 import { regionList } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
@@ -24,8 +24,10 @@ const Form = ({
     onSetNext,
     onSetReForm,
     setVersion,
+    region,
     setRegion,
     setWH,
+    formName,
     setFormName,
     id_default,
     pokeData,
@@ -94,6 +96,15 @@ const Form = ({
     }, [currForm, formList, filterFormName]);
 
     useEffect(() => {
+        if (!region && formName) {
+            const findForm = formList.map(item => item.find(item => item.form.name === reversedCapitalize(formName, "-", " "))).find(item => item);
+            let region = Object.values(regionList).find(item => findForm.form.form_name.includes(item.toLowerCase()));
+            if (findForm.form.form_name !== "" && region) setRegion(region);
+            else setRegion(regionList[parseInt(species.generation.url.split("/")[6])]);
+        }
+    }, [formList, region, setRegion, species.generation.url, formName])
+
+    useEffect(() => {
         if (!onChangeForm || (!currForm && id_default && pokeData && formList.length > 0 && pokeData.length > 0)) {
             setCurrForm(findForm() ?? findFirst());
             setPokeID(findFirst() ? findFirst().form.id : id_default);
@@ -113,7 +124,7 @@ const Form = ({
             }
 
         }
-    }, [filterFormList, currForm, dataPoke, findForm, findFirst, findDefaultForm, pokeID, setPokeID,
+    }, [filterFormList, currForm, dataPoke, findForm, findFirst, findDefaultForm, pokeID, setPokeID, species, setRegion,
         id_default, onSetNext, onSetPrev, stats.attack.ranking, stats.defense.ranking, stats.stamina.ranking,
         formList.length, onChangeForm, pokeData, setSpinner])
 

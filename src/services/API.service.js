@@ -18,6 +18,8 @@ const POKE_GIF_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Poke
 const POKE_TRAINER_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Trainers/';
 const POKE_SOUND_CRY_API_URL = 'https://raw.githubusercontent.com/Touched/pokedex-data/master/data/';
 
+const POKE_RANKING_API_URL = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/rankings/';
+
 class APIService {
 
     constructor() {
@@ -176,6 +178,10 @@ class APIService {
 
     getStickerPokeGo(sticker) {
         return `${POGO_PRODHOLOHOLO_ASSET_URL}Stickers/${sticker}`;
+    }
+
+    getRankingFile(cp, type) {
+        return `${POKE_RANKING_API_URL}all/${type.toLowerCase()}/rankings-${cp}.json`;
     }
 }
 
