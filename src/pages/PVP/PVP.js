@@ -1,5 +1,6 @@
 import pokemonData from '../../data/pokemon.json';
 import combatData from '../../data/combat.json';
+import combatPokemonData from '../../data/combat_pokemon_go_list.json';
 
 import Type from "../../components/Sprites/Type/Type";
 import Stats from '../../components/Info/Stats/Stats';
@@ -8,7 +9,7 @@ import './PVP.css';
 import Hexagon from "../../components/Sprites/Hexagon/Hexagon";
 import { useState, useEffect, Fragment, useRef } from "react";
 
-import { convertNameRankingToOri, splitAndCapitalize, convertArrStats } from '../../util/Utils';
+import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName } from '../../util/Utils';
 import { calculateStatsByTag, sortStatsPokemon } from '../../util/Calculate';
 import { Accordion } from 'react-bootstrap';
 
@@ -64,6 +65,13 @@ const PVP = () => {
 
         if (data.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: data.moveset[0].split("_")[2]}
 
+        let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
+            && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+        );
+        const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+        if (!result) combatPoke = combatPoke[0]
+        else combatPoke = result;
+
         return (
             <Accordion.Item eventKey={key}>
                 <Accordion.Header onClick={() => {
@@ -90,9 +98,16 @@ const PVP = () => {
                             <Type block={true} style={{marginBottom: 0}} styled={true} arr={pokemon.types} />
                         </div>
                         <div className="d-flex flex-wrap element-top">
-                            <TypeBadge find={true} title="Fast Move" style={{marginRight: 15}} move={fmove}/>
-                            <TypeBadge find={true} title="Primary Charge Move" style={{marginRight: 10}} move={cmovePri}/>
-                            {cMoveDataSec && <TypeBadge find={true} title="Secondary Charge Move" move={cmoveSec}/>}
+                            <TypeBadge find={true} title="Fast Move" style={{marginRight: 15}} move={fmove}
+                            elite={combatPoke.ELITE_QUICK_MOVES.includes(fmove.name)}/>
+                            <TypeBadge find={true} title="Primary Charge Move" style={{marginRight: 10}} move={cmovePri}
+                            elite={combatPoke.ELITE_CINEMATIC_MOVES.includes(cmovePri.name)}
+                            shadow={combatPoke.SHADOW_MOVES.includes(cmovePri.name)}
+                            purified={combatPoke.PURIFIED_MOVES.includes(cmovePri.name)}/>
+                            {cMoveDataSec && <TypeBadge find={true} title="Secondary Charge Move" move={cmoveSec}
+                            elite={combatPoke.ELITE_CINEMATIC_MOVES.includes(cmoveSec.name)}
+                            shadow={combatPoke.SHADOW_MOVES.includes(cmoveSec.name)}
+                            purified={combatPoke.PURIFIED_MOVES.includes(cmoveSec.name)}/>}
                         </div>
                         <hr />
                         <div className="row" style={{margin: 0}}>
@@ -204,7 +219,7 @@ const PVP = () => {
 
     return (
         <div className="container">
-            <div className='d-flex flex-wrap element-top ranking-link-group'>
+            <div className='element-top ranking-link-group'>
                 <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall`}>Overall</a>
                 <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads`}>Leads</a>
                 <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers`}>Closers</a>

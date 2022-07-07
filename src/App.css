@@ -13,6 +13,12 @@ img.pokemon-main-sprite {
     object-fit: contain;
 }
 
+img.sprite-type {
+    width: 100%;
+    height: 35px;
+    object-fit: contain;
+}
+
 img.pokemon-sprite-accordion {
     width: 100%;
     height: 50px;

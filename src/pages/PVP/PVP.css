@@ -37,6 +37,10 @@
     padding: 0 2rem;
 }
 
+.ranking-container .accordion-button.collapsed:hover {
+    background-color: lightgray;
+}
+
 .number-count-ranking {
     padding: 3px 6px;
     background-color: #1976d2;
@@ -67,11 +71,17 @@
     min-width: 0;
 }
 
+.ranking-link-group {
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
 .ranking-link-group a {
     border-radius: 0;
     border-left: 1px solid black;
     border-top: 2px solid black;
     border-right: 1px solid black;
+    border-bottom: 2px solid black !important;
     background-color: #f1ffff;
     color: black;
     box-shadow: none !important;

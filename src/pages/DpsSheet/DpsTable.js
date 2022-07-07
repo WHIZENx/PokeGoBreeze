@@ -234,7 +234,7 @@ const DpsTable = () => {
             let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
                 && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
             );
-            let result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+            const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
             if (!result) combatPoke = combatPoke[0]
             else combatPoke = result;
             if (combatPoke) {

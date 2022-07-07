@@ -12,9 +12,9 @@ const TypeBadge = (props) => {
     if (!props.find) move = combatData.find(item => item.name === props.move.name.replaceAll("_FAST", ""));
 
     return (
-        <Link target="_blank" to={"/moves/"+move.id} className="d-block type-badge-container" style={props.style}>
+        <div className="type-badge-container" style={props.style}>
             <span className="caption text-type-border">{props.title}</span>
-            <div className="d-flex align-items-center position-relative">
+            <Link target="_blank" to={"/moves/"+move.id} className="d-flex align-items-center position-relative" style={props.style}>
                 <span className={move.type.toLowerCase()+" type-border position-relative"}>
                     {(props.elite || props.shadow || props.purified) &&
                         <span className="type-badge-border">
@@ -26,12 +26,13 @@ const TypeBadge = (props) => {
                     <span>{splitAndCapitalize(props.move.name.replaceAll("_FAST", "").replaceAll("_PLUS", "+"), "_", " ")}</span>
                 </span>
                 <span className={move.type.toLowerCase()+" type-icon-border"}>
-                    <img style={{padding: 5, backgroundColor: 'black'}} width={35} height={35} alt="img-type-pokemon" src={APIService.getTypeHqSprite(capitalize(move.type.toLowerCase()))}/>
+                    <div style={{width: 35}}>
+                        <img style={{padding: 5, backgroundColor: 'black'}} className="sprite-type" alt="img-type-pokemon" src={APIService.getTypeHqSprite(capitalize(move.type.toLowerCase()))}/>
+                    </div>
                 </span>
-            </div>
-        </Link>
+            </Link>
+        </div>
     )
-
 }
 
 export default TypeBadge;

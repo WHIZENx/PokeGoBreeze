@@ -1,10 +1,9 @@
 .type-badge-container {
-    cursor: pointer;
     opacity: 1;
     width: max-content;
 }
 
-.type-badge-container:hover {
+.type-badge-container a:hover {
     opacity: 0.8;
 }
 
