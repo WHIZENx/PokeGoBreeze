@@ -76,7 +76,7 @@ const StatsTable = () => {
     }, []);
 
     useEffect(() => {
-        const battleTable = calStatsProd(statATK, statDEF, statSTA, battleLeague);
+        const battleTable = calStatsProd(statATK, statDEF, statSTA, 0, battleLeague);
         currStatBattle.current = battleTable
         setStatsBattle(battleTable);
     }, [statATK, statDEF, statSTA, battleLeague]);
@@ -90,7 +90,7 @@ const StatsTable = () => {
     }
 
     const clearStatsPoke = useCallback(() => {
-        setStatsBattle(calStatsProd(statATK, statDEF, statSTA, battleLeague))
+        setStatsBattle(calStatsProd(statATK, statDEF, statSTA, 0, battleLeague))
     }, [battleLeague, statATK, statDEF, statSTA]);
 
     const searchStatsPoke = useCallback(() => {

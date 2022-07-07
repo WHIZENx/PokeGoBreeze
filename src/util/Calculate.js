@@ -359,7 +359,7 @@ export const sortStatsProd = (data) => {
     return data.map((item, index) => ({...item, ratio: item.statsProds*100/data[data.length-1].statsProds, rank: data.length-index}));
 }
 
-export const calStatsProd = (atk, def, sta, maxCP, pure) => {
+export const calStatsProd = (atk, def, sta, minCP, maxCP, pure) => {
     let dataList = [];
     if (atk === 0 || def === 0 || sta === 0) return dataList;
     for (let l = MIN_LEVEL; l <= MAX_LEVEL; l+=0.5) {
@@ -367,7 +367,7 @@ export const calStatsProd = (atk, def, sta, maxCP, pure) => {
             for (let j = MIN_IV; j <= MAX_IV; ++j) {
                 for (let k = MIN_IV; k <= MAX_IV; ++k) {
                     const cp = calculateCP(atk+i, def+j, sta+k, l);
-                    if (maxCP == null || cp <= maxCP) {
+                    if ((!minCP || minCP <= cp) && (!maxCP || cp <= maxCP)) {
                         const statsATK = calculateStatsBattle(atk, i, l);
                         const statsDEF = calculateStatsBattle(def, j, l);
                         const statsSTA = calculateStatsBattle(sta, k, l);
@@ -701,7 +701,7 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
     let dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 2500);
     let dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, null);
 
-    let statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null, true);
+    let statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null, null, true);
     let ultraStatsProd = sortStatsProd(statsProd.filter(item => item.CP <= 2500));
     let greatStatsProd = sortStatsProd(ultraStatsProd.filter(item => item.CP <= 1500));
     let littleStatsProd = sortStatsProd(greatStatsProd.filter(item => item.CP <= 500));

@@ -10,7 +10,7 @@ import Hexagon from "../../components/Sprites/Hexagon/Hexagon";
 import { useState, useEffect, Fragment, useRef } from "react";
 
 import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName } from '../../util/Utils';
-import { calculateStatsByTag, sortStatsPokemon } from '../../util/Calculate';
+import { calculateStatsByTag, calStatsProd, sortStatsPokemon } from '../../util/Calculate';
 import { Accordion } from 'react-bootstrap';
 
 import APIService from '../../services/API.service';
@@ -19,6 +19,7 @@ import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
 import { useParams } from 'react-router-dom';
+import IVbar from '../../components/Sprites/IVBar/IVBar';
 
 const PVP = () => {
 
@@ -26,6 +27,7 @@ const PVP = () => {
 
     const [rankingData, setRankingData] = useState(null);
     const [countRank, setCountRank] = useState(null);
+    const [storeStats, setStoreStats] = useState(null);
 
     const [search, setSearch] = useState('');
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
@@ -35,6 +37,7 @@ const PVP = () => {
             const file = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data;
             setRankingData(file);
             setCountRank(file.map(i => false));
+            setStoreStats(file.map(i => null))
         }
         fetchMyAPI();
     }, [params.cp, params.type]);
@@ -90,7 +93,7 @@ const PVP = () => {
                     </div>
                 </Accordion.Header>
                 <Accordion.Body className="ranking-body">
-                    {true &&
+                    {countRank[key] &&
                     <Fragment>
                     <div className="w-100 ranking-info element-top">
                         <div className="d-flex flex-wrap align-items-center">
@@ -172,6 +175,7 @@ const PVP = () => {
                             </div>
                             <div>
                                 <h5><b>Top rank league</b></h5>
+                                {renderTopStats(stats, key)}
                             </div>
                         </div>
                     </div>
@@ -186,6 +190,7 @@ const PVP = () => {
                         </div>
                         <div>
                             <h5><b>Top rank league</b></h5>
+                            {renderTopStats(stats, key)}
                         </div>
                     </div>
                     }
@@ -217,6 +222,39 @@ const PVP = () => {
         )
     }
 
+    const renderTopStats = (stats, key) => {
+        const store = storeStats[key];
+        let currStats;
+        if (!store) {
+            const maxCP = parseInt(params.cp);
+            const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+            const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
+            currStats = allStats[allStats.length-1];
+            setStoreStats(update(storeStats, {[key]: {$set: currStats}}));
+        } else {
+            currStats = store;
+        }
+
+        return (
+            <ul className='element-top'>
+                <li className='element-top'>
+                    CP: {currStats.CP}
+                </li>
+                <li className='element-top'>
+                    Level: {currStats.level}
+                </li>
+                <li className='element-top'>
+                    Attack
+                    <IVbar iv={currStats.IV.atk}/>
+                    Defense
+                    <IVbar iv={currStats.IV.def}/>
+                    HP
+                    <IVbar iv={currStats.IV.sta}/>
+                </li>
+            </ul>
+        )
+    }
+
     return (
         <div className="container">
             <div className='element-top ranking-link-group'>
@@ -234,12 +272,12 @@ const PVP = () => {
                 onInput={e => setSearch(e.target.value)}
                 />
             </div>
-            {rankingData &&
+            {rankingData && countRank && storeStats &&
                 <div>
                     <Accordion alwaysOpen className="ranking-container">
                         {rankingData
                         .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
-                        .sort((a,b) => b.score-a.score).slice(0, 1).map((value, index) => (
+                        .sort((a,b) => b.score-a.score).map((value, index) => (
                             <Fragment key={index}>
                                 {renderItem(value, index)}
                             </Fragment>

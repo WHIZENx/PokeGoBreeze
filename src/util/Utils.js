@@ -6,13 +6,13 @@ import { MAX_IV } from "./Constants";
 export const marks = [...Array(MAX_IV+1).keys()].map(n => {return {value: n, label: n.toString()}});
 
 export const PokeGoSlider = styled(Slider)(() => ({
-    color: '#ee9219',
+    color: '#ef911d',
     height: 18,
     padding: '13px 0',
     '& .MuiSlider-thumb': {
       height: 18,
       width: 18,
-      backgroundColor: '#ee9219',
+      backgroundColor: '#ef911d',
       '&:hover, &.Mui-focusVisible, &.Mui-active': {
         boxShadow: 'none',
       },
@@ -46,7 +46,7 @@ export const PokeGoSlider = styled(Slider)(() => ({
         width: 32,
         height: 32,
         borderRadius: '50% 50% 50% 0',
-        backgroundColor: '#ee9219',
+        backgroundColor: '#ef911d',
         transformOrigin: 'bottom left',
         transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
         '&:before': { display: 'none' },

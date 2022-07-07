@@ -1,0 +1,43 @@
+.iv-group {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.iv-bg-group, .iv-group {
+    width: 100%;
+    display: flex;
+}
+
+.iv {
+    height: 13px;
+}
+
+.iv.iv-bg-bar {
+    width: 30%;
+}
+
+.iv-bg-bar {
+    background-color: lightgray;
+}
+
+.iv-bar {
+    background-color: #ef911d;
+}
+
+.iv:first-of-type {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    margin-right: 5px;
+}
+
+.iv:last-of-type {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    margin-left: 5px;
+}
+
+.border-right-iv {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}

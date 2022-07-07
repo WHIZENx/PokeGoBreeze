@@ -54,11 +54,6 @@
     width: 64px;
 }
 
-.group-pokemon-sprite:hover {
-    -webkit-filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
-}
-
 .main-name {
     width: 30%;
 }

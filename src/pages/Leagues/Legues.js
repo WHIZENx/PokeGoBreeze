@@ -90,8 +90,8 @@ const Leagues = () => {
                             {value.filter(item => item.type === "FREE" && item.guaranteedLimited).map((item, index) => (
                                 <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                     <div className='w-100 d-flex justify-content-center'>
-                                        <div className='group-pokemon-sprite'>
-                                            <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
+                                        <div className='group-pokemon-sprite filter-shadow'>
+                                            <img className='pokemon-sprite-medium filter-shadow' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
                                         </div>
                                     </div>
                                     <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")} {item.form !== "NORMAL" && splitAndCapitalize(item.form, "_", " ")}</span>
@@ -102,8 +102,8 @@ const Leagues = () => {
                             {value.filter(item => item.type === "PREMIUM" && item.guaranteedLimited).map((item, index) => (
                                 <Link style={{paddingBottom: 20}} target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                     <div className='w-100 d-flex justify-content-center'>
-                                        <div className='group-pokemon-sprite'>
-                                            <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
+                                        <div className='group-pokemon-sprite filter-shadow'>
+                                            <img className='pokemon-sprite-medium filter-shadow' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
                                         </div>
                                     </div>
                                     <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")} {item.form !== "NORMAL" && splitAndCapitalize(item.form, "_", " ")}</span>
@@ -119,8 +119,8 @@ const Leagues = () => {
                         {value.filter((item, index, arr) => arr.findIndex(value => (value.id === item.id && value.type === "FREE")) === index).map((item, index) => (
                             <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                 <div className='d-flex justify-content-center'>
-                                    <span className='group-pokemon-sprite'>
-                                        <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
+                                    <span className='group-pokemon-sprite filter-shadow'>
+                                        <img className='pokemon-sprite-medium filter-shadow' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
                                     </span>
                                 </div>
                                 <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")} {item.form !== "NORMAL" && splitAndCapitalize(item.form, "_", " ")}</span>
@@ -130,8 +130,8 @@ const Leagues = () => {
                         {value.filter((item, index, arr) => arr.findIndex(value => (value.id === item.id && value.type === "PREMIUM")) === index).map((item, index) => (
                             <Link style={{paddingBottom: 20}} target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                 <div className='d-flex justify-content-center'>
-                                    <span className='group-pokemon-sprite'>
-                                        <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
+                                    <span className='group-pokemon-sprite filter-shadow'>
+                                        <img className='pokemon-sprite-medium filter-shadow' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
                                     </span>
                                 </div>
                                 <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")} {item.form !== "NORMAL" && splitAndCapitalize(item.form, "_", " ")}</span>
@@ -218,7 +218,7 @@ const Leagues = () => {
                                     <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                         <div className="d-flex justify-content-center">
                                             <span style={{width: 64}}>
-                                                <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
+                                                <img className='pokemon-sprite-medium filter-shadow' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
                                             </span>
                                         </div>
                                         <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
@@ -233,7 +233,7 @@ const Leagues = () => {
                                     <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                         <div className="d-flex justify-content-center">
                                             <span style={{width: 64}}>
-                                                <img className='pokemon-sprite-medium' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
+                                                <img className='pokemon-sprite-medium filter-shadow' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
                                             </span>
                                         </div>
                                         <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>

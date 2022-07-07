@@ -134,6 +134,11 @@ ul {
     box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2);
 }
 
+.filter-shadow:hover {
+    -webkit-filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
+}
+
 .shadow-ic {background-color:#c184ec}
 .bug{background-color:#9cb820}
 .dark{background-color:#504843}
