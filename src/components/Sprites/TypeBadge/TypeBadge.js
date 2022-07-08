@@ -14,7 +14,7 @@ const TypeBadge = (props) => {
     return (
         <div className="type-badge-container" style={props.style}>
             <span className="caption text-type-border">{props.title}</span>
-            <Link target="_blank" to={"/moves/"+move.id} className="d-flex align-items-center position-relative" style={props.style}>
+            <Link target="_blank" to={"/moves/"+move.id} className="d-flex align-items-center position-relative" style={{width: 'fit-content'}}>
                 <span className={move.type.toLowerCase()+" type-border position-relative"}>
                     {(props.elite || props.shadow || props.purified) &&
                         <span className="type-badge-border">

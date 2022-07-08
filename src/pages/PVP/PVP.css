@@ -99,3 +99,21 @@
 .ranking-link-group a:last-of-type {
     border-right: 2px solid black;
 }
+
+.weakness-bg-text {
+    padding: 8px 0;
+    background-color: orangered;
+    color: white;
+}
+
+.neutral-bg-text {
+    padding: 8px 0;
+    background-color: gray;
+    color: white;
+}
+
+.resistance-bg-text {
+    padding: 8px 0;
+    background-color: green;
+    color: white;
+}

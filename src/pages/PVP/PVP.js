@@ -10,16 +10,17 @@ import Hexagon from "../../components/Sprites/Hexagon/Hexagon";
 import { useState, useEffect, Fragment, useRef } from "react";
 
 import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName } from '../../util/Utils';
-import { calculateStatsByTag, calStatsProd, sortStatsPokemon } from '../../util/Calculate';
+import { calculateStatsByTag, calStatsProd, calculateCP, sortStatsPokemon } from '../../util/Calculate';
 import { Accordion } from 'react-bootstrap';
 
 import APIService from '../../services/API.service';
-import { findAssetForm } from "../../util/Compute";
+import { computeBgColor, computeColor, findAssetForm } from "../../util/Compute";
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
 import { useParams } from 'react-router-dom';
 import IVbar from '../../components/Sprites/IVBar/IVBar';
+import TypeEffectiveSelect from '../../components/Effective/TypeEffectiveSelect';
 
 const PVP = () => {
 
@@ -44,6 +45,27 @@ const PVP = () => {
 
     const convertNameRankingToForm = (name) => {
         return rankingData.find(pokemon => pokemon.speciesId === name).speciesName;
+    }
+
+    const calculateStatsTopRank = (key, stats) => {
+        setCountRank(update(countRank, {[key]: {$set: true}}));
+        const store = storeStats[key];
+        if (!store) {
+            const maxCP = parseInt(params.cp);
+
+            if (maxCP === 10000) {
+                const cp = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50);
+                const buddyCP = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 51);
+                setStoreStats(update(storeStats, {[key]: {$set: {
+                    "50": {cp: cp},
+                    "51": {cp: buddyCP},
+                }}}));
+            } else {
+                const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+                const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
+                setStoreStats(update(storeStats, {[key]: {$set: allStats[allStats.length-1]}}));
+            }
+        }
     }
 
     const renderItem = (data, key) => {
@@ -79,7 +101,7 @@ const PVP = () => {
             <Accordion.Item eventKey={key}>
                 <Accordion.Header onClick={() => {
                 if (countRank[key]) setTimeout(() => {setCountRank(update(countRank, {[key]: {$set: false}}))}, 500)
-                else setCountRank(update(countRank, {[key]: {$set: true}}))
+                else calculateStatsTopRank(key, stats)
                 }}>
                     <span className="d-inline-block position-relative" style={{width: 50, marginRight: '2rem'}}>
                         {data.speciesName.includes("(Shadow)") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
@@ -93,7 +115,7 @@ const PVP = () => {
                     </div>
                 </Accordion.Header>
                 <Accordion.Body className="ranking-body">
-                    {countRank[key] &&
+                    {true && storeStats[key] &&
                     <Fragment>
                     <div className="w-100 ranking-info element-top">
                         <div className="d-flex flex-wrap align-items-center">
@@ -147,6 +169,8 @@ const PVP = () => {
                                 ))}
                             </div>
                         </div>
+                    </div>
+                    <div className='container'>
                         <hr />
                     </div>
                     {scores ?
@@ -154,7 +178,7 @@ const PVP = () => {
                         <div className="col-lg-4 d-flex justify-content-center element-top">
                             <div>
                                 <h5><b>Overall Performance</b></h5>
-                                <Hexagon animation={0} size={200}
+                                <Hexagon animation={0} borderSize={340} size={200}
                                 stats={{
                                     lead: scores[0],
                                     atk: scores[4],
@@ -174,8 +198,8 @@ const PVP = () => {
                                     pokemonStats={statsRanking.current}/>
                             </div>
                             <div>
-                                <h5><b>Top rank league</b></h5>
-                                {renderTopStats(stats, key)}
+                                <h5><b>Top Rank League</b></h5>
+                                {renderTopStats(stats, key, id)}
                             </div>
                         </div>
                     </div>
@@ -189,11 +213,41 @@ const PVP = () => {
                                 pokemonStats={statsRanking.current}/>
                         </div>
                         <div>
-                            <h5><b>Top rank league</b></h5>
-                            {renderTopStats(stats, key)}
+                            <h5 className='element-top'><b>Top Rank League</b></h5>
+                            {renderTopStats(stats, key, id)}
                         </div>
                     </div>
                     }
+                    <div className='container'>
+                        <hr />
+                        <div className='row'>
+                            <div className='col-lg-4' style={{marginBottom: 15}}>
+                                <div className='h-100'>
+                                    <h6 className='d-flex justify-content-center weakness-bg-text'><b>Weakness</b></h6>
+                                    <hr className='w-100'/>
+                                    {<TypeEffectiveSelect effect={0} types={pokemon.types}/>}
+                                </div>
+                                <hr className='w-100' style={{margin: 0}}/>
+                            </div>
+                            <div className='col-lg-4' style={{marginBottom: 15}}>
+                                <div className='h-100'>
+                                    <h6 className='d-flex justify-content-center neutral-bg-text'><b>Neutral</b></h6>
+                                    <hr className='w-100'/>
+                                    {<TypeEffectiveSelect effect={1} types={pokemon.types}/>}
+
+                                </div>
+                                <hr className='w-100' style={{margin: 0}}/>
+                            </div>
+                            <div className='col-lg-4' style={{marginBottom: 15}}>
+                                <div className='h-100'>
+                                    <h6 className='d-flex justify-content-center resistance-bg-text'><b>Resistance</b></h6>
+                                    <hr className='w-100'/>
+                                    {<TypeEffectiveSelect effect={2} types={pokemon.types}/>}
+                                </div>
+                                <hr className='w-100' style={{margin: 0}}/>
+                            </div>
+                        </div>
+                    </div>
                     </Fragment>
                     }
                 </Accordion.Body>
@@ -222,34 +276,30 @@ const PVP = () => {
         )
     }
 
-    const renderTopStats = (stats, key) => {
-        const store = storeStats[key];
-        let currStats;
-        if (!store) {
-            const maxCP = parseInt(params.cp);
-            const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-            const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
-            currStats = allStats[allStats.length-1];
-            setStoreStats(update(storeStats, {[key]: {$set: currStats}}));
-        } else {
-            currStats = store;
-        }
-
+    const renderTopStats = (stats, key, id) => {
+        const maxCP = parseInt(params.cp);
+        const currStats = storeStats[key];
         return (
             <ul className='element-top'>
                 <li className='element-top'>
-                    CP: {currStats.CP}
+                    CP: <b>{maxCP === 10000 ? `${currStats["50"].cp}-${currStats["51"].cp}` : `${currStats.CP}`}</b>
+                </li>
+                <li className={currStats.level <= 40 ? 'element-top' : ''}>
+                    Level: <b>{maxCP === 10000 ? "50-51" : `${currStats.level}`} </b>
+                    {(currStats.level > 40 || maxCP === 10000) &&
+                    <b>
+                    (Need XL Candy
+                        <div className="position-relative d-inline-block filter-shadow">
+                            <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
+                            <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                        </div>
+                    )</b>
+                    }
                 </li>
                 <li className='element-top'>
-                    Level: {currStats.level}
-                </li>
-                <li className='element-top'>
-                    Attack
-                    <IVbar iv={currStats.IV.atk}/>
-                    Defense
-                    <IVbar iv={currStats.IV.def}/>
-                    HP
-                    <IVbar iv={currStats.IV.sta}/>
+                    <IVbar title="Attack" iv={maxCP === 10000 ? 15 : currStats.IV.atk} style={{maxWidth: 500}}/>
+                    <IVbar title="Defense" iv={maxCP === 10000 ? 15 : currStats.IV.def} style={{maxWidth: 500}}/>
+                    <IVbar title="HP" iv={maxCP === 10000 ? 15 : currStats.IV.sta} style={{maxWidth: 500}}/>
                 </li>
             </ul>
         )
@@ -277,7 +327,7 @@ const PVP = () => {
                     <Accordion alwaysOpen className="ranking-container">
                         {rankingData
                         .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
-                        .sort((a,b) => b.score-a.score).map((value, index) => (
+                        .sort((a,b) => b.score-a.score).slice(0,1).map((value, index) => (
                             <Fragment key={index}>
                                 {renderItem(value, index)}
                             </Fragment>

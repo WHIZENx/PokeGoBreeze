@@ -157,7 +157,7 @@ const Hexagon = ({setDefaultStats, ...props}) => {
     }
 
     return (
-        <div className="position-relative stats-border">
+        <div className="position-relative stats-border" style={{width: props.borderSize, height: props.borderSize}}>
             {initHex &&
                 <Fragment>
                 <div className="position-absolute text-center leader-text">

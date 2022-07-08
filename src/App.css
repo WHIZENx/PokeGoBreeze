@@ -37,6 +37,12 @@ img.pokemon-sprite {
     object-fit: contain;
 }
 
+img.pokemon-sprite-small {
+    width: 100%;
+    height: 16px;
+    object-fit: contain;
+}
+
 img.pokemon-sprite-medium {
     width: 100%;
     height: 64px;
@@ -134,7 +140,12 @@ ul {
     box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2);
 }
 
-.filter-shadow:hover {
+.filter-shadow {
+    -webkit-filter: drop-shadow(1px 1px 1px black);
+    filter: drop-shadow(1px 1px 1px black);
+}
+
+.filter-shadow-hover:hover {
     -webkit-filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
 }

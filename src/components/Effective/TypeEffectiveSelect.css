@@ -1,0 +1,11 @@
+.type-select-bg {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.sprite-type-select {
+    width: auto !important;
+}

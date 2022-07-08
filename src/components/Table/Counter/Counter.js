@@ -63,7 +63,7 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
                                 <td className="text-origin text-center">
                                     <Link  to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}`: ""}`} target="_blank">
                                         <div className="d-flex justify-content-center">
-                                            <div className="position-relative group-pokemon-sprite filter-shadow">
+                                            <div className="position-relative group-pokemon-sprite filter-shadow-hover">
                                                 {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                                                 {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}/>}
                                                 <img className="pokemon-sprite-counter" alt="img-pokemon" src={findAssetForm(value.pokemon_id, value.pokemon_name) ?

@@ -35,7 +35,7 @@ const Info = (props) => {
             });
             if (value_effective >= 2.56) data.very_weak.push(key);
             else if (value_effective >= 1.6) data.weak.push(key);
-            else if (value_effective >= 1) data.neutral.push(key);
+            else if (value_effective === 1) data.neutral.push(key);
             else if (value_effective >= 0.625) data.resist.push(key);
             else if (value_effective >= 0.39) data.very_resist.push(key);
             else if (value_effective >= 0.2) data.super_resist.push(key);

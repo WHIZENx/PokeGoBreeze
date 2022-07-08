@@ -5,7 +5,7 @@
 }
 
 .iv-bg-group, .iv-group {
-    width: 100%;
+    width: 99%;
     display: flex;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .iv.iv-bg-bar {
-    width: 30%;
+    width: 33%;
 }
 
 .iv-bg-bar {

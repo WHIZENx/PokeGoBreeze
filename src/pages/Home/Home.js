@@ -228,8 +228,8 @@ const Home = () => {
                                             <Link to={`/pokemon/${row.id}${row.forme ? `?form=${row.forme.toLowerCase()}`: ""}`} target="_blank">
                                             #{row.id} <img height={60} alt='img-pokemon'
                                             src={APIService.getPokeIconSprite(row.sprite, true)}
-                                            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}>
-                                            </img> {splitAndCapitalize(row.name, "-", " ")}
+                                            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(row.baseSpecies)}}/>
+                                             {splitAndCapitalize(row.name, "-", " ")}
                                             </Link>
                                         </StyledTableCell>
                                         <StyledTableCell align="center" component="td">
