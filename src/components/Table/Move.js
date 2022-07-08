@@ -83,7 +83,7 @@ const Move = (props) => {
                                                 <li className='card-header'><b>Fast Moves</b></li>
                                                 }
                                                 {!props.type && index === countFM &&
-                                                <li className='card-header'><b>Charge Moves</b></li>
+                                                <li className='card-header'><b>Charged Moves</b></li>
                                                 }
                                                 <li className="container card-pokemon" onMouseDown={() => changeMove(value)}>
                                                     <CardType value={findType(value.name)} name={splitAndCapitalize(value.name.replaceAll("_PLUS","+").replaceAll("_FAST", ""), "_", " ")} elite={value.elite} shadow={value.shadow}  purified={value.purified}/>

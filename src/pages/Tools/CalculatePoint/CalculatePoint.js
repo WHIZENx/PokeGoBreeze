@@ -429,7 +429,7 @@ const CalculatePoint = () => {
                                 }
                             </div>
                             <div>
-                                <Move text="Charge Moves" id={idDef} selectDefault={true} form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()} setMove={setCMove} move={cMove} type="CHARGE"/>
+                                <Move text="Charged Moves" id={idDef} selectDefault={true} form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()} setMove={setCMove} move={cMove} type="CHARGE"/>
                                 {cMove &&
                                 <div className="element-top" style={{width: 300, margin: 'auto'}}>
                                     <p>- Move Ability Type: <b>{capitalize(cMove.type_move.toLowerCase())}</b></p>

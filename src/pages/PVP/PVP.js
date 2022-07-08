@@ -18,7 +18,7 @@ import { computeBgColor, computeColor, findAssetForm } from "../../util/Compute"
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import IVbar from '../../components/Sprites/IVBar/IVBar';
 import TypeEffectiveSelect from '../../components/Effective/TypeEffectiveSelect';
 
@@ -68,6 +68,29 @@ const PVP = () => {
         }
     }
 
+    const findMove = (name, uses, combatList) => {
+        const oldName = name;
+        if (name.includes("HIDDEN_POWER")) name = "HIDDEN_POWER";
+        let move = combatData.find(move => move.name === name);
+        if (oldName.includes("HIDDEN_POWER")) move = {...move, type: oldName.split("_")[2]};
+
+        let elite = false;
+        if (combatList.ELITE_QUICK_MOVES.includes(name)) elite = true;
+        if (combatList.ELITE_CINEMATIC_MOVES.includes(name)) elite = true;
+
+        return (
+            <div className={(move.type.toLowerCase())+' type-rank-item d-flex align-items-center justify-content-between'}>
+                <div>
+                    <img style={{marginRight: 15}} className="filter-shadow" width={24} height={24} alt='img-pokemon' src={APIService.getTypeSprite(move.type)}/>
+                    <span className='filter-shadow'>{splitAndCapitalize(oldName, "_", " ")} {elite && <b className="filter-shadow">*</b>}</span>
+                </div>
+                <div>
+                    <span className="ranking-score score-ic filter-shadow">{uses}</span>
+                </div>
+            </div>
+        )
+    }
+
     const renderItem = (data, key) => {
         const name = convertNameRankingToOri(data.speciesId, data.speciesName);
         const pokemon = Object.values(pokemonData).find(pokemon => pokemon.slug === name);
@@ -115,7 +138,7 @@ const PVP = () => {
                     </div>
                 </Accordion.Header>
                 <Accordion.Body className="ranking-body">
-                    {true && storeStats[key] &&
+                    {countRank[key] && storeStats[key] &&
                     <Fragment>
                     <div className="w-100 ranking-info element-top">
                         <div className="d-flex flex-wrap align-items-center">
@@ -125,11 +148,11 @@ const PVP = () => {
                         <div className="d-flex flex-wrap element-top">
                             <TypeBadge find={true} title="Fast Move" style={{marginRight: 15}} move={fmove}
                             elite={combatPoke.ELITE_QUICK_MOVES.includes(fmove.name)}/>
-                            <TypeBadge find={true} title="Primary Charge Move" style={{marginRight: 10}} move={cmovePri}
+                            <TypeBadge find={true} title="Primary Charged Move" style={{marginRight: 10}} move={cmovePri}
                             elite={combatPoke.ELITE_CINEMATIC_MOVES.includes(cmovePri.name)}
                             shadow={combatPoke.SHADOW_MOVES.includes(cmovePri.name)}
                             purified={combatPoke.PURIFIED_MOVES.includes(cmovePri.name)}/>
-                            {cMoveDataSec && <TypeBadge find={true} title="Secondary Charge Move" move={cmoveSec}
+                            {cMoveDataSec && <TypeBadge find={true} title="Secondary Charged Move" move={cmoveSec}
                             elite={combatPoke.ELITE_CINEMATIC_MOVES.includes(cmoveSec.name)}
                             shadow={combatPoke.SHADOW_MOVES.includes(cmoveSec.name)}
                             purified={combatPoke.PURIFIED_MOVES.includes(cmoveSec.name)}/>}
@@ -234,7 +257,6 @@ const PVP = () => {
                                     <h6 className='d-flex justify-content-center neutral-bg-text'><b>Neutral</b></h6>
                                     <hr className='w-100'/>
                                     {<TypeEffectiveSelect effect={1} types={pokemon.types}/>}
-
                                 </div>
                                 <hr className='w-100' style={{margin: 0}}/>
                             </div>
@@ -245,6 +267,34 @@ const PVP = () => {
                                     {<TypeEffectiveSelect effect={2} types={pokemon.types}/>}
                                 </div>
                                 <hr className='w-100' style={{margin: 0}}/>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='container'>
+                        <div className='row' style={{margin: 0}}>
+                            <div className='col-xl-6' style={{padding: 0, backgroundColor: 'lightgray'}}>
+                                <div className='moves-title'>Fast Moves</div>
+                                <div className='type-rank-list'>
+                                    {data.moves.fastMoves.map(move => {
+                                        if (!move.uses) move.uses = 0;
+                                        return move;
+                                    }).sort((a,b) => b.uses-a.uses).map((value, index) => (
+                                        <Fragment key={index}>{findMove(value.moveId, value.uses, combatPoke)}</Fragment>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className='col-xl-6' style={{padding: 0, backgroundColor: 'lightgray'}}>
+                                <div className='moves-title'>Charged Moves</div>
+                                <div className='type-rank-list'>
+                                    {data.moves.chargedMoves.map(move => {
+                                        if (move.moveId === "FUTURE_SIGHT") move.moveId = "FUTURESIGHT";
+                                        if (move.moveId === "TECHNO_BLAST_DOUSE") move.moveId = "TECHNO_BLAST_WATER";
+                                        if (!move.uses) move.uses = 0;
+                                        return move;
+                                    }).sort((a,b) => b.uses-a.uses).map((value, index) => (
+                                        <Fragment key={index}>{findMove(value.moveId, value.uses, combatPoke)}</Fragment>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -264,10 +314,10 @@ const PVP = () => {
         return (
             <div className="d-flex align-items-center">
                 <span className="number-count-ranking">{index+1}</span>
-                <span className="d-inline-block position-relative" style={{width: 50, marginRight: '1rem'}}>
+                <Link to={`/pvp/${params.cp}/${params.type}/${name}`} target="_blank" className="d-inline-block position-relative" style={{width: 50, marginRight: '1rem'}}>
                     {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                     <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
-                </span>
+                </Link>
                 <div>
                     <b>#{id} {splitAndCapitalize(name, "-", " ")}</b>
                     <Type hideText={true} block={true} style={{marginBottom: 0}} styled={true} height={20} arr={pokemon.types} />
@@ -327,7 +377,7 @@ const PVP = () => {
                     <Accordion alwaysOpen className="ranking-container">
                         {rankingData
                         .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
-                        .sort((a,b) => b.score-a.score).slice(0,1).map((value, index) => (
+                        .sort((a,b) => b.score-a.score).map((value, index) => (
                             <Fragment key={index}>
                                 {renderItem(value, index)}
                             </Fragment>

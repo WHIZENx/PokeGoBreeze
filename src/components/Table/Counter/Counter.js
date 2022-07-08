@@ -50,7 +50,7 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
                     <tr className="text-center">
                         <th className="table-column-head main-move-name">Pokémon</th>
                         <th className="table-column-head main-move-counter">Fast</th>
-                        <th className="table-column-head main-move-counter">Charge</th>
+                        <th className="table-column-head main-move-counter">Charged</th>
                         <th className="table-column-head">%</th>
                     </tr>
                 </thead>

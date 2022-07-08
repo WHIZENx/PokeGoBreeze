@@ -145,7 +145,7 @@ const Move = (props) => {
                                     <td colSpan="2">{move.pve_energy > 0 && "+"}{move.pve_energy}</td>
                                 </tr>
                                 {move.type_move === "CHARGE" && <tr>
-                                    <td>PVE Bar Charge</td>
+                                    <td>PVE Bar Charged</td>
                                     <td colSpan="2" className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(true, move.pve_energy)).keys()].map((value, index) => (
                                         <div style={{width: ((120-(5*(Math.max(1, getBarCharge(true, move.pve_energy)))))/getBarCharge(true, move.pve_energy))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
@@ -165,7 +165,7 @@ const Move = (props) => {
                                     <td colSpan="2">{move.pvp_energy > 0 && "+"}{move.pvp_energy}</td>
                                 </tr>
                                 {move.type_move === "CHARGE" && <tr>
-                                    <td>PVP Bar Charge</td>
+                                    <td>PVP Bar Charged</td>
                                     <td colSpan="2" className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((value, index) => (
                                         <div style={{width: ((120-(5*(Math.max(1, getBarCharge(false, move.pvp_energy)))))/getBarCharge(false, move.pvp_energy))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>

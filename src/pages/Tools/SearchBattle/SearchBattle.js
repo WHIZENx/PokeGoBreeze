@@ -301,7 +301,7 @@ const FindBattle = () => {
                                     <Accordion.Header>
                                         <b>More information</b>
                                     </Accordion.Header>
-                                    <Accordion.Body>
+                                    <Accordion.Body style={{padding: 0}}>
                                     <div className='sub-body'>
                                         <div className="row justify-content-center league-info-content" style={{margin:0}}>
                                             {value.map((item, index) => (

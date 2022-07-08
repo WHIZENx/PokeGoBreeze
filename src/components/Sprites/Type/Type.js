@@ -15,11 +15,11 @@ const Type = (props) => {
             {props.arr.map((value, index) => (
                 <li style={props.style} className='img-group' key={ index }>
                     {props.hideText ?
-                        <img width={props.height} height={props.height} alt='img-pokemon' src={APIService.getTypeSprite(value)}
+                        <img className={props.shadow ? "filter-shadow" : ""} width={props.height} height={props.height} alt='img-pokemon' src={APIService.getTypeSprite(value)}
                         onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}/>
                         :
                         <Fragment>
-                            <img width={36} height={36} alt='img-pokemon' src={APIService.getTypeSprite(value)}/>
+                            <img className={props.shadow ? "filter-shadow" : ""} width={36} height={36} alt='img-pokemon' src={APIService.getTypeSprite(value)}/>
                             <span className='caption text-black'>{capitalize(value)}</span>
                         </Fragment>
                     }

@@ -24,6 +24,7 @@ import Sticker from './pages/Sticker/Sticker';
 import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
 import CalculatePoint from './pages/Tools/CalculatePoint/CalculatePoint';
 import PVP from './pages/PVP/PVP';
+import PokemonPVP from './pages/PVP/Pokemon';
 
 const App = () => {
 
@@ -52,6 +53,7 @@ const App = () => {
               <Route path="/raid-battle" element={<RaidBattle/>}></Route>
               <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
               <Route path="/pvp/:cp/:type" element={<PVP/>}></Route>
+              <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
               <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
               <Route path="/stickers" element={<Sticker/>}></Route>

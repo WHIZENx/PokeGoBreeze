@@ -77,9 +77,9 @@ const TypeEffectiveSelect = (props) => {
                 types.forEach((type) => {
                     value_effective *= value[splitAndCapitalize(type, "-", " ")];
                 });
-                if (value_effective >= 0.625) data.resist.push(key);
-                else if (value_effective >= 0.39) data.very_resist.push(key);
-                else if (value_effective >= 0.2) data.super_resist.push(key);
+                if (value_effective <= 0.3) data.super_resist.push(key);
+                else if (value_effective <= 0.39) data.very_resist.push(key);
+                else if (value_effective <= 0.625) data.resist.push(key);
             });
             return (
                 <div className="container" style={{paddingBottom: '0.5rem'}}>

@@ -493,7 +493,7 @@ const RaidBattle = () => {
                             </div>
                             <div className="col d-flex justify-content-center">
                                 <div>
-                                    <h6 className='text-center'><b>Charge Moves</b></h6>
+                                    <h6 className='text-center'><b>Charged Moves</b></h6>
                                     <SelectMove clearData={clearData} result={resultCMove} move={cMove} setMovePokemon={setCMove}/>
                                 </div>
                             </div>
@@ -561,7 +561,7 @@ const RaidBattle = () => {
                                 <hr/>
                                 <div className="container" style={{marginBottom: 15}}>
                                     <TypeBadge title="Fast Move" move={value.fmove} elite={value.elite.fmove}/>
-                                    <TypeBadge title="Charge Move" move={value.cmove} elite={value.elite.cmove} shadow={value.mShadow} purified={value.purified} />
+                                    <TypeBadge title="Charged Move" move={value.cmove} elite={value.elite.cmove} shadow={value.mShadow} purified={value.purified} />
                                 </div>
                             </div>
                         ))
@@ -637,7 +637,7 @@ const RaidBattle = () => {
                                 <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite}/>
                             </div>
                             <div className="d-inline-block">
-                                <TypeBadge title="Charge Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
+                                <TypeBadge title="Charged Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
                             </div>
                             <hr/>
                             <div className="row" style={{margin: 0}}>

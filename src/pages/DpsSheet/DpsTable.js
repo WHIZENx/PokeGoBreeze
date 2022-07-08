@@ -74,7 +74,7 @@ const columns = [
         sortFunction: fmoveSort
     },
     {
-        name: 'Charge Move',
+        name: 'Charged Move',
         selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_", " ")}`}>
             <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}/> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_", " ").replaceAll(" Plus", "+")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.mShadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
         sortable: true,
@@ -378,7 +378,7 @@ const DpsTable = () => {
                                 </Box>
                                 <Box className="col-xl-4" style={{padding: 0}}>
                                     <div className="input-group">
-                                        <span className="input-group-text">Charge Move</span>
+                                        <span className="input-group-text">Charged Move</span>
                                         <SelectMove inputType={"small"} clearData={clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCmoveTargetPokemon} moveType="CHARGE"/>
                                     </div>
                                 </Box>
@@ -415,8 +415,8 @@ const DpsTable = () => {
                                             ctime: options.delay.ctime,
                                         }
                                     })}/>
-                                    <span className="input-group-text">Charge Move Time</span>
-                                    <input type="number" className="form-control" style={{height:42}} placeholder="Delay time (sec)" aria-label="Charge Move Time" min={0} disabled={!enableDelay} required={enableDelay}
+                                    <span className="input-group-text">Charged Move Time</span>
+                                    <input type="number" className="form-control" style={{height:42}} placeholder="Delay time (sec)" aria-label="Charged Move Time" min={0} disabled={!enableDelay} required={enableDelay}
                                     onInput={(e) => setOptions({
                                         ...options,
                                         delay: {

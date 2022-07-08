@@ -66,7 +66,7 @@ const PokemonRaid = ({id, pokemon, data, setData, controls, onCopyPokemon, onRem
                             setCMovePokemon={setCMovePokemon}/>
             <span className="input-group-text justify-content-center"><b>Fast Move</b></span>
             <SelectMove selected={true} inputType={"small"} clearData={clearData} pokemon={dataTargetPokemon} move={fmoveTargetPokemon} setMovePokemon={setFMovePokemon} moveType="FAST"/>
-            <span className="input-group-text justify-content-center"><b>Charge Move</b></span>
+            <span className="input-group-text justify-content-center"><b>Charged Move</b></span>
             <SelectMove selected={true} inputType={"small"} clearData={clearData} pokemon={dataTargetPokemon} move={cmoveTargetPokemon} setMovePokemon={setCMovePokemon} moveType="CHARGE"/>
         </div>
     )
