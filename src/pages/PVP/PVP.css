@@ -77,7 +77,7 @@
 }
 
 .ranking-link-group a {
-    border-radius: 0;
+    border-radius: 0 !important;
     border-left: 1px solid black;
     border-top: 2px solid black;
     border-right: 1px solid black;

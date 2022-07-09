@@ -11,7 +11,7 @@ import { useState, useEffect, Fragment, useRef } from "react";
 
 import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName } from '../../util/Utils';
 import { calculateStatsByTag, calStatsProd, calculateCP, sortStatsPokemon } from '../../util/Calculate';
-import { Accordion } from 'react-bootstrap';
+import { Accordion, Button } from 'react-bootstrap';
 
 import APIService from '../../services/API.service';
 import { computeBgColor, computeColor, findAssetForm } from "../../util/Compute";
@@ -79,7 +79,7 @@ const PVP = () => {
         if (combatList.ELITE_CINEMATIC_MOVES.includes(name)) elite = true;
 
         return (
-            <div className={(move.type.toLowerCase())+' type-rank-item d-flex align-items-center justify-content-between'}>
+            <Link to={`/moves/${move.id}`} target="_blank" className={(move.type.toLowerCase())+' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'}>
                 <div>
                     <img style={{marginRight: 15}} className="filter-shadow" width={24} height={24} alt='img-pokemon' src={APIService.getTypeSprite(move.type)}/>
                     <span className='filter-shadow'>{splitAndCapitalize(oldName, "_", " ")} {elite && <b className="filter-shadow">*</b>}</span>
@@ -87,7 +87,7 @@ const PVP = () => {
                 <div>
                     <span className="ranking-score score-ic filter-shadow">{uses}</span>
                 </div>
-            </div>
+            </Link>
         )
     }
 
@@ -314,7 +314,7 @@ const PVP = () => {
         return (
             <div className="d-flex align-items-center">
                 <span className="number-count-ranking">{index+1}</span>
-                <Link to={`/pvp/${params.cp}/${params.type}/${name}`} target="_blank" className="d-inline-block position-relative" style={{width: 50, marginRight: '1rem'}}>
+                <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="d-inline-block position-relative filter-shadow-hover" style={{width: 50, marginRight: '1rem'}}>
                     {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                     <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
                 </Link>
@@ -358,13 +358,13 @@ const PVP = () => {
     return (
         <div className="container">
             <div className='element-top ranking-link-group'>
-                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall`}>Overall</a>
-                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads`}>Leads</a>
-                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers`}>Closers</a>
-                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/${params.cp}/switches`}>Switches</a>
-                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/${params.cp}/chargers`}>Chargers</a>
-                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/${params.cp}/attackers`}>Attackers</a>
-                <a type='button' className={'btn btn-primary'+(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency`}>Consistency</a>
+                <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall`}>Overall</Button >
+                <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads`}>Leads</Button>
+                <Button className={(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers`}>Closers</Button>
+                <Button className={(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/${params.cp}/switches`}>Switches</Button>
+                <Button className={(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/${params.cp}/chargers`}>Chargers</Button>
+                <Button className={(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/${params.cp}/attackers`}>Attackers</Button>
+                <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency`}>Consistency</Button>
             </div>
             <div className="input-group border-input">
                 <input type="text" className='form-control input-search' placeholder='Enter Name or ID'

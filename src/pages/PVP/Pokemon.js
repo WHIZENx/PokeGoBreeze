@@ -17,75 +17,88 @@ import Stats from '../../components/Info/Stats/Stats';
 import TypeEffectiveSelect from '../../components/Effective/TypeEffectiveSelect';
 import IVbar from '../../components/Sprites/IVBar/IVBar';
 
+import loading from '../../assets/loading.png';
+import Error from '../Error/Error';
+import { Button } from 'react-bootstrap';
+
 const PokemonPVP = () => {
 
     const params = useParams();
 
     const [rankingPoke, setRankingPoke] = useState(null);
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
+    const [spinner, setSpinner] = useState(true);
+    const [found, setFound] = useState(true);
 
     useEffect(() => {
         const fetchMyAPI = async () => {
-            const data = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data
-            .find(pokemon => pokemon.speciesId === params.pokemon.toLowerCase());
+            try {
+                const paramName = params.pokemon.replaceAll("-", "_").toLowerCase()
+                const data = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data
+                .find(pokemon => pokemon.speciesId === paramName);
 
-            const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-            const pokemon = Object.values(pokemonData).find(pokemon => pokemon.slug === name);
-            const id = pokemon.num;
-            const form = findAssetForm(pokemon.num, pokemon.name);
+                const name = convertNameRankingToOri(data.speciesId, data.speciesName);
+                const pokemon = Object.values(pokemonData).find(pokemon => pokemon.slug === name);
+                const id = pokemon.num;
+                const form = findAssetForm(pokemon.num, pokemon.name);
 
-            const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+                const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
-            let fmoveData = data.moveset[0], cMoveDataPri = data.moveset[1], cMoveDataSec = data.moveset[2];
-            if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
-            if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
-            if (cMoveDataSec === "FUTURE_SIGHT") cMoveDataSec = "FUTURESIGHT";
-            if (cMoveDataPri === "TECHNO_BLAST_DOUSE") cMoveDataPri = "TECHNO_BLAST_WATER";
-            if (cMoveDataSec === "TECHNO_BLAST_DOUSE") cMoveDataSec = "TECHNO_BLAST_WATER";
+                let fmoveData = data.moveset[0], cMoveDataPri = data.moveset[1], cMoveDataSec = data.moveset[2];
+                if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
+                if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
+                if (cMoveDataSec === "FUTURE_SIGHT") cMoveDataSec = "FUTURESIGHT";
+                if (cMoveDataPri === "TECHNO_BLAST_DOUSE") cMoveDataPri = "TECHNO_BLAST_WATER";
+                if (cMoveDataSec === "TECHNO_BLAST_DOUSE") cMoveDataSec = "TECHNO_BLAST_WATER";
 
-            let fmove = combatData.find(item => item.name === fmoveData);
-            const cmovePri = combatData.find(item => item.name === cMoveDataPri);
-            if (cMoveDataSec) var cmoveSec = combatData.find(item => item.name === cMoveDataSec);
+                let fmove = combatData.find(item => item.name === fmoveData);
+                const cmovePri = combatData.find(item => item.name === cMoveDataPri);
+                if (cMoveDataSec) var cmoveSec = combatData.find(item => item.name === cMoveDataSec);
 
-            if (data.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: data.moveset[0].split("_")[2]}
+                if (data.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: data.moveset[0].split("_")[2]}
 
-            let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
-                && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
-            );
-            const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
-            if (!result) combatPoke = combatPoke[0]
-            else combatPoke = result;
+                let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
+                    && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+                );
+                const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+                if (!result) combatPoke = combatPoke[0]
+                else combatPoke = result;
 
-            const maxCP = parseInt(params.cp);
+                const maxCP = parseInt(params.cp);
 
-            let bestStats;
-            if (maxCP === 10000) {
-                const cp = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50);
-                const buddyCP = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 51);
-                bestStats = {
-                    "50": {cp: cp},
-                    "51": {cp: buddyCP},
-                };
-            } else {
-                const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-                const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
-                bestStats = allStats[allStats.length-1];
+                let bestStats;
+                if (maxCP === 10000) {
+                    const cp = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50);
+                    const buddyCP = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 51);
+                    bestStats = {
+                        "50": {cp: cp},
+                        "51": {cp: buddyCP},
+                    };
+                } else {
+                    const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+                    const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
+                    bestStats = allStats[allStats.length-1];
+                }
+
+                setRankingPoke({
+                    data: data,
+                    id: id,
+                    name: name,
+                    pokemon: pokemon,
+                    form: form,
+                    stats: stats,
+                    scores: data.scores,
+                    fmove: fmove,
+                    cmovePri: cmovePri,
+                    cmoveSec: cmoveSec,
+                    combatPoke: combatPoke,
+                    bestStats: bestStats
+                });
+                setSpinner(false);
+            } catch {
+                setSpinner(false);
+                setFound(false);
             }
-
-            setRankingPoke({
-                data: data,
-                id: id,
-                name: name,
-                pokemon: pokemon,
-                form: form,
-                stats: stats,
-                scores: data.scores,
-                fmove: fmove,
-                cmovePri: cmovePri,
-                cmoveSec: cmoveSec,
-                combatPoke: combatPoke,
-                bestStats: bestStats
-            });
         }
         fetchMyAPI();
     }, [params.cp, params.type, params.pokemon]);
@@ -101,7 +114,7 @@ const PokemonPVP = () => {
         if (combatList.ELITE_CINEMATIC_MOVES.includes(name)) elite = true;
 
         return (
-            <div className={(move.type.toLowerCase())+' type-rank-item d-flex align-items-center justify-content-between'}>
+            <Link to={`/moves/${move.id}`} target="_blank" className={(move.type.toLowerCase())+' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'}>
                 <div>
                     <img style={{marginRight: 15}} className="filter-shadow" width={24} height={24} alt='img-pokemon' src={APIService.getTypeSprite(move.type)}/>
                     <span className='filter-shadow'>{splitAndCapitalize(oldName, "_", " ")} {elite && <b className="filter-shadow">*</b>}</span>
@@ -109,7 +122,7 @@ const PokemonPVP = () => {
                 <div>
                     <span className="ranking-score score-ic filter-shadow">{uses}</span>
                 </div>
-            </div>
+            </Link>
         )
     }
 
@@ -122,7 +135,7 @@ const PokemonPVP = () => {
         return (
             <div className="d-flex align-items-center">
                 <span className="number-count-ranking">{index+1}</span>
-                <Link to={`/pvp/${params.cp}/${params.type}/${name}`} target="_blank"  className="d-inline-block position-relative" style={{width: 50, marginRight: '1rem'}}>
+                <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="d-inline-block position-relative filter-shadow-hover" style={{width: 50, marginRight: '1rem'}}>
                     {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                     <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
                 </Link>
@@ -134,7 +147,7 @@ const PokemonPVP = () => {
         )
     }
 
-    const renderTopStats = (stats, key, id) => {
+    const renderTopStats = (stats, id) => {
         const maxCP = parseInt(params.cp);
         const currStats = rankingPoke.bestStats;
         return (
@@ -164,25 +177,52 @@ const PokemonPVP = () => {
     }
 
     return (
+        <Fragment>
+        {!found ?
+        <Error />
+        :
+        <Fragment>
+        <div className='position-fixed loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
+        <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
+            <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
+            <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
+        </div>
         <div className="container" style={{marginTop: 15, marginBottom: 15}}>
             {rankingPoke &&
             <Fragment>
+            <div className='element-top ranking-link-group'>
+                <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall/${params.pokemon}`}>Overall</Button >
+                <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads/${params.pokemon}`}>Leads</Button>
+                <Button className={(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers/${params.pokemon}`}>Closers</Button>
+                <Button className={(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/${params.cp}/switches/${params.pokemon}`}>Switches</Button>
+                <Button className={(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/${params.cp}/chargers/${params.pokemon}`}>Chargers</Button>
+                <Button className={(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/${params.cp}/attackers/${params.pokemon}`}>Attackers</Button>
+                <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency/${params.pokemon}`}>Consistency</Button>
+            </div>
             <div className="w-100 ranking-info element-top">
-                <div className="d-flex flex-wrap align-items-center">
-                    <h3 style={{marginRight: 15}}><b>#{rankingPoke.id} {splitAndCapitalize(rankingPoke.name, "-", " ")}</b></h3>
-                    <Type block={true} style={{marginBottom: 0}} styled={true} arr={rankingPoke.pokemon.types} />
-                </div>
-                <div className="d-flex flex-wrap element-top">
-                    <TypeBadge find={true} title="Fast Move" style={{marginRight: 15}} move={rankingPoke.fmove}
-                    elite={rankingPoke.combatPoke.ELITE_QUICK_MOVES.includes(rankingPoke.fmove.name)}/>
-                    <TypeBadge find={true} title="Primary Charged Move" style={{marginRight: 10}} move={rankingPoke.cmovePri}
-                    elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmovePri.name)}
-                    shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmovePri.name)}
-                    purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmovePri.name)}/>
-                    {rankingPoke.cMoveDataSec && <TypeBadge find={true} title="Secondary Charged Move" move={rankingPoke.cmoveSec}
-                    elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmoveSec.name)}
-                    shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmoveSec.name)}
-                    purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmoveSec.name)}/>}
+                <div className="d-flex flex-wrap align-items-center justify-content-center">
+                    <div className="position-relative filter-shadow" style={{width: 128, marginRight: '2rem'}}>
+                        {rankingPoke.data.speciesName.includes("(Shadow)") && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                        <img alt='img-league' className="pokemon-sprite-raid" src={rankingPoke.form ?  APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke.id)}/>
+                    </div>
+                    <div>
+                        <div className="d-flex flex-wrap align-items-center">
+                            <h3 style={{marginRight: 15}}><b>#{rankingPoke.id} {splitAndCapitalize(rankingPoke.name, "-", " ")}</b></h3>
+                            <Type block={true} style={{marginBottom: 0}} styled={true} arr={rankingPoke.pokemon.types} />
+                        </div>
+                        <div className="d-flex flex-wrap element-top">
+                            <TypeBadge find={true} title="Fast Move" style={{marginRight: 15}} move={rankingPoke.fmove}
+                            elite={rankingPoke.combatPoke.ELITE_QUICK_MOVES.includes(rankingPoke.fmove.name)}/>
+                            <TypeBadge find={true} title="Primary Charged Move" style={{marginRight: 10}} move={rankingPoke.cmovePri}
+                            elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmovePri.name)}
+                            shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmovePri.name)}
+                            purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmovePri.name)}/>
+                            {rankingPoke.cMoveDataSec && <TypeBadge find={true} title="Secondary Charged Move" move={rankingPoke.cmoveSec}
+                            elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmoveSec.name)}
+                            shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmoveSec.name)}
+                            purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmoveSec.name)}/>}
+                        </div>
+                    </div>
                 </div>
                 <hr />
                 <div className="row" style={{margin: 0}}>
@@ -228,7 +268,15 @@ const PokemonPVP = () => {
                 <div className="col-lg-4 d-flex justify-content-center element-top">
                     <div>
                         <h5><b>Overall Performance</b></h5>
-                        <Hexagon animation={0} borderSize={340} size={200}
+                        <Hexagon animation={1} borderSize={340} size={200}
+                        defaultStats={{
+                            lead: 0,
+                            atk: 0,
+                            cons: 0,
+                            closer: 0,
+                            charger: 0,
+                            switching: 0
+                        }}
                         stats={{
                             lead: rankingPoke.scores[0],
                             atk: rankingPoke.scores[4],
@@ -328,6 +376,9 @@ const PokemonPVP = () => {
             </Fragment>
             }
         </div>
+        </Fragment>
+        }
+        </Fragment>
     )
 }
 

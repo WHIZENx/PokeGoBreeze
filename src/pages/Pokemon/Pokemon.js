@@ -244,9 +244,6 @@ const Pokemon = (props) => {
                     <div className="w-100 text-center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
                         {Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName) &&
                         !Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName).releasedGO &&
-                            // <h5 className='text-danger'>* {splitAndCapitalize(data.name, "-", " ")} not released in Pokémon GO
-                            // <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/>
-                            // </h5>
                             <Alert variant="danger">
                                 <h5 className='text-danger' style={{margin: 0}}>* <b>{formName}</b> not released in Pokémon GO
                                 <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/>

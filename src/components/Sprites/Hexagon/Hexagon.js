@@ -2,12 +2,11 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import './Hexagon.css';
 
-const Hexagon = ({setDefaultStats, ...props}) => {
+const Hexagon = (props) => {
 
-    const hexBorderSize = props.size ?? 0;
-    const hexSize = hexBorderSize/2;
     const canvasHex = useRef();
     const [initHex, setInitHex] = useState(false);
+    const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
 
     const getHexConerCord = useCallback((center, size, i) => {
         let angle_deg = 60 * i - 30;
@@ -21,7 +20,7 @@ const Hexagon = ({setDefaultStats, ...props}) => {
         return { x: x, y: y };
     }
 
-    const drawInitHex = useCallback((canvasId, center) => {
+    const drawInitHex = useCallback((canvasId, center, hexSize) => {
         const ctx = canvasId.getContext('2d');
         const start = getHexConerCord(center, hexSize, 0);
         ctx.beginPath();
@@ -36,9 +35,9 @@ const Hexagon = ({setDefaultStats, ...props}) => {
         ctx.strokeStyle = "gray";
         ctx.stroke();
         ctx.closePath();
-    }, [getHexConerCord, hexSize]);
+    }, [getHexConerCord]);
 
-    const drawInitLineHex = useCallback((canvasId, center) => {
+    const drawInitLineHex = useCallback((canvasId, center, hexSize) => {
         const ctx = canvasId.getContext('2d');
         ctx.beginPath();
         for (let i = 1; i <= 6; i++) {
@@ -49,9 +48,9 @@ const Hexagon = ({setDefaultStats, ...props}) => {
         ctx.strokeStyle = "lightgray";
         ctx.stroke();
         ctx.closePath();
-    }, [getHexConerCord, hexSize]);
+    }, [getHexConerCord]);
 
-    const drawStatsHex = useCallback((canvasId, center, stat) => {
+    const drawStatsHex = useCallback((canvasId, center, stat, hexSize) => {
         const stats = {
             "0": (stat.switching || 0)*hexSize/100,
             "1": (stat.charger || 0)*hexSize/100,
@@ -76,7 +75,7 @@ const Hexagon = ({setDefaultStats, ...props}) => {
         ctx.strokeStyle = "green";
         ctx.stroke();
         ctx.closePath();
-    }, [getHexConerCord, hexSize]);
+    }, [getHexConerCord]);
 
     const loop = (type, startStat, endStat) => {
         return type === 1 ? Math.min(startStat+(endStat/30), endStat)
@@ -84,44 +83,51 @@ const Hexagon = ({setDefaultStats, ...props}) => {
         : Math.max(startStat-(endStat/30), endStat)
     }
 
+    const drawHexagon = useCallback((stats) => {
+        const hexBorderSize = props.size ?? 0;
+        const hexSize = hexBorderSize/2;
+
+        const ctx = canvasHex.current.getContext('2d');
+        ctx.beginPath();
+        ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
+        drawInitHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 }, hexSize);
+        drawInitLineHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 }, hexSize);
+        drawStatsHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 }, stats, hexSize);
+        setInitHex(true);
+    }, [drawInitHex, drawInitLineHex, drawStatsHex, props.size]);
+
     useEffect(() => {
-        if (props.lead !== props.stats.lead ||
-            props.charger !== props.stats.charger ||
-            props.closer !== props.stats.closer ||
-            props.cons !== props.stats.cons ||
-            props.atk !== props.stats.atk ||
-            props.switching !== props.stats.switching) {
+        if (!props.animation) {
+            drawHexagon(props.stats);
+        } else if (defaultStats.lead !== props.stats.lead ||
+            defaultStats.charger !== props.stats.charger ||
+            defaultStats.closer !== props.stats.closer ||
+            defaultStats.cons !== props.stats.cons ||
+            defaultStats.atk !== props.stats.atk ||
+            defaultStats.switching !== props.stats.switching) {
             var interval
             if (props.animation) {
                 interval = setInterval(() => {
-                    setDefaultStats({...props.defaultStats, ...{
-                        lead: loop(props.animation, props.lead, props.stats.lead),
-                        charger: loop(props.animation, props.charger, props.stats.charger),
-                        closer: loop(props.animation, props.closer, props.stats.closer),
-                        cons: loop(props.animation, props.cons, props.stats.cons),
-                        atk: loop(props.animation, props.atk, props.stats.atk),
-                        switching: loop(props.animation, props.switching, props.stats.switching)
-                    }})
-                }, 5)
+                    setDefaultStats({
+                        lead: loop(props.animation, defaultStats.lead, props.stats.lead),
+                        charger: loop(props.animation, defaultStats.charger, props.stats.charger),
+                        closer: loop(props.animation, defaultStats.closer, props.stats.closer),
+                        cons: loop(props.animation, defaultStats.cons, props.stats.cons),
+                        atk: loop(props.animation, defaultStats.atk, props.stats.atk),
+                        switching: loop(props.animation, defaultStats.switching, props.stats.switching)
+                    })
+                }, 25)
             }
-
-            const ctx = canvasHex.current.getContext('2d');
-            ctx.beginPath();
-            ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
-            drawInitHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 });
-            drawInitLineHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 });
-            drawStatsHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 }, props.animation ? props.defaultStats : props.stats);
-            setInitHex(true);
+            drawHexagon(defaultStats);
+            return () => clearInterval(interval);
         }
-        return () => clearInterval(interval);
-    }, [drawInitHex, drawInitLineHex, drawStatsHex, hexBorderSize, setDefaultStats, props.animation, props.stats,
-        props.atk, props.charger, props.closer, props.cons, props.defaultStats, props.lead, props.switching]);
+    }, [drawHexagon, defaultStats, setDefaultStats, props.animation, props.stats]);
 
     const onPlayAnimaion = () => {
         var interval;
         clearInterval(interval);
 
-        let defaultStats = {
+        let initStats = {
             lead: 0,
             atk: 0,
             cons: 0,
@@ -131,28 +137,23 @@ const Hexagon = ({setDefaultStats, ...props}) => {
         }
 
         interval = setInterval(() => {
-            defaultStats = {
-                lead: loop(1, defaultStats.lead, props.stats.lead),
-                charger: loop(1, defaultStats.charger, props.stats.charger),
-                closer: loop(1, defaultStats.closer, props.stats.closer),
-                cons: loop(1, defaultStats.cons, props.stats.cons),
-                atk: loop(1, defaultStats.atk, props.stats.atk),
-                switching: loop(1, defaultStats.switching, props.stats.switching)
+            initStats = {
+                lead: loop(1, initStats.lead, props.stats.lead),
+                charger: loop(1, initStats.charger, props.stats.charger),
+                closer: loop(1, initStats.closer, props.stats.closer),
+                cons: loop(1, initStats.cons, props.stats.cons),
+                atk: loop(1, initStats.atk, props.stats.atk),
+                switching: loop(1, initStats.switching, props.stats.switching)
             };
 
-            const ctx = canvasHex.current.getContext('2d');
-            ctx.beginPath();
-            ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
-            drawInitHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 });
-            drawInitLineHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 });
-            drawStatsHex(canvasHex.current, { x: hexBorderSize/2, y: (hexBorderSize+4)/2 }, defaultStats);
+            drawHexagon(initStats);
 
-            if (defaultStats.lead === props.stats.lead &&
-                defaultStats.charger === props.stats.charger &&
-                defaultStats.closer === props.stats.closer &&
-                defaultStats.cons === props.stats.cons &&
-                defaultStats.atk === props.stats.atk &&
-                defaultStats.switching === props.stats.switching) clearInterval(interval);
+            if (initStats.lead === props.stats.lead &&
+                initStats.charger === props.stats.charger &&
+                initStats.closer === props.stats.closer &&
+                initStats.cons === props.stats.cons &&
+                initStats.atk === props.stats.atk &&
+                initStats.switching === props.stats.switching) clearInterval(interval);
         }, 10)
     }
 
@@ -192,7 +193,7 @@ const Hexagon = ({setDefaultStats, ...props}) => {
                 </div>
                 </Fragment>
             }
-            <canvas onClick={() => onPlayAnimaion()} ref={canvasHex} width={hexBorderSize} height={hexBorderSize+4}></canvas>
+            <canvas onClick={() => onPlayAnimaion()} ref={canvasHex} width={props.size ?? 0} height={(props.size ?? 0)+4}></canvas>
         </div>
     )
 }
