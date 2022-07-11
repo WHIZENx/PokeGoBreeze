@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 
 import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from "../../../util/Utils";
-import { computeBgColor, computeColor } from '../../../util/Compute';
+import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/Calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -230,8 +230,8 @@ const Calculate = () => {
                                             <tr>
                                                 <td>
                                                     {statData ?
-                                                        <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(id), marginRight: 8}}>
-                                                            <div className="poke-candy" style={{background: computeColor(id), width: 20, height: 20}}></div>
+                                                        <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(id), marginRight: 8}}>
+                                                            <div className="poke-candy" style={{background: computeCandyColor(id), width: 20, height: 20}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 8}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}/>
@@ -254,8 +254,8 @@ const Calculate = () => {
                                                 <td>
                                                     {statData ?
                                                     <div className="position-relative d-inline-block">
-                                                        <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                        <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                        <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                        <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                     </div>
                                                     :
                                                     <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}/>
@@ -356,8 +356,8 @@ const Calculate = () => {
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         {dataLittleLeague && dataLittleLeague.elidge ?
-                                                        <div className="bg-poke-candy" style={{backgroundColor: computeBgColor(id), marginRight: 10}}>
-                                                            <div className="poke-candy" style={{background: computeColor(id), width: 20, height: 20}}></div>
+                                                        <div className="bg-poke-candy" style={{backgroundColor: computeCandyBgColor(id), marginRight: 10}}>
+                                                            <div className="poke-candy" style={{background: computeCandyColor(id), width: 20, height: 20}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}/>
@@ -367,8 +367,8 @@ const Calculate = () => {
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         {dataLittleLeague && dataLittleLeague.elidge ?
                                                         <div className="position-relative d-inline-block">
-                                                            <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                            <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                            <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                            <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}/>
@@ -410,8 +410,8 @@ const Calculate = () => {
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         {dataGreatLeague && dataGreatLeague.elidge ?
-                                                        <div className="bg-poke-candy" style={{backgroundColor: computeBgColor(id), marginRight: 10}}>
-                                                            <div className="poke-candy" style={{background: computeColor(id), width: 20, height: 20}}></div>
+                                                        <div className="bg-poke-candy" style={{backgroundColor: computeCandyBgColor(id), marginRight: 10}}>
+                                                            <div className="poke-candy" style={{background: computeCandyColor(id), width: 20, height: 20}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}/>
@@ -421,8 +421,8 @@ const Calculate = () => {
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         {dataGreatLeague && dataGreatLeague.elidge ?
                                                         <div className="position-relative d-inline-block">
-                                                            <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                            <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                            <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                            <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}/>
@@ -464,8 +464,8 @@ const Calculate = () => {
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         {dataUltraLeague && dataUltraLeague.elidge ?
-                                                        <div className="bg-poke-candy" style={{backgroundColor: computeBgColor(id), marginRight: 10}}>
-                                                            <div className="poke-candy" style={{background: computeColor(id), width: 20, height: 20}}></div>
+                                                        <div className="bg-poke-candy" style={{backgroundColor: computeCandyBgColor(id), marginRight: 10}}>
+                                                            <div className="poke-candy" style={{background: computeCandyColor(id), width: 20, height: 20}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}/>
@@ -475,8 +475,8 @@ const Calculate = () => {
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         {dataUltraLeague && dataUltraLeague.elidge ?
                                                         <div className="position-relative d-inline-block">
-                                                            <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                            <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                            <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                            <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}/>
@@ -518,8 +518,8 @@ const Calculate = () => {
                                                 <td colSpan="3" style={{padding: 0}}>
                                                     <div className="d-flex align-items-center td-style" style={{float: 'left', width: '50%', borderRight: '1px solid #b8d4da'}}>
                                                         {dataMasterLeague ?
-                                                        <div className="bg-poke-candy" style={{backgroundColor: computeBgColor(id), marginRight: 10}}>
-                                                            <div className="poke-candy" style={{background: computeColor(id), width: 20, height: 20}}></div>
+                                                        <div className="bg-poke-candy" style={{backgroundColor: computeCandyBgColor(id), marginRight: 10}}>
+                                                            <div className="poke-candy" style={{background: computeCandyColor(id), width: 20, height: 20}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("Item_1301")}/>
@@ -529,8 +529,8 @@ const Calculate = () => {
                                                     <div className="d-flex align-items-center td-style" style={{float: 'right', width: '50%'}}>
                                                         {dataMasterLeague ?
                                                         <div className="position-relative d-inline-block">
-                                                            <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                            <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                            <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                            <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                         </div>
                                                         :
                                                         <img style={{marginRight: 10}} alt='img-stardust' height={20} src={APIService.getItemSprite("RareXLCandy_PSD")}/>

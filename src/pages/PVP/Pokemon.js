@@ -11,7 +11,7 @@ import { Link, useParams } from "react-router-dom";
 import APIService from "../../services/API.service";
 import Type from "../../components/Sprites/Type/Type";
 import { calculateCP, calculateStatsByTag, calStatsProd, sortStatsPokemon } from '../../util/Calculate';
-import { computeBgColor, computeColor, findAssetForm } from '../../util/Compute';
+import { computeBgType, computeCandyBgColor, computeCandyColor, findAssetForm } from '../../util/Compute';
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
 import Stats from '../../components/Info/Stats/Stats';
 import TypeEffectiveSelect from '../../components/Effective/TypeEffectiveSelect';
@@ -31,7 +31,7 @@ const PokemonPVP = () => {
     const [found, setFound] = useState(true);
 
     useEffect(() => {
-        const fetchMyAPI = async () => {
+        const fetchPokemon = async () => {
             try {
                 const paramName = params.pokemon.replaceAll("-", "_").toLowerCase()
                 const data = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data
@@ -100,7 +100,7 @@ const PokemonPVP = () => {
                 setFound(false);
             }
         }
-        fetchMyAPI();
+        fetchPokemon();
     }, [params.cp, params.type, params.pokemon]);
 
     const findMove = (name, uses, combatList) => {
@@ -126,24 +126,29 @@ const PokemonPVP = () => {
         )
     }
 
-    const renderItemList = (data, index) => {
+    const renderItemList = (data, type, index) => {
         const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
         const pokemon = Object.values(pokemonData).find(pokemon => pokemon.slug === name);
         const id = pokemon.num;
         const form = findAssetForm(pokemon.num, pokemon.name);
 
         return (
-            <div className="d-flex align-items-center">
-                <span className="number-count-ranking">{index+1}</span>
-                <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="d-inline-block position-relative filter-shadow-hover" style={{width: 50, marginRight: '1rem'}}>
-                    {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
-                    <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
-                </Link>
-                <div>
-                    <b>#{id} {splitAndCapitalize(name, "-", " ")}</b>
-                    <Type hideText={true} block={true} style={{marginBottom: 0}} styled={true} height={20} arr={pokemon.types} />
+            <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types)}}>
+                <div className="d-flex align-items-center">
+                    <span className="number-count-ranking">{index+1}</span>
+                    <span className="d-inline-block position-relative filter-shadow" style={{width: 50, marginRight: '1rem'}}>
+                        {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                        <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
+                    </span>
+                    <div>
+                        <b className='text-white text-shadow'>#{id} {splitAndCapitalize(name, "-", " ")}</b>
+                        <Type shadow={true} hideText={true} block={true} style={{marginBottom: 0}} styled={true} height={20} arr={pokemon.types} />
+                    </div>
                 </div>
-            </div>
+                <div style={{marginRight: 15}}>
+                    <span className="ranking-score score-ic text-white text-shadow filter-shadow" style={{backgroundColor: type === 0 ? 'lightgreen' : 'lightcoral'}}>{data.rating}</span>
+                </div>
+            </Link>
         )
     }
 
@@ -161,8 +166,8 @@ const PokemonPVP = () => {
                     <b>
                     (Need XL Candy
                         <div className="position-relative d-inline-block filter-shadow">
-                            <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                            <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                            <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                            <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                         </div>
                     )</b>
                     }
@@ -187,10 +192,11 @@ const PokemonPVP = () => {
             <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
             <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
         </div>
-        <div className="container" style={{marginTop: 15, marginBottom: 15}}>
-            {rankingPoke &&
-            <Fragment>
-            <div className='element-top ranking-link-group'>
+        {rankingPoke &&
+        <Fragment>
+        <div style={{backgroundImage: computeBgType(rankingPoke.pokemon.types, rankingPoke.data.speciesName.includes("(Shadow)"), 0.8), paddingTop: 15, paddingBottom: 15}}>
+        <div className="container">
+            <div className='ranking-link-group' style={{paddingTop: 10}}>
                 <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall/${params.pokemon}`}>Overall</Button >
                 <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads/${params.pokemon}`}>Leads</Button>
                 <Button className={(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers/${params.pokemon}`}>Closers</Button>
@@ -207,17 +213,17 @@ const PokemonPVP = () => {
                     </div>
                     <div>
                         <div className="d-flex flex-wrap align-items-center">
-                            <h3 style={{marginRight: 15}}><b>#{rankingPoke.id} {splitAndCapitalize(rankingPoke.name, "-", " ")}</b></h3>
-                            <Type block={true} style={{marginBottom: 0}} styled={true} arr={rankingPoke.pokemon.types} />
+                            <h3 className='text-white text-shadow' style={{marginRight: 15}}><b>#{rankingPoke.id} {splitAndCapitalize(rankingPoke.name, "-", " ")}</b></h3>
+                            <Type shadow={true} block={true} style={{marginBottom: 0}} color={'white'} styled={true} arr={rankingPoke.pokemon.types} />
                         </div>
                         <div className="d-flex flex-wrap element-top">
-                            <TypeBadge find={true} title="Fast Move" style={{marginRight: 15}} move={rankingPoke.fmove}
+                            <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} style={{marginRight: 15}} move={rankingPoke.fmove}
                             elite={rankingPoke.combatPoke.ELITE_QUICK_MOVES.includes(rankingPoke.fmove.name)}/>
-                            <TypeBadge find={true} title="Primary Charged Move" style={{marginRight: 10}} move={rankingPoke.cmovePri}
+                            <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} style={{marginRight: 10}} move={rankingPoke.cmovePri}
                             elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmovePri.name)}
                             shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmovePri.name)}
                             purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmovePri.name)}/>
-                            {rankingPoke.cMoveDataSec && <TypeBadge find={true} title="Secondary Charged Move" move={rankingPoke.cmoveSec}
+                            {rankingPoke.cMoveDataSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={rankingPoke.cmoveSec}
                             elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmoveSec.name)}
                             shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmoveSec.name)}
                             purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmoveSec.name)}/>}
@@ -228,34 +234,24 @@ const PokemonPVP = () => {
                 <div className="row" style={{margin: 0}}>
                     <div className="col-lg-6 element-top" style={{padding: 0}}>
                         <div className="title-item-ranking">
-                            <h4>Best Matchups</h4>
+                            <h4 className='text-white text-shadow'>Best Matchups</h4>
                             <div style={{marginRight: 15}}>
                                 <span className="ranking-score score-ic">Rating</span>
                             </div>
                         </div>
                         {rankingPoke.data.matchups.sort((a,b) => b.rating-a.rating).map((matchup, index) => (
-                            <div className="list-item-ranking" key={index}>
-                                {renderItemList(matchup, index)}
-                                <div style={{marginRight: 15}}>
-                                    <span className="ranking-score score-ic">{matchup.rating}</span>
-                                </div>
-                            </div>
+                            <Fragment key={index}>{renderItemList(matchup, 1, index)}</Fragment>
                         ))}
                     </div>
                     <div className="col-lg-6 element-top" style={{padding: 0}}>
                         <div className="title-item-ranking">
-                            <h4>Best Counters</h4>
+                            <h4 className='text-white text-shadow'>Best Counters</h4>
                             <div style={{marginRight: 15}}>
                                 <span className="ranking-score score-ic">Rating</span>
                             </div>
                         </div>
                         {rankingPoke.data.counters.sort((a,b) => a.rating-b.rating).map((counter, index) => (
-                            <div className="list-item-ranking" key={index}>
-                                {renderItemList(counter, index)}
-                                <div style={{marginRight: 15}}>
-                                    <span className="ranking-score score-ic">{counter.rating}</span>
-                                </div>
-                            </div>
+                            <Fragment key={index}>{renderItemList(counter, 0, index)}</Fragment>
                         ))}
                     </div>
                 </div>
@@ -263,6 +259,7 @@ const PokemonPVP = () => {
             <div className='container'>
                 <hr />
             </div>
+            <div className='stats-container'>
             {rankingPoke.scores ?
             <div className="row w-100" style={{margin: 0}}>
                 <div className="col-lg-4 d-flex justify-content-center element-top">
@@ -316,9 +313,10 @@ const PokemonPVP = () => {
                 </div>
             </div>
             }
+            </div>
             <div className='container'>
                 <hr />
-                <div className='row'>
+                <div className='row text-white'>
                     <div className='col-lg-4' style={{marginBottom: 15}}>
                         <div className='h-100'>
                             <h6 className='d-flex justify-content-center weakness-bg-text'><b>Weakness</b></h6>
@@ -373,9 +371,10 @@ const PokemonPVP = () => {
                     </div>
                 </div>
             </div>
-            </Fragment>
-            }
         </div>
+        </div>
+        </Fragment>
+        }
         </Fragment>
         }
         </Fragment>

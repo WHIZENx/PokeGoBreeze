@@ -29,7 +29,7 @@ const Search = () => {
     }, []);
 
     useEffect(() => {
-        // const fetchMyAPI = async () => {
+        // const fetchPokemon = async () => {
         //     if (pokeList.length === 0) {
         //         const res = await APIService.getPokeJSON('pokemon_names.json');
         //         Object.entries(res.data).forEach(([key, value]) => {
@@ -38,7 +38,7 @@ const Search = () => {
         //         setPokemonList(pokeList);
         //     }
         // }
-        // fetchMyAPI();
+        // fetchPokemon();
 
         if (pokeList.length === 0) {
             pokeList.push(...Object.values(pokeListName).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));

@@ -2,9 +2,9 @@ import './IVBar.css';
 
 const IVbar = (props) => {
 
-    const width_iv_1 = `${props.iv < 5 ? 6.52*props.iv : 32.6}%`;
-    const width_iv_2 = `${props.iv >= 5 ? props.iv < 10 ? 6.52*(props.iv-5) : 32.6 : 0}%`;
-    const width_iv_3 = `${props.iv >= 10 ? props.iv <= 15 ? 6.52*(props.iv-10) : 32.6 : 0}%`;
+    const ivWidthFirst = props.iv < 5 ? 20*props.iv : 100;
+    const ivWidthSec = props.iv >= 5 ? props.iv < 10 ? 20*(props.iv-5) : 100 : 0;
+    const ivWidthThird = props.iv >= 10 ? props.iv < 15 ? 20*(props.iv-10) : 100 : 0;
 
     return (
         <div className='iv-container element-top' style={props.style}>
@@ -12,16 +12,18 @@ const IVbar = (props) => {
                 <b>{props.title}</b>
                 <b>{props.iv}</b>
             </div>
-            <div className='position-relative'>
-                <div className='iv-bg-group'>
-                    <div className='iv iv-bg-bar'></div>
-                    <div className='iv iv-bg-bar'></div>
-                    <div className='iv iv-bg-bar'></div>
+            <div className='iv-bg-group'>
+                <div className='iv iv-first-child position-relative'>
+                    <div style={{width: `${ivWidthFirst}%`}} className={'position-absolute iv-bar'+(props.iv <= 5 ? " border-right-iv": "")}></div>
+                    <div className='iv-bg-bar w-100'></div>
                 </div>
-                <div className='iv-group'>
-                    <div className={'iv iv-bar'+(props.iv <= 5 ? " border-right-iv": "")} style={{width: width_iv_1}}></div>
-                    <div className={'iv iv-bar'+(props.iv > 5 && props.iv <= 10 ? " border-right-iv": "")} style={{width: width_iv_2}}></div>
-                    <div className='iv iv-bar' style={{width: width_iv_3}}></div>
+                <div className='iv position-relative'>
+                    <div style={{width: `${ivWidthSec}%`}} className={'position-absolute iv-bar'+(props.iv > 5 && props.iv <= 10 ? " border-right-iv": "")}></div>
+                    <div className='iv-bg-bar w-100'></div>
+                </div>
+                <div className='iv iv-last-child position-relative'>
+                    <div style={{width: `${ivWidthThird}%`}} className={'position-absolute iv-bar'}></div>
+                    <div className='iv-bg-bar w-100'></div>
                 </div>
             </div>
         </div>

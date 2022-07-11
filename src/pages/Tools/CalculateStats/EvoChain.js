@@ -15,12 +15,12 @@ const EvoChain = (props) => {
     }, []);
 
     useEffect(() => {
-        const fetchMyAPI = async () => {
+        const fetchEvolution = async () => {
             setArrEvoList([]);
             const dataEvo = await APIService.getFetchUrl(props.url)
             getEvoChain([dataEvo.data.chain])
         }
-        if (props.url) fetchMyAPI();
+        if (props.url) fetchEvolution();
     }, [getEvoChain, props.url]);
 
     return (

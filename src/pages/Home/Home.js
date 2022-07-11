@@ -77,7 +77,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        const fetchMyAPI = async () => {
+        const fetchPokemon = async () => {
             if (pokeList.length === 0) {
                 // const result = await Promise.all([...Array(startPokemon).keys()].map(async (n) => (await APIService.getPokeInfo(n+1)).data));
                 // let result = Object.values((await APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')).data);
@@ -106,7 +106,7 @@ const Home = () => {
                 setDataList(result);
             }
         }
-        fetchMyAPI();
+        fetchPokemon();
 
         tableScrollID.current = 1;
         const result = dataList.filter(item => {

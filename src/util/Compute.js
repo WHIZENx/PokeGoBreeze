@@ -2,7 +2,7 @@ import candyData from '../data/candy_pokemon_go.json';
 import pokemonAssets from '../data/assets_pokemon_go.json';
 
 import APIService from "../services/API.service";
-import { convertName } from "./Utils";
+import { convertName, getStyleRuleValue } from "./Utils";
 
 export const rankName = (rank) => {
     if (rank === 21) return "Ace"
@@ -33,16 +33,27 @@ export const raidEgg = (tier, mega) => {
     else return APIService.getRaidSprite("ic_raid_small");
 }
 
-export const computeBgColor = (id) => {
+export const computeCandyBgColor = (id) => {
     let data = candyData.find(item => item.familyGroup.map(value => value.id).includes(id));
     if (!data) data = candyData.find(item => item.familyId === 0);
     return `rgb(${Math.round(255*data.SecondaryColor.r)}, ${Math.round(255*data.SecondaryColor.g)}, ${Math.round(255*data.SecondaryColor.b)}, ${data.SecondaryColor.a})`
 }
 
-export const computeColor = (id) => {
+export const computeCandyColor = (id) => {
   let data = candyData.find(item => item.familyGroup.map(value => value.id).includes(id));
   if (!data) data = candyData.find(item => item.familyId === 0);
   return `rgb(${Math.round(255*data.PrimaryColor.r)}, ${Math.round(255*data.PrimaryColor.g)}, ${Math.round(255*data.PrimaryColor.b)}, ${data.PrimaryColor.a})`
+}
+
+export const computeBgType = (types, shadow, opacity) => {
+    let colorsPalette = [];
+    types.forEach(type => {
+        type = type.toLowerCase();
+        const color = getStyleRuleValue('background-color', `.${type}`, document.styleSheets[2]);
+        colorsPalette.push(color.split(")")[0]+`, ${opacity ?? 1})`);
+    });
+    if (shadow) return `linear-gradient(to bottom right, ${colorsPalette[0]}, rgb(202, 156, 236), ${colorsPalette[1] ?? colorsPalette[0]})`
+    return `linear-gradient(to bottom right, ${colorsPalette[0]}, ${colorsPalette[1] ?? colorsPalette[0]})`
 }
 
 export const findAssetForm = (id, name) => {

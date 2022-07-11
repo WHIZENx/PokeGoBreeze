@@ -10,7 +10,7 @@ import './SearchBattle.css';
 import APIService from "../../../services/API.service";
 
 import { splitAndCapitalize } from "../../../util/Utils";
-import { computeBgColor, computeColor } from '../../../util/Compute';
+import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
 import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
 
 import { Accordion, useAccordionButton } from "react-bootstrap";
@@ -327,13 +327,13 @@ const FindBattle = () => {
                                                                 <li>Stats Prod (%): <span style={{backgroundColor: 'transparent'}} className={getTextColorRatio(item.battleLeague.little.ratio)}><b>{item.battleLeague.little.ratio.toFixed(2)}</b></span></li>
                                                                 <li>
                                                                     <span className="d-flex align-items-center">
-                                                                        <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
-                                                                            <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
+                                                                        <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(item.id), marginRight: 5}}>
+                                                                            <div className="poke-candy" style={{background: computeCandyColor(item.id), width: 20, height: 20}}></div>
                                                                         </div>
                                                                         <span className="d-flex align-items-center" style={{marginRight: 5}}>{item.battleLeague.little.result_between_candy+getCandyEvo(value, item.id, 0)}<span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span></span>
                                                                         <div className="position-relative d-inline-block">
-                                                                            <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                                            <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                                            <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                                            <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                                         </div>
                                                                         {item.battleLeague.little.result_between_xl_candy}
                                                                     </span>
@@ -357,13 +357,13 @@ const FindBattle = () => {
                                                             <li>Stats Prod (%): <span style={{backgroundColor: 'transparent'}} className={getTextColorRatio(item.battleLeague.great.ratio)}><b>{item.battleLeague.great.ratio.toFixed(2)}</b></span></li>
                                                             <li>
                                                                 <span className="d-flex align-items-center">
-                                                                    <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
-                                                                        <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
+                                                                    <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(item.id), marginRight: 5}}>
+                                                                        <div className="poke-candy" style={{background: computeCandyColor(item.id), width: 20, height: 20}}></div>
                                                                     </div>
                                                                     <span className="d-flex align-items-center">{item.battleLeague.great.result_between_candy+getCandyEvo(value, item.id, 0)}<span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span></span>
                                                                     <div className="position-relative d-inline-block">
-                                                                        <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                                        <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                                        <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                                        <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                                     </div>
                                                                     {item.battleLeague.great.result_between_xl_candy}
                                                                 </span>
@@ -388,13 +388,13 @@ const FindBattle = () => {
                                                             <li>Stats Prod (%): <span style={{backgroundColor: 'transparent'}} className={getTextColorRatio(item.battleLeague.ultra.ratio)}><b>{item.battleLeague.ultra.ratio.toFixed(2)}</b></span></li>
                                                             <li>
                                                                 <span className="d-flex align-items-center">
-                                                                    <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
-                                                                        <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
+                                                                    <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(item.id), marginRight: 5}}>
+                                                                        <div className="poke-candy" style={{background: computeCandyColor(item.id), width: 20, height: 20}}></div>
                                                                     </div>
                                                                     <span className="d-flex align-items-center">{item.battleLeague.ultra.result_between_candy+getCandyEvo(value, item.id, 0)}<span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span></span>
                                                                     <div className="position-relative d-inline-block">
-                                                                        <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                                        <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                                        <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                                        <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                                     </div>
                                                                     {item.battleLeague.ultra.result_between_xl_candy}
                                                                 </span>
@@ -418,13 +418,13 @@ const FindBattle = () => {
                                                             <li>Stats Prod (%): <span style={{backgroundColor: 'transparent'}} className={getTextColorRatio(item.battleLeague.master.ratio)}><b>{item.battleLeague.master.ratio.toFixed(2)}</b></span></li>
                                                             <li>
                                                                 <span className="d-flex align-items-center">
-                                                                    <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(item.id), marginRight: 5}}>
-                                                                        <div className="poke-candy" style={{background: computeColor(item.id), width: 20, height: 20}}></div>
+                                                                    <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(item.id), marginRight: 5}}>
+                                                                        <div className="poke-candy" style={{background: computeCandyColor(item.id), width: 20, height: 20}}></div>
                                                                     </div>
                                                                     <span className="d-flex align-items-center">{item.battleLeague.master.result_between_candy+getCandyEvo(value, item.id, 0)}<span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span></span>
                                                                     <div className="position-relative d-inline-block">
-                                                                        <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                                                                        <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                                                                        <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                                                                        <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                                                                     </div>
                                                                     {item.battleLeague.master.result_between_xl_candy}
                                                                 </span>

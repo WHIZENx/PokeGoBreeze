@@ -11,36 +11,89 @@ import { useState, useEffect, Fragment, useRef } from "react";
 
 import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName } from '../../util/Utils';
 import { calculateStatsByTag, calStatsProd, calculateCP, sortStatsPokemon } from '../../util/Calculate';
-import { Accordion, Button } from 'react-bootstrap';
+import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../services/API.service';
-import { computeBgColor, computeColor, findAssetForm } from "../../util/Compute";
+import { computeBgType, computeCandyBgColor, computeCandyColor, findAssetForm } from "../../util/Compute";
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
 import { Link, useParams } from 'react-router-dom';
 import IVbar from '../../components/Sprites/IVBar/IVBar';
 import TypeEffectiveSelect from '../../components/Effective/TypeEffectiveSelect';
+import CloseIcon from '@mui/icons-material/Close';
 
 const PVP = () => {
 
     const params = useParams();
 
     const [rankingData, setRankingData] = useState(null);
-    const [countRank, setCountRank] = useState(null);
     const [storeStats, setStoreStats] = useState(null);
 
     const [search, setSearch] = useState('');
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
 
+    const LeaveToggle = ({ eventKey }) => {
+        const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
+
+        return (
+          <div className='accordion-footer' onClick={decoratedOnClick}>
+            <span className='text-danger'>Close <CloseIcon sx={{color: 'red'}}/></span>
+          </div>
+        );
+    }
+
     useEffect(() => {
-        const fetchMyAPI = async () => {
-            const file = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data;
+        const fetchPokemon = async () => {
+            let file = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data;
+            pokemonData = Object.values(pokemonData);
+            file = file.map(item => {
+                const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+                const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
+                const id = pokemon.num;
+                const form = findAssetForm(pokemon.num, pokemon.name);
+
+                const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+
+                let fmoveData = item.moveset[0], cMoveDataPri = item.moveset[1], cMoveDataSec = item.moveset[2];
+                if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
+                if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
+                if (cMoveDataSec === "FUTURE_SIGHT") cMoveDataSec = "FUTURESIGHT";
+                if (cMoveDataPri === "TECHNO_BLAST_DOUSE") cMoveDataPri = "TECHNO_BLAST_WATER";
+                if (cMoveDataSec === "TECHNO_BLAST_DOUSE") cMoveDataSec = "TECHNO_BLAST_WATER";
+
+                let fmove = combatData.find(item => item.name === fmoveData);
+                const cmovePri = combatData.find(item => item.name === cMoveDataPri);
+                if (cMoveDataSec) var cmoveSec = combatData.find(item => item.name === cMoveDataSec);
+
+                if (item.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: item.moveset[0].split("_")[2]}
+
+                let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
+                    && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+                );
+                const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+                if (!result) combatPoke = combatPoke[0]
+                else combatPoke = result;
+                return {
+                    ...item,
+                    id: id,
+                    name: name,
+                    form: form,
+                    pokemon: pokemon,
+                    stats: stats,
+                    atk: statsRanking.current.attack.ranking.find(i => i.attack === stats.atk),
+                    def: statsRanking.current.defense.ranking.find(i => i.defense === stats.def),
+                    sta: statsRanking.current.stamina.ranking.find(i => i.stamina === stats.sta),
+                    fmove: fmove,
+                    cmovePri: cmovePri,
+                    cmoveSec: cmoveSec,
+                    combatPoke: combatPoke
+                }
+            })
             setRankingData(file);
-            setCountRank(file.map(i => false));
             setStoreStats(file.map(i => null))
         }
-        fetchMyAPI();
+        fetchPokemon();
     }, [params.cp, params.type]);
 
     const convertNameRankingToForm = (name) => {
@@ -48,7 +101,6 @@ const PVP = () => {
     }
 
     const calculateStatsTopRank = (key, stats) => {
-        setCountRank(update(countRank, {[key]: {$set: true}}));
         const store = storeStats[key];
         if (!store) {
             const maxCP = parseInt(params.cp);
@@ -91,213 +143,183 @@ const PVP = () => {
         )
     }
 
+    const onSearch = (value) => {
+        setSearch(value)
+    }
+
     const renderItem = (data, key) => {
-        const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-        const pokemon = Object.values(pokemonData).find(pokemon => pokemon.slug === name);
-        const id = pokemon.num;
-        const form = findAssetForm(pokemon.num, pokemon.name);
-
-        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
-        const scores = rankingData.find(pokemon => pokemon.speciesId === data.speciesId).scores;
-
-        let fmoveData = data.moveset[0], cMoveDataPri = data.moveset[1], cMoveDataSec = data.moveset[2];
-        if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
-        if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
-        if (cMoveDataSec === "FUTURE_SIGHT") cMoveDataSec = "FUTURESIGHT";
-        if (cMoveDataPri === "TECHNO_BLAST_DOUSE") cMoveDataPri = "TECHNO_BLAST_WATER";
-        if (cMoveDataSec === "TECHNO_BLAST_DOUSE") cMoveDataSec = "TECHNO_BLAST_WATER";
-
-        let fmove = combatData.find(item => item.name === fmoveData);
-        const cmovePri = combatData.find(item => item.name === cMoveDataPri);
-        if (cMoveDataSec) var cmoveSec = combatData.find(item => item.name === cMoveDataSec);
-
-        if (data.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: data.moveset[0].split("_")[2]}
-
-        let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
-            && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
-        );
-        const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
-        if (!result) combatPoke = combatPoke[0]
-        else combatPoke = result;
-
         return (
             <Accordion.Item eventKey={key}>
                 <Accordion.Header onClick={() => {
-                if (countRank[key]) setTimeout(() => {setCountRank(update(countRank, {[key]: {$set: false}}))}, 500)
-                else calculateStatsTopRank(key, stats)
+                if (!storeStats[key]) calculateStatsTopRank(key, data.stats)
                 }}>
                     <span className="d-inline-block position-relative" style={{width: 50, marginRight: '2rem'}}>
                         {data.speciesName.includes("(Shadow)") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
-                        <img alt='img-league' className="pokemon-sprite-accordion" src={form ?  APIService.getPokemonModel(form) : APIService.getPokeFullSprite(id)}/>
+                        <img alt='img-league' className="pokemon-sprite-accordion" src={data.form ?  APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}/>
                     </span>
                     <div className="ranking-group w-100">
-                        <b>{splitAndCapitalize(name, "-", " ")}</b>
+                        <b>{splitAndCapitalize(data.name, "-", " ")}</b>
                         <div style={{marginRight: 15}}>
                             <span className="ranking-score score-ic">{data.score}</span>
                         </div>
                     </div>
                 </Accordion.Header>
-                <Accordion.Body className="ranking-body">
-                    {countRank[key] && storeStats[key] &&
+                <Accordion.Body style={{padding: 0, backgroundImage: computeBgType(data.pokemon.types, data.speciesName.includes("(Shadow)"), 0.8)}}>
+                    {storeStats[key] &&
                     <Fragment>
-                    <div className="w-100 ranking-info element-top">
-                        <div className="d-flex flex-wrap align-items-center">
-                            <h3 style={{marginRight: 15}}><b>#{id} {splitAndCapitalize(name, "-", " ")}</b></h3>
-                            <Type block={true} style={{marginBottom: 0}} styled={true} arr={pokemon.types} />
-                        </div>
-                        <div className="d-flex flex-wrap element-top">
-                            <TypeBadge find={true} title="Fast Move" style={{marginRight: 15}} move={fmove}
-                            elite={combatPoke.ELITE_QUICK_MOVES.includes(fmove.name)}/>
-                            <TypeBadge find={true} title="Primary Charged Move" style={{marginRight: 10}} move={cmovePri}
-                            elite={combatPoke.ELITE_CINEMATIC_MOVES.includes(cmovePri.name)}
-                            shadow={combatPoke.SHADOW_MOVES.includes(cmovePri.name)}
-                            purified={combatPoke.PURIFIED_MOVES.includes(cmovePri.name)}/>
-                            {cMoveDataSec && <TypeBadge find={true} title="Secondary Charged Move" move={cmoveSec}
-                            elite={combatPoke.ELITE_CINEMATIC_MOVES.includes(cmoveSec.name)}
-                            shadow={combatPoke.SHADOW_MOVES.includes(cmoveSec.name)}
-                            purified={combatPoke.PURIFIED_MOVES.includes(cmoveSec.name)}/>}
-                        </div>
-                        <hr />
-                        <div className="row" style={{margin: 0}}>
-                            <div className="col-lg-6 element-top" style={{padding: 0}}>
-                                <div className="title-item-ranking">
-                                    <h4>Best Matchups</h4>
-                                    <div style={{marginRight: 15}}>
-                                        <span className="ranking-score score-ic">Rating</span>
-                                    </div>
-                                </div>
-                                {data.matchups.sort((a,b) => b.rating-a.rating).map((matchup, index) => (
-                                    <div className="list-item-ranking" key={index}>
-                                        {renderItemList(matchup, index)}
+                    <div className="ranking-body">
+                        <div className="w-100 ranking-info element-top">
+                            <div className="d-flex flex-wrap align-items-center">
+                                <h3 className='text-white text-shadow' style={{marginRight: 15}}><b>#{data.id} {splitAndCapitalize(data.name, "-", " ")}</b></h3>
+                                <Type shadow={true} block={true} style={{marginBottom: 0}} color={'white'} styled={true} arr={data.pokemon.types} />
+                            </div>
+                            <div className="d-flex flex-wrap element-top">
+                                <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} style={{marginRight: 15}} move={data.fmove}
+                                elite={data.combatPoke.ELITE_QUICK_MOVES.includes(data.fmove.name)}/>
+                                <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} style={{marginRight: 10}} move={data.cmovePri}
+                                elite={data.combatPoke.ELITE_CINEMATIC_MOVES.includes(data.cmovePri.name)}
+                                shadow={data.combatPoke.SHADOW_MOVES.includes(data.cmovePri.name)}
+                                purified={data.combatPoke.PURIFIED_MOVES.includes(data.cmovePri.name)}/>
+                                {data.cMoveDataSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={data.cmoveSec}
+                                elite={data.combatPoke.ELITE_CINEMATIC_MOVES.includes(data.cmoveSec.name)}
+                                shadow={data.combatPoke.SHADOW_MOVES.includes(data.cmoveSec.name)}
+                                purified={data.combatPoke.PURIFIED_MOVES.includes(data.cmoveSec.name)}/>}
+                            </div>
+                            <hr />
+                            <div className="row" style={{margin: 0}}>
+                                <div className="col-lg-6 element-top" style={{padding: 0}}>
+                                    <div className="title-item-ranking">
+                                        <h4 className='text-white text-shadow'>Best Matchups</h4>
                                         <div style={{marginRight: 15}}>
-                                            <span className="ranking-score score-ic">{matchup.rating}</span>
+                                            <span className="ranking-score score-ic">Rating</span>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                            <div className="col-lg-6 element-top" style={{padding: 0}}>
-                                <div className="title-item-ranking">
-                                    <h4>Best Counters</h4>
-                                    <div style={{marginRight: 15}}>
-                                        <span className="ranking-score score-ic">Rating</span>
-                                    </div>
+                                    {data.matchups.sort((a,b) => b.rating-a.rating).map((matchup, index) => (
+                                        <Fragment key={index}>{renderItemList(matchup, 0, index)}</Fragment>
+                                    ))}
                                 </div>
-                                {data.counters.sort((a,b) => a.rating-b.rating).map((counter, index) => (
-                                    <div className="list-item-ranking" key={index}>
-                                        {renderItemList(counter, index)}
+                                <div className="col-lg-6 element-top" style={{padding: 0}}>
+                                    <div className="title-item-ranking">
+                                        <h4 className='text-white text-shadow'>Best Counters</h4>
                                         <div style={{marginRight: 15}}>
-                                            <span className="ranking-score score-ic">{counter.rating}</span>
+                                            <span className="ranking-score score-ic">Rating</span>
                                         </div>
                                     </div>
-                                ))}
+                                    {data.counters.sort((a,b) => a.rating-b.rating).map((counter, index) => (
+                                        <Fragment key={index}>{renderItemList(counter, 1, index)}</Fragment>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className='container'>
-                        <hr />
-                    </div>
-                    {scores ?
-                    <div className="row w-100" style={{margin: 0}}>
-                        <div className="col-lg-4 d-flex justify-content-center element-top">
-                            <div>
-                                <h5><b>Overall Performance</b></h5>
-                                <Hexagon animation={0} borderSize={340} size={200}
-                                stats={{
-                                    lead: scores[0],
-                                    atk: scores[4],
-                                    cons: scores[5],
-                                    closer: scores[1],
-                                    charger: scores[3],
-                                    switching: scores[2]
-                                }}/>
+                        <div className='container'>
+                            <hr />
+                        </div>
+                        <div className='stats-container'>
+                        {data.scores ?
+                        <div className="row w-100" style={{margin: 0}}>
+                            <div className="col-lg-4 d-flex justify-content-center element-top">
+                                <div>
+                                    <h5><b>Overall Performance</b></h5>
+                                    <Hexagon animation={0} borderSize={320} size={180}
+                                    stats={{
+                                        lead: data.scores[0],
+                                        atk: data.scores[4],
+                                        cons: data.scores[5],
+                                        closer: data.scores[1],
+                                        charger: data.scores[3],
+                                        switching: data.scores[2]
+                                    }}/>
+                                </div>
+                            </div>
+                            <div className="col-lg-8 container status-ranking element-top">
+                                <div>
+                                    <h5><b>Overall Stats</b></h5>
+                                    <Stats statATK={data.atk}
+                                        statDEF={data.def}
+                                        statSTA={data.sta}
+                                        pokemonStats={statsRanking.current}/>
+                                </div>
+                                <div>
+                                    <h5><b>Top Rank League</b></h5>
+                                    {renderTopStats(data.stats, key, data.id)}
+                                </div>
                             </div>
                         </div>
-                        <div className="col-lg-8 container status-ranking element-top">
+                        :
+                        <div className="w-100 container status-ranking element-top">
                             <div>
                                 <h5><b>Overall Stats</b></h5>
-                                <Stats statATK={statsRanking.current.attack.ranking.find(i => i.attack === stats.atk)}
-                                    statDEF={statsRanking.current.defense.ranking.find(i => i.defense === stats.def)}
-                                    statSTA={statsRanking.current.stamina.ranking.find(i => i.stamina === stats.sta)}
+                                <Stats statATK={data.atk}
+                                    statDEF={data.def}
+                                    statSTA={data.sta}
                                     pokemonStats={statsRanking.current}/>
                             </div>
                             <div>
-                                <h5><b>Top Rank League</b></h5>
-                                {renderTopStats(stats, key, id)}
+                                <h5 className='element-top'><b>Top Rank League</b></h5>
+                                {renderTopStats(data.stats, key, data.id)}
                             </div>
                         </div>
-                    </div>
-                    :
-                    <div className="w-100 container status-ranking element-top">
-                        <div>
-                            <h5><b>Overall Stats</b></h5>
-                            <Stats statATK={statsRanking.current.attack.ranking.find(i => i.attack === stats.atk)}
-                                statDEF={statsRanking.current.defense.ranking.find(i => i.defense === stats.def)}
-                                statSTA={statsRanking.current.stamina.ranking.find(i => i.stamina === stats.sta)}
-                                pokemonStats={statsRanking.current}/>
+                        }
                         </div>
-                        <div>
-                            <h5 className='element-top'><b>Top Rank League</b></h5>
-                            {renderTopStats(stats, key, id)}
-                        </div>
-                    </div>
-                    }
-                    <div className='container'>
-                        <hr />
-                        <div className='row'>
-                            <div className='col-lg-4' style={{marginBottom: 15}}>
-                                <div className='h-100'>
-                                    <h6 className='d-flex justify-content-center weakness-bg-text'><b>Weakness</b></h6>
-                                    <hr className='w-100'/>
-                                    {<TypeEffectiveSelect effect={0} types={pokemon.types}/>}
+                        <div className='container'>
+                            <hr />
+                            <div className='row text-white'>
+                                <div className='col-lg-4' style={{marginBottom: 15}}>
+                                    <div className='h-100'>
+                                        <h6 className='d-flex justify-content-center weakness-bg-text'><b>Weakness</b></h6>
+                                        <hr className='w-100'/>
+                                        {<TypeEffectiveSelect effect={0} types={data.pokemon.types}/>}
+                                    </div>
+                                    <hr className='w-100' style={{margin: 0}}/>
                                 </div>
-                                <hr className='w-100' style={{margin: 0}}/>
-                            </div>
-                            <div className='col-lg-4' style={{marginBottom: 15}}>
-                                <div className='h-100'>
-                                    <h6 className='d-flex justify-content-center neutral-bg-text'><b>Neutral</b></h6>
-                                    <hr className='w-100'/>
-                                    {<TypeEffectiveSelect effect={1} types={pokemon.types}/>}
+                                <div className='col-lg-4' style={{marginBottom: 15}}>
+                                    <div className='h-100'>
+                                        <h6 className='d-flex justify-content-center neutral-bg-text'><b>Neutral</b></h6>
+                                        <hr className='w-100'/>
+                                        {<TypeEffectiveSelect effect={1} types={data.pokemon.types}/>}
+                                    </div>
+                                    <hr className='w-100' style={{margin: 0}}/>
                                 </div>
-                                <hr className='w-100' style={{margin: 0}}/>
-                            </div>
-                            <div className='col-lg-4' style={{marginBottom: 15}}>
-                                <div className='h-100'>
-                                    <h6 className='d-flex justify-content-center resistance-bg-text'><b>Resistance</b></h6>
-                                    <hr className='w-100'/>
-                                    {<TypeEffectiveSelect effect={2} types={pokemon.types}/>}
+                                <div className='col-lg-4' style={{marginBottom: 15}}>
+                                    <div className='h-100'>
+                                        <h6 className='d-flex justify-content-center resistance-bg-text'><b>Resistance</b></h6>
+                                        <hr className='w-100'/>
+                                        {<TypeEffectiveSelect effect={2} types={data.pokemon.types}/>}
+                                    </div>
+                                    <hr className='w-100' style={{margin: 0}}/>
                                 </div>
-                                <hr className='w-100' style={{margin: 0}}/>
                             </div>
                         </div>
-                    </div>
-                    <div className='container'>
-                        <div className='row' style={{margin: 0}}>
-                            <div className='col-xl-6' style={{padding: 0, backgroundColor: 'lightgray'}}>
-                                <div className='moves-title'>Fast Moves</div>
-                                <div className='type-rank-list'>
-                                    {data.moves.fastMoves.map(move => {
-                                        if (!move.uses) move.uses = 0;
-                                        return move;
-                                    }).sort((a,b) => b.uses-a.uses).map((value, index) => (
-                                        <Fragment key={index}>{findMove(value.moveId, value.uses, combatPoke)}</Fragment>
-                                    ))}
+                        <div className='container'>
+                            <div className='row' style={{margin: 0}}>
+                                <div className='col-xl-6' style={{padding: 0, backgroundColor: 'lightgray'}}>
+                                    <div className='moves-title'>Fast Moves</div>
+                                    <div className='type-rank-list'>
+                                        {data.moves.fastMoves.map(move => {
+                                            if (!move.uses) move.uses = 0;
+                                            return move;
+                                        }).sort((a,b) => b.uses-a.uses).map((value, index) => (
+                                            <Fragment key={index}>{findMove(value.moveId, value.uses, data.combatPoke)}</Fragment>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className='col-xl-6' style={{padding: 0, backgroundColor: 'lightgray'}}>
-                                <div className='moves-title'>Charged Moves</div>
-                                <div className='type-rank-list'>
-                                    {data.moves.chargedMoves.map(move => {
-                                        if (move.moveId === "FUTURE_SIGHT") move.moveId = "FUTURESIGHT";
-                                        if (move.moveId === "TECHNO_BLAST_DOUSE") move.moveId = "TECHNO_BLAST_WATER";
-                                        if (!move.uses) move.uses = 0;
-                                        return move;
-                                    }).sort((a,b) => b.uses-a.uses).map((value, index) => (
-                                        <Fragment key={index}>{findMove(value.moveId, value.uses, combatPoke)}</Fragment>
-                                    ))}
+                                <div className='col-xl-6' style={{padding: 0, backgroundColor: 'lightgray'}}>
+                                    <div className='moves-title'>Charged Moves</div>
+                                    <div className='type-rank-list'>
+                                        {data.moves.chargedMoves.map(move => {
+                                            if (move.moveId === "FUTURE_SIGHT") move.moveId = "FUTURESIGHT";
+                                            if (move.moveId === "TECHNO_BLAST_DOUSE") move.moveId = "TECHNO_BLAST_WATER";
+                                            if (!move.uses) move.uses = 0;
+                                            return move;
+                                        }).sort((a,b) => b.uses-a.uses).map((value, index) => (
+                                            <Fragment key={index}>{findMove(value.moveId, value.uses, data.combatPoke)}</Fragment>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <LeaveToggle eventKey={key} />
                     </Fragment>
                     }
                 </Accordion.Body>
@@ -305,24 +327,29 @@ const PVP = () => {
         )
     }
 
-    const renderItemList = (data, index) => {
+    const renderItemList = (data, type, index) => {
         const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
         const pokemon = Object.values(pokemonData).find(pokemon => pokemon.slug === name);
         const id = pokemon.num;
         const form = findAssetForm(pokemon.num, pokemon.name);
 
         return (
-            <div className="d-flex align-items-center">
-                <span className="number-count-ranking">{index+1}</span>
-                <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="d-inline-block position-relative filter-shadow-hover" style={{width: 50, marginRight: '1rem'}}>
-                    {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
-                    <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
-                </Link>
-                <div>
-                    <b>#{id} {splitAndCapitalize(name, "-", " ")}</b>
-                    <Type hideText={true} block={true} style={{marginBottom: 0}} styled={true} height={20} arr={pokemon.types} />
+            <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types)}}>
+                <div className="d-flex align-items-center">
+                    <span className="number-count-ranking">{index+1}</span>
+                    <span className="d-inline-block position-relative filter-shadow" style={{width: 50, marginRight: '1rem'}}>
+                        {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                        <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
+                    </span>
+                    <div>
+                        <b className='text-white text-shadow'>#{id} {splitAndCapitalize(name, "-", " ")}</b>
+                        <Type shadow={true} hideText={true} block={true} style={{marginBottom: 0}} styled={true} height={20} arr={pokemon.types} />
+                    </div>
                 </div>
-            </div>
+                <div style={{marginRight: 15}}>
+                    <span className="ranking-score score-ic text-white text-shadow filter-shadow" style={{backgroundColor: type === 0 ? 'lightgreen' : 'lightcoral'}}>{data.rating}</span>
+                </div>
+            </Link>
         )
     }
 
@@ -338,12 +365,12 @@ const PVP = () => {
                     Level: <b>{maxCP === 10000 ? "50-51" : `${currStats.level}`} </b>
                     {(currStats.level > 40 || maxCP === 10000) &&
                     <b>
-                    (Need XL Candy
+                    (
                         <div className="position-relative d-inline-block filter-shadow">
-                            <div className="bg-poke-xl-candy" style={{background: computeBgColor(id), width: 30, height: 30}}></div>
-                            <div className="poke-xl-candy" style={{background: computeColor(id), width: 30, height: 30}}></div>
+                            <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
+                            <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
                         </div>
-                    )</b>
+                        XL Candy required)</b>
                     }
                 </li>
                 <li className='element-top'>
@@ -369,10 +396,10 @@ const PVP = () => {
             <div className="input-group border-input">
                 <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
                 value={search}
-                onInput={e => setSearch(e.target.value)}
+                onInput={e => onSearch(e.target.value)}
                 />
             </div>
-            {rankingData && countRank && storeStats &&
+            {rankingData && storeStats &&
                 <div>
                     <Accordion alwaysOpen className="ranking-container">
                         {rankingData

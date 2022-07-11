@@ -22,7 +22,7 @@ import evoData from "../../../data/evolution_pokemon_go.json";
 import "./Evolution.css";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { capitalize, splitAndCapitalize } from "../../../util/Utils";
-import { computeBgColor, computeColor } from "../../../util/Compute";
+import { computeCandyBgColor, computeCandyColor } from "../../../util/Compute";
 
 import { OverlayTrigger } from "react-bootstrap";
 import PopoverConfig from "../../../components/Popover/PopoverConfig";
@@ -35,11 +35,12 @@ const theme = createTheme({
         fontSize: 10
       },
     },
-  });
+});
 
 const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, evolution_url, id, onSetIDPoke}) => {
 
     const [arrEvoList, setArrEvoList] = useState([]);
+    const [data, setData] = useState(null);
 
     const getEvoChain = useCallback((data) => {
         if (data.length === 0) return false;
@@ -96,15 +97,22 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     }, []);
 
     useEffect(() => {
-        if (id && forme && evolution_url) {
-            APIService.getFetchUrl(evolution_url)
-            .then(res => {
-                setArrEvoList([]);
-                if (forme.form_name !== "gmax") getEvoChain([res.data.chain]);
-                else getGmaxChain(id, forme);
-            });
+        const fetchEvolution = async () => {
+            if (!data && id && forme && evolution_url) {
+                const res = (await APIService.getFetchUrl(evolution_url)).data;
+                setData(res);
+            }
         }
-    }, [evolution_url, forme, getEvoChain, getGmaxChain, id]);
+        fetchEvolution();
+    }, [data, evolution_url, forme, id]);
+
+    useEffect(() => {
+        if (data) {
+            setArrEvoList([]);
+            if (forme.form_name !== "gmax") getEvoChain([data.chain]);
+            else getGmaxChain(id, forme);
+        }
+    }, [forme, getEvoChain, getGmaxChain, id, data]);
 
     const handlePokeID = (id) => {
         if (id !== id.toString()) onSetIDPoke(parseInt(id));
@@ -156,8 +164,8 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                 labels={{end:
                     (<div className="position-absolute" style={{left: -40}}>
                         {!value.gmax && <span className="d-flex align-items-center caption" style={{width: 'max-content'}}>
-                            <div className="bg-poke-candy" style={{backgroundColor: computeBgColor(value.id)}}>
-                                <div className="poke-candy" style={{background: computeColor(value.id), width: 20, height: 20}}></div>
+                            <div className="bg-poke-candy" style={{backgroundColor: computeCandyBgColor(value.id)}}>
+                                <div className="poke-candy" style={{background: computeCandyColor(value.id), width: 20, height: 20}}></div>
                             </div>
                             <span style={{marginLeft: 2}}>{`x${data.candyCost}`}</span>
                         </span>}

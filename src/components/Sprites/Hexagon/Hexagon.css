@@ -3,6 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #a8a8a8;
 }
 
 .leader-text {

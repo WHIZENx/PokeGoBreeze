@@ -10,7 +10,7 @@ const Type = (props) => {
     }
 
     return (
-        <ul className={props.block ? '': 'element-top'} style={props.styled && { padding: 0, margin: 0 }}>
+        <ul className={(props.block ? '': 'element-top')+(props.shadow ? ' filter-shadow' : '')} style={props.styled && { padding: 0, margin: 0 }}>
             {props.text && <p>{props.text}</p>}
             {props.arr.map((value, index) => (
                 <li style={props.style} className='img-group' key={ index }>
@@ -20,7 +20,7 @@ const Type = (props) => {
                         :
                         <Fragment>
                             <img className={props.shadow ? "filter-shadow" : ""} width={36} height={36} alt='img-pokemon' src={APIService.getTypeSprite(value)}/>
-                            <span className='caption text-black'>{capitalize(value)}</span>
+                            <span className={'caption'+(props.shadow ? " text-shadow" : "")} style={{color: props.color ?? 'black'}}>{capitalize(value)}</span>
                         </Fragment>
                     }
                 </li>

@@ -146,8 +146,8 @@ const Move = (props) => {
                                 </tr>
                                 {move.type_move === "CHARGE" && <tr>
                                     <td>PVE Bar Charged</td>
-                                    <td colSpan="2" className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(true, move.pve_energy)).keys()].map((value, index) => (
-                                        <div style={{width: ((120-(5*(Math.max(1, getBarCharge(true, move.pve_energy)))))/getBarCharge(true, move.pve_energy))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
+                                    <td colSpan="2" style={{border: 'none'}}>{[...Array(getBarCharge(true, move.pve_energy)).keys()].map((value, index) => (
+                                        <div style={{width: ((120-(5*(Math.max(1, getBarCharge(true, move.pve_energy)))))/getBarCharge(true, move.pve_energy))}} key={index} className={"d-inline-block bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
                                 </tr>}
                                 <tr className="text-center"><td className="table-sub-header" colSpan="3">PVP Stats</td></tr>
@@ -166,8 +166,8 @@ const Move = (props) => {
                                 </tr>
                                 {move.type_move === "CHARGE" && <tr>
                                     <td>PVP Bar Charged</td>
-                                    <td colSpan="2" className="d-flex align-items-center" style={{border: 'none'}}>{[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((value, index) => (
-                                        <div style={{width: ((120-(5*(Math.max(1, getBarCharge(false, move.pvp_energy)))))/getBarCharge(false, move.pvp_energy))}} key={index} className={"bar-charge "+move.type.toLowerCase()}></div>
+                                    <td colSpan="2" style={{border: 'none'}}>{[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((value, index) => (
+                                        <div style={{width: ((120-(5*(Math.max(1, getBarCharge(false, move.pvp_energy)))))/getBarCharge(false, move.pvp_energy))}} key={index} className={"d-inline-block bar-charge "+move.type.toLowerCase()}></div>
                                     ))}</td>
                                 </tr>}
                                 {move.buffs.length > 0 &&

@@ -1,40 +1,31 @@
-.iv-group {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.iv-bg-group, .iv-group {
+.iv-bg-group {
     width: 99%;
-    display: flex;
+    display: inline-flex;
+    column-gap: 5px;
 }
 
 .iv {
-    height: 13px;
-}
-
-.iv.iv-bg-bar {
     width: 33%;
 }
 
 .iv-bg-bar {
+    height: 13px;
     background-color: lightgray;
 }
 
 .iv-bar {
+    height: 13px;
     background-color: #ef911d;
 }
 
-.iv:first-of-type {
+.iv-first-child div {
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
-    margin-right: 5px;
 }
 
-.iv:last-of-type {
+.iv-last-child div {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
-    margin-left: 5px;
 }
 
 .border-right-iv {

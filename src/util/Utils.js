@@ -160,6 +160,7 @@ export const convertNameRankingToOri = (text, form) => {
   .replace("-shadow", "")
   if (text.includes("standard")) form = "-standard";
   return formOri.includes("(") && formOri.includes(")") &&
+  form !== "-defense" &&
   form !== "-sunshine" &&
   form !== "-jr" &&
   form !== "-small" &&
@@ -175,3 +176,18 @@ export const convertArrStats = (data) => {
       baseStatsPokeGo: {attack: stats.atk, defense: stats.def, stamina: stats.sta}}
   })
 };
+
+export const getStyleRuleValue = (style, selector, sheet) => {
+  var sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
+  for (var i = 0, l = sheets.length; i < l; i++) {
+      sheet = sheets[i];
+      if( !sheet.cssRules ) { continue; }
+      for (var j = 0, k = sheet.cssRules.length; j < k; j++) {
+          var rule = sheet.cssRules[j];
+          if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
+              return rule.style[style];
+          }
+      }
+  }
+  return null;
+}

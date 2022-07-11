@@ -12,8 +12,8 @@ const TypeBadge = (props) => {
     if (!props.find) move = combatData.find(item => item.name === props.move.name.replaceAll("_FAST", ""));
 
     return (
-        <div className="type-badge-container" style={props.style}>
-            <span className="caption text-type-border">{props.title}</span>
+        <div className={"type-badge-container"+(props.grow ? ' filter-shadow' : '')} style={props.style}>
+            <span className="caption text-type-border" style={{color: props.color ?? 'gray'}}>{props.title}</span>
             <Link target="_blank" to={"/moves/"+move.id} className="d-flex align-items-center position-relative" style={{width: 'fit-content'}}>
                 <span className={move.type.toLowerCase()+" type-border position-relative"}>
                     {(props.elite || props.shadow || props.purified) &&

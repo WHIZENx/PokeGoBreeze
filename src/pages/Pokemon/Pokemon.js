@@ -5,7 +5,7 @@ import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
 import { convertArrStats, splitAndCapitalize } from '../../util/Utils';
-import { computeBgColor, computeColor } from '../../util/Compute';
+import { computeCandyBgColor, computeCandyColor } from '../../util/Compute';
 import { regionList } from '../../util/Constants';
 import { sortStatsPokemon } from '../../util/Calculate';
 
@@ -309,8 +309,8 @@ const Pokemon = (props) => {
                                         <td><img alt="img-cost-info" width={100} src={APIService.getItemSprite("Item_1202")}/></td>
                                         <td style={{padding:0}}>
                                             <div className="d-flex align-items-center row-extra td-costs">
-                                                <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(data.id), marginRight: 5}}>
-                                                    <div className="poke-candy" style={{background: computeColor(data.id), width: 20, height: 20}}></div>
+                                                <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(data.id), marginRight: 5}}>
+                                                    <div className="poke-candy" style={{background: computeCandyColor(data.id), width: 20, height: 20}}></div>
                                                 </div>
                                                 <span>{getCostModifier(data.id).thirdMove.candy ? `x${getCostModifier(data.id).thirdMove.candy}` : "Unavailable"}</span>
                                             </div>
@@ -330,8 +330,8 @@ const Pokemon = (props) => {
                                         <td><img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()}/></td>
                                         <td style={{padding:0}}>
                                             <div className="d-flex align-items-center row-extra td-costs">
-                                                <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeBgColor(data.id), marginRight: 5}}>
-                                                    <div className="poke-candy" style={{background: computeColor(data.id), width: 20, height: 20}}></div>
+                                                <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(data.id), marginRight: 5}}>
+                                                    <div className="poke-candy" style={{background: computeCandyColor(data.id), width: 20, height: 20}}></div>
                                                 </div>
                                                 <span>{getCostModifier(data.id).purified.candy ? `x${getCostModifier(data.id).purified.candy}` : "Unavailable"}</span>
                                             </div>
