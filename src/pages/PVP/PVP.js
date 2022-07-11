@@ -22,6 +22,10 @@ import { Link, useParams } from 'react-router-dom';
 import IVbar from '../../components/Sprites/IVBar/IVBar';
 import TypeEffectiveSelect from '../../components/Effective/TypeEffectiveSelect';
 import CloseIcon from '@mui/icons-material/Close';
+import { leagues } from '../../util/Constants';
+
+import loading from '../../assets/loading.png';
+import Error from '../Error/Error';
 
 const PVP = () => {
 
@@ -32,6 +36,9 @@ const PVP = () => {
 
     const [search, setSearch] = useState('');
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
+
+    const [spinner, setSpinner] = useState(true);
+    const [found, setFound] = useState(true);
 
     const LeaveToggle = ({ eventKey }) => {
         const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
@@ -45,78 +52,81 @@ const PVP = () => {
 
     useEffect(() => {
         const fetchPokemon = async () => {
-            let file = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data;
-            pokemonData = Object.values(pokemonData);
-            file = file.map(item => {
-                const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-                const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
-                const id = pokemon.num;
-                const form = findAssetForm(pokemon.num, pokemon.name);
+            try {
+                let file = (await APIService.getFetchUrl(APIService.getRankingFile(params.serie, parseInt(params.cp), params.type))).data;
+                pokemonData = Object.values(pokemonData);
+                file = file.map(item => {
+                    const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+                    const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
+                    const id = pokemon.num;
+                    const form = findAssetForm(pokemon.num, pokemon.name);
 
-                const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+                    const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
-                let fmoveData = item.moveset[0], cMoveDataPri = item.moveset[1], cMoveDataSec = item.moveset[2];
-                if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
-                if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
-                if (cMoveDataSec === "FUTURE_SIGHT") cMoveDataSec = "FUTURESIGHT";
-                if (cMoveDataPri === "TECHNO_BLAST_DOUSE") cMoveDataPri = "TECHNO_BLAST_WATER";
-                if (cMoveDataSec === "TECHNO_BLAST_DOUSE") cMoveDataSec = "TECHNO_BLAST_WATER";
+                    let fmoveData = item.moveset[0], cMoveDataPri = item.moveset[1], cMoveDataSec = item.moveset[2];
+                    if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
+                    if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
+                    if (cMoveDataSec === "FUTURE_SIGHT") cMoveDataSec = "FUTURESIGHT";
+                    if (cMoveDataPri === "TECHNO_BLAST_DOUSE") cMoveDataPri = "TECHNO_BLAST_WATER";
+                    if (cMoveDataSec === "TECHNO_BLAST_DOUSE") cMoveDataSec = "TECHNO_BLAST_WATER";
 
-                let fmove = combatData.find(item => item.name === fmoveData);
-                const cmovePri = combatData.find(item => item.name === cMoveDataPri);
-                if (cMoveDataSec) var cmoveSec = combatData.find(item => item.name === cMoveDataSec);
+                    let fmove = combatData.find(item => item.name === fmoveData);
+                    const cmovePri = combatData.find(item => item.name === cMoveDataPri);
+                    if (cMoveDataSec) var cmoveSec = combatData.find(item => item.name === cMoveDataSec);
 
-                if (item.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: item.moveset[0].split("_")[2]}
+                    if (item.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: item.moveset[0].split("_")[2]}
 
-                let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
-                    && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
-                );
-                const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
-                if (!result) combatPoke = combatPoke[0]
-                else combatPoke = result;
-                return {
-                    ...item,
-                    id: id,
-                    name: name,
-                    form: form,
-                    pokemon: pokemon,
-                    stats: stats,
-                    atk: statsRanking.current.attack.ranking.find(i => i.attack === stats.atk),
-                    def: statsRanking.current.defense.ranking.find(i => i.defense === stats.def),
-                    sta: statsRanking.current.stamina.ranking.find(i => i.stamina === stats.sta),
-                    fmove: fmove,
-                    cmovePri: cmovePri,
-                    cmoveSec: cmoveSec,
-                    combatPoke: combatPoke
-                }
-            })
-            setRankingData(file);
-            setStoreStats(file.map(i => null))
+                    let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
+                        && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+                    );
+                    const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+                    if (!result) combatPoke = combatPoke[0]
+                    else combatPoke = result;
+                    return {
+                        ...item,
+                        id: id,
+                        name: name,
+                        form: form,
+                        pokemon: pokemon,
+                        stats: stats,
+                        atk: statsRanking.current.attack.ranking.find(i => i.attack === stats.atk),
+                        def: statsRanking.current.defense.ranking.find(i => i.defense === stats.def),
+                        sta: statsRanking.current.stamina.ranking.find(i => i.stamina === stats.sta),
+                        fmove: fmove,
+                        cmovePri: cmovePri,
+                        cmoveSec: cmoveSec,
+                        combatPoke: combatPoke
+                    }
+                })
+                setRankingData(file);
+                setStoreStats(file.map(i => false));
+                setSpinner(false);
+            } catch {
+                setSpinner(false);
+                setFound(false);
+            }
         }
         fetchPokemon();
-    }, [params.cp, params.type]);
+    }, [params.serie, params.cp, params.type]);
 
     const convertNameRankingToForm = (name) => {
         return rankingData.find(pokemon => pokemon.speciesId === name).speciesName;
     }
 
-    const calculateStatsTopRank = (key, stats) => {
-        const store = storeStats[key];
-        if (!store) {
-            const maxCP = parseInt(params.cp);
+    const calculateStatsTopRank = (stats) => {
+        const maxCP = parseInt(params.cp);
 
-            if (maxCP === 10000) {
-                const cp = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50);
-                const buddyCP = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 51);
-                setStoreStats(update(storeStats, {[key]: {$set: {
-                    "50": {cp: cp},
-                    "51": {cp: buddyCP},
-                }}}));
-            } else {
-                const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-                const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
-                setStoreStats(update(storeStats, {[key]: {$set: allStats[allStats.length-1]}}));
-            }
+        if (maxCP === 10000) {
+            const cp = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50);
+            const buddyCP = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 51);
+            return {
+                "50": {cp: cp},
+                "51": {cp: buddyCP},
+            };
+        } else {
+            const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+            const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
+            return allStats[allStats.length-1];
         }
     }
 
@@ -151,7 +161,7 @@ const PVP = () => {
         return (
             <Accordion.Item eventKey={key}>
                 <Accordion.Header onClick={() => {
-                if (!storeStats[key]) calculateStatsTopRank(key, data.stats)
+                if (!storeStats[key]) setStoreStats(update(storeStats, {[key]: {$set: true}}))
                 }}>
                     <span className="d-inline-block position-relative" style={{width: 50, marginRight: '2rem'}}>
                         {data.speciesName.includes("(Shadow)") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
@@ -334,9 +344,8 @@ const PVP = () => {
         const form = findAssetForm(pokemon.num, pokemon.name);
 
         return (
-            <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types)}}>
-                <div className="d-flex align-items-center">
-                    <span className="number-count-ranking">{index+1}</span>
+            <Link to={`/pvp/ranking/${params.serie}/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types, data.opponent.includes("_shadow"))}}>
+                <div className="container d-flex align-items-center" style={{columnGap: 10}}>
                     <span className="d-inline-block position-relative filter-shadow" style={{width: 50, marginRight: '1rem'}}>
                         {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                         <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
@@ -355,7 +364,7 @@ const PVP = () => {
 
     const renderTopStats = (stats, key, id) => {
         const maxCP = parseInt(params.cp);
-        const currStats = storeStats[key];
+        const currStats = calculateStatsTopRank(stats);
         return (
             <ul className='element-top'>
                 <li className='element-top'>
@@ -382,16 +391,49 @@ const PVP = () => {
         )
     }
 
+    const renderLeague = () => {
+        const league = leagues.find(item => item.id === params.serie)
+        return (
+            <Fragment>
+                {league &&
+                <div className='d-flex flex-wrap align-items-center element-top' style={{columnGap: 10}}>
+                    <img alt='img-league' width={64} height={64} src={!league.logo ?
+                        league.cp === 500 ? APIService.getPokeOtherLeague("GBL_littlecup")
+                        :
+                        league.cp === 1500 ? APIService.getPokeLeague("great_league")
+                        :
+                        league.cp === 2500 ? APIService.getPokeLeague("ultra_league")
+                        :
+                        APIService.getPokeLeague("master_league") : league.logo}/>
+                    <h2><b>{league.name}</b></h2>
+                </div>
+                }
+            </Fragment>
+        )
+    }
+
     return (
+        <Fragment>
+        {!found ?
+        <Error />
+        :
+        <Fragment>
+        <div className='position-fixed loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
+        <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
+            <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
+            <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
+        </div>
+        {rankingData && storeStats &&
         <div className="container">
+            {renderLeague()}
             <div className='element-top ranking-link-group'>
-                <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall`}>Overall</Button >
-                <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads`}>Leads</Button>
-                <Button className={(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers`}>Closers</Button>
-                <Button className={(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/${params.cp}/switches`}>Switches</Button>
-                <Button className={(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/${params.cp}/chargers`}>Chargers</Button>
-                <Button className={(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/${params.cp}/attackers`}>Attackers</Button>
-                <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency`}>Consistency</Button>
+                <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/overall`}>Overall</Button >
+                <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/leads`}>Leads</Button>
+                <Button className={(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/closers`}>Closers</Button>
+                <Button className={(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/switches`}>Switches</Button>
+                <Button className={(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/chargers`}>Chargers</Button>
+                <Button className={(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/attackers`}>Attackers</Button>
+                <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/consistency`}>Consistency</Button>
             </div>
             <div className="input-group border-input">
                 <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
@@ -399,20 +441,20 @@ const PVP = () => {
                 onInput={e => onSearch(e.target.value)}
                 />
             </div>
-            {rankingData && storeStats &&
-                <div>
-                    <Accordion alwaysOpen className="ranking-container">
-                        {rankingData
-                        .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
-                        .sort((a,b) => b.score-a.score).map((value, index) => (
-                            <Fragment key={index}>
-                                {renderItem(value, index)}
-                            </Fragment>
-                        ))}
-                    </Accordion>
-                </div>
-            }
+            <Accordion alwaysOpen className="ranking-container">
+                {rankingData
+                .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
+                .sort((a,b) => b.score-a.score).map((value, index) => (
+                    <Fragment key={index}>
+                        {renderItem(value, index)}
+                    </Fragment>
+                ))}
+            </Accordion>
         </div>
+        }
+        </Fragment>
+        }
+        </Fragment>
     )
 }
 

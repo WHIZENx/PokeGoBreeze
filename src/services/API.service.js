@@ -180,8 +180,8 @@ class APIService {
         return `${POGO_PRODHOLOHOLO_ASSET_URL}Stickers/${sticker}`;
     }
 
-    getRankingFile(cp, type) {
-        return `${POKE_RANKING_API_URL}all/${type.toLowerCase()}/rankings-${cp}.json`;
+    getRankingFile(serie, cp, type) {
+        return `${POKE_RANKING_API_URL}${serie}/${type.toLowerCase()}/rankings-${cp}.json`;
     }
 }
 

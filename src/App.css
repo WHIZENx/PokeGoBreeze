@@ -1,3 +1,8 @@
+.container-fluid {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
 .link-url {
     color: #0d6efd;
     cursor: pointer;

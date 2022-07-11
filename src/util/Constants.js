@@ -1,4 +1,5 @@
 import { getOption } from "../options/options";
+import APIService from "../services/API.service";
 
 export const RAID_BOSS_TIER = {
     1: {
@@ -98,3 +99,150 @@ export const typeCostPowerUp = (type) => {
         type: type,
     };
 }
+
+export const leagues = [
+    {
+        id: "all",
+        name: "Little Cup",
+        cp: 500,
+        logo: APIService.getPokeOtherLeague("GBL_littlecup")
+    },
+    {
+        id: "all",
+        name: "Great League",
+        cp: 1500,
+        logo: APIService.getPokeLeague("great_league")
+    },
+    {
+        id: "all",
+        name: "Ultra League",
+        cp: 2500,
+        logo: APIService.getPokeLeague("ultra_league")
+    },
+    {
+        id: "all",
+        name: "Master League",
+        cp: 10000,
+        logo: APIService.getPokeLeague("master_league")
+    },
+    // {
+    //     id: "adl",
+    //     name: "Adl",
+    //     cp: [500,1500,2500,1000],
+    //     logo: null
+    // },
+    {
+        id: "alchemy",
+        name: "Silph Factions (Alchemy)",
+        cp: 1500,
+        logo: null
+    },
+    {
+        id: "architect",
+        name: "Silph Architect Cup",
+        cp: 1500,
+        logo: null
+    },
+    // {
+    //     id: "championship",
+    //     name: "2022 Championship Series",
+    //     cp: [500,1500,2500,1000],
+    //     logo: null
+    // },
+    {
+        id: "classic",
+        name: "Master League (Classic)",
+        cp: 10000,
+        logo: APIService.getAssetPokeGo("pogo_master_league.png")
+    },
+    // {
+    //     id: "cliffhanger",
+    //     name: "cliffhanger",
+    //     cp: [500,1500,2500,1000],
+    //     logo: null
+    // },
+    {
+        id: "colony",
+        name: "Silph Factions (Colony)",
+        cp: 1500,
+        logo: null
+    },
+    {
+        id: "firefly",
+        name: "Fire Fly Cup",
+        cp: 1500,
+        logo: null
+    },
+    {
+        id: "flying",
+        name: "Flying Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/flying_cup.png")
+    },
+    {
+        id: "forged",
+        name: "Forged Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/catch2022_icon_high.png")
+    },
+    {
+        id: "fossil",
+        name: "Fossil Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/fossil_gblcup.png")
+    },
+    // {
+    //     id: "gobattleleague",
+    //     name: "Go Battle League",
+    //     cp: [500,1500,2500,1000],
+    //     logo: null
+    // },
+    // {
+    //     id: "goteamup",
+    //     name: "Go Team Up",
+    //     cp: [1500,2500,1000],
+    //     logo: null
+    // },
+    {
+        id: "kanto",
+        name: "Kanto Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/kantoLeague2022_icon.png")
+    },
+    {
+        id: "mega",
+        name: "Mega Master League",
+        cp: 10000,
+        logo: APIService.getAssetPokeGo("pogo_master_league.png")
+    },
+    // {
+    //     id: "premierclassic",
+    //     name: "Premier Classic League",
+    //     cp: [1500, 2500, 10000],
+    //     logo: "premierball_sprite.png"
+    // },
+    // {
+    //     id: "remix",
+    //     name: "Remix",
+    //     cp: [1500, 2500, 10000],
+    //     logo: null
+    // },
+    {
+        id: "retro",
+        name: "Retro Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/GBL_retrocup.png")
+    },
+    {
+        id: "river",
+        name: "River Cup",
+        cp: 1500,
+        logo: null
+    },
+    {
+        id: "summer",
+        name: "Summer Cup",
+        cp: 1500,
+        logo: null
+    },
+]

@@ -3,7 +3,6 @@ import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import logo from '../assets/pokedex.png';
-import APIService from '../services/API.service';
 
 import "./Navbar.css"
 
@@ -37,12 +36,7 @@ const NavbarComponent = () => {
                         <Link className="dropdown-item" to="/calculate-point">Calculate Point Stats</Link>
                     </NavDropdown>
                     <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Table</Link>
-                    <NavDropdown title="PVP Simulator">
-                        <a className="dropdown-item" href="/pvp/500/overall"><img width={25} height={25} alt="logo-league" src={APIService.getPokeOtherLeague("GBL_littlecup")}/> Little Cup</a>
-                        <a className="dropdown-item" href="/pvp/1500/overall"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("great_league")}/> Great League</a>
-                        <a className="dropdown-item" href="/pvp/2500/overall"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("ultra_league")}/> Ultra League</a>
-                        <a className="dropdown-item" href="/pvp/10000/overall"><img width={25} height={25} alt="logo-league" src={APIService.getPokeLeague("master_league")}/> Master League</a>
-                    </NavDropdown>
+                    <Link className="nav-link" to="/pvp">PVP</Link>
                     <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>
                     <Link className="nav-link" to="/stickers">Stickers</Link>
                 </Nav>

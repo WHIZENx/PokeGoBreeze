@@ -15,7 +15,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "General"
     },
     {
         "name": "HYPER_BEAM",
@@ -33,7 +34,8 @@
         "damageWindowEndMs": 3600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.15
+        "staminaLossScalar": 0.15,
+        "archetype": "Nuke"
     },
     {
         "name": "DARK_PULSE",
@@ -51,7 +53,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "General"
     },
     {
         "name": "SLUDGE",
@@ -69,7 +72,8 @@
         "damageWindowEndMs": 1550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "VICE_GRIP",
@@ -87,7 +91,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.055
+        "staminaLossScalar": 0.055,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "FLAME_WHEEL",
@@ -105,7 +110,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "High Energy"
     },
     {
         "name": "MEGAHORN",
@@ -123,7 +129,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12
+        "staminaLossScalar": 0.12,
+        "archetype": "Nuke"
     },
     {
         "name": "FLAMETHROWER",
@@ -141,7 +148,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "High Energy"
     },
     {
         "name": "DIG",
@@ -159,7 +167,8 @@
         "damageWindowEndMs": 4500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "High Energy"
     },
     {
         "name": "CROSS_CHOP",
@@ -177,7 +186,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "PSYBEAM",
@@ -195,7 +205,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "High Energy"
     },
     {
         "name": "EARTHQUAKE",
@@ -213,7 +224,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "archetype": "Nuke"
     },
     {
         "name": "STONE_EDGE",
@@ -231,7 +243,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.5,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "archetype": "Nuke"
     },
     {
         "name": "ICE_PUNCH",
@@ -249,7 +262,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "HEART_STAMP",
@@ -267,7 +281,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "DISCHARGE",
@@ -285,7 +300,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "General"
     },
     {
         "name": "FLASH_CANNON",
@@ -303,7 +319,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "Nuke"
     },
     {
         "name": "DRILL_PECK",
@@ -321,7 +338,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "Low Quality"
     },
     {
         "name": "ICE_BEAM",
@@ -339,7 +357,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "High Energy"
     },
     {
         "name": "BLIZZARD",
@@ -357,7 +376,8 @@
         "damageWindowEndMs": 2900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "archetype": "Nuke"
     },
     {
         "name": "HEAT_WAVE",
@@ -375,7 +395,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095
+        "staminaLossScalar": 0.095,
+        "archetype": "High Energy"
     },
     {
         "name": "AERIAL_ACE",
@@ -393,7 +414,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "General"
     },
     {
         "name": "DRILL_RUN",
@@ -411,7 +433,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "General"
     },
     {
         "name": "PETAL_BLIZZARD",
@@ -429,7 +452,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "Nuke"
     },
     {
         "name": "MEGA_DRAIN",
@@ -447,7 +471,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "High Energy"
     },
     {
         "name": "BUG_BUZZ",
@@ -472,7 +497,8 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "High Energy Debuff"
     },
     {
         "name": "POISON_FANG",
@@ -497,7 +523,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05
+        "staminaLossScalar": 0.05,
+        "archetype": "Debuff Spam/Bait"
     },
     {
         "name": "NIGHT_SLASH",
@@ -522,7 +549,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.07
+        "staminaLossScalar": 0.07,
+        "archetype": "Boost Spam/Bait"
     },
     {
         "name": "BUBBLE_BEAM",
@@ -547,7 +575,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "Debuff Spam/Bait"
     },
     {
         "name": "SUBMISSION",
@@ -565,7 +594,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "General"
     },
     {
         "name": "LOW_SWEEP",
@@ -583,7 +613,8 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "AQUA_JET",
@@ -601,7 +632,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "AQUA_TAIL",
@@ -619,7 +651,8 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "SEED_BOMB",
@@ -637,7 +670,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "PSYSHOCK",
@@ -655,7 +689,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "General"
     },
     {
         "name": "ANCIENT_POWER",
@@ -686,7 +721,8 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "Boost"
     },
     {
         "name": "ROCK_TOMB",
@@ -711,7 +747,8 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "High Energy Debuff"
     },
     {
         "name": "ROCK_SLIDE",
@@ -729,7 +766,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "archetype": "General"
     },
     {
         "name": "POWER_GEM",
@@ -747,7 +785,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "High Energy"
     },
     {
         "name": "SHADOW_SNEAK",
@@ -765,7 +804,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "SHADOW_PUNCH",
@@ -783,7 +823,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "OMINOUS_WIND",
@@ -814,7 +855,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "Boost"
     },
     {
         "name": "SHADOW_BALL",
@@ -832,7 +874,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "Nuke"
     },
     {
         "name": "MAGNET_BOMB",
@@ -850,7 +893,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "General"
     },
     {
         "name": "IRON_HEAD",
@@ -868,7 +912,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "General"
     },
     {
         "name": "PARABOLIC_CHARGE",
@@ -886,7 +931,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05
+        "staminaLossScalar": 0.05,
+        "archetype": "High Energy"
     },
     {
         "name": "THUNDER_PUNCH",
@@ -904,7 +950,8 @@
         "damageWindowEndMs": 1550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "THUNDER",
@@ -922,7 +969,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "archetype": "High Energy"
     },
     {
         "name": "THUNDERBOLT",
@@ -940,7 +988,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "High Energy"
     },
     {
         "name": "TWISTER",
@@ -958,7 +1007,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "DRAGON_PULSE",
@@ -976,7 +1026,8 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.085
+        "staminaLossScalar": 0.085,
+        "archetype": "High Energy"
     },
     {
         "name": "DRAGON_CLAW",
@@ -994,7 +1045,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "DISARMING_VOICE",
@@ -1012,7 +1064,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "DRAINING_KISS",
@@ -1030,7 +1083,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05
+        "staminaLossScalar": 0.05,
+        "archetype": "High Energy"
     },
     {
         "name": "DAZZLING_GLEAM",
@@ -1048,7 +1102,8 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "Nuke"
     },
     {
         "name": "MOONBLAST",
@@ -1073,7 +1128,8 @@
         "damageWindowEndMs": 3700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095
+        "staminaLossScalar": 0.095,
+        "archetype": "Debuff Nuke"
     },
     {
         "name": "PLAY_ROUGH",
@@ -1091,7 +1147,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "archetype": "High Energy"
     },
     {
         "name": "CROSS_POISON",
@@ -1116,7 +1173,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.07
+        "staminaLossScalar": 0.07,
+        "archetype": "Boost Spam/Bait"
     },
     {
         "name": "SLUDGE_BOMB",
@@ -1134,7 +1192,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "General"
     },
     {
         "name": "SLUDGE_WAVE",
@@ -1152,7 +1211,8 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.095
+        "staminaLossScalar": 0.095,
+        "archetype": "Nuke"
     },
     {
         "name": "GUNK_SHOT",
@@ -1170,7 +1230,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12
+        "staminaLossScalar": 0.12,
+        "archetype": "Nuke"
     },
     {
         "name": "BONE_CLUB",
@@ -1188,7 +1249,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "BULLDOZE",
@@ -1206,7 +1268,8 @@
         "damageWindowEndMs": 3100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "High Energy"
     },
     {
         "name": "MUD_BOMB",
@@ -1224,7 +1287,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "SIGNAL_BEAM",
@@ -1255,7 +1319,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "archetype": "High Energy Debuff"
     },
     {
         "name": "X_SCISSOR",
@@ -1273,7 +1338,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "FLAME_CHARGE",
@@ -1298,7 +1364,8 @@
         "damageWindowEndMs": 3450,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.05
+        "staminaLossScalar": 0.05,
+        "archetype": "Boost"
     },
     {
         "name": "FLAME_BURST",
@@ -1316,7 +1383,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.07
+        "staminaLossScalar": 0.07,
+        "archetype": "High Energy"
     },
     {
         "name": "FIRE_BLAST",
@@ -1334,7 +1402,8 @@
         "damageWindowEndMs": 3900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "archetype": "Nuke"
     },
     {
         "name": "BRINE",
@@ -1352,7 +1421,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "General"
     },
     {
         "name": "WATER_PULSE",
@@ -1370,7 +1440,8 @@
         "damageWindowEndMs": 2900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "High Energy"
     },
     {
         "name": "SCALD",
@@ -1395,7 +1466,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "High Energy Debuff"
     },
     {
         "name": "HYDRO_PUMP",
@@ -1413,7 +1485,8 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "archetype": "Nuke"
     },
     {
         "name": "PSYCHIC",
@@ -1438,7 +1511,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "High Energy Debuff"
     },
     {
         "name": "PSYSTRIKE",
@@ -1456,7 +1530,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "archetype": "General"
     },
     {
         "name": "ICY_WIND",
@@ -1481,7 +1556,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.055
+        "staminaLossScalar": 0.055,
+        "archetype": "Debuff"
     },
     {
         "name": "GIGA_DRAIN",
@@ -1499,7 +1575,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "archetype": "High Energy"
     },
     {
         "name": "FIRE_PUNCH",
@@ -1517,7 +1594,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "SOLAR_BEAM",
@@ -1535,7 +1613,8 @@
         "damageWindowEndMs": 4700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.12
+        "staminaLossScalar": 0.12,
+        "archetype": "Nuke"
     },
     {
         "name": "LEAF_BLADE",
@@ -1553,7 +1632,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.09
+        "staminaLossScalar": 0.09,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "POWER_WHIP",
@@ -1571,7 +1651,8 @@
         "damageWindowEndMs": 2350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.12
+        "staminaLossScalar": 0.12,
+        "archetype": "General"
     },
     {
         "name": "AIR_CUTTER",
@@ -1589,7 +1670,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "Low Quality"
     },
     {
         "name": "HURRICANE",
@@ -1607,7 +1689,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "archetype": "Nuke"
     },
     {
         "name": "BRICK_BREAK",
@@ -1625,7 +1708,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.25,
-        "staminaLossScalar": 0.075
+        "staminaLossScalar": 0.075,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "SWIFT",
@@ -1643,7 +1727,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "High Energy"
     },
     {
         "name": "HORN_ATTACK",
@@ -1661,7 +1746,8 @@
         "damageWindowEndMs": 1650,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "STOMP",
@@ -1679,7 +1765,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "HYPER_FANG",
@@ -1697,7 +1784,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "General"
     },
     {
         "name": "BODY_SLAM",
@@ -1715,7 +1803,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.085
+        "staminaLossScalar": 0.085,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "REST",
@@ -1733,7 +1822,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "STRUGGLE",
@@ -1751,7 +1841,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.1
+        "staminaLossScalar": 0.1,
+        "archetype": "High Energy"
     },
     {
         "name": "SCALD_BLASTOISE",
@@ -1769,7 +1860,8 @@
         "damageWindowEndMs": 4600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.08
+        "staminaLossScalar": 0.08,
+        "archetype": "High Energy"
     },
     {
         "name": "HYDRO_PUMP_BLASTOISE",
@@ -1787,7 +1879,8 @@
         "damageWindowEndMs": 4300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.11
+        "staminaLossScalar": 0.11,
+        "archetype": "High Energy"
     },
     {
         "name": "WRAP_GREEN",
@@ -1805,7 +1898,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "General"
     },
     {
         "name": "WRAP_PINK",
@@ -1823,7 +1917,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.06
+        "staminaLossScalar": 0.06,
+        "archetype": "General"
     },
     {
         "name": "FURY_CUTTER",
@@ -1841,7 +1936,8 @@
         "damageWindowEndMs": 400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "BUG_BITE",
@@ -1859,7 +1955,8 @@
         "damageWindowEndMs": 450,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "BITE",
@@ -1877,7 +1974,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "SUCKER_PUNCH",
@@ -1895,7 +1993,8 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "DRAGON_BREATH",
@@ -1913,7 +2012,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Multipurpose"
     },
     {
         "name": "THUNDER_SHOCK",
@@ -1931,7 +2031,8 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "SPARK",
@@ -1949,7 +2050,8 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "LOW_KICK",
@@ -1967,7 +2069,8 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "KARATE_CHOP",
@@ -1985,7 +2088,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "EMBER",
@@ -2003,7 +2107,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "WING_ATTACK",
@@ -2021,7 +2126,8 @@
         "damageWindowEndMs": 750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "PECK",
@@ -2039,7 +2145,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "LICK",
@@ -2057,7 +2164,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "SHADOW_CLAW",
@@ -2075,7 +2183,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Multipurpose"
     },
     {
         "name": "VINE_WHIP",
@@ -2093,7 +2202,8 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "RAZOR_LEAF",
@@ -2111,7 +2221,8 @@
         "damageWindowEndMs": 850,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "MUD_SHOT",
@@ -2129,7 +2240,8 @@
         "damageWindowEndMs": 550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "ICE_SHARD",
@@ -2147,7 +2259,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "FROST_BREATH",
@@ -2165,7 +2278,8 @@
         "damageWindowEndMs": 750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "QUICK_ATTACK",
@@ -2183,7 +2297,8 @@
         "damageWindowEndMs": 550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "SCRATCH",
@@ -2201,7 +2316,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "TACKLE",
@@ -2219,7 +2335,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "POUND",
@@ -2237,7 +2354,8 @@
         "damageWindowEndMs": 540,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "CUT",
@@ -2255,7 +2373,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "POISON_JAB",
@@ -2273,7 +2392,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "ACID",
@@ -2291,7 +2411,8 @@
         "damageWindowEndMs": 600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "PSYCHO_CUT",
@@ -2309,7 +2430,8 @@
         "damageWindowEndMs": 570,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "ROCK_THROW",
@@ -2327,7 +2449,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "METAL_CLAW",
@@ -2345,7 +2468,8 @@
         "damageWindowEndMs": 630,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "BULLET_PUNCH",
@@ -2363,7 +2487,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "WATER_GUN",
@@ -2381,7 +2506,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "SPLASH",
@@ -2399,7 +2525,8 @@
         "damageWindowEndMs": 1230,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "WATER_GUN_BLASTOISE",
@@ -2417,7 +2544,8 @@
         "damageWindowEndMs": 500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "MUD_SLAP",
@@ -2435,7 +2563,8 @@
         "damageWindowEndMs": 1350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "ZEN_HEADBUTT",
@@ -2453,7 +2582,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "CONFUSION",
@@ -2471,7 +2601,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Multipurpose"
     },
     {
         "name": "POISON_STING",
@@ -2489,7 +2620,8 @@
         "damageWindowEndMs": 575,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "BUBBLE",
@@ -2507,7 +2639,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "FEINT_ATTACK",
@@ -2525,7 +2658,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "STEEL_WING",
@@ -2543,7 +2677,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "FIRE_FANG",
@@ -2561,7 +2696,8 @@
         "damageWindowEndMs": 840,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "ROCK_SMASH",
@@ -2579,7 +2715,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "TRANSFORM",
@@ -2597,7 +2734,8 @@
         "damageWindowEndMs": 700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": null
     },
     {
         "name": "COUNTER",
@@ -2615,7 +2753,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Multipurpose"
     },
     {
         "name": "POWDER_SNOW",
@@ -2633,7 +2772,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "CLOSE_COMBAT",
@@ -2658,7 +2798,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Self-Debuff"
     },
     {
         "name": "DYNAMIC_PUNCH",
@@ -2676,7 +2817,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "FOCUS_BLAST",
@@ -2694,7 +2836,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Nuke"
     },
     {
         "name": "AURORA_BEAM",
@@ -2712,7 +2855,8 @@
         "damageWindowEndMs": 3550,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "High Energy"
     },
     {
         "name": "CHARGE_BEAM",
@@ -2730,7 +2874,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "VOLT_SWITCH",
@@ -2748,7 +2893,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Multipurpose"
     },
     {
         "name": "WILD_CHARGE",
@@ -2773,7 +2919,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Self-Debuff"
     },
     {
         "name": "ZAP_CANNON",
@@ -2798,7 +2945,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Debuff Nuke"
     },
     {
         "name": "DRAGON_TAIL",
@@ -2816,7 +2964,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Multipurpose"
     },
     {
         "name": "AVALANCHE",
@@ -2834,7 +2983,8 @@
         "damageWindowEndMs": 2100,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "AIR_SLASH",
@@ -2852,7 +3002,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "BRAVE_BIRD",
@@ -2877,7 +3028,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Self-Debuff Nuke"
     },
     {
         "name": "SKY_ATTACK",
@@ -2895,7 +3047,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "SAND_TOMB",
@@ -2920,7 +3073,8 @@
         "damageWindowEndMs": 4000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Debuff Spam/Bait"
     },
     {
         "name": "ROCK_BLAST",
@@ -2938,7 +3092,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "INFESTATION",
@@ -2956,7 +3111,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "STRUGGLE_BUG",
@@ -2974,7 +3130,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "SILVER_WIND",
@@ -3005,7 +3162,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Boost"
     },
     {
         "name": "ASTONISH",
@@ -3023,7 +3181,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "HEX",
@@ -3041,7 +3200,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "NIGHT_SHADE",
@@ -3059,7 +3219,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "High Energy"
     },
     {
         "name": "IRON_TAIL",
@@ -3077,7 +3238,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "GYRO_BALL",
@@ -3095,7 +3257,8 @@
         "damageWindowEndMs": 3300,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "High Energy"
     },
     {
         "name": "HEAVY_SLAM",
@@ -3113,7 +3276,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "FIRE_SPIN",
@@ -3131,7 +3295,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "OVERHEAT",
@@ -3156,7 +3321,8 @@
         "damageWindowEndMs": 3800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Self-Debuff Nuke"
     },
     {
         "name": "BULLET_SEED",
@@ -3174,7 +3340,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "GRASS_KNOT",
@@ -3192,7 +3359,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "ENERGY_BALL",
@@ -3217,7 +3385,8 @@
         "damageWindowEndMs": 3800,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "High Energy Debuff"
     },
     {
         "name": "EXTRASENSORY",
@@ -3235,7 +3404,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "FUTURESIGHT",
@@ -3253,7 +3423,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Nuke"
     },
     {
         "name": "MIRROR_COAT",
@@ -3271,7 +3442,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "High Energy"
     },
     {
         "name": "OUTRAGE",
@@ -3289,7 +3461,8 @@
         "damageWindowEndMs": 3700,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Nuke"
     },
     {
         "name": "SNARL",
@@ -3307,7 +3480,8 @@
         "damageWindowEndMs": 1050,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "CRUNCH",
@@ -3332,7 +3506,8 @@
         "damageWindowEndMs": 3000,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "Debuff"
     },
     {
         "name": "FOUL_PLAY",
@@ -3350,7 +3525,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.04
+        "staminaLossScalar": 0.04,
+        "archetype": "General"
     },
     {
         "name": "HIDDEN_POWER",
@@ -3368,7 +3544,8 @@
         "damageWindowEndMs": 1400,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "TAKE_DOWN",
@@ -3386,7 +3563,8 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "WATERFALL",
@@ -3404,7 +3582,8 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "SURF",
@@ -3422,7 +3601,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "DRACO_METEOR",
@@ -3447,7 +3627,8 @@
         "damageWindowEndMs": 3500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Self-Debuff Nuke"
     },
     {
         "name": "DOOM_DESIRE",
@@ -3465,7 +3646,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "YAWN",
@@ -3483,7 +3665,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Low Quality"
     },
     {
         "name": "PSYCHO_BOOST",
@@ -3508,7 +3691,8 @@
         "damageWindowEndMs": 4000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Self-Debuff Spam"
     },
     {
         "name": "ORIGIN_PULSE",
@@ -3526,7 +3710,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Nuke"
     },
     {
         "name": "PRECIPICE_BLADES",
@@ -3544,7 +3729,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Nuke"
     },
     {
         "name": "PRESENT",
@@ -3562,7 +3748,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "WEATHER_BALL_FIRE",
@@ -3580,7 +3767,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "WEATHER_BALL_ICE",
@@ -3598,7 +3786,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "WEATHER_BALL_ROCK",
@@ -3616,7 +3805,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "WEATHER_BALL_WATER",
@@ -3634,7 +3824,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "FRENZY_PLANT",
@@ -3652,7 +3843,8 @@
         "damageWindowEndMs": 2550,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "SMACK_DOWN",
@@ -3670,7 +3862,8 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "BLAST_BURN",
@@ -3688,7 +3881,8 @@
         "damageWindowEndMs": 3200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "HYDRO_CANNON",
@@ -3706,7 +3900,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "LAST_RESORT",
@@ -3724,7 +3919,8 @@
         "damageWindowEndMs": 2850,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "High Energy"
     },
     {
         "name": "METEOR_MASH",
@@ -3742,7 +3938,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0.05,
-        "staminaLossScalar": 0.065
+        "staminaLossScalar": 0.065,
+        "archetype": "General"
     },
     {
         "name": "SKULL_BASH",
@@ -3767,7 +3964,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Boost Nuke"
     },
     {
         "name": "ACID_SPRAY",
@@ -3792,7 +3990,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "EARTH_POWER",
@@ -3817,7 +4016,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "High Energy Debuff"
     },
     {
         "name": "CRABHAMMER",
@@ -3842,7 +4042,8 @@
         "damageWindowEndMs": 1750,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Boost"
     },
     {
         "name": "LUNGE",
@@ -3867,7 +4068,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "OCTAZOOKA",
@@ -3892,7 +4094,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "MIRROR_SHOT",
@@ -3917,7 +4120,8 @@
         "damageWindowEndMs": 2200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff Spam/Bait"
     },
     {
         "name": "SUPER_POWER",
@@ -3948,7 +4152,8 @@
         "damageWindowEndMs": 2800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Self-Debuff Spam"
     },
     {
         "name": "FELL_STINGER",
@@ -3973,7 +4178,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Boost Spam/Bait"
     },
     {
         "name": "LEAF_TORNADO",
@@ -3998,7 +4204,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff Spam/Bait"
     },
     {
         "name": "DRAIN_PUNCH",
@@ -4023,7 +4230,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Boost Spam/Bait"
     },
     {
         "name": "SHADOW_BONE",
@@ -4048,7 +4256,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "MUDDY_WATER",
@@ -4073,7 +4282,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff Spam/Bait"
     },
     {
         "name": "BLAZE_KICK",
@@ -4091,7 +4301,8 @@
         "damageWindowEndMs": 800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "RAZOR_SHELL",
@@ -4116,7 +4327,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait Debuff"
     },
     {
         "name": "POWER_UP_PUNCH",
@@ -4141,7 +4353,8 @@
         "damageWindowEndMs": 1900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Boost Spam/Bait"
     },
     {
         "name": "CHARM",
@@ -4159,7 +4372,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "GIGA_IMPACT",
@@ -4177,7 +4391,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Nuke"
     },
     {
         "name": "FRUSTRATION",
@@ -4195,7 +4410,8 @@
         "damageWindowEndMs": 1800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "High Energy"
     },
     {
         "name": "RETURN",
@@ -4213,7 +4429,8 @@
         "damageWindowEndMs": 350,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Nuke"
     },
     {
         "name": "SYNCHRONOISE",
@@ -4231,7 +4448,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "LOCK_ON",
@@ -4249,7 +4467,8 @@
         "damageWindowEndMs": 300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "THUNDER_FANG",
@@ -4267,7 +4486,8 @@
         "damageWindowEndMs": 900,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "ICE_FANG",
@@ -4285,7 +4505,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Heavy Damage"
     },
     {
         "name": "SACRED_SWORD",
@@ -4303,7 +4524,8 @@
         "damageWindowEndMs": 1000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "FLYING_PRESS",
@@ -4321,7 +4543,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "AURA_SPHERE",
@@ -4339,7 +4562,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Nuke"
     },
     {
         "name": "PAYBACK",
@@ -4357,7 +4581,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Nuke"
     },
     {
         "name": "ROCK_WRECKER",
@@ -4375,7 +4600,8 @@
         "damageWindowEndMs": 2700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "AEROBLAST",
@@ -4400,7 +4626,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Boost Nuke"
     },
     {
         "name": "TECHNO_BLAST_NORMAL",
@@ -4418,7 +4645,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "archetype": "Nuke"
     },
     {
         "name": "TECHNO_BLAST_BURN",
@@ -4436,7 +4664,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "archetype": "Nuke"
     },
     {
         "name": "TECHNO_BLAST_CHILL",
@@ -4454,7 +4683,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "archetype": "Nuke"
     },
     {
         "name": "TECHNO_BLAST_WATER",
@@ -4472,7 +4702,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "archetype": "Nuke"
     },
     {
         "name": "TECHNO_BLAST_SHOCK",
@@ -4490,7 +4721,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0
+        "staminaLossScalar": 0,
+        "archetype": "Nuke"
     },
     {
         "name": "FLY",
@@ -4508,7 +4740,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "V_CREATE",
@@ -4533,7 +4766,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Self-Debuff Spam"
     },
     {
         "name": "LEAF_STORM",
@@ -4558,7 +4792,8 @@
         "damageWindowEndMs": 1250,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Self-Debuff Nuke"
     },
     {
         "name": "TRI_ATTACK",
@@ -4589,7 +4824,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "GUST",
@@ -4607,7 +4843,8 @@
         "damageWindowEndMs": 2000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Multipurpose"
     },
     {
         "name": "INCINERATE",
@@ -4625,7 +4862,8 @@
         "damageWindowEndMs": 2300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Multipurpose"
     },
     {
         "name": "FEATHER_DANCE",
@@ -4650,7 +4888,8 @@
         "damageWindowEndMs": 2500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "WEATHER_BALL_NORMAL",
@@ -4668,7 +4907,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "PSYCHIC_FANGS",
@@ -4693,7 +4933,8 @@
         "damageWindowEndMs": 1100,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff Spam/Bait"
     },
     {
         "name": "MAGICAL_LEAF",
@@ -4711,7 +4952,8 @@
         "damageWindowEndMs": 1300,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "SACRED_FIRE",
@@ -4736,7 +4978,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "ICICLE_SPEAR",
@@ -4754,7 +4997,8 @@
         "damageWindowEndMs": 1800,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Spam/Bait"
     },
     {
         "name": "AEROBLAST_PLUS",
@@ -4779,7 +5023,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Boost Nuke"
     },
     {
         "name": "AEROBLAST_PLUS_PLUS",
@@ -4804,7 +5049,8 @@
         "damageWindowEndMs": 3400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Boost Nuke"
     },
     {
         "name": "SACRED_FIRE_PLUS",
@@ -4829,7 +5075,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "SACRED_FIRE_PLUS_PLUS",
@@ -4854,7 +5101,8 @@
         "damageWindowEndMs": 2400,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff"
     },
     {
         "name": "ACROBATICS",
@@ -4872,7 +5120,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "LUSTER_PURGE",
@@ -4897,7 +5146,8 @@
         "damageWindowEndMs": 1500,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff Nuke"
     },
     {
         "name": "MIST_BALL",
@@ -4922,7 +5172,8 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Debuff Nuke"
     },
     {
         "name": "BRUTAL_SWING",
@@ -4940,7 +5191,8 @@
         "damageWindowEndMs": 1600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "General"
     },
     {
         "name": "ROLLOUT",
@@ -4958,7 +5210,8 @@
         "damageWindowEndMs": 1200,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Fast Charge"
     },
     {
         "name": "SEED_FLARE",
@@ -4983,7 +5236,8 @@
         "damageWindowEndMs": 2600,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": "Nuke Debuff"
     },
     {
         "name": "FAIRY_WIND",
@@ -5001,7 +5255,8 @@
         "damageWindowEndMs": 10000,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": null
     },
     {
         "name": "CRUSH_CLAW",
@@ -5019,6 +5274,7 @@
         "damageWindowEndMs": 1700,
         "accuracyChance": 1.0,
         "criticalChance": 0,
-        "staminaLossScalar": 0.01
+        "staminaLossScalar": 0.01,
+        "archetype": null
     }
 ]

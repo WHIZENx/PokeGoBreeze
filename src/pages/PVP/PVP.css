@@ -45,17 +45,6 @@
     background-color: lightgray;
 }
 
-.number-count-ranking {
-    padding: 3px 6px;
-    background-color: #1976d2;
-    color: white;
-    border-radius: 50%;
-    line-height: 1;
-    font-size: 0.75rem;
-    font-weight: 500;
-    margin-right: 10px;
-}
-
 .title-item-ranking {
     display: flex;
     justify-content: space-between;
@@ -157,4 +146,10 @@
     .stats-container {
         margin: 0 10px;
     }
+}
+
+.group-selected {
+    white-space: nowrap;
+    overflow-x: auto;
+    margin: 10px;
 }

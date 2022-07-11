@@ -33,8 +33,8 @@ const PokemonPVP = () => {
     useEffect(() => {
         const fetchPokemon = async () => {
             try {
-                const paramName = params.pokemon.replaceAll("-", "_").toLowerCase()
-                const data = (await APIService.getFetchUrl(APIService.getRankingFile(parseInt(params.cp), params.type))).data
+                const paramName = params.pokemon.replaceAll("-", "_").toLowerCase();
+                const data = (await APIService.getFetchUrl(APIService.getRankingFile(params.serie, parseInt(params.cp), params.type))).data
                 .find(pokemon => pokemon.speciesId === paramName);
 
                 const name = convertNameRankingToOri(data.speciesId, data.speciesName);
@@ -101,7 +101,7 @@ const PokemonPVP = () => {
             }
         }
         fetchPokemon();
-    }, [params.cp, params.type, params.pokemon]);
+    }, [params.serie, params.cp, params.type, params.pokemon]);
 
     const findMove = (name, uses, combatList) => {
         const oldName = name;
@@ -133,9 +133,8 @@ const PokemonPVP = () => {
         const form = findAssetForm(pokemon.num, pokemon.name);
 
         return (
-            <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types)}}>
-                <div className="d-flex align-items-center">
-                    <span className="number-count-ranking">{index+1}</span>
+            <Link to={`/pvp/ranking/${params.serie}/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types)}}>
+                <div className="container d-flex align-items-center" style={{columnGap: 10}}>
                     <span className="d-inline-block position-relative filter-shadow" style={{width: 50, marginRight: '1rem'}}>
                         {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                         <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
@@ -197,13 +196,13 @@ const PokemonPVP = () => {
         <div style={{backgroundImage: computeBgType(rankingPoke.pokemon.types, rankingPoke.data.speciesName.includes("(Shadow)"), 0.8), paddingTop: 15, paddingBottom: 15}}>
         <div className="pokemon-ranking-body container">
             <div className='ranking-link-group' style={{paddingTop: 10}}>
-                <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall/${params.pokemon}`}>Overall</Button >
-                <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads/${params.pokemon}`}>Leads</Button>
-                <Button className={(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers/${params.pokemon}`}>Closers</Button>
-                <Button className={(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/${params.cp}/switches/${params.pokemon}`}>Switches</Button>
-                <Button className={(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/${params.cp}/chargers/${params.pokemon}`}>Chargers</Button>
-                <Button className={(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/${params.cp}/attackers/${params.pokemon}`}>Attackers</Button>
-                <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency/${params.pokemon}`}>Consistency</Button>
+                <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/overall/${params.pokemon}`}>Overall</Button >
+                <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/leads/${params.pokemon}`}>Leads</Button>
+                <Button className={(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/closers/${params.pokemon}`}>Closers</Button>
+                <Button className={(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/switches/${params.pokemon}`}>Switches</Button>
+                <Button className={(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/chargers/${params.pokemon}`}>Chargers</Button>
+                <Button className={(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/rankin/${params.serie}g/${params.cp}/attackers/${params.pokemon}`}>Attackers</Button>
+                <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/ranking/${params.serie}/${params.cp}/consistency/${params.pokemon}`}>Consistency</Button>
             </div>
             <div className="w-100 ranking-info element-top">
                 <div className="d-flex flex-wrap align-items-center justify-content-center" style={{columnGap: '2rem'}}>
