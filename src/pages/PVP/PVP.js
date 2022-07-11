@@ -167,7 +167,7 @@ const PVP = () => {
                 <Accordion.Body style={{padding: 0, backgroundImage: computeBgType(data.pokemon.types, data.speciesName.includes("(Shadow)"), 0.8)}}>
                     {storeStats[key] &&
                     <Fragment>
-                    <div className="ranking-body">
+                    <div className="pokemon-ranking-body ranking-body">
                         <div className="w-100 ranking-info element-top">
                             <div className="d-flex flex-wrap align-items-center">
                                 <h3 className='text-white text-shadow' style={{marginRight: 15}}><b>#{data.id} {splitAndCapitalize(data.name, "-", " ")}</b></h3>

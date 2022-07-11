@@ -629,14 +629,12 @@ const RaidBattle = () => {
                             </div>
                         </div>
                         <div className="col-lg-7 stats-boss h-100">
-                            <div className="d-flex flex-wrap align-items-center">
-                                <h3 style={{marginRight: 15}}><b>#{id} {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()} Tier {tier}</b></h3>
+                            <div className="d-flex flex-wrap align-items-center" style={{columnGap: 15}}>
+                                <h3><b>#{id} {form ? splitAndCapitalize(form.form.name, "-", " ") : name.toLowerCase()} Tier {tier}</b></h3>
                                 <Type styled={true} arr={form.form.types.map(type => type.type.name)} />
                             </div>
-                            <div className="d-inline-block" style={{marginRight: 15}}>
+                            <div className="d-flex flex-wrap align-items-center" style={{columnGap: 15}}>
                                 <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite}/>
-                            </div>
-                            <div className="d-inline-block">
                                 <TypeBadge title="Charged Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
                             </div>
                             <hr/>

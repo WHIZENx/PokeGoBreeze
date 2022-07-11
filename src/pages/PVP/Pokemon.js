@@ -195,7 +195,7 @@ const PokemonPVP = () => {
         {rankingPoke &&
         <Fragment>
         <div style={{backgroundImage: computeBgType(rankingPoke.pokemon.types, rankingPoke.data.speciesName.includes("(Shadow)"), 0.8), paddingTop: 15, paddingBottom: 15}}>
-        <div className="container">
+        <div className="pokemon-ranking-body container">
             <div className='ranking-link-group' style={{paddingTop: 10}}>
                 <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall/${params.pokemon}`}>Overall</Button >
                 <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads/${params.pokemon}`}>Leads</Button>
@@ -206,20 +206,20 @@ const PokemonPVP = () => {
                 <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency/${params.pokemon}`}>Consistency</Button>
             </div>
             <div className="w-100 ranking-info element-top">
-                <div className="d-flex flex-wrap align-items-center justify-content-center">
-                    <div className="position-relative filter-shadow" style={{width: 128, marginRight: '2rem'}}>
+                <div className="d-flex flex-wrap align-items-center justify-content-center" style={{columnGap: '2rem'}}>
+                    <div className="position-relative filter-shadow" style={{width: 128}}>
                         {rankingPoke.data.speciesName.includes("(Shadow)") && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                         <img alt='img-league' className="pokemon-sprite-raid" src={rankingPoke.form ?  APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke.id)}/>
                     </div>
                     <div>
-                        <div className="d-flex flex-wrap align-items-center">
-                            <h3 className='text-white text-shadow' style={{marginRight: 15}}><b>#{rankingPoke.id} {splitAndCapitalize(rankingPoke.name, "-", " ")}</b></h3>
+                        <div className="d-flex flex-wrap align-items-center" style={{columnGap: 15}}>
+                            <h3 className='text-white text-shadow'><b>#{rankingPoke.id} {splitAndCapitalize(rankingPoke.name, "-", " ")}</b></h3>
                             <Type shadow={true} block={true} style={{marginBottom: 0}} color={'white'} styled={true} arr={rankingPoke.pokemon.types} />
                         </div>
-                        <div className="d-flex flex-wrap element-top">
-                            <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} style={{marginRight: 15}} move={rankingPoke.fmove}
+                        <div className="d-flex flex-wrap element-top" style={{columnGap: 10}}>
+                            <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} move={rankingPoke.fmove}
                             elite={rankingPoke.combatPoke.ELITE_QUICK_MOVES.includes(rankingPoke.fmove.name)}/>
-                            <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} style={{marginRight: 10}} move={rankingPoke.cmovePri}
+                            <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={rankingPoke.cmovePri}
                             elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmovePri.name)}
                             shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmovePri.name)}
                             purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmovePri.name)}/>
@@ -321,7 +321,7 @@ const PokemonPVP = () => {
                         <div className='h-100'>
                             <h6 className='d-flex justify-content-center weakness-bg-text'><b>Weakness</b></h6>
                             <hr className='w-100'/>
-                            {<TypeEffectiveSelect effect={0} types={rankingPoke.pokemon.types}/>}
+                            <TypeEffectiveSelect block={true} effect={0} types={rankingPoke.pokemon.types}/>
                         </div>
                         <hr className='w-100' style={{margin: 0}}/>
                     </div>
@@ -329,7 +329,7 @@ const PokemonPVP = () => {
                         <div className='h-100'>
                             <h6 className='d-flex justify-content-center neutral-bg-text'><b>Neutral</b></h6>
                             <hr className='w-100'/>
-                            {<TypeEffectiveSelect effect={1} types={rankingPoke.pokemon.types}/>}
+                            <TypeEffectiveSelect block={true} effect={1} types={rankingPoke.pokemon.types}/>
                         </div>
                         <hr className='w-100' style={{margin: 0}}/>
                     </div>
@@ -337,7 +337,7 @@ const PokemonPVP = () => {
                         <div className='h-100'>
                             <h6 className='d-flex justify-content-center resistance-bg-text'><b>Resistance</b></h6>
                             <hr className='w-100'/>
-                            {<TypeEffectiveSelect effect={2} types={rankingPoke.pokemon.types}/>}
+                            <TypeEffectiveSelect block={true} effect={2} types={rankingPoke.pokemon.types}/>
                         </div>
                         <hr className='w-100' style={{margin: 0}}/>
                     </div>

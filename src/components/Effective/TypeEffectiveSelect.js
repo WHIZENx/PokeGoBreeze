@@ -12,13 +12,13 @@ const TypeEffectiveSelect = (props) => {
             <Fragment>
                 {data.length > 0 &&
                     <Fragment>
-                    <h6><b>x{text}</b></h6>
-                    <div className="d-flex flex-wrap">{data.map((value, index) => (
-                        <span key={index} className={value.toLowerCase()+" type-select-bg d-flex align-items-center"}>
+                    <h6 className={props.block ? "element-top" : ""}><b>x{text}</b></h6>
+                    <div className="d-flex flex-wrap" style={{gap: 5}}>{data.map((value, index) => (
+                        <span key={index} className={value.toLowerCase()+" type-select-bg d-flex align-items-center filter-shadow"}>
                             <div style={{display: 'contents', width: 16}}>
                                 <img className="pokemon-sprite-small sprite-type-select filter-shadow" alt="img-type-pokemon" src={APIService.getTypeHqSprite(capitalize(value.toLowerCase()))}/>
                             </div>
-                            <span className="filter-shadow" style={{marginLeft: 5}}>{value}</span>
+                            <span className="filter-shadow">{value}</span>
                         </span>
                     ))}
                     </div>
