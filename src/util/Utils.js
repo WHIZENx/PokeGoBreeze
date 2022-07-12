@@ -146,6 +146,7 @@ export const convertNameRankingToForm = (text) => {
 
 export const convertNameRankingToOri = (text, form) => {
   const formOri = form;
+  if (text.includes("_mega") || text === "ho_oh" || text.includes("castform") || text.includes("tapu")) return text.replaceAll("_", "-");
   if (formOri.includes("(") && formOri.includes(")")) form = "-"+form.split(" (")[1].replace(")", "").toLowerCase();
   text = text.toLowerCase()
   .replaceAll("_", "-")
@@ -158,8 +159,12 @@ export const convertNameRankingToOri = (text, form) => {
   .replace("cherrim-sunny", "cherrim-sunshine")
   .replace("-5th-anniversary", "")
   .replace("-shadow", "")
+  .replace("-armored", "-a")
   if (text.includes("standard")) form = "-standard";
   return formOri.includes("(") && formOri.includes(")") &&
+  form !== "-therian" &&
+  form !== "-o" &&
+  form !== "-origin" &&
   form !== "-defense" &&
   form !== "-sunshine" &&
   form !== "-jr" &&
@@ -190,4 +195,32 @@ export const getStyleRuleValue = (style, selector, sheet) => {
       }
   }
   return null;
+}
+
+export const findMoveTeam = (move, moveSet) => {
+    move = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
+    for (let value of moveSet) {
+        if (value === "FUTURESIGHT") value = "FUTURE_SIGHT";
+        if (value === "TECHNO_BLAST_DOUSE") value = "TECHNO_BLAST_WATER";
+        let m = value.replace("_FAST", "").split("_");
+        if (m.length === move.length) {
+            let count = 0;
+            for (let i = 0; i < move.length; i++) {
+                if (capitalize(m[i].toLowerCase()).includes(move[i])) count++;
+            }
+            if (count === m.length) return value.replace("FUTURE_SIGHT", "FUTURESIGHT").replace("_FAST", "");
+        }
+    };
+    for (let value of moveSet) {
+        let m = value.replace("_FAST", "").split("_");
+        if (m.length === move.length) {
+            let count = 0;
+            for (let i = 0; i < move.length; i++) {
+                if (m[i][0] === move[i][0]) count++;
+            }
+            if (count === m.length) return value.replace("_FAST", "");
+        }
+    };
+    console.log(move, moveSet)
+    return null;
 }

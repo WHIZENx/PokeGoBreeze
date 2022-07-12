@@ -18,7 +18,7 @@ const POKE_GIF_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Poke
 const POKE_TRAINER_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Trainers/';
 const POKE_SOUND_CRY_API_URL = 'https://raw.githubusercontent.com/Touched/pokedex-data/master/data/';
 
-const POKE_RANKING_API_URL = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/rankings/';
+const POKE_PV_API_URL = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/';
 
 class APIService {
 
@@ -181,7 +181,11 @@ class APIService {
     }
 
     getRankingFile(serie, cp, type) {
-        return `${POKE_RANKING_API_URL}${serie}/${type.toLowerCase()}/rankings-${cp}.json`;
+        return `${POKE_PV_API_URL}rankings/${serie}/${type.toLowerCase()}/rankings-${cp}.json`;
+    }
+
+    getTeamFile(type, serie, cp) {
+        return `${POKE_PV_API_URL}training/${type}/${serie}/${cp}.json`;
     }
 }
 

@@ -100,7 +100,7 @@ export const typeCostPowerUp = (type) => {
     };
 }
 
-export const leagues = [
+export const leaguesRanking = [
     {
         id: "all",
         name: "Little Cup",
@@ -244,5 +244,56 @@ export const leagues = [
         name: "Summer Cup",
         cp: 1500,
         logo: null
+    },
+]
+
+export const leaguesTeam = [
+    {
+        id: "all",
+        name: "Great League",
+        cp: 1500,
+        logo: APIService.getPokeLeague("great_league")
+    },
+    {
+        id: "all",
+        name: "Ultra League",
+        cp: 2500,
+        logo: APIService.getPokeLeague("ultra_league")
+    },
+    {
+        id: "all",
+        name: "Master League",
+        cp: 10000,
+        logo: APIService.getPokeLeague("master_league")
+    },
+    {
+        id: "classic",
+        name: "Master League (Classic)",
+        cp: 10000,
+        logo: APIService.getAssetPokeGo("pogo_master_league.png")
+    },
+    {
+        id: "kanto",
+        name: "Kanto Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/kantoLeague2022_icon.png")
+    },
+    {
+        id: "remix",
+        name: "Great League Remix",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/league_icon_great_pokemon_limit.png")
+    },
+    {
+        id: "remix",
+        name: "Ultra League Remix",
+        cp: 2500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/league_icon_ultra_pokemon_limit.png")
+},
+    {
+        id: "retro",
+        name: "Retro Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/GBL_retrocup.png")
     },
 ]

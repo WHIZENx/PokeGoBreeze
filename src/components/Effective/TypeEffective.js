@@ -23,20 +23,20 @@ const TypeEffective = (props) => {
             <h6 className='element-top'><b>Weakness</b></h6>
             {props.typeEffective.very_weak.length !== 0 || props.typeEffective.weak.length !== 0 ?
             <Fragment>
-                <Type text={'2.56x damage from'} arr={props.typeEffective.very_weak} />
-                <Type text={'1.6x damage from'} arr={props.typeEffective.weak} />
+                <Type text={'2.56x damage from'} arr={props.typeEffective.very_weak} style={{marginLeft: 15}}/>
+                <Type text={'1.6x damage from'} arr={props.typeEffective.weak} style={{marginLeft: 15}}/>
             </Fragment> : noneSprit()
             }
             <h6 className='element-top'><b>Resistance</b></h6>
             {props.typeEffective.super_resist.length !== 0 || props.typeEffective.very_resist.length !== 0 || props.typeEffective.resist.length !== 0 ?
             <Fragment>
-            <Type text={'0.244x damage from'} arr={props.typeEffective.super_resist} />
-            <Type text={'0.391x damage from'} arr={props.typeEffective.very_resist} />
-            <Type text={'0.625x damage from'} arr={props.typeEffective.resist} />
+            <Type text={'0.244x damage from'} arr={props.typeEffective.super_resist} style={{marginLeft: 15}}/>
+            <Type text={'0.391x damage from'} arr={props.typeEffective.very_resist} style={{marginLeft: 15}}/>
+            <Type text={'0.625x damage from'} arr={props.typeEffective.resist} style={{marginLeft: 15}}/>
             </Fragment> : noneSprit()
             }
             <h6 className='element-top'><b>Neutral</b></h6>
-            <Type text={'1x damage from'} arr={props.typeEffective.neutral} />
+            <Type text={'1x damage from'} arr={props.typeEffective.neutral} style={{marginLeft: 15}}/>
         </div>
     );
 }

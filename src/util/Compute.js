@@ -57,6 +57,7 @@ export const computeBgType = (types, shadow, opacity) => {
 }
 
 export const findAssetForm = (id, name) => {
+    if (name.split("-")[1] === "A") name = name.replace("-A", "-Armor")
     name = convertName(name).replaceAll("GALAR", "GALARIAN")
     const pokemon = pokemonAssets.find(item => item.id === id);
     const standard = pokemon.image.filter(item => item.form.includes("STANDARD"));

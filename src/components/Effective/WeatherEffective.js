@@ -8,7 +8,7 @@ const WeatherEffective = (props) => {
     return (
         <div className="element-top">
             <h5 className='element-top'>- Type Pokémon for Boosts:</h5>
-            <Type arr={props.weatherEffective} />
+            <Type arr={props.weatherEffective} style={{marginLeft: 15}}/>
         </div>
     );
 }

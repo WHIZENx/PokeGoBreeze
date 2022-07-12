@@ -4109,6 +4109,27 @@
         ]
     },
     {
+        "ID": 150,
+        "NAME": "MEWTWO_A",
+        "BASE_SPECIES": "MEWTWO",
+        "QUICK_MOVES": [
+            "CONFUSION_FAST",
+            "IRON_TAIL_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "EARTHQUAKE",
+            "ROCK_SLIDE",
+            "DYNAMIC_PUNCH",
+            "FUTURESIGHT"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": [
+            "PSYSTRIKE"
+        ]
+    },
+    {
         "ID": 151,
         "NAME": "MEW",
         "BASE_SPECIES": "MEW",

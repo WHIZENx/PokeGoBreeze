@@ -311,7 +311,7 @@ const DpsTable = () => {
                     {types.map((item, index) => (
                         <div key={index} className="col img-group" style={{margin: 0, padding: 0}}>
                             <button value={item} onClick={() => addTypeArr(item)} className={'btn-select-type w-100 border-types'+(selectTypes.includes(item) ? " select-type" : "")} style={{padding: 10}}>
-                                <Type styled={true} arr={[item]}/>
+                                <Type block={true} arr={[item]}/>
                             </button>
                         </div>
                     ))

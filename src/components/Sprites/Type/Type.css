@@ -4,3 +4,7 @@
     align-items: center;
     justify-content: center;
 }
+
+.type-list {
+    gap: 10px;
+}

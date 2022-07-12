@@ -23,9 +23,10 @@ import StatsTable from './pages/Tools/StatsTable/Stats';
 import Sticker from './pages/Sticker/Sticker';
 import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
 import CalculatePoint from './pages/Tools/CalculatePoint/CalculatePoint';
-import PVP from './pages/PVP/PVP';
+import RankingPVP from './pages/PVP/Ranking/PVP';
 import PokemonPVP from './pages/PVP/Pokemon';
 import PVPHome from './pages/PVP/Home';
+import TeamPVP from './pages/PVP/Teams/PVP';
 
 const App = () => {
 
@@ -54,8 +55,9 @@ const App = () => {
               <Route path="/raid-battle" element={<RaidBattle/>}></Route>
               <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
               <Route path="/pvp" element={<PVPHome/>}></Route>
-              <Route path="/pvp/ranking/:serie/:cp/:type" element={<PVP/>}></Route>
-              <Route path="/pvp/ranking/:serie/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
+              <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP/>}></Route>
+              <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
+              <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
               <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
               <Route path="/stickers" element={<Sticker/>}></Route>

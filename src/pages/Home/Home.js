@@ -166,7 +166,7 @@ const Home = () => {
                     {types.map((item, index) => (
                         <div key={index} className="col img-group" style={{margin: 0, padding: 0}}>
                             <button value={item} onClick={() => addTypeArr(item)} className={'btn-select-type w-100 border-types'+(selectTypes.includes(item) ? " select-type" : "")} style={{padding: 10}}>
-                                <Type styled={true} arr={[item]}/>
+                                <Type block={true} arr={[item]}/>
                             </button>
                         </div>
                     ))
@@ -235,7 +235,7 @@ const Home = () => {
                                         <StyledTableCell align="center" component="td">
                                             <div style={{width: '100%', height: '100%', backgroundColor: row.color}}>
                                         </div></StyledTableCell>
-                                        <StyledTableCell align="center" component="td"><Type hideText={true} block={true} style={{marginBottom: 0}} styled={true} height={40} arr={row.types}/></StyledTableCell>
+                                        <StyledTableCell align="center" component="td"><Type hideText={true} block={true} height={40} arr={row.types}/></StyledTableCell>
                                         <StyledTableCell align="center" component="td">{row.minCP}</StyledTableCell>
                                         <StyledTableCell align="center" component="td">{row.maxCP_40}</StyledTableCell>
                                         <StyledTableCell align="center" component="td">{row.maxCP_50}</StyledTableCell>

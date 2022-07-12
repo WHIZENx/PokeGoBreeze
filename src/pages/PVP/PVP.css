@@ -1,3 +1,8 @@
+
+.pvp-container {
+    margin: 15px auto 5vh auto;
+}
+
 .pokemon-ranking-body hr {
     color: white;
 }
@@ -9,9 +14,16 @@
     border-bottom: 1px solid #dee2e6;
 }
 
+.card-container {
+    width: 100%;
+    display: grid;
+    overflow-x: auto;
+}
+
 .ranking-group {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .ranking-score {
@@ -63,6 +75,11 @@
 .list-item-ranking:hover {
     opacity: 0.9;
     border: 1px solid black;
+}
+
+.status-ranking {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .status-ranking div .progress {
@@ -152,4 +169,24 @@
     white-space: nowrap;
     overflow-x: auto;
     margin: 10px;
+}
+
+.card-ranking {
+    padding: 10px;
+    border-left: 2px solid #b8d4da;
+    border-right: 2px solid #b8d4da;
+    border-bottom: 2px solid #b8d4da;
+}
+
+.card-ranking:first-of-type {
+    border-top: 2px solid #b8d4da;
+}
+
+.view-pokemon {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.view-pokemon:hover {
+    opacity: 1;
 }

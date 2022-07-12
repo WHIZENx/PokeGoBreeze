@@ -207,7 +207,7 @@ const Leagues = () => {
                             {value.conditions.unique_type &&
                             <li style={{fontWeight: 500}} className='unique-type'>
                                 <h6 className='title-leagues'>Unique Type</h6>
-                                <Type arr={value.conditions.unique_type}/>
+                                <Type arr={value.conditions.unique_type} style={{marginLeft: 15}}/>
                             </li>
                             }
                             {value.conditions.whiteList.length !== 0 &&
