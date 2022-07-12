@@ -144,8 +144,8 @@ const RankingPVP = () => {
 
         return (
             <Link to={`/moves/${move.id}`} target="_blank" className={(move.type.toLowerCase())+' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'}>
-                <div>
-                    <img style={{marginRight: 15}} className="filter-shadow" width={24} height={24} alt='img-pokemon' src={APIService.getTypeSprite(move.type)}/>
+                <div className='d-flex' style={{columnGap: 10}}>
+                    <img className="filter-shadow" width={24} height={24} alt='img-pokemon' src={APIService.getTypeSprite(move.type)}/>
                     <span className='filter-shadow'>{splitAndCapitalize(oldName, "_", " ")} {elite && <b className="filter-shadow">*</b>}</span>
                 </div>
                 <div>

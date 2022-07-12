@@ -213,7 +213,7 @@ const Move = (props) => {
                                 <tr>
                                     <td>Sound</td>
                                     <td colSpan="2">
-                                        <audio className="w-100" controls style={{height: 30}}>
+                                        <audio className="d-flex w-100" controls style={{height: 30}}>
                                             <source src={APIService.getSoundMove(move.sound)} type="audio/wav"></source>
                                             Your browser does not support the audio element.
                                         </audio>

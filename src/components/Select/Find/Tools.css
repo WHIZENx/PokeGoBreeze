@@ -28,6 +28,10 @@
     overflow-x: auto;
 }
 
+.scroll-card .btn-form:not(:first-child) {
+    margin-left: 10px;
+}
+
 .col-cal {
     margin-bottom: 15px;
     /* max-width: 50%; */

@@ -14,7 +14,7 @@ const Type = (props) => {
     return (
         <div className={(props.block ? '': 'element-top')+(props.shadow ? ' filter-shadow' : '')} style={props.style}>
             {props.text && <p>{props.text}</p>}
-            <div className="d-inline-flex flex-wrap type-list justify-content-center align-items-center">
+            <div className="d-inline-flex flex-wrap type-list align-items-center">
                 {props.arr.map((value, index) => (
                     <div className='text-center d-flex' key={ index }>
                         {props.hideText ?

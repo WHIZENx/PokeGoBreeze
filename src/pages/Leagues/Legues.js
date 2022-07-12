@@ -152,9 +152,11 @@ const Leagues = () => {
                 {leaguesData.data.map((value, index) => (
                     <Accordion.Item key={index} eventKey={index}>
                         <Accordion.Header>
-                            <img style={{marginRight: 10}} alt='img-league' height={50} src={APIService.getAssetPokeGo(value.iconUrl)}/>
-                            <b className={value.enabled ? "" : "text-danger"}>{(value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title) ? splitAndCapitalize(value.id.replace("VS_","").toLowerCase(), "_", " ") : splitAndCapitalize(value.title.toLowerCase(), "_", " ")) +
-                            (value.id.includes("SAFARI_ZONE") ? ` ${value.id.split("_")[3]} ${capitalize(value.id.split("_")[4].toLowerCase())}` : "")} {leaguesData.allowLeagues.includes(value.id) && <span className='d-inline-block caption text-success'>(Opened)</span>}</b>
+                            <div className='d-flex align-items-center' style={{columnGap: 10}}>
+                                <img alt='img-league' height={50} src={APIService.getAssetPokeGo(value.iconUrl)}/>
+                                <b className={value.enabled ? "" : "text-danger"}>{(value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title) ? splitAndCapitalize(value.id.replace("VS_","").toLowerCase(), "_", " ") : splitAndCapitalize(value.title.toLowerCase(), "_", " ")) +
+                                (value.id.includes("SAFARI_ZONE") ? ` ${value.id.split("_")[3]} ${capitalize(value.id.split("_")[4].toLowerCase())}` : "")} {leaguesData.allowLeagues.includes(value.id) && <span className='d-inline-block caption text-success'>(Opened)</span>}</b>
+                            </div>
                         </Accordion.Header>
                         <Accordion.Body className='league-body'>
                             <div className='sub-body'>

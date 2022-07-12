@@ -19,16 +19,21 @@ const Weather = (props) => {
     }
 
     return (
-        <ul className='element-top'>
+        <div className='element-top' style={props.style}>
             {props.text && <p>{props.text}</p>}
-            {props.arr.map((value, index) => (
-                <li className='img-group' key={ index }>
-                    <img height={50} alt='img-pokemon' src={APIService.getWeatherSprite(value)}/>
-                    <span className='caption text-black'>{capitalize(value)}</span>
-                </li>
-            ))
-            }
-        </ul>
+            <div className='d-inline-flex flex-wrap type-list align-items-center'>
+                {props.arr.map((value, index) => (
+                    <div className='text-center d-flex' key={ index }>
+                        <div>
+                            <img height={50} alt='img-pokemon' src={APIService.getWeatherSprite(value)}/>
+                            <span className='caption text-black'>{capitalize(value)}</span>
+                        </div>
+                    </div>
+                ))
+                }
+            </div>
+
+        </div>
     );
 }
 
