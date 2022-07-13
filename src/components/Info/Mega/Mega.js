@@ -28,7 +28,7 @@ const Mega = (props) => {
     return (
         <Fragment>
             <h4 className="title-evo"><b>Mega Evolution</b></h4>
-            <div className="mega-container scroll-form">
+            <div className="mega-container scroll-evolution">
                 <ul className="ul-evo">
                     {arrEvoList.map((value, evo) => (
                         <li key={evo} className='img-form-gender-group li-evo' style={{width: 'fit-content', height: 'fit-content'}}>

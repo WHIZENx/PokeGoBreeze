@@ -82,8 +82,12 @@ const RankingPVP = () => {
                         && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
                     );
                     const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
-                    if (!result) combatPoke = combatPoke[0]
+                    if (!result) {
+                        if (combatPoke) combatPoke = combatPoke[0]
+                        else combatPoke = combatPoke.find(item => item.BASE_SPECIES === convertName(pokemon.name));
+                    }
                     else combatPoke = result;
+
                     return {
                         ...item,
                         id: id,
@@ -97,13 +101,16 @@ const RankingPVP = () => {
                         fmove: fmove,
                         cmovePri: cmovePri,
                         cmoveSec: cmoveSec,
-                        combatPoke: combatPoke
+                        combatPoke: combatPoke,
+                        shadow: item.speciesName.includes("(Shadow)"),
+                        purified: combatPoke.PURIFIED_MOVES.includes(cmovePri) || (cMoveDataSec && combatPoke.PURIFIED_MOVES.includes(cMoveDataSec))
                     }
                 })
                 setRankingData(file);
                 setStoreStats(file.map(i => false));
                 setSpinner(false);
-            } catch {
+            } catch (e) {
+                console.log(e)
                 setSpinner(false);
                 setFound(false);
             }
@@ -169,7 +176,8 @@ const RankingPVP = () => {
                         <Link to={`/pvp/${params.cp}/overall/${data.speciesId.replaceAll("_", "-")}`} target="_blank"><VisibilityIcon className="view-pokemon" fontSize="large" sx={{color: 'black'}}/></Link>
                         <div className="d-flex justify-content-center">
                             <span className="position-relative" style={{width: 50}}>
-                                {data.speciesName.includes("(Shadow)") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                                {data.shadow && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                                {data.purified && <img height={28} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()}/>}
                                 <img alt='img-league' className="pokemon-sprite-accordion" src={data.form ?  APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}/>
                             </span>
                         </div>
@@ -181,7 +189,7 @@ const RankingPVP = () => {
                         </div>
                     </div>
                 </Accordion.Header>
-                <Accordion.Body style={{padding: 0, backgroundImage: computeBgType(data.pokemon.types, data.speciesName.includes("(Shadow)"), 0.8)}}>
+                <Accordion.Body style={{padding: 0, backgroundImage: computeBgType(data.pokemon.types, data.shadow, data.purified, 0.8)}}>
                     {storeStats[key] &&
                     <Fragment>
                     <div className="pokemon-ranking-body ranking-body">
@@ -197,7 +205,7 @@ const RankingPVP = () => {
                                 elite={data.combatPoke.ELITE_CINEMATIC_MOVES.includes(data.cmovePri.name)}
                                 shadow={data.combatPoke.SHADOW_MOVES.includes(data.cmovePri.name)}
                                 purified={data.combatPoke.PURIFIED_MOVES.includes(data.cmovePri.name)}/>
-                                {data.cMoveDataSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={data.cmoveSec}
+                                {data.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={data.cmoveSec}
                                 elite={data.combatPoke.ELITE_CINEMATIC_MOVES.includes(data.cmoveSec.name)}
                                 shadow={data.combatPoke.SHADOW_MOVES.includes(data.cmoveSec.name)}
                                 purified={data.combatPoke.PURIFIED_MOVES.includes(data.cmoveSec.name)}/>}

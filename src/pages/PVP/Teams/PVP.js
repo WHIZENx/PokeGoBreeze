@@ -41,7 +41,10 @@ const TeamPVP = () => {
             && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
         const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
-        if (!result) combatPoke = combatPoke[0]
+        if (!result) {
+            if (combatPoke) combatPoke = combatPoke[0]
+            else combatPoke = combatPoke.find(item => item.BASE_SPECIES === convertName(pokemon.name));
+        }
         else combatPoke = result;
 
         let fmove, cmovePri, cmoveSec, cmove;
@@ -75,7 +78,8 @@ const TeamPVP = () => {
             cmovePri: cmovePri,
             cmoveSec: cmoveSec,
             combatPoke: combatPoke,
-            shadow: speciesId.includes("shadow")
+            shadow: speciesId.includes("shadow"),
+            purified: combatPoke.PURIFIED_MOVES.includes(cmovePri.name) || (cmoveSec && combatPoke.PURIFIED_MOVES.includes(cmoveSec.name))
         }
     }
 
@@ -85,10 +89,14 @@ const TeamPVP = () => {
                 let file = (await APIService.getFetchUrl(APIService.getTeamFile("analysis", params.serie, parseInt(params.cp)))).data;
                 pokemonData = Object.values(pokemonData);
 
+                const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);
+                const teamsTotalGames = file.teams.reduce((p, c) => p + c.games, 0);
+
                 file.performers = file.performers.map(item => {
                     return {
                         ...item,
-                        ...mappingPokemonData(item.pokemon)
+                        ...mappingPokemonData(item.pokemon),
+                        performersTotalGames: performersTotalGames
                     }
                 });
 
@@ -100,6 +108,7 @@ const TeamPVP = () => {
                     })
                     return {
                         ...item,
+                        teamsTotalGames: teamsTotalGames,
                         teamData: teamsData,
                     }
                 });
@@ -157,18 +166,33 @@ const TeamPVP = () => {
                     />
                 </div>
                 <div className="ranking-container card-container">
+                    <div className="ranking-group w-100 ranking-header" style={{columnGap: '1rem'}}>
+                        <div></div>
+                        <div className="d-flex" style={{marginRight: 15, columnGap: 30}}>
+                            <div className="text-center" style={{width: 140}}>
+                                <span className="ranking-score">Team Score</span>
+                            </div>
+                            <div className="text-center" style={{width: 160}}>
+                                <span className="ranking-score">Individual Score</span>
+                            </div>
+                            <div className="text-center" style={{width: 70}}>
+                                <span className="ranking-score">Usage</span>
+                            </div>
+                        </div>
+                    </div>
                     {rankingData.performers
                     .filter(pokemon => splitAndCapitalize(pokemon.name, "-", " ").toLowerCase().includes(search.toLowerCase()))
                     .sort((a,b) => b.teamScore-a.teamScore).map((value, index) => (
-                        <div className="d-flex align-items-center card-ranking" key={index} style={{columnGap: '1rem', backgroundImage: computeBgType(value.pokemonData.types, value.shadow)}}>
+                        <div className="d-flex align-items-center card-ranking" key={index} style={{columnGap: '1rem', backgroundImage: computeBgType(value.pokemonData.types, value.shadow, value.purified)}}>
                             <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll("_", "-")}`} target="_blank"><VisibilityIcon className="view-pokemon" fontSize="large" sx={{color: 'black'}}/></Link>
                             <div className="d-flex justify-content-center">
                                 <span className="position-relative filter-shadow" style={{width: 96}}>
                                     {value.shadow && <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                                    {value.purified && <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()}/>}
                                     <img alt='img-league' className="pokemon-sprite" src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}/>
                                 </span>
                             </div>
-                            <div className="ranking-group w-100">
+                            <div className="ranking-group w-100" style={{columnGap: 15}}>
                                 <div>
                                     <div className="d-flex align-items-center" style={{columnGap: 10}}>
                                         <b className='text-white text-shadow'>{splitAndCapitalize(value.name, "-", " ")}</b>
@@ -187,9 +211,17 @@ const TeamPVP = () => {
                                         purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmoveSec.name)}/>}
                                     </div>
                                 </div>
-                                <div className="d-flex" style={{marginRight: 15, columnGap: 10}}>
-                                    <span className="ranking-score score-ic">{value.teamScore}</span>
-                                    <span className="ranking-score score-ic">{value.individualScore}</span>
+                                <div className="d-flex filter-shadow align-items-center" style={{marginRight: 15, columnGap: 30}}>
+                                    <div className="text-center" style={{width: 120}}>
+                                        <span className="ranking-score score-ic">{value.teamScore}</span>
+                                    </div>
+                                    <div className="text-center" style={{width: 160}}>
+                                        <span className="ranking-score score-ic">{value.individualScore}</span>
+                                    </div>
+                                    <div style={{width: 'fit-content'}} className="text-center ranking-score score-ic">
+                                        {(value.games*100/value.performersTotalGames).toFixed(2)}
+                                        <span className="caption text-black">{value.games}/{value.performersTotalGames}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -197,6 +229,17 @@ const TeamPVP = () => {
                 </div>
                 <hr />
                 <h2>Top Team Pokémon</h2>
+                <div className="ranking-group w-100 ranking-header" style={{columnGap: '1rem'}}>
+                    <div></div>
+                    <div className="d-flex" style={{marginRight: 15, columnGap: 30}}>
+                        <div className="text-center" style={{width: 130}}>
+                            <span className="ranking-score">Team Score</span>
+                        </div>
+                        <div className="text-center" style={{width: 150}}>
+                            <span className="ranking-score">Usage</span>
+                        </div>
+                    </div>
+                </div>
                 <Accordion alwaysOpen className="d-grid ranking-container">
                 {rankingData.teams
                 .sort((a,b) => b.teamScore-a.teamScore).map((value, index) => (
@@ -209,6 +252,7 @@ const TeamPVP = () => {
                                         <div className="d-flex justify-content-center">
                                             <div className="position-relative filter-shadow" style={{width: 96}}>
                                                 {value.shadow && <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                                                {value.purified && <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()}/>}
                                                 <img alt='img-league' className="pokemon-sprite" src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}/>
                                             </div>
                                         </div>
@@ -216,19 +260,26 @@ const TeamPVP = () => {
                                     </div>
                                 ))}
                                 </div>
-                                <div style={{marginRight: 15}}>
-                                    <span className="ranking-score score-ic">{value.teamScore}</span>
+                                <div className="d-flex align-items-center" style={{marginRight: 15, columnGap: 30}}>
+                                    <div className="text-center" style={{width: 200}}>
+                                        <span className="ranking-score score-ic">{value.teamScore}</span>
+                                    </div>
+                                    <div style={{width: 'fit-content'}} className="text-center ranking-score score-ic">
+                                        {(value.games*100/value.teamsTotalGames).toFixed(2)}
+                                        <span className="caption text-black">{value.games}/{value.teamsTotalGames}</span>
+                                    </div>
                                 </div>
                             </div>
                         </Accordion.Header>
                         <Accordion.Body style={{padding: 0}}>
                             <Fragment>
                                 {value.teamData.map((value, index) => (
-                                    <div className="d-flex align-items-center" key={index} style={{padding: 15, gap: '1rem', backgroundImage: computeBgType(value.pokemonData.types, value.shadow)}}>
+                                    <div className="d-flex align-items-center" key={index} style={{padding: 15, gap: '1rem', backgroundImage: computeBgType(value.pokemonData.types, value.shadow, value.purified)}}>
                                         <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll("_", "-")}`} target="_blank"><VisibilityIcon className="view-pokemon" fontSize="large" sx={{color: 'black'}}/></Link>
                                         <div className="d-flex justify-content-center">
                                             <div className="position-relative filter-shadow" style={{width: 96}}>
                                                 {value.shadow && <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                                                {value.purified && <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()}/>}
                                                 <img alt='img-league' className="pokemon-sprite" src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}/>
                                             </div>
                                         </div>

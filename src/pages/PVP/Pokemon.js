@@ -93,7 +93,9 @@ const PokemonPVP = () => {
                     cmovePri: cmovePri,
                     cmoveSec: cmoveSec,
                     combatPoke: combatPoke,
-                    bestStats: bestStats
+                    bestStats: bestStats,
+                    shadow: data.speciesName.includes("(Shadow)"),
+                    purified: combatPoke.PURIFIED_MOVES.includes(cmovePri) || (cMoveDataSec && combatPoke.PURIFIED_MOVES.includes(cMoveDataSec))
                 });
                 setSpinner(false);
             } catch {
@@ -134,7 +136,7 @@ const PokemonPVP = () => {
         const form = findAssetForm(pokemon.num, pokemon.name);
 
         return (
-            <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types)}}>
+            <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types, data.opponent.includes("_shadow"))}}>
                 <div className="container d-flex align-items-center" style={{columnGap: 10}}>
                     <div className="d-flex justify-content-center">
                         <span className="d-inline-block position-relative filter-shadow" style={{width: 50}}>
@@ -217,7 +219,7 @@ const PokemonPVP = () => {
         </div>
         {rankingPoke &&
         <Fragment>
-        <div style={{backgroundImage: computeBgType(rankingPoke.pokemon.types, rankingPoke.data.speciesName.includes("(Shadow)"), 0.8), paddingTop: 15, paddingBottom: 15}}>
+        <div style={{backgroundImage: computeBgType(rankingPoke.pokemon.types, rankingPoke.shadow, rankingPoke.purified, 0.8), paddingTop: 15, paddingBottom: 15}}>
         <div className="pokemon-ranking-body container pvp-container">
             {renderLeague()}
             <hr />
@@ -231,13 +233,14 @@ const PokemonPVP = () => {
                 <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency/${params.pokemon}`}>Consistency</Button>
             </div>
             <div className="w-100 ranking-info element-top">
-                <div className="d-flex flex-wrap align-items-center justify-content-center" style={{columnGap: '2rem'}}>
+                <div className="d-flex flex-wrap align-items-center justify-content-center" style={{gap: '2rem'}}>
                     <div className="position-relative filter-shadow" style={{width: 128}}>
-                        {rankingPoke.data.speciesName.includes("(Shadow)") && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                        {rankingPoke.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
+                        {rankingPoke.purified && <img height={64} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()}/>}
                         <img alt='img-league' className="pokemon-sprite-raid" src={rankingPoke.form ?  APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke.id)}/>
                     </div>
                     <div>
-                        <div className="d-flex flex-wrap align-items-center" style={{columnGap: 15}}>
+                        <div className="d-flex flex-wrap align-items-center" style={{gap: 15}}>
                             <h3 className='text-white text-shadow'><b>#{rankingPoke.id} {splitAndCapitalize(rankingPoke.name, "-", " ")}</b></h3>
                             <Type shadow={true} block={true} color={'white'} arr={rankingPoke.pokemon.types} />
                         </div>
@@ -248,7 +251,7 @@ const PokemonPVP = () => {
                             elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmovePri.name)}
                             shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmovePri.name)}
                             purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmovePri.name)}/>
-                            {rankingPoke.cMoveDataSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={rankingPoke.cmoveSec}
+                            {rankingPoke.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={rankingPoke.cmoveSec}
                             elite={rankingPoke.combatPoke.ELITE_CINEMATIC_MOVES.includes(rankingPoke.cmoveSec.name)}
                             shadow={rankingPoke.combatPoke.SHADOW_MOVES.includes(rankingPoke.cmoveSec.name)}
                             purified={rankingPoke.combatPoke.PURIFIED_MOVES.includes(rankingPoke.cmoveSec.name)}/>}

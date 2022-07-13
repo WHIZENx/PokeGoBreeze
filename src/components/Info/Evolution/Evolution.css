@@ -38,8 +38,16 @@
 
 .info-evo span:last-child {
     margin-bottom: 0;
+    color: darkslategray
 }
 
 #popover-info-evo {
     background-color: cornsilk;
+}
+
+.scroll-evolution {
+    position: relative;
+    height: 180px !important;
+    white-space: nowrap;
+    overflow-x: auto;
 }

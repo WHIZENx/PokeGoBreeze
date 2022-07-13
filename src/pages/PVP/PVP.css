@@ -20,6 +20,15 @@
     overflow-x: auto;
 }
 
+.ranking-header {
+    position: sticky;
+    top: 0;
+    padding: 15px;
+    border: 2px solid #dee2e6;
+    background-color: white;
+    z-index: 1;
+}
+
 .ranking-group {
     display: flex;
     justify-content: space-between;

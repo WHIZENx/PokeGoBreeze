@@ -1,8 +1,9 @@
 {
-    "timestamp": 1656573377000,
+    "timestamp": 1657709585000,
     "allowLeagues": [
+        "VS_SEEKER_GREAT",
         "VS_SEEKER_ULTRA",
-        "VS_SEEKER_GREAT_KANTO"
+        "VS_SEEKER_MASTER"
     ],
     "data": [
         {
@@ -4904,6 +4905,1327 @@
             "league": "GREAT_LEAGUE"
         },
         {
+            "id": "VS_SEEKER_GREAT_LITTLE_REMIX",
+            "title": "LITTLE_CUP_REMIX",
+            "enabled": true,
+            "conditions": {
+                "timestamp": null,
+                "unique_selected": true,
+                "unique_type": false,
+                "max_level": null,
+                "max_cp": 500,
+                "whiteList": [
+                    {
+                        "id": 1,
+                        "name": "BULBASAUR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 4,
+                        "name": "CHARMANDER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 7,
+                        "name": "SQUIRTLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 10,
+                        "name": "CATERPIE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 13,
+                        "name": "WEEDLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 16,
+                        "name": "PIDGEY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 19,
+                        "name": "RATTATA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 21,
+                        "name": "SPEAROW",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 23,
+                        "name": "EKANS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 27,
+                        "name": "SANDSHREW",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 29,
+                        "name": "NIDORAN_FEMALE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 32,
+                        "name": "NIDORAN_MALE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 37,
+                        "name": "VULPIX",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 41,
+                        "name": "ZUBAT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 43,
+                        "name": "ODDISH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 46,
+                        "name": "PARAS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 48,
+                        "name": "VENONAT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 50,
+                        "name": "DIGLETT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 52,
+                        "name": "MEOWTH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 54,
+                        "name": "PSYDUCK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 56,
+                        "name": "MANKEY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 58,
+                        "name": "GROWLITHE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 60,
+                        "name": "POLIWAG",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 63,
+                        "name": "ABRA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 66,
+                        "name": "MACHOP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 69,
+                        "name": "BELLSPROUT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 72,
+                        "name": "TENTACOOL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 74,
+                        "name": "GEODUDE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 77,
+                        "name": "PONYTA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 79,
+                        "name": "SLOWPOKE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 81,
+                        "name": "MAGNEMITE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 83,
+                        "name": "FARFETCHD",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 84,
+                        "name": "DODUO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 86,
+                        "name": "SEEL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 88,
+                        "name": "GRIMER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 90,
+                        "name": "SHELLDER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 92,
+                        "name": "GASTLY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 95,
+                        "name": "ONIX",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 96,
+                        "name": "DROWZEE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 98,
+                        "name": "KRABBY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 100,
+                        "name": "VOLTORB",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 102,
+                        "name": "EXEGGCUTE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 104,
+                        "name": "CUBONE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 108,
+                        "name": "LICKITUNG",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 109,
+                        "name": "KOFFING",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 111,
+                        "name": "RHYHORN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 114,
+                        "name": "TANGELA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 116,
+                        "name": "HORSEA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 118,
+                        "name": "GOLDEEN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 120,
+                        "name": "STARYU",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 123,
+                        "name": "SCYTHER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 129,
+                        "name": "MAGIKARP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 133,
+                        "name": "EEVEE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 137,
+                        "name": "PORYGON",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 138,
+                        "name": "OMANYTE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 140,
+                        "name": "KABUTO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 147,
+                        "name": "DRATINI",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 152,
+                        "name": "CHIKORITA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 155,
+                        "name": "CYNDAQUIL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 158,
+                        "name": "TOTODILE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 161,
+                        "name": "SENTRET",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 163,
+                        "name": "HOOTHOOT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 165,
+                        "name": "LEDYBA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 167,
+                        "name": "SPINARAK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 170,
+                        "name": "CHINCHOU",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 172,
+                        "name": "PICHU",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 173,
+                        "name": "CLEFFA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 174,
+                        "name": "IGGLYBUFF",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 175,
+                        "name": "TOGEPI",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 177,
+                        "name": "NATU",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 179,
+                        "name": "MAREEP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 187,
+                        "name": "HOPPIP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 190,
+                        "name": "AIPOM",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 191,
+                        "name": "SUNKERN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 193,
+                        "name": "YANMA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 194,
+                        "name": "WOOPER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 198,
+                        "name": "MURKROW",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 200,
+                        "name": "MISDREAVUS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 204,
+                        "name": "PINECO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 207,
+                        "name": "GLIGAR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 209,
+                        "name": "SNUBBULL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 215,
+                        "name": "SNEASEL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 216,
+                        "name": "TEDDIURSA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 218,
+                        "name": "SLUGMA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 220,
+                        "name": "SWINUB",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 223,
+                        "name": "REMORAID",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 228,
+                        "name": "HOUNDOUR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 231,
+                        "name": "PHANPY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 236,
+                        "name": "TYROGUE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 238,
+                        "name": "SMOOCHUM",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 239,
+                        "name": "ELEKID",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 240,
+                        "name": "MAGBY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 246,
+                        "name": "LARVITAR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 252,
+                        "name": "TREECKO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 255,
+                        "name": "TORCHIC",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 258,
+                        "name": "MUDKIP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 261,
+                        "name": "POOCHYENA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 263,
+                        "name": "ZIGZAGOON",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 265,
+                        "name": "WURMPLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 270,
+                        "name": "LOTAD",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 273,
+                        "name": "SEEDOT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 276,
+                        "name": "TAILLOW",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 278,
+                        "name": "WINGULL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 280,
+                        "name": "RALTS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 283,
+                        "name": "SURSKIT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 285,
+                        "name": "SHROOMISH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 287,
+                        "name": "SLAKOTH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 290,
+                        "name": "NINCADA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 293,
+                        "name": "WHISMUR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 296,
+                        "name": "MAKUHITA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 298,
+                        "name": "AZURILL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 299,
+                        "name": "NOSEPASS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 300,
+                        "name": "SKITTY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 304,
+                        "name": "ARON",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 307,
+                        "name": "MEDITITE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 309,
+                        "name": "ELECTRIKE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 316,
+                        "name": "GULPIN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 318,
+                        "name": "CARVANHA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 320,
+                        "name": "WAILMER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 322,
+                        "name": "NUMEL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 325,
+                        "name": "SPOINK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 328,
+                        "name": "TRAPINCH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 331,
+                        "name": "CACNEA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 333,
+                        "name": "SWABLU",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 339,
+                        "name": "BARBOACH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 341,
+                        "name": "CORPHISH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 343,
+                        "name": "BALTOY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 345,
+                        "name": "LILEEP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 347,
+                        "name": "ANORITH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 349,
+                        "name": "FEEBAS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 353,
+                        "name": "SHUPPET",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 355,
+                        "name": "DUSKULL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 360,
+                        "name": "WYNAUT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 361,
+                        "name": "SNORUNT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 363,
+                        "name": "SPHEAL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 366,
+                        "name": "CLAMPERL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 371,
+                        "name": "BAGON",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 374,
+                        "name": "BELDUM",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 387,
+                        "name": "TURTWIG",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 390,
+                        "name": "CHIMCHAR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 393,
+                        "name": "PIPLUP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 396,
+                        "name": "STARLY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 399,
+                        "name": "BIDOOF",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 401,
+                        "name": "KRICKETOT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 403,
+                        "name": "SHINX",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 406,
+                        "name": "BUDEW",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 408,
+                        "name": "CRANIDOS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 410,
+                        "name": "SHIELDON",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 412,
+                        "name": "BURMY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 415,
+                        "name": "COMBEE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 418,
+                        "name": "BUIZEL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 420,
+                        "name": "CHERUBI",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 422,
+                        "name": "SHELLOS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 425,
+                        "name": "DRIFLOON",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 427,
+                        "name": "BUNEARY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 431,
+                        "name": "GLAMEOW",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 433,
+                        "name": "CHINGLING",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 434,
+                        "name": "STUNKY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 438,
+                        "name": "BONSLY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 439,
+                        "name": "MIME_JR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 440,
+                        "name": "HAPPINY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 443,
+                        "name": "GIBLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 446,
+                        "name": "MUNCHLAX",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 447,
+                        "name": "RIOLU",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 449,
+                        "name": "HIPPOPOTAS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 451,
+                        "name": "SKORUPI",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 453,
+                        "name": "CROAGUNK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 456,
+                        "name": "FINNEON",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 458,
+                        "name": "MANTYKE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 459,
+                        "name": "SNOVER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 495,
+                        "name": "SNIVY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 498,
+                        "name": "TEPIG",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 501,
+                        "name": "OSHAWOTT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 504,
+                        "name": "PATRAT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 506,
+                        "name": "LILLIPUP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 509,
+                        "name": "PURRLOIN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 511,
+                        "name": "PANSAGE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 513,
+                        "name": "PANSEAR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 515,
+                        "name": "PANPOUR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 517,
+                        "name": "MUNNA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 519,
+                        "name": "PIDOVE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 522,
+                        "name": "BLITZLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 524,
+                        "name": "ROGGENROLA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 527,
+                        "name": "WOOBAT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 529,
+                        "name": "DRILBUR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 532,
+                        "name": "TIMBURR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 535,
+                        "name": "TYMPOLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 540,
+                        "name": "SEWADDLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 543,
+                        "name": "VENIPEDE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 548,
+                        "name": "PETILIL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 551,
+                        "name": "SANDILE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 554,
+                        "name": "DARUMAKA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 557,
+                        "name": "DWEBBLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 559,
+                        "name": "SCRAGGY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 562,
+                        "name": "YAMASK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 564,
+                        "name": "TIRTOUGA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 566,
+                        "name": "ARCHEN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 568,
+                        "name": "TRUBBISH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 572,
+                        "name": "MINCCINO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 574,
+                        "name": "GOTHITA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 577,
+                        "name": "SOLOSIS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 580,
+                        "name": "DUCKLETT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 582,
+                        "name": "VANILLITE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 585,
+                        "name": "DEERLING",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 588,
+                        "name": "KARRABLAST",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 590,
+                        "name": "FOONGUS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 592,
+                        "name": "FRILLISH",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 595,
+                        "name": "JOLTIK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 597,
+                        "name": "FERROSEED",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 599,
+                        "name": "KLINK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 602,
+                        "name": "TYNAMO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 605,
+                        "name": "ELGYEM",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 607,
+                        "name": "LITWICK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 610,
+                        "name": "AXEW",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 613,
+                        "name": "CUBCHOO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 616,
+                        "name": "SHELMET",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 619,
+                        "name": "MIENFOO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 622,
+                        "name": "GOLETT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 624,
+                        "name": "PAWNIARD",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 627,
+                        "name": "RUFFLET",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 629,
+                        "name": "VULLABY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 650,
+                        "name": "CHESPIN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 653,
+                        "name": "FENNEKIN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 656,
+                        "name": "FROAKIE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 659,
+                        "name": "BUNNELBY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 661,
+                        "name": "FLETCHLING",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 667,
+                        "name": "LITLEO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 669,
+                        "name": "FLABEBE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 674,
+                        "name": "PANCHAM",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 677,
+                        "name": "ESPURR",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 682,
+                        "name": "SPRITZEE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 684,
+                        "name": "SWIRLIX",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 686,
+                        "name": "INKAY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 688,
+                        "name": "BINACLE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 690,
+                        "name": "SKRELP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 692,
+                        "name": "CLAUNCHER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 694,
+                        "name": "HELIOPTILE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 696,
+                        "name": "TYRUNT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 698,
+                        "name": "AMAURA",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 704,
+                        "name": "GOOMY",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 708,
+                        "name": "PHANTUMP",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 710,
+                        "name": "PUMPKABOO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 712,
+                        "name": "BERGMITE",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 714,
+                        "name": "NOIBAT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 722,
+                        "name": "ROWLET",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 725,
+                        "name": "LITTEN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 728,
+                        "name": "POPPLIO",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 731,
+                        "name": "PIKIPEK",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 734,
+                        "name": "YUNGOOS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 744,
+                        "name": "ROCKRUFF",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 751,
+                        "name": "DEWPIDER",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 753,
+                        "name": "FOMANTIS",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 757,
+                        "name": "SALANDIT",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 759,
+                        "name": "STUFFUL",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 765,
+                        "name": "ORANGURU",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 782,
+                        "name": "JANGMO_O",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 808,
+                        "name": "MELTAN",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 819,
+                        "name": "SKWOVET",
+                        "form": "NORMAL"
+                    },
+                    {
+                        "id": 831,
+                        "name": "WOOLOO",
+                        "form": "NORMAL"
+                    }
+                ],
+                "banned": [
+                    {
+                        "id": 132,
+                        "name": "DITTO"
+                    },
+                    {
+                        "id": 292,
+                        "name": "SHEDINJA"
+                    }
+                ]
+            },
+            "iconUrl": "LeagueIcons/GBL_littlecupremix.png",
+            "league": "GREAT_LEAGUE"
+        },
+        {
             "id": "VS_SEEKER_GREAT_LOVE",
             "title": "LOVE_CUP",
             "enabled": true,
@@ -9319,15 +10641,15 @@
                 "20": [
                     {
                         "guaranteedLimited": false,
-                        "id": 150,
-                        "name": "MEWTWO",
+                        "id": 145,
+                        "name": "ZAPDOS",
                         "form": "NORMAL",
                         "type": "FREE"
                     },
                     {
                         "guaranteedLimited": false,
-                        "id": 150,
-                        "name": "MEWTWO",
+                        "id": 145,
+                        "name": "ZAPDOS",
                         "form": "NORMAL",
                         "type": "PREMIUM"
                     }

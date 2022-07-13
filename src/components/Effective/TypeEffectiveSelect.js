@@ -12,7 +12,7 @@ const TypeEffectiveSelect = (props) => {
             <Fragment>
                 {data.length > 0 &&
                     <Fragment>
-                    <h6 className={props.block ? "element-top" : ""}><b>x{text}</b></h6>
+                    <h6 className={props.block ? "element-top" : ""}><b className="text-shadow">x{text}</b></h6>
                     <div className="d-flex flex-wrap" style={{gap: 5}}>{data.map((value, index) => (
                         <span key={index} className={value.toLowerCase()+" type-select-bg d-flex align-items-center filter-shadow"}>
                             <div style={{display: 'contents', width: 16}}>

@@ -129,6 +129,8 @@ export const convertName = (text) => {
   .replaceAll(":", "")
   .replaceAll(" ", "_")
   .replaceAll("É", "E")
+  .replace("PUMPKABOO_AVERAGE", "PUMPKABOO")
+  .replace("GOURGEIST_AVERAGE", "GOURGEIST")
 };
 
 export const convertNameRanking = (text) => {

@@ -40,7 +40,6 @@ const theme = createTheme({
 const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, evolution_url, id, onSetIDPoke}) => {
 
     const [arrEvoList, setArrEvoList] = useState([]);
-    const [data, setData] = useState(null);
 
     const getEvoChain = useCallback((data) => {
         if (data.length === 0) return false;
@@ -98,21 +97,13 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
 
     useEffect(() => {
         const fetchEvolution = async () => {
-            if (!data && id && forme && evolution_url) {
-                const res = (await APIService.getFetchUrl(evolution_url)).data;
-                setData(res);
-            }
-        }
-        fetchEvolution();
-    }, [data, evolution_url, forme, id]);
-
-    useEffect(() => {
-        if (data) {
+            const data = (await APIService.getFetchUrl(evolution_url)).data;
             setArrEvoList([]);
             if (forme.form_name !== "gmax") getEvoChain([data.chain]);
             else getGmaxChain(id, forme);
         }
-    }, [forme, getEvoChain, getGmaxChain, id, data]);
+        if (id && forme && evolution_url) fetchEvolution();
+    }, [evolution_url, forme, id, getEvoChain, getGmaxChain]);
 
     const handlePokeID = (id) => {
         if (id !== id.toString()) onSetIDPoke(parseInt(id));
@@ -304,7 +295,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                 </span>
             </OverlayTrigger>
             </h4>
-            <div className="evo-container scroll-form" style={{minHeight:setHeightEvo()}}>
+            <div className="evo-container scroll-evolution" style={{minHeight:setHeightEvo()}}>
                 <ul className="ul-evo">
                     {arrEvoList.map((values, evo) => (
                         <li key={evo} className='img-form-gender-group li-evo' style={{marginRight: arrEvoList.length > 1 && evo < arrEvoList.length-1 ? window.innerWidth/(6.5*arrEvoList.length) : 0}}>
