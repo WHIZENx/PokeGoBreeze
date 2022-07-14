@@ -134,11 +134,10 @@ const TeamPVP = () => {
                     }
                 });
                 setRankingData(file);
-                setSpinner(false);
             } catch (e) {
-                setSpinner(false);
                 setFound(false);
             }
+            setSpinner(false);
         }
         fetchPokemon();
     }, [params.cp, params.serie])

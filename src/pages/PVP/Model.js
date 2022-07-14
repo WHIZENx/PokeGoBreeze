@@ -10,6 +10,19 @@ import { calculateCP, calStatsProd } from "../../util/Calculate";
 import { computeBgType, computeCandyBgColor, computeCandyColor, findAssetForm } from "../../util/Compute";
 import { convertNameRankingToForm, convertNameRankingToOri, splitAndCapitalize } from "../../util/Utils";
 
+import CircleIcon from '@mui/icons-material/Circle';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import BakeryDiningIcon from '@mui/icons-material/BakeryDining';
+import EnergySavingsLeafIcon from '@mui/icons-material/EnergySavingsLeaf';
+import StairsIcon from '@mui/icons-material/Stairs';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import BoltIcon from '@mui/icons-material/Bolt';
+import BrokenImageIcon from '@mui/icons-material/BrokenImage';
+import SpokeIcon from '@mui/icons-material/Spoke';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import PersonIcon from '@mui/icons-material/Person';
+
 export const Keys = (pokemonData, data, cp, type) => {
 
     const renderItemList = (data, bgtype) => {
@@ -182,6 +195,35 @@ export const TypeEffective = (types) => {
 
 export const MoveSet = (moves, combatList, combatData) => {
 
+    const findArchetype = (archetype) => {
+        return (
+            ["General", "Nuke", "Spam/Bait", "High Energy", "Low Quality", "Debuff", "Boost", "Fast Charge", "Heavy Damage", "Multipurpose", "Self-Debuff"].map((value, index) => (
+                <Fragment key={index}>
+                    {archetype.includes(value) && !(archetype.includes("Self-Debuff") && value === "Debuff") &&
+                    <div className="filter-shadow" title={value} key={index}>
+                        {value === "General" && <CircleIcon/>}
+                        {value === "Nuke" && <RocketLaunchIcon sx={{color: 'gray'}} />}
+                        {value === "Spam/Bait" && <BakeryDiningIcon sx={{color: 'pink'}}/>}
+                        {value === "High Energy" && <EnergySavingsLeafIcon sx={{color: 'orange'}}/>}
+                        {value === "Low Quality" && <StairsIcon sx={{color: 'lightgray'}}/>}
+                        {value === "Debuff" && <ArrowDownwardIcon sx={{color: 'lightcoral'}}/>}
+                        {value === "Boost" && <ArrowUpwardIcon sx={{color: 'lightgreen'}}/>}
+                        {value === "Fast Charge" && <BoltIcon sx={{color: '#f8d030'}}/>}
+                        {value === "Heavy Damage" && <BrokenImageIcon sx={{color: 'brown'}}/>}
+                        {value === "Multipurpose" && <SpokeIcon sx={{color: 'lightskyblue'}}/>}
+                        {value === "Self-Debuff" &&
+                        <div className="position-relative">
+                            <PersonIcon sx={{color: 'black'}}/>
+                            <KeyboardDoubleArrowDownIcon fontSize="small" className="position-absolute" sx={{color: 'red', left: '50%', bottom: 0}}/>
+                        </div>
+                        }
+                    </div>
+                    }
+                </Fragment>
+            ))
+        )
+    }
+
     const findMove = (name, uses) => {
         const oldName = name;
         if (name.includes("HIDDEN_POWER")) name = "HIDDEN_POWER";
@@ -198,7 +240,8 @@ export const MoveSet = (moves, combatList, combatData) => {
                     <img className="filter-shadow" width={24} height={24} alt='img-pokemon' src={APIService.getTypeSprite(move.type)}/>
                     <span className='filter-shadow'>{splitAndCapitalize(oldName, "_", " ")} {elite && <b className="filter-shadow">*</b>}</span>
                 </div>
-                <div>
+                <div className="d-flex align-items-center" style={{columnGap: 10}}>
+                    {move.archetype && findArchetype(move.archetype)}
                     <span className="ranking-score score-ic filter-shadow">{uses}</span>
                 </div>
             </Link>

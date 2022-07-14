@@ -6,7 +6,7 @@ import '../PVP.css';
 import { Fragment, useEffect, useRef, useState } from "react";
 
 import { capitalize, convertArrStats, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import APIService from "../../../services/API.service";
 import Type from "../../../components/Sprites/Type/Type";
 import { calculateCP, calculateStatsByTag, calStatsProd, sortStatsPokemon } from '../../../util/Calculate';
@@ -15,7 +15,6 @@ import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import loading from '../../../assets/loading.png';
 import Error from '../../Error/Error';
-import { Button } from 'react-bootstrap';
 import { leaguesRanking } from '../../../util/Constants';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
@@ -24,6 +23,7 @@ const PokemonPVP = () => {
     const params = useParams();
 
     const [rankingPoke, setRankingPoke] = useState(null);
+    const storeStats = useRef(null);
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
     const [spinner, setSpinner] = useState(true);
     const [found, setFound] = useState(true);
@@ -71,19 +71,22 @@ const PokemonPVP = () => {
 
                 const maxCP = parseInt(params.cp);
 
-                let bestStats;
-                if (maxCP === 10000) {
-                    const cp = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50);
-                    const buddyCP = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 51);
-                    bestStats = {
-                        "50": {cp: cp},
-                        "51": {cp: buddyCP},
-                    };
-                } else {
-                    const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-                    const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
-                    bestStats = allStats[allStats.length-1];
+                let bestStats = storeStats.current;
+                if (!bestStats) {
+                    if (maxCP === 10000) {
+                        const cp = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50);
+                        const buddyCP = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 51);
+                        bestStats = {
+                            "50": {cp: cp},
+                            "51": {cp: buddyCP},
+                        };
+                    } else {
+                        const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+                        const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
+                        bestStats = allStats[allStats.length-1];
+                    }
                 }
+
 
                 setRankingPoke({
                     data: data,
@@ -104,11 +107,10 @@ const PokemonPVP = () => {
                     shadow: data.speciesName.includes("(Shadow)"),
                     purified: combatPoke.PURIFIED_MOVES.includes(cmovePri) || (cMoveDataSec && combatPoke.PURIFIED_MOVES.includes(cMoveDataSec))
                 });
-                setSpinner(false);
-            } catch {
-                setSpinner(false);
+            } catch (e) {
                 setFound(false);
             }
+            setSpinner(false);
         }
         fetchPokemon();
     }, [params.cp, params.type, params.pokemon]);
@@ -152,13 +154,13 @@ const PokemonPVP = () => {
             {renderLeague()}
             <hr />
             <div className='ranking-link-group' style={{paddingTop: 10}}>
-                <Button className={(params.type.toLowerCase() === 'overall' ? " active" : "")} href={`pvp/${params.cp}/overall/${params.pokemon}`}>Overall</Button >
-                <Button className={(params.type.toLowerCase() === 'leads' ? " active" : "")} href={`pvp/${params.cp}/leads/${params.pokemon}`}>Leads</Button>
-                <Button className={(params.type.toLowerCase() === 'closers' ? " active" : "")} href={`pvp/${params.cp}/closers/${params.pokemon}`}>Closers</Button>
-                <Button className={(params.type.toLowerCase() === 'switches' ? " active" : "")} href={`pvp/${params.cp}/switches/${params.pokemon}`}>Switches</Button>
-                <Button className={(params.type.toLowerCase() === 'chargers' ? " active" : "")} href={`pvp/${params.cp}/chargers/${params.pokemon}`}>Chargers</Button>
-                <Button className={(params.type.toLowerCase() === 'attackers' ? " active" : "")} href={`pvp/${params.cp}/attackers/${params.pokemon}`}>Attackers</Button>
-                <Button className={(params.type.toLowerCase() === 'consistency' ? " active" : "")} href={`pvp/${params.cp}/consistency/${params.pokemon}`}>Consistency</Button>
+                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'overall' ? " active" : "")} to={`/pvp/${params.cp}/overall/${params.pokemon}`}>Overall</Link>
+                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'leads' ? " active" : "")} to={`/pvp/${params.cp}/leads/${params.pokemon}`}>Leads</Link>
+                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'closers' ? " active" : "")} to={`/pvp/${params.cp}/closers/${params.pokemon}`}>Closers</Link>
+                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'switches' ? " active" : "")} to={`/pvp/${params.cp}/switches/${params.pokemon}`}>Switches</Link>
+                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'chargers' ? " active" : "")} to={`/pvp/${params.cp}/chargers/${params.pokemon}`}>Chargers</Link>
+                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'attackers' ? " active" : "")} to={`/pvp/${params.cp}/attackers/${params.pokemon}`}>Attackers</Link>
+                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'consistency' ? " active" : "")} to={`/pvp/${params.cp}/consistency/${params.pokemon}`}>Consistency</Link>
             </div>
             <div className="w-100 ranking-info element-top">
                 <div className="d-flex flex-wrap align-items-center justify-content-center" style={{gap: '2rem'}}>

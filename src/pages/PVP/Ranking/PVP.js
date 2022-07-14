@@ -122,11 +122,10 @@ const RankingPVP = () => {
                 })
                 setRankingData(file);
                 setStoreStats(file.map(i => false));
-                setSpinner(false);
             } catch (e) {
-                setSpinner(false);
                 setFound(false);
             }
+            setSpinner(false);
         }
         fetchPokemon();
     }, [params.serie, params.cp, params.type]);
