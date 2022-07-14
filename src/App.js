@@ -24,7 +24,7 @@ import Sticker from './pages/Sticker/Sticker';
 import RaidBattle from './pages/Tools/RaidBattle/RaidBattle';
 import CalculatePoint from './pages/Tools/CalculatePoint/CalculatePoint';
 import RankingPVP from './pages/PVP/Ranking/PVP';
-import PokemonPVP from './pages/PVP/Pokemon';
+import PokemonPVP from './pages/PVP/Pokemon/Pokemon';
 import PVPHome from './pages/PVP/Home';
 import TeamPVP from './pages/PVP/Teams/PVP';
 

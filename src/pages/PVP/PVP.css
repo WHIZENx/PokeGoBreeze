@@ -26,7 +26,29 @@
     padding: 15px;
     border: 2px solid #dee2e6;
     background-color: white;
-    z-index: 1;
+    z-index: 4;
+}
+
+.ranking-header .ranking-sort {
+    color: gray;
+    cursor: pointer;
+}
+
+.ranking-header .ranking-selected {
+    color: black;
+    text-decoration: underline;
+}
+
+.ranking-sort svg path {
+    display: none;
+}
+
+.ranking-sort:hover svg path {
+    display: inline-block;
+}
+
+.ranking-selected.ranking-sort svg path  {
+    display: inline-block;
 }
 
 .ranking-group {

@@ -3,24 +3,20 @@ import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
 
 import Type from "../../../components/Sprites/Type/Type";
-import Stats from '../../../components/Info/Stats/Stats';
 
 import '../PVP.css';
-import Hexagon from "../../../components/Sprites/Hexagon/Hexagon";
 import { useState, useEffect, Fragment, useRef } from "react";
 
-import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName } from '../../../util/Utils';
-import { calculateStatsByTag, calStatsProd, calculateCP, sortStatsPokemon } from '../../../util/Calculate';
+import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName, capitalize } from '../../../util/Utils';
+import { calculateStatsByTag, sortStatsPokemon } from '../../../util/Calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../../services/API.service';
-import { computeBgType, computeCandyBgColor, computeCandyColor, findAssetForm } from "../../../util/Compute";
+import { computeBgType, findAssetForm } from "../../../util/Compute";
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
 import { Link, useParams } from 'react-router-dom';
-import IVbar from '../../../components/Sprites/IVBar/IVBar';
-import TypeEffectiveSelect from '../../../components/Effective/TypeEffectiveSelect';
 import CloseIcon from '@mui/icons-material/Close';
 import { leaguesRanking } from '../../../util/Constants';
 
@@ -28,6 +24,9 @@ import loading from '../../../assets/loading.png';
 import Error from '../../Error/Error';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
 const RankingPVP = () => {
 
@@ -35,6 +34,8 @@ const RankingPVP = () => {
 
     const [rankingData, setRankingData] = useState(null);
     const [storeStats, setStoreStats] = useState(null);
+    const sortedBy = useRef("score");
+    const [sorted, setSorted] = useState(1);
 
     const [search, setSearch] = useState('');
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
@@ -55,7 +56,20 @@ const RankingPVP = () => {
     useEffect(() => {
         const fetchPokemon = async () => {
             try {
-                let file = (await APIService.getFetchUrl(APIService.getRankingFile(params.serie, parseInt(params.cp), params.type))).data;
+                const cp = parseInt(params.cp);
+                let file = (await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type))).data;
+                if (params.serie === "all") document.title = `PVP Ranking - ${
+                    cp === 500 ? "Little Cup" :
+                    cp === 1500 ? "Great League" :
+                    cp === 2500 ? "Ultra League" :
+                    "Master League"}`;
+                else document.title = `PVP Ranking - ${
+                    params.serie === "remix" ?
+                    cp === 500 ? "Little Cup " :
+                    cp === 1500 ? "Great League " :
+                    cp === 2500 ? "Ultra League " :
+                    "Master League ":""}
+                    ${splitAndCapitalize(params.serie, "-", " ")} (${capitalize(params.type)})`;
                 pokemonData = Object.values(pokemonData);
                 file = file.map(item => {
                     const name = convertNameRankingToOri(item.speciesId, item.speciesName);
@@ -110,57 +124,12 @@ const RankingPVP = () => {
                 setStoreStats(file.map(i => false));
                 setSpinner(false);
             } catch (e) {
-                console.log(e)
                 setSpinner(false);
                 setFound(false);
             }
         }
         fetchPokemon();
     }, [params.serie, params.cp, params.type]);
-
-    const convertNameRankingToForm = (name) => {
-        return rankingData.find(pokemon => pokemon.speciesId === name).speciesName;
-    }
-
-    const calculateStatsTopRank = (stats) => {
-        const maxCP = parseInt(params.cp);
-
-        if (maxCP === 10000) {
-            const cp = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 50);
-            const buddyCP = calculateCP(stats.atk+15, stats.def+15, stats.sta+15, 51);
-            return {
-                "50": {cp: cp},
-                "51": {cp: buddyCP},
-            };
-        } else {
-            const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-            const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
-            return allStats[allStats.length-1];
-        }
-    }
-
-    const findMove = (name, uses, combatList) => {
-        const oldName = name;
-        if (name.includes("HIDDEN_POWER")) name = "HIDDEN_POWER";
-        let move = combatData.find(move => move.name === name);
-        if (oldName.includes("HIDDEN_POWER")) move = {...move, type: oldName.split("_")[2]};
-
-        let elite = false;
-        if (combatList.ELITE_QUICK_MOVES.includes(name)) elite = true;
-        if (combatList.ELITE_CINEMATIC_MOVES.includes(name)) elite = true;
-
-        return (
-            <Link to={`/moves/${move.id}`} target="_blank" className={(move.type.toLowerCase())+' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'}>
-                <div className='d-flex' style={{columnGap: 10}}>
-                    <img className="filter-shadow" width={24} height={24} alt='img-pokemon' src={APIService.getTypeSprite(move.type)}/>
-                    <span className='filter-shadow'>{splitAndCapitalize(oldName, "_", " ")} {elite && <b className="filter-shadow">*</b>}</span>
-                </div>
-                <div>
-                    <span className="ranking-score score-ic filter-shadow">{uses}</span>
-                </div>
-            </Link>
-        )
-    }
 
     const onSearch = (value) => {
         setSearch(value)
@@ -211,137 +180,20 @@ const RankingPVP = () => {
                                 purified={data.combatPoke.PURIFIED_MOVES.includes(data.cmoveSec.name)}/>}
                             </div>
                             <hr />
-                            <div className="row" style={{margin: 0}}>
-                                <div className="col-lg-6 element-top" style={{padding: 0}}>
-                                    <div className="title-item-ranking">
-                                        <h4 className='text-white text-shadow'>Best Matchups</h4>
-                                        <div style={{marginRight: 15}}>
-                                            <span className="ranking-score score-ic">Rating</span>
-                                        </div>
-                                    </div>
-                                    {data.matchups.sort((a,b) => b.rating-a.rating).map((matchup, index) => (
-                                        <Fragment key={index}>{renderItemList(matchup, 0, index)}</Fragment>
-                                    ))}
-                                </div>
-                                <div className="col-lg-6 element-top" style={{padding: 0}}>
-                                    <div className="title-item-ranking">
-                                        <h4 className='text-white text-shadow'>Best Counters</h4>
-                                        <div style={{marginRight: 15}}>
-                                            <span className="ranking-score score-ic">Rating</span>
-                                        </div>
-                                    </div>
-                                    {data.counters.sort((a,b) => a.rating-b.rating).map((counter, index) => (
-                                        <Fragment key={index}>{renderItemList(counter, 1, index)}</Fragment>
-                                    ))}
-                                </div>
-                            </div>
+                            {Keys(Object.values(pokemonData), data, params.cp, params.type)}
                         </div>
                         <div className='container'>
                             <hr />
                         </div>
                         <div className='stats-container'>
-                        {data.scores ?
-                        <div className="row w-100" style={{margin: 0}}>
-                            <div className="col-lg-4 d-flex justify-content-center element-top">
-                                <div>
-                                    <h5><b>Overall Performance</b></h5>
-                                    <Hexagon animation={0} borderSize={320} size={180}
-                                    stats={{
-                                        lead: data.scores[0],
-                                        atk: data.scores[4],
-                                        cons: data.scores[5],
-                                        closer: data.scores[1],
-                                        charger: data.scores[3],
-                                        switching: data.scores[2]
-                                    }}/>
-                                </div>
-                            </div>
-                            <div className="col-lg-8 container status-ranking element-top">
-                                <div>
-                                    <h5><b>Overall Stats</b></h5>
-                                    <Stats statATK={data.atk}
-                                        statDEF={data.def}
-                                        statSTA={data.sta}
-                                        pokemonStats={statsRanking.current}/>
-                                </div>
-                                <div>
-                                    <h5><b>Top Rank League</b></h5>
-                                    {renderTopStats(data.stats, key, data.id)}
-                                </div>
-                            </div>
-                        </div>
-                        :
-                        <div className="w-100 container status-ranking element-top">
-                            <div>
-                                <h5><b>Overall Stats</b></h5>
-                                <Stats statATK={data.atk}
-                                    statDEF={data.def}
-                                    statSTA={data.sta}
-                                    pokemonStats={statsRanking.current}/>
-                            </div>
-                            <div>
-                                <h5 className='element-top'><b>Top Rank League</b></h5>
-                                {renderTopStats(data.stats, key, data.id)}
-                            </div>
-                        </div>
-                        }
+                            {OverAllStats(data, statsRanking, params.cp)}
                         </div>
                         <div className='container'>
                             <hr />
-                            <div className='row text-white'>
-                                <div className='col-lg-4' style={{marginBottom: 15}}>
-                                    <div className='h-100'>
-                                        <h6 className='d-flex justify-content-center weakness-bg-text'><b>Weakness</b></h6>
-                                        <hr className='w-100'/>
-                                        {<TypeEffectiveSelect effect={0} types={data.pokemon.types}/>}
-                                    </div>
-                                    <hr className='w-100' style={{margin: 0}}/>
-                                </div>
-                                <div className='col-lg-4' style={{marginBottom: 15}}>
-                                    <div className='h-100'>
-                                        <h6 className='d-flex justify-content-center neutral-bg-text'><b>Neutral</b></h6>
-                                        <hr className='w-100'/>
-                                        {<TypeEffectiveSelect effect={1} types={data.pokemon.types}/>}
-                                    </div>
-                                    <hr className='w-100' style={{margin: 0}}/>
-                                </div>
-                                <div className='col-lg-4' style={{marginBottom: 15}}>
-                                    <div className='h-100'>
-                                        <h6 className='d-flex justify-content-center resistance-bg-text'><b>Resistance</b></h6>
-                                        <hr className='w-100'/>
-                                        {<TypeEffectiveSelect effect={2} types={data.pokemon.types}/>}
-                                    </div>
-                                    <hr className='w-100' style={{margin: 0}}/>
-                                </div>
-                            </div>
+                            {TypeEffective(data.pokemon.types)}
                         </div>
                         <div className='container'>
-                            <div className='row' style={{margin: 0}}>
-                                <div className='col-xl-6' style={{padding: 0, backgroundColor: 'lightgray'}}>
-                                    <div className='moves-title'>Fast Moves</div>
-                                    <div className='type-rank-list'>
-                                        {data.moves.fastMoves.map(move => {
-                                            if (!move.uses) move.uses = 0;
-                                            return move;
-                                        }).sort((a,b) => b.uses-a.uses).map((value, index) => (
-                                            <Fragment key={index}>{findMove(value.moveId, value.uses, data.combatPoke)}</Fragment>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className='col-xl-6' style={{padding: 0, backgroundColor: 'lightgray'}}>
-                                    <div className='moves-title'>Charged Moves</div>
-                                    <div className='type-rank-list'>
-                                        {data.moves.chargedMoves.map(move => {
-                                            if (move.moveId === "FUTURE_SIGHT") move.moveId = "FUTURESIGHT";
-                                            if (move.moveId === "TECHNO_BLAST_DOUSE") move.moveId = "TECHNO_BLAST_WATER";
-                                            if (!move.uses) move.uses = 0;
-                                            return move;
-                                        }).sort((a,b) => b.uses-a.uses).map((value, index) => (
-                                            <Fragment key={index}>{findMove(value.moveId, value.uses, data.combatPoke)}</Fragment>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
+                            {MoveSet(data.moves, data.combatPoke, combatData)}
                         </div>
                     </div>
                     <LeaveToggle eventKey={key} />
@@ -349,62 +201,6 @@ const RankingPVP = () => {
                     }
                 </Accordion.Body>
             </Accordion.Item>
-        )
-    }
-
-    const renderItemList = (data, type, index) => {
-        const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
-        const pokemon = Object.values(pokemonData).find(pokemon => pokemon.slug === name);
-        const id = pokemon.num;
-        const form = findAssetForm(pokemon.num, pokemon.name);
-
-        return (
-            <Link to={`/pvp/${params.cp}/${params.type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types, data.opponent.includes("_shadow"))}}>
-                <div className="container d-flex align-items-center" style={{columnGap: 10}}>
-                    <div className="d-flex justify-content-center">
-                        <span className="position-relative filter-shadow" style={{width: 50}}>
-                            {data.opponent.includes("_shadow") && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
-                            <img alt='img-league' className="pokemon-sprite-accordion" src={ form ? APIService.getPokemonModel(form) :APIService.getPokeFullSprite(id)}/>
-                        </span>
-                    </div>
-                    <div>
-                        <b className='text-white text-shadow'>#{id} {splitAndCapitalize(name, "-", " ")}</b>
-                        <Type shadow={true} hideText={true} height={20} arr={pokemon.types} />
-                    </div>
-                </div>
-                <div style={{marginRight: 15}}>
-                    <span className="ranking-score score-ic text-white text-shadow filter-shadow" style={{backgroundColor: type === 0 ? 'lightgreen' : 'lightcoral'}}>{data.rating}</span>
-                </div>
-            </Link>
-        )
-    }
-
-    const renderTopStats = (stats, key, id) => {
-        const maxCP = parseInt(params.cp);
-        const currStats = calculateStatsTopRank(stats);
-        return (
-            <ul className='element-top'>
-                <li className='element-top'>
-                    CP: <b>{maxCP === 10000 ? `${currStats["50"].cp}-${currStats["51"].cp}` : `${currStats.CP}`}</b>
-                </li>
-                <li className={currStats.level <= 40 ? 'element-top' : ''}>
-                    Level: <b>{maxCP === 10000 ? "50-51" : `${currStats.level}`} </b>
-                    {(currStats.level > 40 || maxCP === 10000) &&
-                    <b>
-                    (
-                        <div className="position-relative d-inline-block filter-shadow">
-                            <div className="bg-poke-xl-candy" style={{background: computeCandyBgColor(id), width: 30, height: 30}}></div>
-                            <div className="poke-xl-candy" style={{background: computeCandyColor(id), width: 30, height: 30}}></div>
-                        </div>
-                        XL Candy required)</b>
-                    }
-                </li>
-                <li className='element-top'>
-                    <IVbar title="Attack" iv={maxCP === 10000 ? 15 : currStats.IV.atk} style={{maxWidth: 500}}/>
-                    <IVbar title="Defense" iv={maxCP === 10000 ? 15 : currStats.IV.def} style={{maxWidth: 500}}/>
-                    <IVbar title="HP" iv={maxCP === 10000 ? 15 : currStats.IV.sta} style={{maxWidth: 500}}/>
-                </li>
-            </ul>
         )
     }
 
@@ -459,15 +255,29 @@ const RankingPVP = () => {
                 onInput={e => onSearch(e.target.value)}
                 />
             </div>
-            <Accordion alwaysOpen className="ranking-container">
-                {rankingData
-                .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
-                .sort((a,b) => b.score-a.score).map((value, index) => (
-                    <Fragment key={index}>
-                        {renderItem(value, index)}
-                    </Fragment>
-                ))}
-            </Accordion>
+            <div className="ranking-container">
+                <div className="ranking-group w-100 ranking-header" style={{columnGap: '1rem'}}>
+                    <div></div>
+                    <div className="d-flex" style={{marginRight: 15}}>
+                        <div className="text-center" style={{width: 'max-content'}} onClick={() => {setSorted(!sorted);}}>
+                            <span className={"ranking-sort ranking-score"+(sortedBy.current === "score" ? " ranking-selected":"")}>
+                                Score
+                                {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <Accordion alwaysOpen >
+                    {rankingData
+                    .filter(pokemon => splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), "-", " ").toLowerCase().includes(search.toLowerCase()))
+                    .sort((a,b) => sorted ? b[sortedBy.current]-a[sortedBy.current] : a[sortedBy.current]-b[sortedBy.current]).map((value, index) => (
+                        <Fragment key={index}>
+                            {renderItem(value, index)}
+                        </Fragment>
+                    ))}
+                </Accordion>
+            </div>
+
         </div>
         }
         </Fragment>

@@ -1,8 +1,13 @@
+import { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import APIService from "../../services/API.service";
 import { leaguesRanking, leaguesTeam } from "../../util/Constants";
 
 const PVPHome = () => {
+
+    useEffect(() => {
+        document.title = "PVP - Simulator";
+    }, []);
 
     return (
         <div className="container">
