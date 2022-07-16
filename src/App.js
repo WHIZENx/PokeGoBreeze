@@ -27,6 +27,7 @@ import RankingPVP from './pages/PVP/Ranking/PVP';
 import PokemonPVP from './pages/PVP/Pokemon/Pokemon';
 import PVPHome from './pages/PVP/Home';
 import TeamPVP from './pages/PVP/Teams/PVP';
+import Battle from './pages/PVP/Battle/Battle';
 
 const App = () => {
 
@@ -58,6 +59,7 @@ const App = () => {
               <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP/>}></Route>
               <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
               <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
+              <Route path="/pvp/battle" element={<Battle/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
               <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
               <Route path="/stickers" element={<Sticker/>}></Route>

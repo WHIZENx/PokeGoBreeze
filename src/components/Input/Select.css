@@ -45,6 +45,14 @@
     opacity: 0.5;
 }
 
+.remove-pokemon-select-right {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: white;
+}
+
 .remove-pokemon-select:hover {
     opacity: 1;
 }

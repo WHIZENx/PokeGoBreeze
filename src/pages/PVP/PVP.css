@@ -221,3 +221,43 @@
 .view-pokemon:hover {
     opacity: 1;
 }
+
+.battle-bar {
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.fast-attack {
+    border-width: 1px;
+    border-style: solid;
+    width: 12px;
+    height: 12px;
+}
+
+.charge-attack {
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+}
+
+.wait-attack {
+    width: 12px;
+    height: 12px;
+}
+
+.pokemon-select {
+    cursor: pointer;
+    padding: 0 15px;
+    border-bottom: 1px solid lightgray;
+    background-color: white;
+}
+
+.pokemon-select:hover {
+    background-color: lightgray;
+}
+
+.border-box-battle {
+    border: 2px solid lightgray;
+}
