@@ -6,8 +6,9 @@ import combatData from '../../../data/combat.json';
 import { splitAndCapitalize } from "../../../util/Utils";
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from "../../../components/Card/CardMoveSmall";
+import { calculateStatsByTag, calStatsProd } from "../../../util/Calculate";
 
-const Select = ({data, pokemonBattle, setPokemonBattle}) => {
+const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
 
     const [show, setShow] = useState(false);
     const [showFMove, setShowFMove] = useState(false);
@@ -24,6 +25,7 @@ const Select = ({data, pokemonBattle, setPokemonBattle}) => {
     const [pokemonIcon, setPokemonIcon] = useState(null)
 
     const selectPokemon = (value) => {
+        clearData();
         let [fMove, cMovePri, cMoveSec] = value.moveset;
         setSearch(splitAndCapitalize(value.pokemon.name, "-", " "));
         setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
@@ -45,7 +47,9 @@ const Select = ({data, pokemonBattle, setPokemonBattle}) => {
         cMoveSec = combatData.find(item => item.name === cMoveSec);
         setCMoveSec(cMoveSec);
 
-        setPokemonBattle({...pokemonBattle, pokemonData: value, fMove: fmove, cMovePri: cMovePri, cMoveSec: cMoveSec})
+        const stats = calculateStatsByTag(value.pokemon.baseStats, value.pokemon.forme);
+        const allStats = calStatsProd(stats.atk, stats.def, stats.sta, 500, 1500);
+        setPokemonBattle({...pokemonBattle, pokemonData: {...value, bestStats: allStats[allStats.length-1]}, fMove: fmove, cMovePri: cMovePri, cMoveSec: cMoveSec})
     }
 
     const selectFMove = (value) => {
@@ -56,12 +60,14 @@ const Select = ({data, pokemonBattle, setPokemonBattle}) => {
 
     const selectCMovePri = (value) => {
         setCMovePri(value);
-        setPokemonBattle({...pokemonBattle, cMovePri: value})
+        setPokemonBattle({...pokemonBattle, cMovePri: value});
+        setShowCMovePri(false);
     }
 
     const selectCMoveSec = (value) => {
         setCMoveSec(value);
-        setPokemonBattle({...pokemonBattle, cMoveSec: value})
+        setPokemonBattle({...pokemonBattle, cMoveSec: value});
+        setShowCMoveSec(false);
     }
 
     const removePokemon = () => {
@@ -77,7 +83,7 @@ const Select = ({data, pokemonBattle, setPokemonBattle}) => {
         <Fragment>
             <h5>Pokemon</h5>
             <div className="border-box-battle position-relative">
-                {pokemonIcon && <span onClick={() => removePokemon()} className="remove-pokemon-select remove-pokemon-select-right"><CloseIcon sx={{color: 'red'}}/></span>}
+                {pokemonIcon && <span className="remove-pokemon-select-right"><span onClick={() => removePokemon()} className="remove-pokemon-select"><CloseIcon sx={{color: 'red'}}/></span></span>}
                 <input className="input-pokemon-select form-control shadow-none"
                 onClick={() => setShow(true)}
                 onBlur={() => setShow(false)}
