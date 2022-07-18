@@ -219,12 +219,14 @@ const DpsTable = () => {
         movePoke.forEach(vf => {
             addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false);
             if (!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) {
-                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES);
+                if (combat.SHADOW_MOVES.length > 0) {
+                    addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES);
+                    addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true, combat.SHADOW_MOVES);
+                }
                 addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES);
                 addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.PURIFIED_MOVES);
             }
-            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true, combat.SHADOW_MOVES);
-            else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true);
+            addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true);
         });
     }, [addCPokeData]);
 
