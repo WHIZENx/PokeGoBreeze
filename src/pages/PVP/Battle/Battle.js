@@ -4,12 +4,13 @@ import pokemonData from '../../../data/pokemon.json';
 
 import Select from "./Select";
 import APIService from "../../../services/API.service";
-import { convertNameRankingToOri } from "../../../util/Utils";
+import { convertNameRankingToOri, splitAndCapitalize } from "../../../util/Utils";
 import { findAssetForm } from "../../../util/Compute";
 import { calculateStatsBattle, calculateStatsByTag, getTypeEffective } from "../../../util/Calculate";
 import { SHADOW_ATK_BONUS, STAB_MULTIPLY } from "../../../util/Constants";
 import { Accordion, Form } from "react-bootstrap";
 import TypeBadge from "../../../components/Sprites/TypeBadge/TypeBadge";
+import { Badge } from "@mui/material";
 
 const Battle = () => {
 
@@ -37,12 +38,16 @@ const Battle = () => {
         block: 2
     })
 
-    const State = (timer, type, color, size) => {
+    const State = (timer, type, color, size, tap) => {
         return {
             timer: timer,
             type: type,
             color: color,
-            size: size
+            size: size,
+            tap: tap ?? false,
+            energy: 0,
+            hp: 0,
+            hpObj: 0
         }
     }
 
@@ -113,8 +118,8 @@ const Battle = () => {
                 if (chargedPri) {
                     if (isDelay || chargedPriCount % 2 === 0) timelinePri.push(State(timer, "N"));
                     else {
-                        if (chargeType === 1) timelinePri.push(State(timer, "P", player1.cmove.type.toLowerCase(), 2+Math.ceil(17-chargedPriCount/2)));
-                        if (chargeType === 2) timelinePri.push(State(timer, "P", player1.cmoveSec.type.toLowerCase(), 2+Math.ceil(17-chargedPriCount/2)));
+                        if (chargeType === 1) timelinePri.push(State(timer, chargedPriCount === -1 ? "C" : "S", player1.cmove.type.toLowerCase(), 2+Math.ceil(17-chargedPriCount/2)));
+                        if (chargeType === 2) timelinePri.push(State(timer, chargedPriCount === -1 ? "C" : "S", player1.cmoveSec.type.toLowerCase(), 2+Math.ceil(17-chargedPriCount/2)));
                     }
                 } else {
                     if (!isDelay && player1.block > 0 && chargedSecCount === -1) timelinePri.push(State(timer, "B"));
@@ -164,8 +169,8 @@ const Battle = () => {
                 if (chargedSec) {
                     if (isDelay || chargedSecCount % 2 === 0) timelineSec.push(State(timer, "N"));
                     else {
-                        if (chargeType === 1) timelineSec.push(State(timer, "P", player2.cmove.type.toLowerCase(), 2+Math.ceil(17-chargedSecCount/2)));
-                        if (chargeType === 2) timelineSec.push(State(timer, "P", player2.cmoveSec.type.toLowerCase(), 2+Math.ceil(17-chargedSecCount/2)));
+                        if (chargeType === 1) timelineSec.push(State(timer, chargedSecCount === -1 ? "C" : "S", player2.cmove.type.toLowerCase(), 2+Math.ceil(17-chargedSecCount/2)));
+                        if (chargeType === 2) timelineSec.push(State(timer, chargedSecCount === -1 ? "C" : "S", player2.cmoveSec.type.toLowerCase(), 2+Math.ceil(17-chargedSecCount/2)));
                     }
                 } else {
                     if (!isDelay && player2.block > 0 && chargedPriCount === -1) timelineSec.push(State(timer, "B"));
@@ -438,7 +443,8 @@ const Battle = () => {
                                 <Fragment key={index}>
                                     {value.type === "B" && <div className="text-success bg-success" style={{width: 12}}>0</div>}
                                     {value.type === "F" && <div className={`fast-attack ${value.color} ${value.color}-border`}></div>}
-                                    {(value.type === "C" || value.type === "P" ) && <div className={`charge-attack ${value.color}-border`}></div>}
+                                    {(value.type === "S" || value.type === "P") && <div className={`charge-attack ${value.color}-border`}></div>}
+                                    {value.type === "C" && <div className={`charge-attack ${value.color} ${value.color}-border`}></div>}
                                     {(value.type === "W" || value.type === "N" || !value.type) && <div className="wait-attack"></div>}
                                     {value.type === "X" && <div className="text-danger" style={{width: 12}}>X</div>}
                                 </Fragment>
@@ -457,13 +463,130 @@ const Battle = () => {
                                 <Fragment key={index}>
                                     {value.type === "B" && <div className="text-success bg-success" style={{width: 12}}>0</div>}
                                     {value.type === "F" && <div className={`fast-attack ${value.color} ${value.color}-border`}></div>}
-                                    {(value.type === "C" || value.type === "P" ) && <div className={`charge-attack ${value.color}-border`}></div>}
+                                    {(value.type === "S" || value.type === "P") && <div className={`charge-attack ${value.color}-border`}></div>}
+                                    {value.type === "C" && <div className={`charge-attack ${value.color} ${value.color}-border`}></div>}
                                     {(value.type === "W" || value.type === "N" || !value.type) && <div className="wait-attack"></div>}
                                     {value.type === "X" && <div className="text-danger">X</div>}
                                 </Fragment>
                             ))}
                         </div>
                     </div>
+                    <div className="d-flex timeline-vertical">
+                        {pokemonCurr.pokemonData &&
+                        <div className="w-50">
+                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start" style={{gap: 10}}>
+                                <div className="position-relative filter-shadow" style={{width: 35}}>
+                                    <img alt='img-league' className="sprite-type" src={pokemonCurr.pokemonData.form ?  APIService.getPokemonModel(pokemonCurr.pokemonData.form) : APIService.getPokeFullSprite(pokemonCurr.pokemonData.id)}/>
+                                </div>
+                                <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, "-", " ")}</b>
+                            </div>
+                        </div>
+                        }
+                        {pokemonObj.pokemonData &&
+                        <div className="w-50">
+                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end" style={{gap: 10}}>
+                                <div className="position-relative filter-shadow" style={{width: 35}}>
+                                    <img alt='img-league' className="sprite-type" src={pokemonObj.pokemonData.form ?  APIService.getPokemonModel(pokemonObj.pokemonData.form) : APIService.getPokeFullSprite(pokemonObj.pokemonData.id)}/>
+                                </div>
+                                <b>{splitAndCapitalize(pokemonObj.pokemonData.name, "-", " ")}</b>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    {pokemonCurr.pokemonData && pokemonObj.timeline &&
+                    <div className="d-flex timeline-vertical battle-container">
+                        {pokemonCurr.pokemonData &&
+                        <div className="w-50">
+                            <div className="d-flex flex-column" style={{gap: 10}}>
+                                <Fragment>
+                                {pokemonCurr.timeline.map((value, index) => (
+                                    <Fragment key={index}>
+                                        {(pokemonObj.timeline[index] && pokemonObj.timeline[index].type === "C") &&
+                                            <Fragment>
+                                                {value.type === "B" ?
+                                                    <div className="d-flex align-items-end">
+                                                        <div className="block-attack-container">
+                                                            <img className="block-spirit-timelime" alt="img-shield" src={APIService.getPokeOtherLeague("ShieldButton")}/>
+                                                        </div>
+                                                        <span className="text-success">x2</span>
+                                                    </div>
+                                                    :
+                                                    <div className="wait-attack-container"></div>
+                                                }
+                                            </Fragment>
+                                        }
+                                        {value.type === "F" &&
+                                            <Badge color="primary" overlap="circular" badgeContent={pokemonCurr.timelineTap[index] && pokemonCurr.timelineTap[index] === "T" ? "Tap": null} className={`fast-attack-container ${value.color} text-white text-shadow`}>Fast Attack!</Badge>
+                                        }
+                                        {value.type === "W" &&
+                                            <Badge color="primary" overlap="circular" badgeContent={pokemonCurr.timelineTap[index] && pokemonCurr.timelineTap[index] === "T" ? "Tap": null} className="wait-attack-container"></Badge>
+                                        }
+                                        {value.type === "P" &&
+                                            <div className={`swipe-attack-container ${value.color}-border`}>Swipe Charge</div>
+                                        }
+                                        {value.type === "C" &&
+                                            <div className={`charged-attack-container ${value.color} text-white text-shadow`}>Charged Attack!</div>
+                                        }
+                                        {value.type === "Q" &&
+                                            <div className={`winner-container bg-success text-white`}>WIN!</div>
+                                        }
+                                        {value.type === "X" &&
+                                            <div className={`loser-container bg-danger text-white`}>FENT!</div>
+                                        }
+                                    </Fragment>
+                                ))
+                                }
+                                </Fragment>
+                            </div>
+                        </div>
+                        }
+                        {pokemonObj.pokemonData && pokemonCurr.timeline &&
+                        <div className="w-50">
+                            <div className="d-flex flex-column align-items-end" style={{gap: 10}}>
+                                <Fragment>
+                                {pokemonObj.timeline.map((value, index) => (
+                                    <Fragment key={index}>
+                                        {(pokemonCurr.timeline[index] && pokemonCurr.timeline[index].type === "C") &&
+                                            <Fragment>
+                                                {value.type === "B" ?
+                                                    <div className="d-flex align-items-end">
+                                                        <div className="block-attack-container">
+                                                            <img className="block-spirit-timelime" alt="img-shield" src={APIService.getPokeOtherLeague("ShieldButton")}/>
+                                                        </div>
+                                                        <span className="text-success">x2</span>
+                                                    </div>
+                                                    :
+                                                    <div className="wait-attack-container"></div>
+                                                }
+                                            </Fragment>
+                                        }
+                                        {value.type === "F" &&
+                                            <div className={`fast-attack-container ${value.color} text-white text-shadow`}>Fast Attack!</div>
+                                        }
+                                        {value.type === "W" &&
+                                            <div className="wait-attack-container"></div>
+                                        }
+                                        {value.type === "P" &&
+                                            <div className={`swipe-attack-container ${value.color}-border`}>Swipe Charge</div>
+                                        }
+                                        {value.type === "C" &&
+                                            <div className={`charged-attack-container ${value.color} text-white text-shadow`}>Charged Attack!</div>
+                                        }
+                                        {value.type === "Q" &&
+                                            <div className={`winner-container bg-success text-white`}>WIN!</div>
+                                        }
+                                        {value.type === "X" &&
+                                            <div className={`loser-container bg-danger text-white`}>FENT!</div>
+                                        }
+                                    </Fragment>
+                                ))
+                                }
+                                </Fragment>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    }
                 </div>
                 <div className="col-xl-3">
                     <Select data={data} pokemonBattle={pokemonObj} setPokemonBattle={setPokemonObj} clearData={clearDataPokemonObj}/>

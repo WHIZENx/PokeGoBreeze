@@ -261,3 +261,58 @@
 .border-box-battle {
     border: 2px solid lightgray;
 }
+
+.pokemon-battle-header {
+    background-color: lightgray;
+    padding: 10px;
+    border-right: 1px solid gray;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+}
+
+.timeline-vertical .w-50:first-child .pokemon-battle-header {
+    border-left: 1px solid gray;
+}
+
+.battle-container {
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+.fast-attack-container {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: lighter;
+}
+
+.wait-attack-container {
+    height: 44px;
+}
+
+.block-attack-container {
+    width: 44px;
+}
+
+.swipe-attack-container {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: lighter;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.charged-attack-container {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: lighter;
+}
+
+.winner-container, .loser-container {
+    padding: 10px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+}

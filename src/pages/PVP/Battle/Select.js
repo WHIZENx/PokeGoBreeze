@@ -7,6 +7,7 @@ import { splitAndCapitalize } from "../../../util/Utils";
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from "../../../components/Card/CardMoveSmall";
 import { calculateStatsByTag, calStatsProd } from "../../../util/Calculate";
+import CardPokemon from "../../../components/Card/CardPokemon";
 
 const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
 
@@ -96,11 +97,8 @@ const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
             {data &&
             <div className="result-pokemon" style={{display: show ? "block" : "none"}}>
                 {data.filter(pokemon => splitAndCapitalize(pokemon.pokemon.name, "-", " ").toLowerCase().includes(search.toLowerCase())).map((value, index) => (
-                    <div className="d-flex align-items-center card-pokemon-select" onMouseDown={() => selectPokemon(value)} key={index}>
-                        <div style={{width: 64}}>
-                            <img alt="img-pokemon" className="pokemon-sprite-medium" src={APIService.getPokeIconSprite(value.pokemon.sprite, true)}/>
-                        </div>
-                        <span>{splitAndCapitalize(value.pokemon.name, "-", " ")}</span>
+                    <div className="card-pokemon-select" key={ index } onMouseDown={() => selectPokemon(value)}>
+                        <CardPokemon value={value.pokemon}/>
                     </div>
                 ))
                 }
