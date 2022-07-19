@@ -288,6 +288,7 @@
 
 .wait-attack-container {
     height: 44px;
+    width: 20px;
 }
 
 .block-attack-container {
@@ -296,7 +297,7 @@
 
 .swipe-attack-container {
     width: fit-content;
-    padding: 10px;
+    padding: 9px;
     border-radius: 5px;
     font-weight: lighter;
     border-width: 1px;
@@ -315,4 +316,20 @@
     font-weight: bold;
     width: 100%;
     text-align: center;
+}
+
+.dec-block {
+    font-size: 11px;
+    color: red;
+}
+
+.fit-timeline {
+    padding: 10px;
+}
+
+.fit-timeline .timeline-fit-container div {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }

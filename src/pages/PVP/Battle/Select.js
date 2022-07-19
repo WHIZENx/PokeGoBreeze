@@ -72,6 +72,7 @@ const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
     }
 
     const removePokemon = () => {
+        clearData();
         setPokemonIcon(null);
         setPokemon(null);
         setSearch('');

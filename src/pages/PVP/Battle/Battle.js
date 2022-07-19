@@ -10,11 +10,17 @@ import { calculateStatsBattle, calculateStatsByTag, getTypeEffective } from "../
 import { SHADOW_ATK_BONUS, STAB_MULTIPLY } from "../../../util/Constants";
 import { Accordion, Form } from "react-bootstrap";
 import TypeBadge from "../../../components/Sprites/TypeBadge/TypeBadge";
-import { Badge } from "@mui/material";
+import { TimeLine, TimeLineFit, TimeLineVertical } from "./Timeline";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 const Battle = () => {
 
     const [data, setData] = useState(null);
+    const [options, setOptions] = useState({
+        showTap: false,
+        timelineType: 0
+    });
+    const {showTap} = options;
 
     const [pokemonCurr, setPokemonCurr] = useState({
         pokemonData: null,
@@ -22,7 +28,6 @@ const Battle = () => {
         cMovePri: null,
         cMoveSec: null,
         timeline: [],
-        timelineTap: [],
         energy: 0,
         block: 2
     })
@@ -33,21 +38,21 @@ const Battle = () => {
         cMovePri: null,
         cMoveSec: null,
         timeline: [],
-        timelineTap: [],
         energy: 0,
         block: 2
     })
 
-    const State = (timer, type, color, size, tap) => {
+    const State = (timer, type, color, size, tap, block, energy, hp, dmg) => {
         return {
-            timer: timer,
+            timer: timer ?? 0,
             type: type,
             color: color,
-            size: size,
+            size: size ?? 12,
             tap: tap ?? false,
-            energy: 0,
-            hp: 0,
-            hpObj: 0
+            block: block ?? 0,
+            energy: energy ?? 0,
+            hp: hp ?? 0,
+            dmg: dmg ?? 0
         }
     }
 
@@ -58,7 +63,8 @@ const Battle = () => {
             cmove: {...cMove, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*cMove.pvp_power*(data.pokemon.types.includes(cMove.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(cMove.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
             cmoveSec: {...cMoveSec, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*cMoveSec.pvp_power*(data.pokemon.types.includes(cMoveSec.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(cMoveSec.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
             energy: energy ?? 0,
-            block: block ?? 2
+            block: block ?? 2,
+            turn: Math.ceil(fMove.durationMs/500)
         }
     }
 
@@ -68,9 +74,6 @@ const Battle = () => {
 
         // console.log(player1, player2)
 
-        let timelineTapPri = [];
-        let timelineTapSec = [];
-
         let timelinePri = [];
         let timelineSec = [];
 
@@ -79,104 +82,105 @@ const Battle = () => {
         let tapSec, fastSecDelay = 0, preChargeSec, immuneSec, chargedSec, chargedSecCount = 0;
         let chargeType;
         let timelineInterval1 = setInterval(() => {
+            timelinePri.push(State(timer, null, null, null, null, player1.block, player1.energy, player1.hp));
             if (!chargedPri && !chargedSec) {
                 if (!preChargePri && !tapPri) {
                     tapPri = true;
-                    if (!preChargeSec) timelineTapPri.push("T");
-                    else timelineTapPri.push("W");
-                    fastPriDelay = Math.ceil(player1.fmove.durationMs/500)-1;
+                    if (!preChargeSec) timelinePri[timer].tap = true;
+                    else timelinePri[timer].tap = false;
+                    fastPriDelay = player1.turn-1;
                 } else {
-                    timelineTapPri.push("W");
+                    timelinePri[timer].tap = false;
                 }
                 if (!preChargePri && fastPriDelay === 0) {
                     tapPri = false;
                     if (!preChargeSec) player2.hp -= player1.fmove.pvp_power_actual;
                     else immunePri = true;
                     player1.energy += player1.fmove.pvp_energy;
-                    timelinePri.push(State(timer, "F", player1.fmove.type.toLowerCase()));
-                    if (preChargeSec && Math.ceil(player1.fmove.durationMs/500) === 1) timelineTapPri[timelineTapPri.length-1] = "T";
+                    timelinePri[timer] = {...timelinePri[timer], type: "F", color: player1.fmove.type.toLowerCase()};
+                    if (preChargeSec && player1.turn === 1) timelinePri[timer].tap = true;
                 } else {
                     fastPriDelay -= 1;
-                    if (!preChargePri) timelinePri.push(State(timer, "W"));
+                    if (!preChargePri) timelinePri[timer].type = "W";
                 }
 
                 if (!preChargeSec && (player1.energy >= Math.abs(player1.cmove.pvp_energy) || player1.energy >= Math.abs(player1.cmoveSec.pvp_energy))) {
                     if (player1.energy >= Math.abs(player1.cmove.pvp_energy)) {
                         chargeType = 1;
                         player1.energy += player1.cmove.pvp_energy;
-                        timelinePri.push(State(timer, "P", player1.cmove.type.toLowerCase(), 2));
+                        timelinePri[timer] = {...timelinePri[timer], type: "P", color: player1.cmove.type.toLowerCase(), size: 12};
                     }
                     if (player1.energy >= Math.abs(player1.cmoveSec.pvp_energy)) {
                         chargeType = 2;
-                        player1.energy += player1.cmove.pvp_energy;
-                        timelinePri.push(State(timer, "P", player1.cmoveSec.type.toLowerCase(), 2));
+                        player1.energy += player1.cmoveSec.pvp_energy;
+                        timelinePri[timer] = {...timelinePri[timer], type: "P", color: player1.cmoveSec.type.toLowerCase(), size: 12};
                     }
                     preChargePri = true;
-                    chargedPriCount = 17;
+                    chargedPriCount = 16;
                 }
             } else {
                 if (chargedPri) {
-                    if (isDelay || chargedPriCount % 2 === 0) timelinePri.push(State(timer, "N"));
+                    if (isDelay || chargedPriCount % 2 === 0) timelinePri[timer].type = "N";
                     else {
-                        if (chargeType === 1) timelinePri.push(State(timer, chargedPriCount === -1 ? "C" : "S", player1.cmove.type.toLowerCase(), 2+Math.ceil(17-chargedPriCount/2)));
-                        if (chargeType === 2) timelinePri.push(State(timer, chargedPriCount === -1 ? "C" : "S", player1.cmoveSec.type.toLowerCase(), 2+Math.ceil(17-chargedPriCount/2)));
+                        if (chargeType === 1) timelinePri[timer] = {...timelinePri[timer], type: chargedPriCount === -1 ? "C" : "S", color: player1.cmove.type.toLowerCase(), size: timelinePri[timer-2].size+2};
+                        if (chargeType === 2) timelinePri[timer] = {...timelinePri[timer], type: chargedPriCount === -1 ? "C" : "S", color: player1.cmoveSec.type.toLowerCase(), size: timelinePri[timer-2].size+2};
                     }
+                    timelineSec[timer-2].size = timelinePri[timer-2].size;
                 } else {
-                    if (!isDelay && player1.block > 0 && chargedSecCount === -1) timelinePri.push(State(timer, "B"));
-                    else timelinePri.push(State(timer));
+                    if (!isDelay && player1.block > 0 && chargedSecCount === -1) timelinePri[timer].type = "B";
                 }
-                timelineTapPri.push("W");
+                timelinePri[timer].tap = false;
             }
-
         }, 0);
         let timelineInterval2 = setInterval(() => {
+            timelineSec.push(State(timer, null, null, null, null, player2.block, player2.energy, player2.hp));
             if (!chargedPri && !chargedSec) {
                 if (!preChargeSec && !tapSec) {
                     tapSec = true;
-                    if (!preChargePri) timelineTapSec.push("T");
-                    else timelineTapSec.push("W");
-                    fastSecDelay = Math.ceil(player2.fmove.durationMs/500)-1;
+                    if (!preChargePri) timelineSec[timer].tap = true;
+                    else timelineSec[timer].tap = false;
+                    fastSecDelay = player2.turn-1;
                 } else {
-                    timelineTapSec.push("W");
+                    timelineSec[timer].tap = false;
                 }
                 if (!preChargeSec && fastSecDelay === 0) {
                     tapSec = false;
                     if (!preChargePri) player1.hp -= player2.fmove.pvp_power_actual;
                     else immuneSec = true;
                     player2.energy += player2.fmove.pvp_energy;
-                    timelineSec.push(State(timer, "F", player2.fmove.type.toLowerCase()));
-                    if (preChargePri && Math.ceil(player2.fmove.durationMs/500) === 1) timelineTapSec[timelineTapSec.length-1] = "T";
+                    timelineSec[timer] = {...timelineSec[timer], type: "F", color: player2.fmove.type.toLowerCase()};
+                    if (preChargePri && player2.turn === 1) timelineSec[timer].tap = true;
                 } else {
                     fastSecDelay -= 1;
-                    if (!preChargeSec) timelineSec.push(State(timer, "W"));
+                    if (!preChargeSec) timelineSec[timer].type = "W";
                 }
 
                 if (!preChargePri && (player2.energy >= Math.abs(player2.cmove.pvp_energy) || player2.energy >= Math.abs(player2.cmoveSec.pvp_energy))) {
                     if (player2.energy >= Math.abs(player2.cmove.pvp_energy)) {
                         chargeType = 1;
                         player2.energy += player2.cmove.pvp_energy;
-                        timelineSec.push(State(timer, "P", player2.cmove.type.toLowerCase(), 2))
+                        timelineSec[timer] = {...timelineSec[timer], type: "P", color: player2.cmove.type.toLowerCase(), size: 12};
                     }
                     if (player2.energy >= Math.abs(player2.cmoveSec.pvp_energy)) {
                         chargeType = 2;
-                        player2.energy += player2.cmove.pvp_energy;
-                        timelineSec.push(State(timer, "P", player2.cmoveSec.type.toLowerCase(), 2))
+                        player2.energy += player2.cmoveSec.pvp_energy;
+                        timelineSec[timer] = {...timelineSec[timer], type: "P", color: player2.cmoveSec.type.toLowerCase(), size: 12};
                     }
                     preChargeSec = true;
-                    chargedSecCount = 17;
+                    chargedSecCount = 16;
                 }
             } else {
                 if (chargedSec) {
-                    if (isDelay || chargedSecCount % 2 === 0) timelineSec.push(State(timer, "N"));
+                    if (isDelay || chargedSecCount % 2 === 0) timelineSec[timer].type = "N";
                     else {
-                        if (chargeType === 1) timelineSec.push(State(timer, chargedSecCount === -1 ? "C" : "S", player2.cmove.type.toLowerCase(), 2+Math.ceil(17-chargedSecCount/2)));
-                        if (chargeType === 2) timelineSec.push(State(timer, chargedSecCount === -1 ? "C" : "S", player2.cmoveSec.type.toLowerCase(), 2+Math.ceil(17-chargedSecCount/2)));
+                        if (chargeType === 1) timelineSec[timer] = {...timelineSec[timer], type: chargedSecCount === -1 ? "C" : "S", color: player2.cmove.type.toLowerCase(), size: timelineSec[timer-2].size+2};
+                        if (chargeType === 2) timelineSec[timer] = {...timelineSec[timer], type: chargedSecCount === -1 ? "C" : "S", color: player2.cmoveSec.type.toLowerCase(), size: timelineSec[timer-2].size+2};
                     }
+                    timelinePri[timer-2].size = timelineSec[timer-2].size;
                 } else {
-                    if (!isDelay && player2.block > 0 && chargedPriCount === -1) timelineSec.push(State(timer, "B"));
-                    else timelineSec.push(State(timer));
+                    if (!isDelay && player2.block > 0 && chargedPriCount === -1) timelineSec[timer].type = "B";
                 }
-                timelineTapSec.push("W");
+                timelineSec[timer].tap = false;
             }
         }, 0);
         let isDelay = false, delay = 1;
@@ -228,8 +232,6 @@ const Battle = () => {
                     }
                     tapPri = false;
                     tapSec = false;
-                    timelineTapPri.push(null);
-                    timelineTapSec.push(null);
                     if (immunePri) player2.hp -= player1.fmove.pvp_power_actual;
                     else if (immuneSec) player1.hp -= player2.fmove.pvp_power_actual;
                     immunePri = false;
@@ -254,15 +256,13 @@ const Battle = () => {
                     if (timelinePri.length === timelineSec.length) timelinePri[timelinePri.length-1] = State(timer, "Q");
                     else timelinePri.push(State(timer, "Q"))
                 }
-                setPokemonCurr({...pokemonCurr, timeline: timelinePri, timelineTap: timelineTapPri});
-                setPokemonObj({...pokemonObj, timeline: timelineSec, timelineTap: timelineTapSec})
+                setPokemonCurr({...pokemonCurr, timeline: timelinePri});
+                setPokemonObj({...pokemonObj, timeline: timelineSec})
 
                 // console.log(timelinePri, timelineSec)
             }
         }, 0);
     }
-
-    // console.log(pokemonCurr, pokemonObj);
 
     useEffect(() => {
         const fetchPokemon = async () => {
@@ -293,7 +293,6 @@ const Battle = () => {
     const clearDataPokemonCurr = () => {
         setPokemonObj({...pokemonObj,
             timeline: [],
-            timelineTap: [],
         })
         setPokemonCurr({...pokemonCurr,
             pokemonData: null,
@@ -301,7 +300,6 @@ const Battle = () => {
             cMovePri: null,
             cMoveSec: null,
             timeline: [],
-            timelineTap: [],
             energy: 0,
             block: 2
         });
@@ -310,7 +308,6 @@ const Battle = () => {
     const clearDataPokemonObj = () => {
         setPokemonCurr({...pokemonCurr,
             timeline: [],
-            timelineTap: [],
         })
         setPokemonObj({...pokemonObj,
             pokemonData: null,
@@ -318,7 +315,6 @@ const Battle = () => {
             cMovePri: null,
             cMoveSec: null,
             timeline: [],
-            timelineTap: [],
             energy: 0,
             block: 2
         });
@@ -327,8 +323,6 @@ const Battle = () => {
     // const calculateState = () => {
 
     // }
-
-    // console.log(pokemonCurr)
 
     const renderInfoPokemon = (pokemon, setPokemon) => {
         return (
@@ -429,163 +423,40 @@ const Battle = () => {
                     }
                 </div>
                 <div className="col-xl-6">
-                    <div className="w-100 battle-bar">
-                        <div className="d-flex element-top" style={{columnGap: 10, opacity: 0.5, width: 'max-content'}}>
-                            {pokemonCurr.timelineTap.map((value, index) => (
-                                <Fragment key={index}>
-                                    {value === "T" && <div className="charge-attack"></div>}
-                                    {value === "W" && <div className="wait-attack"></div>}
-                                </Fragment>
-                            ))}
+                    {pokemonCurr.pokemonData && pokemonObj.pokemonData && pokemonCurr.timeline.length > 0 && pokemonObj.timeline.length > 0 &&
+                    <Fragment>
+                        <div>
+                            <div className="d-flex justify-content-end">
+                                <FormControlLabel control={<Checkbox checked={showTap} onChange={(event, check) => setOptions({...options, showTap: check})}/>} label="Show Tap Move" />
+                                {/* <FormControlLabel control={<Switch checked={timelineType} onChange={(event, check) => setOptions({...options, timelineType: check})}/>} label="Best moveset of"/> */}
+                            </div>
+                            {TimeLineFit(pokemonCurr, pokemonObj, showTap)}
+                            {options.type ?
+                                <Fragment>{TimeLineFit(pokemonCurr, pokemonObj, showTap)}</Fragment>
+                                :
+                                <Fragment>{TimeLine(pokemonCurr, pokemonObj, showTap)}</Fragment>
+                            }
                         </div>
-                        <div className="d-flex align-items-center" style={{columnGap: 10, width: 'max-content'}}>
-                            {pokemonCurr.timeline.map((value, index) => (
-                                <Fragment key={index}>
-                                    {value.type === "B" && <div className="text-success bg-success" style={{width: 12}}>0</div>}
-                                    {value.type === "F" && <div className={`fast-attack ${value.color} ${value.color}-border`}></div>}
-                                    {(value.type === "S" || value.type === "P") && <div className={`charge-attack ${value.color}-border`}></div>}
-                                    {value.type === "C" && <div className={`charge-attack ${value.color} ${value.color}-border`}></div>}
-                                    {(value.type === "W" || value.type === "N" || !value.type) && <div className="wait-attack"></div>}
-                                    {value.type === "X" && <div className="text-danger" style={{width: 12}}>X</div>}
-                                </Fragment>
-                            ))}
-                        </div>
-                        <div className="d-flex element-top" style={{columnGap: 10, opacity: 0.5, width: 'max-content'}}>
-                            {pokemonObj.timelineTap.map((value, index) => (
-                                <Fragment key={index}>
-                                    {value === "T" && <div className="charge-attack"></div>}
-                                    {value === "W" && <div className="wait-attack"></div>}
-                                </Fragment>
-                            ))}
-                        </div>
-                        <div className="d-flex align-items-center" style={{columnGap: 10, width: 'max-content'}}>
-                            {pokemonObj.timeline.map((value, index) => (
-                                <Fragment key={index}>
-                                    {value.type === "B" && <div className="text-success bg-success" style={{width: 12}}>0</div>}
-                                    {value.type === "F" && <div className={`fast-attack ${value.color} ${value.color}-border`}></div>}
-                                    {(value.type === "S" || value.type === "P") && <div className={`charge-attack ${value.color}-border`}></div>}
-                                    {value.type === "C" && <div className={`charge-attack ${value.color} ${value.color}-border`}></div>}
-                                    {(value.type === "W" || value.type === "N" || !value.type) && <div className="wait-attack"></div>}
-                                    {value.type === "X" && <div className="text-danger">X</div>}
-                                </Fragment>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="d-flex timeline-vertical">
-                        {pokemonCurr.pokemonData &&
-                        <div className="w-50">
-                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start" style={{gap: 10}}>
-                                <div className="position-relative filter-shadow" style={{width: 35}}>
-                                    <img alt='img-league' className="sprite-type" src={pokemonCurr.pokemonData.form ?  APIService.getPokemonModel(pokemonCurr.pokemonData.form) : APIService.getPokeFullSprite(pokemonCurr.pokemonData.id)}/>
+                        <div className="d-flex timeline-vertical">
+                            <div className="w-50">
+                                <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start" style={{gap: 10}}>
+                                    <div className="position-relative filter-shadow" style={{width: 35}}>
+                                        <img alt='img-league' className="sprite-type" src={pokemonCurr.pokemonData.form ?  APIService.getPokemonModel(pokemonCurr.pokemonData.form) : APIService.getPokeFullSprite(pokemonCurr.pokemonData.id)}/>
+                                    </div>
+                                    <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, "-", " ")}</b>
                                 </div>
-                                <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, "-", " ")}</b>
                             </div>
-                        </div>
-                        }
-                        {pokemonObj.pokemonData &&
-                        <div className="w-50">
-                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end" style={{gap: 10}}>
-                                <div className="position-relative filter-shadow" style={{width: 35}}>
-                                    <img alt='img-league' className="sprite-type" src={pokemonObj.pokemonData.form ?  APIService.getPokemonModel(pokemonObj.pokemonData.form) : APIService.getPokeFullSprite(pokemonObj.pokemonData.id)}/>
+                            <div className="w-50">
+                                <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end" style={{gap: 10}}>
+                                    <div className="position-relative filter-shadow" style={{width: 35}}>
+                                        <img alt='img-league' className="sprite-type" src={pokemonObj.pokemonData.form ?  APIService.getPokemonModel(pokemonObj.pokemonData.form) : APIService.getPokeFullSprite(pokemonObj.pokemonData.id)}/>
+                                    </div>
+                                    <b>{splitAndCapitalize(pokemonObj.pokemonData.name, "-", " ")}</b>
                                 </div>
-                                <b>{splitAndCapitalize(pokemonObj.pokemonData.name, "-", " ")}</b>
                             </div>
                         </div>
-                        }
-                    </div>
-                    {pokemonCurr.pokemonData && pokemonObj.timeline &&
-                    <div className="d-flex timeline-vertical battle-container">
-                        {pokemonCurr.pokemonData &&
-                        <div className="w-50">
-                            <div className="d-flex flex-column" style={{gap: 10}}>
-                                <Fragment>
-                                {pokemonCurr.timeline.map((value, index) => (
-                                    <Fragment key={index}>
-                                        {(pokemonObj.timeline[index] && pokemonObj.timeline[index].type === "C") &&
-                                            <Fragment>
-                                                {value.type === "B" ?
-                                                    <div className="d-flex align-items-end">
-                                                        <div className="block-attack-container">
-                                                            <img className="block-spirit-timelime" alt="img-shield" src={APIService.getPokeOtherLeague("ShieldButton")}/>
-                                                        </div>
-                                                        <span className="text-success">x2</span>
-                                                    </div>
-                                                    :
-                                                    <div className="wait-attack-container"></div>
-                                                }
-                                            </Fragment>
-                                        }
-                                        {value.type === "F" &&
-                                            <Badge color="primary" overlap="circular" badgeContent={pokemonCurr.timelineTap[index] && pokemonCurr.timelineTap[index] === "T" ? "Tap": null} className={`fast-attack-container ${value.color} text-white text-shadow`}>Fast Attack!</Badge>
-                                        }
-                                        {value.type === "W" &&
-                                            <Badge color="primary" overlap="circular" badgeContent={pokemonCurr.timelineTap[index] && pokemonCurr.timelineTap[index] === "T" ? "Tap": null} className="wait-attack-container"></Badge>
-                                        }
-                                        {value.type === "P" &&
-                                            <div className={`swipe-attack-container ${value.color}-border`}>Swipe Charge</div>
-                                        }
-                                        {value.type === "C" &&
-                                            <div className={`charged-attack-container ${value.color} text-white text-shadow`}>Charged Attack!</div>
-                                        }
-                                        {value.type === "Q" &&
-                                            <div className={`winner-container bg-success text-white`}>WIN!</div>
-                                        }
-                                        {value.type === "X" &&
-                                            <div className={`loser-container bg-danger text-white`}>FENT!</div>
-                                        }
-                                    </Fragment>
-                                ))
-                                }
-                                </Fragment>
-                            </div>
-                        </div>
-                        }
-                        {pokemonObj.pokemonData && pokemonCurr.timeline &&
-                        <div className="w-50">
-                            <div className="d-flex flex-column align-items-end" style={{gap: 10}}>
-                                <Fragment>
-                                {pokemonObj.timeline.map((value, index) => (
-                                    <Fragment key={index}>
-                                        {(pokemonCurr.timeline[index] && pokemonCurr.timeline[index].type === "C") &&
-                                            <Fragment>
-                                                {value.type === "B" ?
-                                                    <div className="d-flex align-items-end">
-                                                        <div className="block-attack-container">
-                                                            <img className="block-spirit-timelime" alt="img-shield" src={APIService.getPokeOtherLeague("ShieldButton")}/>
-                                                        </div>
-                                                        <span className="text-success">x2</span>
-                                                    </div>
-                                                    :
-                                                    <div className="wait-attack-container"></div>
-                                                }
-                                            </Fragment>
-                                        }
-                                        {value.type === "F" &&
-                                            <div className={`fast-attack-container ${value.color} text-white text-shadow`}>Fast Attack!</div>
-                                        }
-                                        {value.type === "W" &&
-                                            <div className="wait-attack-container"></div>
-                                        }
-                                        {value.type === "P" &&
-                                            <div className={`swipe-attack-container ${value.color}-border`}>Swipe Charge</div>
-                                        }
-                                        {value.type === "C" &&
-                                            <div className={`charged-attack-container ${value.color} text-white text-shadow`}>Charged Attack!</div>
-                                        }
-                                        {value.type === "Q" &&
-                                            <div className={`winner-container bg-success text-white`}>WIN!</div>
-                                        }
-                                        {value.type === "X" &&
-                                            <div className={`loser-container bg-danger text-white`}>FENT!</div>
-                                        }
-                                    </Fragment>
-                                ))
-                                }
-                                </Fragment>
-                            </div>
-                        </div>
-                        }
-                    </div>
+                        {TimeLineVertical(pokemonCurr, pokemonObj)}
+                    </Fragment>
                     }
                 </div>
                 <div className="col-xl-3">
