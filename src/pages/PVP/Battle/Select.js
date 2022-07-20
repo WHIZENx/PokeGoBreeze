@@ -81,6 +81,12 @@ const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
         setCMoveSec(null);
     }
 
+    const removeChargeMoveSec = () => {
+        clearData(true);
+        setCMoveSec("");
+        setTimeout(() => {setShowCMoveSec(false)}, 0);
+    }
+
     return (
         <Fragment>
             <h5>Pokemon</h5>
@@ -161,7 +167,7 @@ const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
             <h5>Charged Moves Secondary</h5>
             <div className={'position-relative d-flex align-items-center form-control '+(pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0, borderRadius: 0}}>
                 <div className='card-move-input' tabIndex={ 0 } onClick={() => setShowCMoveSec(true)} onBlur={() => setShowCMoveSec(false)}>
-                    <CardMoveSmall value={cMoveSec} show={pokemon ? true : false}/>
+                    <CardMoveSmall value={cMoveSec} empty={cMoveSec === ""} show={pokemon ? true : false} clearData={removeChargeMoveSec}/>
                     {showCMoveSec && data && pokemon &&
                         <div className="result-move-select">
                             <div>
@@ -173,7 +179,7 @@ const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
                                 if (move === "TECHNO_BLAST_DOUSE") move = "TECHNO_BLAST_WATER";
                                 return combatData.find(item => item.name === move);
                             })
-                            .filter(value => value.name !== cMoveSec.name && value.name !== cMovePri.name)
+                            .filter(value => (cMoveSec === "" || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
                             .map((value, index) => (
                                     <div className="card-move" key={ index } onMouseDown={() => selectCMoveSec(value)}>
                                         <CardMoveSmall value={value}/>

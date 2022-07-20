@@ -11,7 +11,7 @@ import { SHADOW_ATK_BONUS, STAB_MULTIPLY } from "../../../util/Constants";
 import { Accordion, Form } from "react-bootstrap";
 import TypeBadge from "../../../components/Sprites/TypeBadge/TypeBadge";
 import { TimeLine, TimeLineFit, TimeLineVertical } from "./Timeline";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const Battle = () => {
 
@@ -61,7 +61,7 @@ const Battle = () => {
             hp: calculateStatsBattle(data.stats.sta, data.bestStats.IV.sta, data.bestStats.level, true),
             fmove: {...fMove, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*fMove.pvp_power*(data.pokemon.types.includes(fMove.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(fMove.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
             cmove: {...cMove, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*cMove.pvp_power*(data.pokemon.types.includes(cMove.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(cMove.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
-            cmoveSec: {...cMoveSec, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*cMoveSec.pvp_power*(data.pokemon.types.includes(cMoveSec.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(cMoveSec.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
+            cmoveSec: cMoveSec === "" ? null : {...cMoveSec, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*cMoveSec.pvp_power*(data.pokemon.types.includes(cMoveSec.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(cMoveSec.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
             energy: energy ?? 0,
             block: block ?? 2,
             turn: Math.ceil(fMove.durationMs/500)
@@ -84,6 +84,21 @@ const Battle = () => {
         let timelineInterval1 = setInterval(() => {
             timelinePri.push(State(timer, null, null, null, null, player1.block, player1.energy, player1.hp));
             if (!chargedPri && !chargedSec) {
+                if (!preChargeSec && (player1.energy >= Math.abs(player1.cmove.pvp_energy) || (player1.cmoveSec && player1.energy >= Math.abs(player1.cmoveSec.pvp_energy)))) {
+                    if (player1.energy >= Math.abs(player1.cmove.pvp_energy)) {
+                        chargeType = 1;
+                        player1.energy += player1.cmove.pvp_energy;
+                        timelinePri[timer] = {...timelinePri[timer], type: "P", color: player1.cmove.type.toLowerCase(), size: 12};
+                    }
+                    if (player1.cmoveSec && player1.energy >= Math.abs(player1.cmoveSec.pvp_energy)) {
+                        chargeType = 2;
+                        player1.energy += player1.cmoveSec.pvp_energy;
+                        timelinePri[timer] = {...timelinePri[timer], type: "P", color: player1.cmoveSec.type.toLowerCase(), size: 12};
+                    }
+                    preChargePri = true;
+                    chargedPriCount = 16;
+                }
+
                 if (!preChargePri && !tapPri) {
                     tapPri = true;
                     if (!preChargeSec) timelinePri[timer].tap = true;
@@ -92,6 +107,7 @@ const Battle = () => {
                 } else {
                     timelinePri[timer].tap = false;
                 }
+
                 if (!preChargePri && fastPriDelay === 0) {
                     tapPri = false;
                     if (!preChargeSec) player2.hp -= player1.fmove.pvp_power_actual;
@@ -103,21 +119,6 @@ const Battle = () => {
                     fastPriDelay -= 1;
                     if (!preChargePri) timelinePri[timer].type = "W";
                 }
-
-                if (!preChargeSec && (player1.energy >= Math.abs(player1.cmove.pvp_energy) || player1.energy >= Math.abs(player1.cmoveSec.pvp_energy))) {
-                    if (player1.energy >= Math.abs(player1.cmove.pvp_energy)) {
-                        chargeType = 1;
-                        player1.energy += player1.cmove.pvp_energy;
-                        timelinePri[timer] = {...timelinePri[timer], type: "P", color: player1.cmove.type.toLowerCase(), size: 12};
-                    }
-                    if (player1.energy >= Math.abs(player1.cmoveSec.pvp_energy)) {
-                        chargeType = 2;
-                        player1.energy += player1.cmoveSec.pvp_energy;
-                        timelinePri[timer] = {...timelinePri[timer], type: "P", color: player1.cmoveSec.type.toLowerCase(), size: 12};
-                    }
-                    preChargePri = true;
-                    chargedPriCount = 16;
-                }
             } else {
                 if (chargedPri) {
                     if (isDelay || chargedPriCount % 2 === 0) timelinePri[timer].type = "N";
@@ -125,7 +126,7 @@ const Battle = () => {
                         if (chargeType === 1) timelinePri[timer] = {...timelinePri[timer], type: chargedPriCount === -1 ? "C" : "S", color: player1.cmove.type.toLowerCase(), size: timelinePri[timer-2].size+2};
                         if (chargeType === 2) timelinePri[timer] = {...timelinePri[timer], type: chargedPriCount === -1 ? "C" : "S", color: player1.cmoveSec.type.toLowerCase(), size: timelinePri[timer-2].size+2};
                     }
-                    timelineSec[timer-2].size = timelinePri[timer-2].size;
+                    if (timelinePri[timer-2]) timelineSec[timer-2].size = timelinePri[timer-2].size;
                 } else {
                     if (!isDelay && player1.block > 0 && chargedSecCount === -1) timelinePri[timer].type = "B";
                 }
@@ -135,6 +136,21 @@ const Battle = () => {
         let timelineInterval2 = setInterval(() => {
             timelineSec.push(State(timer, null, null, null, null, player2.block, player2.energy, player2.hp));
             if (!chargedPri && !chargedSec) {
+                if (!preChargePri && (player2.energy >= Math.abs(player2.cmove.pvp_energy) || (player2.cmoveSec && player2.energy >= Math.abs(player2.cmoveSec.pvp_energy)))) {
+                    if (player2.energy >= Math.abs(player2.cmove.pvp_energy)) {
+                        chargeType = 1;
+                        player2.energy += player2.cmove.pvp_energy;
+                        timelineSec[timer] = {...timelineSec[timer], type: "P", color: player2.cmove.type.toLowerCase(), size: 12};
+                    }
+                    if (player2.cmoveSec && player2.energy >= Math.abs(player2.cmoveSec.pvp_energy)) {
+                        chargeType = 2;
+                        player2.energy += player2.cmoveSec.pvp_energy;
+                        timelineSec[timer] = {...timelineSec[timer], type: "P", color: player2.cmoveSec.type.toLowerCase(), size: 12};
+                    }
+                    preChargeSec = true;
+                    chargedSecCount = 16;
+                }
+
                 if (!preChargeSec && !tapSec) {
                     tapSec = true;
                     if (!preChargePri) timelineSec[timer].tap = true;
@@ -143,6 +159,7 @@ const Battle = () => {
                 } else {
                     timelineSec[timer].tap = false;
                 }
+
                 if (!preChargeSec && fastSecDelay === 0) {
                     tapSec = false;
                     if (!preChargePri) player1.hp -= player2.fmove.pvp_power_actual;
@@ -154,21 +171,6 @@ const Battle = () => {
                     fastSecDelay -= 1;
                     if (!preChargeSec) timelineSec[timer].type = "W";
                 }
-
-                if (!preChargePri && (player2.energy >= Math.abs(player2.cmove.pvp_energy) || player2.energy >= Math.abs(player2.cmoveSec.pvp_energy))) {
-                    if (player2.energy >= Math.abs(player2.cmove.pvp_energy)) {
-                        chargeType = 1;
-                        player2.energy += player2.cmove.pvp_energy;
-                        timelineSec[timer] = {...timelineSec[timer], type: "P", color: player2.cmove.type.toLowerCase(), size: 12};
-                    }
-                    if (player2.energy >= Math.abs(player2.cmoveSec.pvp_energy)) {
-                        chargeType = 2;
-                        player2.energy += player2.cmoveSec.pvp_energy;
-                        timelineSec[timer] = {...timelineSec[timer], type: "P", color: player2.cmoveSec.type.toLowerCase(), size: 12};
-                    }
-                    preChargeSec = true;
-                    chargedSecCount = 16;
-                }
             } else {
                 if (chargedSec) {
                     if (isDelay || chargedSecCount % 2 === 0) timelineSec[timer].type = "N";
@@ -176,7 +178,7 @@ const Battle = () => {
                         if (chargeType === 1) timelineSec[timer] = {...timelineSec[timer], type: chargedSecCount === -1 ? "C" : "S", color: player2.cmove.type.toLowerCase(), size: timelineSec[timer-2].size+2};
                         if (chargeType === 2) timelineSec[timer] = {...timelineSec[timer], type: chargedSecCount === -1 ? "C" : "S", color: player2.cmoveSec.type.toLowerCase(), size: timelineSec[timer-2].size+2};
                     }
-                    timelinePri[timer-2].size = timelineSec[timer-2].size;
+                    if (timelineSec[timer-2]) timelinePri[timer-2].size = timelineSec[timer-2].size;
                 } else {
                     if (!isDelay && player2.block > 0 && chargedPriCount === -1) timelineSec[timer].type = "B";
                 }
@@ -290,34 +292,42 @@ const Battle = () => {
         fetchPokemon();
     }, [])
 
-    const clearDataPokemonCurr = () => {
-        setPokemonObj({...pokemonObj,
-            timeline: [],
-        })
-        setPokemonCurr({...pokemonCurr,
-            pokemonData: null,
-            fMove: null,
-            cMovePri: null,
-            cMoveSec: null,
-            timeline: [],
-            energy: 0,
-            block: 2
-        });
+    const clearDataPokemonCurr = (removeCMoveSec) => {
+        if (removeCMoveSec) {
+            setPokemonCurr({...pokemonCurr, cMoveSec: ""});
+        } else {
+            setPokemonObj({...pokemonObj,
+                timeline: [],
+            })
+            setPokemonCurr({...pokemonCurr,
+                pokemonData: null,
+                fMove: null,
+                cMovePri: null,
+                cMoveSec: null,
+                timeline: [],
+                energy: 0,
+                block: 2
+            });
+        }
     }
 
-    const clearDataPokemonObj = () => {
-        setPokemonCurr({...pokemonCurr,
-            timeline: [],
-        })
-        setPokemonObj({...pokemonObj,
-            pokemonData: null,
-            fMove: null,
-            cMovePri: null,
-            cMoveSec: null,
-            timeline: [],
-            energy: 0,
-            block: 2
-        });
+    const clearDataPokemonObj = (removeCMoveSec) => {
+        if (removeCMoveSec) {
+            setPokemonObj({...pokemonObj, cMoveSec: ""});
+        } else {
+            setPokemonCurr({...pokemonCurr,
+                timeline: [],
+            })
+            setPokemonObj({...pokemonObj,
+                pokemonData: null,
+                fMove: null,
+                cMovePri: null,
+                cMoveSec: null,
+                timeline: [],
+                energy: 0,
+                block: 2
+            });
+        }
     }
 
     // const calculateState = () => {
@@ -386,7 +396,7 @@ const Battle = () => {
                         <hr/>
                         <TypeBadge find={true} title="Fast Move" move={pokemon.fMove}/>
                         <TypeBadge find={true} title="Primary Charged Move" move={pokemon.cMovePri}/>
-                        <TypeBadge find={true} title="Secondary Charged Move" move={pokemon.cMoveSec}/>
+                        {pokemon.cMoveSec && pokemon.cMoveSec !== "" && <TypeBadge find={true} title="Secondary Charged Move" move={pokemon.cMoveSec}/>}
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
@@ -425,18 +435,6 @@ const Battle = () => {
                 <div className="col-xl-6">
                     {pokemonCurr.pokemonData && pokemonObj.pokemonData && pokemonCurr.timeline.length > 0 && pokemonObj.timeline.length > 0 &&
                     <Fragment>
-                        <div>
-                            <div className="d-flex justify-content-end">
-                                <FormControlLabel control={<Checkbox checked={showTap} onChange={(event, check) => setOptions({...options, showTap: check})}/>} label="Show Tap Move" />
-                                {/* <FormControlLabel control={<Switch checked={timelineType} onChange={(event, check) => setOptions({...options, timelineType: check})}/>} label="Best moveset of"/> */}
-                            </div>
-                            {TimeLineFit(pokemonCurr, pokemonObj, showTap)}
-                            {options.type ?
-                                <Fragment>{TimeLineFit(pokemonCurr, pokemonObj, showTap)}</Fragment>
-                                :
-                                <Fragment>{TimeLine(pokemonCurr, pokemonObj, showTap)}</Fragment>
-                            }
-                        </div>
                         <div className="d-flex timeline-vertical">
                             <div className="w-50">
                                 <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start" style={{gap: 10}}>
@@ -456,6 +454,25 @@ const Battle = () => {
                             </div>
                         </div>
                         {TimeLineVertical(pokemonCurr, pokemonObj)}
+                        <div>
+                            {options.timelineType ?
+                                <Fragment>{TimeLineFit(pokemonCurr, pokemonObj, showTap)}</Fragment>
+                                :
+                                <Fragment>{TimeLine(pokemonCurr, pokemonObj, showTap)}</Fragment>
+                            }
+                            <div className="d-flex justify-content-center">
+                                <FormControlLabel control={<Checkbox checked={showTap} onChange={(event, check) => setOptions({...options, showTap: check})}/>} label="Show Tap Move" />
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="row-timeline-group-label"
+                                    name="row-timeline-group"
+                                    defaultValue={1}
+                                    onChange={(e) =>  setOptions({...options, timelineType: parseInt(e.target.value)})}>
+                                    <FormControlLabel value={0} control={<Radio />} label={<span>Normal Timeline</span>} />
+                                    <FormControlLabel value={1} control={<Radio />} label={<span>Fit Timeline</span>} />
+                                </RadioGroup>
+                            </div>
+                        </div>
                     </Fragment>
                     }
                 </div>

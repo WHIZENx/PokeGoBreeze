@@ -38,7 +38,7 @@ export const TimeLineVertical = (pokemonCurr, pokemonObj, hide) => {
                                     <Badge color="primary" overlap="circular" badgeContent={value.tap ? "Tap": null} className="wait-attack-container"
                                     anchorOrigin={{
                                         vertical: 'top',
-                                        horizontal: 'left',
+                                        horizontal: 'right',
                                     }}></Badge>
                                 }
                                 {value.type === "P" &&
@@ -188,7 +188,7 @@ export const TimeLineFit = (pokemonCurr, pokemonObj, showTap, hide) => {
         <Fragment>
             {!hide &&
             <div className="w-100 fit-timeline">
-                <div style={{height: 12}}>
+                <div className="element-top" style={{height: 12}}>
                     <div style={{display: !showTap ? 'none' : 'block'}}>
                         <div className="position-relative timeline-fit-container" style={{opacity: 0.5}}>
                             {pokemonCurr.timeline.map((value, index) => (

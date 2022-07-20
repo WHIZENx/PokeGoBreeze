@@ -223,6 +223,7 @@
 }
 
 .battle-bar {
+    height: 150px;
     overflow-x: auto;
     padding: 10px;
 }
@@ -324,6 +325,7 @@
 }
 
 .fit-timeline {
+    height: 150px;
     padding: 10px;
 }
 
