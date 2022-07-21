@@ -9,7 +9,7 @@ import CardMoveSmall from "../../../components/Card/CardMoveSmall";
 import { calculateStatsByTag, calStatsProd } from "../../../util/Calculate";
 import CardPokemon from "../../../components/Card/CardPokemon";
 
-const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
+const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}) => {
 
     const [show, setShow] = useState(false);
     const [showFMove, setShowFMove] = useState(false);
@@ -49,7 +49,8 @@ const Select = ({data, pokemonBattle, setPokemonBattle, clearData}) => {
         setCMoveSec(cMoveSec);
 
         const stats = calculateStatsByTag(value.pokemon.baseStats, value.pokemon.forme);
-        const allStats = calStatsProd(stats.atk, stats.def, stats.sta, 500, 1500);
+        const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
+        const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
         setPokemonBattle({...pokemonBattle, pokemonData: {...value, bestStats: allStats[allStats.length-1]}, fMove: fmove, cMovePri: cMovePri, cMoveSec: cMoveSec})
     }
 

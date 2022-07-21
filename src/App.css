@@ -165,6 +165,10 @@ ul {
     text-shadow: 1px 1px black;
 }
 
+.text-shadow-white {
+    text-shadow: 1px 1px white;
+}
+
 .shadow-ic {background-color:#c184ec}
 .bug{background-color:#9cb820}
 .dark{background-color:#504843}
