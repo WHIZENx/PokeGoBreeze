@@ -60,8 +60,15 @@ const Form = ({
         if (id_default === 555 && form === "galar") form += "-standard"
         return formList.map(form => {
             let curFrom = form.find(item => form && (item.form.form_name === form || item.form.name === item.default_name+"-"+form));
-            return curFrom ?? form.find(item => item.form.is_default)
-        }).find(item => form ? item.form.form_name === form || item.form.name === item.default_name+"-"+form : item.id === id_default);
+            curFrom = curFrom ?? form.find(item => item.form.is_default);
+            if (paramForm && curFrom.form.form_name !== paramForm.toLowerCase()) {
+                const changeForm = form.find(item => item.form.form_name === paramForm.toLowerCase());
+                if (changeForm) curFrom = changeForm;
+            }
+            return curFrom;
+        }).find(item => {
+            return form ? item.form.form_name === form || item.form.name === item.default_name+"-"+form : item.id === id_default
+        });
     }, [formList, id_default, paramForm]);
 
     const [currForm, setCurrForm] = useState(null);
@@ -97,7 +104,8 @@ const Form = ({
 
     useEffect(() => {
         if (!region && formName) {
-            const findForm = formList.map(item => item.find(item => item.form.name === reversedCapitalize(formName, "-", " "))).find(item => item);
+            let findForm = formList.map(item => item.find(item => item.form.name === reversedCapitalize(formName, "-", " "))).find(item => item);
+            if (!findForm) findForm = formList.map(item => item.find(item => item.form.form_name === "normal" || item.form.form_name === "standard")).find(item => item);
             let region = Object.values(regionList).find(item => findForm.form.form_name.includes(item.toLowerCase()));
             if (findForm.form.form_name !== "" && region) setRegion(region);
             else setRegion(regionList[parseInt(species.generation.url.split("/")[6])]);
@@ -106,11 +114,13 @@ const Form = ({
 
     useEffect(() => {
         if (!onChangeForm || (!currForm && id_default && pokeData && formList.length > 0 && pokeData.length > 0)) {
+            // console.log(findForm(), findFirst())
             setCurrForm(findForm() ?? findFirst());
             setPokeID(findFirst() ? findFirst().form.id : id_default);
             setDataPoke(pokeData.find(item => item.id === id_default));
         }
         if (currForm && dataPoke) {
+
             setStatATK(filterFormList(stats.attack.ranking, id_default));
             setStatDEF(filterFormList(stats.defense.ranking, id_default));
             setStatSTA(filterFormList(stats.stamina.ranking, id_default));
@@ -170,8 +180,10 @@ const Form = ({
                         <Fragment key={index}>
                             {value.map((value, index) => (
                                 <button key={index} className={"btn btn-form "+((currForm && pokeID === currForm.form.id && value.form.id === currForm.form.id) || (currForm && pokeID !== currForm.form.id && value.form.id === currForm.form.id) ? "form-selected" : "")} onClick={() => changeForm(value.form.name, value.form.form_name)}>
-                                    <div style={{width: 64}}>
-                                        <img className='pokemon-sprite-medium' onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}/>
+                                    <div className='d-flex w-100 justify-content-center'>
+                                        <div style={{width: 64}}>
+                                            <img className='pokemon-sprite-medium' onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}/>
+                                        </div>
                                     </div>
                                     <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</p>
                                     {value.form.id === pokeID &&

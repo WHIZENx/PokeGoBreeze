@@ -190,7 +190,7 @@ const Battle = () => {
                 }
                 timelineSec[timer].tap = false;
             }
-        }, 0);
+        }, 1);
         let isDelay = false, delay = 1;
         let turnInterval = setInterval(() => {
             timer += 1;
@@ -270,9 +270,12 @@ const Battle = () => {
                     if (timelinePri.length === timelineSec.length) timelinePri[timelinePri.length-1] = State(timer, "Q");
                     else timelinePri.push(State(timer, "Q"))
                 }
-                setPokemonCurr({...pokemonCurr, timeline: timelinePri});
-                setPokemonObj({...pokemonObj, timeline: timelineSec})
-
+                if (timelinePri.length === timelineSec.length) {
+                    setPokemonCurr({...pokemonCurr, timeline: timelinePri});
+                    setPokemonObj({...pokemonObj, timeline: timelineSec});
+                } else {
+                    battleAnimation();
+                }
                 // console.log(timelinePri, timelineSec)
             }
         }, 0);

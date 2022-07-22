@@ -5,6 +5,7 @@
     overflow-x: auto;
     display: inline-flex;
     column-gap: 10px;
+    width: 100%;
 }
 
 .img-gender {

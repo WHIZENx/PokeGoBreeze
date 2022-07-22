@@ -65,7 +65,7 @@ const TableMove = (props) => {
                         <colgroup className="main-move" />
                         <colgroup className="main-move" />
                         <thead>
-                            <tr className="text-center"><th className="table-sub-header" colSpan="3">Best Move ATK</th></tr>
+                            <tr className="text-center"><th className="table-sub-header" colSpan="3">Best Moves Offensive</th></tr>
                             <tr className="text-center">
                                 <th className="table-column-head main-move">Fast</th>
                                 <th className="table-column-head main-move">Charge</th>
@@ -85,7 +85,7 @@ const TableMove = (props) => {
                         <colgroup className="main-move" />
                         <colgroup className="main-move" />
                         <thead>
-                            <tr className="text-center"><th className="table-sub-header" colSpan="3">Best Move DEF</th></tr>
+                            <tr className="text-center"><th className="table-sub-header" colSpan="3">Best Moves Defensive</th></tr>
                             <tr className="text-center">
                                 <th className="table-column-head">Fast</th>
                                 <th className="table-column-head">Charge</th>

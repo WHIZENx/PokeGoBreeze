@@ -1,8 +1,8 @@
 {
-    "timestamp": 1658283046000,
+    "timestamp": 1658458304000,
     "allowLeagues": [
-        "VS_SEEKER_GREAT",
-        "VS_SEEKER_GREAT_FLYING"
+        "VS_SEEKER_ULTRA",
+        "VS_SEEKER_GREAT_LITTLE_REMIX"
     ],
     "data": [
         {
@@ -6185,11 +6185,6 @@
                         "form": "NORMAL"
                     },
                     {
-                        "id": 765,
-                        "name": "ORANGURU",
-                        "form": "NORMAL"
-                    },
-                    {
                         "id": 782,
                         "name": "JANGMO_O",
                         "form": "NORMAL"
@@ -10640,15 +10635,15 @@
                 "20": [
                     {
                         "guaranteedLimited": false,
-                        "id": 146,
-                        "name": "MOLTRES",
+                        "id": 483,
+                        "name": "DIALGA",
                         "form": "NORMAL",
                         "type": "FREE"
                     },
                     {
                         "guaranteedLimited": false,
-                        "id": 146,
-                        "name": "MOLTRES",
+                        "id": 483,
+                        "name": "DIALGA",
                         "form": "NORMAL",
                         "type": "PREMIUM"
                     }

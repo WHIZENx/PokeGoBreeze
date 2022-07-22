@@ -74,7 +74,12 @@ const Pokemon = (props) => {
             if (data.id === 555 && form === "galar") form += "-standard"
             defaultFrom = dataFromList.find(value => value.find(item => item.form.form_name === form.toLowerCase() || item.form.name === item.default_name+"-"+form.toLowerCase()));
 
-            if (defaultFrom) isDefaultForm = defaultFrom[0];
+            if (defaultFrom) {
+                isDefaultForm = defaultFrom[0];
+                if (isDefaultForm.form_name !== form.toLowerCase() && isDefaultForm.form.name !== isDefaultForm.default_name+"-"+form.toLowerCase()) {
+                    isDefaultForm = defaultFrom.find(value => value.form.form_name === form.toLowerCase());
+                }
+            }
             else {
                 defaultFrom = dataFromList.map(value => value.find(item => item.form.is_default));
                 isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
@@ -86,11 +91,14 @@ const Pokemon = (props) => {
             isDefaultForm = defaultFrom.find(item => item.form.id === data.id);
         }
         defaultData = dataPokeList.find(value => value.name === isDefaultForm.form.name);
+        if (!defaultData) defaultData = dataPokeList.find(value => value.name === isDefaultForm.name);
         setWH(prevWH => ({...prevWH, weight: defaultData.weight, height: defaultData.height}));
         if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name, "-", " "));
         else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name, "-", " "));
         if (!params.id) setRegion(regionList[parseInt(data.generation.url.split("/")[6])]);
-        setFormName(splitAndCapitalize(form ? isDefaultForm.form.name : data.name, "-", " "));
+        const nameInfo = splitAndCapitalize(form ? isDefaultForm.form.name : data.name, "-", " ");
+        setFormName(nameInfo);
+        if (params.id) document.title = `#${data.id} - ${nameInfo}`;
         setOnChangeForm(false);
     }, [searchParams, setSearchParams, params.id]);
 
@@ -100,7 +108,6 @@ const Pokemon = (props) => {
             setPokeRatio(getRatioGender(res.data.id));
             fetchMap(res.data);
             setData(res.data);
-            if (params.id) document.title = `#${res.data.id} - ${splitAndCapitalize(res.data.name, "-", " ")}`;
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });

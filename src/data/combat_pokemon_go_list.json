@@ -3960,6 +3960,28 @@
         ]
     },
     {
+        "ID": 144,
+        "NAME": "ARTICUNO_GALAR",
+        "BASE_SPECIES": "ARTICUNO",
+        "QUICK_MOVES": [
+            "CONFUSION_FAST",
+            "PSYCHO_CUT_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "FUTURESIGHT",
+            "ANCIENT_POWER",
+            "BRAVE_BIRD"
+        ],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
         "ID": 145,
         "NAME": "ZAPDOS",
         "BASE_SPECIES": "ZAPDOS",
@@ -3982,6 +4004,27 @@
         "ELITE_QUICK_MOVES": [
             "THUNDER_SHOCK_FAST"
         ],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 145,
+        "NAME": "ZAPDOS_GALAR",
+        "BASE_SPECIES": "ZAPDOS",
+        "QUICK_MOVES": [
+            "COUNTER_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "CLOSE_COMBAT",
+            "ANCIENT_POWER",
+            "BRAVE_BIRD"
+        ],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
+        "ELITE_QUICK_MOVES": [],
         "ELITE_CINEMATIC_MOVES": []
     },
     {
@@ -4008,6 +4051,28 @@
         "ELITE_CINEMATIC_MOVES": [
             "SKY_ATTACK"
         ]
+    },
+    {
+        "ID": 146,
+        "NAME": "MOLTRES_GALAR",
+        "BASE_SPECIES": "MOLTRES",
+        "QUICK_MOVES": [
+            "SUCKER_PUNCH_FAST",
+            "WING_ATTACK_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "PAYBACK",
+            "ANCIENT_POWER",
+            "BRAVE_BIRD"
+        ],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
     },
     {
         "ID": 147,
