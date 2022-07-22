@@ -13,6 +13,12 @@ import TypeBadge from "../../../components/Sprites/TypeBadge/TypeBadge";
 import { TimeLine, TimeLineFit, TimeLineVertical } from "./Timeline";
 import { Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 
@@ -46,7 +52,7 @@ const Battle = () => {
         block: 2
     })
 
-    const State = (timer, type, color, size, tap, block, energy, hp, move, immune) => {
+    const State = (timer, type, color, size, tap, block, energy, hp, move, immune, buff) => {
         return {
             timer: timer ?? 0,
             type: type,
@@ -61,21 +67,31 @@ const Battle = () => {
         }
     }
 
-    const Pokemon = (data, dataObj, fMove, cMove, cMoveSec, energy, block) => {
+    const calculateMoveDmgActual = (poke, pokeObj, move) => {
+        const atkPoke = calculateStatsBattle(poke.stats.atk, poke.bestStats.IV.atk, poke.bestStats.level, true);
+        const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.bestStats.IV.def, pokeObj.bestStats.level, true);
+        // console.log(move)
+        return atkPoke*move.pvp_power*(poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY : 1)*(poke.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(move.type, pokeObj.pokemon.types) : 1)/defPokeObj;
+    }
+
+    const Pokemon = (poke) => {
         return {
-            hp: calculateStatsBattle(data.stats.sta, data.bestStats.IV.sta, data.bestStats.level, true),
-            fmove: {...fMove, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*fMove.pvp_power*(data.pokemon.types.includes(fMove.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(fMove.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
-            cmove: {...cMove, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*cMove.pvp_power*(data.pokemon.types.includes(cMove.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(cMove.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
-            cmoveSec: cMoveSec === "" ? null : {...cMoveSec, pvp_power_actual: calculateStatsBattle(data.stats.atk, data.bestStats.IV.atk, data.bestStats.level, true)*cMoveSec.pvp_power*(data.pokemon.types.includes(cMoveSec.type) ? STAB_MULTIPLY : 1)*(data.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(cMoveSec.type, dataObj.pokemon.types) : 1)/calculateStatsBattle(dataObj.stats.def, dataObj.bestStats.IV.def, dataObj.bestStats.level, true)},
-            energy: energy ?? 0,
-            block: block ?? 2,
-            turn: Math.ceil(fMove.durationMs/500)
+            hp: calculateStatsBattle(poke.pokemonData.stats.sta, poke.pokemonData.bestStats.IV.sta, poke.pokemonData.bestStats.level, true),
+            stats: poke.pokemonData.stats,
+            bestStats: poke.pokemonData.bestStats,
+            pokemon: poke.pokemonData.pokemon,
+            fmove: poke.fMove,
+            cmove: poke.cMovePri,
+            cmoveSec: poke.cMoveSec === "" ? null : poke.cMoveSec,
+            energy: poke.energy ?? 0,
+            block: poke.block ?? 2,
+            turn: Math.ceil(poke.fMove.durationMs/500)
         }
     }
 
     const battleAnimation = () => {
-        let player1 = Pokemon(pokemonCurr.pokemonData, pokemonObj.pokemonData, pokemonCurr.fMove, pokemonCurr.cMovePri, pokemonCurr.cMoveSec, pokemonCurr.energy, pokemonCurr.block)
-        let player2 = Pokemon(pokemonObj.pokemonData, pokemonCurr.pokemonData, pokemonObj.fMove, pokemonObj.cMovePri, pokemonObj.cMoveSec, pokemonObj.energy, pokemonObj.block)
+        let player1 = Pokemon(pokemonCurr);
+        let player2 = Pokemon(pokemonObj);
 
         // console.log(player1, player2)
 
@@ -116,7 +132,7 @@ const Battle = () => {
 
                 if (!preChargePri && fastPriDelay === 0) {
                     tapPri = false;
-                    if (!preChargeSec) player2.hp -= player1.fmove.pvp_power_actual;
+                    if (!preChargeSec) player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
                     player1.energy += player1.fmove.pvp_energy;
                     timelinePri[timer] = {...timelinePri[timer], type: "F", color: player1.fmove.type.toLowerCase(), move: player1.fmove};
                     if (preChargeSec && player1.turn === 1) timelinePri[timer] = {...timelinePri[timer], tap: true, move: player1.fmove};
@@ -137,7 +153,7 @@ const Battle = () => {
                 }
                 timelinePri[timer].tap = false;
             }
-        }, 0);
+        }, 10);
         let timelineInterval2 = setInterval(() => {
             timelineSec.push(State(timer, null, null, null, null, player2.block, player2.energy, player2.hp));
             if (!chargedPri && !chargedSec) {
@@ -168,7 +184,7 @@ const Battle = () => {
 
                 if (!preChargeSec && fastSecDelay === 0) {
                     tapSec = false;
-                    if (!preChargePri) player1.hp -= player2.fmove.pvp_power_actual;
+                    if (!preChargePri) player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
                     else immuneSec = true;
                     player2.energy += player2.fmove.pvp_energy;
                     timelineSec[timer] = {...timelineSec[timer], type: "F", color: player2.fmove.type.toLowerCase(), move: player2.fmove};
@@ -190,7 +206,7 @@ const Battle = () => {
                 }
                 timelineSec[timer].tap = false;
             }
-        }, 1);
+        }, 10);
         let isDelay = false, delay = 1;
         let turnInterval = setInterval(() => {
             timer += 1;
@@ -199,10 +215,40 @@ const Battle = () => {
                     if (chargedPriCount >= 0) chargedPriCount--;
                     else {
                         if (player2.block === 0) {
-                            if (chargeType === 1) player2.hp -= player1.cmove.pvp_power_actual;
-                            if (chargeType === 2) player2.hp -= player1.cmoveSec.pvp_power_actual;
+                            if (chargeType === 1) player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmove);
+                            if (chargeType === 2) player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmoveSec);
                         }
                         else player2.block -= 1;
+                        const moveType = chargeType === 1 ? player1.cmove : player1.cmoveSec;
+                        let arrBufAtk = [], arrBufTarget = [];
+                        moveType.buffs.forEach((value, index) => {
+                            if (Math.round(Math.random()*10) <= value.buffChance*10) {
+                                if (value.target === "target") {
+                                    player2 = {
+                                        ...player2,
+                                        stats: {
+                                            ...player2.stats,
+                                            atk: value.type === "atk" ? player2.stats.atk+value.power : player2.stats.atk,
+                                            def: value.type === "def" ? player2.stats.def+value.power : player2.stats.def
+                                        }
+                                    }
+                                    arrBufTarget.push(value);
+                                } else {
+                                    player1 = {
+                                        ...player1,
+                                        stats: {
+                                            ...player1.stats,
+                                            atk: value.type === "atk" ? player1.stats.atk+value.power : player1.stats.atk,
+                                            def: value.type === "def" ? player1.stats.def+value.power : player1.stats.def
+                                        }
+                                    }
+                                    arrBufAtk.push(value);
+
+                                }
+                                timelinePri[timer-1]["buff"] = arrBufAtk;
+                                timelineSec[timer-1]["buff"] = arrBufTarget;
+                            }
+                        });
                         isDelay = true;
                         delay = 1;
                     }
@@ -215,10 +261,39 @@ const Battle = () => {
                     if (chargedSecCount >= 0) chargedSecCount--;
                     else {
                         if (player1.block === 0) {
-                            if (chargeType === 1) player1.hp -= player2.cmove.pvp_power_actual;
-                            if (chargeType === 2) player1.hp -= player2.cmoveSec.pvp_power_actual;
+                            if (chargeType === 1) player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmove);
+                            if (chargeType === 2) player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmoveSec);
                         }
                         else player1.block -= 1;
+                        const moveType = chargeType === 1 ? player2.cmove : player2.cmoveSec;
+                        let arrBufAtk = [], arrBufTarget = [];
+                        moveType.buffs.forEach((value, index) => {
+                            if (Math.round(Math.random()*10) <= value.buffChance*10) {
+                                if (value.target === "target") {
+                                    player1 = {
+                                        ...player1,
+                                        stats: {
+                                            ...player1.stats,
+                                            atk: value.type === "atk" ? player1.stats.atk+value.power : player1.stats.atk,
+                                            def: value.type === "def" ? player1.stats.def+value.power : player1.stats.def
+                                        }
+                                    }
+                                    arrBufTarget.push(value);
+                                } else {
+                                    player2 = {
+                                        ...player2,
+                                        stats: {
+                                            ...player2.stats,
+                                            atk: value.type === "atk" ? player2.stats.atk+value.power : player2.stats.atk,
+                                            def: value.type === "def" ? player2.stats.def+value.power : player2.stats.def
+                                        }
+                                    }
+                                    arrBufAtk.push(value);
+                                }
+                            }
+                            timelinePri[timer-1]["buff"] = arrBufTarget;
+                            timelineSec[timer-1]["buff"] = arrBufAtk;
+                        });
                         isDelay = true;
                         delay = 1;
                     }
@@ -241,11 +316,11 @@ const Battle = () => {
                     tapPri = false;
                     tapSec = false;
                     if (immunePri) {
-                        player2.hp -= player1.fmove.pvp_power_actual;
+                        player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
                         timelinePri[timer-1].dmgImmune = true;
                     }
                     else if (immuneSec) {
-                        player1.hp -= player2.fmove.pvp_power_actual;
+                        player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
                         timelineSec[timer-1].dmgImmune = true;
                     }
                     immunePri = false;
@@ -278,7 +353,7 @@ const Battle = () => {
                 }
                 // console.log(timelinePri, timelineSec)
             }
-        }, 0);
+        }, 10);
     }
 
     const clearData = useCallback(() => {
@@ -372,30 +447,36 @@ const Battle = () => {
     // }
 
     const findBuff = (move) => {
-        // console.log(Math.round(Math.random()*10))
         if (move.buffs.length === 0) return;
-        // console.log(move.buffs)
-
         return (
-            <Fragment>
+            <div className="bufs-container d-flex flex-row" style={{columnGap: 5}}>
                 {move.buffs.map((value, index) => (
-                    <div key={index}>
-                        {value.type === "atk" ?
-                        <div className="d-flex" style={{columnGap: 5}}>
-                            <img width={28} height={28} alt="img-atk" src={atk_logo}/>
-                            <span>{value.power}</span>
-                            <span>{value.buffChance*100}</span>
+                    <div key={index} className="d-flex position-relative" style={{columnGap: 5}}>
+                        <img width={15} height={15} alt="img-atk" src={value.type === "atk" ? atk_logo : def_logo}/>
+                        <div className="position-absolute icon-buff">
+                            {value.power === 2 ?
+                            <KeyboardDoubleArrowUpIcon fontSize="small" sx={{color : value.power < 0 ? "red" : "green"}}/>
+                            :
+                            <Fragment>
+                                {value.power === 1 ?
+                                <KeyboardArrowUpIcon fontSize="small" sx={{color : value.power < 0 ? "red" : "green"}}/>
+                                :
+                                <Fragment>
+                                    {value.power === -1 ?
+                                    <KeyboardArrowDownIcon fontSize="small" sx={{color : value.power < 0 ? "red" : "green"}}/>
+                                    :
+                                    <KeyboardDoubleArrowDownIcon fontSize="small" sx={{color : value.power < 0 ? "red" : "green"}}/>
+                                    }
+                                </Fragment>
+                                }
+                            </Fragment>
+                            }
+                            <span className={(value.power < 0 ? "text-danger" : "text-success")} style={{fontSize: 12}}>{value.power}</span>
                         </div>
-                        :
-                        <div className="d-flex" style={{columnGap: 5}}>
-                            <img width={28} height={28} alt="img-def" src={def_logo}/>
-                            <span>{value.power}</span>
-                            <span>{value.buffChance*100}</span>
-                        </div>
-                        }
+                        <b style={{fontSize: 12}}>{value.buffChance*100}%</b>
                     </div>
                 ))}
-            </Fragment>
+            </div>
         )
     }
 
@@ -460,12 +541,12 @@ const Battle = () => {
                         </div>
                         <hr/>
                         <TypeBadge find={true} title="Fast Move" move={pokemon.fMove}/>
-                        <div className="d-flex align-items-end" style={{columnGap: 10}}>
+                        <div className="d-flex w-100 position-relative" style={{columnGap: 10}}>
                             <TypeBadge find={true} title="Primary Charged Move" move={pokemon.cMovePri}/>
                             {findBuff(pokemon.cMovePri)}
                         </div>
                         {pokemon.cMoveSec && pokemon.cMoveSec !== "" &&
-                        <div className="d-flex align-items-end" style={{columnGap: 10}}>
+                        <div className="d-flex w-100 position-relative" style={{columnGap: 10}}>
                             <TypeBadge find={true} title="Secondary Charged Move" move={pokemon.cMoveSec}/>
                             {findBuff(pokemon.cMoveSec)}
                         </div>
