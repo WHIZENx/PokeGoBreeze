@@ -21,6 +21,7 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
+import CircleBar from "../../../components/Sprites/ProgressBar/Circle";
 
 const Battle = () => {
 
@@ -593,6 +594,18 @@ const Battle = () => {
                                 </Form.Select>
                             </div>
                             {renderInfoPokemon(pokemonCurr, setPokemonCurr)}
+                            <div className="w-100 bg-type-moves">
+                                <div className="text-center">
+                                    <CircleBar type={pokemonCurr.cMovePri.type} size={80} maxEnergy={200} moveEnergy={Math.abs(pokemonCurr.cMovePri.pvp_energy)} energy={0}/>
+                                    <span></span>
+                                </div>
+                                {pokemonCurr.cMoveSec && pokemonCurr.cMoveSec !== "" &&
+                                <div className="text-center">
+                                    <CircleBar type={pokemonCurr.cMoveSec.type} size={80} maxEnergy={200} moveEnergy={Math.abs(pokemonCurr.cMoveSec.pvp_energy)} energy={0}/>
+                                    <span></span>
+                                </div>
+                                }
+                            </div>
                         </Fragment>
                     }
                 </div>
@@ -663,6 +676,18 @@ const Battle = () => {
                                 </Form.Select>
                             </div>
                             {renderInfoPokemon(pokemonObj)}
+                            <div className="w-100 bg-type-moves">
+                                <div className="text-center">
+                                    <CircleBar type={pokemonObj.cMovePri.type} size={80} maxEnergy={200} moveEnergy={Math.abs(pokemonObj.cMovePri.pvp_energy)} energy={0}/>
+                                    <span></span>
+                                </div>
+                                {pokemonObj.cMoveSec && pokemonObj.cMoveSec !== "" &&
+                                <div className="text-center">
+                                    <CircleBar type={pokemonObj.cMoveSec.type} size={80} maxEnergy={200} moveEnergy={Math.abs(pokemonObj.cMoveSec.pvp_energy)} energy={0}/>
+                                    <span></span>
+                                </div>
+                                }
+                            </div>
                         </Fragment>
                     }
                 </div>

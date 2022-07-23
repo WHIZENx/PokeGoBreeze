@@ -382,3 +382,12 @@
     gap: 5px;
     font-weight: bold;
 }
+
+.bg-type-moves {
+    background-color: white;
+    border: 1px solid lightgray;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    column-gap: 20px;
+}

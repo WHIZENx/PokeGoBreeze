@@ -17,6 +17,7 @@ const POKE_SPRITES_FULL_API_URL = 'https://assets.pokemon.com/assets/cms2/img/po
 const POKE_GIF_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Pokemon/';
 const POKE_TRAINER_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Trainers/';
 const POKE_SOUND_CRY_API_URL = 'https://raw.githubusercontent.com/Touched/pokedex-data/master/data/';
+const POKE_TYPES_API_URL = 'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/';
 
 const POKE_PV_API_URL = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/';
 
@@ -186,6 +187,10 @@ class APIService {
 
     getTeamFile(type, serie, cp) {
         return `${POKE_PV_API_URL}training/${type}/${serie}/${cp}.json`;
+    }
+
+    getTypeIcon(type) {
+        return `${POKE_TYPES_API_URL}${type.toLowerCase()}.png`
     }
 }
 
