@@ -28,9 +28,12 @@ const Battle = () => {
     const [options, setOptions] = useState({
         showTap: false,
         timelineType: 0,
-        league: 1500
+        league: 10000
     });
     const {showTap, timelineType, league} = options;
+
+    var timelineInterval = null;
+    var turnInterval = null;
 
     const [pokemonCurr, setPokemonCurr] = useState({
         pokemonData: null,
@@ -70,7 +73,6 @@ const Battle = () => {
     const calculateMoveDmgActual = (poke, pokeObj, move) => {
         const atkPoke = calculateStatsBattle(poke.stats.atk, poke.bestStats.IV.atk, poke.bestStats.level, true);
         const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.bestStats.IV.def, pokeObj.bestStats.level, true);
-        // console.log(move)
         return atkPoke*move.pvp_power*(poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY : 1)*(poke.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(move.type, pokeObj.pokemon.types) : 1)/defPokeObj;
     }
 
@@ -90,6 +92,9 @@ const Battle = () => {
     }
 
     const battleAnimation = () => {
+        clearInterval(timelineInterval);
+        clearInterval(turnInterval);
+
         let player1 = Pokemon(pokemonCurr);
         let player2 = Pokemon(pokemonObj);
 
@@ -98,12 +103,14 @@ const Battle = () => {
         let timelinePri = [];
         let timelineSec = [];
 
-        let timer = 0;
+        let timer = -1;
         let tapPri, fastPriDelay = 0, preChargePri, immunePri, chargedPri, chargedPriCount = 0;
         let tapSec, fastSecDelay = 0, preChargeSec, immuneSec, chargedSec, chargedSecCount = 0;
         let chargeType;
-        let timelineInterval1 = setInterval(() => {
+        timelineInterval = setInterval(() => {
+            timer += 1;
             timelinePri.push(State(timer, null, null, null, null, player1.block, player1.energy, player1.hp));
+            timelineSec.push(State(timer, null, null, null, null, player2.block, player2.energy, player2.hp));
             if (!chargedPri && !chargedSec) {
                 if (!preChargeSec && (player1.energy >= Math.abs(player1.cmove.pvp_energy) || (player1.cmoveSec && player1.energy >= Math.abs(player1.cmoveSec.pvp_energy)))) {
                     if (player1.energy >= Math.abs(player1.cmove.pvp_energy)) {
@@ -121,42 +128,6 @@ const Battle = () => {
                     chargedPriCount = 16;
                 }
 
-                if (!preChargePri && !tapPri) {
-                    tapPri = true;
-                    if (!preChargeSec) timelinePri[timer] = {...timelinePri[timer], tap: true, move: player1.fmove};
-                    else timelinePri[timer].tap = false;
-                    fastPriDelay = player1.turn-1;
-                } else {
-                    timelinePri[timer].tap = false;
-                }
-
-                if (!preChargePri && fastPriDelay === 0) {
-                    tapPri = false;
-                    if (!preChargeSec) player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
-                    player1.energy += player1.fmove.pvp_energy;
-                    timelinePri[timer] = {...timelinePri[timer], type: "F", color: player1.fmove.type.toLowerCase(), move: player1.fmove};
-                    if (preChargeSec && player1.turn === 1) timelinePri[timer] = {...timelinePri[timer], tap: true, move: player1.fmove};
-                } else {
-                    fastPriDelay -= 1;
-                    if (!preChargePri) timelinePri[timer].type = "W";
-                }
-            } else {
-                if (chargedPri) {
-                    if (isDelay || chargedPriCount % 2 === 0) timelinePri[timer].type = "N";
-                    else {
-                        if (chargeType === 1) timelinePri[timer] = {...timelinePri[timer], type: chargedPriCount === -1 ? "C" : "S", color: player1.cmove.type.toLowerCase(), size: timelinePri[timer-2].size+2, move: player1.cmove};
-                        if (chargeType === 2) timelinePri[timer] = {...timelinePri[timer], type: chargedPriCount === -1 ? "C" : "S", color: player1.cmoveSec.type.toLowerCase(), size: timelinePri[timer-2].size+2, move: player1.cmoveSec};
-                    }
-                    if (timelinePri[timer-2]) timelineSec[timer-2].size = timelinePri[timer-2].size;
-                } else {
-                    if (!isDelay && player1.block > 0 && chargedSecCount === -1) timelinePri[timer].type = "B";
-                }
-                timelinePri[timer].tap = false;
-            }
-        }, 10);
-        let timelineInterval2 = setInterval(() => {
-            timelineSec.push(State(timer, null, null, null, null, player2.block, player2.energy, player2.hp));
-            if (!chargedPri && !chargedSec) {
                 if (!preChargePri && (player2.energy >= Math.abs(player2.cmove.pvp_energy) || (player2.cmoveSec && player2.energy >= Math.abs(player2.cmoveSec.pvp_energy)))) {
                     if (player2.energy >= Math.abs(player2.cmove.pvp_energy)) {
                         chargeType = 1;
@@ -173,27 +144,59 @@ const Battle = () => {
                     chargedSecCount = 16;
                 }
 
-                if (!preChargeSec && !tapSec) {
-                    tapSec = true;
-                    if (!preChargePri) timelineSec[timer] = {...timelineSec[timer], tap: true, move: player2.fmove};
-                    else timelineSec[timer].tap = false;
-                    fastSecDelay = player2.turn-1;
-                } else {
-                    timelineSec[timer].tap = false;
+                if (!preChargePri) {
+                    if (!tapPri) {
+                        tapPri = true;
+                        if (!preChargeSec) timelinePri[timer] = {...timelinePri[timer], tap: true, move: player1.fmove};
+                        else timelinePri[timer].tap = false;
+                        fastPriDelay = player1.turn-1;
+                    } else {
+                        if (timelinePri[timer]) timelinePri[timer].tap = false;
+                    }
+
+                    if (tapPri && fastPriDelay === 0) {
+                        tapPri = false;
+                        if (!preChargeSec) player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
+                        player1.energy += player1.fmove.pvp_energy;
+                        timelinePri[timer] = {...timelinePri[timer], type: "F", color: player1.fmove.type.toLowerCase(), move: player1.fmove, dmgImmune: preChargeSec, tap: preChargeSec && player1.turn === 1 ? true : timelinePri[timer].tap};
+                    } else {
+                        fastPriDelay -= 1;
+                        if (!preChargePri) timelinePri[timer].type = "W";
+                    }
                 }
 
-                if (!preChargeSec && fastSecDelay === 0) {
-                    tapSec = false;
-                    if (!preChargePri) player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
-                    else immuneSec = true;
-                    player2.energy += player2.fmove.pvp_energy;
-                    timelineSec[timer] = {...timelineSec[timer], type: "F", color: player2.fmove.type.toLowerCase(), move: player2.fmove};
-                    if (preChargePri && player2.turn === 1) timelineSec[timer] = {...timelineSec[timer], tap: true, move: player2.fmove};
-                } else {
-                    fastSecDelay -= 1;
-                    if (!preChargeSec) timelineSec[timer].type = "W";
+                if (!preChargeSec) {
+                    if (!tapSec) {
+                        tapSec = true;
+                        if (!preChargePri) timelineSec[timer] = {...timelineSec[timer], tap: true, move: player2.fmove};
+                        else timelineSec[timer].tap = false;
+                        fastSecDelay = player2.turn-1;
+                    } else {
+                        if (timelineSec[timer]) timelineSec[timer].tap = false;
+                    }
+
+                    if (tapSec && fastSecDelay === 0) {
+                        tapSec = false;
+                        if (!preChargePri) player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
+                        else immuneSec = true;
+                        player2.energy += player2.fmove.pvp_energy;
+                        timelineSec[timer] = {...timelineSec[timer], type: "F", color: player2.fmove.type.toLowerCase(), move: player2.fmove, dmgImmune: preChargePri, tap: preChargePri && player2.turn === 1 ? true : timelineSec[timer].tap};
+                    } else {
+                        fastSecDelay -= 1;
+                        if (!preChargeSec) timelineSec[timer].type = "W";
+                    }
                 }
             } else {
+                if (chargedPri) {
+                    if (isDelay || chargedPriCount % 2 === 0) timelinePri[timer].type = "N";
+                    else {
+                        if (chargeType === 1) timelinePri[timer] = {...timelinePri[timer], type: chargedPriCount === -1 ? "C" : "S", color: player1.cmove.type.toLowerCase(), size: timelinePri[timer-2].size+2, move: player1.cmove};
+                        if (chargeType === 2) timelinePri[timer] = {...timelinePri[timer], type: chargedPriCount === -1 ? "C" : "S", color: player1.cmoveSec.type.toLowerCase(), size: timelinePri[timer-2].size+2, move: player1.cmoveSec};
+                    }
+                    if (timelinePri[timer-2]) timelineSec[timer-2].size = timelinePri[timer-2].size;
+                } else {
+                    if (!isDelay && player1.block > 0 && chargedSecCount === -1) timelinePri[timer].type = "B";
+                }
                 if (chargedSec) {
                     if (isDelay || chargedSecCount % 2 === 0) timelineSec[timer].type = "N";
                     else {
@@ -204,12 +207,13 @@ const Battle = () => {
                 } else {
                     if (!isDelay && player2.block > 0 && chargedPriCount === -1) timelineSec[timer].type = "B";
                 }
+                timelinePri[timer].tap = false;
                 timelineSec[timer].tap = false;
             }
-        }, 10);
+        }, 1);
         let isDelay = false, delay = 1;
-        let turnInterval = setInterval(() => {
-            timer += 1;
+        turnInterval = setInterval(() => {
+
             if (!isDelay) {
                 if (chargedPri) {
                     if (chargedPriCount >= 0) chargedPriCount--;
@@ -221,8 +225,9 @@ const Battle = () => {
                         else player2.block -= 1;
                         const moveType = chargeType === 1 ? player1.cmove : player1.cmoveSec;
                         let arrBufAtk = [], arrBufTarget = [];
-                        moveType.buffs.forEach((value, index) => {
-                            if (Math.round(Math.random()*10) <= value.buffChance*10) {
+                        const randInt = parseFloat((Math.random()).toFixed(3))
+                        if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
+                            moveType.buffs.forEach((value, index) => {
                                 if (value.target === "target") {
                                     player2 = {
                                         ...player2,
@@ -243,12 +248,11 @@ const Battle = () => {
                                         }
                                     }
                                     arrBufAtk.push(value);
-
                                 }
-                                timelinePri[timer-1]["buff"] = arrBufAtk;
-                                timelineSec[timer-1]["buff"] = arrBufTarget;
-                            }
-                        });
+                                timelinePri[timer]["buff"] = arrBufAtk;
+                                timelineSec[timer]["buff"] = arrBufTarget;
+                            });
+                        }
                         isDelay = true;
                         delay = 1;
                     }
@@ -267,8 +271,9 @@ const Battle = () => {
                         else player1.block -= 1;
                         const moveType = chargeType === 1 ? player2.cmove : player2.cmoveSec;
                         let arrBufAtk = [], arrBufTarget = [];
-                        moveType.buffs.forEach((value, index) => {
-                            if (Math.round(Math.random()*10) <= value.buffChance*10) {
+                        const randInt = parseFloat((Math.random()).toFixed(3))
+                        if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
+                            moveType.buffs.forEach((value, index) => {
                                 if (value.target === "target") {
                                     player1 = {
                                         ...player1,
@@ -290,10 +295,10 @@ const Battle = () => {
                                     }
                                     arrBufAtk.push(value);
                                 }
-                            }
-                            timelinePri[timer-1]["buff"] = arrBufTarget;
-                            timelineSec[timer-1]["buff"] = arrBufAtk;
-                        });
+                                timelinePri[timer]["buff"] = arrBufTarget;
+                                timelineSec[timer]["buff"] = arrBufAtk;
+                            });
+                        }
                         isDelay = true;
                         delay = 1;
                     }
@@ -317,11 +322,11 @@ const Battle = () => {
                     tapSec = false;
                     if (immunePri) {
                         player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
-                        timelinePri[timer-1].dmgImmune = true;
+                        timelinePri[timer].dmgImmune = true;
                     }
                     else if (immuneSec) {
                         player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
-                        timelineSec[timer-1].dmgImmune = true;
+                        timelineSec[timer].dmgImmune = true;
                     }
                     immunePri = false;
                     immuneSec = false;
@@ -331,8 +336,7 @@ const Battle = () => {
             }
             // console.log("Turn:", timer, player1.hp, player2.hp)
             if (player1.hp <= 0 || player2.hp <= 0) {
-                clearInterval(timelineInterval1);
-                clearInterval(timelineInterval2);
+                clearInterval(timelineInterval);
                 clearInterval(turnInterval);
                 // console.log(timelinePri, timelineSec);
                 if (player1.hp <= 0) {
@@ -353,7 +357,7 @@ const Battle = () => {
                 }
                 // console.log(timelinePri, timelineSec)
             }
-        }, 10);
+        }, 1);
     }
 
     const clearData = useCallback(() => {
@@ -559,7 +563,7 @@ const Battle = () => {
 
     return (
         <div className="container element-top">
-            <Form.Select onChange={(e) => setOptions({...options, league: parseInt(e.target.value)})} defaultValue={1500}>
+            <Form.Select onChange={(e) => setOptions({...options, league: parseInt(e.target.value)})} defaultValue={league}>
                 <option value={500}>Little Cup</option>
                 <option value={1500}>Great League</option>
                 <option value={2500}>Ultra League</option>
@@ -626,7 +630,7 @@ const Battle = () => {
                                     row
                                     aria-labelledby="row-timeline-group-label"
                                     name="row-timeline-group"
-                                    defaultValue={0}
+                                    value={timelineType}
                                     onChange={(e) =>  setOptions({...options, timelineType: parseInt(e.target.value)})}>
                                     <FormControlLabel value={0} control={<Radio />} label={<span>Fit Timeline</span>} />
                                     <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />

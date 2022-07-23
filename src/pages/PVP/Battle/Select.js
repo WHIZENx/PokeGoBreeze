@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import APIService from "../../../services/API.service";
 
 import combatData from '../../../data/combat.json';
@@ -72,7 +72,7 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}) => {
         setShowCMoveSec(false);
     }
 
-    const removePokemon = () => {
+    const removePokemon = useCallback(() => {
         clearData();
         setPokemonIcon(null);
         setPokemon(null);
@@ -80,13 +80,17 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}) => {
         setFMove(null);
         setCMovePri(null);
         setCMoveSec(null);
-    }
+    }, [clearData]);
 
     const removeChargeMoveSec = () => {
         clearData(true);
         setCMoveSec("");
         setTimeout(() => {setShowCMoveSec(false)}, 0);
     }
+
+    useEffect(() => {
+        if (pokemon && !pokemonBattle.pokemonData) removePokemon();
+    }, [pokemon, pokemonBattle.pokemonData, removePokemon])
 
     return (
         <Fragment>

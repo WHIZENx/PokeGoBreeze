@@ -2203,6 +2203,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm58.icon",
                 "shiny": "Addressable Assets/pm58.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 58,
+                "form": "HISUIAN",
+                "default": "Addressable Assets/pm58.fHISUIAN.icon",
+                "shiny": "Addressable Assets/pm58.fHISUIAN.s.icon"
             }
         ],
         "sound": {
@@ -2224,6 +2231,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm59.icon",
                 "shiny": "Addressable Assets/pm59.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 59,
+                "form": "HISUIAN",
+                "default": "Addressable Assets/pm59.fHISUIAN.icon",
+                "shiny": "Addressable Assets/pm59.fHISUIAN.s.icon"
             }
         ],
         "sound": {
@@ -6290,6 +6304,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm211.icon",
                 "shiny": "Addressable Assets/pm211.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 211,
+                "form": "HISUIAN",
+                "default": "Addressable Assets/pm211.fHISUIAN.icon",
+                "shiny": "Addressable Assets/pm211.fHISUIAN.s.icon"
             }
         ],
         "sound": {
@@ -6420,6 +6441,20 @@
                 "gender": 1,
                 "default": "Addressable Assets/pm215.cFASHION_2021_NOEVOLVE.icon",
                 "shiny": "Addressable Assets/pm215.cFASHION_2021_NOEVOLVE.s.icon"
+            },
+            {
+                "gender": 2,
+                "pokemonId": 215,
+                "form": "HISUIAN",
+                "default": "Addressable Assets/pm215.fHISUIAN.g2.icon",
+                "shiny": "Addressable Assets/pm215.fHISUIAN.g2.s.icon"
+            },
+            {
+                "pokemonId": 215,
+                "form": "HISUIAN",
+                "gender": 1,
+                "default": "Addressable Assets/pm215.fHISUIAN.icon",
+                "shiny": "Addressable Assets/pm215.fHISUIAN.s.icon"
             }
         ],
         "sound": {
@@ -16370,6 +16405,13 @@
                 "form": "NORMAL",
                 "default": "Addressable Assets/pm628.icon",
                 "shiny": "Addressable Assets/pm628.s.icon"
+            },
+            {
+                "gender": 3,
+                "pokemonId": 628,
+                "form": "HISUIAN",
+                "default": "Addressable Assets/pm628.fHISUIAN.icon",
+                "shiny": "Addressable Assets/pm628.fHISUIAN.s.icon"
             }
         ],
         "sound": {

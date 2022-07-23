@@ -378,7 +378,7 @@
     font-size: 10px;
     width: max-content;
     text-align: center;
-    display: flex;
+    display: flex !important;
     gap: 5px;
     font-weight: bold;
 }
