@@ -193,7 +193,7 @@ export const TimeLine = (pokemonCurr, pokemonObj, showTap, hide) => {
     )
 }
 
-export const TimeLineFit = (pokemonCurr, pokemonObj, showTap, hide) => {
+export const TimeLineFit = (pokemonCurr, pokemonObj, timeline, eRef, move, left, showTap, hide) => {
 
     const calculateFitPoint = (length, index) => {
         return `${index*100/(length-1)}%`;
@@ -259,9 +259,12 @@ export const TimeLineFit = (pokemonCurr, pokemonObj, showTap, hide) => {
         <Fragment>
             {!hide &&
             <div className="w-100 fit-timeline">
-                {renderTimelineFit(pokemonCurr, pokemonObj)}
-                <hr className="w-100" style={{margin: 0}}/>
-                {renderTimelineFit(pokemonObj, pokemonCurr)}
+                <div className="position-relative h-100" ref={timeline} onMouseMove={move.bind(this)}>
+                    {renderTimelineFit(pokemonCurr, pokemonObj)}
+                    <hr className="w-100" style={{margin: 0}}/>
+                    {renderTimelineFit(pokemonObj, pokemonCurr)}
+                    <div ref={eRef} className="play-line" style={{left: left+"%"}}></div>
+                </div>
             </div>
             }
         </Fragment>

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import pokemonData from '../../../data/pokemon.json';
 
@@ -32,6 +32,11 @@ const Battle = () => {
         league: 10000
     });
     const {showTap, timelineType, league} = options;
+
+    const [leftFit, setLeftFit] = useState(0);
+
+    const timelineFit = useRef();
+    const playLine = useRef();
 
     var timelineInterval = null;
     var turnInterval = null;
@@ -104,7 +109,13 @@ const Battle = () => {
         let timelinePri = [];
         let timelineSec = [];
 
-        let timer = -1;
+        timelinePri.push(State(0, "W", null, null, null, player1.block, player1.energy, player1.hp));
+        timelinePri.push(State(1, "W", null, null, null, player1.block, player1.energy, player1.hp));
+
+        timelineSec.push(State(0, "W", null, null, null, player2.block, player2.energy, player2.hp));
+        timelineSec.push(State(1, "W", null, null, null, player2.block, player2.energy, player2.hp));
+
+        let timer = 1;
         let tapPri, fastPriDelay = 0, preChargePri, immunePri, chargedPri, chargedPriCount = 0;
         let tapSec, fastSecDelay = 0, preChargeSec, immuneSec, chargedSec, chargedSecCount = 0;
         let chargeType;
@@ -451,6 +462,33 @@ const Battle = () => {
 
     // }
 
+    const onPlayLineFitMove = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = Math.max(0, e.clientX - rect.left);
+        setLeftFit(x*100/timelineFit.current.clientWidth);
+    };
+
+    var timelinePlay;
+    const playTimeLine = (x) => {
+        timelinePlay = setInterval(() => {
+            setLeftFit(x*100/timelineFit.current.clientWidth);
+            if (x >= timelineFit.current.clientWidth) clearInterval(timelinePlay)
+            x += 1;
+        }, 0)
+    }
+
+    const stopTimeLine = () => {
+        const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
+        for (let i = 1; i < interval_id; i++) {
+            window.clearInterval(i);
+        }
+    }
+
+    const resetTimeLine = () => {
+        stopTimeLine();
+        setLeftFit(0);
+    }
+
     const findBuff = (move) => {
         if (move.buffs.length === 0) return;
         return (
@@ -596,12 +634,12 @@ const Battle = () => {
                             {renderInfoPokemon(pokemonCurr, setPokemonCurr)}
                             <div className="w-100 bg-type-moves">
                                 <div className="text-center">
-                                    <CircleBar type={pokemonCurr.cMovePri.type} size={80} maxEnergy={200} moveEnergy={Math.abs(pokemonCurr.cMovePri.pvp_energy)} energy={0}/>
+                                    <CircleBar type={pokemonCurr.cMovePri.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonCurr.cMovePri.pvp_energy)} energy={0}/>
                                     <span></span>
                                 </div>
                                 {pokemonCurr.cMoveSec && pokemonCurr.cMoveSec !== "" &&
                                 <div className="text-center">
-                                    <CircleBar type={pokemonCurr.cMoveSec.type} size={80} maxEnergy={200} moveEnergy={Math.abs(pokemonCurr.cMoveSec.pvp_energy)} energy={0}/>
+                                    <CircleBar type={pokemonCurr.cMoveSec.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonCurr.cMoveSec.pvp_energy)} energy={0}/>
                                     <span></span>
                                 </div>
                                 }
@@ -635,7 +673,9 @@ const Battle = () => {
                             {timelineType ?
                                 <Fragment>{TimeLine(pokemonCurr, pokemonObj, showTap)}</Fragment>
                                 :
-                                <Fragment>{TimeLineFit(pokemonCurr, pokemonObj, showTap)}</Fragment>
+                                <Fragment>
+                                    {TimeLineFit(pokemonCurr, pokemonObj, timelineFit, playLine, onPlayLineFitMove, leftFit, showTap)}
+                                </Fragment>
                             }
                             <div className="d-flex justify-content-center">
                                 <FormControlLabel control={<Checkbox checked={showTap} onChange={(event, check) => setOptions({...options, showTap: check})}/>} label="Show Tap Move" />
@@ -648,6 +688,11 @@ const Battle = () => {
                                     <FormControlLabel value={0} control={<Radio />} label={<span>Fit Timeline</span>} />
                                     <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
                                 </RadioGroup>
+                            </div>
+                            <div className="d-flex justify-content-center" style={{columnGap: 10}}>
+                                <button className="btn btn-primary" onClick={() => playTimeLine(leftFit)}>Play</button>
+                                <button className="btn btn-primary" onClick={() => stopTimeLine()}>Stop</button>
+                                <button className="btn btn-danger" onClick={() => resetTimeLine()}>Reset</button>
                             </div>
                         </div>
                     </Fragment>
@@ -678,12 +723,12 @@ const Battle = () => {
                             {renderInfoPokemon(pokemonObj)}
                             <div className="w-100 bg-type-moves">
                                 <div className="text-center">
-                                    <CircleBar type={pokemonObj.cMovePri.type} size={80} maxEnergy={200} moveEnergy={Math.abs(pokemonObj.cMovePri.pvp_energy)} energy={0}/>
+                                    <CircleBar type={pokemonObj.cMovePri.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonObj.cMovePri.pvp_energy)} energy={0}/>
                                     <span></span>
                                 </div>
                                 {pokemonObj.cMoveSec && pokemonObj.cMoveSec !== "" &&
                                 <div className="text-center">
-                                    <CircleBar type={pokemonObj.cMoveSec.type} size={80} maxEnergy={200} moveEnergy={Math.abs(pokemonObj.cMoveSec.pvp_energy)} energy={0}/>
+                                    <CircleBar type={pokemonObj.cMoveSec.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonObj.cMoveSec.pvp_energy)} energy={0}/>
                                     <span></span>
                                 </div>
                                 }

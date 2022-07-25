@@ -391,3 +391,12 @@
     justify-content: center;
     column-gap: 20px;
 }
+
+.play-line {
+    width: 1px;
+    background-color: black;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
