@@ -223,7 +223,7 @@ const Pokemon = (props) => {
                             </div>
                         </div>
                     </div>}
-                    {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
+                    {data.id < Object.keys(pokeListName).length && pokeListName[data.id+1] && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
                         <div className="d-flex justify-content-end align-items-center" onClick={() => props.onIncId()}  title={`#${data.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
