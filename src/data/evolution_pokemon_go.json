@@ -1367,6 +1367,29 @@
         "form": ""
     },
     {
+        "id": 58,
+        "name": "GROWLITHE_HISUIAN",
+        "evo_list": [
+            {
+                "evo_to_form": "HISUIAN",
+                "evo_to_id": 59,
+                "evo_to_name": "ARCANINE",
+                "candyCost": 50,
+                "quest": {}
+            }
+        ],
+        "mega_evo": [],
+        "purified": {
+            "stardust": 3000,
+            "candy": 3
+        },
+        "thirdMove": {
+            "stardust": 50000,
+            "candy": 50
+        },
+        "form": "HISUI"
+    },
+    {
         "id": 59,
         "name": "ARCANINE",
         "evo_list": [],
@@ -1380,6 +1403,21 @@
             "candy": 50
         },
         "form": ""
+    },
+    {
+        "id": 59,
+        "name": "ARCANINE_HISUIAN",
+        "evo_list": [],
+        "mega_evo": [],
+        "purified": {
+            "stardust": 3000,
+            "candy": 3
+        },
+        "thirdMove": {
+            "stardust": 50000,
+            "candy": 50
+        },
+        "form": "HISUI"
     },
     {
         "id": 60,
@@ -2459,7 +2497,7 @@
             "stardust": 50000,
             "candy": 50
         },
-        "form": "HISUIAN"
+        "form": "HISUI"
     },
     {
         "id": 101,
@@ -2489,7 +2527,7 @@
             "stardust": 50000,
             "candy": 50
         },
-        "form": "HISUIAN"
+        "form": "HISUI"
     },
     {
         "id": 102,
@@ -3437,6 +3475,21 @@
         "form": ""
     },
     {
+        "id": 144,
+        "name": "ARTICUNO_GALARIAN",
+        "evo_list": [],
+        "mega_evo": [],
+        "purified": {
+            "stardust": 20000,
+            "candy": 20
+        },
+        "thirdMove": {
+            "stardust": 100000,
+            "candy": 100
+        },
+        "form": "GALAR"
+    },
+    {
         "id": 145,
         "name": "ZAPDOS",
         "evo_list": [],
@@ -3452,6 +3505,21 @@
         "form": ""
     },
     {
+        "id": 145,
+        "name": "ZAPDOS_GALARIAN",
+        "evo_list": [],
+        "mega_evo": [],
+        "purified": {
+            "stardust": 20000,
+            "candy": 20
+        },
+        "thirdMove": {
+            "stardust": 100000,
+            "candy": 100
+        },
+        "form": "GALAR"
+    },
+    {
         "id": 146,
         "name": "MOLTRES",
         "evo_list": [],
@@ -3465,6 +3533,21 @@
             "candy": 100
         },
         "form": ""
+    },
+    {
+        "id": 146,
+        "name": "MOLTRES_GALARIAN",
+        "evo_list": [],
+        "mega_evo": [],
+        "purified": {
+            "stardust": 20000,
+            "candy": 20
+        },
+        "thirdMove": {
+            "stardust": 100000,
+            "candy": 100
+        },
+        "form": "GALAR"
     },
     {
         "id": 147,
@@ -4678,6 +4761,33 @@
         "form": ""
     },
     {
+        "id": 211,
+        "name": "QWILFISH_HISUIAN",
+        "evo_list": [
+            {
+                "evo_to_form": "",
+                "evo_to_id": 904,
+                "evo_to_name": "OVERQWIL",
+                "candyCost": 50,
+                "quest": {
+                    "condition": {
+                        "desc": "WIN_RAID_STATUS",
+                        "pokemonType": []
+                    },
+                    "goal": 10,
+                    "type": "COMPLETE_RAID_BATTLE"
+                }
+            }
+        ],
+        "mega_evo": [],
+        "purified": {},
+        "thirdMove": {
+            "stardust": 50000,
+            "candy": 50
+        },
+        "form": "HISUI"
+    },
+    {
         "id": 212,
         "name": "SCIZOR",
         "evo_list": [],
@@ -4743,6 +4853,34 @@
             "candy": 50
         },
         "form": ""
+    },
+    {
+        "id": 215,
+        "name": "SNEASEL_HISUIAN",
+        "evo_list": [
+            {
+                "evo_to_form": "",
+                "evo_to_id": 903,
+                "evo_to_name": "SNEASLER",
+                "candyCost": 100,
+                "quest": {
+                    "onlyDaytime": true,
+                    "condition": null,
+                    "goal": 7,
+                    "type": "BUDDY_EVOLUTION_WALK"
+                }
+            }
+        ],
+        "mega_evo": [],
+        "purified": {
+            "stardust": 3000,
+            "candy": 3
+        },
+        "thirdMove": {
+            "stardust": 50000,
+            "candy": 50
+        },
+        "form": "HISUI"
     },
     {
         "id": 216,
@@ -12695,6 +12833,18 @@
         "form": ""
     },
     {
+        "id": 628,
+        "name": "BRAVIARY_HISUIAN",
+        "evo_list": [],
+        "mega_evo": [],
+        "purified": {},
+        "thirdMove": {
+            "stardust": 75000,
+            "candy": 75
+        },
+        "form": "HISUI"
+    },
+    {
         "id": 629,
         "name": "VULLABY",
         "evo_list": [
@@ -18413,5 +18563,29 @@
             "candy": 100
         },
         "form": "SHADOW_RIDER"
+    },
+    {
+        "id": 903,
+        "name": "SNEASLER",
+        "evo_list": [],
+        "mega_evo": [],
+        "purified": {},
+        "thirdMove": {
+            "stardust": 75000,
+            "candy": 75
+        },
+        "form": ""
+    },
+    {
+        "id": 904,
+        "name": "OVERQWIL",
+        "evo_list": [],
+        "mega_evo": [],
+        "purified": {},
+        "thirdMove": {
+            "stardust": 75000,
+            "candy": 75
+        },
+        "form": ""
     }
 ]

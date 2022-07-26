@@ -1597,6 +1597,28 @@
         "ELITE_CINEMATIC_MOVES": []
     },
     {
+        "ID": 58,
+        "NAME": "GROWLITHE_HISUI",
+        "BASE_SPECIES": "GROWLITHE",
+        "QUICK_MOVES": [
+            "EMBER_FAST",
+            "BITE_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "ROCK_SLIDE",
+            "CRUNCH",
+            "FLAMETHROWER"
+        ],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
         "ID": 59,
         "NAME": "ARCANINE",
         "BASE_SPECIES": "ARCANINE",
@@ -1623,6 +1645,30 @@
         "ELITE_CINEMATIC_MOVES": [
             "BULLDOZE"
         ]
+    },
+    {
+        "ID": 59,
+        "NAME": "ARCANINE_HISUI",
+        "BASE_SPECIES": "ARCANINE",
+        "QUICK_MOVES": [
+            "FIRE_FANG_FAST",
+            "SNARL_FAST",
+            "ROCK_SMASH_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "ROCK_SLIDE",
+            "WILD_CHARGE",
+            "CRUNCH",
+            "FLAMETHROWER"
+        ],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
     },
     {
         "ID": 60,
@@ -5527,6 +5573,26 @@
         "ELITE_CINEMATIC_MOVES": []
     },
     {
+        "ID": 211,
+        "NAME": "QWILFISH_HISUI",
+        "BASE_SPECIES": "QWILFISH",
+        "QUICK_MOVES": [
+            "POISON_STING_FAST",
+            "POISON_JAB_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "AQUA_TAIL",
+            "ICE_BEAM",
+            "SLUDGE_BOMB",
+            "DARK_PULSE",
+            "SHADOW_BALL"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
         "ID": 212,
         "NAME": "SCIZOR",
         "BASE_SPECIES": "SCIZOR",
@@ -5601,6 +5667,28 @@
             "AVALANCHE",
             "ICE_PUNCH",
             "FOUL_PLAY"
+        ],
+        "SHADOW_MOVES": [
+            "FRUSTRATION"
+        ],
+        "PURIFIED_MOVES": [
+            "RETURN"
+        ],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 215,
+        "NAME": "SNEASEL_HISUI",
+        "BASE_SPECIES": "SNEASEL",
+        "QUICK_MOVES": [
+            "ROCK_SMASH_FAST",
+            "POISON_JAB_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "AERIAL_ACE",
+            "CLOSE_COMBAT",
+            "X_SCISSOR"
         ],
         "SHADOW_MOVES": [
             "FRUSTRATION"
@@ -9739,7 +9827,7 @@
             "RETURN"
         ],
         "ELITE_QUICK_MOVES": [
-            "GUST"
+            "GUST_FAST"
         ],
         "ELITE_CINEMATIC_MOVES": []
     },
@@ -14760,6 +14848,25 @@
             "BRAVE_BIRD",
             "ROCK_SLIDE",
             "CLOSE_COMBAT"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 628,
+        "NAME": "BRAVIARY_HISUI",
+        "BASE_SPECIES": "BRAVIARY",
+        "QUICK_MOVES": [
+            "AIR_SLASH_FAST",
+            "ZEN_HEADBUTT_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "DAZZLING_GLEAM",
+            "BRAVE_BIRD",
+            "PSYCHIC",
+            "OMINOUS_WIND"
         ],
         "SHADOW_MOVES": [],
         "PURIFIED_MOVES": [],
@@ -20707,6 +20814,45 @@
             "PSYSHOCK",
             "PSYCHIC",
             "ENERGY_BALL",
+            "SHADOW_BALL"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 903,
+        "NAME": "SNEASLER",
+        "BASE_SPECIES": "SNEASLER",
+        "QUICK_MOVES": [
+            "ROCK_SMASH_FAST",
+            "POISON_JAB_FAST",
+            "SHADOW_CLAW_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "AERIAL_ACE",
+            "CLOSE_COMBAT",
+            "X_SCISSOR"
+        ],
+        "SHADOW_MOVES": [],
+        "PURIFIED_MOVES": [],
+        "ELITE_QUICK_MOVES": [],
+        "ELITE_CINEMATIC_MOVES": []
+    },
+    {
+        "ID": 904,
+        "NAME": "OVERQWIL",
+        "BASE_SPECIES": "OVERQWIL",
+        "QUICK_MOVES": [
+            "POISON_STING_FAST",
+            "POISON_JAB_FAST"
+        ],
+        "CINEMATIC_MOVES": [
+            "AQUA_TAIL",
+            "ICE_BEAM",
+            "SLUDGE_BOMB",
+            "DARK_PULSE",
             "SHADOW_BALL"
         ],
         "SHADOW_MOVES": [],

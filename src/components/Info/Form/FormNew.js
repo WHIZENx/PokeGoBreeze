@@ -105,7 +105,7 @@ const Form = ({
     useEffect(() => {
         if (!region && formName) {
             let findForm = formList.map(item => item.find(item => item.form.name === reversedCapitalize(formName, "-", " "))).find(item => item);
-            if (!findForm) findForm = formList.map(item => item.find(item => item.form.form_name === "normal" || item.form.form_name === "standard")).find(item => item);
+            if (!findForm) findForm = formList.map(item => item.find(item => item.form.form_name === "normal" || item.form.form_name === "standard" || item.form.form_name === "incarnate")).find(item => item);
             let region = Object.values(regionList).find(item => findForm.form.form_name.includes(item.toLowerCase()));
             if (findForm.form.form_name !== "" && region) setRegion(region);
             else setRegion(regionList[parseInt(species.generation.url.split("/")[6])]);
@@ -182,7 +182,16 @@ const Form = ({
                                 <button key={index} className={"btn btn-form "+((currForm && pokeID === currForm.form.id && value.form.id === currForm.form.id) || (currForm && pokeID !== currForm.form.id && value.form.id === currForm.form.id) ? "form-selected" : "")} onClick={() => changeForm(value.form.name, value.form.form_name)}>
                                     <div className='d-flex w-100 justify-content-center'>
                                         <div style={{width: 64}}>
-                                            <img className='pokemon-sprite-medium' onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}/>
+                                            <img className='pokemon-sprite-medium' onError={(e) => {
+                                                e.onerror=null;
+                                                APIService.getFetchUrl(e.target.currentSrc)
+                                                .then(() => {
+                                                    e.target.src=APIService.getPokeIconSprite(value.default_name);
+                                                })
+                                                .catch(() => {
+                                                    e.target.src=APIService.getPokeIconSprite("unknown-pokemon");
+                                                });
+                                            }} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}/>
                                         </div>
                                     </div>
                                     <p>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</p>
@@ -240,7 +249,7 @@ const Form = ({
                 </div>
             </div>
             :
-            <Evolution onSetIDPoke={onSetIDPoke} evolution_url={species.evolution_chain.url} id={id_default} forme={currForm && currForm.form} formDefault={currForm && pokeID === currForm.form.id} region={regionList[parseInt(species.generation.url.split("/")[6])]}/>
+            <Evolution onSetIDPoke={onSetIDPoke} evolution_url={species.evolution_chain ? species.evolution_chain.url : []} id={id_default} forme={currForm && currForm.form} formDefault={currForm && pokeID === currForm.form.id} region={regionList[parseInt(species.generation.url.split("/")[6])]}/>
             }
         </Fragment>
 

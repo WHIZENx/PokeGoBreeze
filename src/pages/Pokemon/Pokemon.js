@@ -62,6 +62,15 @@ const Pokemon = (props) => {
             dataFromList.push(poke_form);
         }));
         setPokeData(dataPokeList);
+        let modify = false
+        dataFromList = dataFromList.map(value => {
+            if (value.length === 0) {
+                modify = true;
+                return dataFromList.find(item => item.length === dataFromList.length);
+            }
+            return value
+        })
+        if (modify) dataFromList = dataFromList.map((value, index) => {return [value[index]]});
         dataFromList = dataFromList.map(item => {
             return item.map(item => ({form: item, name: data.varieties.find(v => item.pokemon.name.includes(v.pokemon.name)).pokemon.name, default_name: data.name}))
             .sort((a,b) => a.form.id - b.form.id);
@@ -173,7 +182,7 @@ const Pokemon = (props) => {
                             </div>
                         </Link>
                     </div>}
-                    {data.id < Object.keys(pokeListName).length && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
+                    {data.id < Object.keys(pokeListName).length && pokeListName[data.id+1] && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
                         <Link onClick={() => setReForm(false)} className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(data.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
@@ -319,13 +328,13 @@ const Pokemon = (props) => {
                                                 <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(data.id), marginRight: 5}}>
                                                     <div className="poke-candy" style={{background: computeCandyColor(data.id), width: 20, height: 20}}></div>
                                                 </div>
-                                                <span>{getCostModifier(data.id).thirdMove.candy ? `x${getCostModifier(data.id).thirdMove.candy}` : "Unavailable"}</span>
+                                                <span>{getCostModifier(data.id) && getCostModifier(data.id).thirdMove.candy ? `x${getCostModifier(data.id).thirdMove.candy}` : "Unavailable"}</span>
                                             </div>
                                             <div className="row-extra">
                                                 <div className="d-inline-flex justify-content-center" style={{width: 20, marginRight: 5}}>
                                                     <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/>
                                                 </div>
-                                                <span>{getCostModifier(data.id).thirdMove.stardust ? `x${getCostModifier(data.id).thirdMove.stardust}` : "Unavailable"}</span>
+                                                <span>{getCostModifier(data.id) && getCostModifier(data.id).thirdMove.stardust ? `x${getCostModifier(data.id).thirdMove.stardust}` : "Unavailable"}</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -340,13 +349,13 @@ const Pokemon = (props) => {
                                                 <div className="d-inline-block bg-poke-candy" style={{backgroundColor: computeCandyBgColor(data.id), marginRight: 5}}>
                                                     <div className="poke-candy" style={{background: computeCandyColor(data.id), width: 20, height: 20}}></div>
                                                 </div>
-                                                <span>{getCostModifier(data.id).purified.candy ? `x${getCostModifier(data.id).purified.candy}` : "Unavailable"}</span>
+                                                <span>{getCostModifier(data.id) && getCostModifier(data.id).purified.candy ? `x${getCostModifier(data.id).purified.candy}` : "Unavailable"}</span>
                                             </div>
                                             <div className="row-extra">
                                                 <div className="d-inline-flex justify-content-center" style={{width: 20, marginRight: 5}}>
                                                     <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/>
                                                 </div>
-                                                <span>{getCostModifier(data.id).purified.stardust ? `x${getCostModifier(data.id).purified.stardust}` : "Unavailable"}</span>
+                                                <span>{getCostModifier(data.id) && getCostModifier(data.id).purified.stardust ? `x${getCostModifier(data.id).purified.stardust}` : "Unavailable"}</span>
                                             </div>
                                         </td>
                                     </tr>

@@ -20921,5 +20921,87 @@
         "sound": {
             "cry": []
         }
+    },
+    {
+        "id": 899,
+        "name": "WYRDEER",
+        "image": [],
+        "sound": {
+            "cry": []
+        }
+    },
+    {
+        "id": 900,
+        "name": "KLEAVOR",
+        "image": [],
+        "sound": {
+            "cry": []
+        }
+    },
+    {
+        "id": 901,
+        "name": "URSALUNA",
+        "image": [],
+        "sound": {
+            "cry": []
+        }
+    },
+    {
+        "id": 902,
+        "name": "BASCULEGION",
+        "image": [],
+        "sound": {
+            "cry": []
+        }
+    },
+    {
+        "id": 903,
+        "name": "SNEASLER",
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 903,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm903.icon",
+                "shiny": "Addressable Assets/pm903.s.icon"
+            }
+        ],
+        "sound": {
+            "cry": [
+                {
+                    "form": "NORMAL",
+                    "path": "pm903.cry"
+                }
+            ]
+        }
+    },
+    {
+        "id": 904,
+        "name": "OVERQWIL",
+        "image": [
+            {
+                "gender": 3,
+                "pokemonId": 904,
+                "form": "NORMAL",
+                "default": "Addressable Assets/pm904.icon",
+                "shiny": "Addressable Assets/pm904.s.icon"
+            }
+        ],
+        "sound": {
+            "cry": [
+                {
+                    "form": "NORMAL",
+                    "path": "pm904.cry"
+                }
+            ]
+        }
+    },
+    {
+        "id": 905,
+        "name": "ENAMORUS",
+        "image": [],
+        "sound": {
+            "cry": []
+        }
     }
 ]

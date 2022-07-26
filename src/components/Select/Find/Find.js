@@ -38,7 +38,7 @@ const Find = (props) => {
             initialize.current = true
         }
         if (pokeList.length === 0) {
-            pokeList.push(...Object.values(pokeListName).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));
+            pokeList.push(...Object.values(pokeListName).filter(item => item.id > 0).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));
             setPokemonList(pokeList);
         }
 
@@ -97,7 +97,17 @@ const Find = (props) => {
                         {pokemonListFilter.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
                             <div className={"container card-pokemon "+(value.id===id ? "selected": "")} key={ index } onMouseDown={() => getInfoPoke(value)}>
                                 <b>#{value.id}</b>
-                                <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}/>
+                                <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}
+                                onError={(e) => {
+                                    e.onerror=null;
+                                    APIService.getFetchUrl(e.target.currentSrc)
+                                    .then(() => {
+                                        e.target.src=APIService.getPokeSprite(0);
+                                    })
+                                    .catch(() => {
+                                        e.target.src=APIService.getPokeIconSprite("unknown-pokemon");
+                                    });
+                                }}/>
                                 {value.name}
                             </div>
                         ))}

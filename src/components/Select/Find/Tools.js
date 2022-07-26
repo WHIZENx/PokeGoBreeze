@@ -36,6 +36,15 @@ const Tools = (props) => {
             dataFromList.push(poke_form);
         }));
         setPokeData(dataPokeList);
+        let modify = false
+        dataFromList = dataFromList.map(value => {
+            if (value.length === 0) {
+                modify = true;
+                return dataFromList.find(item => item.length === dataFromList.length);
+            }
+            return value
+        })
+        if (modify) dataFromList = dataFromList.map((value, index) => {return [value[index]]});
         dataFromList = dataFromList.map(item => {
             return item.map(item => ({form: item, name: data.varieties.find(v => item.pokemon.name.includes(v.pokemon.name)).pokemon.name, default_name: data.name}))
             .sort((a,b) => a.form.id - b.form.id);
@@ -117,7 +126,18 @@ const Tools = (props) => {
                         <Fragment key={index}>
                             {value.map((value, index) => (
                                 <button value={value.form.name} key={index} className={"btn btn-form"+(value.form.id === currForm.form.id ? " form-selected" : "")} onClick={(e) => changeForm(e)}>
-                                    <img width={64} height={64} onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeIconSprite(value.default_name)}} alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}/>
+                                    <img width={64} height={64}
+                                    onError={(e) => {
+                                        e.onerror=null;
+                                        APIService.getFetchUrl(e.target.currentSrc)
+                                        .then(() => {
+                                            e.target.src=APIService.getPokeIconSprite(value.default_name);
+                                        })
+                                        .catch(() => {
+                                            e.target.src=APIService.getPokeIconSprite("unknown-pokemon");
+                                        });
+                                    }}
+                                    alt="img-icon-form" src={APIService.getPokeIconSprite(value.form.name)}/>
                                     <div>{value.form.form_name === "" ? "Normal" : splitAndCapitalize(value.form.form_name, "-", " ")}</div>
                                     {value.form.id === pokeID &&
                                         <b><small>(Default)</small></b>

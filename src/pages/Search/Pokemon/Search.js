@@ -41,7 +41,7 @@ const Search = () => {
         // fetchPokemon();
 
         if (pokeList.length === 0) {
-            pokeList.push(...Object.values(pokeListName).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));
+            pokeList.push(...Object.values(pokeListName).filter(item => item.id > 0).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));
             setPokemonList(pokeList);
         }
         const results = pokemonList.filter(item => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm));
@@ -101,7 +101,8 @@ const Search = () => {
                     {pokemonListFilter.slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
                         <div className="container card-pokemon" key={ index } onMouseDown={() => getInfoPoke(value)}>
                             <b>#{value.id}</b>
-                            <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}/>
+                            <img width={36} height={36} className='img-search' alt='img-pokemon' src={value.sprites}
+                            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}/>
                             {value.name}
                         </div>
                     ))}

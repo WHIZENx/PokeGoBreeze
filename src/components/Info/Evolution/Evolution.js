@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
 
 import evoData from "../../../data/evolution_pokemon_go.json";
+import pokemonName from "../../../data/pokemon_names.json";
 
 import "./Evolution.css";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -44,12 +45,16 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     const getEvoChain = useCallback((data) => {
         if (data.length === 0) return false;
         let evoList = data.map(item => {
-            return evoData.filter(e => e.id === parseInt(item.species.url.split("/")[6]));
+            return item && evoData.filter(e => e.id === parseInt(item.species.url.split("/")[6]));
         })[0];
         let currForm = formDefault ?
         forme.form_name === "" && ["Alola", "Galar"].includes(region) ?
         region : forme.form_name : forme.form_name;
-        if (evoList.length > 1) {
+        if (!evoList) {
+            const pokemon = evoData.find(e => e.id === id);
+            if (pokemon) return setArrEvoList(oldArr => [...oldArr, [{name: splitAndCapitalize(pokemon.name, "_", " "), id: pokemon.id, baby: false, form: pokemon.form ?? null}]]);
+            return setArrEvoList(oldArr => [...oldArr, [{name: pokemonName[id].name, id: id, baby: false, form: null}]]);
+        } else if (evoList.length > 1) {
             let evoInJSON = evoList.find(item => item.name.includes(currForm.toUpperCase()));
             if (evoInJSON) {
                 let evoInAPI = data.find(item => parseInt(item.species.url.split("/")[6]) === evoInJSON.id);
@@ -78,7 +83,6 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                         })
                     );
                     data = [evoInAPI].map(item => ({...item, evolves_to: tempArr}));
-
                 }
             }
         }
@@ -86,7 +90,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
             return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby, form: item.form ?? null}
         })]);
         return data.map(item => getEvoChain(item.evolves_to))
-    }, [formDefault, forme, region]);
+    }, [formDefault, forme, region, id]);
 
     const getGmaxChain = useCallback((id, form) => {
         setArrEvoList([
@@ -236,27 +240,63 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                         }}>
                             <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
                                 <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
+                                onError={(e) => {
+                                    e.onerror=null;
+                                    APIService.getFetchUrl(e.target.currentSrc)
+                                    .then(() => {
+                                        e.target.src=APIService.getPokeSprite(value.id);
+                                    })
+                                    .catch(() => {
+                                        e.target.src=APIService.getPokeFullSprite(value.id);
+                                    });
+                                }}/>
                             </Badge>
                         </Badge>
                     </ThemeProvider>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
                         <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
+                        onError={(e) => {
+                            e.onerror=null;
+                            APIService.getFetchUrl(e.target.currentSrc)
+                            .then(() => {
+                                e.target.src=APIService.getPokeSprite(value.id);
+                            })
+                            .catch(() => {
+                                e.target.src=APIService.getPokeFullSprite(value.id);
+                            });
+                        }}/>
                     </Badge>
                     }
                     </Fragment>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
                         <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                        onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
+                        onError={(e) => {
+                            e.onerror=null;
+                            APIService.getFetchUrl(e.target.currentSrc)
+                            .then(() => {
+                                e.target.src=APIService.getPokeSprite(value.id);
+                            })
+                            .catch(() => {
+                                e.target.src=APIService.getPokeFullSprite(value.id);
+                            });
+                        }}/>
                     </Badge>
                 }
                 </Fragment>
                 :
                 <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(value.id)}}/>
+                onError={(e) => {
+                    e.onerror=null;
+                    APIService.getFetchUrl(e.target.currentSrc)
+                    .then(() => {
+                        e.target.src=APIService.getPokeSprite(value.id);
+                    })
+                    .catch(() => {
+                        e.target.src=APIService.getPokeFullSprite(value.id);
+                    });
+                }}/>
                 }
                 <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
                 <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>

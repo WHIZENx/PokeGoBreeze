@@ -116,6 +116,7 @@ class APIService {
         if (!fix) {
             if (name.includes("necrozma-dawn")) name += "-wings"
             else if (name.includes("necrozma-dusk")) name += "-mane"
+            name = name.replace("-incarnate", "")
         }
         return `${POKE_ICON_SPRITES_API_URL}${name}.png`;
     }
