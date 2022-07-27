@@ -22,6 +22,7 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import CircleBar from "../../../components/Sprites/ProgressBar/Circle";
+import ProgressBar from "../../../components/Sprites/ProgressBar/Bar";
 
 const Battle = () => {
 
@@ -61,6 +62,11 @@ const Battle = () => {
         block: 2
     })
 
+    const [playTimeline, setPlayTimeline] = useState({
+        pokemonCurr: {hp: 0, energyPri: 0, energySec: 0},
+        pokemonObj: {hp: 0, energyPri: 0, energySec: 0}
+    });
+
     const State = (timer, type, color, size, tap, block, energy, hp, move, immune, buff) => {
         return {
             timer: timer ?? 0,
@@ -71,7 +77,7 @@ const Battle = () => {
             tap: tap ?? false,
             block: block ?? 0,
             energy: energy ?? 0,
-            hp: hp ?? 0,
+            hp: hp ? Math.max(0, hp) : 0,
             dmgImmune: immune ?? false
         }
     }
@@ -84,7 +90,7 @@ const Battle = () => {
 
     const Pokemon = (poke) => {
         return {
-            hp: calculateStatsBattle(poke.pokemonData.stats.sta, poke.pokemonData.bestStats.IV.sta, poke.pokemonData.bestStats.level, true),
+            hp: poke.pokemonData.bestStats.stats.statsSTA,
             stats: poke.pokemonData.stats,
             bestStats: poke.pokemonData.bestStats,
             pokemon: poke.pokemonData.pokemon,
@@ -98,13 +104,14 @@ const Battle = () => {
     }
 
     const battleAnimation = () => {
+        resetTimeLine();
         clearInterval(timelineInterval);
         clearInterval(turnInterval);
 
         let player1 = Pokemon(pokemonCurr);
         let player2 = Pokemon(pokemonObj);
 
-        // console.log(player1, player2)
+        // console.log(pokemonCurr, player1, pokemonObj, player2)
 
         let timelinePri = [];
         let timelineSec = [];
@@ -222,7 +229,7 @@ const Battle = () => {
                 timelinePri[timer].tap = false;
                 timelineSec[timer].tap = false;
             }
-        }, 1);
+        }, 0);
         let isDelay = false, delay = 1;
         turnInterval = setInterval(() => {
 
@@ -350,16 +357,15 @@ const Battle = () => {
             if (player1.hp <= 0 || player2.hp <= 0) {
                 clearInterval(timelineInterval);
                 clearInterval(turnInterval);
-                // console.log(timelinePri, timelineSec);
                 if (player1.hp <= 0) {
-                    timelinePri.push(State(timer, "X"))
-                    if (timelinePri.length === timelineSec.length) timelineSec[timelineSec.length-1] = State(timer, "Q");
-                    else timelineSec.push(State(timer, "Q"))
+                    timelinePri.push(State(timer, "X", null, null, null, null, player1.energy, player1.hp))
+                    if (timelinePri.length === timelineSec.length) timelineSec[timelineSec.length-1] = State(timer, "Q", null, null, null, null, player2.energy, player2.hp);
+                    else timelineSec.push(State(timer, "Q", null, null, null, null, player2.energy, player2.hp))
                 }
                 else if (player2.hp <= 0) {
-                    timelineSec.push(State(timer, "X"))
-                    if (timelinePri.length === timelineSec.length) timelinePri[timelinePri.length-1] = State(timer, "Q");
-                    else timelinePri.push(State(timer, "Q"))
+                    timelineSec.push(State(timer, "X", null, null, null, null, player2.energy, player2.hp))
+                    if (timelinePri.length === timelineSec.length) timelinePri[timelinePri.length-1] = State(timer, "Q", null, null, null, null, player1.energy, player1.hp);
+                    else timelinePri.push(State(timer, "Q", null, null, null, null, player1.energy, player1.hp))
                 }
                 if (timelinePri.length === timelineSec.length) {
                     setPokemonCurr({...pokemonCurr, timeline: timelinePri});
@@ -367,9 +373,9 @@ const Battle = () => {
                 } else {
                     battleAnimation();
                 }
-                // console.log(timelinePri, timelineSec)
+                console.log(timelinePri, timelineSec)
             }
-        }, 1);
+        }, 0);
     }
 
     const clearData = useCallback(() => {
@@ -458,26 +464,35 @@ const Battle = () => {
         }
     }
 
-    // const calculateState = () => {
-
-    // }
-
     const onPlayLineFitMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const x = Math.max(0, e.clientX - rect.left);
         setLeftFit(x*100/timelineFit.current.clientWidth);
+        const range = pokemonCurr.timeline.length;
+        let arr = []
+        for (let i = 0; i < range; i++) {
+            arr.push(document.getElementById(i).getBoundingClientRect());
+        }
+        overlapping(range, arr);
     };
 
     var timelinePlay;
     const playTimeLine = (x) => {
+        const range = pokemonCurr.timeline.length;
+        let arr = []
+        for (let i = 0; i < range; i++) {
+            arr.push(document.getElementById(i).getBoundingClientRect());
+        }
         timelinePlay = setInterval(() => {
             setLeftFit(x*100/timelineFit.current.clientWidth);
             if (x >= timelineFit.current.clientWidth) clearInterval(timelinePlay)
             x += 1;
+            overlapping(range, arr);
         }, 0)
     }
 
     const stopTimeLine = () => {
+        setLeftFit(leftFit);
         const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
         for (let i = 1; i < interval_id; i++) {
             window.clearInterval(i);
@@ -487,6 +502,27 @@ const Battle = () => {
     const resetTimeLine = () => {
         stopTimeLine();
         setLeftFit(0);
+        setPlayTimeline({
+            pokemonCurr: {hp: Math.floor(pokemonCurr.pokemonData.bestStats.stats.statsSTA), energy: 0},
+            pokemonObj: {hp: Math.floor(pokemonObj.pokemonData.bestStats.stats.statsSTA), energy: 0}
+        });
+    }
+
+    const overlapping = (range, arr) => {
+        const index = checkOverLap(range, arr);
+        if (index >= 0 && index < range) {
+            const pokeCurrData = pokemonCurr.timeline[index];
+            const pokeObjData = pokemonObj.timeline[index];
+            setPlayTimeline({
+                pokemonCurr: {hp: pokeCurrData.hp, energy: pokeCurrData.energy},
+                pokemonObj: {hp: pokeObjData.hp, energy: pokeObjData.energy}
+            });
+        }
+    }
+
+    const checkOverLap = (range, arr) => {
+        const rect1 = document.getElementById("play-line").getBoundingClientRect();
+        return arr.filter(dom => dom.left <= rect1.left).length;
     }
 
     const findBuff = (move) => {
@@ -525,7 +561,7 @@ const Battle = () => {
 
     const renderInfoPokemon = (pokemon, setPokemon) => {
         return (
-            <Accordion defaultActiveKey={['0']} alwaysOpen>
+            <Accordion defaultActiveKey={[]} alwaysOpen>
                 <Accordion.Item eventKey="0">
                     <Accordion.Header>
                         Information
@@ -632,18 +668,17 @@ const Battle = () => {
                                 </Form.Select>
                             </div>
                             {renderInfoPokemon(pokemonCurr, setPokemonCurr)}
-                            <div className="w-100 bg-type-moves">
-                                <div className="text-center">
-                                    <CircleBar type={pokemonCurr.cMovePri.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonCurr.cMovePri.pvp_energy)} energy={0}/>
-                                    <span></span>
+                            {pokemonCurr.timeline.length > 0 &&
+                            <div className="w-100 bg-ref-pokemon">
+                                <div className="w-100 bg-type-moves">
+                                    <CircleBar text={splitAndCapitalize(pokemonCurr.cMovePri.name, "_", " ")} type={pokemonCurr.cMovePri.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonCurr.cMovePri.pvp_energy)} energy={playTimeline.pokemonCurr.energy ?? 0}/>
+                                    {pokemonCurr.cMoveSec && pokemonCurr.cMoveSec !== "" &&
+                                    <CircleBar text={splitAndCapitalize(pokemonCurr.cMoveSec.name, "_", " ")} type={pokemonCurr.cMoveSec.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonCurr.cMoveSec.pvp_energy)} energy={playTimeline.pokemonCurr.energy ?? 0}/>
+                                    }
                                 </div>
-                                {pokemonCurr.cMoveSec && pokemonCurr.cMoveSec !== "" &&
-                                <div className="text-center">
-                                    <CircleBar type={pokemonCurr.cMoveSec.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonCurr.cMoveSec.pvp_energy)} energy={0}/>
-                                    <span></span>
-                                </div>
-                                }
+                                <ProgressBar text={"HP"} height={15} hp={Math.floor(playTimeline.pokemonCurr.hp)} maxHp={Math.floor(pokemonCurr.pokemonData.bestStats.stats.statsSTA)}/>
                             </div>
+                            }
                         </Fragment>
                     }
                 </div>
@@ -721,18 +756,17 @@ const Battle = () => {
                                 </Form.Select>
                             </div>
                             {renderInfoPokemon(pokemonObj)}
-                            <div className="w-100 bg-type-moves">
-                                <div className="text-center">
-                                    <CircleBar type={pokemonObj.cMovePri.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonObj.cMovePri.pvp_energy)} energy={0}/>
-                                    <span></span>
+                            {pokemonObj.timeline.length > 0 &&
+                            <div className="w-100 bg-ref-pokemon">
+                                <div className="w-100 bg-type-moves">
+                                    <CircleBar text={splitAndCapitalize(pokemonObj.cMovePri.name, "_", " ")} type={pokemonObj.cMovePri.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonObj.cMovePri.pvp_energy)} energy={playTimeline.pokemonObj.energy ?? 0}/>
+                                    {pokemonObj.cMoveSec && pokemonObj.cMoveSec !== "" &&
+                                    <CircleBar text={splitAndCapitalize(pokemonObj.cMoveSec.name, "_", " ")} type={pokemonObj.cMoveSec.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonObj.cMoveSec.pvp_energy)} energy={playTimeline.pokemonObj.energy ?? 0}/>
+                                    }
                                 </div>
-                                {pokemonObj.cMoveSec && pokemonObj.cMoveSec !== "" &&
-                                <div className="text-center">
-                                    <CircleBar type={pokemonObj.cMoveSec.type} size={80} maxEnergy={100} moveEnergy={Math.abs(pokemonObj.cMoveSec.pvp_energy)} energy={0}/>
-                                    <span></span>
-                                </div>
-                                }
+                                <ProgressBar text={"HP"} height={15} hp={Math.floor(playTimeline.pokemonObj.hp)} maxHp={Math.floor(pokemonObj.pokemonData.bestStats.stats.statsSTA)}/>
                             </div>
+                            }
                         </Fragment>
                     }
                 </div>

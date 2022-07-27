@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styled from "styled-components";
 import APIService from "../../../services/API.service";
 
@@ -17,7 +16,7 @@ const Fill =  styled.div`
     width: ${props => props.size}px;
     height: ${props => props.size}px;
     clip: rect(${props => props.size-(props.energy*props.size/props.moveEnergy)}px, ${props => props.size}px, ${props => props.size}px, 0px);
-    opacity: ${props => props.opacity};
+    filter: brightness(${props => props.brightness});
     transition: 0.1s;
 `;
 
@@ -45,25 +44,21 @@ const IconFill =  styled.div`
     transition: 0.1s;
 `;
 
-const CircleBar = ({type, size, moveEnergy, energy, maxEnergy}) => {
+const CircleBar = ({text, type, size, moveEnergy, energy, maxEnergy}) => {
 
     if (energy > maxEnergy) energy = maxEnergy;
     const fillCount = Math.min(Math.ceil(maxEnergy/moveEnergy), 3);
 
-    const [test, setTest] = useState(energy);
-
-    // console.log(moveEnergy, energy, maxEnergy, fillCount)
-
     return (
-        <div>
-        <Circle size={size}>
-            {[...Array(fillCount).keys()].map(index => (
-                <Fill key={index} className={type.toLowerCase()} size={size-5} moveEnergy={moveEnergy} energy={test-moveEnergy*index} opacity={1-(fillCount-(index+1))*0.2}/>
-            ))}
-            <Icon size={size-5} url={APIService.getTypeIcon(type)}/>
-            <IconFill size={size-5} energy={test} moveEnergy={moveEnergy} url={APIService.getTypeIcon(type)}/>
-        </Circle>
-        <button onClick={() => {if (test <= maxEnergy) setTest(test+5);}}>Inc</button>
+        <div className="d-flex flex-column align-items-center" style={{rowGap: 10}}>
+            {text && <span><b>{text}</b></span>}
+            <Circle size={size}>
+                {[...Array(fillCount).keys()].map(index => (
+                    <Fill key={index} className={type.toLowerCase()} size={size-5} moveEnergy={moveEnergy} energy={energy-moveEnergy*index} brightness={1-(index*0.1)}/>
+                ))}
+                <Icon size={size-5} url={APIService.getTypeIcon(type)}/>
+                <IconFill size={size-5} energy={energy} moveEnergy={moveEnergy} url={APIService.getTypeIcon(type)}/>
+            </Circle>
         </div>
     )
 }

@@ -241,13 +241,13 @@ export const TimeLineFit = (pokemonCurr, pokemonObj, timeline, eRef, move, left,
                 <div className="position-relative timeline-fit-container" style={{height: 30}}>
                     {poke.timeline.map((value, index) => (
                         <Fragment key={index}>
-                            {value.type === "B" && <div style={{left: calculateFitPoint(poke.timeline.length, index)}}><HexagonIcon sx={{color: 'purple', fontSize: value.size}} /></div>}
-                            {value.type === "F" && <div className={`fast-attack ${value.color} black-border`} style={{left: calculateFitPoint(poke.timeline.length, index)}}></div>}
-                            {(value.type === "S" || value.type === "P") && <div className={`charge-attack ${value.color}-border`} style={{width: value.size, height: value.size, left: calculateFitPoint(poke.timeline.length, index)}}></div>}
-                            {value.type === "C" && <div className={`charge-attack ${value.color} ${value.color}-border`} style={{width: value.size, height: value.size, left: calculateFitPoint(poke.timeline.length, index)}}></div>}
-                            {(value.type === "W" || value.type === "N") && <div className="wait-attack" style={{left: calculateFitPoint(poke.timeline.length, index)}}></div>}
-                            {!value.type && <div className="wait-charge-attack" style={{width: value.size, height: value.size, left: calculateFitPoint(poke.timeline.length, index)}}></div>}
-                            {value.type === "X" && <div className="text-danger" style={{left: calculateFitPoint(poke.timeline.length, index)}}>X</div>}
+                            {value.type === "B" && <div id={index} style={{left: calculateFitPoint(poke.timeline.length, index)}}><HexagonIcon sx={{color: 'purple', fontSize: value.size}} /></div>}
+                            {value.type === "F" && <div id={index} className={`fast-attack ${value.color} black-border`} style={{left: calculateFitPoint(poke.timeline.length, index)}}></div>}
+                            {(value.type === "S" || value.type === "P") && <div id={index} className={`charge-attack ${value.color}-border`} style={{width: value.size, height: value.size, left: calculateFitPoint(poke.timeline.length, index)}}></div>}
+                            {value.type === "C" && <div id={index} className={`charge-attack ${value.color} ${value.color}-border`} style={{width: value.size, height: value.size, left: calculateFitPoint(poke.timeline.length, index)}}></div>}
+                            {(value.type === "W" || value.type === "N") && <div id={index} className="wait-attack" style={{left: calculateFitPoint(poke.timeline.length, index)}}></div>}
+                            {!value.type && <div id={index} className="wait-charge-attack" style={{width: value.size, height: value.size, left: calculateFitPoint(poke.timeline.length, index)}}></div>}
+                            {value.type === "X" && <div id={index} className="text-danger" style={{left: calculateFitPoint(poke.timeline.length, index)}}>X</div>}
                         </Fragment>
                     ))}
                 </div>
@@ -263,7 +263,7 @@ export const TimeLineFit = (pokemonCurr, pokemonObj, timeline, eRef, move, left,
                     {renderTimelineFit(pokemonCurr, pokemonObj)}
                     <hr className="w-100" style={{margin: 0}}/>
                     {renderTimelineFit(pokemonObj, pokemonCurr)}
-                    <div ref={eRef} className="play-line" style={{left: left+"%"}}></div>
+                    <div id="play-line" ref={eRef} className="play-line" style={{left: left+"%"}}></div>
                 </div>
             </div>
             }

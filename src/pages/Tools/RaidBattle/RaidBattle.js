@@ -147,6 +147,12 @@ const RaidBattle = () => {
         let result = resultFirst.find(item => item.NAME === form);
         let simpleMove = [];
         if (resultFirst.length === 1 || result == null) {
+            if (resultFirst.length === 0) {
+                setFMove("");
+                setResultFMove("");
+                setCMove("");
+                return setResultCMove("");
+            }
             let simpleMove = [];
             resultFirst[0].QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
             resultFirst[0].ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
@@ -482,7 +488,13 @@ const RaidBattle = () => {
                     <Find hide={true} title="Raid Boss" clearStats={resetData} setStatATK={setStatATK} setStatDEF={setStatDEF} setForm={onSetForm} setName={setName} setId={setId}/>
                 </div>
                 <div className="col-lg d-flex justify-content-center align-items-center" style={{padding: 0}}>
-                    <div className="element-top">
+                    <div className="element-top position-relative">
+                        {(resultFMove === "" || resultCMove === "") &&
+                        <div className="position-absolute w-100 h-100" style={{zIndex: 2}}>
+                            <div className="moveset-error"></div>
+                            <span className="moveset-error-msg">Moveset not Available</span>
+                        </div>
+                        }
                         <h3 className="text-center text-decoration-underline">Select Boss Moveset</h3>
                         <div className="row element-top">
                             <div className="col d-flex justify-content-center">
@@ -528,7 +540,7 @@ const RaidBattle = () => {
                                     onInput={(e) => setTimeAllow(parseInt(e.target.value))}/>
                             </div>
                         </div>
-                        <div className="text-center element-top"><button className="btn btn-primary w-50" onClick={() => handleCalculate()}>Search</button></div>
+                        {resultFMove !== "" && resultCMove !== "" && <div className="text-center element-top"><button className="btn btn-primary w-50" onClick={() => handleCalculate()}>Search</button></div>}
                     </div>
                 </div>
             </div>

@@ -201,7 +201,8 @@ const CalculatePoint = () => {
                     <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === "def" ? `Tier ${tier}` : null}>
                         <span className="position-relative" style={{width: 96}}>
                             <img className="position-absolute" alt="img-logo" height={36} src={pri === "atk" ? `${atk_logo}` : `${def_logo}`}/>
-                            <img alt="img-pokemon" className="pokemon-sprite-large" src={APIService.getPokeIconSprite(form.form.name, true)}/>
+                            <img alt="img-pokemon" className="pokemon-sprite-large" src={APIService.getPokeIconSprite(form.form.name, true)}
+                            onError={(e) => {e.onerror=null;e.target.src=APIService.getPokeIconSprite("unknown-pokemon");}}/>
                         </span>
                     </Badge>
                     <span className="caption">{splitAndCapitalize(form.form.name, "-", " ")}</span>
@@ -211,7 +212,8 @@ const CalculatePoint = () => {
                     <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === "def" ? `Tier ${tier}` : null}>
                         <span className="position-relative" style={{width: 96}}>
                             <img className="position-absolute" alt="img-logo" height={36} src={sec === "atk" ? `${atk_logo}` : `${def_logo}`}/>
-                            <img alt="img-pokemon" className="pokemon-sprite-large" src={APIService.getPokeIconSprite(formDef.form.name, true)}/>
+                            <img alt="img-pokemon" className="pokemon-sprite-large" src={APIService.getPokeIconSprite(formDef.form.name, true)}
+                            onError={(e) => {e.onerror=null;e.target.src=APIService.getPokeIconSprite("unknown-pokemon");}}/>
                         </span>
                     </Badge>
                     <span className="caption">{splitAndCapitalize(formDef.form.name, "-", " ")}</span>

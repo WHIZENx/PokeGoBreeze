@@ -48,19 +48,22 @@ const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveTyp
     }, [setMovePokemon]);
 
     useEffect(() => {
-        if (result) setResultMove(result);
-        else {
-            if (pokemon && !move) findMove(pokemon.num, pokemon.forme, moveType);
-            if (!pokemon) setResultMove(null);
-            else if (selected) findMove(pokemon.num, pokemon.forme, moveType, selected);
+        if (result !== "" && move !== "") {
+            if (result) setResultMove(result);
+            else {
+                if (pokemon && !move) findMove(pokemon.num, pokemon.forme, moveType);
+                if (!pokemon) setResultMove(null);
+                else if (selected) findMove(pokemon.num, pokemon.forme, moveType, selected);
+            }
         }
+
     }, [findMove, pokemon, moveType, move, result, selected, setMovePokemon]);
 
     const smallInput = () => {
         return (
             <div className={'position-relative d-flex align-items-center form-control '+(pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0, borderRadius: 0}}>
                 <div className='card-move-input' tabIndex={ 0 } onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-                    <CardMoveSmall value={move} show={pokemon ? true : false}/>
+                    <CardMoveSmall value={move === "" ? null : move} show={pokemon ? true : false}/>
                     {showMove && resultMove &&
                         <div className="result-move-select">
                             <div>

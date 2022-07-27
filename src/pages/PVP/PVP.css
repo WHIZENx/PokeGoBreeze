@@ -225,7 +225,7 @@
 .battle-bar {
     height: 150px;
     overflow-x: auto;
-    padding: 10px;
+    padding: 10px 0;
 }
 
 .fast-attack {
@@ -348,7 +348,7 @@
 
 .fit-timeline {
     height: 150px;
-    padding: 10px;
+    padding: 10px 0;
 }
 
 .fit-timeline .timeline-fit-container div {
@@ -383,10 +383,17 @@
     font-weight: bold;
 }
 
-.bg-type-moves {
+.bg-ref-pokemon {
     background-color: white;
     border: 1px solid lightgray;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    align-items: center;
+}
+
+.bg-type-moves {
     display: flex;
     justify-content: center;
     column-gap: 20px;

@@ -20,6 +20,7 @@ const Move = (props) => {
         let result = resultFirst.find(item => item.NAME === form);
         let simpleMove = [];
         if (resultFirst.length === 1 || result == null) {
+            if (resultFirst.length === 0) return setResultMove("");
             if (props.type !== "CHARGE") {
                 resultFirst[0].QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
                 resultFirst[0].ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});

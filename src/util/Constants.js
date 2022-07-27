@@ -204,11 +204,23 @@ export const leaguesRanking = [
     //     logo: null
     // },
     {
+        id: "hisui",
+        name: "Hisui Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/hisui_icon.png")
+    },
+    {
         id: "kanto",
         name: "Kanto Cup",
         cp: 1500,
         logo: APIService.getAssetPokeGo("LeagueIcons/kantoLeague2022_icon.png")
     },
+    // {
+    //     id: "litlerremix",
+    //     name: "Litle Remix",
+    //     cp: [500, 1500],
+    //     logo: APIService.getAssetPokeGo("LeagueIcons/GBL_littlecupremix.png")
+    // },
     {
         id: "mega",
         name: "Mega Master League",
@@ -271,6 +283,12 @@ export const leaguesTeam = [
         name: "Master League (Classic)",
         cp: 10000,
         logo: APIService.getAssetPokeGo("pogo_master_league.png")
+    },
+    {
+        id: "hisui",
+        name: "Hisui Cup",
+        cp: 1500,
+        logo: APIService.getAssetPokeGo("LeagueIcons/hisui_icon.png")
     },
     {
         id: "kanto",
