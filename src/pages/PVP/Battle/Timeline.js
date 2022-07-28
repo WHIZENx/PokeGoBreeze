@@ -123,7 +123,7 @@ export const TimeLineVertical = (pokemonCurr, pokemonObj, hide) => {
     )
 }
 
-export const TimeLine = (pokemonCurr, pokemonObj, showTap, hide) => {
+export const TimeLine = (pokemonCurr, pokemonObj, elem, scroll, timeline, eRef, move, left, showTap, hide) => {
 
     const renderTimeline = (poke, pokeObj, border) => {
         return (
@@ -167,13 +167,13 @@ export const TimeLine = (pokemonCurr, pokemonObj, showTap, hide) => {
                 <div className="d-flex align-items-center" style={{columnGap: 10, width: 'max-content', borderBottom: border ? '1px solid lightgray' : 'none'}}>
                     {poke.timeline.map((value, index) => (
                         <Fragment key={index}>
-                            {value.type === "B" && <HexagonIcon sx={{color: 'purple', fontSize: value.size}} />}
-                            {value.type === "F" && <div className={`fast-attack ${value.color} ${value.color}-border`}></div>}
-                            {(value.type === "S" || value.type === "P") && <div className={`charge-attack ${value.color}-border`} style={{width: value.size, height: value.size}}></div>}
-                            {value.type === "C" && <div className={`charge-attack ${value.color} ${value.color}-border`} style={{width: value.size, height: value.size}}></div>}
-                            {(value.type === "W" || value.type === "N") && <div className="wait-attack"></div>}
-                            {!value.type && <div className="wait-charge-attack" style={{width: value.size, height: value.size}}></div>}
-                            {value.type === "X" && <div className="text-danger">X</div>}
+                            {value.type === "B" && <HexagonIcon id={index} sx={{color: 'purple', fontSize: value.size}} />}
+                            {value.type === "F" && <div id={index} className={`fast-attack ${value.color} ${value.color}-border`}></div>}
+                            {(value.type === "S" || value.type === "P") && <div id={index} className={`charge-attack ${value.color}-border`} style={{width: value.size, height: value.size}}></div>}
+                            {value.type === "C" && <div id={index} className={`charge-attack ${value.color} ${value.color}-border`} style={{width: value.size, height: value.size}}></div>}
+                            {(value.type === "W" || value.type === "N") && <div id={index} className="wait-attack"></div>}
+                            {!value.type && <div id={index} className="wait-charge-attack" style={{width: value.size, height: value.size}}></div>}
+                            {value.type === "X" && <div id={index} className="text-danger">X</div>}
                         </Fragment>
                     ))}
                 </div>
@@ -184,9 +184,14 @@ export const TimeLine = (pokemonCurr, pokemonObj, showTap, hide) => {
     return (
         <Fragment>
             {!hide &&
-            <div className="w-100 battle-bar">
-                {renderTimeline(pokemonCurr, pokemonObj, true)}
-                {renderTimeline(pokemonObj, pokemonCurr)}
+            <div className="w-100 battle-bar d-flex justify-content-center">
+                <div id="battle-bar-scroll" className="battle-bar-container" ref={elem} onScroll={scroll.bind(this)}>
+                    <div className="position-relative" ref={timeline} onMouseMove={move.bind(this)}>
+                        {renderTimeline(pokemonCurr, pokemonObj, true)}
+                        {renderTimeline(pokemonObj, pokemonCurr)}
+                        <div id="play-line" ref={eRef} className="play-line" style={{left: left}}></div>
+                    </div>
+                </div>
             </div>
             }
         </Fragment>
@@ -258,7 +263,7 @@ export const TimeLineFit = (pokemonCurr, pokemonObj, timeline, eRef, move, left,
     return (
         <Fragment>
             {!hide &&
-            <div className="w-100 fit-timeline">
+            <div className="w-100 fit-timeline d-flex justify-content-center">
                 <div className="position-relative h-100" ref={timeline} onMouseMove={move.bind(this)}>
                     {renderTimelineFit(pokemonCurr, pokemonObj)}
                     <hr className="w-100" style={{margin: 0}}/>

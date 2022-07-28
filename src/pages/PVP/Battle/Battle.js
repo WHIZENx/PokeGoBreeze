@@ -19,6 +19,10 @@ import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import CircleBar from "../../../components/Sprites/ProgressBar/Circle";
@@ -35,8 +39,11 @@ const Battle = () => {
     const {showTap, timelineType, league} = options;
 
     const [leftFit, setLeftFit] = useState(0);
+    const [leftNormal, setLeftNormal] = useState(0);
 
     const timelineFit = useRef();
+    const timelineNormal = useRef();
+    const timelineNormalContainer = useRef();
     const playLine = useRef();
 
     var timelineInterval = null;
@@ -229,7 +236,7 @@ const Battle = () => {
                 timelinePri[timer].tap = false;
                 timelineSec[timer].tap = false;
             }
-        }, 0);
+        }, 1);
         let isDelay = false, delay = 1;
         turnInterval = setInterval(() => {
 
@@ -373,9 +380,9 @@ const Battle = () => {
                 } else {
                     battleAnimation();
                 }
-                console.log(timelinePri, timelineSec)
+                // console.log(timelinePri, timelineSec)
             }
-        }, 0);
+        }, 1);
     }
 
     const clearData = useCallback(() => {
@@ -464,10 +471,29 @@ const Battle = () => {
         }
     }
 
-    const onPlayLineFitMove = (e) => {
+    const timelinePlay = useRef(null);
+    const [playState, setPlayState] = useState(false);
+    const xFit = useRef(0);
+    const xNormal = useRef(0);
+    const onPlayLineMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const x = Math.max(0, e.clientX - rect.left);
-        setLeftFit(x*100/timelineFit.current.clientWidth);
+        xNormal.current = x;
+        setLeftNormal(xNormal.current);
+        const range = pokemonCurr.timeline.length;
+        let arr = []
+        for (let i = 0; i < range; i++) {
+            arr.push(document.getElementById(i).getBoundingClientRect());
+        }
+        overlapping(range, arr);
+    }
+
+    const onPlayLineFitMove = (e) => {
+        stopTimeLine();
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = Math.max(0, e.clientX - rect.left);
+        xFit.current = x*100/timelineFit.current.clientWidth;
+        setLeftFit(xFit.current);
         const range = pokemonCurr.timeline.length;
         let arr = []
         for (let i = 0; i < range; i++) {
@@ -476,32 +502,44 @@ const Battle = () => {
         overlapping(range, arr);
     };
 
-    var timelinePlay;
-    const playTimeLine = (x) => {
+    const playTimeLine = () => {
+        setPlayState(true);
+        let x;
+        if (timelineType) x = xNormal.current;
+        else x = xFit.current*timelineFit.current.clientWidth/100;
         const range = pokemonCurr.timeline.length;
         let arr = []
         for (let i = 0; i < range; i++) {
             arr.push(document.getElementById(i).getBoundingClientRect());
         }
-        timelinePlay = setInterval(() => {
-            setLeftFit(x*100/timelineFit.current.clientWidth);
-            if (x >= timelineFit.current.clientWidth) clearInterval(timelinePlay)
-            x += 1;
+        if (timelineType) timelineNormalContainer.current.scrollIntoView({behavior: 'smooth'});
+        timelinePlay.current = setInterval(() => {
+            if (timelineType) {
+                if (x > timelineNormal.current.clientWidth) clearInterval(timelinePlay.current);
+                xNormal.current = x;
+                setLeftNormal(xNormal.current);
+                if (x % timelineNormalContainer.current.clientWidth >= timelineNormalContainer.current.clientWidth/2) document.getElementById('battle-bar-scroll').scrollTo(x, 0);
+            } else {
+                if (x > timelineFit.current.clientWidth) clearInterval(timelinePlay.current);
+                xFit.current = x*100/timelineFit.current.clientWidth;
+                setLeftFit(xFit.current);
+            }
             overlapping(range, arr);
+            x += 1;
         }, 0)
     }
 
     const stopTimeLine = () => {
-        setLeftFit(leftFit);
-        const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
-        for (let i = 1; i < interval_id; i++) {
-            window.clearInterval(i);
-        }
+        setPlayState(false);
+        clearInterval(timelinePlay.current);
     }
 
     const resetTimeLine = () => {
         stopTimeLine();
-        setLeftFit(0);
+        xFit.current = 0;
+        setLeftFit(xFit.current);
+        xNormal.current = 0;
+        setLeftNormal(xNormal.current);
         setPlayTimeline({
             pokemonCurr: {hp: Math.floor(pokemonCurr.pokemonData.bestStats.stats.statsSTA), energy: 0},
             pokemonObj: {hp: Math.floor(pokemonObj.pokemonData.bestStats.stats.statsSTA), energy: 0}
@@ -509,7 +547,8 @@ const Battle = () => {
     }
 
     const overlapping = (range, arr) => {
-        const index = checkOverLap(range, arr);
+        const rect1 = document.getElementById("play-line").getBoundingClientRect();
+        const index = arr.filter(dom => dom.left <= rect1.right).length;
         if (index >= 0 && index < range) {
             const pokeCurrData = pokemonCurr.timeline[index];
             const pokeObjData = pokemonObj.timeline[index];
@@ -520,9 +559,25 @@ const Battle = () => {
         }
     }
 
-    const checkOverLap = (range, arr) => {
-        const rect1 = document.getElementById("play-line").getBoundingClientRect();
-        return arr.filter(dom => dom.left <= rect1.left).length;
+    const onScrollTimeline = (e) => {
+        // console.log(e)
+    }
+
+    const onChangeTimeline = (type) => {
+        stopTimeLine();
+        let width;
+        if (type) width = timelineFit.current.clientWidth;
+        else width = timelineNormal.current.clientWidth;
+        setOptions({...options, timelineType: type});
+        setTimeout(() => {
+            if (type) {
+                xNormal.current = xFit.current*timelineNormal.current.clientWidth/100;
+                setLeftNormal(xNormal.current);
+            } else {
+                xFit.current = xNormal.current/width*100;
+                setLeftFit(xFit.current);
+            }
+        }, 100)
     }
 
     const findBuff = (move) => {
@@ -706,11 +761,9 @@ const Battle = () => {
                         {TimeLineVertical(pokemonCurr, pokemonObj)}
                         <div>
                             {timelineType ?
-                                <Fragment>{TimeLine(pokemonCurr, pokemonObj, showTap)}</Fragment>
+                                <Fragment>{TimeLine(pokemonCurr, pokemonObj, timelineNormalContainer, onScrollTimeline, timelineNormal, playLine, onPlayLineMove, leftNormal, showTap)}</Fragment>
                                 :
-                                <Fragment>
-                                    {TimeLineFit(pokemonCurr, pokemonObj, timelineFit, playLine, onPlayLineFitMove, leftFit, showTap)}
-                                </Fragment>
+                                <Fragment>{TimeLineFit(pokemonCurr, pokemonObj, timelineFit, playLine, onPlayLineFitMove, leftFit, showTap)}</Fragment>
                             }
                             <div className="d-flex justify-content-center">
                                 <FormControlLabel control={<Checkbox checked={showTap} onChange={(event, check) => setOptions({...options, showTap: check})}/>} label="Show Tap Move" />
@@ -719,15 +772,17 @@ const Battle = () => {
                                     aria-labelledby="row-timeline-group-label"
                                     name="row-timeline-group"
                                     value={timelineType}
-                                    onChange={(e) =>  setOptions({...options, timelineType: parseInt(e.target.value)})}>
+                                    onChange={(e) =>  onChangeTimeline(parseInt(e.target.value))}>
                                     <FormControlLabel value={0} control={<Radio />} label={<span>Fit Timeline</span>} />
                                     <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
                                 </RadioGroup>
                             </div>
                             <div className="d-flex justify-content-center" style={{columnGap: 10}}>
-                                <button className="btn btn-primary" onClick={() => playTimeLine(leftFit)}>Play</button>
-                                <button className="btn btn-primary" onClick={() => stopTimeLine()}>Stop</button>
-                                <button className="btn btn-danger" onClick={() => resetTimeLine()}>Reset</button>
+                                <button className="btn btn-primary" onClick={() => playState ? stopTimeLine() : playTimeLine()}>{playState ?
+                                <Fragment><PauseIcon /> Stop</Fragment>
+                                :
+                                <Fragment><PlayArrowIcon /> Play</Fragment>}</button>
+                                <button className="btn btn-danger" onClick={() => resetTimeLine()}><RestartAltIcon /> Reset</button>
                             </div>
                         </div>
                     </Fragment>
