@@ -38,7 +38,7 @@ const Battle = () => {
     const [options, setOptions] = useState({
         showTap: false,
         timelineType: 0,
-        league: params.cp ?? 500
+        league: params.cp ? parseInt(params.cp) : 500
     });
     const {showTap, timelineType, league} = options;
 
@@ -412,7 +412,14 @@ const Battle = () => {
 
     useEffect(() => {
         const fetchPokemon = async () => {
-            let file = (await APIService.getFetchUrl(APIService.getRankingFile("all", league, "overall"))).data;
+            let file = (await APIService.getFetchUrl(APIService.getRankingFile("all", parseInt(league), "overall"))).data;
+
+            document.title = `PVP Battle Simalator - ${
+                parseInt(league) === 500 ? "Little Cup" :
+                parseInt(league) === 1500 ? "Great League" :
+                parseInt(league) === 2500 ? "Ultra League" :
+                "Master League"}`;
+
             clearData();
             pokemonData = Object.values(pokemonData);
             file = file.filter(pokemon => !pokemon.speciesId.includes("shadow") && !pokemon.speciesId.includes("_xs")).map(item => {
