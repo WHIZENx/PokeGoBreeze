@@ -725,11 +725,6 @@ const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felit
         let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
         let mc = combat.find(item => item.name === vc);
 
-        mf["elite"] = felite;
-        mc["elite"] = celite;
-        mc["shadow"] = shadow;
-        mc["purified"] = purified;
-
         let options = {
             objTypes: types,
             POKEMON_DEF_OBJ: calculateStatsBattle(def, 15, 40, true),
@@ -750,8 +745,8 @@ const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felit
             pokemon_forme: pokemon.forme,
             releasedGO: pokemon.releasedGO,
             dps: dpsOff,
-            fmove: mf,
-            cmove: mc
+            fmove: {...mf, elite: felite},
+            cmove: {...mc, elite: celite, shadow: shadow, purified: purified}
         })
     });
 }
@@ -779,7 +774,7 @@ export const counterPokemon = (def, types) => {
             });
             value.ELITE_QUICK_MOVES.forEach(vf => {
                 queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, true, false, false, false);
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, true, true, false);
+                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, true, true, false, false);
                 queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, true, false, true, false);
                 queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, true, false, false, true);
             });
