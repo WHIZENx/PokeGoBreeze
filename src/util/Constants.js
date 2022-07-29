@@ -315,3 +315,30 @@ export const leaguesTeam = [
         logo: APIService.getAssetPokeGo("LeagueIcons/GBL_retrocup.png")
     },
 ]
+
+export const leaguesTeamBattle = [
+    {
+        id: "all",
+        name: "Little Cup",
+        cp: 500,
+        logo: APIService.getPokeOtherLeague("GBL_littlecup")
+    },
+    {
+        id: "all",
+        name: "Great League",
+        cp: 1500,
+        logo: APIService.getPokeLeague("great_league")
+    },
+    {
+        id: "all",
+        name: "Ultra League",
+        cp: 2500,
+        logo: APIService.getPokeLeague("ultra_league")
+    },
+    {
+        id: "all",
+        name: "Master League",
+        cp: 10000,
+        logo: APIService.getPokeLeague("master_league")
+    },
+]

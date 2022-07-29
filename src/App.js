@@ -60,6 +60,7 @@ const App = () => {
               <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
               <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
               <Route path="/pvp/battle" element={<Battle/>}></Route>
+              <Route path="/pvp/battle/:cp" element={<Battle/>}></Route>
               <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
               <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
               <Route path="/stickers" element={<Sticker/>}></Route>

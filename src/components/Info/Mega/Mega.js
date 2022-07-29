@@ -10,8 +10,8 @@ const Mega = (props) => {
     const [arrEvoList, setArrEvoList] = useState([]);
 
     useEffect(() => {
-        if (arrEvoList.length === 0) setArrEvoList(props.formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form));
-    }, [props.formList, arrEvoList.length]);
+        setArrEvoList(props.formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form));
+    }, [props.formList]);
 
     const getQuestEvo = (name) => {
         name = name.split("-").map(text => text.toUpperCase()).join("_")

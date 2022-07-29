@@ -27,14 +27,18 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import CircleBar from "../../../components/Sprites/ProgressBar/Circle";
 import ProgressBar from "../../../components/Sprites/ProgressBar/Bar";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Battle = () => {
+
+    const params = useParams();
+    const navigate = useNavigate();
 
     const [data, setData] = useState(null);
     const [options, setOptions] = useState({
         showTap: false,
         timelineType: 0,
-        league: 10000
+        league: params.cp ?? 500
     });
     const {showTap, timelineType, league} = options;
 
@@ -473,6 +477,7 @@ const Battle = () => {
 
     const timelinePlay = useRef(null);
     const [playState, setPlayState] = useState(false);
+    const scrollWidth = useRef(0);
     const xFit = useRef(0);
     const xNormal = useRef(0);
     const onPlayLineMove = (e) => {
@@ -505,24 +510,28 @@ const Battle = () => {
     const playTimeLine = () => {
         setPlayState(true);
         let x;
-        if (timelineType) x = xNormal.current;
-        else x = xFit.current*timelineFit.current.clientWidth/100;
+        if (timelineType) {
+            x = xNormal.current;
+            timelineNormalContainer.current.scrollTo(Math.max(0, x-(timelineNormalContainer.current.clientWidth/2)), 0);
+        } else x = xFit.current*timelineFit.current.clientWidth/100;
         const range = pokemonCurr.timeline.length;
         let arr = []
         for (let i = 0; i < range; i++) {
             arr.push(document.getElementById(i).getBoundingClientRect());
         }
-        if (timelineType) timelineNormalContainer.current.scrollIntoView({behavior: 'smooth'});
         timelinePlay.current = setInterval(() => {
             if (timelineType) {
-                if (x > timelineNormal.current.clientWidth) clearInterval(timelinePlay.current);
                 xNormal.current = x;
                 setLeftNormal(xNormal.current);
-                if (x % timelineNormalContainer.current.clientWidth >= timelineNormalContainer.current.clientWidth/2) document.getElementById('battle-bar-scroll').scrollTo(x, 0);
+                if (x % timelineNormalContainer.current.clientWidth >= timelineNormalContainer.current.clientWidth/2) {
+                    timelineNormalContainer.current.scrollIntoView({behavior: 'smooth'});
+                    timelineNormalContainer.current.scrollTo(scrollWidth.current+1, 0);
+                }
+                if (x > timelineNormal.current.clientWidth) stopTimeLine();
             } else {
-                if (x > timelineFit.current.clientWidth) clearInterval(timelinePlay.current);
                 xFit.current = x*100/timelineFit.current.clientWidth;
                 setLeftFit(xFit.current);
+                if (x > timelineFit.current.clientWidth) stopTimeLine();
             }
             overlapping(range, arr);
             x += 1;
@@ -540,6 +549,7 @@ const Battle = () => {
         setLeftFit(xFit.current);
         xNormal.current = 0;
         setLeftNormal(xNormal.current);
+        if (timelineType && timelineNormalContainer.current) timelineNormalContainer.current.scrollTo(0, 0);
         setPlayTimeline({
             pokemonCurr: {hp: Math.floor(pokemonCurr.pokemonData.bestStats.stats.statsSTA), energy: 0},
             pokemonObj: {hp: Math.floor(pokemonObj.pokemonData.bestStats.stats.statsSTA), energy: 0}
@@ -560,7 +570,7 @@ const Battle = () => {
     }
 
     const onScrollTimeline = (e) => {
-        // console.log(e)
+        scrollWidth.current = e.currentTarget.scrollLeft;
     }
 
     const onChangeTimeline = (type) => {
@@ -573,6 +583,7 @@ const Battle = () => {
             if (type) {
                 xNormal.current = xFit.current*timelineNormal.current.clientWidth/100;
                 setLeftNormal(xNormal.current);
+                timelineNormalContainer.current.scrollTo(Math.max(0, xNormal.current-(timelineNormalContainer.current.clientWidth/2)), 0);
             } else {
                 xFit.current = xNormal.current/width*100;
                 setLeftFit(xFit.current);
@@ -639,6 +650,7 @@ const Battle = () => {
                             step={0.5}
                             min={1}
                             max={51}
+                            disabled={true}
                             onInput={(e) => {
                                 setPokemon({...pokemon, pokemonData: {...pokemon.pokemonData, bestStats: {...pokemon.pokemonData.bestStats, level: parseInt(e.target.value)}}});
                             }}/>
@@ -649,6 +661,7 @@ const Battle = () => {
                             type="number"
                             min={0}
                             max={15}
+                            disabled={true}
                             onInput={(e) => {
                                 setPokemon({...pokemon, pokemonData: {...pokemon.pokemonData, bestStats: {...pokemon.pokemonData.bestStats, IV: {...pokemon.pokemonData.bestStats.IV, atk: parseInt(e.target.value)}}}});
                             }}/>
@@ -659,6 +672,7 @@ const Battle = () => {
                             type="number"
                             min={0}
                             max={15}
+                            disabled={true}
                             onInput={(e) => {
                                 setPokemon({...pokemon, pokemonData: {...pokemon.pokemonData, bestStats: {...pokemon.pokemonData.bestStats, IV: {...pokemon.pokemonData.bestStats.IV, def: parseInt(e.target.value)}}}});
                             }}/>
@@ -669,6 +683,7 @@ const Battle = () => {
                             type="number"
                             min={0}
                             max={15}
+                            disabled={true}
                             onInput={(e) => {
                                 setPokemon({...pokemon, pokemonData: {...pokemon.pokemonData, bestStats: {...pokemon.pokemonData.bestStats, IV: {...pokemon.pokemonData.bestStats.IV, sta: parseInt(e.target.value)}}}});
                             }}/>
@@ -693,7 +708,10 @@ const Battle = () => {
 
     return (
         <div className="container element-top">
-            <Form.Select onChange={(e) => setOptions({...options, league: parseInt(e.target.value)})} defaultValue={league}>
+            <Form.Select onChange={(e) => {
+                navigate(`/pvp/battle/${parseInt(e.target.value)}`)
+                setOptions({...options, league: parseInt(e.target.value)})
+            }} defaultValue={league}>
                 <option value={500}>Little Cup</option>
                 <option value={1500}>Great League</option>
                 <option value={2500}>Ultra League</option>

@@ -186,7 +186,7 @@ export const TimeLine = (pokemonCurr, pokemonObj, elem, scroll, timeline, eRef, 
             {!hide &&
             <div className="w-100 battle-bar d-flex justify-content-center">
                 <div id="battle-bar-scroll" className="battle-bar-container" ref={elem} onScroll={scroll.bind(this)}>
-                    <div className="position-relative" ref={timeline} onMouseMove={move.bind(this)}>
+                    <div className="position-relative" ref={timeline} onMouseMove={move.bind(this)} onMouseOver={move.bind(this)}>
                         {renderTimeline(pokemonCurr, pokemonObj, true)}
                         {renderTimeline(pokemonObj, pokemonCurr)}
                         <div id="play-line" ref={eRef} className="play-line" style={{left: left}}></div>
@@ -201,7 +201,7 @@ export const TimeLine = (pokemonCurr, pokemonObj, elem, scroll, timeline, eRef, 
 export const TimeLineFit = (pokemonCurr, pokemonObj, timeline, eRef, move, left, showTap, hide) => {
 
     const calculateFitPoint = (length, index) => {
-        return `${index*100/(length-1)}%`;
+        return `${index*100/(length-2)}%`;
     }
 
     const renderTimelineFit = (poke, pokeObj) => {
@@ -264,7 +264,7 @@ export const TimeLineFit = (pokemonCurr, pokemonObj, timeline, eRef, move, left,
         <Fragment>
             {!hide &&
             <div className="w-100 fit-timeline d-flex justify-content-center">
-                <div className="position-relative h-100" ref={timeline} onMouseMove={move.bind(this)}>
+                <div className="position-relative h-100" ref={timeline} onMouseMove={move.bind(this)} onMouseOver={move.bind(this)}>
                     {renderTimelineFit(pokemonCurr, pokemonObj)}
                     <hr className="w-100" style={{margin: 0}}/>
                     {renderTimelineFit(pokemonObj, pokemonCurr)}
