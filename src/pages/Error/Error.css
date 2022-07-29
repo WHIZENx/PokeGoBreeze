@@ -4,6 +4,21 @@
     background-color: black;
 }
 
+.img {
+    background-image: url("../../assets/error.jpg");
+    background-position-x: right;
+    background-position-y: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: fixed;
+    max-width: 900px;
+    max-height: 564px;
+    width: 100%;
+    height: 100%;
+    right: 0;
+    bottom: 0;
+}
+
 .error-desc {
     width: 100%;
     text-align: center;

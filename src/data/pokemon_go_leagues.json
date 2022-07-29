@@ -1,8 +1,8 @@
 {
-    "timestamp": 1658855038000,
+    "timestamp": 1659091269000,
     "allowLeagues": [
-        "VS_SEEKER_ULTRA",
-        "VS_SEEKER_GREAT_LITTLE_REMIX"
+        "VS_SEEKER_MASTER",
+        "VS_SEEKER_GREAT_HISUI"
     ],
     "data": [
         {
@@ -5895,6 +5895,11 @@
                         "id": 209,
                         "name": "SNUBBULL",
                         "form": "NORMAL"
+                    },
+                    {
+                        "id": 211,
+                        "name": "QWILFISH",
+                        "form": "HISUIAN"
                     },
                     {
                         "id": 215,
