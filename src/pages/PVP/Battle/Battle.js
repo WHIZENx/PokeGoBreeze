@@ -565,11 +565,16 @@ const Battle = () => {
 
     const resetTimeLine = () => {
         stopTimeLine();
-        xFit.current = 0;
-        setLeftFit(xFit.current);
-        xNormal.current = 0;
-        setLeftNormal(xNormal.current);
-        if (timelineType && timelineNormalContainer.current) timelineNormalContainer.current.scrollTo(0, 0);
+        if (timelineType && timelineNormalContainer.current) {
+            if (timelineNormalContainer.current) {
+                xNormal.current = timelineNormalContainer.current.getBoundingClientRect().left + 1;
+                timelineNormalContainer.current.scrollTo(0, 0);
+            }
+            setLeftNormal(0);
+        } else {
+            xFit.current = 0;
+            setLeftFit(xFit.current);
+        }
         setPlayTimeline({
             pokemonCurr: {hp: Math.floor(pokemonCurr.pokemonData.bestStats.stats.statsSTA), energy: 0},
             pokemonObj: {hp: Math.floor(pokemonObj.pokemonData.bestStats.stats.statsSTA), energy: 0}
@@ -578,7 +583,6 @@ const Battle = () => {
 
     const overlappingNormal = (range, arr) => {
         const index = arr.filter(dom => dom.left <= xNormal.current).length;
-        console.log(index)
         if (index >= 0 && index < range) updateTimeine(index);
     }
 
@@ -601,19 +605,23 @@ const Battle = () => {
         scrollWidth.current = e.currentTarget.scrollLeft;
     }
 
+    const timelineNormalX = useRef(0);
     const onChangeTimeline = (type) => {
         stopTimeLine();
-        let width;
+        let width, clientX;
         if (type) width = timelineFit.current.clientWidth;
         else width = timelineNormal.current.clientWidth;
         setOptions({...options, timelineType: type});
         setTimeout(() => {
             if (type) {
-                xNormal.current = xFit.current*timelineNormal.current.clientWidth/100;
-                setLeftNormal(xNormal.current);
-                timelineNormalContainer.current.scrollTo(Math.max(0, xNormal.current-(timelineNormalContainer.current.clientWidth/2)), 0);
+                clientX = timelineNormalContainer.current.getBoundingClientRect().left;
+                timelineNormalX.current = clientX;
+                xNormal.current = (xFit.current*timelineNormal.current.clientWidth/100) + clientX;
+                setLeftNormal(xNormal.current - clientX);
+                timelineNormalContainer.current.scrollTo(Math.max(0, xNormal.current-clientX-(timelineNormalContainer.current.clientWidth/2)), 0);
             } else {
-                xFit.current = xNormal.current/width*100;
+                clientX = timelineNormalX.current;
+                xFit.current = (xNormal.current-clientX)/width*100;
                 setLeftFit(xFit.current);
             }
         }, 100)
