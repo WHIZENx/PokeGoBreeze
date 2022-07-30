@@ -115,6 +115,7 @@ const Battle = () => {
     }
 
     const battleAnimation = () => {
+        arrBound.current = [];
         resetTimeLine();
         clearInterval(timelineInterval);
         clearInterval(turnInterval);
@@ -389,6 +390,16 @@ const Battle = () => {
         }, 1);
     }
 
+    useEffect(() => {
+        if (timelineType && arrBound.current.length === 0 && pokemonCurr.timeline.length > 0) {
+            setTimeout(() => {
+                for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+                    arrBound.current.push(document.getElementById(i).getBoundingClientRect());
+                }
+            }, 100)
+        }
+    }, [timelineType, pokemonCurr.timeline.length])
+
     const clearData = useCallback(() => {
         setPokemonObj({
             pokemonData: null,
@@ -412,24 +423,7 @@ const Battle = () => {
 
     useEffect(() => {
         const fetchPokemon = async () => {
-            setPokemonCurr({
-                pokemonData: null,
-                fMove: null,
-                cMovePri: null,
-                cMoveSec: null,
-                timeline: [],
-                energy: 0,
-                block: 2
-            });
-            setPokemonObj({
-                pokemonData: null,
-                fMove: null,
-                cMovePri: null,
-                cMoveSec: null,
-                timeline: [],
-                energy: 0,
-                block: 2
-            });
+            clearData();
             let file = (await APIService.getFetchUrl(APIService.getRankingFile("all", parseInt(league), "overall"))).data;
 
             document.title = `PVP Battle Simalator - ${
@@ -438,7 +432,6 @@ const Battle = () => {
                 parseInt(league) === 2500 ? "Ultra League" :
                 "Master League"}`;
 
-            clearData();
             pokemonData = Object.values(pokemonData);
             file = file.filter(pokemon => !pokemon.speciesId.includes("shadow") && !pokemon.speciesId.includes("_xs")).map(item => {
                 const name = convertNameRankingToOri(item.speciesId, item.speciesName);
@@ -505,18 +498,16 @@ const Battle = () => {
     const scrollWidth = useRef(0);
     const xFit = useRef(0);
     const xNormal = useRef(0);
+    const arrBound = useRef([]);
     const onPlayLineMove = (e) => {
         stopTimeLine();
+        const clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
         const rect = e.currentTarget.getBoundingClientRect();
         const x = Math.max(0, e.clientX - rect.left);
-        xNormal.current = x;
-        setLeftNormal(xNormal.current);
+        xNormal.current = x + clientX;
+        setLeftNormal(x);
         const range = pokemonCurr.timeline.length;
-        let arr = []
-        for (let i = 0; i < range; i++) {
-            arr.push(document.getElementById(i).getBoundingClientRect());
-        }
-        overlapping(range, arr);
+        overlappingNormal(range, arrBound.current);
     }
 
     const onPlayLineFitMove = (e) => {
@@ -536,33 +527,34 @@ const Battle = () => {
     const playTimeLine = () => {
         setPlayState(true);
         let x, clientX;
-        if (timelineType) {
-            x = xNormal.current;
-            timelineNormalContainer.current.scrollTo(Math.max(0, x-(timelineNormalContainer.current.clientWidth/2)), 0);
-            clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
-        } else x = xFit.current*timelineFit.current.clientWidth/100;
+        let arr = [];
         const range = pokemonCurr.timeline.length;
-        let arr = []
-        for (let i = 0; i < range; i++) {
-            arr.push(document.getElementById(i).getBoundingClientRect());
+        if (timelineType) {
+            clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
+            timelineNormalContainer.current.scrollTo(Math.max(0, xNormal.current-clientX-(timelineNormalContainer.current.clientWidth/2)), 0);
+        } else {
+            x = xFit.current*timelineFit.current.clientWidth/100;
+            for (let i = 0; i < range; i++) {
+                arr.push(document.getElementById(i).getBoundingClientRect());
+            }
         }
         timelinePlay.current = setInterval(() => {
             if (timelineType) {
-                xNormal.current = x;
-                setLeftNormal(xNormal.current);
-                if (x % timelineNormalContainer.current.clientWidth >= timelineNormalContainer.current.clientWidth/2) {
+                xNormal.current += 1;
+                setLeftNormal(xNormal.current - clientX);
+                if ((xNormal.current - clientX) % timelineNormalContainer.current.clientWidth >= timelineNormalContainer.current.clientWidth/2) {
                     timelineNormalContainer.current.scrollIntoView({behavior: 'smooth'});
                     timelineNormalContainer.current.scrollTo(scrollWidth.current+1, 0);
                 }
-                if (x > timelineNormal.current.clientWidth) stopTimeLine();
-                overlappingNormal(range, arr, clientX)
+                if ((xNormal.current - clientX) > timelineNormal.current.clientWidth) stopTimeLine();
+                overlappingNormal(range, arrBound.current)
             } else {
                 xFit.current = x*100/timelineFit.current.clientWidth;
                 setLeftFit(xFit.current);
                 if (x > timelineFit.current.clientWidth) stopTimeLine();
                 overlapping(range, arr);
+                x += 1;
             }
-            x += 1;
         }, 0)
     }
 
@@ -584,8 +576,9 @@ const Battle = () => {
         });
     }
 
-    const overlappingNormal = (range, arr, clientX) => {
-        const index = arr.filter(dom => dom.left <= clientX+xNormal.current).length;
+    const overlappingNormal = (range, arr) => {
+        const index = arr.filter(dom => dom.left <= xNormal.current).length;
+        console.log(index)
         if (index >= 0 && index < range) updateTimeine(index);
     }
 
