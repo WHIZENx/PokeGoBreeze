@@ -223,6 +223,5 @@ export const findMoveTeam = (move, moveSet) => {
             if (count === m.length) return value.replace("_FAST", "");
         }
     };
-    console.log(move, moveSet)
     return null;
 }

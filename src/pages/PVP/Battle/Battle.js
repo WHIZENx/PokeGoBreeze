@@ -412,6 +412,24 @@ const Battle = () => {
 
     useEffect(() => {
         const fetchPokemon = async () => {
+            setPokemonCurr({
+                pokemonData: null,
+                fMove: null,
+                cMovePri: null,
+                cMoveSec: null,
+                timeline: [],
+                energy: 0,
+                block: 2
+            });
+            setPokemonObj({
+                pokemonData: null,
+                fMove: null,
+                cMovePri: null,
+                cMoveSec: null,
+                timeline: [],
+                energy: 0,
+                block: 2
+            });
             let file = (await APIService.getFetchUrl(APIService.getRankingFile("all", parseInt(league), "overall"))).data;
 
             document.title = `PVP Battle Simalator - ${
@@ -488,6 +506,7 @@ const Battle = () => {
     const xFit = useRef(0);
     const xNormal = useRef(0);
     const onPlayLineMove = (e) => {
+        stopTimeLine();
         const rect = e.currentTarget.getBoundingClientRect();
         const x = Math.max(0, e.clientX - rect.left);
         xNormal.current = x;
@@ -516,10 +535,11 @@ const Battle = () => {
 
     const playTimeLine = () => {
         setPlayState(true);
-        let x;
+        let x, clientX;
         if (timelineType) {
             x = xNormal.current;
             timelineNormalContainer.current.scrollTo(Math.max(0, x-(timelineNormalContainer.current.clientWidth/2)), 0);
+            clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
         } else x = xFit.current*timelineFit.current.clientWidth/100;
         const range = pokemonCurr.timeline.length;
         let arr = []
@@ -535,12 +555,13 @@ const Battle = () => {
                     timelineNormalContainer.current.scrollTo(scrollWidth.current+1, 0);
                 }
                 if (x > timelineNormal.current.clientWidth) stopTimeLine();
+                overlappingNormal(range, arr, clientX)
             } else {
                 xFit.current = x*100/timelineFit.current.clientWidth;
                 setLeftFit(xFit.current);
                 if (x > timelineFit.current.clientWidth) stopTimeLine();
+                overlapping(range, arr);
             }
-            overlapping(range, arr);
             x += 1;
         }, 0)
     }
@@ -563,17 +584,24 @@ const Battle = () => {
         });
     }
 
+    const overlappingNormal = (range, arr, clientX) => {
+        const index = arr.filter(dom => dom.left <= clientX+xNormal.current).length;
+        if (index >= 0 && index < range) updateTimeine(index);
+    }
+
     const overlapping = (range, arr) => {
-        const rect1 = document.getElementById("play-line").getBoundingClientRect();
+        const rect1 = playLine.current.getBoundingClientRect();
         const index = arr.filter(dom => dom.left <= rect1.right).length;
-        if (index >= 0 && index < range) {
-            const pokeCurrData = pokemonCurr.timeline[index];
-            const pokeObjData = pokemonObj.timeline[index];
-            setPlayTimeline({
-                pokemonCurr: {hp: pokeCurrData.hp, energy: pokeCurrData.energy},
-                pokemonObj: {hp: pokeObjData.hp, energy: pokeObjData.energy}
-            });
-        }
+        if (index >= 0 && index < range) updateTimeine(index);
+    }
+
+    const updateTimeine = (index) => {
+        const pokeCurrData = pokemonCurr.timeline[index];
+        const pokeObjData = pokemonObj.timeline[index];
+        setPlayTimeline({
+            pokemonCurr: {hp: pokeCurrData.hp, energy: pokeCurrData.energy},
+            pokemonObj: {hp: pokeObjData.hp, energy: pokeObjData.energy}
+        });
     }
 
     const onScrollTimeline = (e) => {
