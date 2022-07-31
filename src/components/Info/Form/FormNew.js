@@ -222,7 +222,7 @@ const Form = ({
             <div className="row w-100" style={{margin:0}}>
                 <div className="col-md-5" style={{padding:0}}>
                     <Info data={dataPoke} currForm={currForm} />
-                    <h5 className='element-top'>- Raid:</h5>
+                    <h5 className='element-top'><li>Raid</li></h5>
                     <Raid
                     currForm={currForm}
                     id={id_default}

@@ -35,6 +35,10 @@ class APIService {
         return `${POGO_ASSET_API_URL}Pokemon/${item}.png`;
     }
 
+    getPokemonSqModel(item) {
+        return `${POGO_ASSET_API_URL}Pokemon - 256x256/${item}.png`;
+    }
+
     getTrainerModel(id) {
         id = id.toString().padStart(3, '0');
         return `${POKE_TRAINER_SPRITES_API_URL}${id}.png`;

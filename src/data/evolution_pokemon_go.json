@@ -15512,6 +15512,13 @@
         "name": "ROCKRUFF",
         "evo_list": [
             {
+                "evo_to_form": "DUSK",
+                "evo_to_id": 745,
+                "evo_to_name": "LYCANROC",
+                "candyCost": 50,
+                "quest": {}
+            },
+            {
                 "evo_to_form": "MIDDAY",
                 "evo_to_id": 745,
                 "evo_to_name": "LYCANROC",

@@ -115,7 +115,7 @@ const Battle = () => {
     }
 
     const battleAnimation = () => {
-        arrBound.current = [];
+        if (pokemonCurr.timeline.length === 0 && pokemonObj.timeline.length === 0) arrBound.current = [];
         resetTimeLine();
         clearInterval(timelineInterval);
         clearInterval(turnInterval);
@@ -542,7 +542,7 @@ const Battle = () => {
             if (timelineType) {
                 xNormal.current += 1;
                 setLeftNormal(xNormal.current - clientX);
-                if ((xNormal.current - clientX) % timelineNormalContainer.current.clientWidth >= timelineNormalContainer.current.clientWidth/2) {
+                if ((xNormal.current - clientX) >= timelineNormalContainer.current.clientWidth/2) {
                     timelineNormalContainer.current.scrollIntoView({behavior: 'smooth'});
                     timelineNormalContainer.current.scrollTo(scrollWidth.current+1, 0);
                 }
@@ -583,6 +583,7 @@ const Battle = () => {
 
     const overlappingNormal = (range, arr) => {
         const index = arr.filter(dom => dom.left <= xNormal.current).length;
+        console.log(index)
         if (index >= 0 && index < range) updateTimeine(index);
     }
 

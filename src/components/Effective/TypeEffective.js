@@ -19,7 +19,7 @@ const TypeEffective = (props) => {
 
     return (
         <div className="element-top">
-            <h5 className='element-top'>- Pokémon Type Effective:</h5>
+            <h5 className='element-top'><li>Pokémon Type Effective</li></h5>
             <h6 className='element-top'><b>Weakness</b></h6>
             {props.typeEffective.very_weak.length !== 0 || props.typeEffective.weak.length !== 0 ?
             <Fragment>

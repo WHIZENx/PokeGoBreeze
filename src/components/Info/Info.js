@@ -46,8 +46,8 @@ const Info = (props) => {
 
     return (
         <Fragment>
-            <h4 className='element-top info-title'><b>Infomation</b></h4>
-            <h5 className='element-top'>- Pokémon Type:</h5>
+            <h4 className='element-top info-title'><b>Information</b></h4>
+            <h5 className='element-top'><li>Pokémon Type</li></h5>
             <Type arr={props.currForm ? props.currForm.form.types.map(ele => ele.type.name) : []} style={{marginLeft: 15}}/>
             <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm ? props.currForm.form.types: [])}/>
             <TypeEffective typeEffective={getTypeEffective(props.currForm ? props.currForm.form.types : [])}/>

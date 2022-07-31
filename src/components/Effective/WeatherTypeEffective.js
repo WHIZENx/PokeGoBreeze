@@ -7,7 +7,7 @@ const WeatherTypeEffective = (props) => {
 
     return (
         <div className="element-top">
-            <h5 className='element-top'>- Weather Boosts:</h5>
+            <h5 className='element-top'><li>Weather Boosts</li></h5>
             <Weather arr={props.weatherEffective} style={{marginLeft: 15}}/>
         </div>
     );

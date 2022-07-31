@@ -264,7 +264,7 @@ const Move = (props) => {
                                 </tr>
                                 <tr className="text-center"><td className="table-sub-header" colSpan="2">
                                     <div className="input-group align-items-center justify-content-center">
-                                        <span>{"Pokémon Top in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
+                                        <span>{"Top Pokémon in move "+splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
                                         <FormControlLabel control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)}/>} label="Released in GO"/>
                                     </div>
                                 </td></tr>
