@@ -22,6 +22,7 @@
     "react-bootstrap": "^2.2.2",
     "react-data-table-component": "^7.4.7",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.6",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.0",
     "react-xarrows": "^2.0.2",
