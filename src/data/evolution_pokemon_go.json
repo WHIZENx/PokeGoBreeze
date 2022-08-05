@@ -4791,7 +4791,13 @@
         "id": 212,
         "name": "SCIZOR",
         "evo_list": [],
-        "mega_evo": [],
+        "mega_evo": [
+            {
+                "megaEvolutionName": "SCIZOR_MEGA",
+                "firstMegaEvolution": 200,
+                "megaEvolution": 40
+            }
+        ],
         "purified": {
             "stardust": 5000,
             "candy": 5
@@ -15511,13 +15517,6 @@
         "id": 744,
         "name": "ROCKRUFF",
         "evo_list": [
-            {
-                "evo_to_form": "DUSK",
-                "evo_to_id": 745,
-                "evo_to_name": "LYCANROC",
-                "candyCost": 50,
-                "quest": {}
-            },
             {
                 "evo_to_form": "MIDDAY",
                 "evo_to_id": 745,

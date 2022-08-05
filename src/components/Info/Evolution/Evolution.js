@@ -39,7 +39,7 @@ const theme = createTheme({
     },
 });
 
-const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, evolution_url, id, onSetIDPoke}) => {
+const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, evolution_url, id, onSetIDPoke, gen}) => {
 
     const [arrEvoList, setArrEvoList] = useState([]);
 
@@ -108,7 +108,8 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     const formatEvoChain = (pokemon) => {
         return {
             name: pokemon.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon.name.toLowerCase(),
-            id: pokemon.num, baby: pokemon.isBaby, form: pokemon.forme ?? "", gmax: false
+            id: pokemon.num, baby: pokemon.isBaby, form: pokemon.forme ?? "", gmax: false,
+            sprite: pokemon.name.toLowerCase()
         }
     }
 
@@ -156,8 +157,8 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
 
     const getGmaxChain = useCallback((id, form) => {
         return setArrEvoList([
-            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'normal', gmax: true}],
-            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'gmax', gmax: true}]
+            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'normal', gmax: true, sprite: form.name.replace("-gmax", "")}],
+            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'gmax', gmax: true, sprite: form.name.replace("-gmax", "-gigantamax")}]
         ]);
     }, []);
 
@@ -173,8 +174,8 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
             if (forme.form_name !== "gmax") getEvoChainJSON(id, forme);
             else getGmaxChain(id, forme);
         }
-        if (id && forme) fetchEvolutionJSON();
-    }, [forme, id, getGmaxChain, getEvoChainJSON]);
+        if (id && forme && gen) fetchEvolutionJSON();
+    }, [forme, id, gen, getGmaxChain, getEvoChainJSON]);
 
     const handlePokeID = (id) => {
         if (id !== id.toString()) onSetIDPoke(parseInt(id));
@@ -213,12 +214,29 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
         }
     }
 
+    const renderImgGif = (value) => {
+        return (
+            <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon"
+            src={APIService.getPokemonAsset("pokemon-animation", "all", value.sprite, "gif")}
+            onError={(e) => {
+                e.onerror=null;
+                APIService.getFetchUrl(e.target.currentSrc)
+                .then(() => {
+                    e.target.src=APIService.getPokeSprite(value.id);
+                })
+                .catch(() => {
+                    e.target.src=APIService.getPokeFullSprite(value.id);
+                });
+            }}/>
+        )
+    }
+
     const renderImageEvo = (value, chain, evo, index, evoCount) => {
         let form = value.form ?? forme.form_name;
         let offsetY = 35;
         offsetY += value.baby ? 20 : 0
         offsetY += arrEvoList.length === 1 ? 20 : 0
-        let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-10}};
+        let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-8}};
         let data = getQuestEvo(parseInt(value.id), form.toUpperCase());
         return (
             <Fragment>
@@ -306,64 +324,26 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                             horizontal: 'left',
                         }}>
                             <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
-                                <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                                onError={(e) => {
-                                    e.onerror=null;
-                                    APIService.getFetchUrl(e.target.currentSrc)
-                                    .then(() => {
-                                        e.target.src=APIService.getPokeSprite(value.id);
-                                    })
-                                    .catch(() => {
-                                        e.target.src=APIService.getPokeFullSprite(value.id);
-                                    });
-                                }}/>
+                                {renderImgGif(value)}
                             </Badge>
                         </Badge>
                     </ThemeProvider>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
-                        <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                        onError={(e) => {
-                            e.onerror=null;
-                            APIService.getFetchUrl(e.target.currentSrc)
-                            .then(() => {
-                                e.target.src=APIService.getPokeSprite(value.id);
-                            })
-                            .catch(() => {
-                                e.target.src=APIService.getPokeFullSprite(value.id);
-                            });
-                        }}/>
+                        {renderImgGif(value)}
                     </Badge>
                     }
                     </Fragment>
                     :
                     <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
-                        <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                        onError={(e) => {
-                            e.onerror=null;
-                            APIService.getFetchUrl(e.target.currentSrc)
-                            .then(() => {
-                                e.target.src=APIService.getPokeSprite(value.id);
-                            })
-                            .catch(() => {
-                                e.target.src=APIService.getPokeFullSprite(value.id);
-                            });
-                        }}/>
+                        {renderImgGif(value)}
                     </Badge>
                 }
                 </Fragment>
                 :
-                <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}
-                onError={(e) => {
-                    e.onerror=null;
-                    APIService.getFetchUrl(e.target.currentSrc)
-                    .then(() => {
-                        e.target.src=APIService.getPokeSprite(value.id);
-                    })
-                    .catch(() => {
-                        e.target.src=APIService.getPokeFullSprite(value.id);
-                    });
-                }}/>
+                <Fragment>
+                    {renderImgGif(value)}
+                </Fragment>
                 }
                 <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
                 <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>
@@ -403,10 +383,10 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
             </OverlayTrigger>
             </h4>
             <div className="evo-container scroll-evolution" style={{minHeight:setHeightEvo()}}>
-                <ul className="ul-evo">
+                <ul className="ul-evo d-inline-flex" style={{columnGap: arrEvoList.length > 0 ? window.innerWidth/(6.5*arrEvoList.length) : 0}}>
                     {arrEvoList.map((values, evo) => (
-                        <li key={evo} className='img-form-gender-group li-evo' style={{marginRight: arrEvoList.length > 1 && evo < arrEvoList.length-1 ? window.innerWidth/(6.5*arrEvoList.length) : 0}}>
-                            <ul className="ul-evo">
+                        <li key={evo} className='img-form-gender-group li-evo' >
+                            <ul className="ul-evo d-flex flex-column">
                                 {values.map((value, index) => (
                                     <li id={"evo-"+evo+"-"+index} key={index} className='img-form-gender-group img-evo-group li-evo'>
                                         {onSetIDPoke ?

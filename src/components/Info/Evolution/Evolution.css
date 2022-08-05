@@ -10,6 +10,7 @@
 
 .li-evo {
     margin-bottom: 30px;
+    margin-right: 0;
 }
 
 .select-evo {
@@ -46,7 +47,7 @@
 
 .scroll-evolution {
     position: relative;
-    height: 180px !important;
+    height: 180px;
     white-space: nowrap;
     overflow-x: auto;
 }

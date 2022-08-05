@@ -45,7 +45,7 @@ const PVPHome = () => {
                     </Button>
                 ))}
             </div>
-            <h1>Battle League Simulator</h1>
+            <h1>Battle League Simulator <span className="d-inline-block caption text-danger">(Beta Test)</span></h1>
             <div className="group-selected">
                 {leaguesTeamBattle.map((value, index) => (
                     <Button key={index} className="btn btn-form" style={{height: 200}} target="_blank" href={`/pvp/battle/${value.cp}`}>

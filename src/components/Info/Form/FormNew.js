@@ -241,14 +241,14 @@ const Form = ({
             {formList.filter(item => item[0].form.form_name.includes("mega")).map(item => item[0].form).length > 0 && currForm && !currForm.form.form_name.includes("gmax") ?
             <div className='row w-100' style={{margin:0}}>
                 <div className='col-xl' style={{padding:0}}>
-                <Evolution onSetIDPoke={onSetIDPoke} evolution_url={species.evolution_chain ? species.evolution_chain.url : []} id={id_default} forme={currForm && currForm.form} formDefault={currForm && pokeID === currForm.form.id} eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}/>
+                <Evolution gen={parseInt(species.generation.url.split("/")[6])} onSetIDPoke={onSetIDPoke} evolution_url={species.evolution_chain ? species.evolution_chain.url : []} id={id_default} forme={currForm && currForm.form} formDefault={currForm && pokeID === currForm.form.id} eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}/>
                 </div>
                 <div className='col-xl' style={{padding:0}}>
                     <Mega formList={formList} id={id_default}/>
                 </div>
             </div>
             :
-            <Evolution onSetIDPoke={onSetIDPoke} evolution_url={species.evolution_chain ? species.evolution_chain.url : []} id={id_default} forme={currForm && currForm.form} formDefault={currForm && pokeID === currForm.form.id} region={regionList[parseInt(species.generation.url.split("/")[6])]}/>
+            <Evolution gen={parseInt(species.generation.url.split("/")[6])} onSetIDPoke={onSetIDPoke} evolution_url={species.evolution_chain ? species.evolution_chain.url : []} id={id_default} forme={currForm && currForm.form} formDefault={currForm && pokeID === currForm.form.id} region={regionList[parseInt(species.generation.url.split("/")[6])]}/>
             }
         </Fragment>
 

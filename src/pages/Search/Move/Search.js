@@ -88,7 +88,7 @@ const Search = () => {
                         <tbody>
                             <tr className="text-center"><td className="table-sub-header" colSpan="3">
                                 <div className="row" style={{margin: 0}}>
-                                    <div className="col-4 d-flex justify-content-center align-items-center">Fast move</div>
+                                    <div className="col-4 d-flex justify-content-center align-items-center">Fast moves</div>
                                     <div className="col-4">
                                         <Form.Select style={{borderRadius: 0}} className="form-control" value={fMoveType}
                                             onChange={(e) => setFilters({...filters, fMoveType: e.target.value})}>
@@ -122,7 +122,7 @@ const Search = () => {
                         <tbody>
                             <tr className="text-center"><td className="table-sub-header" colSpan="3">
                                 <div className="row" style={{margin: 0}}>
-                                    <div className="col-4 d-flex justify-content-center align-items-center">Charged move</div>
+                                    <div className="col-4 d-flex justify-content-center align-items-center">Charged moves</div>
                                     <div className="col-4">
                                         <Form.Select style={{borderRadius: 0}} className="form-control" value={cMoveType}
                                             onChange={(e) => setFilters({...filters, cMoveType: e.target.value})}>

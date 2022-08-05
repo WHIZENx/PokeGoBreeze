@@ -26,6 +26,7 @@ const Pokemon = (props) => {
 
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
+    const maxPokemon = Object.keys(pokeListName).length;
 
     const [pokeData, setPokeData] = useState([]);
     const [formList, setFormList] = useState([]);
@@ -164,8 +165,8 @@ const Pokemon = (props) => {
                 <div className="w-100 row prev-next-block sticky-top" style={{margin:0, height: 60}}>
                     {params.id ?
                     <Fragment>
-                    {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
-                        <Link onClick={() => setReForm(false)} className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(parseInt(params.id)-1)} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
+                    {data.id > 1 && <div title="Previous Pokémon" className={`prev-block col${data.id < maxPokemon-1 ? "-6" : ""}`} style={{padding:0}}>
+                        <Link onClick={() => setReForm(false)} className="d-flex justify-content-start align-items-center" to={"/pokemon/"+(data.id-1)} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
@@ -182,8 +183,8 @@ const Pokemon = (props) => {
                             </div>
                         </Link>
                     </div>}
-                    {data.id < Object.keys(pokeListName).length && pokeListName[data.id+1] && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
-                        <Link onClick={() => setReForm(false)} className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(parseInt(data.id)+1)} title={`#${params.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
+                    {data.id < maxPokemon && pokeListName[data.id+1] && <div title="Next Pokémon" className={`next-block col${data.id > 1 ? "-6" : ""}`} style={{float: "right", padding: 0}}>
+                        <Link onClick={() => setReForm(false)} className="d-flex justify-content-end align-items-center" to={"/pokemon/"+(data.id+1)} title={`#${data.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
                                     <b>#{data.id+1}</b>
@@ -205,8 +206,8 @@ const Pokemon = (props) => {
                     <Fragment>
                     {props.prev && props.next ?
                     <Fragment>
-                    {data.id > 1 && <div title="Previous Pokémon" className="prev-block col" style={{padding:0}}>
-                        <div className="d-flex justify-content-start align-items-center" onClick={() => props.onDecId()}  title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
+                    {data.id > 1 && <div title="Previous Pokémon" className={`prev-block col${data.id < maxPokemon-1 ? "-6" : ""}`} style={{padding:0}}>
+                        <div className="d-flex justify-content-start align-items-center" onClick={() => props.onDecId()} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
                             <div style={{cursor: "pointer"}}>
                                 <b><NavigateBeforeIcon fontSize="large"/></b>
                             </div>
@@ -223,8 +224,8 @@ const Pokemon = (props) => {
                             </div>
                         </div>
                     </div>}
-                    {data.id < Object.keys(pokeListName).length && pokeListName[data.id+1] && <div title="Next Pokémon" className="next-block col" style={{float: "right", padding: 0}}>
-                        <div className="d-flex justify-content-end align-items-center" onClick={() => props.onIncId()}  title={`#${data.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
+                    {data.id < maxPokemon && pokeListName[data.id+1] && <div title="Next Pokémon" className={`next-block col${data.id > 1 ? "-6" : ""}`} style={{float: "right", padding: 0}}>
+                        <div className="d-flex justify-content-end align-items-center" onClick={() => props.onIncId()} title={`#${data.id+1} ${splitAndCapitalize(pokeListName[data.id+1].name, "-", " ")}`}>
                             <div className="w-100" style={{cursor: "pointer", textAlign: "end"}}>
                                 <div style={{textAlign: "end"}}>
                                     <b>#{data.id+1}</b>
@@ -243,7 +244,7 @@ const Pokemon = (props) => {
                     </div>}
                     </Fragment>
                     :
-                    <div className='loading-group'>
+                    <div className='d-flex justify-content-center align-items-center' style={{columnGap: 10}}>
                         <img className="loading" width={20} height={20} alt='img-pokemon' src={loading}/>
                         <span className='caption text-black' style={{fontSize: 14}}><b>Loading...</b></span>
                     </div>

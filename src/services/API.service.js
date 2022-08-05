@@ -20,11 +20,21 @@ const POKE_SOUND_CRY_API_URL = 'https://raw.githubusercontent.com/Touched/pokede
 const POKE_TYPES_API_URL = 'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/';
 
 const POKE_PV_API_URL = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/';
+const POKE_ASSETS_URL = `https://raw.githubusercontent.com/WHIZENx/pokemon-assets/master/`;
 
 class APIService {
 
     constructor() {
         this.date = new Date();
+    }
+
+    getAxios(options) {
+        return axios;
+    }
+
+    getAPI(options) {
+        axios.defaults.withCredentials = true;
+        return axios(options);
     }
 
     getFetchUrl(url) {
@@ -196,6 +206,10 @@ class APIService {
 
     getTypeIcon(type) {
         return `${POKE_TYPES_API_URL}${type.toLowerCase()}.png`
+    }
+
+    getPokemonAsset(type, gen, name, file) {
+        return `${POKE_ASSETS_URL}${type}/${gen}/${name}.${file}`
     }
 }
 

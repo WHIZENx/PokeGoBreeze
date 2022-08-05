@@ -1,8 +1,8 @@
 {
-    "timestamp": 1659091269000,
+    "timestamp": 1659672196000,
     "allowLeagues": [
-        "VS_SEEKER_MASTER",
-        "VS_SEEKER_GREAT_HISUI"
+        "VS_SEEKER_GREAT",
+        "VS_SEEKER_GREAT_ELEMENT"
     ],
     "data": [
         {
@@ -11217,15 +11217,15 @@
                 "20": [
                     {
                         "guaranteedLimited": false,
-                        "id": 483,
-                        "name": "DIALGA",
+                        "id": 484,
+                        "name": "PALKIA",
                         "form": "NORMAL",
                         "type": "FREE"
                     },
                     {
                         "guaranteedLimited": false,
-                        "id": 483,
-                        "name": "DIALGA",
+                        "id": 484,
+                        "name": "PALKIA",
                         "form": "NORMAL",
                         "type": "PREMIUM"
                     }
