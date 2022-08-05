@@ -9,12 +9,19 @@
 }
 
 .li-evo {
-    margin-bottom: 30px;
     margin-right: 0;
+    height: 100%;
 }
 
 .select-evo {
     margin-bottom: 10px;
+    height: 100%;
+    display: block;
+}
+
+.select-evo p {
+    margin: 0;
+    height: 18px;
 }
 
 .select-evo:hover {
@@ -47,7 +54,6 @@
 
 .scroll-evolution {
     position: relative;
-    height: 180px;
     white-space: nowrap;
     overflow-x: auto;
 }

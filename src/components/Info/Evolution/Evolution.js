@@ -109,7 +109,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
         return {
             name: pokemon.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon.name.toLowerCase(),
             id: pokemon.num, baby: pokemon.isBaby, form: pokemon.forme ?? "", gmax: false,
-            sprite: pokemon.name.toLowerCase()
+            sprite: pokemon.name.toLowerCase().replace("%", "")
         }
     }
 
@@ -143,6 +143,9 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
 
     const getEvoChainJSON = useCallback((id, forme) => {
         let form = forme.form_name === "" || forme.form_name.includes("mega") ? null : forme.form_name;
+        if (forme.form_name === "10") form += "%";
+        if (forme.name === "necrozma-dawn") form += "-wings";
+        else if (forme.name === "necrozma-dusk") form += "-mane";
         let pokemon = Object.values(pokemonData).find(pokemon => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form);
         if (!pokemon) pokemon = Object.values(pokemonData).find(pokemon => pokemon.num === id && pokemon.forme === null);
         let prevEvo = [], curr = [], evo = [];
@@ -152,13 +155,14 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
         else curr.push([formatEvoChain(pokemon)]);
         getNextEvoChainJSON(pokemon.evos, evo);
         const result = prevEvo.concat(curr).concat(evo);
+
         return setArrEvoList(result);
     }, [getPrevEvoChainJSON, getCurrEvoChainJSON, getNextEvoChainJSON]);
 
     const getGmaxChain = useCallback((id, form) => {
         return setArrEvoList([
-            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'normal', gmax: true, sprite: form.name.replace("-gmax", "")}],
-            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'gmax', gmax: true, sprite: form.name.replace("-gmax", "-gigantamax")}]
+            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'normal', gmax: true, sprite: form.name.replace("-gmax", "").replace("-single-strike", "")}],
+            [{name: form.name.replace("-gmax", ""), id: id, baby: false, form: 'gmax', gmax: true, sprite: form.name.replace("-gmax", "-gigantamax").replace("-single-strike", "")}]
         ]);
     }, []);
 
@@ -180,16 +184,6 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     const handlePokeID = (id) => {
         if (id !== id.toString()) onSetIDPoke(parseInt(id));
     };
-
-    const setHeightEvo = () => {
-        if (arrEvoList.length === 0) return 180;
-        let noEvo = arrEvoList.map(item => item.length).reduce((a, v) => a + v, 0) === 1 ? 25 : 0;
-        const lengths = arrEvoList.map(item => item.length);
-        const result = lengths.indexOf(Math.max(...lengths));
-        const isNotBaby = arrEvoList[result].filter(ele => !ele.baby).length;
-        const isBaby = arrEvoList[result].filter(ele => ele.baby).length;
-        return (170 * isBaby + 160 * isNotBaby + noEvo) + 10;
-    }
 
     const getQuestEvo = (prevId, form) => {
         try {
@@ -234,119 +228,123 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     const renderImageEvo = (value, chain, evo, index, evoCount) => {
         let form = value.form ?? forme.form_name;
         let offsetY = 35;
-        offsetY += value.baby ? 20 : 0
-        offsetY += arrEvoList.length === 1 ? 20 : 0
-        let startAnchor = index > 0 ? {position: "bottom", offset: {y:offsetY}} : {position: "right", offset: {x:-8}};
+        offsetY += value.baby ? 20 : 0;
+        offsetY += arrEvoList.length === 1 ? 20 : 0;
+
+        let startAnchor = index > 0 ? {position: "bottom", offset: {y: offsetY}} : {position: "right", offset: {x: -8}};
         let data = getQuestEvo(parseInt(value.id), form.toUpperCase());
         return (
             <Fragment>
-                {evo > 0 && <Xarrow
-                labels={{end:
-                    (<div className="position-absolute" style={{left: -40}}>
-                        {!value.gmax && <span className="d-flex align-items-center caption" style={{width: 'max-content'}}>
-                            <div className="bg-poke-candy" style={{backgroundColor: computeCandyBgColor(value.id)}}>
-                                <div className="poke-candy" style={{background: computeCandyColor(value.id), width: 20, height: 20}}></div>
-                            </div>
-                            <span style={{marginLeft: 2}}>{`x${data.candyCost}`}</span>
-                        </span>}
-                        {Object.keys(data.quest).length > 0 &&
-                            <Fragment>
-                                {data.quest.randomEvolution && <span className="caption"><QuestionMarkIcon fontSize="small"/></span>}
-                                {data.quest.genderRequirement && <span className="caption">
-                                {form === "male" ?
-                                <MaleIcon fontSize="small" />
-                                :
-                                <Fragment>{form === "female" ?
-                                    <FemaleIcon fontSize="small" />
+                <span id={"evo-"+evo+"-"+index}>
+                    {evo > 0 &&
+                    <Xarrow
+                    labels={{end:
+                        (<div className="position-absolute" style={{left: -40}}>
+                            {!value.gmax && <span className="d-flex align-items-center caption" style={{width: 'max-content'}}>
+                                <div className="bg-poke-candy" style={{backgroundColor: computeCandyBgColor(value.id)}}>
+                                    <div className="poke-candy" style={{background: computeCandyColor(value.id), width: 20, height: 20}}></div>
+                                </div>
+                                <span style={{marginLeft: 2}}>{`x${data.candyCost}`}</span>
+                            </span>}
+                            {Object.keys(data.quest).length > 0 &&
+                                <Fragment>
+                                    {data.quest.randomEvolution && <span className="caption"><QuestionMarkIcon fontSize="small"/></span>}
+                                    {data.quest.genderRequirement && <span className="caption">
+                                    {form === "male" ?
+                                    <MaleIcon fontSize="small" />
                                     :
-                                    <Fragment>{data.quest.genderRequirement === "MALE" ? <MaleIcon fontSize="small" /> : <FemaleIcon fontSize="small" />}</Fragment>
-                                }</Fragment>}
-                                </span>}
-                                {data.quest.kmBuddyDistanceRequirement && <span className="caption">
-                                    {data.quest.mustBeBuddy ?
-                                    <div className="d-flex align-items-end"><DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /></div> :
-                                    <DirectionsWalkIcon fontSize="small"/>} {`${data.quest.kmBuddyDistanceRequirement}km`}
-                                </span>}
-                                {data.quest.onlyDaytime && <span className="caption"><WbSunnyIcon fontSize="small" /></span>}
-                                {data.quest.onlyNighttime && <span className="caption"><DarkModeIcon fontSize="small" /></span>}
-                                {data.quest.evolutionItemRequirement && <img alt='img-item-required' height={20} src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}/>}
-                                {data.quest.lureItemRequirement && <img alt='img-troy-required' height={20} src={APIService.getItemTroy(data.quest.lureItemRequirement)}/>}
-                                {data.quest.onlyUpsideDown && <span className="caption"><SecurityUpdateIcon fontSize="small" /></span>}
-                                {data.quest.condition && <span className="caption">
-                                    {data.quest.condition.desc === "THROW_TYPE" &&
-                                    <Fragment>
-                                        <CallMadeIcon fontSize="small" />
-                                        <span>{`${capitalize(data.quest.condition.throwType.toLowerCase())} x${data.quest.goal}`}</span>
-                                    </Fragment>
-                                    }
-                                    {data.quest.condition.desc === "POKEMON_TYPE" &&
-                                    <div className="d-flex align-items-center" style={{marginTop: 5}}>
-                                        {data.quest.condition.pokemonType.map((value, index) => (
-                                            <img key={index} alt='img-stardust' height={20} src={APIService.getTypeSprite(value)}
-                                            onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}/>
-                                        ))}
-                                        <span style={{marginLeft: 2}}>{`x${data.quest.goal}`}</span>
-                                    </div>
-                                    }
-                                    {data.quest.condition.desc === "WIN_RAID_STATUS" &&
-                                    <Fragment>
-                                        <SportsMartialArtsIcon fontSize="small" />
-                                        <span>{`x${data.quest.goal}`}</span>
-                                    </Fragment>
-                                    }
-                                </span>}
-                                {data.quest.type && data.quest.type === "BUDDY_EARN_AFFECTION_POINTS" && <span className="caption">
-                                    <Fragment>
-                                        <FavoriteIcon fontSize="small" sx={{color:'red'}}/>
-                                        <span>{`x${data.quest.goal}`}</span>
-                                    </Fragment>
-                                </span>}
-                                {data.quest.type && data.quest.type === "BUDDY_FEED" && <span className="caption">
-                                    <Fragment>
-                                        <RestaurantIcon fontSize="small"/>
-                                        <span>{`x${data.quest.goal}`}</span>
-                                    </Fragment>
-                                </span>}
-                            </Fragment>
-                        }
-                    </div>)
-                }}
-                strokeWidth={2} path="grid" startAnchor={startAnchor} endAnchor={{position: "left", offset: {x:10}}}
-                start={`evo-${evo-1}-${chain.length > 1 ? 0 : index}`} end={`evo-${evo}-${chain.length > 1 ? index : 0}`} />}
-                {evoCount > 1 ?
-                <Fragment>
-                {(chain.length > 1) || (chain.length === 1 && form.form_name !== "") ?
+                                    <Fragment>{form === "female" ?
+                                        <FemaleIcon fontSize="small" />
+                                        :
+                                        <Fragment>{data.quest.genderRequirement === "MALE" ? <MaleIcon fontSize="small" /> : <FemaleIcon fontSize="small" />}</Fragment>
+                                    }</Fragment>}
+                                    </span>}
+                                    {data.quest.kmBuddyDistanceRequirement && <span className="caption">
+                                        {data.quest.mustBeBuddy ?
+                                        <div className="d-flex align-items-end"><DirectionsWalkIcon fontSize="small"/><PetsIcon sx={{fontSize: '1rem'}} /></div> :
+                                        <DirectionsWalkIcon fontSize="small"/>} {`${data.quest.kmBuddyDistanceRequirement}km`}
+                                    </span>}
+                                    {data.quest.onlyDaytime && <span className="caption"><WbSunnyIcon fontSize="small" /></span>}
+                                    {data.quest.onlyNighttime && <span className="caption"><DarkModeIcon fontSize="small" /></span>}
+                                    {data.quest.evolutionItemRequirement && <img alt='img-item-required' height={20} src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}/>}
+                                    {data.quest.lureItemRequirement && <img alt='img-troy-required' height={20} src={APIService.getItemTroy(data.quest.lureItemRequirement)}/>}
+                                    {data.quest.onlyUpsideDown && <span className="caption"><SecurityUpdateIcon fontSize="small" /></span>}
+                                    {data.quest.condition && <span className="caption">
+                                        {data.quest.condition.desc === "THROW_TYPE" &&
+                                        <Fragment>
+                                            <CallMadeIcon fontSize="small" />
+                                            <span>{`${capitalize(data.quest.condition.throwType.toLowerCase())} x${data.quest.goal}`}</span>
+                                        </Fragment>
+                                        }
+                                        {data.quest.condition.desc === "POKEMON_TYPE" &&
+                                        <div className="d-flex align-items-center" style={{marginTop: 5}}>
+                                            {data.quest.condition.pokemonType.map((value, index) => (
+                                                <img key={index} alt='img-stardust' height={20} src={APIService.getTypeSprite(value)}
+                                                onError={(e) => {e.onerror=null; e.target.src=APIService.getPokeSprite(0)}}/>
+                                            ))}
+                                            <span style={{marginLeft: 2}}>{`x${data.quest.goal}`}</span>
+                                        </div>
+                                        }
+                                        {data.quest.condition.desc === "WIN_RAID_STATUS" &&
+                                        <Fragment>
+                                            <SportsMartialArtsIcon fontSize="small" />
+                                            <span>{`x${data.quest.goal}`}</span>
+                                        </Fragment>
+                                        }
+                                    </span>}
+                                    {data.quest.type && data.quest.type === "BUDDY_EARN_AFFECTION_POINTS" && <span className="caption">
+                                        <Fragment>
+                                            <FavoriteIcon fontSize="small" sx={{color:'red'}}/>
+                                            <span>{`x${data.quest.goal}`}</span>
+                                        </Fragment>
+                                    </span>}
+                                    {data.quest.type && data.quest.type === "BUDDY_FEED" && <span className="caption">
+                                        <Fragment>
+                                            <RestaurantIcon fontSize="small"/>
+                                            <span>{`x${data.quest.goal}`}</span>
+                                        </Fragment>
+                                    </span>}
+                                </Fragment>
+                            }
+                        </div>)
+                    }}
+                    strokeWidth={2} path="grid" startAnchor={startAnchor} endAnchor={{position: "left", offset: {x: 8}}}
+                    start={`evo-${evo-1}-${chain.length > 1 ? 0 : index}`} end={`evo-${evo}-${chain.length > 1 ? index : 0}`} />}
+                    {evoCount > 1 ?
                     <Fragment>
-                    {form !== "" && !form.includes("mega") ?
-                    <ThemeProvider theme={theme}>
-                        <Badge color="neutral" overlap="circular" badgeContent={splitAndCapitalize(form, "-", " ")} anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                        }}>
-                            <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
-                                {renderImgGif(value)}
+                    {(chain.length > 1) || (chain.length === 1 && form.form_name !== "") ?
+                        <Fragment>
+                        {form !== "" && !form.includes("mega") ?
+                        <ThemeProvider theme={theme}>
+                            <Badge color="neutral" overlap="circular" badgeContent={splitAndCapitalize(form, "-", " ")} anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}>
+                                <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
+                                    {renderImgGif(value)}
+                                </Badge>
                             </Badge>
+                        </ThemeProvider>
+                        :
+                        <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
+                            {renderImgGif(value)}
                         </Badge>
-                    </ThemeProvider>
-                    :
-                    <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
-                        {renderImgGif(value)}
-                    </Badge>
+                        }
+                        </Fragment>
+                        :
+                        <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
+                            {renderImgGif(value)}
+                        </Badge>
                     }
                     </Fragment>
                     :
-                    <Badge color="primary" overlap="circular" badgeContent={evo+1} sx={{width: 96}}>
+                    <Fragment>
                         {renderImgGif(value)}
-                    </Badge>
-                }
-                </Fragment>
-                :
-                <Fragment>
-                    {renderImgGif(value)}
-                </Fragment>
-                }
-                <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
-                <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>
+                    </Fragment>
+                    }
+                    <div id="id-pokemon" style={{color: 'black'}}><b>#{value.id}</b></div>
+                    <div><b className="link-title">{splitAndCapitalize(value.name, "-", " ")}</b></div>
+                </span>
                 {value.baby && <span className="caption text-danger">(Baby)</span>}
                 {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
                 <p>{value.id === id && <span className="caption">Current</span>}</p>
@@ -382,13 +380,13 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
                 </span>
             </OverlayTrigger>
             </h4>
-            <div className="evo-container scroll-evolution" style={{minHeight:setHeightEvo()}}>
+            <div className="evo-container scroll-evolution">
                 <ul className="ul-evo d-inline-flex" style={{columnGap: arrEvoList.length > 0 ? window.innerWidth/(6.5*arrEvoList.length) : 0}}>
                     {arrEvoList.map((values, evo) => (
                         <li key={evo} className='img-form-gender-group li-evo' >
                             <ul className="ul-evo d-flex flex-column">
                                 {values.map((value, index) => (
-                                    <li id={"evo-"+evo+"-"+index} key={index} className='img-form-gender-group img-evo-group li-evo'>
+                                    <li key={index} className='img-form-gender-group img-evo-group li-evo'>
                                         {onSetIDPoke ?
                                         <div className="select-evo" onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, "-", " ")}`}>
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}

@@ -51,11 +51,19 @@ const PokemonModel = (props) => {
                                 </div>
                                 }
                                 <div className='model text-center' style={{minWidth: value.shiny ? "50%" : "100%"}}>
-                                    <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.default)}/>
+                                    <div className='d-flex w-100 justify-content-center'>
+                                        <div style={{width: 80}}>
+                                            <img className='pokemon-sprite-model' alt='pokemon-model' src={APIService.getPokemonModel(value.default)}/>
+                                        </div>
+                                    </div>
                                     <span className='caption'>Default</span>
                                 </div>
                                 {value.shiny && <div className='model text-center'>
-                                    <img className='pokemon-sprite-model' alt='pokemon-model' height={80} src={APIService.getPokemonModel(value.shiny)}/>
+                                    <div className='d-flex w-100 justify-content-center'>
+                                        <div style={{width: 80}}>
+                                            <img className='pokemon-sprite-model' alt='pokemon-model' src={APIService.getPokemonModel(value.shiny)}/>
+                                        </div>
+                                    </div>
                                     <span className='caption'>Shiny</span>
                                 </div>}
                             </div>
