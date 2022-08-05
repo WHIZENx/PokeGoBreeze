@@ -20,7 +20,6 @@ import { Link, useParams } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import { leaguesRanking } from '../../../util/Constants';
 
-import loading from '../../../assets/loading.png';
 import Error from '../../Error/Error';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -28,8 +27,12 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
+import { useDispatch } from "react-redux";
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
+
 const RankingPVP = () => {
 
+    const dispatch = useDispatch();
     const params = useParams();
 
     const [rankingData, setRankingData] = useState(null);
@@ -40,7 +43,6 @@ const RankingPVP = () => {
     const [search, setSearch] = useState('');
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
 
-    const [spinner, setSpinner] = useState(true);
     const [found, setFound] = useState(true);
 
     const LeaveToggle = ({ eventKey }) => {
@@ -55,6 +57,7 @@ const RankingPVP = () => {
 
     useEffect(() => {
         const fetchPokemon = async () => {
+            dispatch(showSpinner());
             try {
                 const cp = parseInt(params.cp);
                 let file = (await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type))).data;
@@ -125,10 +128,10 @@ const RankingPVP = () => {
             } catch (e) {
                 setFound(false);
             }
-            setSpinner(false);
+            dispatch(hideSpinner());
         }
         fetchPokemon();
-    }, [params.serie, params.cp, params.type]);
+    }, [dispatch, params.serie, params.cp, params.type]);
 
     const onSearch = (value) => {
         setSearch(value)
@@ -230,11 +233,6 @@ const RankingPVP = () => {
         <Error />
         :
         <Fragment>
-        <div className='position-fixed loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
-        <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
-            <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
-            <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
-        </div>
         {rankingData && storeStats &&
         <div className="container pvp-container">
             {renderLeague()}

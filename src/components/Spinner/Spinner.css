@@ -1,0 +1,23 @@
+.spinner-container {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 4;
+}
+
+.loading-group-spin {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #46464679;
+    z-index: 1;
+}
+
+.loading-spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}

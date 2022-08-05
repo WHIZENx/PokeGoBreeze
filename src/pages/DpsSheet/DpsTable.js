@@ -513,8 +513,8 @@ const DpsTable = () => {
                 </div>
             </div>
             <div className="position-relative">
-                <div className='loading-group-spin' style={{display: !showSpinner ? "none" : "block"}}></div>
-                <div className="loading-spin text-center" style={{display: !showSpinner ? "none" : "block"}}>
+                <div className='loading-group-spin-table' style={{display: !showSpinner ? "none" : "block"}}></div>
+                <div className="loading-spin-table text-center" style={{display: !showSpinner ? "none" : "block"}}>
                     <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}/>
                     <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
                 </div>

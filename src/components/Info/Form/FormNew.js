@@ -15,9 +15,10 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Raid from '../../Raid/Raid';
+import { useDispatch, useSelector } from 'react-redux';
+import { hideSpinner } from '../../../store/actions/spinner.action';
 
 const Form = ({
-    setSpinner,
     onChangeForm,
     setOnChangeForm,
     onSetPrev,
@@ -40,6 +41,8 @@ const Form = ({
     paramForm
 }) => {
 
+    const dispatch = useDispatch();
+    const spinner = useSelector((state) => state.spinner);
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -119,12 +122,11 @@ const Form = ({
             setDataPoke(pokeData.find(item => item.id === id_default));
         }
         if (currForm && dataPoke) {
-
             setStatATK(filterFormList(stats.attack.ranking, id_default));
             setStatDEF(filterFormList(stats.defense.ranking, id_default));
             setStatSTA(filterFormList(stats.stamina.ranking, id_default));
             setPokeID(findDefaultForm() ? currForm.form.id : findFirst().form.id);
-            if (setSpinner) setTimeout(() => {setSpinner(false);}, 1000);
+            if (spinner) setTimeout(() => {dispatch(hideSpinner());}, 1000);
             if (onSetPrev && onSetNext) {
                 setTimeout(() => {
                     onSetPrev(true);
@@ -133,9 +135,9 @@ const Form = ({
             }
 
         }
-    }, [filterFormList, currForm, dataPoke, findForm, findFirst, findDefaultForm, pokeID, setPokeID, species, setRegion,
+    }, [dispatch, filterFormList, currForm, dataPoke, findForm, findFirst, findDefaultForm, pokeID, setPokeID, species, setRegion,
         id_default, onSetNext, onSetPrev, stats.attack.ranking, stats.defense.ranking, stats.stamina.ranking,
-        formList.length, onChangeForm, pokeData, setSpinner])
+        formList.length, onChangeForm, pokeData, spinner])
 
     const changeForm = (name, form) => {
         if (setOnChangeForm) setOnChangeForm(true);

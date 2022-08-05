@@ -17,11 +17,13 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import loading from '../../../assets/loading.png';
 import Error from "../../Error/Error";
+import { useDispatch } from "react-redux";
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
 
 const TeamPVP = () => {
 
+    const dispatch = useDispatch();
     const params = useParams();
 
     const [rankingData, setRankingData] = useState(null);
@@ -33,7 +35,6 @@ const TeamPVP = () => {
     const [sortedTeamBy, setSortedTeamBy] = useState("teamScore");
     const [sortedTeam, setSortedTeam] = useState(1);
 
-    const [spinner, setSpinner] = useState(true);
     const [found, setFound] = useState(true);
 
     const mappingPokemonData = (data) => {
@@ -93,6 +94,7 @@ const TeamPVP = () => {
 
     useEffect(() => {
         const fetchPokemon = async () => {
+            dispatch(showSpinner());
             try {
                 const cp = parseInt(params.cp);
                 let file = (await APIService.getFetchUrl(APIService.getTeamFile("analysis", params.serie, cp))).data;
@@ -137,10 +139,10 @@ const TeamPVP = () => {
             } catch (e) {
                 setFound(false);
             }
-            setSpinner(false);
+            dispatch(hideSpinner());
         }
         fetchPokemon();
-    }, [params.cp, params.serie])
+    }, [dispatch, params.cp, params.serie])
 
     const renderLeague = () => {
         const league = leaguesTeam.find(item => item.id === params.serie && item.cp === parseInt(params.cp))
@@ -169,11 +171,6 @@ const TeamPVP = () => {
             <Error />
             :
             <Fragment>
-            <div className='position-fixed loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
-            <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
-                <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
-                <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
-            </div>
             {rankingData &&
             <div className="container pvp-container">
                 {renderLeague()}

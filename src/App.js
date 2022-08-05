@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { Provider } from 'react-redux';
-import store from './store'
+import thunk from "redux-thunk" 
+import { applyMiddleware, createStore } from 'redux';
 
 import { SnackbarProvider } from 'notistack';
 import './App.css';
@@ -33,6 +34,11 @@ import PVPHome from './pages/PVP/Home';
 import TeamPVP from './pages/PVP/Teams/PVP';
 import Battle from './pages/PVP/Battle/Battle';
 
+import rootReducer from './store/reducers';
+import Spinner from './components/Spinner/Spinner';
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
 const App = () => {
 
     return (
@@ -43,36 +49,37 @@ const App = () => {
           horizontal: 'right',
         }}
         maxSnack={1}>
-          <BrowserRouter>
-              <NavbarComponent />
-              <Routes>
-                <Route path="/" element={<Home/>}></Route>
-                <Route path="/type-effective" element={<TypeEffect/>}></Route>
-                <Route path="/weather-boosts" element={<Weather/>}></Route>
-                <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
-                <Route path="/search-move" element={<SearchMove/>}></Route>
-                <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
-                <Route path="/moves/:id" element={<Move/>}></Route>
-                <Route path="/find-cp-iv" element={<FindTable/>}></Route>
-                <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
-                <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
-                <Route path="/stats-table" element={<StatsTable/>}></Route>
-                <Route path="/damage-calculate" element={<Damage/>}></Route>
-                <Route path="/raid-battle" element={<RaidBattle/>}></Route>
-                <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
-                <Route path="/pvp" element={<PVPHome/>}></Route>
-                <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP/>}></Route>
-                <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
-                <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
-                <Route path="/pvp/battle" element={<Battle/>}></Route>
-                <Route path="/pvp/battle/:cp" element={<Battle/>}></Route>
-                <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
-                <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
-                <Route path="/stickers" element={<Sticker/>}></Route>
-                <Route path="*" element={<Error/>}></Route>
-              </Routes>
-              {/* <FooterComponent /> */}
-          </BrowserRouter>
+            <BrowserRouter>
+                <NavbarComponent />
+                <Routes>
+                  <Route path="/" element={<Home/>}></Route>
+                  <Route path="/type-effective" element={<TypeEffect/>}></Route>
+                  <Route path="/weather-boosts" element={<Weather/>}></Route>
+                  <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
+                  <Route path="/search-move" element={<SearchMove/>}></Route>
+                  <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
+                  <Route path="/moves/:id" element={<Move/>}></Route>
+                  <Route path="/find-cp-iv" element={<FindTable/>}></Route>
+                  <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
+                  <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
+                  <Route path="/stats-table" element={<StatsTable/>}></Route>
+                  <Route path="/damage-calculate" element={<Damage/>}></Route>
+                  <Route path="/raid-battle" element={<RaidBattle/>}></Route>
+                  <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
+                  <Route path="/pvp" element={<PVPHome/>}></Route>
+                  <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP/>}></Route>
+                  <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
+                  <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
+                  <Route path="/pvp/battle" element={<Battle/>}></Route>
+                  <Route path="/pvp/battle/:cp" element={<Battle/>}></Route>
+                  <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
+                  <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
+                  <Route path="/stickers" element={<Sticker/>}></Route>
+                  <Route path="*" element={<Error/>}></Route>
+                </Routes>
+                {/* <FooterComponent /> */}
+            </BrowserRouter>
+            <Spinner />
         </SnackbarProvider>
       </Provider>
     );

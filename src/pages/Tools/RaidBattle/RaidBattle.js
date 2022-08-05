@@ -15,7 +15,6 @@ import { calculateBattleDPS, calculateBattleDPSDefender, calculateStatsBattle, c
 
 import { Badge, Checkbox, FormControlLabel, Switch } from "@mui/material";
 
-import loadingImg from '../../../assets/loading.png';
 import './RaidBattle.css';
 import APIService from "../../../services/API.service";
 import Type from "../../../components/Sprites/Type/Type";
@@ -35,8 +34,12 @@ import { useSnackbar } from "notistack";
 import { Modal, Button } from "react-bootstrap";
 
 import update from 'immutability-helper';
+import { useDispatch } from "react-redux";
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
 
 const RaidBattle = () => {
+
+    const dispatch = useDispatch();
 
     const [id, setId] = useState(1);
     const [name, setName] = useState('');
@@ -68,7 +71,6 @@ const RaidBattle = () => {
 
     const {weatherBoss, weatherCounter, released, enableTimeAllow} = options;
 
-    const [spinner, setSpinner] = useState(false);
     const [timeAllow, setTimeAllow] = useState(0);
 
     const [resultBoss, setResultBoss] = useState(null);
@@ -289,7 +291,7 @@ const RaidBattle = () => {
                 return result;
             }, {});
             dataList = Object.values(group).map(pokemon => pokemon.reduce((p, c) => p.tdoAtk > c.tdoAtk ? p : c)).sort((a,b) => b.tdoAtk - a.tdoAtk);
-            setSpinner(false);
+            dispatch(hideSpinner());
             setResult(dataList);
         }
     }
@@ -435,7 +437,7 @@ const RaidBattle = () => {
     }, [findMove, id, form]);
 
     const handleCalculate = () => {
-        setSpinner(true);
+        dispatch(showSpinner());
         clearData();
         clearDataTarget();
         setTimeout(() => {
@@ -478,11 +480,6 @@ const RaidBattle = () => {
 
     return (
         <Fragment>
-            <div className='loading-group-spin position-fixed' style={{display: !spinner ? "none" : "block"}}></div>
-            <div className="loading-spin text-center position-fixed" style={{display: !spinner ? "none" : "block"}}>
-                <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}/>
-                <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
-            </div>
             <div className="row" style={{margin: 0, overflowX: "hidden"}}>
                 <div className="col-lg" style={{padding: 0}}>
                     <Find hide={true} title="Raid Boss" clearStats={resetData} setStatATK={setStatATK} setStatDEF={setStatDEF} setForm={onSetForm} setName={setName} setId={setId}/>
