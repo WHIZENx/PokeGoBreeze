@@ -4,9 +4,29 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import { Provider } from 'react-redux';
+import thunk from "redux-thunk"
+import { applyMiddleware, createStore } from 'redux';
+
+import { SnackbarProvider } from 'notistack';
+
+import rootReducer from './store/reducers';
+import logger from 'redux-logger';
+
+const store = createStore(rootReducer, applyMiddleware(thunk, logger));
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        maxSnack={1}>
+          <App />
+      </SnackbarProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

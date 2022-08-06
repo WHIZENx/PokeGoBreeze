@@ -21,7 +21,7 @@ import PokemonModel from "../../components/Info/Assets/PokemonModel";
 import Error from "../Error/Error";
 import { Alert } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { showSpinner } from "../../store/actions/spinner.action";
+import { hideSpinner, showSpinner } from "../../store/actions/spinner.action";
 
 const Pokemon = (props) => {
 
@@ -125,6 +125,7 @@ const Pokemon = (props) => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
             if (params.id) document.title = `#${params.id} - Not Found`;
             setIsFound(false);
+            dispatch(hideSpinner());
         });
     }, [dispatch, enqueueSnackbar, getRatioGender, fetchMap, params.id]);
 

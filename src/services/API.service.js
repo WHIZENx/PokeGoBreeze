@@ -28,7 +28,7 @@ class APIService {
         this.date = new Date();
     }
 
-    getAxios(options) {
+    getAxios() {
         return axios;
     }
 

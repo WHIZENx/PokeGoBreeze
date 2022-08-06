@@ -1,5 +1,5 @@
 {
-    "timestamp": 1659091159000,
+    "timestamp": 1659812850000,
     "data": [
         {
             "id": "6ANNIV_1",
@@ -494,8 +494,8 @@
             "id": "FORMULAEKOREA_PIKACHU",
             "maxCount": 25,
             "stickerUrl": null,
-            "pokemonId": null,
-            "pokemonName": null,
+            "pokemonId": 25,
+            "pokemonName": "PIKACHU",
             "shop": false,
             "pack": []
         },

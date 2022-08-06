@@ -27,6 +27,7 @@
     "react-scripts": "5.0.0",
     "react-xarrows": "^2.0.2",
     "redux": "^4.2.0",
+    "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.5",
     "web-vitals": "^2.1.4"

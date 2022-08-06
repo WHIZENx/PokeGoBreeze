@@ -26,7 +26,7 @@ const PokemonModel = (props) => {
     }, [getImageList, props.id]);
 
     return (
-        <div>
+        <div className='element-top'>
             <h4 className="title-evo"><b>{"Assets of "+splitAndCapitalize(props.name, "_", " ")+" in Pokémon Go"}</b> <img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/></h4>
             <div>
                 {pokeAssets.map((assets, index) => (

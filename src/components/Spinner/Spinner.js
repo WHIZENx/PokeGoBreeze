@@ -10,11 +10,13 @@ const Spinner = () => {
     return (
         <Fragment>
             {spinner &&
-            <div className='position-fixed spinner-container' style={{display: true ? "block" : "none"}}>
-                <div className='position-fixed loading-group-spin' ></div>
-                <div className="position-fixed loading-spin text-center">
-                    <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
-                    <span className='caption text-white text-shadow' style={{fontSize: 18}}><b>Loading...</b></span>
+            <div className='spinner-container'>
+                <div className='loading-group-spin'></div>
+                <div className="loading-spin-container">
+                    <div className="loading-spin text-center">
+                        <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
+                        <span className='caption text-white text-shadow' style={{fontSize: 18}}><b>Loading...</b></span>
+                    </div>
                 </div>
             </div>
             }
