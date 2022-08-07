@@ -34,62 +34,75 @@ import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadGM } from './store/actions/gamemaster.action';
 import APIService from './services/API.service';
-import { optionEvolution, optionSticker, optionPokemon } from './options/options';
+import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat } from './options/options';
+import { hideSpinner, showSpinner } from './store/actions/spinner.action';
 
 const App = () => {
 
   const dispatch = useDispatch();
-  const spinner = useSelector((state) => state.gameMaster);
+  const data = useSelector((state) => state.gameMaster);
 
   useEffect(() => {
-    APIService.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json')
-      .then(res => {
-        const pokemon = optionPokemon(res.data);
-        dispatch(loadGM({
-          pokemon: pokemon,
-          evolution: optionEvolution(res.data, pokemon),
-          stickers: optionSticker(res.data, pokemon)
-        }));
-      });
+    dispatch(showSpinner());
+    Promise.all([
+      APIService.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json'),
+      APIService.getFetchUrl("https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/master?recursive=1")
+    ]).then(([gm, assets]) => {
+      const pokemon = optionPokemon(gm.data);
+      const pokemonFamily = optionPokemonFamily(pokemon);
+      const formSpecial = optionformSpecial(gm.data);
+      const assetImgFiles = optionPokeImg(assets.data);
+      const assetSoundFiles = optionPokeSound(assets.data);
+
+      dispatch(loadGM({
+        pokemon: pokemon,
+        evolution: optionEvolution(gm.data, pokemon, formSpecial),
+        stickers: optionSticker(gm.data, pokemon),
+        assets: optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles),
+        combat: optionCombat(gm.data)
+      }));
+    });
   }, [dispatch])
+
+  useEffect(() => {
+    if (data.data) dispatch(hideSpinner());
+  }, [dispatch, data.data])
 
   return (
     <Fragment>
-      {spinner.data &&
-      <Fragment>
-        <BrowserRouter>
-            <NavbarComponent />
-            <Routes>
-              <Route path="/" element={<Home/>}></Route>
-              <Route path="/type-effective" element={<TypeEffect/>}></Route>
-              <Route path="/weather-boosts" element={<Weather/>}></Route>
-              <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
-              <Route path="/search-move" element={<SearchMove/>}></Route>
-              <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
-              <Route path="/moves/:id" element={<Move/>}></Route>
-              <Route path="/find-cp-iv" element={<FindTable/>}></Route>
-              <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
-              <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
-              <Route path="/stats-table" element={<StatsTable/>}></Route>
-              <Route path="/damage-calculate" element={<Damage/>}></Route>
-              <Route path="/raid-battle" element={<RaidBattle/>}></Route>
-              <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
-              <Route path="/pvp" element={<PVPHome/>}></Route>
-              <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP/>}></Route>
-              <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
-              <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
-              <Route path="/pvp/battle" element={<Battle/>}></Route>
-              <Route path="/pvp/battle/:cp" element={<Battle/>}></Route>
-              <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
-              <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
-              <Route path="/stickers" element={<Sticker/>}></Route>
-              <Route path="*" element={<Error/>}></Route>
-            </Routes>
-            {/* <FooterComponent /> */}
-        </BrowserRouter>
-        <Spinner />
-      </Fragment>
-      }
+      <BrowserRouter>
+          <NavbarComponent />
+          {data.data &&
+          <Routes>
+            <Route path="/" element={<Home/>}></Route>
+            <Route path="/type-effective" element={<TypeEffect/>}></Route>
+            <Route path="/weather-boosts" element={<Weather/>}></Route>
+            <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
+            <Route path="/search-move" element={<SearchMove/>}></Route>
+            <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
+            <Route path="/moves/:id" element={<Move/>}></Route>
+            <Route path="/find-cp-iv" element={<FindTable/>}></Route>
+            <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
+            <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
+            <Route path="/stats-table" element={<StatsTable/>}></Route>
+            <Route path="/damage-calculate" element={<Damage/>}></Route>
+            <Route path="/raid-battle" element={<RaidBattle/>}></Route>
+            <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
+            <Route path="/pvp" element={<PVPHome/>}></Route>
+            <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP/>}></Route>
+            <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
+            <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
+            <Route path="/pvp/battle" element={<Battle/>}></Route>
+            <Route path="/pvp/battle/:cp" element={<Battle/>}></Route>
+            <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
+            <Route path="/battle-leagues" element={<Leagues/>}></Route>Sticker
+            <Route path="/stickers" element={<Sticker/>}></Route>
+            <Route path="*" element={<Error/>}></Route>
+          </Routes>
+          }
+          {/* <FooterComponent /> */}
+      </BrowserRouter>
+      <Spinner />
     </Fragment>
   );
 }

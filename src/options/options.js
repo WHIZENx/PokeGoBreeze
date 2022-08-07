@@ -12,12 +12,23 @@ export function getOption() {
     return result;
 }
 
+export const optionPokeImg = (data) => {
+    return data.tree.filter(item =>
+        item.path.includes("Images/Pokemon/")
+    ).map(item => item.path.replace("Images/Pokemon/", "").replace(".png", ""))
+}
+
+export const optionPokeSound = (data) => {
+    return data.tree.filter(item =>
+        item.path.includes("Sounds/Pokemon Cries/")
+    ).map(item => item.path.replace("Sounds/Pokemon Cries/", "").replace(".wav", ""))
+}
+
 export const optionPokemon = (data) => {
-    return data.filter(item => {
-        return item.templateId.includes("POKEMON") &&
-        item.templateId[0] === "V" &&
+    return data.filter(item =>
+        item.templateId.includes("POKEMON") &&
         Object.keys(item.data).includes("pokemonSettings")
-    }).map(item => {
+    ).map(item => {
         const name = item.data.pokemonSettings.form ?? item.data.pokemonSettings.pokemonId;
         return {
             ...item.data.pokemonSettings,
@@ -27,7 +38,25 @@ export const optionPokemon = (data) => {
     });
 }
 
-export const optionEvolution = (data, pokemon) => {
+export const optionformSpecial = (data) => {
+    return data.filter(item =>
+        item.templateId.includes("POKEMON") &&
+        item.templateId.includes("FORMS") &&
+        Object.keys(item.data).includes("formSettings") &&
+        item.data.formSettings.forms
+    ).map(item => item.data.formSettings.forms)
+    .reduce((prev, curr) => [...prev, ...curr], [])
+    .filter(item => { return item.assetBundleSuffix || item.isCostume ||
+        (item.form &&
+        (item.form.includes("NORMAL") || (!item.form.includes("UNOWN") && item.form.split("_")[item.form.split("_").length-1] === "S")))})
+    .map(item => item.form);
+}
+
+export const optionPokemonFamily = (pokemon) => {
+    return Array.from(new Set(pokemon.map(item => item.pokemonId)));
+}
+
+export const optionEvolution = (data, pokemon, formSpecial) => {
 
     const evolutionModel = () => {
         return {
@@ -41,18 +70,7 @@ export const optionEvolution = (data, pokemon) => {
         }
     }
 
-    return pokemon.filter(item => {return !item.name.includes("NORMAL") &&
-            !item.name.includes("ANNIV") &&
-            !item.name.includes("OKINAWA") &&
-            !item.name.includes("KARIYUSHI") &&
-            !item.name.includes("POP_STAR") &&
-            !item.name.includes("ROCK_STAR") &&
-            !item.name.includes("2018") &&
-            !item.name.includes("2019") &&
-            !item.name.includes("2020") &&
-            !item.name.includes("2021") &&
-            !item.name.includes("2022") &&
-            !item.name.split("_")[-1] !== 'S'})
+    return pokemon.filter(item => !formSpecial.includes(item.name))
             .map(item => {
                 let result = evolutionModel();
                 result.id = item.id;
@@ -183,4 +201,181 @@ export const optionSticker = (data, pokemon) => {
         }
     })
     return stickers;
+}
+
+export const optionAssets = (pokemon, family, imgs, sounds) => {
+
+    const assetModel = () => {
+        return {
+            id: 0,
+            name: "",
+            image: [],
+            sound: {
+                cry: []
+            }
+        }
+    }
+
+    return family.map((item, index) => {
+        let result = assetModel();
+        result.id = pokemon.find(poke => poke.name === item).id;
+        result.name = item;
+
+        let formSet = imgs.filter(img => img.includes(`Addressable Assets/pm${result.id}.`));
+        let count = 0, mega = false;
+        while (formSet.length > count) {
+            let form = formSet[count].split("."), shiny = false, gender = 3;
+            if (form[1] === "icon" || form[1] === "g2") form = "NORMAL";
+            else form = form[1].replace("_NOEVOLVE", "").replace(/[a-z]/g, "");
+            if (formSet.includes(formSet[count].replace(".icon", "")+".s.icon")) shiny = true;
+            if (!formSet[count].includes(".g2.") && formSet.includes(formSet[count].replace(".icon", "")+".g2.icon")) gender = 1;
+            else if (formSet[count].includes(".g2.")) gender = 2;
+            if (form.includes("MEGA")) mega = true;
+            result.image.push({
+                gender: gender,
+                pokemonId: result.id,
+                form: form,
+                default: formSet[count],
+                shiny: shiny ? formSet[count+1] : null
+            });
+            count += shiny ? 2 : 1;
+        }
+
+        formSet = imgs.filter(img => !img.includes(`Addressable Assets/`)
+        && (img.includes(`pokemon_icon_${result.id.toString().padStart(3, '0')}_51`) || img.includes(`pokemon_icon_${result.id.toString().padStart(3, '0')}_52`)));
+        if (formSet.length > 0 && !mega) {
+            for (let index = 0; index < formSet.length; index += 2) {
+                result.image.push({
+                    gender: 3,
+                    pokemonId: result.id,
+                    form: formSet.length === 2 ? "MEGA" : formSet[index].includes("_51") ? "MEGA_X" : "MEGA_Y",
+                    default: formSet[index],
+                    shiny: formSet[index+1]
+                });
+            }
+        }
+
+        const formList = result.image.map(img => img.form.replaceAll("_", ""));
+        formSet = imgs.filter(img => !img.includes(`Addressable Assets/`)
+        && img.includes(`pokemon_icon_pm${result.id.toString().padStart(4, '0')}`))
+        for (let index = 0; index < formSet.length; index += 2) {
+            const subForm = formSet[index].replace("_shiny", "").split("_");
+            const form = subForm[subForm.length-1].toUpperCase();
+            if (!formList.includes(form)) {
+                formList.push(form)
+                result.image.push({
+                    gender: 3,
+                    pokemonId: result.id,
+                    form: form,
+                    default: formSet[index],
+                    shiny: formSet[index+1]
+                });
+            }
+        }
+
+        mega = false
+        let soundForm = sounds.filter(sound => sound.includes(`Addressable Assets/pm${result.id}.`));
+        result.sound.cry = soundForm.map(sound => {
+            let form = sound.split(".");
+            if (form[1] === "cry") form = "NORMAL";
+            else form = form[1].replace(/[a-z]/g, "");
+            if (form.includes("MEGA")) mega = true;
+            return {
+                form: form,
+                path: sound
+            }
+        });
+
+        soundForm = sounds.filter(sound => !sound.includes(`Addressable Assets/`)
+        && (sound.includes(`pv${result.id.toString().padStart(3, '0')}_51`) || sound.includes(`pv${result.id.toString().padStart(3, '0')}_52`)))
+        if (soundForm.length > 0 && !mega) {
+            soundForm.forEach(sound => {
+                result.sound.cry.push({
+                    form: formSet.length === 2 ? "MEGA" : sound.includes("_51") ? "MEGA_X" : "MEGA_Y",
+                    path: sound
+                });
+            })
+        }
+        return result;
+    });
+
+}
+
+export const optionCombat = (data) => {
+
+    const combatModel = () => {
+        return {
+            name: "",
+            type: null,
+            type_move: null,
+            pvp_power: 0,
+            pvp_energy: 0,
+            sound: null,
+            buffs: [],
+            id: 0,
+            pve_power: 0,
+            pve_energy: 0,
+            durationMs: 0,
+            damageWindowStartMs: 0,
+            damageWindowEndMs: 0,
+            accuracyChance: 0,
+            criticalChance: 0,
+            staminaLossScalar: 0,
+            archetype: null
+        }
+    }
+
+    const moves = data.filter(item => item.templateId[0] === "V" && item.templateId.includes("MOVE"))
+    .map(item => {
+        return {
+            ...item.data.moveSettings,
+            id: parseInt(item.templateId.split("_")[0].replace("V", ""))
+        }
+    });
+    const sequence = data.filter(item => item.templateId.includes("sequence_") && item.data.moveSequenceSettings.sequence.find(seq => seq.includes("sfx attacker")))
+    .map(item => {
+        return {
+            id: item.templateId.replace("sequence_", "").toUpperCase(),
+            path: item.data.moveSequenceSettings.sequence.find(seq => seq.includes("sfx attacker")).replace("sfx attacker ", "")
+        }
+    });
+
+    return data.filter(item => item.templateId.includes("COMBAT_V"))
+    .map(item => {
+        let result = combatModel();
+        result.name = item.data.combatMove.uniqueId
+		result.type = item.data.combatMove.type.replace("POKEMON_TYPE_", "")
+		if (item.templateId.includes("FAST")) result.type_move = "FAST"
+		else result.type_move = "CHARGE";
+        result.pvp_power = item.data.combatMove.power ?? 0.0;
+        result.pvp_energy = item.data.combatMove.energyDelta ?? 0;
+        const seq = sequence.find(seq => seq.id === result.name);
+        result.sound = seq ? seq.path : null;
+        if (item.data.combatMove.buffs) {
+            const buffKey = Object.keys(item.data.combatMove.buffs);
+            buffKey.forEach(buff => {
+                if (buff.includes("AttackStat")) {
+                    if (buff.includes("target")) result.buffs.push({"type": "atk", "target": "target", "power": item.data.combatMove.buffs[buff]})
+                    else result.buffs.push({"type": "atk", "target": "attacker", "power": item.data.combatMove.buffs[buff]})
+                } else if (buff.includes("DefenseStat")) {
+                    if (buff.includes("target")) result.buffs.push({"type": "def", "target": "target", "power": item.data.combatMove.buffs[buff]})
+                    else result.buffs.push({"type": "def", "target": "attacker", "power": item.data.combatMove.buffs[buff]})
+                }
+                result.buffs[result.buffs.length-1]["buffChance"] = item.data.combatMove.buffs[buffKey[buffKey.length-1]]
+            })
+        }
+		const move = moves.find(move => move.movementId === result.name);
+        result.id = move.id;
+        result.name = result.name.replace("_FAST", "");
+        result.pve_power = move.power ?? 0.0;
+        if (result.name === "STRUGGLE") result.pve_energy = -33;
+        else result.pve_energy = move.energyDelta ?? 0;
+        result.durationMs = move.durationMs;
+        result.damageWindowStartMs = move.damageWindowStartMs;
+        result.damageWindowEndMs = move.damageWindowEndMs;
+        result.accuracyChance = move.accuracyChance;
+        result.criticalChance = move.criticalChance ?? 0;
+        result.staminaLossScalar = move.staminaLossScalar ?? 0;
+        return result;
+    })
 }
