@@ -34,7 +34,7 @@ import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadGM } from './store/actions/gamemaster.action';
 import APIService from './services/API.service';
-import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat } from './options/options';
+import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat, optionPokemonCombat } from './options/options';
 import { hideSpinner, showSpinner } from './store/actions/spinner.action';
 
 const App = () => {
@@ -43,7 +43,6 @@ const App = () => {
   const data = useSelector((state) => state.gameMaster);
 
   useEffect(() => {
-    dispatch(showSpinner());
     Promise.all([
       APIService.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json'),
       APIService.getFetchUrl("https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/master?recursive=1")
@@ -59,13 +58,15 @@ const App = () => {
         evolution: optionEvolution(gm.data, pokemon, formSpecial),
         stickers: optionSticker(gm.data, pokemon),
         assets: optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles),
-        combat: optionCombat(gm.data)
+        combat: optionCombat(gm.data),
+        pokemonCombat: optionPokemonCombat(gm.data, pokemon, formSpecial)
       }));
     });
   }, [dispatch])
 
   useEffect(() => {
     if (data.data) dispatch(hideSpinner());
+    else dispatch(showSpinner());
   }, [dispatch, data.data])
 
   return (

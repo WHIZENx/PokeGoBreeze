@@ -720,34 +720,36 @@ export const queryStatesEvoChain = (item, level, atkIV, defIV, staIV) => {
     return {...item, battleLeague, maxCP: battleLeague.master.CP, form: pokemon.forme}
 }
 
-const queryMoveCounter = (dataList, pokemon, stats, def, types, vf, cmove, felite, celite, shadow, purified) => {
+const queryMoveCounter = (dataList, combat, pokemon, stats, def, types, vf, cmove, felite, celite, shadow, purified) => {
     cmove.forEach(vc => {
-        let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
+        let mf = combat.find(item => item.name === vf);
         let mc = combat.find(item => item.name === vc);
 
-        let options = {
-            objTypes: types,
-            POKEMON_DEF_OBJ: calculateStatsBattle(def, 15, 40, true),
-            IV_ATK: 15,
-            IV_DEF: 15,
-            IV_HP: 15,
-            POKEMON_LEVEL: 40
+        if (mf && mc) {
+            let options = {
+                objTypes: types,
+                POKEMON_DEF_OBJ: calculateStatsBattle(def, 15, 40, true),
+                IV_ATK: 15,
+                IV_DEF: 15,
+                IV_HP: 15,
+                POKEMON_LEVEL: 40
+            }
+
+            let dpsOff = calculateAvgDPS(mf, mc,
+                calculateStatsBattle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL, true),
+                calculateStatsBattle(stats.def, options.IV_DEF, options.POKEMON_LEVEL, true),
+                calculateStatsBattle(stats.sta, options.IV_HP, options.POKEMON_LEVEL, true), pokemon.types, options);
+
+            dataList.push({
+                pokemon_id: pokemon.num,
+                pokemon_name: pokemon.name,
+                pokemon_forme: pokemon.forme,
+                releasedGO: pokemon.releasedGO,
+                dps: dpsOff,
+                fmove: {...mf, elite: felite},
+                cmove: {...mc, elite: celite, shadow: shadow, purified: purified}
+            })
         }
-
-        let dpsOff = calculateAvgDPS(mf, mc,
-            calculateStatsBattle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL, true),
-            calculateStatsBattle(stats.def, options.IV_DEF, options.POKEMON_LEVEL, true),
-            calculateStatsBattle(stats.sta, options.IV_HP, options.POKEMON_LEVEL, true), pokemon.types, options);
-
-        dataList.push({
-            pokemon_id: pokemon.num,
-            pokemon_name: pokemon.name,
-            pokemon_forme: pokemon.forme,
-            releasedGO: pokemon.releasedGO,
-            dps: dpsOff,
-            fmove: {...mf, elite: felite},
-            cmove: {...mc, elite: celite, shadow: shadow, purified: purified}
-        })
     });
 }
 
@@ -756,31 +758,31 @@ const sortCounterDPS = (data) => {
     return data.map((item, index) => ({...item, ratio: item.dps*100/data[0].dps}));
 }
 
-export const counterPokemon = (def, types) => {
+export const counterPokemon = (def, types, combat, combatList) => {
     let dataList = [];
-    pokemonCombatList.forEach(value => {
-        if (value.QUICK_MOVES[0] !== "STRUGGLE" && value.CINEMATIC_MOVES[0] !== "STRUGGLE") {
-            let pokemon = Object.values(pokemonData).find(item => item.num === value.ID && convertName(item.name).includes(value.NAME));
+    combatList.forEach(value => {
+        if (value.quickMoves[0] !== "STRUGGLE" && value.cinematicMoves[0] !== "STRUGGLE") {
+            let pokemon = Object.values(pokemonData).find(item => item.num === value.id && convertName(item.name).includes(value.name));
             if (pokemon === undefined) {
-                console.log(value.ID, value.NAME);
+                console.log(value.id, value.name);
                 return;
             }
             let stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
-            value.QUICK_MOVES.forEach(vf => {
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, false, false, false, false);
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, false, true, false, false);
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, false, false, true, false);
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, false, false, false, true);
+            value.quickMoves.forEach(vf => {
+                queryMoveCounter(dataList, combat, pokemon, stats, def, types, vf, value.cinematicMoves, false, false, false, false);
+                queryMoveCounter(dataList, combat, pokemon, stats, def, types, vf, value.eliteCinematicMoves, false, true, false, false);
+                queryMoveCounter(dataList, combat, pokemon, stats, def, types, vf, value.shadowMoves, false, false, true, false);
+                queryMoveCounter(dataList, combat, pokemon, stats, def, types, vf, value.purifiedMoves, false, false, false, true);
             });
-            value.ELITE_QUICK_MOVES.forEach(vf => {
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.CINEMATIC_MOVES, true, false, false, false);
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.ELITE_CINEMATIC_MOVES, true, true, false, false);
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.SHADOW_MOVES, true, false, true, false);
-                queryMoveCounter(dataList, pokemon, stats, def, types, vf, value.PURIFIED_MOVES, true, false, false, true);
+            value.eliteQuickMoves.forEach(vf => {
+                queryMoveCounter(dataList, combat, pokemon, stats, def, types, vf, value.cinematicMoves, true, false, false, false);
+                queryMoveCounter(dataList, combat, pokemon, stats, def, types, vf, value.eliteCinematicMoves, true, true, false, false);
+                queryMoveCounter(dataList, combat, pokemon, stats, def, types, vf, value.shadowMoves, true, false, true, false);
+                queryMoveCounter(dataList, combat, pokemon, stats, def, types, vf, value.purifiedMoves, true, false, false, true);
             });
         }
     });
     return sortCounterDPS(dataList);
 }
 
-/* ------------- PVP Calculate ------------- */
+/* ------------- Redux Calculate ------------- */

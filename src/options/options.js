@@ -12,6 +12,54 @@ export function getOption() {
     return result;
 }
 
+export const optionSettings = (data) => {
+    let settings = {
+        combat_options: [],
+        battle_options: [],
+        throw_charge: {},
+        buddy_friendship: {},
+        trainer_friendship: {}
+    };
+
+    data.forEach(item => {
+        if (item.templateId === "COMBAT_SETTINGS") {
+            settings.combat_options = {}
+            settings.combat_options["stab"] = item.data.combatSettings.sameTypeAttackBonusMultiplier
+            settings.combat_options["shadow_bonus"] = {}
+            settings.combat_options.shadow_bonus["atk"] = item.data.combatSettings.shadowPokemonAttackBonusMultiplier
+            settings.combat_options.shadow_bonus["def"] = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier
+
+            settings.throw_charge["normal"] = item.data.combatSettings.chargeScoreBase
+            settings.throw_charge["nice"] = item.data.combatSettings.chargeScoreNice
+            settings.throw_charge["great"] = item.data.combatSettings.chargeScoreGreat
+            settings.throw_charge["excellent"] = item.data.combatSettings.chargeScoreExcellent
+        }
+        if (item.templateId === "BATTLE_SETTINGS") {
+            settings.battle_options = {}
+            settings.battle_options["enemyAttackInterval"] = item.data.battleSettings.enemyAttackInterval
+            settings.battle_options["stab"] = item.data.battleSettings.sameTypeAttackBonusMultiplier
+            settings.battle_options["shadow_bonus"] = {}
+            settings.battle_options.shadow_bonus["atk"] = item.data.battleSettings.shadowPokemonAttackBonusMultiplier
+            settings.battle_options.shadow_bonus["def"] = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier
+        }
+        if (item.templateId.includes("BUDDY_LEVEL_")) {
+            const level = parseInt(item.templateId.replace("BUDDY_LEVEL_", ""))
+            settings.buddy_friendship[level] = {}
+            settings.buddy_friendship[level]["level"] = level
+            settings.buddy_friendship[level]["minNonCumulativePointsRequired"] = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0
+            settings.buddy_friendship[level]["unlockedTrading"] = item.data.buddyLevelSettings.unlockedTraits
+        }
+        if (item.templateId.includes("FRIENDSHIP_LEVEL_")) {
+            const level = parseInt(item.templateId.replace("FRIENDSHIP_LEVEL_", ""))
+            settings.trainer_friendship[level] = {}
+            settings.trainer_friendship[level]["level"] = level
+            settings.trainer_friendship[level]["atk_bonus"] = item.data.friendshipMilestoneSettings.attackBonusPercentage
+            settings.trainer_friendship[level]["unlockedTrading"] = item.data.friendshipMilestoneSettings.unlockedTrading
+        }
+    })
+    return settings;
+}
+
 export const optionPokeImg = (data) => {
     return data.tree.filter(item =>
         item.path.includes("Images/Pokemon/")
@@ -291,7 +339,7 @@ export const optionAssets = (pokemon, family, imgs, sounds) => {
         if (soundForm.length > 0 && !mega) {
             soundForm.forEach(sound => {
                 result.sound.cry.push({
-                    form: formSet.length === 2 ? "MEGA" : sound.includes("_51") ? "MEGA_X" : "MEGA_Y",
+                    form: soundForm.length !== 2 ? "MEGA" : sound.includes("_51") ? "MEGA_X" : "MEGA_Y",
                     path: sound
                 });
             })
@@ -378,4 +426,45 @@ export const optionCombat = (data) => {
         result.staminaLossScalar = move.staminaLossScalar ?? 0;
         return result;
     })
+}
+
+export const optionPokemonCombat = (data, pokemon, formSpecial) => {
+
+    const combatModel = () => {
+        return {
+            id: 0,
+            name: "",
+            baseSpecies: "",
+            quickMoves: [],
+            cinematicMoves: [],
+            shadowMoves: [],
+            purifiedMoves: [],
+            eliteQuickMoves: [],
+            eliteCinematicMoves: []
+        }
+    }
+
+    return pokemon.filter(item => !formSpecial.includes(item.name)).map(item => {
+        let result = combatModel();
+        result.id = item.id;
+        result.name = item.name;
+        result.baseSpecies = item.pokemonId;
+        if (result.id === 235) {
+            const moves = data.find(item => item.templateId === "SMEARGLE_MOVES_SETTINGS").data.smeargleMovesSettings;
+            result.quickMoves = moves.quickMoves.map(move => move.replace("_FAST", ""));
+            result.cinematicMoves = moves.cinematicMoves;
+        } else {
+            result.quickMoves = item.quickMoves ? item.quickMoves.map(move => move.replace("_FAST", "")) : [];
+            result.cinematicMoves = item.cinematicMoves;
+            result.eliteQuickMoves = item.eliteQuickMove ? item.eliteQuickMove.map(move => move.replace("_FAST", "")) : [];
+            result.eliteCinematicMoves = item.eliteCinematicMove ?? [];
+            if (item.shadow) {
+                result.shadowMoves.push(item.shadow.shadowChargeMove);
+                result.purifiedMoves.push(item.shadow.purifiedChargeMove);
+            }
+        }
+
+        return result;
+    })
+
 }

@@ -88,7 +88,7 @@ const TeamPVP = () => {
             cmoveSec: cmoveSec,
             combatPoke: combatPoke,
             shadow: speciesId.includes("shadow"),
-            purified: combatPoke.PURIFIED_MOVES.includes(cmovePri.name) || (cmoveSec && combatPoke.PURIFIED_MOVES.includes(cmoveSec.name))
+            purified: (cmovePri && combatPoke.PURIFIED_MOVES.includes(cmovePri.name)) || (cmoveSec && combatPoke.PURIFIED_MOVES.includes(cmoveSec.name))
         }
     }
 
@@ -137,6 +137,7 @@ const TeamPVP = () => {
                 });
                 setRankingData(file);
             } catch (e) {
+                console.log(e)
                 setFound(false);
             }
             dispatch(hideSpinner());
@@ -227,10 +228,10 @@ const TeamPVP = () => {
                                     <div className="d-flex" style={{columnGap: 10}}>
                                         <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} move={value.fmove}
                                         elite={value.combatPoke.ELITE_QUICK_MOVES.includes(value.fmove.name)}/>
-                                        <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
+                                        {value.cmovePri && <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
                                         elite={value.combatPoke.ELITE_CINEMATIC_MOVES.includes(value.cmovePri.name)}
                                         shadow={value.combatPoke.SHADOW_MOVES.includes(value.cmovePri.name)}
-                                        purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmovePri.name)}/>
+                                        purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmovePri.name)}/>}
                                         {value.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={value.cmoveSec}
                                         elite={value.combatPoke.ELITE_CINEMATIC_MOVES.includes(value.cmoveSec.name)}
                                         shadow={value.combatPoke.SHADOW_MOVES.includes(value.cmoveSec.name)}
@@ -325,10 +326,10 @@ const TeamPVP = () => {
                                                     <div className="d-flex" style={{gap: 10}}>
                                                         <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} move={value.fmove}
                                                         elite={value.combatPoke.ELITE_QUICK_MOVES.includes(value.fmove.name)}/>
-                                                        <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
+                                                        {value.cmovePri && <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
                                                         elite={value.combatPoke.ELITE_CINEMATIC_MOVES.includes(value.cmovePri.name)}
                                                         shadow={value.combatPoke.SHADOW_MOVES.includes(value.cmovePri.name)}
-                                                        purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmovePri.name)}/>
+                                                        purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmovePri.name)}/>}
                                                         {value.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={value.cmoveSec}
                                                         elite={value.combatPoke.ELITE_CINEMATIC_MOVES.includes(value.cmoveSec.name)}
                                                         shadow={value.combatPoke.SHADOW_MOVES.includes(value.cmoveSec.name)}

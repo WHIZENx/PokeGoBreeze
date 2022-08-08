@@ -131,6 +131,8 @@ export const convertName = (text) => {
   .replaceAll("É", "E")
   .replace("PUMPKABOO_AVERAGE", "PUMPKABOO")
   .replace("GOURGEIST_AVERAGE", "GOURGEIST")
+  .replace("GALAR", "GALARIAN")
+  .replace("HISUI", "HISUIAN")
 };
 
 export const convertNameRanking = (text) => {

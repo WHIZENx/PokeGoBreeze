@@ -7,9 +7,11 @@ import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
 import './Counter.css';
+import { useSelector } from "react-redux";
 
 const Counter = ({def, form, changeForm, setLoadCounter}) => {
 
+    const gmData = useSelector((state) => state.gameMaster.data);
     const [counterList, setCounterList] = useState([]);
     const [open, setOpen] = useState(false);
     const [releasedGO, setReleaseGO] = useState(true);
@@ -29,7 +31,7 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
     }
 
     const loadMetaData = () => {
-        setCounterList(counterPokemon(def, form.types));
+        setCounterList(counterPokemon(def, form.types, gmData.combat, gmData.pokemonCombat));
         setOpen(true);
     }
 

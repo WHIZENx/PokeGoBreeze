@@ -177,7 +177,7 @@ class APIService {
     }
 
     getSoundPokemonGO(path) {
-        return `${POGO_SOUND_API_URL}Pokemon Cries/Addressable Assets/${path}.wav`;
+        return `${POGO_SOUND_API_URL}Pokemon Cries/${path}.wav`;
     }
 
     getSoundMove(sound) {

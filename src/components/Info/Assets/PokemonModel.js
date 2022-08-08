@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import pokemonData from '../../../data/pokemon.json';
-import pokeImageList from '../../../data/assets_pokemon_go.json';
+// import pokeImageList from '../../../data/assets_pokemon_go.json';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -8,18 +8,23 @@ import FemaleIcon from '@mui/icons-material/Female';
 import './PokemonModel.css';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
+import { useSelector } from 'react-redux';
 
 const PokemonModel = (props) => {
 
-    const getImageList = useCallback((id) => {
-        let model = pokeImageList.find(item => item.id === id);
-        return Array.from(new Set(model.image.map(item => item.form))).map(value => {
-            return {form: value, image: model.image.filter(item => value === item.form)}
-        });
-    }, []);
+    const gmData = useSelector((state) => state.gameMaster.data);
 
     const [pokeAssets, setPokeAssets] = useState([]);
     const gender = useRef(Object.values(pokemonData).find(item => item.num === props.id).genderRatio);
+    const sound = useRef(null);
+
+    const getImageList = useCallback((id) => {
+        let model = gmData.assets.find(item => item.id === id);
+        sound.current = gmData.assets.find(item => item.id === id);
+        return Array.from(new Set(model.image.map(item => item.form))).map(value => {
+            return {form: value, image: model.image.filter(item => value === item.form)}
+        });
+    }, [gmData.assets]);
 
     useEffect(() => {
         setPokeAssets(getImageList(props.id));
@@ -85,12 +90,12 @@ const PokemonModel = (props) => {
                 Your browser does not support the audio element.
             </audio>
             <h6>Pokémon GO:</h6> */}
-            {pokeImageList.find(item => item.id === props.id).sound.cry.length === 0 ?
+            {!sound.current || sound.current.sound.cry.length === 0 ?
             <div>Sound in Pokémon Go unavailable.</div>
             :
             <ul style={{margin: 0}}>
-                {pokeImageList.find(item => item.id === props.id).sound.cry.map((value, index) => (
-                    <li key={index}>
+                {sound.current.sound.cry.map((value, index) => (
+                    <li key={index} style={{listStyleType: 'disc'}}>
                         <h6>Form: {splitAndCapitalize(value.form, "_", " ")}</h6>
                         <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100" controls style={{height: 30}}>
                             <source type="audio/wav"></source>
