@@ -2,7 +2,9 @@ import { combineReducers } from 'redux';
 import spinner from './spinner.reducer';
 import gameMaster from './gamemaster.reducer';
 
-export default combineReducers({
+const rootReducer = combineReducers({
     spinner,
     gameMaster
 });
+
+export default rootReducer;

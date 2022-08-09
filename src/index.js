@@ -11,21 +11,26 @@ import { applyMiddleware, createStore } from 'redux';
 import { SnackbarProvider } from 'notistack';
 
 import rootReducer from './store/reducers';
-import logger from 'redux-logger';
+import { composeWithDevTools } from "@redux-devtools/extension";
 
-const store = createStore(rootReducer, applyMiddleware(thunk, logger));
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(
+    applyMiddleware(thunk)
+  ),
+);
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <SnackbarProvider
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        maxSnack={1}>
-          <App />
-      </SnackbarProvider>
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          maxSnack={1}>
+            <App />
+        </SnackbarProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
