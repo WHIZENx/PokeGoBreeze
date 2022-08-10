@@ -62,7 +62,7 @@ export const MULTIPLY_LEVEL_FRIENDSHIP = (options, level) => {
     level = level ?? DEFAULT_POKEMON_FRIEND_LEVEL;
     return getOption(options, "trainer_friendship", level.toString(), "atk_bonus");
 }
-export const MULTIPLY_THROW_CHARGE = (options, type) => { return getOption(options, "trainer_friendship", type);}
+export const MULTIPLY_THROW_CHARGE = (options, type) => { return getOption(options, "throw_charge", type);}
 
 /* Shadow exclusive bonus for Pokémon in battle */
 export const SHADOW_ATK_BONUS = (options) => { return getOption(options, "combat_options", "shadow_bonus", "atk"); }

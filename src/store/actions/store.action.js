@@ -1,5 +1,5 @@
 import APIService from "../../services/API.service";
-import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat, optionPokemonCombat, optionSettings } from '../../options/options';
+import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat, optionPokemonCombat, optionSettings, optionLeagues } from '../../options/options';
 
 export const LOAD_STORE = "LOAD_STORE";
 export const RESET_STORE = "RESET_STORE";
@@ -24,7 +24,8 @@ export const loadStore = dispatch => {
                     stickers: optionSticker(gm.data, pokemon),
                     assets: optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles),
                     combat: optionCombat(gm.data),
-                    pokemonCombat: optionPokemonCombat(gm.data, pokemon, formSpecial)
+                    pokemonCombat: optionPokemonCombat(gm.data, pokemon, formSpecial),
+                    leagues: optionLeagues(gm.data, pokemon)
                 }
             });
       });

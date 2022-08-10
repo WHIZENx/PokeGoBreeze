@@ -460,8 +460,94 @@ export const optionPokemonCombat = (data, pokemon, formSpecial) => {
                 result.purifiedMoves.push(item.shadow.purifiedChargeMove);
             }
         }
-
         return result;
     })
 
+}
+
+export const optionLeagues = (data, pokemon) => {
+
+    const leagueModel = () => {
+        return {
+            id: null,
+            title: "",
+            enabled: false,
+            conditions: {},
+            iconUrl: null,
+            league: ""
+        }
+    }
+
+    const leagueConditionModel = () => {
+        return {
+            timestamp: null,
+            unique_selected: false,
+            unique_type: false,
+            max_level: null,
+            max_cp: 0,
+            whiteList: [],
+            banned: []
+        }
+    }
+
+    let result = {
+        allowLeagues: [],
+        data: []
+    }
+
+    result.allowLeagues = data.find(item => item.templateId === "VS_SEEKER_CLIENT_SETTINGS").data.vsSeekerClientSettings.allowedVsSeekerLeagueTemplateId
+    .map(item => item.replace("COMBAT_LEAGUE_", "").replace("DEFAULT_", ""))
+
+    result.data = data.filter(item => item.templateId.includes("COMBAT_LEAGUE_") && !item.templateId.includes("SETTINGS"))
+    .map(item => {
+        let result = leagueModel();
+        result.id = item.templateId.replace("COMBAT_LEAGUE_", "").replace("DEFAULT_", "");
+        result.title = item.data.combatLeague.title.replace("combat_", "").replace("_title", "").toUpperCase()
+        result.enabled = item.data.combatLeague.enabled
+        result.conditions = leagueConditionModel();
+        item.data.combatLeague.pokemonCondition.forEach(con => {
+            if (con.type === "POKEMON_CAUGHT_TIMESTAMP") {
+                result.conditions.timestamp = {}
+                result.conditions.timestamp.start = con.pokemonCaughtTimestamp.afterTimestamp
+                result.conditions.timestamp.end = con.pokemonCaughtTimestamp.beforeTimestamp ?? null;
+            }
+            if (con.type === "WITH_UNIQUE_POKEMON") {
+                result.conditions.unique_selected = true
+            }
+            if (con.type === "WITH_POKEMON_TYPE") {
+                result.conditions.unique_type = con.withPokemonType.pokemonType.map(type => type.replace("POKEMON_TYPE_", ""))
+            }
+            if (con.type === "POKEMON_LEVEL_RANGE") {
+                result.conditions.max_level = con.pokemonLevelRange.maxLevel
+            }
+            if (con.type === "WITH_POKEMON_CP_LIMIT") {
+                result.conditions.max_cp = con.withPokemonCpLimit.maxCp
+            }
+            if (con.type === "POKEMON_WHITELIST") {
+                result.conditions.whiteList = con.pokemonWhiteList.pokemon.map(poke => {
+                    let whiteList = {};
+                    whiteList.id = pokemon.find(item => item.name === poke.id).id
+                    whiteList.name = poke.id
+                    whiteList.form = poke.form ? poke.form.replace(whiteList.name+"_", "") : "NORMAL";
+                    if (poke.forms && poke.forms.length === 1) whiteList.form = poke.forms[0].replace(whiteList.name+"_", "");
+                    return whiteList;
+                });
+                result.conditions.whiteList = result.conditions.whiteList.sort((a,b) => a.id-b.id);
+            }
+            result.iconUrl = item.data.combatLeague.iconUrl.replace("https://storage.googleapis.com/prod-public-images/", "").replace("https://prodholoholo-public-images.nianticlabs.com/LeagueIcons/", "")
+            result.league = item.data.combatLeague.badgeType.replace("BADGE_", "")
+            if (item.data.combatLeague.bannedPokemon) {
+                result.conditions.banned = item.data.combatLeague.bannedPokemon.map(poke => {
+                    let banList = {};
+                    banList.id = pokemon.find(item => item.name === poke).id;
+                    banList.name = poke;
+                    return banList;
+                });
+                result.conditions.banned = result.conditions.banned.sort((a,b) => a.id-b.id);
+            }
+        })
+        return result;
+    })
+
+    return result;
 }

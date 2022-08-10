@@ -25,7 +25,7 @@ import { hideSpinner, showSpinner } from "../../store/actions/spinner.action";
 const Pokemon = (props) => {
 
     const dispatch = useDispatch();
-    const gmData = useSelector((state) => state.store.data);
+    const dataStore = useSelector((state) => state.store.data);
 
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -155,7 +155,7 @@ const Pokemon = (props) => {
     }
 
     const getCostModifier = (id) => {
-        return gmData.evolution.find(item => item.id === id)
+        return dataStore.evolution.find(item => item.id === id)
     }
 
     return (

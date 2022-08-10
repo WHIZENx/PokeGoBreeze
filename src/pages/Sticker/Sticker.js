@@ -1,6 +1,6 @@
 import { Badge } from "@mui/material";
 
-import { getTime, splitAndCapitalize } from '../../util/Utils';
+import { splitAndCapitalize } from '../../util/Utils';
 
 import './Sticker.css';
 import APIService from '../../services/API.service';
@@ -21,11 +21,10 @@ const Sticker = () => {
     return (
         <div className='container' style={{padding: 15}}>
             <h2 className='title-leagues' style={{marginBottom: 15}}>Sticker List</h2>
-            <span className="text-timestamp">* Update: {getTime(pokeStickerList.timestamp, true)}</span>
             <div className='sticker-container'>
                 <h5><span>Sticker</span></h5>
                 <div className='sticker-group'>
-                    {pokeStickerList.data.map((value, index) => (
+                    {pokeStickerList.map((value, index) => (
                         <OverlayTrigger
                         key={index}
                         placement='auto'

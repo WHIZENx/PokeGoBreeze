@@ -1,6 +1,6 @@
 const inititaialize = {
     data: null,
-    timeUpdate: new Date()
+    timestamp: new Date()
 }
 
 const StoreReducer = (state = inititaialize, action) => {
@@ -9,7 +9,7 @@ const StoreReducer = (state = inititaialize, action) => {
         return {
             ...state,
             data: action.payload,
-            timeUpdate: new Date()
+            timestamp: new Date()
         };
       case 'RESET_STORE':
         return {

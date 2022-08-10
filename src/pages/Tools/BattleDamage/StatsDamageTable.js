@@ -2,7 +2,6 @@ import { Box, FormControlLabel, Radio } from "@mui/material";
 import { useCallback, useState } from "react";
 
 import { LevelSlider, TypeRadioGroup } from "../../../util/Utils";
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateStatsBattle } from '../../../util/Calculate';
 
 import APIService from "../../../services/API.service";
@@ -10,19 +9,23 @@ import APIService from "../../../services/API.service";
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
+import { useSelector } from "react-redux";
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../util/Constants";
 
 const StatsTable = ({setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA}) => {
+
+    const globalOptions = useSelector((state) => state.store.data.options);
 
     const [currStatLevel, setCurrStatLevel] = useState(1);
     const [currStatType, setCurrStatType] = useState(null);
 
     const onHandleLevel = useCallback((e, v) => {
         setStatLevel(v);
-        if(setStatLvATK) setStatLvATK(calculateStatsBattle(statATK, 15, currStatLevel, false, currStatType === "shadow" ? SHADOW_ATK_BONUS : 1));
-        if(setStatLvDEF) setStatLvDEF(calculateStatsBattle(statDEF, 15, currStatLevel, false, currStatType === "shadow" ? SHADOW_DEF_BONUS : 1));
+        if(setStatLvATK) setStatLvATK(calculateStatsBattle(statATK, 15, currStatLevel, false, currStatType === "shadow" ? SHADOW_ATK_BONUS(globalOptions) : 1));
+        if(setStatLvDEF) setStatLvDEF(calculateStatsBattle(statDEF, 15, currStatLevel, false, currStatType === "shadow" ? SHADOW_DEF_BONUS(globalOptions) : 1));
         if(setStatLvSTA) setStatLvSTA(calculateStatsBattle(statSTA, 15, currStatLevel));
         setCurrStatLevel(v);
-    }, [setStatLevel, setStatLvATK, setStatLvDEF, setStatLvSTA, statATK, statDEF, statSTA, currStatType, currStatLevel]);
+    }, [globalOptions, setStatLevel, setStatLvATK, setStatLvDEF, setStatLvSTA, statATK, statDEF, statSTA, currStatType, currStatLevel]);
 
     const onHandleType = useCallback(v => {
         setStatType(v);
@@ -71,11 +74,11 @@ const StatsTable = ({setStatType, setStatLevel, statATK, statDEF, statSTA, setSt
                             <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={atk_logo}/>ATK</td>
-                                    <td className="text-center">{calculateStatsBattle(statATK, 15, currStatLevel, true, currStatType === "shadow" ? SHADOW_ATK_BONUS : 1)}</td>
+                                    <td className="text-center">{calculateStatsBattle(statATK, 15, currStatLevel, true, currStatType === "shadow" ? SHADOW_ATK_BONUS(globalOptions) : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>DEF</td>
-                                    <td className="text-center">{calculateStatsBattle(statDEF, 15, currStatLevel, true, currStatType === "shadow" ? SHADOW_DEF_BONUS : 1)}</td>
+                                    <td className="text-center">{calculateStatsBattle(statDEF, 15, currStatLevel, true, currStatType === "shadow" ? SHADOW_DEF_BONUS(globalOptions) : 1)}</td>
                                 </tr>
                                 <tr>
                                     <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>HP</td>

@@ -11,19 +11,19 @@ import { useSelector } from 'react-redux';
 
 const PokemonModel = (props) => {
 
-    const gmData = useSelector((state) => state.store.data);
+    const data = useSelector((state) => state.store.data);
 
     const [pokeAssets, setPokeAssets] = useState([]);
     const gender = useRef(Object.values(pokemonData).find(item => item.num === props.id).genderRatio);
     const sound = useRef(null);
 
     const getImageList = useCallback((id) => {
-        let model = gmData.assets.find(item => item.id === id);
-        sound.current = gmData.assets.find(item => item.id === id);
+        let model = data.assets.find(item => item.id === id);
+        sound.current = data.assets.find(item => item.id === id);
         return model ? Array.from(new Set(model.image.map(item => item.form))).map(value => {
             return {form: value, image: model.image.filter(item => value === item.form)}
         }) : [];
-    }, [gmData.assets]);
+    }, [data.assets]);
 
     useEffect(() => {
         setPokeAssets(getImageList(props.id));

@@ -403,12 +403,12 @@ export const calculateDamagePVE = (globalOptions, atk, defObj, power, eff, notPu
         const isDodge = eff.dodge ? 0.25 : 1;
         const isMega = eff.mega ? eff.stab ? 1.3 : 1.1 : 1;
         const isTrainer = eff.trainer ? 1.3 : 1;
-        const isFrind = eff.flevel ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.flevel) : 1;
+        const isFriend = eff.flevel ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.flevel) : 1;
         let isCharge = eff.clevel ? MULTIPLY_THROW_CHARGE(globalOptions, "normal") : 1;
         if (eff.clevel === 1) isCharge = MULTIPLY_THROW_CHARGE(globalOptions, "nice");
         else if (eff.clevel === 2) isCharge = MULTIPLY_THROW_CHARGE(globalOptions, "great");
         else if (eff.clevel === 3) isCharge = MULTIPLY_THROW_CHARGE(globalOptions, "excellent");
-        modifier = isStab * isWb * isFrind * isDodge * isCharge * isMega * isTrainer * eff.effective;
+        modifier = isStab * isWb * isFriend * isDodge * isCharge * isMega * isTrainer * eff.effective;
     } else {
         if (stab) modifier = StabMultiply;
         else modifier = 1;
