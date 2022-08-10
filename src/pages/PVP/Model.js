@@ -22,11 +22,8 @@ import BrokenImageIcon from '@mui/icons-material/BrokenImage';
 import SpokeIcon from '@mui/icons-material/Spoke';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import PersonIcon from '@mui/icons-material/Person';
-import { useSelector } from "react-redux";
 
-export const Keys = (pokemonData, data, cp, type) => {
-
-    const assets = useSelector((state) => state.store.data.assets);
+export const Keys = (assets, pokemonData, data, cp, type) => {
 
     const renderItemList = (data, bgtype) => {
         const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));

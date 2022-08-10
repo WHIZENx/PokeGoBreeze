@@ -50,7 +50,7 @@ const PokemonPVP = () => {
 
                 const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
-                let fmoveData = dataStore.moveset[0], cMoveDataPri = data.moveset[1], cMoveDataSec = data.moveset[2];
+                let fmoveData = data.moveset[0], cMoveDataPri = data.moveset[1], cMoveDataSec = data.moveset[2];
                 if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
                 if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
                 if (cMoveDataSec === "FUTURE_SIGHT") cMoveDataSec = "FUTURESIGHT";
@@ -59,7 +59,7 @@ const PokemonPVP = () => {
 
                 let fmove = dataStore.combat.find(item => item.name === fmoveData);
                 const cmovePri = dataStore.combat.find(item => item.name === cMoveDataPri);
-                if (cMoveDataSec) var cmoveSec = data.combat.find(item => item.name === cMoveDataSec);
+                if (cMoveDataSec) var cmoveSec = dataStore.combat.find(item => item.name === cMoveDataSec);
 
                 if (data.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: data.moveset[0].split("_")[2]}
 
@@ -109,6 +109,7 @@ const PokemonPVP = () => {
                     purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec))
                 });
             } catch (e) {
+                console.log(e)
                 setFound(false);
             }
             dispatch(hideSpinner());
@@ -185,7 +186,7 @@ const PokemonPVP = () => {
                     </div>
                 </div>
                 <hr />
-                {Keys(Object.values(pokemonData), rankingPoke.data, params.cp, params.type)}
+                {Keys(dataStore.assets, Object.values(pokemonData), rankingPoke.data, params.cp, params.type)}
             </div>
             <div className='container'>
                 <hr />

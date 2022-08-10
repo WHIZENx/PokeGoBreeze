@@ -181,7 +181,7 @@ const RankingPVP = () => {
                                 purified={data.combatPoke.purifiedMoves.includes(data.cmoveSec.name)}/>}
                             </div>
                             <hr />
-                            {Keys(Object.values(pokemonData), data, params.cp, params.type)}
+                            {Keys(dataStore.assets, Object.values(pokemonData), data, params.cp, params.type)}
                         </div>
                         <div className='container'>
                             <hr />
