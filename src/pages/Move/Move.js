@@ -4,12 +4,11 @@ import DataTable from "react-data-table-component";
 import { Link, useParams } from "react-router-dom";
 
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
-import { STAB_MULTIPLY } from '../../util/Constants';
+import { STAB_MULTIPLY } from "../../util/Constants";
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
 import TypeBar from "../../components/Sprites/TypeBar/TypeBar";
 
-import moveData from '../../data/combat.json';
 import weathers from '../../data/weather_boosts.json';
 import APIService from "../../services/API.service";
 import './Move.css';
@@ -18,6 +17,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.name.toLowerCase();
@@ -58,6 +58,7 @@ const columns = [
 
 const Move = (props) => {
 
+    const data = useSelector((state) => state.store.data);
     const params = useParams();
 
     const [move, setMove] = useState(null);
@@ -73,7 +74,7 @@ const Move = (props) => {
     };
 
     const queryMove = useCallback((id) => {
-        let move = moveData.find(item => item.id === parseInt(id));
+        let move = data.combat.find(item => item.id === parseInt(id));
         if (move) {
             setMove(move)
             document.title =  `#${move.id} - ${splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}`;
@@ -82,14 +83,14 @@ const Move = (props) => {
             enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
             if (params.id) document.title = `#${params.id} - Not Found`
         }
-    }, [enqueueSnackbar, params.id]);
+    }, [enqueueSnackbar, params.id, data.combat]);
 
     useEffect(() => {
         if (move === null) {
             const id = params.id ? params.id.toLowerCase() : props.id;
             queryMove(id);
-        } else setTopList(queryTopMove(move));
-    }, [params.id, props.id, queryMove, move]);
+        } else setTopList(queryTopMove(data.options, data.pokemonCombat, move));
+    }, [data, params.id, props.id, queryMove, move]);
 
     return (
         <Fragment>
@@ -138,7 +139,7 @@ const Move = (props) => {
                                 <tr>
                                     <td>PVE Power
                                     <span className="caption">(Weather / STAB / Shadow Bonus)</span></td>
-                                    <td colSpan="2">{(move.pve_power*STAB_MULTIPLY).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pve_power*0.2).toFixed(2)}</span></td>
+                                    <td colSpan="2">{(move.pve_power*STAB_MULTIPLY(data.options)).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pve_power*0.2).toFixed(2)}</span></td>
                                 </tr>
                                 <tr>
                                     <td>PVE Energy</td>
@@ -158,7 +159,7 @@ const Move = (props) => {
                                 <tr>
                                     <td>PVP Power
                                     <span className="caption">(STAB / Shadow Bonus)</span></td>
-                                    <td colSpan="2">{(move.pvp_power*STAB_MULTIPLY).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pvp_power*0.2).toFixed(2)}</span></td>
+                                    <td colSpan="2">{(move.pvp_power*STAB_MULTIPLY(data.options)).toFixed(2)} <span className="text-success d-inline-block caption">+{(move.pvp_power*0.2).toFixed(2)}</span></td>
                                 </tr>
                                 <tr>
                                     <td>PVP Energy</td>
@@ -236,17 +237,17 @@ const Move = (props) => {
                                 <tr>
                                     <td>DPS
                                     <span className="caption">(Weather / STAB / Shadow Bonus)</span></td>
-                                    <td>{((move.pve_power*STAB_MULTIPLY)/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td>{((move.pve_power*STAB_MULTIPLY(data.options))/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td>DPS
                                     <span className="caption">(2 Effect Bonus)</span></td>
-                                    <td>{((move.pve_power*Math.pow(STAB_MULTIPLY, 2))/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td>{((move.pve_power*Math.pow(STAB_MULTIPLY(data.options), 2))/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td>DPS
                                     <span className="caption">(STAB+Weather+Shadow Bonus)</span></td>
-                                    <td>{((move.pve_power*Math.pow(STAB_MULTIPLY, 3))/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td>{((move.pve_power*Math.pow(STAB_MULTIPLY(data.options), 3))/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 {move.type_move === "FAST" &&<tr>
                                     <td>EPS</td>
@@ -260,7 +261,7 @@ const Move = (props) => {
                                 <tr>
                                     <td>DPS
                                     <span className="caption">(STAB / Shadow Bonus)</span></td>
-                                    <td>{((move.pvp_power*STAB_MULTIPLY)/(move.durationMs/1000)).toFixed(2)}</td>
+                                    <td>{((move.pvp_power*STAB_MULTIPLY(data.options))/(move.durationMs/1000)).toFixed(2)}</td>
                                 </tr>
                                 <tr className="text-center"><td className="table-sub-header" colSpan="2">
                                     <div className="input-group align-items-center justify-content-center">

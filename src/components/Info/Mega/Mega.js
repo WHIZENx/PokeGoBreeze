@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-import evoData from "../../../data/evolution_pokemon_go.json";
+import { useSelector } from "react-redux";
 import APIService from "../../../services/API.service";
 import { splitAndCapitalize } from "../../../util/Utils";
 
@@ -7,6 +7,7 @@ import './Mega.css';
 
 const Mega = (props) => {
 
+    const evoData = useSelector((state) => state.store.data.evolution);
     const [arrEvoList, setArrEvoList] = useState([]);
 
     useEffect(() => {

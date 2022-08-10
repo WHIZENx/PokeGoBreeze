@@ -4,11 +4,11 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import APIService from '../../services/API.service'
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
-
-import combat from '../../data/combat.json';
+import { useSelector } from 'react-redux';
 
 const CardMoveSmall = (props) => {
 
+    const combat = useSelector((state) => state.store.data.combat);
     const type = props.value ? capitalize(combat.find(item => item.name === props.value.name.replace("_FAST", "")).type.toLowerCase()) : "";
 
     return (

@@ -1,6 +1,5 @@
 import { Badge } from "@mui/material";
 
-import pokeStickerList from '../../data/sticker_pokemon_go.json';
 import { getTime, splitAndCapitalize } from '../../util/Utils';
 
 import './Sticker.css';
@@ -10,9 +9,11 @@ import { useEffect } from "react";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { OverlayTrigger } from "react-bootstrap";
 import PopoverConfig from "../../components/Popover/PopoverConfig";
+import { useSelector } from "react-redux";
 
 const Sticker = () => {
 
+    const pokeStickerList = useSelector((state) => state.store.data.stickers);
     useEffect(() => {
         document.title = "Stickers List";
     }, []);

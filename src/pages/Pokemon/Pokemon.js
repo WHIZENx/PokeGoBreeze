@@ -15,7 +15,6 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 import pokemonData from '../../data/pokemon.json';
-// import evoData from '../../data/evolution_pokemon_go.json';
 import pokeListName from '../../data/pokemon_names.json';
 import PokemonModel from "../../components/Info/Assets/PokemonModel";
 import Error from "../Error/Error";
@@ -26,7 +25,7 @@ import { hideSpinner, showSpinner } from "../../store/actions/spinner.action";
 const Pokemon = (props) => {
 
     const dispatch = useDispatch();
-    const gmData = useSelector((state) => state.gameMaster.data);
+    const gmData = useSelector((state) => state.store.data);
 
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();

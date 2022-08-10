@@ -22,14 +22,17 @@ import BrokenImageIcon from '@mui/icons-material/BrokenImage';
 import SpokeIcon from '@mui/icons-material/Spoke';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import PersonIcon from '@mui/icons-material/Person';
+import { useSelector } from "react-redux";
 
 export const Keys = (pokemonData, data, cp, type) => {
+
+    const assets = useSelector((state) => state.store.data.assets);
 
     const renderItemList = (data, bgtype) => {
         const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
         const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
         const id = pokemon.num;
-        const form = findAssetForm(pokemon.num, pokemon.name);
+        const form = findAssetForm(assets, pokemon.num, pokemon.name);
 
         return (
             <Link to={`/pvp/${cp}/${type}/${data.opponent.replaceAll("_", "-")}`} target="_blank" className="list-item-ranking" style={{backgroundImage: computeBgType(pokemon.types, data.opponent.includes("_shadow"))}}>
@@ -231,8 +234,8 @@ export const MoveSet = (moves, combatList, combatData) => {
         if (oldName.includes("HIDDEN_POWER")) move = {...move, type: oldName.split("_")[2]};
 
         let elite = false;
-        if (combatList.ELITE_QUICK_MOVES.includes(name)) elite = true;
-        if (combatList.ELITE_CINEMATIC_MOVES.includes(name)) elite = true;
+        if (combatList.eliteQuickMoves.includes(name)) elite = true;
+        if (combatList.eliteCinematicMoves.includes(name)) elite = true;
 
         return (
             <Link to={`/moves/${move.id}`} target="_blank" className={(move.type.toLowerCase())+' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'}>

@@ -57,11 +57,16 @@ export const MAX_LEVEL = 51;
 export const MIN_IV = 0;
 export const MAX_IV = 15;
 
-export const STAB_MULTIPLY = getOption("battle_options", "stab");
+export const STAB_MULTIPLY = (options) => { return getOption(options, "battle_options", "stab"); }
+export const MULTIPLY_LEVEL_FRIENDSHIP = (options, level) => {
+    level = level ?? DEFAULT_POKEMON_FRIEND_LEVEL;
+    return getOption(options, "trainer_friendship", level.toString(), "atk_bonus");
+}
+export const MULTIPLY_THROW_CHARGE = (options, type) => { return getOption(options, "trainer_friendship", type);}
 
 /* Shadow exclusive bonus for Pokémon in battle */
-export const SHADOW_ATK_BONUS = getOption("combat_options", "shadow_bonus", "atk");
-export const SHADOW_DEF_BONUS = getOption("combat_options", "shadow_bonus", "def");
+export const SHADOW_ATK_BONUS = (options) => { return getOption(options, "combat_options", "shadow_bonus", "atk"); }
+export const SHADOW_DEF_BONUS = (options) => { return getOption(options, "combat_options", "shadow_bonus", "def"); }
 
 export const regionList = {
     1: "Kanto",

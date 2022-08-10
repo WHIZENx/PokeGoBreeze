@@ -1,12 +1,13 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import CardMoveSmall from "../Card/CardMoveSmall";
 
-import data from '../../data/combat_pokemon_go_list.json';
 import './Select.css';
 import CardMove from "../Card/CardMove";
+import { useSelector } from "react-redux";
 
 const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveType, inputType, result, selected}) => {
 
+    const data = useSelector((state) => state.store.data.pokemonCombat);
     const [resultMove, setResultMove] = useState(null);
     const [showMove, setShowMove] = useState(false);
 
@@ -17,35 +18,35 @@ const SelectMove = ({id, form, move, setMovePokemon, clearData, pokemon, moveTyp
     }
 
     const findMove = useCallback((id, form, type, selected) => {
-        let resultFirst = data.filter(item => item.ID === id);
+        let resultFirst = data.filter(item => item.id === id);
         form = form ? form.toLowerCase().replaceAll("-", "_").replaceAll("_standard", "").toUpperCase() : "";
-        let result = resultFirst.find(item => item.NAME.replace(item.BASE_SPECIES+"_", "") === form);
+        let result = resultFirst.find(item => item.name.replace(item.baseSpecies+"_", "") === form);
         let simpleMove = [];
         if (resultFirst.length === 1 || result == null) {
             if (type === "FAST") {
-                resultFirst[0].QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-                resultFirst[0].ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+                resultFirst[0].quickMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+                resultFirst[0].eliteQuickMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
             } else {
-                resultFirst[0].CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-                resultFirst[0].ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
-                resultFirst[0].SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
-                resultFirst[0].PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
+                resultFirst[0].cinematicMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+                resultFirst[0].eliteCinematicMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+                resultFirst[0].shadowMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
+                resultFirst[0].purifiedMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
             }
             if (setMovePokemon && !selected) setMovePokemon(simpleMove[0]);
             return setResultMove(simpleMove);
         };
         if (type === "FAST") {
-            result.QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-            result.ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+            result.quickMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+            result.eliteQuickMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
         } else {
-            result.CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-            result.ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
-            result.SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
-            result.PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
+            result.cinematicMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+            result.eliteCinematicMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+            result.shadowMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
+            result.purifiedMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
         }
         if (setMovePokemon && !selected) setMovePokemon(simpleMove[0]);
         return setResultMove(simpleMove);
-    }, [setMovePokemon]);
+    }, [setMovePokemon, data]);
 
     useEffect(() => {
         if (result !== "" && move !== "") {

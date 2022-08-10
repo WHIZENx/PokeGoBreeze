@@ -3,8 +3,6 @@ import Find from "../../../components/Select/Find/Find";
 
 import { Badge, Box } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import evoData from "../../../data/evolution_pokemon_go.json";
-import pokeImageList from '../../../data/assets_pokemon_go.json';
 
 import './SearchBattle.css';
 import APIService from "../../../services/API.service";
@@ -18,12 +16,13 @@ import { useSnackbar } from "notistack";
 
 import { Link } from "react-router-dom";
 import { marks, PokeGoSlider } from "../../../util/Utils";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
 
 const FindBattle = () => {
 
     const dispatch = useDispatch();
+    const dataStore = useSelector((state) => state.store.data);
 
     const [id, setId] = useState(1);
     const [name, setName] = useState('Bulbasaur');
@@ -59,40 +58,40 @@ const FindBattle = () => {
         if (form === "GALARIAN") form = "GALAR";
         if (currId.length === 0) return arr;
         let curr;
-        if (form === "") curr = evoData.find(item => currId.includes(item.id) && form === item.form);
-        else curr = evoData.find(item => currId.includes(item.id) && item.form.includes(form));
+        if (form === "") curr = dataStore.evolution.find(item => currId.includes(item.id) && form === item.form);
+        else curr = dataStore.evolution.find(item => currId.includes(item.id) && item.form.includes(form));
         if (!arr.map(i => i.id).includes(curr.id)) arr.push({...curr, form: form});
         return currEvoChain(curr.evo_list.map(i => i.evo_to_id), form, arr)
-    }, []);
+    }, [dataStore.evolution]);
 
     const prevEvoChain = useCallback((obj, defaultForm, arr) => {
         if (!arr.map(i => i.id).includes(obj.id)) arr.push({...obj, form: defaultForm});
         obj.evo_list.forEach(i => {
             currEvoChain([i.evo_to_id], i.evo_to_form, arr)
         });
-        let curr = evoData.filter(item => item.evo_list.find(i => obj.id === i.evo_to_id && i.evo_to_form === defaultForm));
+        let curr = dataStore.evolution.filter(item => item.evo_list.find(i => obj.id === i.evo_to_id && i.evo_to_form === defaultForm));
         if (curr.length === 0) return arr
         else if (curr.length === 1) return prevEvoChain(curr[0], defaultForm, arr)
         else return curr.map(item => prevEvoChain(item, defaultForm, arr));
-    }, [currEvoChain]);
+    }, [currEvoChain, dataStore.evolution]);
 
     const getEvoChain = useCallback((id) => {
         let isForm = form.form.form_name.toUpperCase();
-        let curr = evoData.filter(item => item.evo_list.find(i => id === i.evo_to_id && isForm === i.evo_to_form));
+        let curr = dataStore.evolution.filter(item => item.evo_list.find(i => id === i.evo_to_id && isForm === i.evo_to_form));
         if (curr.length === 0) {
-            if (isForm === "") curr = evoData.filter(item => id === item.id && isForm === item.form);
-            else curr = evoData.filter(item => id === item.id && item.form.includes(isForm));
+            if (isForm === "") curr = dataStore.evolution.filter(item => id === item.id && isForm === item.form);
+            else curr = dataStore.evolution.filter(item => id === item.id && item.form.includes(isForm));
         }
-        if (curr.length === 0) curr = evoData.filter(item => id === item.id && item.form === "");
+        if (curr.length === 0) curr = dataStore.evolution.filter(item => id === item.id && item.form === "");
         return curr.map(item => prevEvoChain(item, isForm, []));
-    }, [prevEvoChain, form]);
+    }, [prevEvoChain, form, dataStore.evolution]);
 
     const searchStatsPoke = useCallback((level) => {
         let arr = [];
         getEvoChain(id).forEach(item => {
             let tempArr = []
             item.forEach(value => {
-                let data = queryStatesEvoChain(value, level, ATKIv, DEFIv, STAIv);
+                let data = queryStatesEvoChain(dataStore.options, value, level, ATKIv, DEFIv, STAIv);
                 if (data.id === id) setMaxCP(data.maxCP);
                 tempArr.push(data)
             });
@@ -117,7 +116,7 @@ const FindBattle = () => {
         if (currBastStats.ratio >= 90) bestLeague.push(currBastStats);
         setBestInLeague(bestLeague.sort((a,b) => a.maxCP - b.maxCP));
         dispatch(hideSpinner());
-    }, [dispatch, ATKIv, DEFIv, STAIv, getEvoChain, id]);
+    }, [dispatch, dataStore.options, ATKIv, DEFIv, STAIv, getEvoChain, id]);
 
     const onSearchStatsPoke = useCallback((e) => {
         e.preventDefault();
@@ -137,8 +136,8 @@ const FindBattle = () => {
 
     const getImageList = (id) => {
         let isForm = form.form.form_name === "" ? "NORMAL" : form.form.form_name.replaceAll("-", "_").toUpperCase();
-        let img = pokeImageList.find(item => item.id === id).image.find(item => item.form.includes(isForm));
-        if (!img) img = pokeImageList.find(item => item.id === id).image[0];
+        let img = dataStore.assets.find(item => item.id === id).image.find(item => item.form.includes(isForm));
+        if (!img) img = dataStore.assets.find(item => item.id === id).image[0];
         try {return img.default}
         catch {return null}
     };

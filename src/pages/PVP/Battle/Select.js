@@ -1,16 +1,16 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import APIService from "../../../services/API.service";
 
-import combatData from '../../../data/combat.json';
-
 import { splitAndCapitalize } from "../../../util/Utils";
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from "../../../components/Card/CardMoveSmall";
 import { calculateStatsByTag, calStatsProd } from "../../../util/Calculate";
 import CardPokemon from "../../../components/Card/CardPokemon";
+import { useSelector } from "react-redux";
 
 const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}) => {
 
+    const combat = useSelector((state) => state.store.data.combat);
     const [show, setShow] = useState(false);
     const [showFMove, setShowFMove] = useState(false);
     const [showCMovePri, setShowCMovePri] = useState(false);
@@ -34,18 +34,18 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}) => {
 
         if (fMove.includes("HIDDEN_POWER")) fMove = "HIDDEN_POWER";
 
-        let fmove = combatData.find(item => item.name === fMove);
+        let fmove = combat.find(item => item.name === fMove);
         if (value.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: value.moveset[0].split("_")[2]}
         setFMove(fmove);
 
         if (cMovePri === "FUTURE_SIGHT") cMovePri = "FUTURESIGHT";
         if (cMovePri === "TECHNO_BLAST_DOUSE") cMovePri = "TECHNO_BLAST_WATER";
-        cMovePri = combatData.find(item => item.name === cMovePri);
+        cMovePri = combat.find(item => item.name === cMovePri);
         setCMovePri(cMovePri);
 
         if (cMoveSec === "FUTURE_SIGHT") cMoveSec = "FUTURESIGHT";
         if (cMoveSec === "TECHNO_BLAST_DOUSE") cMoveSec = "TECHNO_BLAST_WATER";
-        cMoveSec = combatData.find(item => item.name === cMoveSec);
+        cMoveSec = combat.find(item => item.name === cMoveSec);
         setCMoveSec(cMoveSec);
 
         const stats = calculateStatsByTag(value.pokemon.baseStats, value.pokemon.forme);
@@ -128,7 +128,7 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}) => {
                             .map(value => {
                                 let move = value.moveId;
                                 if (move.includes("HIDDEN_POWER")) move = "HIDDEN_POWER";
-                                let fmove = combatData.find(item => item.name === move);
+                                let fmove = combat.find(item => item.name === move);
                                 if (value.moveId.includes("HIDDEN_POWER")) fmove = {...fmove, type: value.moveId.split("_")[2]}
                                 return fmove;
                             })
@@ -156,7 +156,7 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}) => {
                                 let move = value.moveId;
                                 if (move === "FUTURE_SIGHT") move = "FUTURESIGHT";
                                 if (move === "TECHNO_BLAST_DOUSE") move = "TECHNO_BLAST_WATER";
-                                return combatData.find(item => item.name === move);
+                                return combat.find(item => item.name === move);
                             })
                             .filter(value => value.name !== cMovePri.name && value.name !== cMoveSec.name)
                             .map((value, index) => (
@@ -182,7 +182,7 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}) => {
                                 let move = value.moveId;
                                 if (move === "FUTURE_SIGHT") move = "FUTURESIGHT";
                                 if (move === "TECHNO_BLAST_DOUSE") move = "TECHNO_BLAST_WATER";
-                                return combatData.find(item => item.name === move);
+                                return combat.find(item => item.name === move);
                             })
                             .filter(value => (cMoveSec === "" || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
                             .map((value, index) => (

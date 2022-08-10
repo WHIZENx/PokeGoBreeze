@@ -5,8 +5,6 @@ import Find from "../../../components/Select/Find/Find";
 import { Link } from "react-router-dom";
 
 import pokemonData from '../../../data/pokemon.json';
-import combatData from '../../../data/combat.json';
-import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
 
 import { convertName, splitAndCapitalize } from "../../../util/Utils";
 import { findAssetForm } from '../../../util/Compute';
@@ -34,12 +32,13 @@ import { useSnackbar } from "notistack";
 import { Modal, Button } from "react-bootstrap";
 
 import update from 'immutability-helper';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
 
 const RaidBattle = () => {
 
     const dispatch = useDispatch();
+    const data = useSelector((state) => state.store.data);
 
     const [id, setId] = useState(1);
     const [name, setName] = useState('');
@@ -144,9 +143,9 @@ const RaidBattle = () => {
     }
 
     const findMove = useCallback((id, form, type) => {
-        let resultFirst = combatPokemonData.filter(item => item.ID === id);
+        let resultFirst = data.pokemonCombat.filter(item => item.id === id);
         form = form.replaceAll("-", "_").replaceAll("_standard", "").toUpperCase();
-        let result = resultFirst.find(item => item.NAME === form);
+        let result = resultFirst.find(item => item.name === form);
         let simpleMove = [];
         if (resultFirst.length === 1 || result == null) {
             if (resultFirst.length === 0) {
@@ -156,103 +155,105 @@ const RaidBattle = () => {
                 return setResultCMove("");
             }
             let simpleMove = [];
-            resultFirst[0].QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-            resultFirst[0].ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+            resultFirst[0].quickMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+            resultFirst[0].eliteQuickMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
             setFMove(simpleMove[0]);
             setResultFMove(simpleMove);
             simpleMove = [];
-            resultFirst[0].CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-            resultFirst[0].ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
-            resultFirst[0].SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
-            resultFirst[0].PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
+            resultFirst[0].cinematicMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+            resultFirst[0].eliteCinematicMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+            resultFirst[0].shadowMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
+            resultFirst[0].purifiedMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
             setCMove(simpleMove[0]);
             return setResultCMove(simpleMove);
         };
         simpleMove = [];
-        result.QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-        result.ELITE_QUICK_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+        result.quickMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+        result.eliteQuickMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
         setFMove(simpleMove[0]);
         setResultFMove(simpleMove);
         simpleMove = [];
-        result.CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-        result.ELITE_CINEMATIC_MOVES.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
-        result.SHADOW_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
-        result.PURIFIED_MOVES.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
+        result.cinematicMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+        result.eliteCinematicMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+        result.shadowMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
+        result.purifiedMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
         setCMove(simpleMove[0]);
         return setResultCMove(simpleMove);
-    }, []);
+    }, [data.pokemonCombat]);
 
     const addCPokeData = (dataList, movePoke, value, vf, shadow, purified, felite, celite, specialMove, pokemonTarget) => {
         movePoke.forEach(vc => {
-            const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
-            const cmove = combatData.find(item => item.name === vc);
-            const stats = calculateStatsByTag(value.baseStats, value.forme);
-            const statsAttackerTemp = {
-                atk: calculateStatsBattle(stats.atk, 15, 40),
-                def: calculateStatsBattle(stats.def, 15, 40),
-                hp: calculateStatsBattle(stats.sta, 15, 40),
-                fmove: fmove,
-                cmove: cmove,
-                types: value.types,
-                shadow: shadow,
-                WEATHER_BOOSTS: weatherCounter,
+            const fmove = data.combat.find(item => item.name === vf.replaceAll("_FAST", ""));
+            const cmove = data.combat.find(item => item.name === vc);
+            if (fmove && cmove) {
+                const stats = calculateStatsByTag(value.baseStats, value.forme);
+                const statsAttackerTemp = {
+                    atk: calculateStatsBattle(stats.atk, 15, 40),
+                    def: calculateStatsBattle(stats.def, 15, 40),
+                    hp: calculateStatsBattle(stats.sta, 15, 40),
+                    fmove: fmove,
+                    cmove: cmove,
+                    types: value.types,
+                    shadow: shadow,
+                    WEATHER_BOOSTS: weatherCounter,
+                }
+                let statsDefender = {
+                    atk: statBossATK,
+                    def: statBossDEF,
+                    hp: statBossHP,
+                    fmove: data.combat.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
+                    cmove: data.combat.find(item => item.name === cMove.name),
+                    types: form.form.types.map(type => type.type.name),
+                    WEATHER_BOOSTS: weatherBoss
+                }
+                const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
+                statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
+
+                const dpsDef = calculateBattleDPSDefender(data.options, statsAttacker, statsDefender);
+                const dpsAtk = calculateBattleDPS(data.options, statsAttacker, statsDefender, dpsDef);
+
+                const ttkAtk = TimeToKill(Math.floor(statsDefender.hp), dpsAtk); // Time to Attacker kill Defender
+                const ttkDef = TimeToKill(Math.floor(statsAttacker.hp), dpsDef); // Time to Defender kill Attacker
+
+                const tdoAtk = dpsAtk*ttkDef;
+                const tdoDef = dpsDef*ttkAtk;
+
+                dataList.push({
+                    pokemon: value,
+                    fmove: statsAttacker.fmove,
+                    cmove: statsAttacker.cmove,
+                    dpsDef: dpsDef,
+                    dpsAtk: dpsAtk,
+                    tdoAtk: tdoAtk,
+                    tdoDef: tdoDef,
+                    multiDpsTdo: Math.pow(dpsAtk,3)*tdoAtk,
+                    ttkAtk: ttkAtk,
+                    ttkDef: ttkDef,
+                    attackHpRemain: Math.floor(statsAttacker.hp)-Math.min(timeAllow, ttkDef)*dpsDef,
+                    defendHpRemain: Math.floor(statsDefender.hp)-Math.min(timeAllow, ttkAtk)*dpsAtk,
+                    death: Math.floor(statsDefender.hp/tdoAtk),
+                    shadow: shadow,
+                    purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
+                    mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
+                    elite: {
+                        fmove: felite,
+                        cmove: celite
+                    },
+                });
             }
-            let statsDefender = {
-                atk: statBossATK,
-                def: statBossDEF,
-                hp: statBossHP,
-                fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
-                cmove: combatData.find(item => item.name === cMove.name),
-                types: form.form.types.map(type => type.type.name),
-                WEATHER_BOOSTS: weatherBoss
-            }
-            const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
-            statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
-
-            const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
-            const dpsAtk = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
-
-            const ttkAtk = TimeToKill(Math.floor(statsDefender.hp), dpsAtk); // Time to Attacker kill Defender
-            const ttkDef = TimeToKill(Math.floor(statsAttacker.hp), dpsDef); // Time to Defender kill Attacker
-
-            const tdoAtk = dpsAtk*ttkDef;
-            const tdoDef = dpsDef*ttkAtk;
-
-            dataList.push({
-                pokemon: value,
-                fmove: statsAttacker.fmove,
-                cmove: statsAttacker.cmove,
-                dpsDef: dpsDef,
-                dpsAtk: dpsAtk,
-                tdoAtk: tdoAtk,
-                tdoDef: tdoDef,
-                multiDpsTdo: Math.pow(dpsAtk,3)*tdoAtk,
-                ttkAtk: ttkAtk,
-                ttkDef: ttkDef,
-                attackHpRemain: Math.floor(statsAttacker.hp)-Math.min(timeAllow, ttkDef)*dpsDef,
-                defendHpRemain: Math.floor(statsDefender.hp)-Math.min(timeAllow, ttkAtk)*dpsAtk,
-                death: Math.floor(statsDefender.hp/tdoAtk),
-                shadow: shadow,
-                purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
-                mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
-                elite: {
-                    fmove: felite,
-                    cmove: celite
-                },
-            });
         });
     }
 
     const addFPokeData = (dataList, combat, movePoke, pokemon, felite, pokemonTarget) => {
         movePoke.forEach(vf => {
-            addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false, null, pokemonTarget);
+            addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
             if (!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) {
-                if (combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, pokemonTarget);
-                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES, pokemonTarget);
-                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.PURIFIED_MOVES, pokemonTarget);
+                if (combat.shadowMoves.length > 0) addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
+                addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
+                addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves, pokemonTarget);
             }
-            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.SHADOW_MOVES.length > 0) addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true, combat.SHADOW_MOVES, pokemonTarget);
-            else addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true, null, pokemonTarget);
+            if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) && combat.shadowMoves.length > 0) addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves, pokemonTarget);
+            else addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true, null, pokemonTarget);
         });
     };
 
@@ -260,15 +261,15 @@ const RaidBattle = () => {
         let dataList = []
         Object.values(pokemonData).forEach(pokemon => {
             if (pokemon.forme !== "Gmax") {
-                let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
-                    && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+                let combatPoke = data.pokemonCombat.filter(item => item.id === pokemon.num
+                    && item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
                 );
-                let result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+                let result = combatPoke.find(item => item.name === convertName(pokemon.name));
                 if (!result) combatPoke = combatPoke[0]
                 else combatPoke = result;
                 if (combatPoke) {
-                    addFPokeData(dataList, combatPoke, combatPoke.QUICK_MOVES, pokemon, false, pokemonTarget);
-                    addFPokeData(dataList, combatPoke, combatPoke.ELITE_QUICK_MOVES, pokemon, true, pokemonTarget);
+                    addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false, pokemonTarget);
+                    addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true, pokemonTarget);
                 }
             }
         });
@@ -302,55 +303,58 @@ const RaidBattle = () => {
     }
 
     const calculateDPSBatlle = (pokemon, HpRemain, timer) => {
-        const fmove = combatData.find(item => item.name === pokemon.fmoveTargetPokemon.name.replaceAll("_FAST", ""));
-        const cmove = combatData.find(item => item.name === pokemon.cmoveTargetPokemon.name);
-        const stats = calculateStatsByTag(pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.forme);
-        const statsAttacker = {
-            atk: calculateStatsBattle(stats.atk, 15, 40),
-            def: calculateStatsBattle(stats.def, 15, 40),
-            hp: calculateStatsBattle(stats.sta, 15, 40),
-            fmove: fmove,
-            cmove: cmove,
-            types: pokemon.dataTargetPokemon.types,
-            shadow: false,
-            WEATHER_BOOSTS: weatherCounter,
-        }
-        const statsDefender = {
-            atk: statBossATK,
-            def: statBossDEF,
-            hp: Math.floor(HpRemain),
-            fmove: combatData.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
-            cmove: combatData.find(item => item.name === cMove.name),
-            types: form.form.types.map(type => type.type.name),
-            WEATHER_BOOSTS: weatherBoss
-        }
+        const fmove = data.combat.find(item => item.name === pokemon.fmoveTargetPokemon.name.replaceAll("_FAST", ""));
+        const cmove = data.combat.find(item => item.name === pokemon.cmoveTargetPokemon.name);
 
-        const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
-        const dpsAtk = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
+        if (fmove && cmove) {
+            const stats = calculateStatsByTag(pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.forme);
+            const statsAttacker = {
+                atk: calculateStatsBattle(stats.atk, 15, 40),
+                def: calculateStatsBattle(stats.def, 15, 40),
+                hp: calculateStatsBattle(stats.sta, 15, 40),
+                fmove: fmove,
+                cmove: cmove,
+                types: pokemon.dataTargetPokemon.types,
+                shadow: false,
+                WEATHER_BOOSTS: weatherCounter,
+            }
+            const statsDefender = {
+                atk: statBossATK,
+                def: statBossDEF,
+                hp: Math.floor(HpRemain),
+                fmove: data.combat.find(item => item.name === fMove.name.replaceAll("_FAST", "")),
+                cmove: data.combat.find(item => item.name === cMove.name),
+                types: form.form.types.map(type => type.type.name),
+                WEATHER_BOOSTS: weatherBoss
+            }
 
-        const ttkAtk = enableTimeAllow ? Math.min(timeAllow-timer, TimeToKill(Math.floor(statsDefender.hp), dpsAtk)) : TimeToKill(Math.floor(statsDefender.hp), dpsAtk);
-        const ttkDef = enableTimeAllow ? Math.min(timeAllow-timer, TimeToKill(Math.floor(statsAttacker.hp), dpsDef)) : TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
+            const dpsDef = calculateBattleDPSDefender(data.options, statsAttacker, statsDefender);
+            const dpsAtk = calculateBattleDPS(data.options, statsAttacker, statsDefender, dpsDef);
 
-        const timeKill = Math.min(ttkAtk, ttkDef);
+            const ttkAtk = enableTimeAllow ? Math.min(timeAllow-timer, TimeToKill(Math.floor(statsDefender.hp), dpsAtk)) : TimeToKill(Math.floor(statsDefender.hp), dpsAtk);
+            const ttkDef = enableTimeAllow ? Math.min(timeAllow-timer, TimeToKill(Math.floor(statsAttacker.hp), dpsDef)) : TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
 
-        const tdoAtk = dpsAtk*(enableTimeAllow ? timeKill : ttkDef);
-        const tdoDef = dpsDef*(enableTimeAllow ? timeKill : ttkAtk);
+            const timeKill = Math.min(ttkAtk, ttkDef);
 
-        return {
-            pokemon: pokemon.dataTargetPokemon,
-            fmove: statsAttacker.fmove,
-            cmove: statsAttacker.cmove,
-            atk: statsAttacker.atk,
-            def: statsAttacker.def,
-            hp: statsAttacker.hp,
-            dpsAtk: dpsAtk,
-            dpsDef: dpsDef,
-            tdoAtk: tdoAtk,
-            tdoDef: tdoDef,
-            ttkAtk: ttkAtk,
-            ttkDef: ttkDef,
-            timer: timeKill,
-            defHpRemain: Math.floor(statsDefender.hp)-tdoAtk,
+            const tdoAtk = dpsAtk*(enableTimeAllow ? timeKill : ttkDef);
+            const tdoDef = dpsDef*(enableTimeAllow ? timeKill : ttkAtk);
+
+            return {
+                pokemon: pokemon.dataTargetPokemon,
+                fmove: statsAttacker.fmove,
+                cmove: statsAttacker.cmove,
+                atk: statsAttacker.atk,
+                def: statsAttacker.def,
+                hp: statsAttacker.hp,
+                dpsAtk: dpsAtk,
+                dpsDef: dpsDef,
+                tdoAtk: tdoAtk,
+                tdoDef: tdoDef,
+                ttkAtk: ttkAtk,
+                ttkDef: ttkDef,
+                timer: timeKill,
+                defHpRemain: Math.floor(statsDefender.hp)-tdoAtk,
+            }
         }
     }
 
@@ -557,8 +561,8 @@ const RaidBattle = () => {
                                 <div className="d-flex justify-content-center w-100">
                                     <Link to={`/pokemon/${value.pokemon.num}${value.pokemon.forme ? `?form=${value.pokemon.forme.toLowerCase()}`: ""}`} className="sprite-raid position-relative">
                                         {value.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
-                                        <img className="pokemon-sprite-raid" alt="img-pokemon" src={findAssetForm(value.pokemon.num, value.pokemon.name) ?
-                                        APIService.getPokemonModel(findAssetForm(value.pokemon.num, value.pokemon.name)) : APIService.getPokeFullSprite(value.pokemon.num)}/>
+                                        <img className="pokemon-sprite-raid" alt="img-pokemon" src={findAssetForm(data.assets, value.pokemon.num, value.pokemon.name) ?
+                                        APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon.num, value.pokemon.name)) : APIService.getPokeFullSprite(value.pokemon.num)}/>
                                     </Link>
                                 </div>
                                 <span className="d-flex justify-content-center w-100"><b>#{value.pokemon.num} {splitAndCapitalize(value.pokemon.name, "-", " ")}</b></span>

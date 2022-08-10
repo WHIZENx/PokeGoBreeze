@@ -1,5 +1,4 @@
 import candyData from '../data/candy_pokemon_go.json';
-import pokemonAssets from '../data/assets_pokemon_go.json';
 
 import APIService from "../services/API.service";
 import { convertName, getStyleRuleValue } from "./Utils";
@@ -57,7 +56,7 @@ export const computeBgType = (types, shadow, purified, opacity) => {
     return `linear-gradient(to bottom right, ${colorsPalette[0]}, ${colorsPalette[1] ?? colorsPalette[0]})`;
 }
 
-export const findAssetForm = (id, name) => {
+export const findAssetForm = (pokemonAssets, id, name) => {
     if (name.split("-")[1] === "A") name = name.replace("-A", "-Armor")
     name = convertName(name).replaceAll("GALAR", "GALARIAN").replaceAll("HISUI", "HISUIAN")
     const pokemon = pokemonAssets.find(item => item.id === id);

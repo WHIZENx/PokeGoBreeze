@@ -4,12 +4,14 @@ import APIService from "../../../services/API.service";
 import { splitAndCapitalize } from "../../../util/Utils";
 
 import './TypeBadge.css';
-import combatData from '../../../data/combat.json';
+import { useSelector } from "react-redux";
 
 const TypeBadge = (props) => {
 
+    const combat = useSelector((state) => state.store.data.combat);
+
     var move = props.move;
-    if (!props.find) move = combatData.find(item => item.name === props.move.name.replaceAll("_FAST", ""));
+    if (!props.find) move = combat.find(item => item.name === props.move.name.replaceAll("_FAST", ""));
 
     return (
         <div className={"type-badge-container"+(props.grow ? ' filter-shadow' : '')} style={props.style}>

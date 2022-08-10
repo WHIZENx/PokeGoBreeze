@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import spinner from './spinner.reducer';
-import gameMaster from './gamemaster.reducer';
+import store from './store.reducer';
 
 const rootReducer = combineReducers({
     spinner,
-    gameMaster
+    store
 });
 
 export default rootReducer;

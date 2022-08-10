@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 
 const Counter = ({def, form, changeForm, setLoadCounter}) => {
 
-    const gmData = useSelector((state) => state.gameMaster.data);
+    const data = useSelector((state) => state.store.data);
     const [counterList, setCounterList] = useState([]);
     const [open, setOpen] = useState(false);
     const [releasedGO, setReleaseGO] = useState(true);
@@ -31,7 +31,7 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
     }
 
     const loadMetaData = () => {
-        setCounterList(counterPokemon(def, form.types, gmData.combat, gmData.pokemonCombat));
+        setCounterList(counterPokemon(data.options, def, form.types, data.combat, data.pokemonCombat));
         setOpen(true);
     }
 
@@ -68,8 +68,8 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
                                             <div className="position-relative group-pokemon-sprite filter-shadow-hover">
                                                 {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
                                                 {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}/>}
-                                                <img className="pokemon-sprite-counter" alt="img-pokemon" src={findAssetForm(value.pokemon_id, value.pokemon_name) ?
-                                                APIService.getPokemonModel(findAssetForm(value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}/>
+                                                <img className="pokemon-sprite-counter" alt="img-pokemon" src={findAssetForm(data.assets, value.pokemon_id, value.pokemon_name) ?
+                                                APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}/>
                                             </div>
                                         </div>
                                         <span className="caption text-black">#{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, "-", " ")}</span>

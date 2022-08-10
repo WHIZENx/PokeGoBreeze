@@ -3,15 +3,15 @@ const inititaialize = {
     timeUpdate: new Date()
 }
 
-const GameMasterReducer = (state = inititaialize, action) => {
+const StoreReducer = (state = inititaialize, action) => {
     switch (action.type) {
-      case 'LOAD_GM':
+      case 'LOAD_STORE':
         return {
             ...state,
             data: action.payload,
             timeUpdate: new Date()
         };
-      case 'RESET_GM':
+      case 'RESET_STORE':
         return {
             ...state,
             data: null
@@ -21,4 +21,4 @@ const GameMasterReducer = (state = inititaialize, action) => {
     }
 }
 
-export default GameMasterReducer;
+export default StoreReducer;

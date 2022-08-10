@@ -15,9 +15,11 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
 import Find from "../../../components/Select/Find/Find";
+import { useSelector } from "react-redux";
 
 const Calculate = () => {
 
+    const globalOptions = useSelector((state) => state.store.data.options);
     const [id, setId] = useState(1);
     const [name, setName] = useState('Bulbasaur');
 
@@ -67,12 +69,12 @@ const Calculate = () => {
         enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+typePoke+' '+name, { variant: 'success' });
         setPokeStats(result);
         setStatLevel(result.level);
-        setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
-        setDataLittleLeague(calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 500, typePoke));
-        setDataGreatLeague(calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 1500, typePoke));
-        setDataUltraLeague(calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 2500, typePoke));
-        setDataMasterLeague(calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, null, typePoke));
-    }, [enqueueSnackbar, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
+        setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
+        setDataLittleLeague(calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 500, typePoke));
+        setDataGreatLeague(calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 1500, typePoke));
+        setDataUltraLeague(calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, 2500, typePoke));
+        setDataMasterLeague(calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, null, typePoke));
+    }, [enqueueSnackbar, globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
 
     useEffect(() => {
         document.title = "Calculate CP&IV - Tool";
@@ -85,8 +87,8 @@ const Calculate = () => {
 
     const onHandleLevel = useCallback((e, v) => {
         setStatLevel(v);
-        setStatData(calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
-    }, [statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
+        setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
+    }, [globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
 
     return (
         <Fragment>

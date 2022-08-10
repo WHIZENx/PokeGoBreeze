@@ -1,6 +1,5 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import pokemonData from '../../../data/pokemon.json';
-// import pokeImageList from '../../../data/assets_pokemon_go.json';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -12,7 +11,7 @@ import { useSelector } from 'react-redux';
 
 const PokemonModel = (props) => {
 
-    const gmData = useSelector((state) => state.gameMaster.data);
+    const gmData = useSelector((state) => state.store.data);
 
     const [pokeAssets, setPokeAssets] = useState([]);
     const gender = useRef(Object.values(pokemonData).find(item => item.num === props.id).genderRatio);
@@ -21,9 +20,9 @@ const PokemonModel = (props) => {
     const getImageList = useCallback((id) => {
         let model = gmData.assets.find(item => item.id === id);
         sound.current = gmData.assets.find(item => item.id === id);
-        return Array.from(new Set(model.image.map(item => item.form))).map(value => {
+        return model ? Array.from(new Set(model.image.map(item => item.form))).map(value => {
             return {form: value, image: model.image.filter(item => value === item.form)}
-        });
+        }) : [];
     }, [gmData.assets]);
 
     useEffect(() => {

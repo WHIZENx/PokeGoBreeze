@@ -1,15 +1,12 @@
-import options from '../data/pokemon_go_options.json';
-
-export function getUpdateTime() {
-    return new Date(options.timestamp);
+export function getUpdateTime(data) {
+    return new Date(data.timestamp);
 }
 
-export function getOption() {
-    let result = options.data;
-    Array.apply(this, Array.prototype.slice.call(arguments, 0)).forEach(arg => {
-        result = result[arg]
+export function getOption(options) {
+    Array.apply(this, Array.prototype.slice.call(arguments, 1)).forEach(arg => {
+        options = options[arg]
     });
-    return result;
+    return options;
 }
 
 export const optionSettings = (data) => {
@@ -24,37 +21,37 @@ export const optionSettings = (data) => {
     data.forEach(item => {
         if (item.templateId === "COMBAT_SETTINGS") {
             settings.combat_options = {}
-            settings.combat_options["stab"] = item.data.combatSettings.sameTypeAttackBonusMultiplier
-            settings.combat_options["shadow_bonus"] = {}
-            settings.combat_options.shadow_bonus["atk"] = item.data.combatSettings.shadowPokemonAttackBonusMultiplier
-            settings.combat_options.shadow_bonus["def"] = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier
+            settings.combat_options.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier
+            settings.combat_options.shadow_bonus = {}
+            settings.combat_options.shadow_bonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier
+            settings.combat_options.shadow_bonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier
 
-            settings.throw_charge["normal"] = item.data.combatSettings.chargeScoreBase
-            settings.throw_charge["nice"] = item.data.combatSettings.chargeScoreNice
-            settings.throw_charge["great"] = item.data.combatSettings.chargeScoreGreat
-            settings.throw_charge["excellent"] = item.data.combatSettings.chargeScoreExcellent
+            settings.throw_charge.normal = item.data.combatSettings.chargeScoreBase
+            settings.throw_charge.nice = item.data.combatSettings.chargeScoreNice
+            settings.throw_charge.great = item.data.combatSettings.chargeScoreGreat
+            settings.throw_charge.excellent = item.data.combatSettings.chargeScoreExcellent
         }
-        if (item.templateId === "BATTLE_SETTINGS") {
+        else if (item.templateId === "BATTLE_SETTINGS") {
             settings.battle_options = {}
-            settings.battle_options["enemyAttackInterval"] = item.data.battleSettings.enemyAttackInterval
-            settings.battle_options["stab"] = item.data.battleSettings.sameTypeAttackBonusMultiplier
-            settings.battle_options["shadow_bonus"] = {}
-            settings.battle_options.shadow_bonus["atk"] = item.data.battleSettings.shadowPokemonAttackBonusMultiplier
-            settings.battle_options.shadow_bonus["def"] = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier
+            settings.battle_options.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval
+            settings.battle_options.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier
+            settings.battle_options.shadow_bonus = {}
+            settings.battle_options.shadow_bonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier
+            settings.battle_options.shadow_bonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier
         }
-        if (item.templateId.includes("BUDDY_LEVEL_")) {
+        else if (item.templateId.includes("BUDDY_LEVEL_")) {
             const level = parseInt(item.templateId.replace("BUDDY_LEVEL_", ""))
             settings.buddy_friendship[level] = {}
-            settings.buddy_friendship[level]["level"] = level
-            settings.buddy_friendship[level]["minNonCumulativePointsRequired"] = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0
-            settings.buddy_friendship[level]["unlockedTrading"] = item.data.buddyLevelSettings.unlockedTraits
+            settings.buddy_friendship[level].level = level
+            settings.buddy_friendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0
+            settings.buddy_friendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits
         }
-        if (item.templateId.includes("FRIENDSHIP_LEVEL_")) {
+        else if (item.templateId.includes("FRIENDSHIP_LEVEL_")) {
             const level = parseInt(item.templateId.replace("FRIENDSHIP_LEVEL_", ""))
             settings.trainer_friendship[level] = {}
-            settings.trainer_friendship[level]["level"] = level
-            settings.trainer_friendship[level]["atk_bonus"] = item.data.friendshipMilestoneSettings.attackBonusPercentage
-            settings.trainer_friendship[level]["unlockedTrading"] = item.data.friendshipMilestoneSettings.unlockedTrading
+            settings.trainer_friendship[level].level = level
+            settings.trainer_friendship[level].atk_bonus = item.data.friendshipMilestoneSettings.attackBonusPercentage
+            settings.trainer_friendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading
         }
     })
     return settings;
@@ -128,25 +125,25 @@ export const optionEvolution = (data, pokemon, formSpecial) => {
                         let dataEvo = {}
                         let name = evo.evolution ?? result.name;
                         if (evo.form) {
-                            dataEvo["evo_to_form"] = evo.form.replace(name+"_", "").replace("NORMAL", "")
+                            dataEvo.evo_to_form = evo.form.replace(name+"_", "").replace("NORMAL", "")
                         } else {
-                            dataEvo["evo_to_form"] = ""
+                            dataEvo.evo_to_form = ""
                         }
-                        dataEvo["evo_to_id"] = pokemon.find(poke => poke.name === name).id;
-                        dataEvo["evo_to_name"] = name.replace("_NORMAL", "")
-                        if (evo.candyCost) dataEvo["candyCost"] = evo.candyCost;
-                        dataEvo["quest"] = {};
-                        if (evo.genderRequirement) dataEvo.quest["genderRequirement"] = evo.genderRequirement;
-                        if (evo.kmBuddyDistanceRequirement) dataEvo.quest["kmBuddyDistanceRequirement"] = evo.kmBuddyDistanceRequirement;
-                        if (evo.mustBeBuddy) dataEvo.quest["mustBeBuddy"] = evo.mustBeBuddy;
-                        if (evo.onlyDaytime) dataEvo.quest["onlyDaytime"] = evo.onlyDaytime;
-                        if (evo.onlyNighttime) dataEvo.quest["onlyNighttime"] = evo.onlyNighttime;
+                        dataEvo.evo_to_id = pokemon.find(poke => poke.name === name).id;
+                        dataEvo.evo_to_name = name.replace("_NORMAL", "")
+                        if (evo.candyCost) dataEvo.candyCost = evo.candyCost;
+                        dataEvo.quest = {};
+                        if (evo.genderRequirement) dataEvo.quest.genderRequirement = evo.genderRequirement;
+                        if (evo.kmBuddyDistanceRequirement) dataEvo.quest.kmBuddyDistanceRequirement = evo.kmBuddyDistanceRequirement;
+                        if (evo.mustBeBuddy) dataEvo.quest.mustBeBuddy = evo.mustBeBuddy;
+                        if (evo.onlyDaytime) dataEvo.quest.onlyDaytime = evo.onlyDaytime;
+                        if (evo.onlyNighttime) dataEvo.quest.onlyNighttime = evo.onlyNighttime;
                         if (evo.lureItemRequirement) {
                             if (evo.lureItemRequirement === "ITEM_TROY_DISK_MAGNETIC") item = "magnetic";
                             else if (evo.lureItemRequirement === "ITEM_TROY_DISK_MOSSY") item = "moss";
                             else if (evo.lureItemRequirement === "ITEM_TROY_DISK_GLACIAL") item = "glacial";
                             else if (evo.lureItemRequirement === "ITEM_TROY_DISK_RAINY") item = "rainy";
-                            dataEvo.quest["lureItemRequirement"] = item;
+                            dataEvo.quest.lureItemRequirement = item;
                         }
                         if (evo.evolutionItemRequirement) {
                             if (evo.evolutionItemRequirement === "ITEM_SUN_STONE") item = "Sun_Stone";
@@ -156,51 +153,51 @@ export const optionEvolution = (data, pokemon, formSpecial) => {
                             else if (evo.evolutionItemRequirement === "ITEM_DRAGON_SCALE") item = "Dragon_Scale";
                             else if (evo.evolutionItemRequirement === "ITEM_UP_GRADE") item = "Up-Grade";
                             else if (evo.evolutionItemRequirement === "ITEM_GEN5_EVOLUTION_STONE") item = "Unova_Stone";
-                            dataEvo.quest["evolutionItemRequirement"] = item;
+                            dataEvo.quest.evolutionItemRequirement = item;
                         }
-                        if (evo.onlyUpsideDown) dataEvo.quest["onlyUpsideDown"] = evo.onlyUpsideDown;
+                        if (evo.onlyUpsideDown) dataEvo.quest.onlyUpsideDown = evo.onlyUpsideDown;
                         if (evo.questDisplay) {
                             const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
                             const template = data.find(template => template.templateId === questDisplay);
-                            dataEvo.quest["condition"] = null;
+                            dataEvo.quest.condition = null;
                             try {
                                 const condition = template.data.evolutionQuestTemplate.goals[0].condition[0]
                                 dataEvo.quest.condition = {}
-                                dataEvo.quest.condition["desc"] = condition.type.replace("WITH_", "")
+                                dataEvo.quest.condition.desc = condition.type.replace("WITH_", "")
                                 if (condition.withPokemonType) {
-                                    dataEvo.quest.condition["pokemonType"] = condition.withPokemonType.pokemonType.map(type => type.split("_")[2])
+                                    dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map(type => type.split("_")[2])
                                 }
                                 if (condition.withThrowType) {
-                                    dataEvo.quest.condition["throwType"] = condition.withThrowType.throwType.split("_")[2]
+                                    dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split("_")[2]
                                 }
                             }
                             catch {}
-                            dataEvo.quest["goal"] = template.data.evolutionQuestTemplate.goals[0].target
-                            dataEvo.quest["type"] = template.data.evolutionQuestTemplate.questType.replace("QUEST_", "")
+                            dataEvo.quest.goal = template.data.evolutionQuestTemplate.goals[0].target
+                            dataEvo.quest.type = template.data.evolutionQuestTemplate.questType.replace("QUEST_", "")
                         } else if (item.evolutionBranch && item.evolutionBranch.length > 1 && Object.keys(dataEvo.quest).length === 0) {
                             if (evo.form) {
-								dataEvo.quest["randomEvolution"] = false
+								dataEvo.quest.randomEvolution = false
                             } else {
-                                dataEvo.quest["randomEvolution"] = true
+                                dataEvo.quest.randomEvolution = true
                             }
                         }
                         if (evo.temporaryEvolution) {
                             let megaEvo = {}
-                            megaEvo["megaEvolutionName"] = name + evo.temporaryEvolution.split("TEMP_EVOLUTION")[1]
-                            megaEvo["firstMegaEvolution"] = evo.temporaryEvolutionEnergyCost
-                            megaEvo["megaEvolution"] = evo.temporaryEvolutionEnergyCostSubsequent
+                            megaEvo.megaEvolutionName = name + evo.temporaryEvolution.split("TEMP_EVOLUTION")[1]
+                            megaEvo.firstMegaEvolution = evo.temporaryEvolutionEnergyCost
+                            megaEvo.megaEvolution = evo.temporaryEvolutionEnergyCostSubsequent
                             result.mega_evo.push(megaEvo)
                         }
                         if (result.mega_evo.length === 0) { result.evo_list.push(dataEvo) }
                     })
                 }
                 if (item.shadow) {
-                    result.purified["stardust"] = item.shadow.purificationStardustNeeded
-				    result.purified["candy"] = item.shadow.purificationCandyNeeded
+                    result.purified.stardust = item.shadow.purificationStardustNeeded
+				    result.purified.candy = item.shadow.purificationCandyNeeded
                 }
                 if (item.thirdMove) {
-                    result.thirdMove["stardust"] = item.thirdMove.stardustToUnlock
-				    result.thirdMove["candy"] = item.thirdMove.candyToUnlock
+                    result.thirdMove.stardust = item.thirdMove.stardustToUnlock
+				    result.thirdMove.candy = item.thirdMove.candyToUnlock
                 }
                 if (item.form) {
                     result.form = item.form.replace(item.pokemonId+"_", "");
@@ -403,13 +400,13 @@ export const optionCombat = (data) => {
             const buffKey = Object.keys(item.data.combatMove.buffs);
             buffKey.forEach(buff => {
                 if (buff.includes("AttackStat")) {
-                    if (buff.includes("target")) result.buffs.push({"type": "atk", "target": "target", "power": item.data.combatMove.buffs[buff]})
-                    else result.buffs.push({"type": "atk", "target": "attacker", "power": item.data.combatMove.buffs[buff]})
+                    if (buff.includes("target")) result.buffs.push({type: "atk", target: "target", power: item.data.combatMove.buffs[buff]})
+                    else result.buffs.push({type: "atk", target: "attacker", power: item.data.combatMove.buffs[buff]})
                 } else if (buff.includes("DefenseStat")) {
-                    if (buff.includes("target")) result.buffs.push({"type": "def", "target": "target", "power": item.data.combatMove.buffs[buff]})
-                    else result.buffs.push({"type": "def", "target": "attacker", "power": item.data.combatMove.buffs[buff]})
+                    if (buff.includes("target")) result.buffs.push({type: "def", target: "target", power: item.data.combatMove.buffs[buff]})
+                    else result.buffs.push({type: "def", target: "attacker", power: item.data.combatMove.buffs[buff]})
                 }
-                result.buffs[result.buffs.length-1]["buffChance"] = item.data.combatMove.buffs[buffKey[buffKey.length-1]]
+                result.buffs[result.buffs.length-1].buffChance = item.data.combatMove.buffs[buffKey[buffKey.length-1]]
             })
         }
 		const move = moves.find(move => move.movementId === result.name);

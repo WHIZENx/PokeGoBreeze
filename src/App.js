@@ -32,18 +32,18 @@ import Battle from './pages/PVP/Battle/Battle';
 import Spinner from './components/Spinner/Spinner';
 import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadGM } from './store/actions/gamemaster.action';
+import { loadStore } from './store/actions/store.action';
 import { hideSpinner, showSpinner } from './store/actions/spinner.action';
 
 const App = () => {
 
   const dispatch = useDispatch();
-  const data = useSelector((state) => state.gameMaster);
+  const data = useSelector((state) => state.store);
 
   useEffect(() => {
     if (data.data) dispatch(hideSpinner());
     else {
-      loadGM(dispatch);
+      loadStore(dispatch);
       dispatch(showSpinner());
     }
   }, [dispatch, data.data])

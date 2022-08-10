@@ -1,10 +1,8 @@
-import { Fragment, useEffect, useRef, useState } from "react"
+import { Fragment, useCallback, useEffect, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom";
 import APIService from "../../../services/API.service";
 
 import pokemonData from '../../../data/pokemon.json';
-import combatData from '../../../data/combat.json';
-import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
 import { convertArrStats, convertName, convertNameRankingToForm, convertNameRankingToOri, findMoveTeam, splitAndCapitalize } from "../../../util/Utils";
 import { computeBgType, findAssetForm } from "../../../util/Compute";
 import { calculateStatsByTag, sortStatsPokemon } from "../../../util/Calculate";
@@ -18,12 +16,13 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import Error from "../../Error/Error";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
 
 const TeamPVP = () => {
 
     const dispatch = useDispatch();
+    const dataStore = useSelector((state) => state.store.data);
     const params = useParams();
 
     const [rankingData, setRankingData] = useState(null);
@@ -37,22 +36,22 @@ const TeamPVP = () => {
 
     const [found, setFound] = useState(true);
 
-    const mappingPokemonData = (data) => {
+    const mappingPokemonData = useCallback((data) => {
         const [speciesId, moveSet] = data.split(" ");
         const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
         const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
         const id = pokemon.num;
-        const form = findAssetForm(pokemon.num, pokemon.name);
+        const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
         const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
-        let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
-            && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+        let combatPoke = dataStore.pokemonCombat.filter(item => item.id === pokemon.num
+            && item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
-        const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+        const result = combatPoke.find(item => item.name === convertName(pokemon.name));
         if (!result) {
             if (combatPoke) combatPoke = combatPoke[0]
-            else combatPoke = combatPoke.find(item => item.BASE_SPECIES === convertName(pokemon.name));
+            else combatPoke = combatPoke.find(item => item.baseSpecies === convertName(pokemon.name));
         }
         else combatPoke = result;
 
@@ -64,14 +63,14 @@ const TeamPVP = () => {
             [fmove, cmovePri, cmoveSec] = moveSet.split("/");
         }
 
-        const fastMoveSet = combatPoke.QUICK_MOVES.concat(combatPoke.ELITE_QUICK_MOVES);
-        let chargedMoveSet = combatPoke.CINEMATIC_MOVES
-        .concat(combatPoke.ELITE_CINEMATIC_MOVES)
-        .concat(combatPoke.SHADOW_MOVES)
-        .concat(combatPoke.PURIFIED_MOVES)
-        fmove = combatData.find(item => item.name === findMoveTeam(fmove, fastMoveSet));
-        cmovePri = combatData.find(item => item.name === findMoveTeam(cmovePri, chargedMoveSet));
-        if (cmoveSec) cmoveSec = combatData.find(item => item.name === findMoveTeam(cmoveSec, chargedMoveSet));
+        const fastMoveSet = combatPoke.quickMoves.concat(combatPoke.eliteQuickMoves);
+        let chargedMoveSet = combatPoke.cinematicMoves
+        .concat(combatPoke.eliteCinematicMoves)
+        .concat(combatPoke.shadowMoves)
+        .concat(combatPoke.purifiedMoves)
+        fmove = dataStore.combat.find(item => item.name === findMoveTeam(fmove, fastMoveSet));
+        cmovePri = dataStore.combat.find(item => item.name === findMoveTeam(cmovePri, chargedMoveSet));
+        if (cmoveSec) cmoveSec = dataStore.combat.find(item => item.name === findMoveTeam(cmoveSec, chargedMoveSet));
 
         return {
             id: id,
@@ -88,9 +87,9 @@ const TeamPVP = () => {
             cmoveSec: cmoveSec,
             combatPoke: combatPoke,
             shadow: speciesId.includes("shadow"),
-            purified: (cmovePri && combatPoke.PURIFIED_MOVES.includes(cmovePri.name)) || (cmoveSec && combatPoke.PURIFIED_MOVES.includes(cmoveSec.name))
+            purified: (cmovePri && combatPoke.purifiedMoves.includes(cmovePri.name)) || (cmoveSec && combatPoke.purifiedMoves.includes(cmoveSec.name))
         }
-    }
+    }, [dataStore]);
 
     useEffect(() => {
         const fetchPokemon = async () => {
@@ -143,7 +142,7 @@ const TeamPVP = () => {
             dispatch(hideSpinner());
         }
         fetchPokemon();
-    }, [dispatch, params.cp, params.serie])
+    }, [dispatch, params.cp, params.serie, mappingPokemonData])
 
     const renderLeague = () => {
         const league = leaguesTeam.find(item => item.id === params.serie && item.cp === parseInt(params.cp))
@@ -227,15 +226,15 @@ const TeamPVP = () => {
                                     </div>
                                     <div className="d-flex" style={{columnGap: 10}}>
                                         <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} move={value.fmove}
-                                        elite={value.combatPoke.ELITE_QUICK_MOVES.includes(value.fmove.name)}/>
+                                        elite={value.combatPoke.eliteQuickMoves.includes(value.fmove.name)}/>
                                         {value.cmovePri && <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
-                                        elite={value.combatPoke.ELITE_CINEMATIC_MOVES.includes(value.cmovePri.name)}
-                                        shadow={value.combatPoke.SHADOW_MOVES.includes(value.cmovePri.name)}
-                                        purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmovePri.name)}/>}
+                                        elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri.name)}
+                                        shadow={value.combatPoke.shadowMoves.includes(value.cmovePri.name)}
+                                        purified={value.combatPoke.purifiedMoves.includes(value.cmovePri.name)}/>}
                                         {value.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={value.cmoveSec}
-                                        elite={value.combatPoke.ELITE_CINEMATIC_MOVES.includes(value.cmoveSec.name)}
-                                        shadow={value.combatPoke.SHADOW_MOVES.includes(value.cmoveSec.name)}
-                                        purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmoveSec.name)}/>}
+                                        elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec.name)}
+                                        shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec.name)}
+                                        purified={value.combatPoke.purifiedMoves.includes(value.cmoveSec.name)}/>}
                                     </div>
                                 </div>
                                 <div className="d-flex filter-shadow align-items-center" style={{marginRight: 35, columnGap: 30}}>
@@ -325,15 +324,15 @@ const TeamPVP = () => {
                                                     </div>
                                                     <div className="d-flex" style={{gap: 10}}>
                                                         <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} move={value.fmove}
-                                                        elite={value.combatPoke.ELITE_QUICK_MOVES.includes(value.fmove.name)}/>
+                                                        elite={value.combatPoke.eliteQuickMoves.includes(value.fmove.name)}/>
                                                         {value.cmovePri && <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
-                                                        elite={value.combatPoke.ELITE_CINEMATIC_MOVES.includes(value.cmovePri.name)}
-                                                        shadow={value.combatPoke.SHADOW_MOVES.includes(value.cmovePri.name)}
-                                                        purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmovePri.name)}/>}
+                                                        elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri.name)}
+                                                        shadow={value.combatPoke.shadowMoves.includes(value.cmovePri.name)}
+                                                        purified={value.combatPoke.purifiedMoves.includes(value.cmovePri.name)}/>}
                                                         {value.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={value.cmoveSec}
-                                                        elite={value.combatPoke.ELITE_CINEMATIC_MOVES.includes(value.cmoveSec.name)}
-                                                        shadow={value.combatPoke.SHADOW_MOVES.includes(value.cmoveSec.name)}
-                                                        purified={value.combatPoke.PURIFIED_MOVES.includes(value.cmoveSec.name)}/>}
+                                                        elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec.name)}
+                                                        shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec.name)}
+                                                        purified={value.combatPoke.purifiedMoves.includes(value.cmoveSec.name)}/>}
                                                     </div>
                                                 </div>
                                             </div>

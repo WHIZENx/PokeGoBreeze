@@ -1,8 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 
 import pokemonData from '../../data/pokemon.json';
-import combatData from '../../data/combat.json';
-import combatPokemonData from '../../data/combat_pokemon_go_list.json';
 import typesData from '../../data/type_effectiveness.json';
 import weatherBoosts from '../../data/weather_boosts.json';
 import { LevelRating, convertName, splitAndCapitalize } from "../../util/Utils";
@@ -23,6 +21,7 @@ import { Link } from "react-router-dom";
 import { Form } from "react-bootstrap";
 import SelectPokemon from "../../components/Input/SelectPokemon";
 import SelectMove from "../../components/Input/SelectMove";
+import { useSelector } from "react-redux";
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.pokemon.name.toLowerCase();
@@ -67,7 +66,7 @@ const columns = [
     },
     {
         name: 'Fast Move',
-        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.fmove.name).id} target="_blank" title={`${splitAndCapitalize(row.fmove.name, "_", " ")}`}>
+        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+row.fmove.id} target="_blank" title={`${splitAndCapitalize(row.fmove.name, "_", " ")}`}>
             <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.fmove.type))}/> <div><span className="text-b-ic">{splitAndCapitalize(row.fmove.name, "_", " ")}</span>{row.elite.fmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}</div></Link>,
         sortable: true,
         minWidth: '200px',
@@ -75,7 +74,7 @@ const columns = [
     },
     {
         name: 'Charged Move',
-        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+combatData.find(item => item.name === row.cmove.name).id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_", " ")}`}>
+        selector: row => <Link className="d-flex align-items-center" to={"/moves/"+row.cmove.id} target="_blank" title={`${splitAndCapitalize(row.cmove.name, "_", " ")}`}>
             <img style={{marginRight: 10}} width={25} height={25} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(row.cmove.type))}/> <div><span className="text-b-ic">{splitAndCapitalize(row.cmove.name, "_", " ").replaceAll(" Plus", "+")}</span>{row.elite.cmove && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}{row.mShadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}{row.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}</div></Link>,
         sortable: true,
         minWidth: '220px',
@@ -109,6 +108,7 @@ const columns = [
 
 const DpsTable = () => {
 
+    const data = useSelector((state) => state.store.data);
     const types = Object.keys(typesData);
 
     const [dpsTable, setDpsTable] = useState([]);
@@ -154,100 +154,104 @@ const DpsTable = () => {
 
     const addCPokeData = useCallback((dataList, movePoke, pokemon, vf, shadow, purified, felite, celite, specialMove) => {
         movePoke.forEach(vc => {
-            const fmove = combatData.find(item => item.name === vf.replaceAll("_FAST", ""));
-            const cmove = combatData.find(item => item.name === vc);
+            const fmove = data.combat.find(item => item.name === vf.replaceAll("_FAST", ""));
+            const cmove = data.combat.find(item => item.name === vc);
 
-            const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
-            const statsAttacker = {
-                atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
-                def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
-                hp: calculateStatsBattle(stats.sta, IV_HP, POKEMON_LEVEL),
-                fmove: fmove,
-                cmove: cmove,
-                types: pokemon.types,
-                shadow: shadow,
-                WEATHER_BOOSTS: options.WEATHER_BOOSTS,
-                POKEMON_FRIEND: options.TRAINER_FRIEND,
-                POKEMON_FRIEND_LEVEL: options.TRAINER_FRIEND_LEVEL,
-            }
-
-            let dps, tdo;
-            if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
-                const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.forme);
-                const statsDefender = {
-                    atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
-                    def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
-                    hp: calculateStatsBattle(statsDef.sta, IV_HP, POKEMON_LEVEL),
-                    fmove: combatData.find(item => item.name === fmoveTargetPokemon.name.replaceAll("_FAST", "")),
-                    cmove: combatData.find(item => item.name === cmoveTargetPokemon.name),
-                    types: dataTargetPokemon.types,
-                    WEATHER_BOOSTS: options.WEATHER_BOOSTS
+            if (fmove && cmove) {
+                const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+                const statsAttacker = {
+                    atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
+                    def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
+                    hp: calculateStatsBattle(stats.sta, IV_HP, POKEMON_LEVEL),
+                    fmove: fmove,
+                    cmove: cmove,
+                    types: pokemon.types,
+                    shadow: shadow,
+                    WEATHER_BOOSTS: options.WEATHER_BOOSTS,
+                    POKEMON_FRIEND: options.TRAINER_FRIEND,
+                    POKEMON_FRIEND_LEVEL: options.TRAINER_FRIEND_LEVEL,
                 }
-                const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
-                dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
-                tdo = dps*TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
-            } else {
-                dps = calculateAvgDPS(statsAttacker.fmove, statsAttacker.cmove,
-                    statsAttacker.atk,
-                    statsAttacker.def,
-                    statsAttacker.hp,
-                    statsAttacker.types,
-                    options,
-                    statsAttacker.shadow);
-                tdo = calculateTDO(statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
+
+                let dps, tdo;
+                if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
+                    const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.forme);
+                    const statsDefender = {
+                        atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
+                        def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
+                        hp: calculateStatsBattle(statsDef.sta, IV_HP, POKEMON_LEVEL),
+                        fmove: data.combat.find(item => item.name === fmoveTargetPokemon.name.replaceAll("_FAST", "")),
+                        cmove: data.combat.find(item => item.name === cmoveTargetPokemon.name),
+                        types: dataTargetPokemon.types,
+                        WEATHER_BOOSTS: options.WEATHER_BOOSTS
+                    }
+                    const dpsDef = calculateBattleDPSDefender(data.options, statsAttacker, statsDefender);
+                    dps = calculateBattleDPS(data.options, statsAttacker, statsDefender, dpsDef);
+                    tdo = dps*TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
+                } else {
+                    dps = calculateAvgDPS(data.options,
+                        statsAttacker.fmove, statsAttacker.cmove,
+                        statsAttacker.atk,
+                        statsAttacker.def,
+                        statsAttacker.hp,
+                        statsAttacker.types,
+                        options,
+                        statsAttacker.shadow);
+                    tdo = calculateTDO(data.options, statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
+                }
+                dataList.push({
+                    pokemon: pokemon,
+                    fmove: statsAttacker.fmove,
+                    cmove: statsAttacker.cmove,
+                    dps: dps,
+                    tdo: tdo,
+                    multiDpsTdo: Math.pow(dps,3)*tdo,
+                    shadow: shadow,
+                    purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
+                    mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
+                    elite: {
+                        fmove: felite,
+                        cmove: celite
+                    },
+                    cp : calculateCP(stats.atk+IV_ATK, stats.def+IV_DEF, stats.sta+IV_HP, POKEMON_LEVEL)
+                });
             }
-            dataList.push({
-                pokemon: pokemon,
-                fmove: statsAttacker.fmove,
-                cmove: statsAttacker.cmove,
-                dps: dps,
-                tdo: tdo,
-                multiDpsTdo: Math.pow(dps,3)*tdo,
-                shadow: shadow,
-                purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
-                mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
-                elite: {
-                    fmove: felite,
-                    cmove: celite
-                },
-                cp : calculateCP(stats.atk+IV_ATK, stats.def+IV_DEF, stats.sta+IV_HP, POKEMON_LEVEL)
-            });
         });
-    }, [IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, options, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
+    }, [data, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, options, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
 
     const addFPokeData = useCallback((dataList, combat, movePoke, pokemon, felite) => {
         movePoke.forEach(vf => {
-            addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, false, false, felite, false);
+            addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false);
             if (!pokemon.forme || !pokemon.forme.toLowerCase().includes("mega")) {
-                if (combat.SHADOW_MOVES.length > 0) {
-                    addCPokeData(dataList, combat.CINEMATIC_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES);
-                    addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, true, false, felite, true, combat.SHADOW_MOVES);
+                if (combat.shadowMoves.length > 0) {
+                    addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
+                    addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves);
                 }
-                addCPokeData(dataList, combat.SHADOW_MOVES, pokemon, vf, true, false, felite, false, combat.SHADOW_MOVES);
-                addCPokeData(dataList, combat.PURIFIED_MOVES, pokemon, vf, false, true, felite, false, combat.PURIFIED_MOVES);
+                addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
+                addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves);
             }
-            addCPokeData(dataList, combat.ELITE_CINEMATIC_MOVES, pokemon, vf, false, false, felite, true);
+            addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true);
         });
     }, [addCPokeData]);
 
     const calculateDPSTable = useCallback(() => {
         let dataList = [];
         Object.values(pokemonData).forEach(pokemon => {
-            let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
-                && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+            let combatPoke = data.pokemonCombat.filter(item => item.id === pokemon.num
+                && item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
             );
-            const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+
+            const result = combatPoke.find(item => item.name === convertName(pokemon.name));
             if (!result) combatPoke = combatPoke[0]
             else combatPoke = result;
             if (combatPoke) {
-                addFPokeData(dataList, combatPoke, combatPoke.QUICK_MOVES, pokemon, false);
-                addFPokeData(dataList, combatPoke, combatPoke.ELITE_QUICK_MOVES, pokemon, true);
+                addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false);
+                addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true);
             }
         });
         setFinished(true);
         setShowSpinner(false);
         return dataList;
-    }, [addFPokeData]);
+    }, [addFPokeData, data.pokemonCombat]);
 
     const filterBestOptions = (result, best) => {
         best = best === 1 ? "dps" : best === 2 ? "tdo" : "multiDpsTdo";

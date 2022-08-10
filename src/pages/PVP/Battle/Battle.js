@@ -28,9 +28,11 @@ import def_logo from '../../../assets/defense.png';
 import CircleBar from "../../../components/Sprites/ProgressBar/Circle";
 import ProgressBar from "../../../components/Sprites/ProgressBar/Bar";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Battle = () => {
 
+    const dataStore = useSelector((state) => state.store.data);
     const params = useParams();
     const navigate = useNavigate();
 
@@ -96,7 +98,7 @@ const Battle = () => {
     const calculateMoveDmgActual = (poke, pokeObj, move) => {
         const atkPoke = calculateStatsBattle(poke.stats.atk, poke.bestStats.IV.atk, poke.bestStats.level, true);
         const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.bestStats.IV.def, pokeObj.bestStats.level, true);
-        return atkPoke*move.pvp_power*(poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY : 1)*(poke.pokemon.shadow ? SHADOW_ATK_BONUS : 1)*(getTypeEffective(move.type, pokeObj.pokemon.types) : 1)/defPokeObj;
+        return atkPoke*move.pvp_power*(poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore.options) : 1)*(poke.pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1)*(getTypeEffective(move.type, pokeObj.pokemon.types) : 1)/defPokeObj;
     }
 
     const Pokemon = (poke) => {
@@ -437,7 +439,7 @@ const Battle = () => {
                 const name = convertNameRankingToOri(item.speciesId, item.speciesName);
                 const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
                 const id = pokemon.num;
-                const form = findAssetForm(pokemon.num, pokemon.name);
+                const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
                 const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
@@ -453,7 +455,7 @@ const Battle = () => {
             setData(file)
         }
         fetchPokemon();
-    }, [league, clearData])
+    }, [league, clearData, dataStore.assets])
 
     const clearDataPokemonCurr = (removeCMoveSec) => {
         if (removeCMoveSec) {

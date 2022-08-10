@@ -3,11 +3,11 @@ import { Form } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import { capitalize, splitAndCapitalize } from "../../../util/Utils";
-import combatData from '../../../data/combat.json';
 
 import types from '../../../data/type_effectiveness.json';
 
 import './Search.css';
+import { useSelector } from "react-redux";
 
 const nameSort = (rowA, rowB) => {
     const a = rowA.name.toLowerCase().replaceAll(" plus", "+");
@@ -54,6 +54,7 @@ const columns = [
 
 const Search = () => {
 
+    const combat = useSelector((state) => state.store.data.combat);
     const [filters, setFilters] = useState({
         fMoveType: '',
         fMoveName: '',
@@ -71,12 +72,12 @@ const Search = () => {
     }, []);
 
     useEffect(() => {
-        setResultFMove(combatData.filter(item => item.type_move === "FAST")
+        setResultFMove(combat.filter(item => item.type_move === "FAST")
         .filter(move => (splitAndCapitalize(move.name, "_", " ").replaceAll(" Plus", "+").toLowerCase().includes(fMoveName.toLowerCase()) || move.id.toString().includes(fMoveName)) &&
         (fMoveType === '' || fMoveType === capitalize(move.type.toLowerCase()))))
-        setResultCMove(combatData.filter(item => item.type_move === "CHARGE").filter(move => (splitAndCapitalize(move.name, "_", " ").replaceAll(" Plus", "+").toLowerCase().includes(cMoveName.toLowerCase()) || move.id.toString().includes(cMoveName)) &&
+        setResultCMove(combat.filter(item => item.type_move === "CHARGE").filter(move => (splitAndCapitalize(move.name, "_", " ").replaceAll(" Plus", "+").toLowerCase().includes(cMoveName.toLowerCase()) || move.id.toString().includes(cMoveName)) &&
         (cMoveType === '' || cMoveType === capitalize(move.type.toLowerCase()))))
-    }, [fMoveName, fMoveType, cMoveName, cMoveType]);
+    }, [fMoveName, fMoveType, cMoveName, cMoveType, combat]);
 
     return (
         <div className="container" style={{marginTop:20, marginBottom:20}}>

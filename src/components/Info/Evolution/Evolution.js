@@ -17,7 +17,6 @@ import Xarrow from "react-xarrows";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
 
-import evoData from "../../../data/evolution_pokemon_go.json";
 import pokemonData from "../../../data/pokemon.json";
 import pokemonName from "../../../data/pokemon_names.json";
 
@@ -28,6 +27,7 @@ import { computeCandyBgColor, computeCandyColor } from "../../../util/Compute";
 
 import { OverlayTrigger } from "react-bootstrap";
 import PopoverConfig from "../../../components/Popover/PopoverConfig";
+import { useSelector } from "react-redux";
 
 const theme = createTheme({
     palette: {
@@ -41,6 +41,7 @@ const theme = createTheme({
 
 const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, evolution_url, id, onSetIDPoke, gen}) => {
 
+    const evoData = useSelector((state) => state.store.data.evolution);
     const [arrEvoList, setArrEvoList] = useState([]);
 
     const getEvoChain = useCallback((data) => {
@@ -103,7 +104,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
             return {name: item.species.name, id: parseInt(item.species.url.split("/")[6]), baby: item.is_baby, form: item.form ?? null}
         })]);
         return data.map(item => getEvoChain(item.evolves_to))
-    }, [formDefault, forme, region, id]);
+    }, [evoData, formDefault, forme, region, id]);
 
     const formatEvoChain = (pokemon) => {
         return {

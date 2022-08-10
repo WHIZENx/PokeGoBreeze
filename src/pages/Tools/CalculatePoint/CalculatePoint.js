@@ -15,9 +15,11 @@ import { useSnackbar } from "notistack";
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import APIService from "../../../services/API.service";
+import { useSelector } from "react-redux";
 
 const CalculatePoint = () => {
 
+    const globalOptions = useSelector((state) => state.store.data.options);
     const [id, setId] = useState(1);
     const [name, setName] = useState('Bulbasaur');
     const [form, setForm] = useState(null);
@@ -100,7 +102,7 @@ const CalculatePoint = () => {
         for (let i = MIN_LEVEL; i <= MAX_LEVEL; i+=0.5) {
             dataList[lv] = dataList[lv] ?? [];
             for (let j = MIN_IV; j <= MAX_IV; j+=1) {
-                const result = calculateDamagePVE(calculateStatsBattle(statATK, j, i, true), statDefDEF, !isRaid && pvpDmg ? move.pvp_power : move.pve_power, {
+                const result = calculateDamagePVE(globalOptions, calculateStatsBattle(statATK, j, i, true), statDefDEF, !isRaid && pvpDmg ? move.pvp_power : move.pve_power, {
                     effective: getTypeEffective(move.type, formDef.form.types.map(item => item.type.name)),
                     stab: findStabType(form.form.types.map(item => item.type.name), move.type),
                     wb: (!pvpDmg || isRaid) && weaterBoosts
@@ -126,7 +128,7 @@ const CalculatePoint = () => {
             dataListDef[lv] = dataListDef[lv] ?? [];
             dataListSta[lv] = dataListSta[lv] ?? [];
             for (let j = MIN_IV; j <= MAX_IV; j+=1) {
-                const resultDef = calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, j, i, true), !isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power, {
+                const resultDef = calculateDamagePVE(globalOptions, statDefATK, calculateStatsBattle(statDEF, j, i, true), !isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power, {
                     effective: getTypeEffective(moveDef.type, form.form.types.map(item => item.type.name)),
                     stab: findStabType(formDef.form.types.map(item => item.type.name), moveDef.type),
                     wb: (!pvpDmg || isRaid) && weaterBoosts
@@ -162,11 +164,11 @@ const CalculatePoint = () => {
     }
 
     const computeBulk = (count, lv) => {
-        return Math.max(0, Math.ceil((calculateStatsBattle(statSTA, STAIv, lv, true) - count*calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, DEFIv, lv, true), !isRaid && pvpDmg ? cMove.pvp_power : cMove.pve_power, {
+        return Math.max(0, Math.ceil((calculateStatsBattle(statSTA, STAIv, lv, true) - count*calculateDamagePVE(globalOptions, statDefATK, calculateStatsBattle(statDEF, DEFIv, lv, true), !isRaid && pvpDmg ? cMove.pvp_power : cMove.pve_power, {
             effective: getTypeEffective(cMove.type, form.form.types.map(item => item.type.name)),
             stab: findStabType(formDef.form.types.map(item => item.type.name), cMove.type),
             wb: (!pvpDmg || isRaid) && weaterBoosts
-        }, false)) / calculateDamagePVE(statDefATK, calculateStatsBattle(statDEF, DEFIv, lv, true), !isRaid && pvpDmg ? fMove.pvp_power : fMove.pve_power, {
+        }, false)) / calculateDamagePVE(globalOptions, statDefATK, calculateStatsBattle(statDEF, DEFIv, lv, true), !isRaid && pvpDmg ? fMove.pvp_power : fMove.pve_power, {
             effective: getTypeEffective(fMove.type, form.form.types.map(item => item.type.name)),
             stab: findStabType(formDef.form.types.map(item => item.type.name), fMove.type),
             wb: (!pvpDmg || isRaid) && weaterBoosts

@@ -1,6 +1,4 @@
 import pokemonData from '../../../data/pokemon.json';
-import combatData from '../../../data/combat.json';
-import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
 
 import Type from "../../../components/Sprites/Type/Type";
 
@@ -27,12 +25,13 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
 
 const RankingPVP = () => {
 
     const dispatch = useDispatch();
+    const dataStore = useSelector((state) => state.store.data);
     const params = useParams();
 
     const [rankingData, setRankingData] = useState(null);
@@ -78,7 +77,7 @@ const RankingPVP = () => {
                     const name = convertNameRankingToOri(item.speciesId, item.speciesName);
                     const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
                     const id = pokemon.num;
-                    const form = findAssetForm(pokemon.num, pokemon.name);
+                    const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
                     const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
@@ -89,16 +88,16 @@ const RankingPVP = () => {
                     if (cMoveDataPri === "TECHNO_BLAST_DOUSE") cMoveDataPri = "TECHNO_BLAST_WATER";
                     if (cMoveDataSec === "TECHNO_BLAST_DOUSE") cMoveDataSec = "TECHNO_BLAST_WATER";
 
-                    let fmove = combatData.find(item => item.name === fmoveData);
-                    const cmovePri = combatData.find(item => item.name === cMoveDataPri);
-                    if (cMoveDataSec) var cmoveSec = combatData.find(item => item.name === cMoveDataSec);
+                    let fmove = dataStore.combat.find(item => item.name === fmoveData);
+                    const cmovePri = dataStore.combat.find(item => item.name === cMoveDataPri);
+                    if (cMoveDataSec) var cmoveSec = dataStore.combat.find(item => item.name === cMoveDataSec);
 
                     if (item.moveset[0].includes("HIDDEN_POWER")) fmove = {...fmove, type: item.moveset[0].split("_")[2]}
 
-                    let combatPoke = combatPokemonData.filter(item => item.ID === pokemon.num
-                        && item.BASE_SPECIES === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+                    let combatPoke = dataStore.pokemonCombat.filter(item => item.id === pokemon.num
+                        && item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
                     );
-                    const result = combatPoke.find(item => item.NAME === convertName(pokemon.name));
+                    const result = combatPoke.find(item => item.name === convertName(pokemon.name));
                     if (!result) {
                         if (combatPoke) combatPoke = combatPoke[0]
                         else combatPoke = combatPoke.find(item => item.BASE_SPECIES === convertName(pokemon.name));
@@ -120,7 +119,7 @@ const RankingPVP = () => {
                         cmoveSec: cmoveSec,
                         combatPoke: combatPoke,
                         shadow: item.speciesName.includes("(Shadow)"),
-                        purified: combatPoke.PURIFIED_MOVES.includes(cmovePri) || (cMoveDataSec && combatPoke.PURIFIED_MOVES.includes(cMoveDataSec))
+                        purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec))
                     }
                 })
                 setRankingData(file);
@@ -131,7 +130,7 @@ const RankingPVP = () => {
             dispatch(hideSpinner());
         }
         fetchPokemon();
-    }, [dispatch, params.serie, params.cp, params.type]);
+    }, [dispatch, params.serie, params.cp, params.type, dataStore]);
 
     const onSearch = (value) => {
         setSearch(value)
@@ -171,15 +170,15 @@ const RankingPVP = () => {
                             </div>
                             <div className="d-flex flex-wrap element-top" style={{columnGap: 10}}>
                                 <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} move={data.fmove}
-                                elite={data.combatPoke.ELITE_QUICK_MOVES.includes(data.fmove.name)}/>
+                                elite={data.combatPoke.cinematicMoves.includes(data.fmove.name)}/>
                                 <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={data.cmovePri}
-                                elite={data.combatPoke.ELITE_CINEMATIC_MOVES.includes(data.cmovePri.name)}
-                                shadow={data.combatPoke.SHADOW_MOVES.includes(data.cmovePri.name)}
-                                purified={data.combatPoke.PURIFIED_MOVES.includes(data.cmovePri.name)}/>
+                                elite={data.combatPoke.eliteCinematicMoves.includes(data.cmovePri.name)}
+                                shadow={data.combatPoke.shadowMoves.includes(data.cmovePri.name)}
+                                purified={data.combatPoke.purifiedMoves.includes(data.cmovePri.name)}/>
                                 {data.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={data.cmoveSec}
-                                elite={data.combatPoke.ELITE_CINEMATIC_MOVES.includes(data.cmoveSec.name)}
-                                shadow={data.combatPoke.SHADOW_MOVES.includes(data.cmoveSec.name)}
-                                purified={data.combatPoke.PURIFIED_MOVES.includes(data.cmoveSec.name)}/>}
+                                elite={data.combatPoke.eliteCinematicMoves.includes(data.cmoveSec.name)}
+                                shadow={data.combatPoke.shadowMoves.includes(data.cmoveSec.name)}
+                                purified={data.combatPoke.purifiedMoves.includes(data.cmoveSec.name)}/>}
                             </div>
                             <hr />
                             {Keys(Object.values(pokemonData), data, params.cp, params.type)}
@@ -195,7 +194,7 @@ const RankingPVP = () => {
                             {TypeEffective(data.pokemon.types)}
                         </div>
                         <div className='container'>
-                            {MoveSet(data.moves, data.combatPoke, combatData)}
+                            {MoveSet(data.moves, data.combatPoke, dataStore.combat)}
                         </div>
                     </div>
                     <LeaveToggle eventKey={key} />

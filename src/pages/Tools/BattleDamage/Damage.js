@@ -19,6 +19,7 @@ import StatsTable from "./StatsDamageTable";
 
 import Move from "../../../components/Table/Move";
 import { findStabType } from "../../../util/Compute";
+import { useSelector } from "react-redux";
 
 const labels = {
     0: '1.00',
@@ -30,6 +31,7 @@ const labels = {
 
 const Damage = () => {
 
+    const globalOptions = useSelector((state) => state.store.data.options);
     const [id, setId] = useState(1);
     const [name, setName] = useState('Bulbasaur');
     const [form, setForm] = useState(null);
@@ -146,7 +148,7 @@ const Damage = () => {
                 ...r,
                 battleState: eff,
                 move: move,
-                damage: calculateDamagePVE(statLvATK, statLvDEFObj, move.pve_power, eff),
+                damage: calculateDamagePVE(globalOptions, statLvATK, statLvDEFObj, move.pve_power, eff),
                 hp: statLvSTAObj,
                 currPoke: form,
                 objPoke: formObj,
@@ -158,7 +160,7 @@ const Damage = () => {
         } else {
             enqueueSnackbar('Please select move for pokémon!', { variant: 'error' });
         }
-    }, [enqueueSnackbar, enableFriend, battleState, move, form, formObj, statLvATK, statLvDEFObj, statLvSTAObj, statType, statTypeObj, statLevel, statLevelObj]);
+    }, [enqueueSnackbar, globalOptions, enableFriend, battleState, move, form, formObj, statLvATK, statLvDEFObj, statLvSTAObj, statType, statTypeObj, statLevel, statLevelObj]);
 
     const capitalize = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);

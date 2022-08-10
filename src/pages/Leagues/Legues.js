@@ -4,7 +4,6 @@ import { Accordion, Form, useAccordionButton } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import leaguesData from '../../data/pokemon_go_leagues.json';
-import pokeImageList from '../../data/assets_pokemon_go.json';
 import APIService from '../../services/API.service';
 
 import './Leagues.css';
@@ -12,9 +11,11 @@ import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize } from '../../util/Utils';
 import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';
+import { useSelector } from 'react-redux';
 
 const Leagues = () => {
 
+    const pokeImageList = useSelector((state) => state.store.data.assets);
     const [season, setSeason] = useState(Object.keys(leaguesData.seasons)[Object.keys(leaguesData.seasons).length-1])
 
     const getAssetPokeGo = (id, form) => {

@@ -1,16 +1,17 @@
 import { Fragment } from "react";
+import { useSelector } from "react-redux";
 import APIService from "../../services/API.service";
 import { capitalize, splitAndCapitalize } from "../../util/Utils";
 
-import combat from '../../data/combat.json';
-
 const CardMove = (props) => {
 
-    const type = props.value ? capitalize(combat.find(item => item.name === props.value.name.replace("_FAST", "")).type.toLowerCase()) : "";
+    const combat = useSelector((state) => state.store.data.combat);
+    const data = props.value ? combat.find(item => item.name === props.value.name.replace("_FAST", "")) : false;
+    const type = data ? capitalize(data.type.toLowerCase()) : "";
 
     return(
         <Fragment>
-            {props.value &&
+            {props.value && data &&
                 <div className='d-flex align-items-center w-100 h-100' style={{padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap'}}>
                     <img width={64} height={64} alt='type-logo' style={{marginRight: 10}} src={APIService.getTypeSprite(type)}/>
                     <span style={{marginRight: 5}}><b>{splitAndCapitalize(props.value.name.replaceAll("_PLUS","+").replace("_FAST", ""), "_", " ")}</b></span>

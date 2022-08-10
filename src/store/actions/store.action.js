@@ -1,10 +1,10 @@
 import APIService from "../../services/API.service";
-import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat, optionPokemonCombat } from '../../options/options';
+import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat, optionPokemonCombat, optionSettings } from '../../options/options';
 
-export const LOAD_GM = "LOAD_GM";
-export const RESET_GM = "RESET_GM";
+export const LOAD_STORE = "LOAD_STORE";
+export const RESET_STORE = "RESET_STORE";
 
-export const loadGM = dispatch => {
+export const loadStore = dispatch => {
     Promise.all([
         APIService.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json'),
         APIService.getFetchUrl("https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/master?recursive=1")
@@ -16,8 +16,9 @@ export const loadGM = dispatch => {
         const assetSoundFiles = optionPokeSound(assets.data);
 
         dispatch({
-            type: LOAD_GM,
+            type: LOAD_STORE,
             payload: {
+                    options: optionSettings(gm.data),
                     pokemon: pokemon,
                     evolution: optionEvolution(gm.data, pokemon, formSpecial),
                     stickers: optionSticker(gm.data, pokemon),
@@ -29,6 +30,6 @@ export const loadGM = dispatch => {
       });
 };
 
-export const resetGM = () => ({
-    type: RESET_GM
+export const resetStore = () => ({
+    type: RESET_STORE
 });

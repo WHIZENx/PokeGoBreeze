@@ -2,24 +2,24 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { capitalize, convertName, splitAndCapitalize } from "../../../util/Utils";
 import { rankMove } from '../../../util/Calculate';
 
-import pokemonCombatList from "../../../data/combat_pokemon_go_list.json";
-
 import './MoveTable.css';
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
+import { useSelector } from "react-redux";
 
 const TableMove = (props) => {
 
+    const data = useSelector((state) => state.store.data);
     const [move, setMove] = useState({data: []});
 
     const findMove = useCallback(() => {
-        let combatPoke = pokemonCombatList.filter(item => item.ID === parseInt(props.data.species.url.split("/")[6]));
-        if (combatPoke && combatPoke.length === 1) return setMove(rankMove(combatPoke[0], props.statATK, props.statDEF, props.statSTA, props.data.types.map(item => capitalize(item.type.name))));
+        let combatPoke = data.pokemonCombat.filter(item => item.id === parseInt(props.data.species.url.split("/")[6]));
+        if (combatPoke && combatPoke.length === 1) return setMove(rankMove(data.options, data.combat, combatPoke[0], props.statATK, props.statDEF, props.statSTA, props.data.types.map(item => capitalize(item.type.name))));
 
-        let result = combatPoke.find(item => props.form && item.NAME === convertName(props.form.name));
-        if (result === undefined) setMove(rankMove(combatPoke[0], props.statATK, props.statDEF, props.statSTA, props.data.types.map(item => capitalize(item.type.name))));
-        else setMove(rankMove(result, props.statATK, props.statDEF, props.statSTA, props.form.types.map(item => capitalize(item.type.name))));
-    }, [props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
+        let result = combatPoke.find(item => props.form && item.name === convertName(props.form.name));
+        if (result === undefined) setMove(rankMove(data.options, data.combat, combatPoke[0], props.statATK, props.statDEF, props.statSTA, props.data.types.map(item => capitalize(item.type.name))));
+        else setMove(rankMove(data.options, data.combat, result, props.statATK, props.statDEF, props.statSTA, props.form.types.map(item => capitalize(item.type.name))));
+    }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
     useEffect(() => {
         if (props.data) findMove();
