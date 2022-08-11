@@ -6,17 +6,17 @@ import reportWebVitals from './reportWebVitals';
 
 import { Provider } from 'react-redux';
 import thunk from "redux-thunk"
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, compose, createStore } from 'redux';
 
 import { SnackbarProvider } from 'notistack';
 
 import rootReducer from './store/reducers';
-import { composeWithDevTools } from "@redux-devtools/extension";
 
 const store = createStore(
   rootReducer,
-  composeWithDevTools(
-    applyMiddleware(thunk)
+  compose(
+    applyMiddleware(thunk),
+    process.env.NODE_ENV !== "production" && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   ),
 );
 
