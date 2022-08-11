@@ -133,17 +133,6 @@ const Pokemon = (props) => {
     useEffect(() => {
         const id = params.id ? params.id.toLowerCase() : props.id;
         queryPokemon(id);
-        // if (!initialize.current) {
-        //     setStats(sortStatsPokemon(convertArrStats()));
-        //     // APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
-        //     // .then(res => {
-        //         // setStats(sortStatsPokemon(convertArrStats(res.data)));
-        //         // setDataPri(res.data);
-        //     //     return APIService.getPokeJSON('released_pokemon.json');
-        //     // })
-        //     // .finally(initialize.current = true);
-        //     initialize.current = true;
-        // }
     }, [params.id, props.id, queryPokemon, reForm]);
 
     const getNumGen = (url) => {

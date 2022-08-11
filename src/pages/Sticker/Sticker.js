@@ -21,6 +21,7 @@ const Sticker = () => {
     return (
         <div className='container' style={{padding: 15}}>
             <h2 className='title-leagues' style={{marginBottom: 15}}>Sticker List</h2>
+            <hr/>
             <div className='sticker-container'>
                 <h5><span>Sticker</span></h5>
                 <div className='sticker-group'>

@@ -8,7 +8,7 @@ import APIService from "../../../services/API.service";
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
-import sta_logo from '../../../assets/stamina.png';
+import hp_logo from '../../../assets/hp.png';
 import { useSelector } from "react-redux";
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../util/Constants";
 
@@ -81,7 +81,7 @@ const StatsTable = ({setStatType, setStatLevel, statATK, statDEF, statSTA, setSt
                                     <td className="text-center">{calculateStatsBattle(statDEF, 15, currStatLevel, true, currStatType === "shadow" ? SHADOW_DEF_BONUS(globalOptions) : 1)}</td>
                                 </tr>
                                 <tr>
-                                    <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>HP</td>
+                                    <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={hp_logo}/>HP</td>
                                     <td className="text-center">{calculateStatsBattle(statSTA, 15, currStatLevel, true)}</td>
                                 </tr>
                         </tbody>

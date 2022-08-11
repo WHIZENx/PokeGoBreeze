@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
-import sta_logo from '../../../assets/stamina.png';
+import hp_logo from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
 import { splitAndCapitalize } from "../../../util/Utils";
@@ -120,7 +120,7 @@ const DamageTable = (props) => {
                             </Fragment> : "-"}</td>
                         </tr>
                         <tr>
-                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>HP Object remaining</td>
+                            <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={hp_logo}/>HP Object remaining</td>
                             <td>{props.result.hp ? <b>{Math.floor(props.result.hp - props.result.damage)}
                             {Math.floor(props.result.hp - props.result.damage) > 0 ?
                             <span className='caption-small text-success'> (Alive)</span>

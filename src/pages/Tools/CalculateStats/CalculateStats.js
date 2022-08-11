@@ -13,7 +13,7 @@ import './CalculateStats.css';
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
-import sta_logo from '../../../assets/stamina.png';
+import hp_logo from '../../../assets/hp.png';
 import Find from "../../../components/Select/Find/Find";
 import { useSelector } from "react-redux";
 
@@ -298,7 +298,7 @@ const Calculate = () => {
                                                 : "-"}</td>
                                             </tr>
                                             <tr>
-                                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>HP</td>
+                                                <td><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={hp_logo}/>HP</td>
                                                 <td>{statData ? calculateStatsBattle(statSTA, pokeStats.IV.sta, statLevel, true) : "-"}</td>
                                             </tr>
                                             {/* <EvoChain id={id} url={urlEvo.url} /> */}
@@ -387,7 +387,7 @@ const Calculate = () => {
                                                 <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>
                                                 {dataLittleLeague && dataLittleLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataLittleLeague.stats.def}</span> : "-"}
                                                 </td>
-                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={hp_logo}/>
                                                 {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
@@ -441,7 +441,7 @@ const Calculate = () => {
                                                 <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>
                                                 {dataGreatLeague && dataGreatLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataGreatLeague.stats.def}</span> : "-"}
                                                 </td>
-                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={hp_logo}/>
                                                 {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
@@ -495,7 +495,7 @@ const Calculate = () => {
                                                 <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>
                                                 {dataUltraLeague && dataUltraLeague.elidge ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataUltraLeague.stats.def}</span> : "-"}
                                                 </td>
-                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={hp_logo}/>
                                                 {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>
@@ -549,7 +549,7 @@ const Calculate = () => {
                                                 <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={def_logo}/>
                                                 {dataMasterLeague ? <span className={statData.type ==="shadow" ? "text-danger" : ""}>{dataMasterLeague.stats.def}</span> : "-"}
                                                 </td>
-                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={sta_logo}/>
+                                                <td className="text-center"><img style={{marginRight: 10}} alt='img-league' width={20} height={20} src={hp_logo}/>
                                                 {dataMasterLeague ? dataMasterLeague.stats.sta : "-"}
                                                 </td>
                                             </tr>

@@ -15,6 +15,7 @@
     white-space: nowrap;
     overflow-x: auto;
     border: 1px solid #b8d4da;
+    width: max-content;
 }
 
 .group-rank-league {
@@ -30,7 +31,7 @@
 .rank-header {
     background-color: #f1f1ff !important;
     color: #0571c2;
-    border: 1px solid #b8d4da;
+    border-bottom: 1px solid #b8d4da;
     padding: 8px;
     font-weight: bold;
 }
@@ -39,7 +40,7 @@
     position: sticky;
     left: 0;
     background-color: white;
-    z-index: 1;
+    z-index: 2;
 }
 
 .reward-type {

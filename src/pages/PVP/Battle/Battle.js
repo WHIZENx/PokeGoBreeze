@@ -757,7 +757,7 @@ const Battle = () => {
                 <option value={10000}>Master League</option>
             </Form.Select>
             <div className="row element-top" style={{margin: 0}}>
-                <div className="col-xl-3">
+                <div className="col-lg-3">
                     <Select data={data} league={league} pokemonBattle={pokemonCurr} setPokemonBattle={setPokemonCurr} clearData={clearDataPokemonCurr}/>
                     {pokemonCurr.pokemonData &&
                         <Fragment>
@@ -794,7 +794,7 @@ const Battle = () => {
                         </Fragment>
                     }
                 </div>
-                <div className="col-xl-6">
+                <div className="col-lg-6">
                     {pokemonCurr.pokemonData && pokemonObj.pokemonData && pokemonCurr.timeline.length > 0 && pokemonObj.timeline.length > 0 &&
                     <Fragment>
                         <div className="d-flex timeline-vertical">
@@ -845,7 +845,7 @@ const Battle = () => {
                     </Fragment>
                     }
                 </div>
-                <div className="col-xl-3">
+                <div className="col-lg-3">
                     <Select data={data} league={league} pokemonBattle={pokemonObj} setPokemonBattle={setPokemonObj} clearData={clearDataPokemonObj}/>
                     {pokemonObj.pokemonData &&
                         <Fragment>

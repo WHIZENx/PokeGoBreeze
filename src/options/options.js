@@ -1,7 +1,3 @@
-export function getUpdateTime(data) {
-    return new Date(data.timestamp);
-}
-
 export function getOption(options) {
     Array.apply(this, Array.prototype.slice.call(arguments, 1)).forEach(arg => {
         options = options[arg]
@@ -288,7 +284,7 @@ export const optionAssets = (pokemon, family, imgs, sounds) => {
 
         formSet = imgs.filter(img => !img.includes(`Addressable Assets/`)
         && (img.includes(`pokemon_icon_${result.id.toString().padStart(3, '0')}_51`) || img.includes(`pokemon_icon_${result.id.toString().padStart(3, '0')}_52`)));
-        if (formSet.length > 0 && !mega) {
+        if (!mega) {
             for (let index = 0; index < formSet.length; index += 2) {
                 result.image.push({
                     gender: 3,
@@ -333,10 +329,20 @@ export const optionAssets = (pokemon, family, imgs, sounds) => {
 
         soundForm = sounds.filter(sound => !sound.includes(`Addressable Assets/`)
         && (sound.includes(`pv${result.id.toString().padStart(3, '0')}_51`) || sound.includes(`pv${result.id.toString().padStart(3, '0')}_52`)))
-        if (soundForm.length > 0 && !mega) {
+        if (!mega) {
             soundForm.forEach(sound => {
                 result.sound.cry.push({
                     form: soundForm.length !== 2 ? "MEGA" : sound.includes("_51") ? "MEGA_X" : "MEGA_Y",
+                    path: sound
+                });
+            })
+        }
+        soundForm = sounds.filter(sound => !sound.includes(`Addressable Assets/`)
+        && sound.includes(`pv${result.id.toString().padStart(3, '0')}`))
+        if (result.sound.cry.length === 0) {
+            soundForm.forEach(sound => {
+                result.sound.cry.push({
+                    form: sound.includes("_31") ? "SPECIAL" :"NORMAL",
                     path: sound
                 });
             })
@@ -490,9 +496,27 @@ export const optionLeagues = (data, pokemon) => {
         }
     }
 
+    const  leagueRewardModel = () => {
+        return {
+            type: false,
+            count: 0,
+            step: 0
+        }
+    }
+
+    const  leagueRewardPokemonModel = () => {
+        return {
+            guaranteedLimited: false,
+            id: null,
+            name: "",
+            form: ""
+        }
+    }
+
     let result = {
         allowLeagues: [],
-        data: []
+        data: [],
+        season: {}
     }
 
     result.allowLeagues = data.find(item => item.templateId === "VS_SEEKER_CLIENT_SETTINGS").data.vsSeekerClientSettings.allowedVsSeekerLeagueTemplateId
@@ -548,6 +572,85 @@ export const optionLeagues = (data, pokemon) => {
         })
         return result;
     })
+
+    const seasons = data.find(item => item.templateId === "COMBAT_COMPETITIVE_SEASON_SETTINGS").data.combatCompetitiveSeasonSettings.seasonEndTimeTimestamp;
+    let rewards = {
+        rank: {},
+        pokemon: {}
+    };
+    data.filter(item => item.templateId.includes("VS_SEEKER_LOOT_PER_WIN_SETTINGS_RANK_")).forEach(item => {
+        const data = item.data.vsSeekerLoot;
+        if (!rewards.rank[data.rankLevel]) {
+            rewards.rank[data.rankLevel] = {
+                rank: data.rankLevel,
+                free: [],
+                premium: []
+            };
+        }
+        data.reward.slice(0, 5).forEach((reward, index) => {
+            let result = leagueRewardModel();
+            result.step = index+1;
+            if (reward.pokemonReward) {
+                result.type = "pokemon";
+                result.count = 1;
+            } else if (reward.itemLootTable) {
+                result.type = "itemLoot";
+                result.count = 1;
+            } else if (reward.item) {
+                if (reward.item.stardust) {
+                    result.type = "stardust";
+                } else {
+                    result.type = reward.item.item;
+                }
+                result.count = reward.item.count;
+            }
+            if (!data.rewardTrack) {
+                rewards.rank[data.rankLevel].free.push(result);
+            } else {
+                rewards.rank[data.rankLevel].premium.push(result);
+            }
+        });
+    });
+
+    data.filter(item => item.templateId.includes("VS_SEEKER_POKEMON_REWARDS_")).forEach(item => {
+        const data = item.data.vsSeekerPokemonRewards;
+        const track = item.templateId.includes("FREE") ? "FREE" : "PREMIUM";
+        data.availablePokemon.forEach(value => {
+            if (!rewards.pokemon[value.unlockedAtRank]) {
+                rewards.pokemon[value.unlockedAtRank] = {
+                    rank: value.unlockedAtRank,
+                    free: [],
+                    premium: []
+                };
+            }
+            let result = leagueRewardPokemonModel();
+            let poke;
+            if (value.guaranteedLimitedPokemonReward) {
+                result.guaranteedLimited = true;
+                poke = value.guaranteedLimitedPokemonReward.pokemon;
+            } else {
+                poke = value.pokemon;
+            }
+            result.id = pokemon.find(item => item.name === poke.pokemonId).id
+            result.name = poke.pokemonId
+            if (poke.pokemonDisplay) result.form = poke.pokemonDisplay.form.replace(poke.pokemonId+"_", "")
+            else result.form = "NORMAL";
+            if (track === "FREE") {
+                rewards.pokemon[value.unlockedAtRank].free.push(result)
+            } else {
+                rewards.pokemon[value.unlockedAtRank].premium.push(result)
+            }
+        });
+    });
+
+    result.season = {
+        season: seasons.length-1,
+        timestamp: {
+            start: seasons[seasons.length-3],
+            end: seasons[seasons.length-2]
+        },
+        rewards: rewards
+    }
 
     return result;
 }
