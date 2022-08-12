@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service'

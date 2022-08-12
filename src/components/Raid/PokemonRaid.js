@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Badge } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import SelectMove from "../Input/SelectMove";

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { Fragment } from "react";
 import TypeEffective from "../Effective/TypeEffective";
 import WeatherTypeEffective from "../Effective/WeatherTypeEffective";

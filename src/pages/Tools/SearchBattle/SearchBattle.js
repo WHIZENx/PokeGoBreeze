@@ -170,7 +170,6 @@ const FindBattle = () => {
         "normal");
     }
 
-    // eslint-disable-next-line react/prop-types
     const LeaveToggle = ({ eventKey }) => {
         const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
 

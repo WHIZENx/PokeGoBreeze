@@ -44,7 +44,6 @@ const RankingPVP = () => {
 
     const [found, setFound] = useState(true);
 
-    // eslint-disable-next-line react/prop-types
     const LeaveToggle = ({ eventKey }) => {
         const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
 

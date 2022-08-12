@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useRef, useState } from 'react';
 import pokemonData from '../../../data/pokemon.json';
 import { calculateStatsByTag } from '../../../util/Calculate';

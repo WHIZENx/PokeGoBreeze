@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useRef } from 'react';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { forwardRef, useEffect } from "react";
 import { Popover } from "react-bootstrap";
 

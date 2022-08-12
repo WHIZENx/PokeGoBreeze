@@ -27,7 +27,6 @@ const Leagues = () => {
         } catch {return APIService.getPokeFullSprite(id)}
     }
 
-    // eslint-disable-next-line react/prop-types
     const LeaveToggle = ({ eventKey }) => {
         const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
 

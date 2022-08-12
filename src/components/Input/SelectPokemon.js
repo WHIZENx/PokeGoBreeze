@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import CardPokemon from "../Card/CardPokemon";
 import CloseIcon from '@mui/icons-material/Close';
 
