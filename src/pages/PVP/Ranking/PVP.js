@@ -3,7 +3,7 @@ import pokemonData from '../../../data/pokemon.json';
 import Type from "../../../components/Sprites/Type/Type";
 
 import '../PVP.css';
-import { useState, useEffect, Fragment, useRef } from "react";
+import React, { useState, useEffect, Fragment, useRef } from "react";
 
 import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName, capitalize } from '../../../util/Utils';
 import { calculateStatsByTag, sortStatsPokemon } from '../../../util/Calculate';
@@ -44,6 +44,7 @@ const RankingPVP = () => {
 
     const [found, setFound] = useState(true);
 
+    // eslint-disable-next-line react/prop-types
     const LeaveToggle = ({ eventKey }) => {
         const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
 

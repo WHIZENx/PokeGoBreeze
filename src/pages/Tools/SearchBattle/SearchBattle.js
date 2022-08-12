@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Find from "../../../components/Select/Find/Find";
 
 import { Badge, Box } from "@mui/material";
@@ -170,6 +170,7 @@ const FindBattle = () => {
         "normal");
     }
 
+    // eslint-disable-next-line react/prop-types
     const LeaveToggle = ({ eventKey }) => {
         const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
 

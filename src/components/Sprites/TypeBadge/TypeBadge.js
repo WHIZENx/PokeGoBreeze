@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+import React from "react";
 import { capitalize } from "@mui/material";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";

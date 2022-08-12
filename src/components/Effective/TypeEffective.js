@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import Type from '../Sprites/Type/Type';

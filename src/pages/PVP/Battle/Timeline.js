@@ -1,5 +1,5 @@
 import { Badge } from "@mui/material"
-import { Fragment } from "react"
+import React, { Fragment } from "react"
 import APIService from "../../../services/API.service"
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, splitAndCapitalize } from "../../../util/Utils";

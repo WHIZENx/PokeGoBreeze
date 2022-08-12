@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from "../../../util/Utils";
 import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';

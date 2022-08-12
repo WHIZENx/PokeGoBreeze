@@ -1,7 +1,7 @@
 import pokemonData from '../../../data/pokemon.json';
 
 import '../PVP.css';
-import { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 
 import { capitalize, convertArrStats, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { Link, useParams } from "react-router-dom";

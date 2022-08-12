@@ -1,4 +1,5 @@
-import { Fragment } from "react";
+/* eslint-disable react/prop-types */
+import React, { Fragment } from "react";
 import typeEffective from '../../data/type_effectiveness.json';
 import APIService from "../../services/API.service";
 import { capitalize, splitAndCapitalize } from "../../util/Utils";

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import pokemonData from '../../../data/pokemon.json';
 
@@ -98,7 +98,11 @@ const Battle = () => {
     const calculateMoveDmgActual = (poke, pokeObj, move) => {
         const atkPoke = calculateStatsBattle(poke.stats.atk, poke.bestStats.IV.atk, poke.bestStats.level, true);
         const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.bestStats.IV.def, pokeObj.bestStats.level, true);
-        return atkPoke*move.pvp_power*(poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore.options) : 1)*(poke.pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1)*(getTypeEffective(move.type, pokeObj.pokemon.types) : 1)/defPokeObj;
+        return atkPoke
+        *move.pvp_power
+        *(poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore.options) : 1)
+        *(poke.pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1)
+        *(getTypeEffective(move.type, pokeObj.pokemon.types))/defPokeObj;
     }
 
     const Pokemon = (poke) => {

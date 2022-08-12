@@ -1,4 +1,5 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+/* eslint-disable react/prop-types */
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
 import { splitAndCapitalize } from '../../util/Utils';
 import { useSelector } from 'react-redux';

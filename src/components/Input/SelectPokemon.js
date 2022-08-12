@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types */
 import CardPokemon from "../Card/CardPokemon";
 import CloseIcon from '@mui/icons-material/Close';
 
 import pokemonData from '../../data/pokemon.json';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import './Select.css';
 import { splitAndCapitalize } from "../../util/Utils";

@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import APIService from '../../services/API.service';
 
 import './Leagues.css';
-import { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize } from '../../util/Utils';
 // import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';
@@ -27,6 +27,7 @@ const Leagues = () => {
         } catch {return APIService.getPokeFullSprite(id)}
     }
 
+    // eslint-disable-next-line react/prop-types
     const LeaveToggle = ({ eventKey }) => {
         const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
 

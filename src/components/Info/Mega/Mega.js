@@ -1,4 +1,5 @@
-import { Fragment, useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
+import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import APIService from "../../../services/API.service";
 import { splitAndCapitalize } from "../../../util/Utils";

@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import { useSnackbar } from "notistack";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useParams } from "react-router-dom";
 

@@ -4,7 +4,7 @@ import { splitAndCapitalize } from '../../util/Utils';
 
 import './Sticker.css';
 import APIService from '../../services/API.service';
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { OverlayTrigger } from "react-bootstrap";

@@ -1,4 +1,5 @@
-import { forwardRef, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import React, { forwardRef, useEffect } from "react";
 import { Popover } from "react-bootstrap";
 
 const PopoverConfig = forwardRef(
@@ -15,4 +16,5 @@ const PopoverConfig = forwardRef(
     },
 );
 
+PopoverConfig.displayName = 'PopoverConfig';
 export default PopoverConfig;

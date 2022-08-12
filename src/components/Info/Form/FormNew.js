@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import Info from '../Info';
 

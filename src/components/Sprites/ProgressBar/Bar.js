@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+import React from "react";
 import styled, { keyframes } from "styled-components";
 
 const Bar = styled.div`

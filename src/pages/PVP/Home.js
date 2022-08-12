@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import APIService from "../../services/API.service";
 import { leaguesRanking, leaguesTeam, leaguesTeamBattle } from "../../util/Constants";

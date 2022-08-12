@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+/* eslint-disable react/prop-types */
+import React, { useRef, useState } from 'react';
 import pokemonData from '../../../data/pokemon.json';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { convertNameRanking, splitAndCapitalize } from '../../../util/Utils';
