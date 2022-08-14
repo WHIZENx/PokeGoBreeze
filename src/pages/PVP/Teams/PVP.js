@@ -172,7 +172,7 @@ const TeamPVP = () => {
             :
             <Fragment>
             {rankingData &&
-            <div className="container pvp-container">
+            <div className="container pvp-container element-bottom">
                 {renderLeague()}
                 <hr />
                 <h2>Top Performer Pokémon</h2>

@@ -233,7 +233,7 @@ const RankingPVP = () => {
         :
         <Fragment>
         {rankingData && storeStats &&
-        <div className="container pvp-container">
+        <div className="container pvp-container element-bottom">
             {renderLeague()}
             <hr />
             <div className='element-top ranking-link-group'>

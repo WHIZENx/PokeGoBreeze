@@ -41,7 +41,6 @@ const PokemonPVP = () => {
                 const pokemon = Object.values(pokemonData).find(pokemon => pokemon.slug === name);
                 const id = pokemon.num;
                 const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
-
                 document.title = `#${id} ${splitAndCapitalize(name, "-", " ")} - ${
                     cp === 500 ? "Little Cup" :
                     cp === 1500 ? "Great League" :

@@ -131,8 +131,8 @@ export const convertName = (text) => {
   .replaceAll("É", "E")
   .replace("PUMPKABOO_AVERAGE", "PUMPKABOO")
   .replace("GOURGEIST_AVERAGE", "GOURGEIST")
-  .replace("GALAR", "GALARIAN")
-  .replace("HISUI", "HISUIAN")
+  .replace("_GALAR", "_GALARIAN")
+  .replace("_HISUI", "_HISUIAN")
 };
 
 export const convertNameRanking = (text) => {
@@ -157,9 +157,16 @@ export const convertNameRankingToOri = (text, form) => {
   .replaceAll("galarian", "galar")
   .replaceAll("alolan", "alola")
   .replace("-xs", "")
+  .replace("indeedee-male", "indeedee")
   .replace("female", "f")
   .replace("male", "m")
   .replace("-sea", "")
+  .replace("-reine", "")
+  .replace("-red-striped", "")
+  .replace("-full-belly", "")
+  .replace("-sword", "")
+  .replace("-shield", "")
+  .replace("-rider", "")
   .replace("cherrim-sunny", "cherrim-sunshine")
   .replace("-5th-anniversary", "")
   .replace("-shadow", "")

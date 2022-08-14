@@ -3,7 +3,7 @@ import pokemonData from '../data/pokemon.json';
 import typeEffective from "../data/type_effectiveness.json";
 import weatherBoosts from '../data/weather_boosts.json';
 import { DEFAULT_DAMAGE_CONST, DEFAULT_DAMAGE_MULTIPLY, DEFAULT_ENEMY_ATK_DELAY, DEFAULT_ENERYGY_PER_HP_LOST, DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_SHADOW, DEFAULT_TRAINER_FRIEND, DEFAULT_WEATHER_BOOSTS, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, MULTIPLY_LEVEL_FRIENDSHIP, MULTIPLY_THROW_CHARGE, RAID_BOSS_TIER, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY, typeCostPowerUp } from "./Constants";
-import { capitalize, convertName, splitAndCapitalize } from "./Utils";
+import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm } from "./Utils";
 
 const weatherMultiple = (globalOptions, weather, type) => {
     return weatherBoosts[weather].find(item => item === capitalize(type.toLowerCase())) ? STAB_MULTIPLY(globalOptions) : 1;
@@ -771,9 +771,13 @@ export const counterPokemon = (globalOptions, def, types, combat, combatList) =>
     let dataList = [];
     combatList.forEach(value => {
         if (value.quickMoves[0] !== "STRUGGLE" && value.cinematicMoves[0] !== "STRUGGLE") {
-            let pokemon = Object.values(pokemonData).find(item => item.num === value.id && convertName(item.name).includes(value.name));
+            let pokemon = Object.values(pokemonData).find(item => {
+                const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()));
+                // if (item.num === value.id && item.slug !== name) console.log(name, item.slug)
+                return item.slug === name;
+            });
             if (pokemon === undefined) {
-                console.log(value.id, value.name);
+                console.log(value.id, value.name, convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase())));
                 return;
             }
             let stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);

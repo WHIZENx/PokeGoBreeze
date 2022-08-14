@@ -23,7 +23,7 @@ const Type = (props) => {
                             :
                             <div>
                                 <img className={props.shadow ? "filter-shadow" : ""} width={36} height={36} alt='img-pokemon' src={APIService.getTypeSprite(value)}/>
-                                <span className={'caption'+(props.shadow ? " text-shadow" : "")} style={{color: props.color ?? 'black'}}>{capitalize(value)}</span>
+                                <span className={'caption'+(props.shadow ? " text-shadow" : "")} style={{color: props.color ?? 'black'}}>{capitalize(value.toLowerCase())}</span>
                             </div>
                         }
                     </div>

@@ -130,6 +130,10 @@ ul {
     margin-top: 10px !important;
 }
 
+.element-bottom {
+    padding-bottom: 15px !important;
+}
+
 .img-search {
     margin: 0 5px;
 }

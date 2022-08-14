@@ -236,7 +236,7 @@ const Pokemon = (props) => {
                     </Fragment>
                     }
                 </div>
-                <div className={'position-relative poke-container'+(props.isSearch ? "" : " container")}>
+                <div className={'element-bottom position-relative poke-container'+(props.isSearch ? "" : " container")}>
                     <div className="w-100 text-center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
                         {Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName) &&
                         !Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName).releasedGO &&

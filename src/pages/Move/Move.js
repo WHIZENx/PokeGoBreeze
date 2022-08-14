@@ -95,7 +95,7 @@ const Move = (props) => {
     return (
         <Fragment>
             {move &&
-            <div className={'poke-container'+(props.id ? "" : " container")}>
+            <div className={'element-bottom poke-container'+(props.id ? "" : " container")}>
                 <div className="h-100 head-box d-flex flex-wrap align-items-center">
                     <h1 className="text-move"><b>{splitAndCapitalize(move.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</b></h1>
                     <TypeBar type={move.type}/>
