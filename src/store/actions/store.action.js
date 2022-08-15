@@ -1,3 +1,4 @@
+import { TOKEN_PRIVATE_REPO } from '../..';
 import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat, optionPokemonCombat, optionSettings, optionLeagues } from '../../options/options';
 
 export const LOAD_STORE = "LOAD_STORE";
@@ -7,7 +8,7 @@ export const loadStore = (dispatch, axios, source) => {
     Promise.all([
         axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json', {cancelToken: source.token}),
         axios.getFetchUrl("https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/master?recursive=1", {
-            headers: { Authorization: `token ${process.env.TOKEN_PRIVATE_REPO}` },
+            headers: { "Authorization": `token ${TOKEN_PRIVATE_REPO()}` },
             cancelToken: source.token
         })
       ]).then(([gm, assets]) => {

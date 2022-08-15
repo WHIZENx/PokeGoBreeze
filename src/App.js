@@ -47,6 +47,7 @@ const App = () => {
     const source = cancelToken.source();
     if (data.data) dispatch(hideSpinner());
     else {
+      console.log(process.env.VERCEL_ENV)
       loadStore(dispatch, axios, source);
       dispatch(showSpinner());
     }

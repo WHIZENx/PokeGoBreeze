@@ -13,6 +13,10 @@ import { SnackbarProvider } from 'notistack';
 import rootReducer from './store/reducers';
 import { composeWithDevTools } from '@redux-devtools/extension';
 
+export const TOKEN_PRIVATE_REPO = () => {
+  return process.env.TOKEN_PRIVATE_REPO;
+}
+
 const devTools =
   process.env.NODE_ENV === "production"
     ? applyMiddleware(thunk)
