@@ -167,13 +167,6 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     }, []);
 
     useEffect(() => {
-        // const fetchEvolution = async () => {
-        //     const data = (await APIService.getFetchUrl(evolution_url)).data;
-        //     setArrEvoList([]);
-        //     if (forme.form_name !== "gmax") getEvoChain([data.chain]);
-        //     else getGmaxChain(id, forme);
-        // }
-
         const fetchEvolutionJSON = () => {
             if (forme.form_name !== "gmax") getEvoChainJSON(id, forme);
             else getGmaxChain(id, forme);

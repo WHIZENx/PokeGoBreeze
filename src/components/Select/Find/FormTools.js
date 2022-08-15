@@ -8,6 +8,7 @@ import { RAID_BOSS_TIER } from "../../../util/Constants";
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import sta_logo from '../../../assets/stamina.png';
+import hp_logo from '../../../assets/hp.png';
 
 import pokemonData from '../../../data/pokemon.json';
 
@@ -122,7 +123,7 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
                             <td className="text-center">{statSTA ? Math.floor(statSTA.stamina/RAID_BOSS_TIER[tier].CPm) : 0}</td>
                         </tr>
                         <tr>
-                            <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={sta_logo}/>HP</td>
+                            <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={hp_logo}/>HP</td>
                             <td className="text-center">{RAID_BOSS_TIER[tier].sta}</td>
                         </tr>
                     </tbody>

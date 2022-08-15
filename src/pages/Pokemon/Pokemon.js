@@ -1,7 +1,6 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import APIService from "../../services/API.service";
 
-import loading from '../../assets/loading.png';
 import './Pokemon.css';
 
 import { convertArrStats, splitAndCapitalize } from '../../util/Utils';
@@ -21,9 +20,12 @@ import pokeListName from '../../data/pokemon_names.json';
 import PokemonModel from "../../components/Info/Assets/PokemonModel";
 import Error from "../Error/Error";
 import { Alert } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { hideSpinner, showSpinner } from "../../store/actions/spinner.action";
 
 const Pokemon = (props) => {
 
+    const dispatch = useDispatch();
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const maxPokemon = Object.keys(pokeListName).length;
@@ -44,7 +46,6 @@ const Pokemon = (props) => {
     const [isFound, setIsFound] = useState(true);
 
     const [onChangeForm, setOnChangeForm] = useState(false);
-    const [spinner, setSpinner] = useState(false);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -53,7 +54,6 @@ const Pokemon = (props) => {
     }, []);
 
     const fetchMap = useCallback(async (data) => {
-        setSpinner(true);
         let dataPokeList = [];
         let dataFromList = [];
         await Promise.all(data.varieties.map(async (value, index) => {
@@ -113,6 +113,7 @@ const Pokemon = (props) => {
     }, [searchParams, setSearchParams, params.id]);
 
     const queryPokemon = useCallback((id) => {
+        dispatch(showSpinner());
         APIService.getPokeSpicies(id)
         .then(res => {
             setPokeRatio(getRatioGender(res.data.id));
@@ -123,23 +124,13 @@ const Pokemon = (props) => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
             if (params.id) document.title = `#${params.id} - Not Found`;
             setIsFound(false);
+            dispatch(hideSpinner());
         });
-    }, [enqueueSnackbar, getRatioGender, fetchMap, params.id]);
+    }, [dispatch, enqueueSnackbar, getRatioGender, fetchMap, params.id]);
 
     useEffect(() => {
         const id = params.id ? params.id.toLowerCase() : props.id;
         queryPokemon(id);
-        // if (!initialize.current) {
-        //     setStats(sortStatsPokemon(convertArrStats()));
-        //     // APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
-        //     // .then(res => {
-        //         // setStats(sortStatsPokemon(convertArrStats(res.data)));
-        //         // setDataPri(res.data);
-        //     //     return APIService.getPokeJSON('released_pokemon.json');
-        //     // })
-        //     // .finally(initialize.current = true);
-        //     initialize.current = true;
-        // }
     }, [params.id, props.id, queryPokemon, reForm]);
 
     const getNumGen = (url) => {
@@ -204,8 +195,6 @@ const Pokemon = (props) => {
                     </Fragment>
                     :
                     <Fragment>
-                    {props.prev && props.next ?
-                    <Fragment>
                     {data.id > 1 && <div title="Previous Pokémon" className={`prev-block col${data.id < maxPokemon-1 ? "-6" : ""}`} style={{padding:0}}>
                         <div className="d-flex justify-content-start align-items-center" onClick={() => props.onDecId()} title={`#${data.id-1} ${splitAndCapitalize(pokeListName[data.id-1].name, "-", " ")}`}>
                             <div style={{cursor: "pointer"}}>
@@ -243,21 +232,9 @@ const Pokemon = (props) => {
                         </div>
                     </div>}
                     </Fragment>
-                    :
-                    <div className='d-flex justify-content-center align-items-center' style={{columnGap: 10}}>
-                        <img className="loading" width={20} height={20} alt='img-pokemon' src={loading}/>
-                        <span className='caption text-black' style={{fontSize: 14}}><b>Loading...</b></span>
-                    </div>
-                    }
-                    </Fragment>
                     }
                 </div>
                 <div className={'position-relative poke-container'+(props.isSearch ? "" : " container")}>
-                    <div className='position-fixed loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
-                    <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
-                        <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
-                        <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
-                    </div>
                     <div className="w-100 text-center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
                         {Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName) &&
                         !Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName).releasedGO &&
@@ -365,7 +342,6 @@ const Pokemon = (props) => {
                         </div>
                     </div>
                     <Form
-                        setSpinner={setSpinner}
                         onChangeForm={onChangeForm}
                         setOnChangeForm={setOnChangeForm}
                         onSetPrev={props.onSetPrev}

@@ -16,12 +16,14 @@ import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { useSnackbar } from "notistack";
 
-import loading from '../../../assets/loading.png';
 import { Link } from "react-router-dom";
 import { marks, PokeGoSlider } from "../../../util/Utils";
+import { useDispatch } from "react-redux";
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
 
 const FindBattle = () => {
 
+    const dispatch = useDispatch();
     const [id, setId] = useState(1);
     const [name, setName] = useState('Bulbasaur');
     const [form, setForm] = useState(null);
@@ -40,7 +42,6 @@ const FindBattle = () => {
     const [evoChain, setEvoChain] = useState([]);
     const [bestInLeague, setBestInLeague] = useState([]);
 
-    const [spinner, setSpinner] = useState(false);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -114,20 +115,20 @@ const FindBattle = () => {
         if (bestLeague.length === 0) return setBestInLeague([currBastStats]);
         if (currBastStats.ratio >= 90) bestLeague.push(currBastStats);
         setBestInLeague(bestLeague.sort((a,b) => a.maxCP - b.maxCP));
-        setSpinner(false);
-    }, [ATKIv, DEFIv, STAIv, getEvoChain, id]);
+        dispatch(hideSpinner())
+    }, [dispatch, ATKIv, DEFIv, STAIv, getEvoChain, id]);
 
     const onSearchStatsPoke = useCallback((e) => {
         e.preventDefault();
         if (searchCP < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
         const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
         if (result.level == null) return enqueueSnackbar('At CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' impossible found in '+name, { variant: 'error' });
-        setSpinner(true);
+        dispatch(showSpinner())
         enqueueSnackbar('Search success at CP: '+result.CP+' and IV '+result.IV.atk+'/'+result.IV.def+'/'+result.IV.sta+' found in '+name+" "+splitAndCapitalize(form.form.form_name, "-", " "), { variant: 'success' });
         setTimeout(() => {
             searchStatsPoke(result.level);
         }, 500);
-    }, [searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA, form]);
+    }, [dispatch, searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA, form]);
 
     useEffect(() => {
         document.title = "Search Battle Leagues Stats - Tool";
@@ -181,11 +182,6 @@ const FindBattle = () => {
 
     return (
         <Fragment>
-            <div className='loading-group-spin position-fixed' style={{display: !spinner ? "none" : "block"}}></div>
-            <div className="loading-spin text-center position-fixed" style={{display: !spinner ? "none" : "block"}}>
-                <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
-                <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
-            </div>
             <div className="container">
 
                 <Find hide={true} clearStats={clearArrStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setId={setId} setName={setName} setForm={setForm}/>

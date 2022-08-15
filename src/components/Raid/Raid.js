@@ -98,10 +98,6 @@ const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBo
                                 <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={sta_logo}/>STA</td>
                                 <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta/RAID_BOSS_TIER[tier].CPm)}</td>
                             </tr>
-                            <tr>
-                                <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={sta_logo}/>HP</td>
-                                <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta)}</td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>

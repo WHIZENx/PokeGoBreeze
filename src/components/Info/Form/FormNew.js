@@ -15,9 +15,10 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Raid from '../../Raid/Raid';
+import { useDispatch, useSelector } from 'react-redux';
+import { hideSpinner } from '../../../store/actions/spinner.action';
 
 const Form = ({
-    setSpinner,
     onChangeForm,
     setOnChangeForm,
     onSetPrev,
@@ -39,6 +40,9 @@ const Form = ({
     onSetIDPoke,
     paramForm
 }) => {
+
+    const dispatch = useDispatch();
+    const spinner = useSelector((state) => state.spinner);
 
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -90,17 +94,17 @@ const Form = ({
         return form.toLowerCase().includes(formStats.toLowerCase());
     }, []);
 
-    const filterFormList = useCallback((stats, id) => {
+    const filterFormList = useCallback((formName, stats, id, formLength) => {
         const filterId = stats.filter(item => item.id === id);
         const firstFilter = stats.find(item => item.id === id &&
-            currForm.form.form_name.toLowerCase() === item.form.toLowerCase());
+            formName.toLowerCase() === item.form.toLowerCase());
         if (firstFilter) return firstFilter;
         const filterForm = stats.find(item => item.id === id &&
-            filterFormName(currForm.form.form_name, item.form));
-        if (filterId.length === 1 && formList.length === 1 && !filterForm) return filterId[0];
-        else if (filterId.length === formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
+            filterFormName(formName, item.form));
+        if (filterId.length === 1 && formLength === 1 && !filterForm) return filterId[0];
+        else if (filterId.length === formLength && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
         else return filterForm;
-    }, [currForm, formList, filterFormName]);
+    }, [filterFormName]);
 
     useEffect(() => {
         if (!region && formName) {
@@ -113,29 +117,35 @@ const Form = ({
     }, [formList, region, setRegion, species.generation.url, formName])
 
     useEffect(() => {
+        if (currForm && pokeID) {
+            dispatch(hideSpinner());
+        }
+    }, [currForm, pokeID, dispatch]);
+
+    useEffect(() => {
+        if (currForm && pokeID && onSetPrev && onSetNext && !spinner) {
+            onSetPrev(true);
+            onSetNext(true);
+        }
+    }, [currForm, pokeID, onSetNext, onSetPrev, spinner]);
+
+    useEffect(() => {
+        if (currForm && currForm.form && pokeID) {
+            setStatATK(filterFormList(currForm.form.form_name, stats.attack.ranking, id_default, formList.length));
+            setStatDEF(filterFormList(currForm.form.form_name, stats.defense.ranking, id_default, formList.length));
+            setStatSTA(filterFormList(currForm.form.form_name, stats.stamina.ranking, id_default, formList.length));
+            setPokeID(findDefaultForm() ? currForm.form.id : findFirst().form.id);
+        }
+    }, [currForm, pokeID, filterFormList, findDefaultForm, findFirst, id_default,
+        stats.attack.ranking, stats.defense.ranking, stats.stamina.ranking, formList.length]);
+
+    useEffect(() => {
         if (!onChangeForm || (!currForm && id_default && pokeData && formList.length > 0 && pokeData.length > 0)) {
             setCurrForm(findForm() ?? findFirst());
             setPokeID(findFirst() ? findFirst().form.id : id_default);
             setDataPoke(pokeData.find(item => item.id === id_default));
         }
-        if (currForm && dataPoke) {
-
-            setStatATK(filterFormList(stats.attack.ranking, id_default));
-            setStatDEF(filterFormList(stats.defense.ranking, id_default));
-            setStatSTA(filterFormList(stats.stamina.ranking, id_default));
-            setPokeID(findDefaultForm() ? currForm.form.id : findFirst().form.id);
-            if (setSpinner) setTimeout(() => {setSpinner(false);}, 1000);
-            if (onSetPrev && onSetNext) {
-                setTimeout(() => {
-                    onSetPrev(true);
-                    onSetNext(true);
-                }, 500);
-            }
-
-        }
-    }, [filterFormList, currForm, dataPoke, findForm, findFirst, findDefaultForm, pokeID, setPokeID, species, setRegion,
-        id_default, onSetNext, onSetPrev, stats.attack.ranking, stats.defense.ranking, stats.stamina.ranking,
-        formList.length, onChangeForm, pokeData, setSpinner])
+    }, [currForm, findForm, findFirst, setPokeID, id_default, formList.length, onChangeForm, pokeData])
 
     const changeForm = (name, form) => {
         if (setOnChangeForm) setOnChangeForm(true);

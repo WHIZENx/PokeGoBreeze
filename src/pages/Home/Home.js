@@ -79,8 +79,6 @@ const Home = () => {
     useEffect(() => {
         const fetchPokemon = async () => {
             if (pokeList.length === 0) {
-                // const result = await Promise.all([...Array(startPokemon).keys()].map(async (n) => (await APIService.getPokeInfo(n+1)).data));
-                // let result = Object.values((await APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')).data);
                 let result = Object.values(pokemonData);
                 result = result.map(item => {
                     let stats = calculateStatsByTag(item.baseStats, item.forme);

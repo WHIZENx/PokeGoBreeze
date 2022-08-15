@@ -28,9 +28,12 @@ import def_logo from '../../../assets/defense.png';
 import CircleBar from "../../../components/Sprites/ProgressBar/Circle";
 import ProgressBar from "../../../components/Sprites/ProgressBar/Bar";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 
 const Battle = () => {
 
+    const dispatch = useDispatch();
     const params = useParams();
     const navigate = useNavigate();
 
@@ -423,6 +426,7 @@ const Battle = () => {
 
     useEffect(() => {
         const fetchPokemon = async () => {
+            dispatch(showSpinner());
             clearData();
             let file = (await APIService.getFetchUrl(APIService.getRankingFile("all", parseInt(league), "overall"))).data;
 
@@ -451,9 +455,10 @@ const Battle = () => {
                 }
             });
             setData(file)
+            dispatch(hideSpinner());
         }
         fetchPokemon();
-    }, [league, clearData])
+    }, [dispatch, league, clearData])
 
     const clearDataPokemonCurr = (removeCMoveSec) => {
         if (removeCMoveSec) {

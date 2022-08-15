@@ -28,12 +28,6 @@ const Find = (props) => {
 
     useEffect(() => {
         if (!initialize.current) {
-            // APIService.getFetchUrl('https://itsjavi.com/pokemon-assets/assets/data/pokemon.json')
-            // .then(res => {
-            //     setStats(sortStatsPokemon(convertArrStats(res.data)));
-            //     setDataPri(res.data);
-            // })
-            // .finally(initialize.current = true);
             setDataPri(pokemonData);
             initialize.current = true
         }

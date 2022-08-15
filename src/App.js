@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { SnackbarProvider } from 'notistack';
+
 import './App.css';
 
 import NavbarComponent from './components/Navbar';
@@ -29,15 +29,13 @@ import PVPHome from './pages/PVP/Home';
 import TeamPVP from './pages/PVP/Teams/PVP';
 import Battle from './pages/PVP/Battle/Battle';
 
+import Spinner from './components/Spinner/Spinner';
+import { Fragment } from 'react';
+
 const App = () => {
 
     return (
-      <SnackbarProvider
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
-      }}
-      maxSnack={1}>
+      <Fragment>
         <BrowserRouter>
             <NavbarComponent />
             <Routes>
@@ -68,7 +66,8 @@ const App = () => {
             </Routes>
             {/* <FooterComponent /> */}
         </BrowserRouter>
-      </SnackbarProvider>
+        <Spinner />
+      </Fragment>
     );
 }
 

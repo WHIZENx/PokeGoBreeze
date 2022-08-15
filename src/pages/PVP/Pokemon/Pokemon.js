@@ -13,23 +13,25 @@ import { calculateCP, calculateStatsByTag, calStatsProd, sortStatsPokemon } from
 import { computeBgType, findAssetForm } from '../../../util/Compute';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
-import loading from '../../../assets/loading.png';
 import Error from '../../Error/Error';
 import { leaguesRanking } from '../../../util/Constants';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
+import { useDispatch } from 'react-redux';
+import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 
 const PokemonPVP = () => {
 
+    const dispatch = useDispatch();
     const params = useParams();
 
     const [rankingPoke, setRankingPoke] = useState(null);
     const storeStats = useRef(null);
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
-    const [spinner, setSpinner] = useState(true);
     const [found, setFound] = useState(true);
 
     useEffect(() => {
         const fetchPokemon = async () => {
+            dispatch(showSpinner());
             try {
                 const cp = parseInt(params.cp);
                 const paramName = params.pokemon.replaceAll("-", "_").toLowerCase();
@@ -110,10 +112,10 @@ const PokemonPVP = () => {
             } catch (e) {
                 setFound(false);
             }
-            setSpinner(false);
+            dispatch(hideSpinner());
         }
         fetchPokemon();
-    }, [params.cp, params.type, params.pokemon]);
+    }, [dispatch, params.cp, params.type, params.pokemon]);
 
     const renderLeague = () => {
         const league = leaguesRanking.find(item => item.id === "all" && item.cp === parseInt(params.cp))
@@ -142,11 +144,6 @@ const PokemonPVP = () => {
         <Error />
         :
         <Fragment>
-        <div className='position-fixed loading-group-spin' style={{display: spinner ? "block" : "none"}}></div>
-        <div className="position-fixed loading-spin text-center" style={{display: spinner ? "block" : "none"}}>
-            <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
-            <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
-        </div>
         {rankingPoke &&
         <Fragment>
         <div style={{backgroundImage: computeBgType(rankingPoke.pokemon.types, rankingPoke.shadow, rankingPoke.purified, 0.8), paddingTop: 15, paddingBottom: 15}}>
@@ -154,13 +151,13 @@ const PokemonPVP = () => {
             {renderLeague()}
             <hr />
             <div className='ranking-link-group' style={{paddingTop: 10}}>
-                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'overall' ? " active" : "")} to={`/pvp/${params.cp}/overall/${params.pokemon}`}>Overall</Link>
-                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'leads' ? " active" : "")} to={`/pvp/${params.cp}/leads/${params.pokemon}`}>Leads</Link>
-                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'closers' ? " active" : "")} to={`/pvp/${params.cp}/closers/${params.pokemon}`}>Closers</Link>
-                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'switches' ? " active" : "")} to={`/pvp/${params.cp}/switches/${params.pokemon}`}>Switches</Link>
-                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'chargers' ? " active" : "")} to={`/pvp/${params.cp}/chargers/${params.pokemon}`}>Chargers</Link>
-                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'attackers' ? " active" : "")} to={`/pvp/${params.cp}/attackers/${params.pokemon}`}>Attackers</Link>
-                <Link onClick={() => setSpinner(true)} className={"btn btn-primary"+(params.type.toLowerCase() === 'consistency' ? " active" : "")} to={`/pvp/${params.cp}/consistency/${params.pokemon}`}>Consistency</Link>
+                <Link className={"btn btn-primary"+(params.type.toLowerCase() === 'overall' ? " active" : "")} to={`/pvp/${params.cp}/overall/${params.pokemon}`}>Overall</Link>
+                <Link className={"btn btn-primary"+(params.type.toLowerCase() === 'leads' ? " active" : "")} to={`/pvp/${params.cp}/leads/${params.pokemon}`}>Leads</Link>
+                <Link className={"btn btn-primary"+(params.type.toLowerCase() === 'closers' ? " active" : "")} to={`/pvp/${params.cp}/closers/${params.pokemon}`}>Closers</Link>
+                <Link className={"btn btn-primary"+(params.type.toLowerCase() === 'switches' ? " active" : "")} to={`/pvp/${params.cp}/switches/${params.pokemon}`}>Switches</Link>
+                <Link className={"btn btn-primary"+(params.type.toLowerCase() === 'chargers' ? " active" : "")} to={`/pvp/${params.cp}/chargers/${params.pokemon}`}>Chargers</Link>
+                <Link className={"btn btn-primary"+(params.type.toLowerCase() === 'attackers' ? " active" : "")} to={`/pvp/${params.cp}/attackers/${params.pokemon}`}>Attackers</Link>
+                <Link className={"btn btn-primary"+(params.type.toLowerCase() === 'consistency' ? " active" : "")} to={`/pvp/${params.cp}/consistency/${params.pokemon}`}>Consistency</Link>
             </div>
             <div className="w-100 ranking-info element-top">
                 <div className="d-flex flex-wrap align-items-center justify-content-center" style={{gap: '2rem'}}>
