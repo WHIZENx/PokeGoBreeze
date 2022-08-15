@@ -156,8 +156,18 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
         else curr.push([formatEvoChain(pokemon)]);
         getNextEvoChainJSON(pokemon.evos, evo);
         const result = prevEvo.concat(curr).concat(evo);
-
-        return setArrEvoList(result);
+        Promise.all(result.map(async poke => {
+            return Promise.all(poke.map(async value => {
+                const url = (await APIService.getFetchUrl(APIService.getPokemonAsset("pokemon-animation", "all", value.sprite, "gif"),
+                {
+                    headers: { Authorization: `token ${process.env.TOKEN_PRIVATE_REPO}` }
+                })).data.download_url;
+                return {...value, url: url}
+            }))
+        })).then(res => {
+            setArrEvoList(res);
+        });
+        // return setArrEvoList(result);
     }, [getPrevEvoChainJSON, getCurrEvoChainJSON, getNextEvoChainJSON]);
 
     const getGmaxChain = useCallback((id, form) => {
@@ -205,7 +215,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
     const renderImgGif = (value) => {
         return (
             <img className="pokemon-sprite" id="img-pokemon" alt="img-pokemon"
-            src={APIService.getPokemonAsset("pokemon-animation", "all", value.sprite, "gif")}
+            src={value.url}
             onError={(e) => {
                 e.onerror=null;
                 APIService.getFetchUrl(e.target.currentSrc)
