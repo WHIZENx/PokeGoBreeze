@@ -28,7 +28,6 @@ import { computeCandyBgColor, computeCandyColor } from "../../../util/Compute";
 import { OverlayTrigger } from "react-bootstrap";
 import PopoverConfig from "../../../components/Popover/PopoverConfig";
 import { useSelector } from "react-redux";
-import { TOKEN_PRIVATE_REPO } from "../../..";
 
 const theme = createTheme({
     palette: {
@@ -161,7 +160,7 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
             return Promise.all(poke.map(async value => {
                 const url = (await APIService.getFetchUrl(APIService.getPokemonAsset("pokemon-animation", "all", value.sprite, "gif"),
                 {
-                    headers: { Authorization: `token ${TOKEN_PRIVATE_REPO()}` }
+                    headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` }
                 })).data.download_url;
                 return {...value, url: url}
             }))
