@@ -34,6 +34,7 @@ import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadStore } from './store/actions/store.action';
 import { hideSpinner, showSpinner } from './store/actions/spinner.action';
+import APIService from './services/API.service';
 
 const App = () => {
 
@@ -41,12 +42,20 @@ const App = () => {
   const data = useSelector((state) => state.store);
 
   useEffect(() => {
+    const axios = APIService;
+    const cancelToken = axios.getAxios().CancelToken;
+    const source = cancelToken.source();
     if (data.data) dispatch(hideSpinner());
     else {
-      loadStore(dispatch);
+      loadStore(dispatch, axios, source);
       dispatch(showSpinner());
     }
-  }, [dispatch, data.data])
+
+    return () => {
+      source.cancel();
+      if (data.spinner) dispatch(hideSpinner());
+    }
+  }, [dispatch, data])
 
   return (
     <Fragment>

@@ -92,11 +92,16 @@ const TeamPVP = () => {
     }, [dataStore]);
 
     useEffect(() => {
+        const axios = APIService;
+        const cancelToken = axios.getAxios().CancelToken;
+        const source = cancelToken.source();
         const fetchPokemon = async () => {
             dispatch(showSpinner());
             try {
                 const cp = parseInt(params.cp);
-                let file = (await APIService.getFetchUrl(APIService.getTeamFile("analysis", params.serie, cp))).data;
+                let file = (await APIService.getFetchUrl(APIService.getTeamFile("analysis", params.serie, cp)), {
+                    cancelToken: source.token
+                }).data;
                 if (params.serie === "all") document.title = `PVP Teams - ${
                     cp === 500 ? "Little Cup" :
                     cp === 1500 ? "Great League" :
@@ -142,7 +147,12 @@ const TeamPVP = () => {
             dispatch(hideSpinner());
         }
         fetchPokemon();
-    }, [dispatch, params.cp, params.serie, mappingPokemonData])
+
+        return () => {
+            source.cancel();
+            if (dataStore.spinner) dispatch(hideSpinner());
+        }
+    }, [dispatch, params.cp, params.serie, dataStore.spinner, mappingPokemonData])
 
     const renderLeague = () => {
         const league = leaguesTeam.find(item => item.id === params.serie && item.cp === parseInt(params.cp))

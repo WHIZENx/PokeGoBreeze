@@ -28,10 +28,12 @@ import def_logo from '../../../assets/defense.png';
 import CircleBar from "../../../components/Sprites/ProgressBar/Circle";
 import ProgressBar from "../../../components/Sprites/ProgressBar/Bar";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner.action";
 
 const Battle = () => {
 
+    const dispatch = useDispatch();
     const dataStore = useSelector((state) => state.store.data);
     const params = useParams();
     const navigate = useNavigate();
@@ -428,38 +430,55 @@ const Battle = () => {
     }, []);
 
     useEffect(() => {
+        const axios = APIService;
+        const cancelToken = axios.getAxios().CancelToken;
+        const source = cancelToken.source();
         const fetchPokemon = async () => {
-            clearData();
-            let file = (await APIService.getFetchUrl(APIService.getRankingFile("all", parseInt(league), "overall"))).data;
+            try {
+                dispatch(showSpinner());
+                clearData();
+                let file = (await axios.getFetchUrl(axios.getRankingFile("all", parseInt(league), "overall"), {
+                    cancelToken: source.token
+                })).data;
+                document.title = `PVP Battle Simalator - ${
+                    parseInt(league) === 500 ? "Little Cup" :
+                    parseInt(league) === 1500 ? "Great League" :
+                    parseInt(league) === 2500 ? "Ultra League" :
+                    "Master League"}`;
 
-            document.title = `PVP Battle Simalator - ${
-                parseInt(league) === 500 ? "Little Cup" :
-                parseInt(league) === 1500 ? "Great League" :
-                parseInt(league) === 2500 ? "Ultra League" :
-                "Master League"}`;
+                pokemonData = Object.values(pokemonData);
+                file = file.filter(pokemon => !pokemon.speciesId.includes("shadow") && !pokemon.speciesId.includes("_xs")).map(item => {
+                    const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+                    const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
+                    const id = pokemon.num;
+                    const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
-            pokemonData = Object.values(pokemonData);
-            file = file.filter(pokemon => !pokemon.speciesId.includes("shadow") && !pokemon.speciesId.includes("_xs")).map(item => {
-                const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-                const pokemon = pokemonData.find(pokemon => pokemon.slug === name);
-                const id = pokemon.num;
-                const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+                    const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
-                const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
-
-                return {
-                    ...item,
-                    name: name,
-                    pokemon: pokemon,
-                    id: id,
-                    form: form,
-                    stats: stats
+                    return {
+                        ...item,
+                        name: name,
+                        pokemon: pokemon,
+                        id: id,
+                        form: form,
+                        stats: stats
+                    }
+                });
+                setData(file);
+            } catch (e) {
+                if (axios.getAxios().isCancel()) {
+                    console.log("cancel request!")
                 }
-            });
-            setData(file)
+            }
+            dispatch(hideSpinner());
         }
         fetchPokemon();
-    }, [league, clearData, dataStore.assets])
+
+        return () => {
+            source.cancel();
+            if (dataStore.spinner) dispatch(hideSpinner());
+        }
+    }, [dispatch, league, clearData, dataStore])
 
     const clearDataPokemonCurr = (removeCMoveSec) => {
         if (removeCMoveSec) {

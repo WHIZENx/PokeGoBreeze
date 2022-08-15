@@ -26,19 +26,31 @@ class APIService {
 
     constructor() {
         this.date = new Date();
+        this.axios = axios;
     }
 
     getAxios() {
-        return axios;
+        return this.axios;
     }
 
-    getAPI(options) {
-        axios.defaults.withCredentials = true;
-        return axios(options);
+    getFetchUrl(url, options = null) {
+        return this.axios.get(url, options);
     }
 
-    getFetchUrl(url) {
-        return axios.get(url);
+    getPokeInfo(value, options = null) {
+        return this.axios.get(`${POKE_API_URL}pokemon/${value}`, options);
+    }
+
+    getPokeSpicies(value, options = null) {
+        return this.axios.get(`${POKE_API_URL}pokemon-species/${value}`, options);
+    }
+
+    getPokeForm(value, options = null) {
+        return this.axios.get(`${POKE_API_URL}pokemon-form/${value}`, options);
+    }
+
+    getPokeJSON(path, options = null) {
+        return this.axios.get(`${POGO_API_URL}${path}`, options);
     }
 
     getPokemonModel(item) {
@@ -56,22 +68,6 @@ class APIService {
 
     getPokemonGoIcon(icon) {
         return `${POGO_ASSET_API_URL}App Icons/${icon}.png`;
-    }
-
-    getPokeInfo(value) {
-        return axios.get(`${POKE_API_URL}pokemon/${value}`);
-    }
-
-    getPokeSpicies(value) {
-        return axios.get(`${POKE_API_URL}pokemon-species/${value}`);
-    }
-
-    getPokeForm(value) {
-        return axios.get(`${POKE_API_URL}pokemon-form/${value}`);
-    }
-
-    getPokeJSON(path) {
-        return axios.get(`${POGO_API_URL}${path}`);
     }
 
     getIconSprite(icon) {

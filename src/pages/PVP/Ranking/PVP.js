@@ -55,11 +55,16 @@ const RankingPVP = () => {
     }
 
     useEffect(() => {
+        const axios = APIService;
+        const cancelToken = axios.getAxios().CancelToken;
+        const source = cancelToken.source();
         const fetchPokemon = async () => {
             dispatch(showSpinner());
             try {
                 const cp = parseInt(params.cp);
-                let file = (await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type))).data;
+                let file = (await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type)), {
+                    cancelToken: source.token
+                }).data;
                 if (params.serie === "all") document.title = `PVP Ranking - ${
                     cp === 500 ? "Little Cup" :
                     cp === 1500 ? "Great League" :
@@ -130,6 +135,11 @@ const RankingPVP = () => {
             dispatch(hideSpinner());
         }
         fetchPokemon();
+
+        return () => {
+            source.cancel();
+            if (dataStore.spinner) dispatch(hideSpinner());
+        }
     }, [dispatch, params.serie, params.cp, params.type, dataStore]);
 
     const onSearch = (value) => {

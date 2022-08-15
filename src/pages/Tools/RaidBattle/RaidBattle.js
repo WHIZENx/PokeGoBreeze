@@ -123,7 +123,6 @@ const RaidBattle = () => {
 
     const clearData = () => {
         setResult([]);
-        // setTrainerBattle([[initDataPoke]]);
     }
 
     const clearDataTarget = () => {

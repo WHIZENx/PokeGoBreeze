@@ -1,13 +1,12 @@
-import APIService from "../../services/API.service";
 import { optionEvolution, optionSticker, optionPokemon, optionPokeImg, optionformSpecial, optionPokemonFamily, optionAssets, optionPokeSound, optionCombat, optionPokemonCombat, optionSettings, optionLeagues } from '../../options/options';
 
 export const LOAD_STORE = "LOAD_STORE";
 export const RESET_STORE = "RESET_STORE";
 
-export const loadStore = dispatch => {
+export const loadStore = (dispatch, axios, source) => {
     Promise.all([
-        APIService.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json'),
-        APIService.getFetchUrl("https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/master?recursive=1")
+        axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json', {cancelToken: source.token}),
+        axios.getFetchUrl("https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/master?recursive=1", {cancelToken: source.token})
       ]).then(([gm, assets]) => {
         const pokemon = optionPokemon(gm.data);
         const pokemonFamily = optionPokemonFamily(pokemon);

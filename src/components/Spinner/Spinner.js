@@ -15,7 +15,7 @@ const Spinner = () => {
                 <div className="loading-spin-container">
                     <div className="loading-spin text-center">
                         <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
-                        <span className='caption text-white text-shadow' style={{fontSize: 18}}><b>Loading...</b></span>
+                        <span className='caption text-white text-shadow' style={{fontSize: 18}}><b>Loading<span id='p1'>.</span><span id='p2'>.</span><span id='p3'>.</span></b></span>
                     </div>
                 </div>
             </div>

@@ -260,7 +260,7 @@ const Home = () => {
                                 <StyledTableCell align="center" component="td" colSpan={7} sx={{height: window.innerHeight/2}}>
                                     <div className='loading-group'>
                                         <img className="loading" width={64} height={64} alt='img-pokemon' src={loading}/>
-                                        <span className='caption text-black' style={{fontSize: 20}}><b>Loading...</b></span>
+                                        <span className='caption text-black' style={{fontSize: 20}}><b>Loading<span id='p1'>.</span><span id='p2'>.</span><span id='p3'>.</span></b></span>
                                     </div>
                                 </StyledTableCell>
                             </StyledTableRow>

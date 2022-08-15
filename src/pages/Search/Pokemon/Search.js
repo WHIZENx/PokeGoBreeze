@@ -29,17 +29,6 @@ const Search = () => {
     }, []);
 
     useEffect(() => {
-        // const fetchPokemon = async () => {
-        //     if (pokeList.length === 0) {
-        //         const res = await APIService.getPokeJSON('pokemon_names.json');
-        //         Object.entries(res.data).forEach(([key, value]) => {
-        //             pokeList.push({id: value.id, name: value.name, sprites: APIService.getPokeSprite(value.id)});
-        //         });
-        //         setPokemonList(pokeList);
-        //     }
-        // }
-        // fetchPokemon();
-
         if (pokeList.length === 0) {
             pokeList.push(...Object.values(pokeListName).filter(item => item.id > 0).map(item => { return {id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id)}}));
             setPokemonList(pokeList);

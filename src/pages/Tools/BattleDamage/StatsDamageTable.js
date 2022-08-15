@@ -12,7 +12,6 @@ import hp_logo from '../../../assets/hp.png';
 import { useSelector } from "react-redux";
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from "../../../util/Constants";
 
-// eslint-disable-next-line react/prop-types
 const StatsTable = ({setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA}) => {
 
     const globalOptions = useSelector((state) => state.store.data.options);

@@ -54,13 +54,12 @@ const Pokemon = (props) => {
         return Object.values(pokemonData).find(item => id === item.num).genderRatio;
     }, []);
 
-    const fetchMap = useCallback(async (data) => {
-        // setSpinner(true);
+    const fetchMap = useCallback(async (data, axios, source) => {
         let dataPokeList = [];
         let dataFromList = [];
         await Promise.all(data.varieties.map(async (value, index) => {
-            const poke_info = (await APIService.getFetchUrl(value.pokemon.url)).data;
-            const poke_form = await Promise.all(poke_info.forms.map(async (item) => (await APIService.getFetchUrl(item.url)).data));
+            const poke_info = (await axios.getFetchUrl(value.pokemon.url, {cancelToken: source.token})).data;
+            const poke_form = await Promise.all(poke_info.forms.map(async (item) => (await axios.getFetchUrl(item.url, {cancelToken: source.token})).data));
             dataPokeList.push(poke_info);
             dataFromList.push(poke_form);
         }));
@@ -114,12 +113,14 @@ const Pokemon = (props) => {
         setOnChangeForm(false);
     }, [searchParams, setSearchParams, params.id]);
 
-    const queryPokemon = useCallback((id) => {
+    const queryPokemon = useCallback((id, axios, source) => {
         dispatch(showSpinner());
-        APIService.getPokeSpicies(id)
+        axios.getPokeSpicies(id, {
+            cancelToken: source.token
+        })
         .then(res => {
             setPokeRatio(getRatioGender(res.data.id));
-            fetchMap(res.data);
+            fetchMap(res.data, axios, source);
             setData(res.data);
         })
         .catch(err => {
@@ -131,9 +132,17 @@ const Pokemon = (props) => {
     }, [dispatch, enqueueSnackbar, getRatioGender, fetchMap, params.id]);
 
     useEffect(() => {
+        const axios = APIService;
+        const cancelToken = axios.getAxios().CancelToken;
+        const source = cancelToken.source();
         const id = params.id ? params.id.toLowerCase() : props.id;
-        queryPokemon(id);
-    }, [params.id, props.id, queryPokemon, reForm]);
+        queryPokemon(id, axios, source);
+
+        return () => {
+            source.cancel();
+            if (dataStore.spinner) dispatch(hideSpinner());
+        }
+    }, [dispatch, dataStore.spinner, params.id, props.id, queryPokemon, reForm]);
 
     const getNumGen = (url) => {
         return "Gen " + url.split("/")[6]

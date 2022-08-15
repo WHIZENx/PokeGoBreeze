@@ -29,12 +29,17 @@ const PokemonPVP = () => {
     const [found, setFound] = useState(true);
 
     useEffect(() => {
+        const axios = APIService;
+        const cancelToken = axios.getAxios().CancelToken;
+        const source = cancelToken.source();
         const fetchPokemon = async () => {
             dispatch(showSpinner());
             try {
                 const cp = parseInt(params.cp);
                 const paramName = params.pokemon.replaceAll("-", "_").toLowerCase();
-                const data = (await APIService.getFetchUrl(APIService.getRankingFile("all", cp, params.type))).data
+                const data = (await APIService.getFetchUrl(APIService.getRankingFile("all", cp, params.type)), {
+                    cancelToken: source.token
+                }).data
                 .find(pokemon => pokemon.speciesId === paramName);
 
                 const name = convertNameRankingToOri(data.speciesId, data.speciesName);
@@ -114,6 +119,11 @@ const PokemonPVP = () => {
             dispatch(hideSpinner());
         }
         fetchPokemon();
+
+        return () => {
+            source.cancel();
+            if (dataStore.spinner) dispatch(hideSpinner());
+        }
     }, [dispatch, params.cp, params.type, params.pokemon, dataStore]);
 
     const renderLeague = () => {

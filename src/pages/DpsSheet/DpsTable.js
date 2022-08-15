@@ -520,11 +520,12 @@ const DpsTable = () => {
                 <div className='loading-group-spin-table' style={{display: !showSpinner ? "none" : "block"}}></div>
                 <div className="loading-spin-table text-center" style={{display: !showSpinner ? "none" : "block"}}>
                     <img className="loading" width={64} height={64} alt='img-pokemon' src={loadingImg}/>
-                    <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
+                    <span className='caption text-black' style={{fontSize: 18}}><b>Loading<span id='p1'>.</span><span id='p2'>.</span><span id='p3'>.</span></b></span>
                 </div>
                 <DataTable
                     columns={columns}
                     data={dataFilter}
+                    noDataComponent={null}
                     pagination
                     defaultSortFieldId={7}
                     defaultSortAsc={false}

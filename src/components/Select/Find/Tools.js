@@ -24,14 +24,14 @@ const Tools = (props) => {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    const fetchMap = useCallback(async (data) => {
+    const fetchMap = useCallback(async (data, axios, source) => {
         setFormList([]);
         setPokeData([]);
         let dataPokeList = [];
         let dataFromList = [];
         await Promise.all(data.varieties.map(async (value, index) => {
-            const poke_info = await APIService.getFetchUrl(value.pokemon.url);
-            const poke_form = await Promise.all(poke_info.data.forms.map(async (item) => (await APIService.getFetchUrl(item.url)).data));
+            const poke_info = await axios.getFetchUrl(value.pokemon.url, {cancelToken: source.token});
+            const poke_form = await Promise.all(poke_info.data.forms.map(async (item) => (await axios.getFetchUrl(item.url, {cancelToken: source.token})).data));
             dataPokeList.push(poke_info.data);
             dataFromList.push(poke_form);
         }));
@@ -64,10 +64,12 @@ const Tools = (props) => {
         }
     }, []);
 
-    const queryPokemon = useCallback((id) => {
-        APIService.getPokeSpicies(id)
+    const queryPokemon = useCallback((id, axios, source) => {
+        axios.getPokeSpicies(id, {
+            cancelToken: source.token
+        })
         .then(res => {
-            fetchMap(res.data);
+            fetchMap(res.data, axios, source);
             setData(res.data);
         })
         .catch(err => {
@@ -76,7 +78,14 @@ const Tools = (props) => {
     }, [enqueueSnackbar, fetchMap]);
 
     useEffect(() => {
-        queryPokemon(props.id);
+        const axios = APIService;
+        const cancelToken = axios.getAxios().CancelToken;
+        const source = cancelToken.source();
+        queryPokemon(props.id, axios, source);
+
+        return () => {
+            source.cancel();
+        }
     }, [props.id, queryPokemon]);
 
     const changeForm = (e) => {
@@ -151,7 +160,7 @@ const Tools = (props) => {
                     </Fragment>
                 :   <div className='loading-group vertical-center'>
                         <img className="loading" width={40} height={40} alt='img-pokemon' src={loading}/>
-                        <span className='caption text-black' style={{fontSize: 18}}><b>Loading...</b></span>
+                        <span className='caption text-black' style={{fontSize: 18}}><b>Loading<span id='p1'>.</span><span id='p2'>.</span><span id='p3'>.</span></b></span>
                     </div>
                 }
             </div>
