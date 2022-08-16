@@ -769,7 +769,7 @@ const Battle = () => {
     }
 
     return (
-        <div className="container element-top">
+        <div className="container element-top battle-body-container">
             <Form.Select onChange={(e) => {
                 navigate(`/pvp/battle/${parseInt(e.target.value)}`)
                 setOptions({...options, league: parseInt(e.target.value)})

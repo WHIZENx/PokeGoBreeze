@@ -288,6 +288,12 @@
     max-height: 80vh;
 }
 
+.battle-body-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .turn-battle {
     border-top: 1px solid lightgray;
     display: flex;
