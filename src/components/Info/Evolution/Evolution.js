@@ -155,7 +155,6 @@ const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, ev
         else curr.push([formatEvoChain(pokemon)]);
         getNextEvoChainJSON(pokemon.evos, evo);
         const result = prevEvo.concat(curr).concat(evo);
-
         return setArrEvoList(result);
     }, [getPrevEvoChainJSON, getCurrEvoChainJSON, getNextEvoChainJSON]);
 

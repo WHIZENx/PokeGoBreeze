@@ -19974,7 +19974,9 @@
             "RETURN"
         ],
         "ELITE_QUICK_MOVES": [],
-        "ELITE_CINEMATIC_MOVES": []
+        "ELITE_CINEMATIC_MOVES": [
+            "OBSTRUCT"
+        ]
     },
     {
         "ID": 863,
