@@ -465,11 +465,7 @@ const Battle = () => {
                     }
                 });
                 setData(file);
-            } catch (e) {
-                if (axios.getAxios().isCancel()) {
-                    console.log("cancel request!")
-                }
-            }
+            } catch (e) {}
             dispatch(hideSpinner());
         }
         fetchPokemon();
@@ -608,7 +604,7 @@ const Battle = () => {
 
     const overlappingNormal = (range, arr) => {
         const index = arr.filter(dom => dom.left <= xNormal.current).length;
-        console.log(index)
+        // console.log(index)
         if (index >= 0 && index < range) updateTimeine(index);
     }
 

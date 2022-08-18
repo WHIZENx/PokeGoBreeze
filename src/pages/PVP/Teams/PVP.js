@@ -141,7 +141,6 @@ const TeamPVP = () => {
                 });
                 setRankingData(file);
             } catch (e) {
-                console.log(e)
                 setFound(false);
             }
             dispatch(hideSpinner());
