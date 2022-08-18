@@ -1,12 +1,17 @@
 import React from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import logo from '../assets/pokedex.png';
+import { getTime } from '../util/Utils';
 
 import "./Navbar.css"
 
 const NavbarComponent = () => {
+
+    const dataStore = useSelector((state) => state.store);
+
     return (
         <Navbar collapseOnSelect bg="dark" expand="lg" variant="dark">
             <Link className="navbar-brand" to="/">
@@ -40,6 +45,11 @@ const NavbarComponent = () => {
                     <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>
                     <Link className="nav-link" to="/stickers">Stickers</Link>
                 </Nav>
+                {dataStore.timestamp &&
+                <Navbar.Text>
+                    <span className='text-white' style={{marginLeft: 10, marginRight: 10}}>Update: {getTime(dataStore.timestamp, true)}</span>
+                </Navbar.Text>
+                }
             </Navbar.Collapse>
         </Navbar>
     );

@@ -23,9 +23,13 @@ export const convertPVPRankings = (data, leagues) => {
         if (league !== "all") {
             item = leagues.find(item => item.iconUrl.includes(league));
             if (!item) {
+                item = leagues.find(item => item.title.replaceAll("_", "").includes(league.toUpperCase()));
+            }
+            if (!item) {
                 item = leagues.find(item => item.id.includes(league.toUpperCase()));
             }
         }
+
         let result = leagueModel();
         result.id = league;
         result.name = splitAndCapitalize(item ? item.title : league, "_", " ");
@@ -45,6 +49,9 @@ export const convertPVPTrain = (data, leagues) => {
         let item;
         if (league !== "all") {
             item = leagues.find(item => item.iconUrl.includes(league));
+            if (!item) {
+                item = leagues.find(item => item.title.replaceAll("_", "").includes(league.toUpperCase()));
+            }
             if (!item) {
                 item = leagues.find(item => item.id.includes(league.toUpperCase()));
             }

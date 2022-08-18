@@ -99,9 +99,9 @@ const TeamPVP = () => {
             dispatch(showSpinner());
             try {
                 const cp = parseInt(params.cp);
-                let file = (await APIService.getFetchUrl(APIService.getTeamFile("analysis", params.serie, cp)), {
+                let file = (await axios.getFetchUrl(axios.getTeamFile("analysis", params.serie, cp), {
                     cancelToken: source.token
-                }).data;
+                })).data;
                 if (params.serie === "all") document.title = `PVP Teams - ${
                     cp === 500 ? "Little Cup" :
                     cp === 1500 ? "Great League" :

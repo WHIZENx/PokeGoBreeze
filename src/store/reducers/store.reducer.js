@@ -1,20 +1,16 @@
 const inititaialize = {
     data: null,
-    timestamp: new Date()
+    timestamp: null
 }
 
 const StoreReducer = (state = inititaialize, action) => {
     switch (action.type) {
       case 'LOAD_STORE':
-        return {
-            ...state,
-            data: action.payload,
-            timestamp: new Date()
-        };
+        return action.payload;
       case 'RESET_STORE':
         return {
             ...state,
-            data: null
+            data: new Date()
         };
       default:
         return state;

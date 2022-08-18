@@ -37,7 +37,7 @@ const PokemonPVP = () => {
             try {
                 const cp = parseInt(params.cp);
                 const paramName = params.pokemon.replaceAll("-", "_").toLowerCase();
-                const data = (await APIService.getFetchUrl(APIService.getRankingFile("all", cp, params.type)), {
+                const data = (await axios.getFetchUrl(axios.getRankingFile("all", cp, params.type)), {
                     cancelToken: source.token
                 }).data
                 .find(pokemon => pokemon.speciesId === paramName);

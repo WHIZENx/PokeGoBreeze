@@ -7,6 +7,7 @@ export const RESET_STORE = "RESET_STORE";
 export const loadStore = (dispatch, axios, source) => {
     Promise.all([
         axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json', {cancelToken: source.token}),
+        axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/timestamp.txt', {cancelToken: source.token}),
         axios.getFetchUrl("https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/master?recursive=1", {
             headers: { "Authorization": `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
             cancelToken: source.token
@@ -15,7 +16,7 @@ export const loadStore = (dispatch, axios, source) => {
             headers: { "Authorization": `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
             cancelToken: source.token
         })
-      ]).then(([gm, assets, pvp]) => {
+      ]).then(([gm, timestamp, assets, pvp]) => {
 
         const pokemon = optionPokemon(gm.data);
         const pokemonFamily = optionPokemonFamily(pokemon);
@@ -30,6 +31,7 @@ export const loadStore = (dispatch, axios, source) => {
         dispatch({
             type: LOAD_STORE,
             payload: {
+                data: {
                     options: optionSettings(gm.data),
                     pokemon: pokemon,
                     evolution: optionEvolution(gm.data, pokemon, formSpecial),
@@ -42,6 +44,8 @@ export const loadStore = (dispatch, axios, source) => {
                         rankings: convertPVPRankings(pvpRank, league.data),
                         trains: convertPVPTrain(pvpTrain, league.data)
                     }
+                },
+                timestamp: timestamp.data
                 }
             });
       });
