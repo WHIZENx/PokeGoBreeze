@@ -9,7 +9,7 @@ import './Leagues.css';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize } from '../../util/Utils';
-// import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';
+import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -18,7 +18,8 @@ import { Modal, Button } from 'react-bootstrap';
 const Leagues = () => {
 
     const dataStore = useSelector((state) => state.store.data);
-    const [rank, setRank] = useState(1)
+    const [rank, setRank] = useState(1);
+    const [showData, setShowData] = useState(null);
 
     const getAssetPokeGo = (id, form) => {
         try {
@@ -43,12 +44,30 @@ const Leagues = () => {
 
     const [show, setShow] = useState(false);
 
-    const handleShow = (track, step) => {
-        setShow(true);
+    const handleShow = (type, track, step) => {
+        let result = [];
+        if (type === "pokemon") {
+            setShow(true);
+            Object.values(dataStore.leagues.season.rewards.pokemon).forEach(value => {
+                if (value.rank <= rank) {
+                    result.push(...value[track.toLowerCase()].map(item => {
+                        if (item.guaranteedLimited) {
+                            return {
+                                ...item,
+                                rank: value.rank
+                            }
+                        }
+                        return item;
+                    }))
+                }
+            })
+        }
+        setShowData(result.sort((a,b) => a.id-b.id));
     }
 
     const handleClose = () => {
         setShow(false);
+        setShowData(null);
     }
 
     return (
@@ -62,7 +81,7 @@ const Leagues = () => {
                     </span>
                 </div>
                 <div className='col-md-4 d-flex justify-content-end' style={{padding: 0}}>
-                <Form.Select onChange={(e) => setRank(e.target.value)} defaultValue={rank}>
+                <Form.Select onChange={(e) => setRank(parseInt(e.target.value))} defaultValue={rank}>
                     {Object.keys(dataStore.leagues.season.rewards.rank).map((value, index) => (
                         <option key={index} value={value}>Rank {value}</option>
                     ))
@@ -74,7 +93,7 @@ const Leagues = () => {
                 <div className='season-league'>
                     <div className='group-rank-league reward-league text-center'>
                         <div className='rank-header'>Season {dataStore.leagues.season.season}</div>
-                        <Badge color="primary" className='position-relative d-inline-block img-link' overlap="circular" badgeContent={null} sx={{paddingBottom: '0.5rem !important', maxWidth: 64}}>
+                        <Badge color="primary" className='position-relative d-inline-block img-link' overlap="circular" badgeContent={null} sx={{paddingTop: '1.5rem !important', paddingBottom: '0.5rem !important', maxWidth: 64}}>
                             <img className='pokemon-sprite-medium' style={{width: 64}} alt='img-pokemon' src={APIService.getPokeOtherLeague("BattleIconColor")}/>
                             <span className='caption text-black'>Free</span>
                         </Badge>
@@ -89,19 +108,19 @@ const Leagues = () => {
                             <div className='group-rank-league text-center'>
                                 <div className='rank-header'>Win Stack {value.step}</div>
                                 <Badge color="primary" className='position-relative d-inline-block img-link' overlap="circular" badgeContent={value.count} max={10000}
-                                sx={{paddingBottom: (value.type === "pokemon" || value.type === "itemLoot" ? '0 !important' : '1.5rem !important'), minWidth: 64}}>
+                                sx={{paddingBottom: (value.type === "pokemon" || value.type === "itemLoot" ? '0 !important' : '1.5rem !important'), paddingTop: '1.5rem !important', minWidth: 64}}>
                                     {value.type === "pokemon" &&
                                     <Fragment>
                                         <img className='pokemon-sprite-medium' style={{width: 64}} alt='img-pokemon' src={APIService.getIconSprite("ic_grass")}/>
                                         <span className='caption text-black'>Random Pokemon</span>
-                                        <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow("FREE", value.step)}/>
+                                        <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow(value.type, "FREE", value.step)}/>
                                     </Fragment>
                                     }
                                     {value.type === "itemLoot" &&
                                     <Fragment>
                                         <img className='pokemon-sprite-medium' style={{width: 64}} alt='img-pokemon' src={APIService.getIconSprite("btn_question_02_normal_white_shadow")}/>
                                         <span className='caption text-black'>Random Item</span>
-                                        <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow("FREE", value.step)}/>
+                                        <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow(value.type, "FREE", value.step)}/>
                                     </Fragment>
                                     }
                                     {value.type === "ITEM_RARE_CANDY" &&
@@ -130,14 +149,14 @@ const Leagues = () => {
                                     <Fragment>
                                         <img className='pokemon-sprite-medium' style={{width: 64}} alt='img-pokemon' src={APIService.getIconSprite("ic_grass")}/>
                                         <span className='caption text-black'>Random Pokemon</span>
-                                        <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow("PREMIUM", value.step)}/>
+                                        <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow(dataStore.leagues.season.rewards.rank[rank].premium[index].type, "PREMIUM", value.step)}/>
                                     </Fragment>
                                     }
                                     {dataStore.leagues.season.rewards.rank[rank].premium[index].type === "itemLoot" &&
                                     <Fragment>
                                         <img className='pokemon-sprite-medium' style={{width: 64}} alt='img-pokemon' src={APIService.getIconSprite("btn_question_02_normal_white_shadow")}/>
                                         <span className='caption text-black'>Random Item</span>
-                                        <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow("PREMIUM", value.step)}/>
+                                        <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow(dataStore.leagues.season.rewards.rank[rank].premium[index].type, "PREMIUM", value.step)}/>
                                     </Fragment>
                                     }
                                     {dataStore.leagues.season.rewards.rank[rank].premium[index].type === "ITEM_RARE_CANDY" &&
@@ -168,7 +187,7 @@ const Leagues = () => {
             <Accordion alwaysOpen style={{marginTop: 15}}>
                 {dataStore.leagues.data.map((value, index) => (
                     <Accordion.Item key={index} eventKey={index}>
-                        <Accordion.Header>
+                        <Accordion.Header className={dataStore.leagues.allowLeagues.includes(value.id) ? "league-opened" : ""}>
                             <div className='d-flex align-items-center' style={{columnGap: 10}}>
                                 <img alt='img-league' height={50} src={APIService.getAssetPokeGo(value.iconUrl)}/>
                                 <b className={value.enabled ? "" : "text-danger"}>{(value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title) ? splitAndCapitalize(value.id.replace("VS_","").toLowerCase(), "_", " ") : splitAndCapitalize(value.title.toLowerCase(), "_", " ")) +
@@ -268,16 +287,54 @@ const Leagues = () => {
                 }
             </Accordion>
 
-            <Modal show={show} onHide={handleClose} centered>
+            {showData &&
+            <Modal size="lg" show={show} onHide={handleClose} centered>
                 <Modal.Header closeButton>
-                <Modal.Title>Rank {rank}</Modal.Title>
+                <Modal.Title>
+                    <span>{rank > 20 &&
+                    <div className='combat-league'>
+                        <img className='main-combat-league' alt='img-pokemon' src={rankIconName(rank)}/>
+                        <span className='combat-center-league'>
+                            <img alt='img-league' height={24} src={rankIconCenterName(rank)}/>
+                        </span>
+                    </div>
+                    }</span>
+                    Rank {rank}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className='text-center'>
+                    <h5 style={{textDecoration: 'underline'}}>Random Pokemon</h5>
+                    {showData.filter(item => !item.guaranteedLimited).map((item, index) => (
+                        <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                            <div className="d-flex justify-content-center">
+                                <span style={{width: 64}}>
+                                    <img className='pokemon-sprite-medium filter-shadow-hover' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
+                                </span>
+                            </div>
+                            <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                        </Link>
+                    ))}
+                    {showData.filter(item => item.guaranteedLimited && item.rank === rank).length > 0 &&
+                    <Fragment>
+                        <hr />
+                        <h5 style={{textDecoration: 'underline'}}>Garanteed Pokemon in first time</h5>
+                        {showData.filter(item => item.guaranteedLimited && item.rank === rank).map((item, index) => (
+                        <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                            <div className="d-flex justify-content-center">
+                                <span style={{width: 64}}>
+                                    <img className='pokemon-sprite-medium filter-shadow-hover' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
+                                </span>
+                            </div>
+                            <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                        </Link>
+                    ))}
+                    </Fragment>
+                    }
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>Close</Button>
                 </Modal.Footer>
             </Modal>
+            }
         </div>
     )
 }

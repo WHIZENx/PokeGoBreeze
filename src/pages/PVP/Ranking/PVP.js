@@ -130,16 +130,12 @@ const RankingPVP = () => {
                 setRankingData(file);
                 setStoreStats(file.map(i => false));
             } catch (e) {
+                source.cancel();
                 setFound(false);
             }
             dispatch(hideSpinner());
         }
         fetchPokemon();
-
-        return () => {
-            source.cancel();
-            if (dataStore.spinner) dispatch(hideSpinner());
-        }
     }, [dispatch, params.serie, params.cp, params.type, dataStore]);
 
     const onSearch = (value) => {

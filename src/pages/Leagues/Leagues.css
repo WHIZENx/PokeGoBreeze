@@ -10,6 +10,10 @@
     margin: auto;
 }
 
+.league-opened .accordion-button.collapsed {
+    background-color: #e6ffe6;
+}
+
 .season-league {
     position: relative;
     white-space: nowrap;
@@ -114,20 +118,20 @@ li.unique-type ul {
 
 .combat-league {
     display: inline-block;
-    width: 20px;
+    width: 64px;
     position: relative;
     margin-right: 5px;
 }
 
 .combat-league img.main-combat-league {
     width: 100%;
-    height: 20px;
+    height: 64px;
     object-fit: contain;
 }
 
 .combat-center-league {
     position: absolute;
-    top: 40%;
-    left: 40%;
-    transform: translate(-30%, -40%);
+    top: 38%;
+    left: 49%;
+    transform: translate(-50%, -40%);
 }

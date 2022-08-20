@@ -50,11 +50,6 @@ const App = () => {
       loadStore(dispatch, axios, source);
       dispatch(showSpinner());
     }
-
-    return () => {
-      source.cancel();
-      if (data.spinner) dispatch(hideSpinner());
-    }
   }, [dispatch, data])
 
   return (

@@ -127,6 +127,7 @@ const Pokemon = (props) => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
             if (params.id) document.title = `#${params.id} - Not Found`;
             setIsFound(false);
+            source.cancel();
             dispatch(hideSpinner());
         });
     }, [dispatch, enqueueSnackbar, getRatioGender, fetchMap, params.id]);
@@ -137,12 +138,7 @@ const Pokemon = (props) => {
         const source = cancelToken.source();
         const id = params.id ? params.id.toLowerCase() : props.id;
         queryPokemon(id, axios, source);
-
-        return () => {
-            source.cancel();
-            if (dataStore.spinner) dispatch(hideSpinner());
-        }
-    }, [dispatch, dataStore.spinner, params.id, props.id, queryPokemon, reForm]);
+    }, [dispatch, params.id, props.id, queryPokemon, reForm]);
 
     const getNumGen = (url) => {
         return "Gen " + url.split("/")[6]

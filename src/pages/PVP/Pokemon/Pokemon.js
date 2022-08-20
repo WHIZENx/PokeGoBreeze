@@ -113,16 +113,12 @@ const PokemonPVP = () => {
                     purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec))
                 });
             } catch (e) {
+                source.cancel();
                 setFound(false);
             }
             dispatch(hideSpinner());
         }
         fetchPokemon();
-
-        return () => {
-            source.cancel();
-            if (dataStore.spinner) dispatch(hideSpinner());
-        }
     }, [dispatch, params.cp, params.type, params.pokemon, dataStore]);
 
     const renderLeague = () => {

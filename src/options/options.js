@@ -649,7 +649,8 @@ export const optionLeagues = (data, pokemon) => {
             start: seasons[seasons.length-3],
             end: seasons[seasons.length-2]
         },
-        rewards: rewards
+        rewards: rewards,
+        settings: data.find(item => item.templateId === `COMBAT_RANKING_SETTINGS_S${seasons.length-1}`).data.combatRankingProtoSettings.rankLevel
     }
 
     return result;

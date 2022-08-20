@@ -200,6 +200,8 @@
     white-space: nowrap;
     overflow-x: auto;
     margin: 10px;
+    display: flex;
+    column-gap: 10px;
 }
 
 .card-ranking {

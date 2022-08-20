@@ -465,15 +465,12 @@ const Battle = () => {
                     }
                 });
                 setData(file);
-            } catch (e) {}
+            } catch (e) {
+                source.cancel();
+            }
             dispatch(hideSpinner());
         }
         fetchPokemon();
-
-        return () => {
-            source.cancel();
-            if (dataStore.spinner) dispatch(hideSpinner());
-        }
     }, [dispatch, league, clearData, dataStore])
 
     const clearDataPokemonCurr = (removeCMoveSec) => {

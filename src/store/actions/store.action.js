@@ -48,6 +48,8 @@ export const loadStore = (dispatch, axios, source) => {
                 timestamp: timestamp.data
                 }
             });
+      }).catch(() => {
+        source.cancel();
       });
 };
 

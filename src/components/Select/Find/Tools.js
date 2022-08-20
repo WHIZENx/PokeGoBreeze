@@ -74,6 +74,7 @@ const Tools = (props) => {
         })
         .catch(err => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
+            source.cancel();
         });
     }, [enqueueSnackbar, fetchMap]);
 
@@ -82,10 +83,6 @@ const Tools = (props) => {
         const cancelToken = axios.getAxios().CancelToken;
         const source = cancelToken.source();
         queryPokemon(props.id, axios, source);
-
-        return () => {
-            source.cancel();
-        }
     }, [props.id, queryPokemon]);
 
     const changeForm = (e) => {
