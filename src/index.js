@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './App'
 import reportWebVitals from './reportWebVitals';
 
 import { Provider } from 'react-redux';
@@ -12,6 +12,8 @@ import { SnackbarProvider } from 'notistack';
 
 import rootReducer from './store/reducers';
 import { composeWithDevTools } from '@redux-devtools/extension';
+
+if (module.hot) module.hot.accept();
 
 const devTools =
   process.env.NODE_ENV === "production"

@@ -1,5 +1,5 @@
-import React, { Box } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Box } from "@mui/material";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
 
 import { marks, PokeGoSlider } from "../../../util/Utils";
@@ -9,7 +9,7 @@ import APIService from "../../../services/API.service";
 
 import Find from "../../../components/Select/Find/Find";
 
-const columnsStats = [
+export const columnsStats = [
     {
         name: 'Rank',
         selector: row => row.rank,

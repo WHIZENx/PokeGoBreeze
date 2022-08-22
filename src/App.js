@@ -1,4 +1,4 @@
-import React, { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import './App.css';
 
@@ -30,7 +30,7 @@ import TeamPVP from './pages/PVP/Teams/PVP';
 import Battle from './pages/PVP/Battle/Battle';
 
 import Spinner from './components/Spinner/Spinner';
-import { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadStore } from './store/actions/store.action';
 import { hideSpinner, showSpinner } from './store/actions/spinner.action';
