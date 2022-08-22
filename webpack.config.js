@@ -131,17 +131,7 @@ module.exports = {
             include: path.resolve(__dirname, 'src'),
             exclude: /node_modules/,
             use: [
-            {
-                loader: MiniCssExtractPlugin.loader,
-                options: {}
-            },
-            {
-                loader: 'css-loader',
-                options: {
-                    importLoaders: 0
-                }
-            },
-            'postcss-loader'
+                MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'
             ]
         },
         {
