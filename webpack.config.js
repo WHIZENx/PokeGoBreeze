@@ -1,11 +1,13 @@
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
+const manifest = require('./public/manifest.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProduction;
@@ -41,6 +43,10 @@ module.exports = {
             icons: {
                 favicons: true
             }
+        }),
+        new WebpackManifestPlugin({
+            fileName: './manifest.json',
+            seed: manifest
         })
     ],
     optimization: {
