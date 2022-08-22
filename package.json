@@ -42,11 +42,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js",
     "develop": "webpack-dev-server",
-    "build": "webpack --mode production --config webpack.config.js"
+    "deploy": "webpack --mode production --config webpack.config.js"
   },
   "eslintConfig": {
     "extends": [
