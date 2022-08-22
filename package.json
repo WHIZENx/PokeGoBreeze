@@ -46,7 +46,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js",
     "develop": "webpack-dev-server",
-    "build": "webpack -p --config webpack.config.js"
+    "build": "webpack --mode production --config webpack.config.js"
   },
   "eslintConfig": {
     "extends": [
