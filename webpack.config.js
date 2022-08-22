@@ -72,7 +72,7 @@ module.exports = {
     mode: isProduction ? 'production' : 'development',
     bail: isProduction,
     target: 'web',
-    devtool: 'cheap-module-source-map',
+    devtool: isProduction ? false : 'cheap-module-source-map',
     devServer: {
         static: [
             { directory: path.resolve(__dirname, 'dist') },

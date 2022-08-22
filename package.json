@@ -47,7 +47,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js",
     "develop": "webpack-dev-server",
-    "deploy": "webpack --mode production --config webpack.config.js"
+    "deploy": "webpack --mode production --config webpack.config.js",
+    "postbuild": "rimraf build/**/*.map"
   },
   "eslintConfig": {
     "extends": [
