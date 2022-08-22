@@ -36,7 +36,7 @@ module.exports = {
         }),
         new ESLintPlugin(),
         new WebpackFavicons({
-            src: 'public/logo192.png',
+            src: 'src/assets/pokedex.png',
             path: 'img',
             background: '#000',
             theme_color: '#000',
