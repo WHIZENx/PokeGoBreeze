@@ -53,7 +53,7 @@ module.exports = {
             fileName: './manifest.json',
             seed: manifest
         }),
-        new CleanWebpackPlugin(),
+        new CleanWebpackPlugin()
     ],
     optimization: {
         runtimeChunk: 'single',
@@ -92,9 +92,7 @@ module.exports = {
         minimizer: [
             new UglifyJSPlugin({
                 uglifyOptions: {
-                    compress: {
-                        warnings: false,
-                    },
+                    warnings: false,
                     output: {
                         comments: false,
                     },

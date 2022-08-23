@@ -134,7 +134,6 @@ const RankingPVP = () => {
                 setRankingData(file);
                 setStoreStats(file.map(i => false));
             } catch (e) {
-                console.log(e)
                 source.cancel();
                 setFound(false);
             }
