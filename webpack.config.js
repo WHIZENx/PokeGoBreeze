@@ -162,13 +162,13 @@ module.exports = {
             include: path.resolve(__dirname, 'src'),
             exclude: /node_modules/,
             use: [
-                isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
+                MiniCssExtractPlugin.loader,
                 {
                     loader: 'css-loader',
                     options: {
                         url: true,
                         importLoaders: 1,
-                        sourceMap: isDevelopment,
+                        sourceMap: true
                     }
                 },
                 {
