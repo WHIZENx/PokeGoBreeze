@@ -4,7 +4,7 @@ import { loadStore } from './store/actions/store.action';
 import { hideSpinner, showSpinner } from './store/actions/spinner.action';
 import APIService from './services/API.service';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import importedComponent from 'react-imported-component';
+// import importedComponent from 'react-imported-component';
 
 import './App.css';
 
@@ -37,97 +37,97 @@ import Battle from './pages/PVP/Battle/Battle';
 
 import Spinner from './components/Spinner/Spinner';
 
-const AsyncHome = importedComponent(
-    () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
-);
+// const AsyncHome = importedComponent(
+//     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
+// );
 
-const AsyncTypeEffect = importedComponent(
-    () => import(/* webpackChunkName:'TypeEffect' */ './pages/TypeEffect/TypeEffect')
-);
+// const AsyncTypeEffect = importedComponent(
+//     () => import(/* webpackChunkName:'TypeEffect' */ './pages/TypeEffect/TypeEffect')
+// );
 
-const AsyncWeather = importedComponent(
-    () => import(/* webpackChunkName:'Weather' */ './pages/Weather/Weather')
-);
+// const AsyncWeather = importedComponent(
+//     () => import(/* webpackChunkName:'Weather' */ './pages/Weather/Weather')
+// );
 
-const AsyncSearchPokemon = importedComponent(
-    () => import(/* webpackChunkName:'SearchPokemon' */ './pages/Search/Pokemon/Search')
-);
+// const AsyncSearchPokemon = importedComponent(
+//     () => import(/* webpackChunkName:'SearchPokemon' */ './pages/Search/Pokemon/Search')
+// );
 
-const AsyncSearchMove = importedComponent(
-    () => import(/* webpackChunkName:'SearchMove' */ './pages/Search/Move/Search')
-);
+// const AsyncSearchMove = importedComponent(
+//     () => import(/* webpackChunkName:'SearchMove' */ './pages/Search/Move/Search')
+// );
 
-const AsyncPokemon = importedComponent(
-    () => import(/* webpackChunkName:'Pokemon' */ './pages/Pokemon/Pokemon')
-);
+// const AsyncPokemon = importedComponent(
+//     () => import(/* webpackChunkName:'Pokemon' */ './pages/Pokemon/Pokemon')
+// );
 
-const AsyncFindTable = importedComponent(
-    () => import(/* webpackChunkName:'FindTable' */ './pages/Tools/FindTable/FindTable')
-);
+// const AsyncFindTable = importedComponent(
+//     () => import(/* webpackChunkName:'FindTable' */ './pages/Tools/FindTable/FindTable')
+// );
 
-const AsyncCalculateStats = importedComponent(
-    () => import(/* webpackChunkName:'CalculateStats' */ './pages/Tools/CalculateStats/CalculateStats')
-);
+// const AsyncCalculateStats = importedComponent(
+//     () => import(/* webpackChunkName:'CalculateStats' */ './pages/Tools/CalculateStats/CalculateStats')
+// );
 
-const AsyncDamage = importedComponent(
-    () => import(/* webpackChunkName:'Damage' */ './pages/Tools/BattleDamage/Damage')
-);
+// const AsyncDamage = importedComponent(
+//     () => import(/* webpackChunkName:'Damage' */ './pages/Tools/BattleDamage/Damage')
+// );
 
-const AsyncDpsTable = importedComponent(
-    () => import(/* webpackChunkName:'DpsTable' */ './pages/DpsSheet/DpsTable')
-);
+// const AsyncDpsTable = importedComponent(
+//     () => import(/* webpackChunkName:'DpsTable' */ './pages/DpsSheet/DpsTable')
+// );
 
-const AsyncMove = importedComponent(
-    () => import(/* webpackChunkName:'Move' */ './pages/Move/Move')
-);
+// const AsyncMove = importedComponent(
+//     () => import(/* webpackChunkName:'Move' */ './pages/Move/Move')
+// );
 
-const AsyncError = importedComponent(
-    () => import(/* webpackChunkName:'Error' */ './pages/Error/Error')
-);
+// const AsyncError = importedComponent(
+//     () => import(/* webpackChunkName:'Error' */ './pages/Error/Error')
+// );
 
-const AsyncLeagues = importedComponent(
-    () => import(/* webpackChunkName:'Leagues' */ './pages/Leagues/Legues')
-);
+// const AsyncLeagues = importedComponent(
+//     () => import(/* webpackChunkName:'Leagues' */ './pages/Leagues/Legues')
+// );
 
-const AsyncSearchBattle = importedComponent(
-    () => import(/* webpackChunkName:'SearchBattle' */ './pages/Tools/SearchBattle/SearchBattle')
-);
+// const AsyncSearchBattle = importedComponent(
+//     () => import(/* webpackChunkName:'SearchBattle' */ './pages/Tools/SearchBattle/SearchBattle')
+// );
 
-const AsyncStatsTable = importedComponent(
-    () => import(/* webpackChunkName:'StatsTable' */ './pages/Tools/StatsTable/Stats')
-);
+// const AsyncStatsTable = importedComponent(
+//     () => import(/* webpackChunkName:'StatsTable' */ './pages/Tools/StatsTable/Stats')
+// );
 
-const AsyncSticker = importedComponent(
-    () => import(/* webpackChunkName:'Sticker' */ './pages/Sticker/Sticker')
-);
+// const AsyncSticker = importedComponent(
+//     () => import(/* webpackChunkName:'Sticker' */ './pages/Sticker/Sticker')
+// );
 
-const AsyncRaidBattle = importedComponent(
-    () => import(/* webpackChunkName:'RaidBattle' */ './pages/Tools/RaidBattle/RaidBattle')
-);
+// const AsyncRaidBattle = importedComponent(
+//     () => import(/* webpackChunkName:'RaidBattle' */ './pages/Tools/RaidBattle/RaidBattle')
+// );
 
-const AsyncCalculatePoint = importedComponent(
-    () => import(/* webpackChunkName:'CalculatePoint' */ './pages/Tools/CalculatePoint/CalculatePoint')
-);
+// const AsyncCalculatePoint = importedComponent(
+//     () => import(/* webpackChunkName:'CalculatePoint' */ './pages/Tools/CalculatePoint/CalculatePoint')
+// );
 
-const AsyncRankingPVP = importedComponent(
-    () => import(/* webpackChunkName:'RankingPVP' */ './pages/PVP/Ranking/PVP')
-);
+// const AsyncRankingPVP = importedComponent(
+//     () => import(/* webpackChunkName:'RankingPVP' */ './pages/PVP/Ranking/PVP')
+// );
 
-const AsyncPokemonPVP = importedComponent(
-    () => import(/* webpackChunkName:'PokemonPVP' */ './pages/PVP/Pokemon/Pokemon')
-);
+// const AsyncPokemonPVP = importedComponent(
+//     () => import(/* webpackChunkName:'PokemonPVP' */ './pages/PVP/Pokemon/Pokemon')
+// );
 
-const AsyncPVPHome = importedComponent(
-    () => import(/* webpackChunkName:'PVPHome' */ './pages/PVP/Home')
-);
+// const AsyncPVPHome = importedComponent(
+//     () => import(/* webpackChunkName:'PVPHome' */ './pages/PVP/Home')
+// );
 
-const AsyncTeamPVP = importedComponent(
-    () => import(/* webpackChunkName:'TeamPVP' */ './pages/PVP/Teams/PVP')
-);
+// const AsyncTeamPVP = importedComponent(
+//     () => import(/* webpackChunkName:'TeamPVP' */ './pages/PVP/Teams/PVP')
+// );
 
-const AsyncBattle = importedComponent(
-    () => import(/* webpackChunkName:'Battle' */ './pages/PVP/Battle/Battle')
-);
+// const AsyncBattle = importedComponent(
+//     () => import(/* webpackChunkName:'Battle' */ './pages/PVP/Battle/Battle')
+// );
 
 const App = () => {
 
@@ -151,30 +151,30 @@ const App = () => {
           <NavbarComponent />
           {data.data &&
           <Routes>
-            <Route path="/" exact element={<AsyncHome/>}></Route>
-            <Route path="/type-effective" element={<AsyncTypeEffect/>}></Route>
-            <Route path="/weather-boosts" element={<AsyncWeather/>}></Route>
-            <Route path="/search-pokemon" element={<AsyncSearchPokemon/>}></Route>
-            <Route path="/search-move" element={<AsyncSearchMove/>}></Route>
-            <Route path="/pokemon/:id" element={<AsyncPokemon/>}></Route>
-            <Route path="/moves/:id" element={<AsyncMove/>}></Route>
-            <Route path="/find-cp-iv" element={<AsyncFindTable/>}></Route>
-            <Route path="/calculate-stats" element={<AsyncCalculateStats/>}></Route>
-            <Route path="/search-battle-stats" element={<AsyncSearchBattle/>}></Route>
-            <Route path="/stats-table" element={<AsyncStatsTable/>}></Route>
-            <Route path="/damage-calculate" element={<AsyncDamage/>}></Route>
-            <Route path="/raid-battle" element={<AsyncRaidBattle/>}></Route>
-            <Route path="/calculate-point" element={<AsyncCalculatePoint/>}></Route>
-            <Route path="/pvp" element={<AsyncPVPHome/>}></Route>
-            <Route path="/pvp/rankings/:serie/:cp/:type" element={<AsyncRankingPVP/>}></Route>
-            <Route path="/pvp/:cp/:type/:pokemon" element={<AsyncPokemonPVP/>}></Route>
-            <Route path="/pvp/teams/:serie/:cp" element={<AsyncTeamPVP/>}></Route>
-            <Route path="/pvp/battle" element={<AsyncBattle/>}></Route>
-            <Route path="/pvp/battle/:cp" element={<AsyncBattle/>}></Route>
-            <Route path="/dps-tdo-table" element={<AsyncDpsTable/>}></Route>
-            <Route path="/battle-leagues" element={<AsyncLeagues/>}></Route>
-            <Route path="/stickers" element={<AsyncSticker/>}></Route>
-            <Route path="*" element={<AsyncError/>}></Route>
+            <Route path="/" exact element={<Home/>}></Route>
+            <Route path="/type-effective" element={<TypeEffect/>}></Route>
+            <Route path="/weather-boosts" element={<Weather/>}></Route>
+            <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
+            <Route path="/search-move" element={<SearchMove/>}></Route>
+            <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
+            <Route path="/moves/:id" element={<Move/>}></Route>
+            <Route path="/find-cp-iv" element={<FindTable/>}></Route>
+            <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
+            <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
+            <Route path="/stats-table" element={<StatsTable/>}></Route>
+            <Route path="/damage-calculate" element={<Damage/>}></Route>
+            <Route path="/raid-battle" element={<RaidBattle/>}></Route>
+            <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
+            <Route path="/pvp" element={<PVPHome/>}></Route>
+            <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP/>}></Route>
+            <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
+            <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
+            <Route path="/pvp/battle" element={<Battle/>}></Route>
+            <Route path="/pvp/battle/:cp" element={<Battle/>}></Route>
+            <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
+            <Route path="/battle-leagues" element={<Leagues/>}></Route>
+            <Route path="/stickers" element={<Sticker/>}></Route>
+            <Route path="*" element={<Error/>}></Route>
           </Routes>
           }
           {/* <FooterComponent /> */}
