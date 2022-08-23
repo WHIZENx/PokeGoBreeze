@@ -156,6 +156,7 @@ export const convertNameRankingToOri = (text, form) => {
   .replaceAll("_", "-")
   .replaceAll("galarian", "galar")
   .replaceAll("alolan", "alola")
+  .replaceAll("hisuian", "hisui")
   .replace("-xs", "")
   .replace("indeedee-male", "indeedee")
   .replace("female", "f")
@@ -193,11 +194,26 @@ export const convertArrStats = (data) => {
   })
 };
 
+export const getStyleSheet = (style, selector) => {
+  var sheets = document.styleSheets;
+  for (var i = 0, l = sheets.length; i < l; i++) {
+      var sheet = sheets[i];
+      if ( !sheet || !sheet.cssRules ) { continue; }
+      for (var j = 0, k = sheet.cssRules.length; j < k; j++) {
+          var rule = sheet.cssRules[j];
+          if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
+              return sheet;
+          }
+      }
+  }
+  return null;
+}
+
 export const getStyleRuleValue = (style, selector, sheet) => {
   var sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
   for (var i = 0, l = sheets.length; i < l; i++) {
       sheet = sheets[i];
-      if( !sheet.cssRules ) { continue; }
+      if ( !sheet || !sheet.cssRules ) { continue; }
       for (var j = 0, k = sheet.cssRules.length; j < k; j++) {
           var rule = sheet.cssRules[j];
           if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {

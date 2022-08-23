@@ -44,11 +44,11 @@ export const computeCandyColor = (id) => {
   return `rgb(${Math.round(255*data.PrimaryColor.r)}, ${Math.round(255*data.PrimaryColor.g)}, ${Math.round(255*data.PrimaryColor.b)}, ${data.PrimaryColor.a})`
 }
 
-export const computeBgType = (types, shadow, purified, opacity) => {
+export const computeBgType = (types, shadow, purified, opacity, styleSheet) => {
     let colorsPalette = [];
     types.forEach(type => {
         type = type.toLowerCase();
-        const color = getStyleRuleValue('background-color', `.${type}`, document.styleSheets[2]);
+        const color = getStyleRuleValue('background-color', `.${type}`, styleSheet);
         colorsPalette.push(color.split(")")[0]+`, ${opacity ?? 1})`);
     });
     if (shadow) return `linear-gradient(to bottom right, ${colorsPalette[0]}, rgb(202, 156, 236), ${colorsPalette[1] ?? colorsPalette[0]})`;

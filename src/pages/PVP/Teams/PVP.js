@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import APIService from "../../../services/API.service";
 
 import pokemonData from '../../../data/pokemon.json';
-import { convertArrStats, convertName, convertNameRankingToForm, convertNameRankingToOri, findMoveTeam, splitAndCapitalize } from "../../../util/Utils";
+import { convertArrStats, convertName, convertNameRankingToForm, convertNameRankingToOri, findMoveTeam, getStyleSheet, splitAndCapitalize } from "../../../util/Utils";
 import { computeBgType, findAssetForm } from "../../../util/Compute";
 import { calculateStatsByTag, sortStatsPokemon } from "../../../util/Calculate";
 import { Accordion } from "react-bootstrap";
@@ -35,6 +35,7 @@ const TeamPVP = () => {
     const [sortedTeam, setSortedTeam] = useState(1);
 
     const [found, setFound] = useState(true);
+    const styleSheet = useRef(null);
 
     const mappingPokemonData = useCallback((data) => {
         const [speciesId, moveSet] = data.split(" ");
@@ -45,9 +46,12 @@ const TeamPVP = () => {
 
         const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
+        if (!styleSheet.current) styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`)
+
         let combatPoke = dataStore.pokemonCombat.filter(item => item.id === pokemon.num
             && item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
+
         const result = combatPoke.find(item => item.name === convertName(pokemon.name));
         if (!result) {
             if (combatPoke) combatPoke = combatPoke[0]
@@ -218,7 +222,7 @@ const TeamPVP = () => {
                     {rankingData.performers
                     .filter(pokemon => splitAndCapitalize(pokemon.name, "-", " ").toLowerCase().includes(search.toLowerCase()))
                     .sort((a,b) => sorted ? b[sortedBy]-a[sortedBy] : a[sortedBy]-b[sortedBy]).map((value, index) => (
-                        <div className="d-flex align-items-center card-ranking" key={index} style={{columnGap: '1rem', backgroundImage: computeBgType(value.pokemonData.types, value.shadow, value.purified)}}>
+                        <div className="d-flex align-items-center card-ranking" key={index} style={{columnGap: '1rem', backgroundImage: computeBgType(value.pokemonData.types, value.shadow, value.purified, 1, styleSheet.current)}}>
                             <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll("_", "-")}`} target="_blank"><VisibilityIcon className="view-pokemon" fontSize="large" sx={{color: 'black'}}/></Link>
                             <div className="d-flex justify-content-center">
                                 <span className="position-relative filter-shadow" style={{width: 96}}>
@@ -236,10 +240,10 @@ const TeamPVP = () => {
                                     <div className="d-flex" style={{columnGap: 10}}>
                                         <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} move={value.fmove}
                                         elite={value.combatPoke.eliteQuickMoves.includes(value.fmove.name)}/>
-                                        {value.cmovePri && <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
+                                        <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
                                         elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri.name)}
                                         shadow={value.combatPoke.shadowMoves.includes(value.cmovePri.name)}
-                                        purified={value.combatPoke.purifiedMoves.includes(value.cmovePri.name)}/>}
+                                        purified={value.combatPoke.purifiedMoves.includes(value.cmovePri.name)}/>
                                         {value.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={value.cmoveSec}
                                         elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec.name)}
                                         shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec.name)}
@@ -334,10 +338,10 @@ const TeamPVP = () => {
                                                     <div className="d-flex" style={{gap: 10}}>
                                                         <TypeBadge grow={true} find={true} title="Fast Move" color={'white'} move={value.fmove}
                                                         elite={value.combatPoke.eliteQuickMoves.includes(value.fmove.name)}/>
-                                                        {value.cmovePri && <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
+                                                        <TypeBadge grow={true} find={true} title="Primary Charged Move" color={'white'} move={value.cmovePri}
                                                         elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri.name)}
                                                         shadow={value.combatPoke.shadowMoves.includes(value.cmovePri.name)}
-                                                        purified={value.combatPoke.purifiedMoves.includes(value.cmovePri.name)}/>}
+                                                        purified={value.combatPoke.purifiedMoves.includes(value.cmovePri.name)}/>
                                                         {value.cmoveSec && <TypeBadge grow={true} find={true} title="Secondary Charged Move" color={'white'} move={value.cmoveSec}
                                                         elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec.name)}
                                                         shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec.name)}

@@ -92,7 +92,6 @@ const PokemonPVP = () => {
                     }
                 }
 
-
                 setRankingPoke({
                     data: data,
                     id: id,

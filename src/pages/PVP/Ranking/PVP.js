@@ -5,7 +5,7 @@ import Type from "../../../components/Sprites/Type/Type";
 import '../PVP.css';
 import React, { useState, useEffect, Fragment, useRef } from "react";
 
-import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName, capitalize } from '../../../util/Utils';
+import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName, capitalize, getStyleSheet } from '../../../util/Utils';
 import { calculateStatsByTag, sortStatsPokemon } from '../../../util/Calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
@@ -38,6 +38,8 @@ const RankingPVP = () => {
     const [storeStats, setStoreStats] = useState(null);
     const sortedBy = useRef("score");
     const [sorted, setSorted] = useState(1);
+
+    const styleSheet = useRef(null);
 
     const [search, setSearch] = useState('');
     const statsRanking = useRef(sortStatsPokemon(convertArrStats(pokemonData)));
@@ -86,6 +88,8 @@ const RankingPVP = () => {
 
                     const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
 
+                    if (!styleSheet.current) styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`)
+
                     let fmoveData = item.moveset[0], cMoveDataPri = item.moveset[1], cMoveDataSec = item.moveset[2];
                     if (fmoveData.includes("HIDDEN_POWER")) fmoveData = "HIDDEN_POWER";
                     if (cMoveDataPri === "FUTURE_SIGHT") cMoveDataPri = "FUTURESIGHT";
@@ -130,6 +134,7 @@ const RankingPVP = () => {
                 setRankingData(file);
                 setStoreStats(file.map(i => false));
             } catch (e) {
+                console.log(e)
                 source.cancel();
                 setFound(false);
             }
@@ -165,7 +170,7 @@ const RankingPVP = () => {
                         </div>
                     </div>
                 </Accordion.Header>
-                <Accordion.Body style={{padding: 0, backgroundImage: computeBgType(data.pokemon.types, data.shadow, data.purified, 0.8)}}>
+                <Accordion.Body style={{padding: 0, backgroundImage: computeBgType(data.pokemon.types, data.shadow, data.purified, 0.8, styleSheet.current)}}>
                     {storeStats[key] &&
                     <Fragment>
                     <div className="pokemon-ranking-body ranking-body">

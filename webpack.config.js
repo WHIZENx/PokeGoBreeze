@@ -1,13 +1,18 @@
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
+const autoprefixer = require('autoprefixer');
 const manifest = require('./public/manifest.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const CssnanoPlugin = require('cssnano-webpack-plugin');
+
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProduction;
@@ -24,8 +29,8 @@ module.exports = {
             favicon: './public/favicon.ico'
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].bundle.css',
-            chunkFilename: '[id].css'
+            filename: '[contenthash].css',
+            chunkFilename: '[hash].css'
         }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.ProvidePlugin({
@@ -47,7 +52,8 @@ module.exports = {
         new WebpackManifestPlugin({
             fileName: './manifest.json',
             seed: manifest
-        })
+        }),
+        new CleanWebpackPlugin(),
     ],
     optimization: {
         runtimeChunk: 'single',
@@ -58,22 +64,48 @@ module.exports = {
             cacheGroups: {
                 reactVendor: {
                     test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-                    name: "reactvendor"
+                    name: "reactVendor",
+                    enforce: true
                 },
                 utilityVendor: {
                     test: /[\\/]node_modules[\\/](lodash|moment|moment-timezone)[\\/]/,
-                    name: "utilityVendor"
+                    name: "utilityVendor",
+                    enforce: true
                 },
                 bootstrapVendor: {
                     test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
-                    name: "bootstrapVendor"
+                    name: "bootstrapVendor",
+                    enforce: true
                 },
                 vendor: {
                     test: /[\\/]node_modules[\\/](!react-bootstrap)(!lodash)(!moment)(!moment-timezone)[\\/]/,
-                    name: "vendor"
+                    name: "vendor",
+                    enforce: true
+                },
+                styles: {
+                    test: /\.css$/,
+                    name: "styles",
+                    enforce: true
                 },
             },
         },
+        minimizer: [
+            new UglifyJSPlugin({
+                uglifyOptions: {
+                    compress: {
+                        warnings: false,
+                    },
+                    output: {
+                        comments: false,
+                    },
+                    sourceMap: true,
+                    minimize: false,
+                }
+            }),
+            new CssnanoPlugin({
+                sourceMap: true
+            })
+        ]
     },
     mode: isProduction ? 'production' : 'development',
     bail: isProduction,
@@ -96,9 +128,10 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js',
-        chunkFilename: "[name].chunk.js",
-        publicPath
+        filename: '[contenthash].js',
+        chunkFilename: "[chunkhash].js",
+        publicPath,
+        clean: true,
     },
     resolve: {
         modules: [path.join(__dirname, 'src'), 'node_modules'],
@@ -131,7 +164,26 @@ module.exports = {
             include: path.resolve(__dirname, 'src'),
             exclude: /node_modules/,
             use: [
-                MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'
+                isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
+                {
+                    loader: 'css-loader',
+                    options: {
+                        url: true,
+                        importLoaders: 1,
+                        sourceMap: isDevelopment,
+                    }
+                },
+                {
+                    loader: 'postcss-loader',
+                    options: {
+                        postcssOptions: {
+                            plugins: [
+                                "postcss-preset-env",
+                                autoprefixer
+                            ]
+                        }
+                    }
+                },
             ]
         },
         {
