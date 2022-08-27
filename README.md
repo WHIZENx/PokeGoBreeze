@@ -1,6 +1,10 @@
 # Pokemon GO Tools&Information
 
-This Web Appliation was hosted in [Firebase](https://pokego-breeze.web.app/) with travis CI/CD and [Vercel](https://poke-go-breeze.vercel.app/) with github CI/CD.
+This Web Appliation was deploy in hosted Vercel
+  - Main version: [Vercel](https://poke-go-breeze.vercel.app/) (Easy stable)
+  - Develop version: [Vercel](https://poke-go-breeze-develop.vercel.app/) (Flexible)
+
+Old Web Appliation version was hosted in [Firebase](https://pokego-breeze.web.app/).
 
 ## Pages information
 ### [Home](https://poke-go-breeze.vercel.app/)
