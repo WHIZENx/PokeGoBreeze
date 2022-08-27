@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import pokemonData from '../../data/pokemon.json';
 import combatData from '../../data/combat.json';

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import APIService from "../../../services/API.service";
+import React from "react";
 
 const Circle = styled.div`
     width: ${props => props.size+5}px;

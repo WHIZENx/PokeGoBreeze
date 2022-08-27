@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import Find from "../../../components/Select/Find/Find";
 
 import { Tabs, Tab } from "react-bootstrap";

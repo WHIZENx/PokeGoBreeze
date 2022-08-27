@@ -1,5 +1,5 @@
 import { Box, FormControlLabel, Radio } from "@mui/material";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import { LevelSlider, TypeRadioGroup } from "../../../util/Utils";
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';

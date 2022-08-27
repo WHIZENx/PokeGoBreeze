@@ -12,7 +12,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import PetsIcon from '@mui/icons-material/Pets';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Xarrow from "react-xarrows";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";

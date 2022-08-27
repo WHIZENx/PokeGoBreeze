@@ -3,7 +3,7 @@ import combatData from '../../../data/combat.json';
 import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
 
 import '../PVP.css';
-import { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 
 import { capitalize, convertArrStats, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { Link, useParams } from "react-router-dom";

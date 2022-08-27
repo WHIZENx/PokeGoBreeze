@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import pokemonData from '../../../data/pokemon.json';
 import pokeImageList from '../../../data/assets_pokemon_go.json';
 

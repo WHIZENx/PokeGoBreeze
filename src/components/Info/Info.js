@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import TypeEffective from "../Effective/TypeEffective";
 import WeatherTypeEffective from "../Effective/WeatherTypeEffective";
 import Type from "../Sprites/Type/Type";

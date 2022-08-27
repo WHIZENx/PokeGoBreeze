@@ -1,5 +1,5 @@
 import { capitalize, FormControlLabel, Switch } from "@mui/material";
-import { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
 import { splitAndCapitalize } from "../../../util/Utils";

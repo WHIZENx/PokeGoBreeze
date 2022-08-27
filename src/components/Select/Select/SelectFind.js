@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import pokemonData from '../../../data/pokemon.json';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { convertNameRanking, splitAndCapitalize } from '../../../util/Utils';

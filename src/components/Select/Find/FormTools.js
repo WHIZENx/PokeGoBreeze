@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Stats from "../../Info/Stats/Stats";
 import { calculateRaidStat } from "../../../util/Calculate";
 

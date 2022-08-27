@@ -1,4 +1,5 @@
 import styled, { keyframes } from "styled-components";
+import React from "react";
 
 const Bar = styled.div`
     width: 100%;

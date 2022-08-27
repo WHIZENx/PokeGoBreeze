@@ -8,7 +8,7 @@ import pokeImageList from '../../data/assets_pokemon_go.json';
 import APIService from '../../services/API.service';
 
 import './Leagues.css';
-import { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize } from '../../util/Utils';
 import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';

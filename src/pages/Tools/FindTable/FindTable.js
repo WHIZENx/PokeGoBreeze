@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import { HundoRate, marks, PokeGoSlider } from "../../../util/Utils";
 import { calculateCP, predictCPList, predictStat } from "../../../util/Calculate";

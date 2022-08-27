@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import typeEffective from '../../data/type_effectiveness.json';
 import APIService from "../../services/API.service";
 import { capitalize, splitAndCapitalize } from "../../util/Utils";

@@ -1,6 +1,7 @@
 import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import './TypeBar.css'
+import React from 'react';
 
 const TypeBar = (props) => {
 

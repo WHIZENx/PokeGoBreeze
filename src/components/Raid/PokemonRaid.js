@@ -1,5 +1,5 @@
 import { Badge } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectMove from "../Input/SelectMove";
 import SelectPokemon from "../Input/SelectPokemon";
 

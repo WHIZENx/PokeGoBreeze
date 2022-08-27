@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import data from '../../data/combat_pokemon_go_list.json';
 import combat from '../../data/combat.json';
 import CardType from '../Card/CardType';

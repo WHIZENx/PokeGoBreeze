@@ -1,4 +1,5 @@
 import './IVBar.css';
+import React from 'react';
 
 const IVbar = (props) => {
 

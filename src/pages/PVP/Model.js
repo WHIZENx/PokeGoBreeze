@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import React, { Fragment } from "react"
 import { Link } from "react-router-dom";
 import TypeEffectiveSelect from "../../components/Effective/TypeEffectiveSelect";
 import Stats from "../../components/Info/Stats/Stats";

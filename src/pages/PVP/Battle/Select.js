@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import APIService from "../../../services/API.service";
 
 import combatData from '../../../data/combat.json';

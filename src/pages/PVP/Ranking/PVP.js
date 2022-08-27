@@ -5,7 +5,7 @@ import combatPokemonData from '../../../data/combat_pokemon_go_list.json';
 import Type from "../../../components/Sprites/Type/Type";
 
 import '../PVP.css';
-import { useState, useEffect, Fragment, useRef } from "react";
+import React, { useState, useEffect, Fragment, useRef } from "react";
 
 import { convertNameRankingToOri, splitAndCapitalize, convertArrStats, convertName, capitalize } from '../../../util/Utils';
 import { calculateStatsByTag, sortStatsPokemon } from '../../../util/Calculate';
