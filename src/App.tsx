@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { loadStore } from './store/actions/store.action';
 import { hideSpinner, showSpinner } from './store/actions/spinner.action';
 import APIService from './services/API.service';
@@ -132,7 +132,7 @@ import Spinner from './components/Spinner/Spinner';
 const App = () => {
 
   const dispatch = useDispatch();
-  const data = useSelector((state) => state.store);
+  const data = useSelector((state: RootStateOrAny) => state.store);
 
   useEffect(() => {
     const axios = APIService;
@@ -151,7 +151,7 @@ const App = () => {
           <NavbarComponent />
           {data.data &&
           <Routes>
-            <Route path="/" exact element={<Home/>}></Route>
+            <Route path="/" element={<Home/>}></Route>
             <Route path="/type-effective" element={<TypeEffect/>}></Route>
             <Route path="/weather-boosts" element={<Weather/>}></Route>
             <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>

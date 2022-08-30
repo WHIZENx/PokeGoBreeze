@@ -1,4 +1,4 @@
-const SpinnerReducer = (state = false, action) => {
+const SpinnerReducer = (state = false, action: any) => {
     switch (action.type) {
       case 'SHOW_SPINNER':
         return true;

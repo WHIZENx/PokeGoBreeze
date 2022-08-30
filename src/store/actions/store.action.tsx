@@ -4,7 +4,7 @@ import { convertPVPRankings, convertPVPTrain, pvpFindPath } from '../../options/
 export const LOAD_STORE = "LOAD_STORE";
 export const RESET_STORE = "RESET_STORE";
 
-export const loadStore = (dispatch, axios, source) => {
+export const loadStore = (dispatch: any, axios: any, source: any) => {
     Promise.all([
         axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json', {cancelToken: source.token}),
         axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/timestamp.txt', {cancelToken: source.token}),

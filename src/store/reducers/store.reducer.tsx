@@ -3,7 +3,7 @@ const inititaialize = {
     timestamp: null
 }
 
-const StoreReducer = (state = inititaialize, action) => {
+const StoreReducer = (state = inititaialize, action: any) => {
     switch (action.type) {
       case 'LOAD_STORE':
         return action.payload;

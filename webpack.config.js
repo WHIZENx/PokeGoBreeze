@@ -120,7 +120,7 @@ module.exports = {
         port: 9000,
     },
     entry: {
-        src: ['./src/index.jsx'],
+        src: ['./src/index.tsx'],
         vendors: ['react']
     },
     output: {
@@ -136,68 +136,87 @@ module.exports = {
             react: path.join(__dirname, 'node_modules', 'react'),
             process: "process/browser"
         },
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
     module: {
         rules: [
-        {
-            test: /\.(jsx|js)$/,
-            include: path.resolve(__dirname, 'src'),
-            exclude: /node_modules/,
-            use: [{
-                loader: 'babel-loader',
-                options: {
-                    presets: [
-                        ['@babel/preset-env', {
-                            "targets": "defaults"
-                        }],
-                        '@babel/preset-react'
-                    ]
-                }
-                }
-            ]
-        },
-        {
-            test: /\.css$/i,
-            include: path.resolve(__dirname, 'src'),
-            exclude: /node_modules/,
-            use: [
-                MiniCssExtractPlugin.loader,
-                {
-                    loader: 'css-loader',
+            {
+                test: /\.tsx$/,
+                include: path.resolve(__dirname, 'src'),
+                exclude: /node_modules/,
+                use: [{
+                    loader: 'babel-loader',
                     options: {
-                        url: true,
-                        importLoaders: 1,
-                        sourceMap: true
+                        presets: [
+                            ['@babel/preset-env', {
+                                "targets": "defaults"
+                            }],
+                            '@babel/preset-react',
+                            "@babel/typescript"
+                        ]
                     }
-                },
-                {
-                    loader: 'postcss-loader',
+                    }
+                ]
+            },
+            {
+                test: /\.(jsx|js)$/,
+                include: path.resolve(__dirname, 'src'),
+                exclude: /node_modules/,
+                use: [{
+                    loader: 'babel-loader',
                     options: {
-                        postcssOptions: {
-                            plugins: [
-                                "postcss-preset-env",
-                                autoprefixer
-                            ]
+                        presets: [
+                            ['@babel/preset-env', {
+                                "targets": "defaults"
+                            }],
+                            '@babel/preset-react'
+                        ]
+                    }
+                    }
+                ]
+            },
+            {
+                test: /\.css$/i,
+                include: path.resolve(__dirname, 'src'),
+                exclude: /node_modules/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            url: true,
+                            importLoaders: 1,
+                            sourceMap: true
                         }
-                    }
-                },
-            ]
-        },
-        {
-            test: /\.(gif|png|jpe?g|svg)$/i,
-            include: path.resolve(__dirname, 'src'),
-            exclude: /node_modules/,
-            use: [
-                'file-loader',
-                {
-                    loader: 'image-webpack-loader',
-                    options: {
-                        bypassOnDebug: true, // webpack@1.x
-                        disable: true, // webpack@2.x and newer
                     },
-                },
-            ],
-        }
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            postcssOptions: {
+                                plugins: [
+                                    "postcss-preset-env",
+                                    autoprefixer
+                                ]
+                            }
+                        }
+                    },
+                ]
+            },
+            {
+                test: /\.(gif|png|jpe?g|svg)$/i,
+                include: path.resolve(__dirname, 'src'),
+                exclude: /node_modules/,
+                use: [
+                    'file-loader',
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            bypassOnDebug: true, // webpack@1.x
+                            disable: true, // webpack@2.x and newer
+                        },
+                    },
+                ],
+            }
         ]
     }
 }
