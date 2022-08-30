@@ -22,7 +22,6 @@ const publicPath = process.env.PUBLIC_URL || '/';
 dotenv.config();
 
 module.exports = {
-    devtool: 'inline-source-map',
     plugins: [
         new HtmlWebpackPlugin({
             template: './public/index.html',
@@ -121,7 +120,7 @@ module.exports = {
         port: 9000,
     },
     entry: {
-        src: ['./src/index.js'],
+        src: ['./src/index.jsx'],
         vendors: ['react']
     },
     output: {
