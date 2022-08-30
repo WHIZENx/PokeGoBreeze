@@ -107,7 +107,7 @@ module.exports = {
     mode: isProduction ? 'production' : 'development',
     bail: isProduction,
     target: 'web',
-    devtool: isDevelopment ? 'inline-source-map' : false,
+    devtool: false,
     devServer: {
         static: [
             { directory: path.resolve(__dirname, 'dist') },
