@@ -103,23 +103,23 @@ export const HundoRate = styled(Rating)(() => ({
     },
 }));
 
-export const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export const splitAndCapitalize = (string, splitBy, joinBy) => {
-  return string.split(splitBy).map(text => capitalize(text.toLowerCase())).join(joinBy);
+export const splitAndCapitalize = (str: string, splitBy: string, joinBy: string) => {
+  return str.split(splitBy).map((text: string) => capitalize(text.toLowerCase())).join(joinBy);
 };
 
-export const reversedCapitalize = (string, splitBy, joinBy) => {
-  return string.replaceAll(joinBy, splitBy).toLowerCase();
+export const reversedCapitalize = (str: string, splitBy: string, joinBy: string) => {
+  return str.replaceAll(joinBy, splitBy).toLowerCase();
 };
 
-export const getTime = (value, notFull) => {
+export const getTime = (value: string, notFull: boolean | undefined) => {
   return notFull ? Moment((new Date(parseInt(value)))).format('D MMMM YYYY') : Moment((new Date(parseInt(value)))).format('HH:mm D MMMM YYYY')
 }
 
-export const convertName = (text) => {
+export const convertName = (text: string) => {
   return text.toUpperCase()
   .replaceAll("-", "_")
   .replaceAll("NIDORAN_F", "NIDORAN_FEMALE")
@@ -135,20 +135,20 @@ export const convertName = (text) => {
   .replace("_HISUI", "_HISUIAN")
 };
 
-export const convertNameRanking = (text) => {
+export const convertNameRanking = (text: string) => {
   return text.toLowerCase()
   .replaceAll("-", "_")
   .replaceAll("galar", "galarian")
   .replaceAll("alola", "alolan")
 };
 
-export const convertNameRankingToForm = (text) => {
+export const convertNameRankingToForm = (text: string) => {
   let form = "";
   if (text.includes("_")) form = ` (${capitalize(text.split("_")[1])})`;
   return text + form;
 }
 
-export const convertNameRankingToOri = (text, form) => {
+export const convertNameRankingToOri = (text: string, form: string) => {
   const formOri = form;
   if (text.includes("_mega") || text === "ho_oh" || text.includes("castform") || text.includes("tapu")) return text.replaceAll("_", "-");
   if (formOri.includes("(") && formOri.includes(")")) form = "-"+form.split(" (")[1].replace(")", "").toLowerCase();
@@ -186,21 +186,21 @@ export const convertNameRankingToOri = (text, form) => {
   form !== "-super" ? text.replaceAll(form.toLowerCase(), "") : text;
 };
 
-export const convertArrStats = (data) => {
-  return Object.values(data).map(value => {
-      let stats = calculateStatsByTag(value.baseStats, value.forme);
+export const convertArrStats = (data: { [s: string]: unknown; } | ArrayLike<unknown>) => {
+  return Object.values(data).map((value: any) => {
+      const stats = calculateStatsByTag(value.baseStats, value.forme);
       return {id: value.num, name: value.slug, base_stats: value.baseStats,
       baseStatsPokeGo: {attack: stats.atk, defense: stats.def, stamina: stats.sta}}
   })
 };
 
-export const getStyleSheet = (style, selector) => {
-  var sheets = document.styleSheets;
-  for (var i = 0, l = sheets.length; i < l; i++) {
-      var sheet = sheets[i];
+export const getStyleSheet = (style: string, selector: string) => {
+  const sheets = document.styleSheets;
+  for (let i = 0, l = sheets.length; i < l; i++) {
+      const sheet = sheets[i];
       if ( !sheet || !sheet.cssRules ) { continue; }
-      for (var j = 0, k = sheet.cssRules.length; j < k; j++) {
-          var rule = sheet.cssRules[j];
+      for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
+          const rule: any = sheet.cssRules[j];
           if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
               return sheet;
           }
@@ -209,13 +209,13 @@ export const getStyleSheet = (style, selector) => {
   return null;
 }
 
-export const getStyleRuleValue = (style, selector, sheet) => {
-  var sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
-  for (var i = 0, l = sheets.length; i < l; i++) {
+export const getStyleRuleValue = (style: string, selector: string, sheet: any = null) => {
+  const sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
+  for (let i = 0, l = sheets.length; i < l; i++) {
       sheet = sheets[i];
       if ( !sheet || !sheet.cssRules ) { continue; }
-      for (var j = 0, k = sheet.cssRules.length; j < k; j++) {
-          var rule = sheet.cssRules[j];
+      for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
+          const rule = sheet.cssRules[j];
           if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
               return rule.style[style];
           }
@@ -224,12 +224,12 @@ export const getStyleRuleValue = (style, selector, sheet) => {
   return null;
 }
 
-export const findMoveTeam = (move, moveSet) => {
+export const findMoveTeam = (move: any, moveSet: any) => {
     move = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
     for (let value of moveSet) {
         if (value === "FUTURESIGHT") value = "FUTURE_SIGHT";
         if (value === "TECHNO_BLAST_DOUSE") value = "TECHNO_BLAST_WATER";
-        let m = value.replace("_FAST", "").split("_");
+        const m = value.replace("_FAST", "").split("_");
         if (m.length === move.length) {
             let count = 0;
             for (let i = 0; i < move.length; i++) {
@@ -237,9 +237,9 @@ export const findMoveTeam = (move, moveSet) => {
             }
             if (count === m.length) return value.replace("FUTURE_SIGHT", "FUTURESIGHT").replace("_FAST", "");
         }
-    };
-    for (let value of moveSet) {
-        let m = value.replace("_FAST", "").split("_");
+    }
+    for (const value of moveSet) {
+        const m = value.replace("_FAST", "").split("_");
         if (m.length === move.length) {
             let count = 0;
             for (let i = 0; i < move.length; i++) {
@@ -247,6 +247,6 @@ export const findMoveTeam = (move, moveSet) => {
             }
             if (count === m.length) return value.replace("_FAST", "");
         }
-    };
+    }
     return null;
 }

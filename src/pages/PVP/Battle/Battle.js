@@ -82,7 +82,7 @@ const Battle = () => {
         pokemonObj: {hp: 0, energyPri: 0, energySec: 0}
     });
 
-    const State = (timer, type, color, size, tap, block, energy, hp, move, immune, buff) => {
+    const State = (timer, type, color, size, tap, block, energy, hp, move, immune) => {
         return {
             timer: timer ?? 0,
             type: type,
@@ -266,7 +266,7 @@ const Battle = () => {
                         let arrBufAtk = [], arrBufTarget = [];
                         const randInt = parseFloat((Math.random()).toFixed(3))
                         if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
-                            moveType.buffs.forEach((value, index) => {
+                            moveType.buffs.forEach((value) => {
                                 if (value.target === "target") {
                                     player2 = {
                                         ...player2,
@@ -312,7 +312,7 @@ const Battle = () => {
                         let arrBufAtk = [], arrBufTarget = [];
                         const randInt = parseFloat((Math.random()).toFixed(3))
                         if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
-                            moveType.buffs.forEach((value, index) => {
+                            moveType.buffs.forEach((value) => {
                                 if (value.target === "target") {
                                     player1 = {
                                         ...player1,
@@ -446,6 +446,7 @@ const Battle = () => {
                     parseInt(league) === 2500 ? "Ultra League" :
                     "Master League"}`;
 
+                // eslint-disable-next-line no-import-assign
                 pokemonData = Object.values(pokemonData);
                 file = file.filter(pokemon => !pokemon.speciesId.includes("shadow") && !pokemon.speciesId.includes("_xs")).map(item => {
                     const name = convertNameRankingToOri(item.speciesId, item.speciesName);

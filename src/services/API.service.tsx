@@ -23,6 +23,8 @@ const POKE_PV_API_URL = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/
 const POKE_ASSETS_URL = `https://raw.githubusercontent.com/WHIZENx/pokemon-assets/master/`;
 
 class APIService {
+    date: Date;
+    axios: any;
 
     constructor() {
         this.date = new Date();
@@ -33,70 +35,70 @@ class APIService {
         return this.axios;
     }
 
-    getFetchUrl(url, options = null) {
+    getFetchUrl(url: string, options: any = null) {
         return this.axios.get(url, options);
     }
 
-    getPokeInfo(value, options = null) {
+    getPokeInfo(value: number, options: any = null) {
         return this.axios.get(`${POKE_API_URL}pokemon/${value}`, options);
     }
 
-    getPokeSpicies(value, options = null) {
+    getPokeSpicies(value: number, options: any = null) {
         return this.axios.get(`${POKE_API_URL}pokemon-species/${value}`, options);
     }
 
-    getPokeForm(value, options = null) {
+    getPokeForm(value: number, options: any = null) {
         return this.axios.get(`${POKE_API_URL}pokemon-form/${value}`, options);
     }
 
-    getPokeJSON(path, options = null) {
+    getPokeJSON(path: string, options: any = null) {
         return this.axios.get(`${POGO_API_URL}${path}`, options);
     }
 
-    getPokemonModel(item) {
+    getPokemonModel(item: string) {
         return `${POGO_ASSET_API_URL}Pokemon/${item}.png`;
     }
 
-    getPokemonSqModel(item) {
+    getPokemonSqModel(item: string) {
         return `${POGO_ASSET_API_URL}Pokemon - 256x256/${item}.png`;
     }
 
-    getTrainerModel(id) {
+    getTrainerModel(id: any) {
         id = id.toString().padStart(3, '0');
         return `${POKE_TRAINER_SPRITES_API_URL}${id}.png`;
     }
 
-    getPokemonGoIcon(icon) {
+    getPokemonGoIcon(icon: string) {
         return `${POGO_ASSET_API_URL}App Icons/${icon}.png`;
     }
 
-    getIconSprite(icon) {
+    getIconSprite(icon: string) {
         return `${POGO_ASSET_API_URL}Menu Icons/${icon}.png`;
     }
 
-    getItemSprite(item) {
+    getItemSprite(item: string) {
         return `${POGO_ASSET_API_URL}Items/${item}.png`;
     }
 
-    getRaidSprite(name) {
+    getRaidSprite(name: string) {
         return `${POGO_ASSET_API_URL}Raids/${name}.png`;
     }
 
-    getGenderSprite(sex) {
+    getGenderSprite(sex: string) {
         return `${POGO_ASSET_API_URL}Pokedex/${sex.toLowerCase()}_l.png`;
     }
 
-    getTypeSprite(type) {
+    getTypeSprite(type: string) {
         if (type.toLowerCase() === "unknown") return this.getPokeSprite(0);
         return `${POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
     }
 
-    getTypeHqSprite(type) {
+    getTypeHqSprite(type: string) {
         if (type === "Fighting") type = "Fight";
         return `${POKE_ICON_SPRITES_TYPE_API_URL}Badge_Type_${type}_01.png`;
     }
 
-    getWeatherSprite(weather) {
+    getWeatherSprite(weather: string) {
         weather = weather.replaceAll(' ', '').replaceAll('Rainy', 'Rain');
         weather = weather.charAt(0).toLowerCase() + weather.slice(1);
 
@@ -105,7 +107,7 @@ class APIService {
         return `${POGO_ASSET_API_URL}Weather/weatherIcon_large_${weather}${timeOfSun}.png`;
     }
 
-    getWeatherIconSprite(weather) {
+    getWeatherIconSprite(weather: string) {
         weather = weather.replaceAll(' ', '').replaceAll('Rainy', 'Rain');
 
         if (weather === "Overcast") weather = "Cloudy"
@@ -113,16 +115,16 @@ class APIService {
         return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather.toLowerCase()}.png`;
     }
 
-    getPokeSprite(id) {
+    getPokeSprite(id: number) {
         return `${POKE_SPRITES_API_URL}${id}.png`;
     }
 
-    getPokeFullSprite(id) {
+    getPokeFullSprite(id: any) {
         id = id.toString().padStart(3, '0');
         return `${POKE_SPRITES_FULL_API_URL}${id}.png`;
     }
 
-    getPokeIconSprite(name, fix) {
+    getPokeIconSprite(name: string, fix = false) {
         if (!fix) {
             if (name.includes("necrozma-dawn")) name += "-wings"
             else if (name.includes("necrozma-dusk")) name += "-mane"
@@ -131,7 +133,7 @@ class APIService {
         return `${POKE_ICON_SPRITES_API_URL}${name}.png`;
     }
 
-    getPokeGifSprite(name) {
+    getPokeGifSprite(name: string) {
         name = name.replace("mega-x","megax").replace("mega-y","megay");
         if (!name.includes("mega") && name.includes("-m")) name = name.replace("-m", "");
         if (name.includes("gengar")) name += "_2";
@@ -139,11 +141,11 @@ class APIService {
         return `${POKE_GIF_SPRITES_API_URL}${name}.gif`
     }
 
-    getPokeOtherLeague(league) {
+    getPokeOtherLeague(league: string) {
         return `${POGO_ASSET_API_URL}Combat/${league}.png`;
     }
 
-    getPokeLeague(league) {
+    getPokeLeague(league: string) {
         return `${POGO_ASSET_API_URL}Combat/pogo_${league}.png`;
     }
 
@@ -159,52 +161,52 @@ class APIService {
         return `${POGO_ASSET_API_URL}Friends/ui_bg_lucky_pokemon.png`;
     }
 
-    getItemEvo(item) {
+    getItemEvo(item: string) {
         return `${POGO_ASSET_API_URL}Items/Bag_${item}_Sprite.png`;
     }
 
-    getItemTroy(item) {
+    getItemTroy(item: string) {
         return item === "" ? `${POGO_ASSET_API_URL}Items/TroyKey.png` : `${POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
     }
 
-    getSoundCryPokemon(name) {
+    getSoundCryPokemon(name: string) {
         name = name.toLowerCase().replaceAll("_","").replaceAll("-","");
         return `${POKE_SOUND_CRY_API_URL}/${name}/cry.aif`;
     }
 
-    getSoundPokemonGO(path) {
+    getSoundPokemonGO(path: string) {
         return `${POGO_SOUND_API_URL}Pokemon Cries/${path}.wav`;
     }
 
-    getSoundMove(sound) {
+    getSoundMove(sound: string) {
         return `${POGO_SOUND_API_URL}Pokemon Moves/${sound}.wav`;
     }
 
-    getAssetPokeGo(image) {
+    getAssetPokeGo(image: string) {
         return image.includes("gofestCatch2022") ? `${POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/${image}` : `${POGO_PROD_ASSET_URL}${image}`;
     }
 
-    getSticker(sticker) {
+    getSticker(sticker: string) {
         return `${POGO_ASSET_API_URL}Stickers/sticker_${sticker}.png`;
     }
 
-    getStickerPokeGo(sticker) {
+    getStickerPokeGo(sticker: string) {
         return `${POGO_PRODHOLOHOLO_ASSET_URL}Stickers/${sticker}`;
     }
 
-    getRankingFile(serie, cp, type) {
+    getRankingFile(serie: string, cp: number, type: string) {
         return `${POKE_PV_API_URL}rankings/${serie}/${type.toLowerCase()}/rankings-${cp}.json`;
     }
 
-    getTeamFile(type, serie, cp) {
+    getTeamFile(type: string, serie: string, cp: number) {
         return `${POKE_PV_API_URL}training/${type}/${serie}/${cp}.json`;
     }
 
-    getTypeIcon(type) {
+    getTypeIcon(type: string) {
         return `${POKE_TYPES_API_URL}${type.toLowerCase()}.png`
     }
 
-    getPokemonAsset(type, gen, name, file) {
+    getPokemonAsset(type: string, gen: number, name: string, file: string) {
         return `${POKE_ASSETS_URL}${type}/${gen}/${name}.${file}`
     }
 }

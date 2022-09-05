@@ -1,50 +1,50 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
 import { splitAndCapitalize } from '../../util/Utils';
-import { useSelector } from 'react-redux';
+import { RootStateOrAny, useSelector } from 'react-redux';
 
-const Move = (props) => {
+const Move = (props: { type: any; id: any; form: any; move: any; setMove: (arg0: any) => void; text: string; selectDefault: any; }) => {
 
-    const data = useSelector((state) => state.store.data);
+    const data = useSelector((state: RootStateOrAny) => state.store.data);
 
     const [countFM, setCountFM] = useState(0);
-    const [resultMove, setResultMove] = useState(null);
-    const [currentMove, setCurrentMove] = useState(null);
+    const [resultMove, setResultMove]: any = useState(null);
+    const [currentMove, setCurrentMove]: any = useState(null);
     const [showMove, setShowMove] = useState(false);
 
-    const findMoveData = useCallback((move) => {
-        return data.combat.find(item => item.name === move.replaceAll("_FAST", ""));
+    const findMoveData = useCallback((move: string) => {
+        return data.combat.find((item: { name: any; }) => item.name === move.replaceAll("_FAST", ""));
     }, [data.combat]);
 
-    const findMove = useCallback((id, form) => {
-        let resultFirst = data.pokemonCombat.filter(item => item.id === id);
+    const findMove = useCallback((id: any, form: string) => {
+        const resultFirst = data.pokemonCombat.filter((item: { id: any; }) => item.id === id);
         form = form.replaceAll("-", "_").replaceAll("_standard", "").toUpperCase();
-        let result = resultFirst.find(item => item.name === form);
-        let simpleMove = [];
+        const result = resultFirst.find((item: { name: any; }) => item.name === form);
+        const simpleMove: React.SetStateAction<null> | { name: any; elite: boolean; shadow: boolean; purified: boolean; }[] = [];
         if (resultFirst.length === 1 || result == null) {
-            if (resultFirst.length === 0) return setResultMove("");
+            if (resultFirst.length === 0) return setResultMove('');
             if (props.type !== "CHARGE") {
-                resultFirst[0].quickMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-                resultFirst[0].eliteQuickMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+                resultFirst[0].quickMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+                resultFirst[0].eliteQuickMoves.forEach((value: any) => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
                 setCountFM(simpleMove.length);
             }
             if (props.type === "FAST") return setResultMove(simpleMove);
-            resultFirst[0].cinematicMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-            resultFirst[0].eliteCinematicMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
-            resultFirst[0].shadowMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
-            resultFirst[0].purifiedMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
+            resultFirst[0].cinematicMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+            resultFirst[0].eliteCinematicMoves.forEach((value: any) => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+            resultFirst[0].shadowMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
+            resultFirst[0].purifiedMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
             return setResultMove(simpleMove);
-        };
+        }
         if (props.type !== "CHARGE") {
-            result.quickMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-            result.eliteQuickMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+            result.quickMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+            result.eliteQuickMoves.forEach((value: any) => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
             setCountFM(simpleMove.length);
         }
         if (props.type === "FAST") return setResultMove(simpleMove);
-        result.cinematicMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
-        result.eliteCinematicMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
-        result.shadowMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
-        result.purifiedMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
+        result.cinematicMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
+        result.eliteCinematicMoves.forEach((value: any) => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});
+        result.shadowMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: true, purified: false})});
+        result.purifiedMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
         return setResultMove(simpleMove);
     }, [props.type, data.pokemonCombat]);
 
@@ -53,11 +53,11 @@ const Move = (props) => {
         if (!props.move) setCurrentMove(null);
     }, [props.id, props.form, findMove, props.move]);
 
-    const findType = (move) => {
+    const findType = (move: any) => {
         return findMoveData(move).type;
     }
 
-    const changeMove = (value) => {
+    const changeMove = (value: any) => {
         setShowMove(false)
         setCurrentMove(value);
         props.setMove(findMoveData(value.name));
@@ -80,7 +80,7 @@ const Move = (props) => {
                                 <ul>
                                     {resultMove &&
                                         <Fragment>
-                                            {resultMove.filter(value => props.selectDefault || (!props.selectDefault && value.name !== currentMove.name) ).map((value, index) => (
+                                            {resultMove.filter((value: { name: any; }) => props.selectDefault || (!props.selectDefault && value.name !== currentMove.name) ).map((value: { name: string; elite: any; shadow: any; purified: any; }, index: React.Key | null | undefined) => (
                                                 <Fragment key={ index }>
                                                 {!props.type && index === 0 &&
                                                 <li className='card-header'><b>Fast Moves</b></li>

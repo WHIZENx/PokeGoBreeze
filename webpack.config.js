@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
@@ -14,8 +15,9 @@ const CssnanoPlugin = require('cssnano-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
+
 const isProduction = process.env.NODE_ENV === 'production';
-const isDevelopment = !isProduction;
+// const isDevelopment = !isProduction;
 
 const publicPath = process.env.PUBLIC_URL || '/';
 

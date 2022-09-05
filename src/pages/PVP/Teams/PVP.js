@@ -118,6 +118,7 @@ const TeamPVP = () => {
                     cp === 2500 ? "Ultra League " :
                     "Master League ":""}
                     ${splitAndCapitalize(params.serie, "-", " ")}`;
+                // eslint-disable-next-line no-import-assign
                 pokemonData = Object.values(pokemonData);
 
                 const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);

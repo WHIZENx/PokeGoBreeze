@@ -107,22 +107,22 @@ const StatsTable = () => {
             <Find hide={true} clearStats={clearStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName}/>
             <h1 id ="main" className='text-center'>Stats Battle Table</h1>
             <div className="text-center" style={{marginTop: 15, marginBottom: 15}}>
-                <button className={"btn btn-form"+(battleLeague === 500 ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(500)}>
+                <button className={"btn btn-form"+(battleLeague === 500 ? " form-selected" : "")} style={{height: 200}} onClick={() => setBattleLeague(500)}>
                     <img alt='img-league' width={128} height={128} src={APIService.getPokeOtherLeague("GBL_littlecup")}/>
                     <div><b>Little Cup</b></div>
                     <span className="text-danger">CP below 500</span>
                 </button>
-                <button className={"btn btn-form"+(battleLeague === 1500 ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(1500)}>
+                <button className={"btn btn-form"+(battleLeague === 1500 ? " form-selected" : "")} style={{height: 200}} onClick={() => setBattleLeague(1500)}>
                     <img alt='img-league' width={128} height={128} src={APIService.getPokeLeague("great_league")}/>
                     <div><b>Great League</b></div>
                     <span className="text-danger">CP below 1500</span>
                 </button>
-                <button className={"btn btn-form"+(battleLeague === 2500 ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(2500)}>
+                <button className={"btn btn-form"+(battleLeague === 2500 ? " form-selected" : "")} style={{height: 200}} onClick={() => setBattleLeague(2500)}>
                     <img alt='img-league' width={128} height={128} src={APIService.getPokeLeague("ultra_league")}/>
                     <div><b>Ultra League</b></div>
                     <span className="text-danger">CP below 2500</span>
                 </button>
-                <button className={"btn btn-form"+(battleLeague === null ? " form-selected" : "")} style={{height: 200}} onClick={(e) => setBattleLeague(null)}>
+                <button className={"btn btn-form"+(battleLeague === null ? " form-selected" : "")} style={{height: 200}} onClick={() => setBattleLeague(null)}>
                     <img alt='img-league' width={128} height={128} src={APIService.getPokeLeague("master_league")}/>
                     <div><b>Master League</b></div>
                     <span className="text-danger">No limit CP</span>

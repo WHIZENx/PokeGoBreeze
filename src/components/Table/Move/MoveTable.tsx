@@ -5,27 +5,27 @@ import { rankMove } from '../../../util/Calculate';
 import './MoveTable.css';
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
-import { useSelector } from "react-redux";
+import { RootStateOrAny, useSelector } from "react-redux";
 
-const TableMove = (props) => {
+const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; }) => {
 
-    const data = useSelector((state) => state.store.data);
-    const [move, setMove] = useState({data: []});
+    const data = useSelector((state: RootStateOrAny) => state.store.data);
+    const [move, setMove]: any = useState({data: []});
 
     const findMove = useCallback(() => {
-        let combatPoke = data.pokemonCombat.filter(item => item.id === parseInt(props.data.species.url.split("/")[6]));
-        if (combatPoke && combatPoke.length === 1) return setMove(rankMove(data.options, data.combat, combatPoke[0], props.statATK, props.statDEF, props.statSTA, props.data.types.map(item => capitalize(item.type.name))));
+        const combatPoke = data.pokemonCombat.filter((item: { id: number; }) => item.id === parseInt(props.data.species.url.split("/")[6]));
+        if (combatPoke && combatPoke.length === 1) return setMove(rankMove(data.options, data.combat, combatPoke[0], props.statATK, props.statDEF, props.statSTA, props.data.types.map((item: { type: { name: string; }; }) => capitalize(item.type.name))));
 
-        let result = combatPoke.find(item => props.form && item.name === convertName(props.form.name));
-        if (result === undefined) setMove(rankMove(data.options, data.combat, combatPoke[0], props.statATK, props.statDEF, props.statSTA, props.data.types.map(item => capitalize(item.type.name))));
-        else setMove(rankMove(data.options, data.combat, result, props.statATK, props.statDEF, props.statSTA, props.form.types.map(item => capitalize(item.type.name))));
+        const result = combatPoke.find((item: { name: string; }) => props.form && item.name === convertName(props.form.name));
+        if (result === undefined) setMove(rankMove(data.options, data.combat, combatPoke[0], props.statATK, props.statDEF, props.statSTA, props.data.types.map((item: { type: { name: string; }; }) => capitalize(item.type.name))));
+        else setMove(rankMove(data.options, data.combat, result, props.statATK, props.statDEF, props.statSTA, props.form.types.map((item: { type: { name: string; }; }) => capitalize(item.type.name))));
     }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
     useEffect(() => {
         if (props.data) findMove();
     }, [findMove, props.data]);
 
-    const renderMovesetTable = (value, max, type) => {
+    const renderMovesetTable = (value: any, max: number, type: string) => {
         return (
             <tr>
                 <td className="text-origin">
@@ -65,7 +65,7 @@ const TableMove = (props) => {
                         <colgroup className="main-move" />
                         <colgroup className="main-move" />
                         <thead>
-                            <tr className="text-center"><th className="table-sub-header" colSpan="3">Best Moves Offensive</th></tr>
+                            <tr className="text-center"><th className="table-sub-header" colSpan={3}>Best Moves Offensive</th></tr>
                             <tr className="text-center">
                                 <th className="table-column-head main-move">Fast</th>
                                 <th className="table-column-head main-move">Charge</th>
@@ -73,7 +73,7 @@ const TableMove = (props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {move.data.sort((a,b) => b.eDPS.offensive - a.eDPS.offensive).map((value, index) => (
+                            {move.data.sort((a: any, b: any) => b.eDPS.offensive - a.eDPS.offensive).map((value: any, index: React.Key | null | undefined) => (
                                 <Fragment key={index}>{renderMovesetTable(value, move.maxOff, "offensive")}</Fragment>
                             ))
                             }
@@ -85,7 +85,7 @@ const TableMove = (props) => {
                         <colgroup className="main-move" />
                         <colgroup className="main-move" />
                         <thead>
-                            <tr className="text-center"><th className="table-sub-header" colSpan="3">Best Moves Defensive</th></tr>
+                            <tr className="text-center"><th className="table-sub-header" colSpan={3}>Best Moves Defensive</th></tr>
                             <tr className="text-center">
                                 <th className="table-column-head">Fast</th>
                                 <th className="table-column-head">Charge</th>
@@ -93,7 +93,7 @@ const TableMove = (props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {move.data.sort((a,b) => b.eDPS.defensive - a.eDPS.defensive).map((value, index) => (
+                            {move.data.sort((a: { eDPS: { defensive: number; }; },b: { eDPS: { defensive: number; }; }) => b.eDPS.defensive - a.eDPS.defensive).map((value: any, index: React.Key | null | undefined) => (
                                 <Fragment key={index}>{renderMovesetTable(value, move.maxDef, "defensive")}</Fragment>
                             ))
                             }

@@ -3,26 +3,26 @@ import candyData from '../data/candy_pokemon_go.json';
 import APIService from "../services/API.service";
 import { convertName, getStyleRuleValue } from "./Utils";
 
-export const rankName = (rank) => {
+export const rankName = (rank: number) => {
     if (rank === 21) return "Ace"
     else if (rank === 22) return "Veteren"
     else if (rank === 23) return "Expert"
     else if (rank === 24) return "Legend"
 }
 
-export const rankIconName = (rank) => {
+export const rankIconName = (rank: number) => {
     if (rank === 21) return APIService.getPokeOtherLeague("special_combat_rank_1");
     else if (rank === 22) return APIService.getPokeOtherLeague("special_combat_rank_2");
     else if (rank === 23) return APIService.getPokeOtherLeague("special_combat_rank_3");
     else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4");
 }
 
-export const rankIconCenterName = (rank) => {
+export const rankIconCenterName = (rank: number) => {
     if (rank === 21 || rank === 22 || rank === 23) return APIService.getPokeOtherLeague("special_combat_rank_1_center");
     else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4_center");
 }
 
-export const raidEgg = (tier, mega) => {
+export const raidEgg = (tier: number, mega: any) => {
     if (tier === 1) return APIService.getRaidSprite("raid_egg_0_icon");
     else if (tier === 3) return APIService.getRaidSprite("raid_egg_1_icon");
     else if (tier === 4) return APIService.getRaidSprite("raid_egg_5_icon");
@@ -32,21 +32,21 @@ export const raidEgg = (tier, mega) => {
     else return APIService.getRaidSprite("ic_raid_small");
 }
 
-export const computeCandyBgColor = (id) => {
+export const computeCandyBgColor = (id: number) => {
     let data = candyData.find(item => item.familyGroup.map(value => value.id).includes(id));
     if (!data) data = candyData.find(item => item.familyId === 0);
-    return `rgb(${Math.round(255*data.SecondaryColor.r)}, ${Math.round(255*data.SecondaryColor.g)}, ${Math.round(255*data.SecondaryColor.b)}, ${data.SecondaryColor.a})`
+    return `rgb(${Math.round(255*(data as any).SecondaryColor.r)}, ${Math.round(255*(data as any).SecondaryColor.g)}, ${Math.round(255*(data as any).SecondaryColor.b)}, ${(data as any).SecondaryColor.a})`
 }
 
-export const computeCandyColor = (id) => {
+export const computeCandyColor = (id: number) => {
   let data = candyData.find(item => item.familyGroup.map(value => value.id).includes(id));
   if (!data) data = candyData.find(item => item.familyId === 0);
-  return `rgb(${Math.round(255*data.PrimaryColor.r)}, ${Math.round(255*data.PrimaryColor.g)}, ${Math.round(255*data.PrimaryColor.b)}, ${data.PrimaryColor.a})`
+  return `rgb(${Math.round(255*(data as any).PrimaryColor.r)}, ${Math.round(255*(data as any).PrimaryColor.g)}, ${Math.round(255*(data as any).PrimaryColor.b)}, ${(data as any).PrimaryColor.a})`
 }
 
-export const computeBgType = (types, shadow, purified, opacity, styleSheet) => {
-    let colorsPalette = [];
-    types.forEach(type => {
+export const computeBgType = (types: any[], shadow: any, purified: undefined, opacity: number | undefined, styleSheet: null | undefined) => {
+    const colorsPalette: any[] = [];
+    types.forEach((type: string) => {
         type = type.toLowerCase();
         const color = getStyleRuleValue('background-color', `.${type}`, styleSheet);
         colorsPalette.push(color.split(")")[0]+`, ${opacity ?? 1})`);
@@ -56,28 +56,28 @@ export const computeBgType = (types, shadow, purified, opacity, styleSheet) => {
     return `linear-gradient(to bottom right, ${colorsPalette[0]}, ${colorsPalette[1] ?? colorsPalette[0]})`;
 }
 
-export const findAssetForm = (pokemonAssets, id, name) => {
+export const findAssetForm = (pokemonAssets: any[], id: number, name: string) => {
     if (name.split("-")[1] === "A") name = name.replace("-A", "-Armor")
-    const pokemon = pokemonAssets.find(item => item.id === id);
-    const standard = pokemon.image.filter(item => item.form.includes("STANDARD"));
+    const pokemon = pokemonAssets.find((item: { id: any; }) => item.id === id);
+    const standard = pokemon.image.filter((item: { form: string | string[]; }) => item.form.includes("STANDARD"));
     if (pokemon.name === convertName(name) || standard.length > 0) {
-        let image = pokemon.image.find(item => item.form === "NORMAL")
+        const image = pokemon.image.find((item: { form: string; }) => item.form === "NORMAL")
         if (image) return image.default;
         if (standard.length > 0) {
             if (name.includes("GALARIAN")) {
-                if (name.includes("ZEN")) return pokemon.image.find(item => item.form.includes("GALARIAN_ZEN")).default
-                return pokemon.image.find(item => item.form.includes("GALARIAN")).default
-            } else if (name.includes("ZEN")) return pokemon.image.find(item => !item.form.includes("GALARIAN") && item.form.includes("ZEN")).default
-            else return pokemon.image.find(item => item.form === "STANDARD").default;
+                if (name.includes("ZEN")) return pokemon.image.find((item: { form: string | string[]; }) => item.form.includes("GALARIAN_ZEN")).default
+                return pokemon.image.find((item: { form: string | string[]; }) => item.form.includes("GALARIAN")).default
+            } else if (name.includes("ZEN")) return pokemon.image.find((item: { form: string | string[]; }) => !item.form.includes("GALARIAN") && item.form.includes("ZEN")).default
+            else return pokemon.image.find((item: { form: string; }) => item.form === "STANDARD").default;
         }
         try {return pokemon.image[0].default;}
         catch { return null }
     }
-    try {return pokemon.image.find(item => convertName(name).replaceAll(pokemon.name+"_", "") === item.form).default;}
+    try {return pokemon.image.find((item: { form: any; }) => convertName(name).replaceAll(pokemon.name+"_", "") === item.form).default;}
     catch { return null; }
 }
 
-export const findStabType = (types, findType) => {
-    return types.find(type => type.toLowerCase() === findType.toLowerCase()) ? true : false;
+export const findStabType = (types: any[], findType: string) => {
+    return types.find((type: string) => type.toLowerCase() === findType.toLowerCase()) ? true : false;
 };
 

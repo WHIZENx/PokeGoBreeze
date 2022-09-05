@@ -39,7 +39,7 @@ const theme = createTheme({
     },
 });
 
-const Evolution = ({evolution, onLoad, setOnLoad, forme, region, formDefault, evolution_url, id, onSetIDPoke, gen}) => {
+const Evolution = ({forme, region, formDefault, id, onSetIDPoke, gen}) => {
 
     const evoData = useSelector((state) => state.store.data.evolution);
     const [arrEvoList, setArrEvoList] = useState([]);

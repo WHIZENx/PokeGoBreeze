@@ -167,6 +167,7 @@ export const optionEvolution = (data, pokemon, formSpecial) => {
                                     dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split("_")[2]
                                 }
                             }
+                            // eslint-disable-next-line no-empty
                             catch {}
                             dataEvo.quest.goal = template.data.evolutionQuestTemplate.goals[0].target
                             dataEvo.quest.type = template.data.evolutionQuestTemplate.questType.replace("QUEST_", "")
@@ -189,11 +190,11 @@ export const optionEvolution = (data, pokemon, formSpecial) => {
                 }
                 if (item.shadow) {
                     result.purified.stardust = item.shadow.purificationStardustNeeded
-				    result.purified.candy = item.shadow.purificationCandyNeeded
+                    result.purified.candy = item.shadow.purificationCandyNeeded
                 }
                 if (item.thirdMove) {
                     result.thirdMove.stardust = item.thirdMove.stardustToUnlock
-				    result.thirdMove.candy = item.thirdMove.candyToUnlock
+                    result.thirdMove.candy = item.thirdMove.candyToUnlock
                 }
                 if (item.form) {
                     result.form = item.form.replace(item.pokemonId+"_", "");
@@ -257,7 +258,7 @@ export const optionAssets = (pokemon, family, imgs, sounds) => {
         }
     }
 
-    return family.map((item, index) => {
+    return family.map(item => {
         let result = assetModel();
         result.id = pokemon.find(poke => poke.name === item).id;
         result.name = item;

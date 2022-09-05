@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { RootStateOrAny, useSelector } from 'react-redux';
 import loading from '../../assets/loading.png';
 import './Spinner.css';
 
 const Spinner = () => {
 
-    const spinner = useSelector((state) => state.spinner);
+    const spinner = useSelector((state: RootStateOrAny) => state.spinner);
 
     return (
         <Fragment>

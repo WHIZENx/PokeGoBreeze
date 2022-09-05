@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import APIService from "../../services/API.service";
 import { leaguesTeamBattle } from "../../util/Constants";
 
 const PVPHome = () => {
 
-    const dispatch = useDispatch();
     const pvp = useSelector((state) => state.store.data.pvp);
 
     const [options, setOptions] = useState({

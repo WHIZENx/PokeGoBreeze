@@ -68,7 +68,7 @@ const Move = (props) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const getWeatherEffective = (type) => {
-        return (Object.entries(weathers).find(([key, value]) => {
+        return (Object.entries(weathers).find(([, value]) => {
             return value.includes(capitalize(type.toLowerCase()))
         }))[0];
     };

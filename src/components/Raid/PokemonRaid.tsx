@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import update from 'immutability-helper';
 
-const PokemonRaid = ({id, pokemon, data, setData, controls, onCopyPokemon, onRemovePokemon, clearData}) => {
+const PokemonRaid = ({id, pokemon, data, setData, controls, onCopyPokemon, onRemovePokemon, clearData}: any) => {
 
     const [dataTargetPokemon, setDataTargetPokemon] = useState(pokemon.dataTargetPokemon);
     const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(pokemon.fmoveTargetPokemon);
@@ -23,15 +23,15 @@ const PokemonRaid = ({id, pokemon, data, setData, controls, onCopyPokemon, onRem
             }}}));
     }, [data, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon, id, setData])
 
-    const setDataPokemon = (value) => {
+    const setDataPokemon = (value: any) => {
         setDataTargetPokemon(value);
     }
 
-    const setFMovePokemon = (value) => {
+    const setFMovePokemon = (value: any) => {
         setFmoveTargetPokemon(value);
     }
 
-    const setCMovePokemon = (value) => {
+    const setCMovePokemon = (value: any) => {
         setCmoveTargetPokemon(value);
     }
 

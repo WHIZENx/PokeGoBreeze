@@ -5,15 +5,15 @@ import { capitalize, splitAndCapitalize } from "../../util/Utils";
 
 import './TypeEffectiveSelect.css';
 
-const TypeEffectiveSelect = (props) => {
+const TypeEffectiveSelect = (props: { block: any; effect: any; types: any; }) => {
 
-    const renderEffective = (text, data) => {
+    const renderEffective = (text: string, data: any[]) => {
         return (
             <Fragment>
                 {data.length > 0 &&
                     <Fragment>
                     <h6 className={props.block ? "element-top" : ""}><b className="text-shadow">x{text}</b></h6>
-                    <div className="d-flex flex-wrap" style={{gap: 5}}>{data.map((value, index) => (
+                    <div className="d-flex flex-wrap" style={{gap: 5}}>{data.map((value: string, index: React.Key) => (
                         <span key={index} className={value.toLowerCase()+" type-select-bg d-flex align-items-center filter-shadow"}>
                             <div style={{display: 'contents', width: 16}}>
                                 <img className="pokemon-sprite-small sprite-type-select filter-shadow" alt="img-type-pokemon" src={APIService.getTypeHqSprite(capitalize(value.toLowerCase()))}/>
@@ -28,8 +28,8 @@ const TypeEffectiveSelect = (props) => {
         )
     }
 
-    const getTypeEffect = (effect, types) => {
-        let data;
+    const getTypeEffect = (effect: number, types: any[]) => {
+        let data: { very_weak?: any; weak?: any; neutral?: any; super_resist?: any; very_resist?: any; resist?: any; };
         if (effect === 0) {
             data = {
                 "weak": [],
@@ -37,8 +37,8 @@ const TypeEffectiveSelect = (props) => {
             }
             Object.entries(typeEffective).forEach(([key, value]) => {
                 let value_effective = 1;
-                types.forEach((type) => {
-                    value_effective *= value[splitAndCapitalize(type, "-", " ")];
+                types.forEach((type: string) => {
+                    value_effective *= (value as any)[splitAndCapitalize(type, "-", " ")];
                 });
                 if (value_effective >= 2.56) data.very_weak.push(key);
                 else if (value_effective >= 1.6) data.weak.push(key);
@@ -56,8 +56,8 @@ const TypeEffectiveSelect = (props) => {
             }
             Object.entries(typeEffective).forEach(([key, value]) => {
                 let value_effective = 1;
-                types.forEach((type) => {
-                    value_effective *= value[splitAndCapitalize(type, "-", " ")];
+                types.forEach((type: string) => {
+                    value_effective *= (value as any)[splitAndCapitalize(type, "-", " ")];
                 });
                 if (value_effective === 1) data.neutral.push(key);
             });
@@ -74,8 +74,8 @@ const TypeEffectiveSelect = (props) => {
             }
             Object.entries(typeEffective).forEach(([key, value]) => {
                 let value_effective = 1;
-                types.forEach((type) => {
-                    value_effective *= value[splitAndCapitalize(type, "-", " ")];
+                types.forEach((type: string) => {
+                    value_effective *= (value as any)[splitAndCapitalize(type, "-", " ")];
                 });
                 if (value_effective <= 0.3) data.super_resist.push(key);
                 else if (value_effective <= 0.39) data.very_resist.push(key);

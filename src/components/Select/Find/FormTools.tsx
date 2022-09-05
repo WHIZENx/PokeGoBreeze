@@ -11,33 +11,30 @@ import hp_logo from '../../../assets/hp.png';
 import sta_logo from '../../../assets/stamina.png';
 
 import pokemonData from '../../../data/pokemon.json';
+import { capitalize } from "../../../util/Utils";
 
-const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide}) => {
+const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide}: any) => {
 
     const [currDataPoke, setCurrDataPoke] = useState(null);
     const [currTier, setCurrTier] = useState(tier);
 
-    const [statATK, setStatATK] = useState(null);
-    const [statDEF, setStatDEF] = useState(null);
-    const [statSTA, setStatSTA] = useState(null);
+    const [statATK, setStatATK]: any = useState(null);
+    const [statDEF, setStatDEF]: any = useState(null);
+    const [statSTA, setStatSTA]: any = useState(null);
 
-    const capitalize = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const filterFormName = useCallback((form, formStats) => {
+    const filterFormName = useCallback((form: string, formStats: string) => {
         form = form === "" ? "Normal" : form.includes("mega") ? form.toLowerCase() : capitalize(form);
         formStats = formStats.includes("Mega") ? formStats.toLowerCase() : formStats.replaceAll("_", "-");
         formStats = formStats === "Hero" ? "Normal" : formStats;
         return form.toLowerCase().includes(formStats.toLowerCase());
     }, []);
 
-    const filterFormList = useCallback((stats, id) => {
-        const filterId = stats.filter(item => item.id === id);
-        const filterForm = stats.find(item => item.id === id && item.form !== "a" &&
+    const filterFormList = useCallback((stats: any[], id: any) => {
+        const filterId = stats.filter((item: { id: any; }) => item.id === id);
+        const filterForm = stats.find((item: { id: any; form: string; }) => item.id === id && item.form !== "a" &&
             filterFormName(currForm.form.form_name, item.form));
         if (filterId.length === 1 && formList.length === 1 && !filterForm) return filterId[0];
-        else if (filterId.length === formList.length && !filterForm) return stats.find(item => item.id === id && item.form === "Normal");
+        else if (filterId.length === formList.length && !filterForm) return stats.find((item: { id: any; form: string; }) => item.id === id && item.form === "Normal");
         else return filterForm;
     }, [currForm, filterFormName, formList.length]);
 
@@ -48,7 +45,7 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
         }
         else if (parseInt(tier) === 5 &&
             currForm && currForm.form.form_name.includes("mega") &&
-            Object.values(pokemonData).find(item => item.num === id).pokemonClass) {
+            Object.values(pokemonData).find((item: any) => item.num === id)?.pokemonClass) {
                 setCurrTier(6);
                 if (setTier) setTier(6);
             }
@@ -63,7 +60,7 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
             setStatATK(raid && tier && !hide ? {attack: calculateRaidStat(formATK.attack, tier)} : formATK);
             setStatDEF(raid && tier && !hide ? {defense: calculateRaidStat(formDEF.defense, tier)} : formDEF);
             setStatSTA(raid && tier && !hide ? {stamina: RAID_BOSS_TIER[tier].sta} : formSTA);
-            setCurrDataPoke(dataPoke.find(item => item.id === id));
+            setCurrDataPoke(dataPoke.find((item: { id: any; }) => item.id === id));
 
             if (formATK && formDEF && formSTA) {
                 onSetStats("atk", raid && tier && !hide ? calculateRaidStat(formATK.attack, tier) : formATK.attack)
@@ -94,7 +91,7 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
                     </optgroup>
                     {currForm && currForm.form.form_name.includes("mega") &&
                     <Fragment>
-                        {Object.values(pokemonData).find(item => item.num === id).pokemonClass ?
+                        {Object.values(pokemonData).find((item: any) => item.num === id)?.pokemonClass ?
                         <optgroup label="Legendary Mega Tiers">
                             <option value={6}>Tier Mega</option>
                         </optgroup>
@@ -109,7 +106,7 @@ const FormTools = ({id, currForm, formList, dataPoke, stats, setForm, onSetStats
                 <table className="table-info">
                     <thead></thead>
                     <tbody>
-                        <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
+                        <tr className="text-center"><td className="table-sub-header" colSpan={2}>Stats</td></tr>
                         <tr>
                             <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={atk_logo}/>ATK</td>
                             <td className="text-center">{statATK ? statATK.attack : 0}</td>

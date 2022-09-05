@@ -141,7 +141,7 @@ const RaidBattle = () => {
         setPokemonBattle(update(pokemonBattle, {$splice: [[index, 1]]}))
     }
 
-    const findMove = useCallback((id, form, type) => {
+    const findMove = useCallback((id, form) => {
         let resultFirst = data.pokemonCombat.filter(item => item.id === id);
         form = form.replaceAll("-", "_").replaceAll("_standard", "").toUpperCase();
         let result = resultFirst.find(item => item.name === form);
@@ -165,7 +165,7 @@ const RaidBattle = () => {
             resultFirst[0].purifiedMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: true})});
             setCMove(simpleMove[0]);
             return setResultCMove(simpleMove);
-        };
+        }
         simpleMove = [];
         result.quickMoves.forEach(value => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});
         result.eliteQuickMoves.forEach(value => {simpleMove.push({name: value, elite: true, shadow: false, purified: false})});

@@ -79,6 +79,7 @@ const RankingPVP = () => {
                     cp === 2500 ? "Ultra League " :
                     "Master League ":""}
                     ${splitAndCapitalize(params.serie, "-", " ")} (${capitalize(params.type)})`;
+                // eslint-disable-next-line no-import-assign
                 pokemonData = Object.values(pokemonData);
                 file = file.map(item => {
                     const name = convertNameRankingToOri(item.speciesId, item.speciesName);
@@ -132,7 +133,7 @@ const RankingPVP = () => {
                     }
                 })
                 setRankingData(file);
-                setStoreStats(file.map(i => false));
+                setStoreStats(file.map(() => false));
             } catch (e) {
                 source.cancel();
                 setFound(false);

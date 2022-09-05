@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { RootStateOrAny, useSelector } from 'react-redux';
 import APIService from '../../services/API.service'
 import { findAssetForm } from '../../util/Compute';
 
-const CardPokemonLarge = (props) => {
+const CardPokemonLarge = (props: any) => {
 
-    const assets = useSelector((state) => state.store.data.assets);
+    const assets = useSelector((state: RootStateOrAny) => state.store.data.assets);
 
     return (
         <Fragment>

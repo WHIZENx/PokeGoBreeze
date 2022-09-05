@@ -57,7 +57,7 @@ const Pokemon = (props) => {
     const fetchMap = useCallback(async (data, axios, source) => {
         let dataPokeList = [];
         let dataFromList = [];
-        await Promise.all(data.varieties.map(async (value, index) => {
+        await Promise.all(data.varieties.map(async (value) => {
             const poke_info = (await axios.getFetchUrl(value.pokemon.url, {cancelToken: source.token})).data;
             const poke_form = await Promise.all(poke_info.forms.map(async (item) => (await axios.getFetchUrl(item.url, {cancelToken: source.token})).data));
             dataPokeList.push(poke_info);
@@ -123,7 +123,7 @@ const Pokemon = (props) => {
             fetchMap(res.data, axios, source);
             setData(res.data);
         })
-        .catch(err => {
+        .catch(() => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
             if (params.id) document.title = `#${params.id} - Not Found`;
             setIsFound(false);
@@ -260,23 +260,23 @@ const Pokemon = (props) => {
                                 <tbody>
                                     <tr>
                                         <td><h5>ID</h5></td>
-                                        <td colSpan={2}><h5><b>#{data.id}</b></h5></td>
+                                        <td colSpan={2}><h5 className="d-flex"><b>#{data.id}</b></h5></td>
                                     </tr>
                                     <tr>
                                         <td><h5>Name</h5></td>
-                                        <td colSpan={2}><h5><b>{formName}</b></h5></td>
+                                        <td colSpan={2}><h5 className="d-flex"><b>{formName}</b></h5></td>
                                     </tr>
                                     <tr>
                                         <td><h5>Generation</h5></td>
-                                        <td colSpan={2}><h5><b>{data.generation.name.split("-")[1].toUpperCase()}</b> <span className="text-gen">({getNumGen(data.generation.url)})</span></h5></td>
+                                        <td colSpan={2}><h5 className="d-flex" style={{gap: 5}}><b>{data.generation.name.split("-")[1].toUpperCase()}</b> <span className="text-gen">({getNumGen(data.generation.url)})</span></h5></td>
                                     </tr>
                                     <tr>
                                         <td><h5>Region</h5></td>
-                                        <td colSpan={2}><h5>{region}</h5></td>
+                                        <td colSpan={2}><h5 className="d-flex">{region}</h5></td>
                                     </tr>
                                     <tr>
                                         <td><h5>Version</h5></td>
-                                        <td colSpan={2}><h5>{version}</h5></td>
+                                        <td colSpan={2}><h5 className="d-flex">{version}</h5></td>
                                     </tr>
                                     <tr>
                                         <td><h5>Body</h5></td>
@@ -315,7 +315,7 @@ const Pokemon = (props) => {
                                                 </div>
                                                 <span>{getCostModifier(data.id) && getCostModifier(data.id).thirdMove.candy ? `x${getCostModifier(data.id).thirdMove.candy}` : "Unavailable"}</span>
                                             </div>
-                                            <div className="row-extra">
+                                            <div className="row-extra d-flex">
                                                 <div className="d-inline-flex justify-content-center" style={{width: 20, marginRight: 5}}>
                                                     <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/>
                                                 </div>
@@ -336,7 +336,7 @@ const Pokemon = (props) => {
                                                 </div>
                                                 <span>{getCostModifier(data.id) && getCostModifier(data.id).purified.candy ? `x${getCostModifier(data.id).purified.candy}` : "Unavailable"}</span>
                                             </div>
-                                            <div className="row-extra">
+                                            <div className="row-extra d-flex">
                                                 <div className="d-inline-flex justify-content-center" style={{width: 20, marginRight: 5}}>
                                                     <img alt='img-stardust' height={20} src={APIService.getItemSprite("stardust_painted")}/>
                                                 </div>

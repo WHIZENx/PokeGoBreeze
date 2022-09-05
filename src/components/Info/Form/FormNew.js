@@ -32,7 +32,6 @@ const Form = ({
     setFormName,
     id_default,
     pokeData,
-    pokemonRaito,
     formList,
     ratio,
     stats,

@@ -94,7 +94,7 @@ const CalculatePoint = () => {
         setFormDef(form);
     }
 
-    const calculateBreakpointAtk = (level, iv) => {
+    const calculateBreakpointAtk = () => {
         setResultBreakPointAtk(null);
         let dataList = [];
         let group = []
@@ -117,7 +117,7 @@ const CalculatePoint = () => {
         enqueueSnackbar('Calculate breakpoint attacker successfully!', { variant: 'success' });
     }
 
-    const calculateBreakpointDef = (level, iv) => {
+    const calculateBreakpointDef = () => {
         setResultBreakPointDef(null);
         let dataListDef = [];
         let groupDef = [];

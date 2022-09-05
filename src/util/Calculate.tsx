@@ -5,28 +5,28 @@ import weatherBoosts from '../data/weather_boosts.json';
 import { DEFAULT_DAMAGE_CONST, DEFAULT_DAMAGE_MULTIPLY, DEFAULT_ENEMY_ATK_DELAY, DEFAULT_ENERYGY_PER_HP_LOST, DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_SHADOW, DEFAULT_TRAINER_FRIEND, DEFAULT_WEATHER_BOOSTS, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, MULTIPLY_LEVEL_FRIENDSHIP, MULTIPLY_THROW_CHARGE, RAID_BOSS_TIER, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY, typeCostPowerUp } from "./Constants";
 import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm } from "./Utils";
 
-const weatherMultiple = (globalOptions, weather, type) => {
-    return weatherBoosts[weather].find(item => item === capitalize(type.toLowerCase())) ? STAB_MULTIPLY(globalOptions) : 1;
+const weatherMultiple = (globalOptions: any, weather: string | number, type: string) => {
+    return (weatherBoosts as any)[weather].find((item: any) => item === capitalize(type.toLowerCase())) ? STAB_MULTIPLY(globalOptions) : 1;
 }
 
-export const getTypeEffective = (typeMove, typesObj) => {
+export const getTypeEffective = (typeMove: string, typesObj: any[]) => {
     let value_effective = 1;
-    typesObj.forEach(type => {
-        try {value_effective *= typeEffective[capitalize(typeMove.toLowerCase())][capitalize(type.type.name.toLowerCase())];}
-        catch {value_effective *= typeEffective[capitalize(typeMove.toLowerCase())][capitalize(type.toLowerCase())];}
+    typesObj.forEach((type: { type: { name: string; }; toLowerCase: () => any; }) => {
+        try {value_effective *= (typeEffective as any)[capitalize(typeMove.toLowerCase())][capitalize(type.type.name.toLowerCase())];}
+        catch {value_effective *= (typeEffective as any)[capitalize(typeMove.toLowerCase())][capitalize(type.toLowerCase())];}
     });
     return value_effective;
 }
 
 /* Thank algorithm from pokemongohub.net */
-export const calBaseATK = (stats, nerf) => {
-    const atk = stats.atk ?? stats.find(item => item.stat.name === "attack").base_stat;
-    const spa = stats.spa ?? stats.find(item => item.stat.name === "special-attack").base_stat;
+export const calBaseATK = (stats: any, nerf: boolean) => {
+    const atk = stats.atk ?? stats.find((item: { stat: { name: string; }; }) => item.stat.name === "attack").base_stat;
+    const spa = stats.spa ?? stats.find((item: { stat: { name: string; }; }) => item.stat.name === "special-attack").base_stat;
 
     const lower = Math.min(atk, spa);
     const higher = Math.max(atk, spa);
 
-    const speed = stats.spe ?? stats.find(item => item.stat.name === "speed").base_stat;
+    const speed = stats.spe ?? stats.find((item: { stat: { name: string; }; }) => item.stat.name === "speed").base_stat;
 
     const scaleATK = Math.round(2*((7/8)*higher+(1/8)*lower));
     const speedMod = 1+(speed-75)/500;
@@ -36,14 +36,14 @@ export const calBaseATK = (stats, nerf) => {
     else return baseATK;
 }
 
-export const calBaseDEF = (stats, nerf) => {
-    const def = stats.def ?? stats.find(item => item.stat.name === "defense").base_stat;
-    const spd = stats.spd ?? stats.find(item => item.stat.name === "special-defense").base_stat;
+export const calBaseDEF = (stats: any, nerf: boolean) => {
+    const def = stats.def ?? stats.find((item: { stat: { name: string; }; }) => item.stat.name === "defense").base_stat;
+    const spd = stats.spd ?? stats.find((item: { stat: { name: string; }; }) => item.stat.name === "special-defense").base_stat;
 
     const lower = Math.min(def, spd);
     const higher = Math.max(def, spd);
 
-    const speed = stats.spe ?? stats.find(item => item.stat.name === "speed").base_stat;
+    const speed = stats.spe ?? stats.find((item: { stat: { name: string; }; }) => item.stat.name === "speed").base_stat;
 
     const scaleDEF = Math.round(2*((5/8)*higher+(3/8)*lower));
     const speedMod = 1+(speed-75)/500;
@@ -53,8 +53,8 @@ export const calBaseDEF = (stats, nerf) => {
     else return baseDEF;
 }
 
-export const calBaseSTA = (stats, nerf) => {
-    const hp = stats.hp ?? stats.find(item => item.stat.name === "hp").base_stat;
+export const calBaseSTA = (stats: any, nerf: boolean) => {
+    const hp = stats.hp ?? stats.find((item: { stat: { name: string; }; }) => item.stat.name === "hp").base_stat;
 
     const baseSTA = Math.floor(hp * 1.75 + 50);
     if (!nerf) return baseSTA;
@@ -62,37 +62,37 @@ export const calBaseSTA = (stats, nerf) => {
     else return baseSTA;
 }
 
-export const sortStatsPokemon = (states) => {
-    const attackRanking = Array.from(new Set(states.sort((a,b) => a.baseStatsPokeGo.attack - b.baseStatsPokeGo.attack)
-    .map(item => {
+export const sortStatsPokemon = (states: any[]) => {
+    const attackRanking = Array.from(new Set(states.sort((a: { baseStatsPokeGo: { attack: number; }; },b: { baseStatsPokeGo: { attack: number; }; }) => a.baseStatsPokeGo.attack - b.baseStatsPokeGo.attack)
+    .map((item: { baseStatsPokeGo: { attack: any; }; }) => {
         return item.baseStatsPokeGo.attack;
     })));
 
     const minATK = Math.min(...attackRanking);
     const maxATK = Math.max(...attackRanking);
-    const attackStats = states.map((item) => {
+    const attackStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { attack: unknown; }; }) => {
         return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", attack: item.baseStatsPokeGo.attack, rank: attackRanking.length-attackRanking.indexOf(item.baseStatsPokeGo.attack)};
     });
 
-    const defenseRanking = Array.from(new Set(states.sort((a,b) => a.baseStatsPokeGo.defense - b.baseStatsPokeGo.defense)
-    .map(item => {
+    const defenseRanking = Array.from(new Set(states.sort((a: { baseStatsPokeGo: { defense: number; }; },b: { baseStatsPokeGo: { defense: number; }; }) => a.baseStatsPokeGo.defense - b.baseStatsPokeGo.defense)
+    .map((item: { baseStatsPokeGo: { defense: any; }; }) => {
         return item.baseStatsPokeGo.defense;
     })));
 
     const minDEF = Math.min(...defenseRanking);
     const maxDEF = Math.max(...defenseRanking);
-    const defenseStats = states.map((item) => {
+    const defenseStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { defense: unknown; }; }) => {
         return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", defense: item.baseStatsPokeGo.defense, rank: defenseRanking.length-defenseRanking.indexOf(item.baseStatsPokeGo.defense)};
     });
 
-    const staminaRanking = Array.from(new Set(states.sort((a,b) => a.baseStatsPokeGo.stamina - b.baseStatsPokeGo.stamina)
-    .map(item => {
+    const staminaRanking = Array.from(new Set(states.sort((a: { baseStatsPokeGo: { stamina: number; }; },b: { baseStatsPokeGo: { stamina: number; }; }) => a.baseStatsPokeGo.stamina - b.baseStatsPokeGo.stamina)
+    .map((item: { baseStatsPokeGo: { stamina: any; }; }) => {
         return item.baseStatsPokeGo.stamina;
     })));
 
     const minSTA = Math.min(...staminaRanking);
     const maxSTA = Math.max(...staminaRanking);
-    const staminaStats = states.map((item) => {
+    const staminaStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { stamina: unknown; }; }) => {
         return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", stamina: item.baseStatsPokeGo.stamina, rank: staminaRanking.length-staminaRanking.indexOf(item.baseStatsPokeGo.stamina)};
     });
 
@@ -121,33 +121,33 @@ export const sortStatsPokemon = (states) => {
     };
 }
 
-export const calculateCP = (atk, def, sta, level) => {
-    return Math.floor(Math.max(10, (atk*(def**0.5)*(sta**0.5)*data.find(item => item.level === level).multiplier**2)/10))
+export const calculateCP = (atk: number, def: number, sta: number, level: number) => {
+    return Math.floor(Math.max(10, (atk*(def**0.5)*(sta**0.5)*(data as any).find((item: any) => item.level === level).multiplier**2)/10))
 }
 
-export const calculateRaidStat = (stat, tier) => {
+export const calculateRaidStat = (stat: number, tier: number) => {
     return Math.floor((stat+15)*RAID_BOSS_TIER[tier].CPm)
 }
 
-export const calculateRaidCP = (atk, def, tier) => {
+export const calculateRaidCP = (atk: number, def: number, tier: number) => {
     return Math.floor(((atk+15)*Math.sqrt(def+15)*Math.sqrt(RAID_BOSS_TIER[tier].sta))/10)
 }
 
-export const calculateDmgOutput = (atk, dps) => {
+export const calculateDmgOutput = (atk: number, dps: number) => {
     return atk*dps;
 }
 
-export const calculateTankiness = (def, HP) => {
+export const calculateTankiness = (def: number, HP: number) => {
     return def*HP;
 }
 
-export const calculateDuelAbility = (dmgOutput, tanki) => {
+export const calculateDuelAbility = (dmgOutput: number, tanki: number) => {
     return dmgOutput*tanki;
 }
 
-export const predictStat = (atk, def, sta, cp) => {
+export const predictStat = (atk: number, def: number, sta: number, cp: any) => {
     cp = parseInt(cp)
-    let dataStat = {}
+    const dataStat: any = {}
     let minLevel = 1;
     let maxLevel = 1;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i+=0.5) {
@@ -166,7 +166,7 @@ export const predictStat = (atk, def, sta, cp) => {
     dataStat["minLevel"] = minLevel;
     dataStat["maxLevel"] = maxLevel;
 
-    let predictArr = [];
+    const predictArr = [];
     for (let l = minLevel; l <= maxLevel; l+=0.5) {
         for (let i = MIN_IV; i <= MAX_IV; i++) {
             for (let j = MIN_IV; j <= MAX_IV; j++) {
@@ -176,7 +176,7 @@ export const predictStat = (atk, def, sta, cp) => {
                         sta: k,
                         level: l,
                         percent: parseFloat(((i+j+k)*100/45).toFixed(2)),
-                        hp: Math.floor((sta+k)*data.find(item => item.level === l).multiplier)})
+                        hp: Math.floor((sta+k)*(data as any).find((item: any) => item.level === l).multiplier)})
                 }
             }
         }
@@ -185,28 +185,28 @@ export const predictStat = (atk, def, sta, cp) => {
     return dataStat;
 }
 
-export const predictCPList = (atk, def, sta, IVatk, IVdef, IVsta) => {
+export const predictCPList = (atk: number, def: number, sta: number, IVatk: any, IVdef: any, IVsta: any) => {
     IVatk = parseInt(IVatk);
     IVdef = parseInt(IVdef);
     IVsta = parseInt(IVsta);
 
-    let dataStat = {};
+    const dataStat: any = {};
     dataStat["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
 
-    let predictArr = [];
+    const predictArr = [];
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i+=0.5) {
         predictArr.push({level: i,
             cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i),
-            hp: Math.floor((sta+IVsta)*data.find(item => item.level === i).multiplier)})
+            hp: Math.floor((sta+IVsta)*(data as any).find((item: any) => item.level === i).multiplier)})
     }
     dataStat["result"] = predictArr;
     return dataStat;
 }
 
-export const calculateStats = (atk, def, sta, IVatk, IVdef, IVsta, cp) => {
+export const calculateStats = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, cp: any) => {
     cp = parseInt(cp)
 
-    let dataStat = {};
+    const dataStat: any = {};
     dataStat["IV"] = {atk: IVatk, def: IVdef, sta: IVsta};
     dataStat["CP"] = cp;
     dataStat["level"] = null;
@@ -220,11 +220,18 @@ export const calculateStats = (atk, def, sta, IVatk, IVdef, IVsta, cp) => {
     return dataStat;
 }
 
-export const calculateBetweenLevel = (globalOptions, atk, def, sta, IVatk, IVdef, IVsta, from_lv, to_lv, type) => {
+export const calculateStatsBattle = (base: number, iv: number, level: number, floor: any = false, addition: any = false) => {
+    let result: number = (base+iv)*(data as any).find((item: any) => item.level === level).multiplier;
+    if (addition) result *= addition;
+    if (floor) return Math.floor(result);
+    return result
+}
+
+export const calculateBetweenLevel = (globalOptions: any, atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, from_lv: number, to_lv: number, type: any = '') => {
     // from_lv -= 0.5;
     to_lv -= 0.5;
 
-    let power_up_count = (to_lv-from_lv)*2;
+    const power_up_count = (to_lv-from_lv)*2;
 
     if (from_lv > to_lv) {
         return {
@@ -243,15 +250,20 @@ export const calculateBetweenLevel = (globalOptions, atk, def, sta, IVatk, IVdef
         let between_candy_diff = 0;
         let between_xl_candy_diff = 0;
 
-        if (type === "shadow") {
-            var atk_stat = calculateStatsBattle(atk, IVatk, to_lv+0.5, true, SHADOW_ATK_BONUS(globalOptions));
-            var def_stat = calculateStatsBattle(def, IVdef, to_lv+0.5, true, SHADOW_DEF_BONUS(globalOptions));
+        let atk_stat = 0;
+        let def_stat = 0;
+        let atk_stat_diff = 0;
+        let def_stat_diff = 0;
 
-            var atk_stat_diff = Math.abs(calculateStatsBattle(atk, IVatk, to_lv+0.5) - atk_stat, true);
-            var def_stat_diff = Math.abs(calculateStatsBattle(def, IVdef, to_lv+0.5) - def_stat, true);
+        if (type === "shadow") {
+            atk_stat = calculateStatsBattle(atk, IVatk, to_lv+0.5, true, SHADOW_ATK_BONUS(globalOptions));
+            def_stat = calculateStatsBattle(def, IVdef, to_lv+0.5, true, SHADOW_DEF_BONUS(globalOptions));
+
+            atk_stat_diff = Math.abs(calculateStatsBattle(atk, IVatk, to_lv+0.5, true) - atk_stat);
+            def_stat_diff = Math.abs(calculateStatsBattle(def, IVdef, to_lv+0.5, true) - def_stat);
         }
 
-        data.forEach(ele => {
+        data.forEach((ele: any) => {
             if (ele.level >= from_lv && ele.level <= to_lv) {
                 between_stadust += Math.ceil(ele.stadust*typeCostPowerUp(type).stadust);
                 between_candy += Math.ceil(ele.candy*typeCostPowerUp(type).candy);
@@ -259,10 +271,10 @@ export const calculateBetweenLevel = (globalOptions, atk, def, sta, IVatk, IVdef
                 between_stadust_diff += Math.abs(ele.stadust-(Math.ceil(ele.stadust*typeCostPowerUp(type).stadust)));
                 between_candy_diff += Math.abs(ele.candy-(Math.ceil(ele.candy*typeCostPowerUp(type).candy)));
                 between_xl_candy_diff += Math.abs(ele.xl_candy-(Math.ceil(ele.xl_candy*typeCostPowerUp(type).candy)));
-            };
+            }
         });
 
-        let dataList = {
+        const dataList: any = {
             cp: calculateCP(atk+IVatk, def+IVdef, sta+IVsta, to_lv+0.5),
             result_between_stadust: between_stadust,
             result_between_stadust_diff: between_stadust_diff,
@@ -285,20 +297,13 @@ export const calculateBetweenLevel = (globalOptions, atk, def, sta, IVatk, IVdef
     }
 }
 
-export const calculateStatsBattle = (base, iv, level, floor, addition) => {
-    let result = (base+iv)*data.find(item => item.level === level).multiplier;
-    if (addition) result *= addition;
-    if (floor) return Math.floor(result);
-    return result
-}
-
-export const calculateBattleLeague = (globalOptions, atk, def, sta, IVatk, IVdef, IVsta, from_lv, currCP, maxCp, type) => {
+export const calculateBattleLeague = (globalOptions: any, atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, from_lv: any, currCP: number, maxCp: number | null, type: string) => {
     let level = MAX_LEVEL;
     if (type !== "lucky") level -= 1;
     if (maxCp && currCP > maxCp) {
         return {elidge: false}
     } else {
-        let dataBattle = {};
+        const dataBattle: any = {};
 
         dataBattle["elidge"] = true;
         dataBattle["maxCP"] = maxCp;
@@ -316,12 +321,12 @@ export const calculateBattleLeague = (globalOptions, atk, def, sta, IVatk, IVdef
                     dataBattle["level"] = i;
                     dataBattle.cp = calculateCP(atk+IVatk, def+IVdef, sta+IVsta, i);
                     dataBattle.limit = false;
-                };
+                }
             }
         }
 
-        let atk_stat = (type === "shadow") ? calculateStatsBattle(atk, IVatk, dataBattle.level, true, SHADOW_ATK_BONUS(globalOptions)) : calculateStatsBattle(atk, IVatk, dataBattle.level, true);
-        let def_stat = (type === "shadow") ? calculateStatsBattle(def, IVdef, dataBattle.level, true, SHADOW_DEF_BONUS(globalOptions)) : calculateStatsBattle(def, IVdef, dataBattle.level, true);
+        const atk_stat = (type === "shadow") ? calculateStatsBattle(atk, IVatk, dataBattle.level, true, SHADOW_ATK_BONUS(globalOptions)) : calculateStatsBattle(atk, IVatk, dataBattle.level, true);
+        const def_stat = (type === "shadow") ? calculateStatsBattle(def, IVdef, dataBattle.level, true, SHADOW_DEF_BONUS(globalOptions)) : calculateStatsBattle(def, IVdef, dataBattle.level, true);
 
         dataBattle["rangeValue"] = calculateBetweenLevel(globalOptions, atk, def, sta, IVatk, IVdef, IVsta, from_lv, dataBattle.level, type);
         dataBattle["stats"] = {
@@ -333,7 +338,7 @@ export const calculateBattleLeague = (globalOptions, atk, def, sta, IVatk, IVdef
     }
 }
 
-export const findCPforLeague = (atk, def, sta, IVatk, IVdef, IVsta, level, maxCPLeague) => {
+export const findCPforLeague = (atk: number, def: number, sta: number, IVatk: any, IVdef: any, IVsta: any, level: any, maxCPLeague: any) => {
     let cp = 10;
     let l = level;
     for (let i = level; i <= MAX_LEVEL; i+=0.5) {
@@ -347,13 +352,13 @@ export const findCPforLeague = (atk, def, sta, IVatk, IVdef, IVsta, level, maxCP
     }
 }
 
-export const sortStatsProd = (data) => {
-    data = data.sort((a,b) => a.statsProds - b.statsProds);
-    return data.map((item, index) => ({...item, ratio: item.statsProds*100/data[data.length-1].statsProds, rank: data.length-index}));
+export const sortStatsProd = (data: any[]) => {
+    data = data.sort((a: { statsProds: number; },b: { statsProds: number; }) => a.statsProds - b.statsProds);
+    return data.map((item: { statsProds: number; }, index: number) => ({...item, ratio: item.statsProds*100/data[data.length-1].statsProds, rank: data.length-index}));
 }
 
-export const calStatsProd = (atk, def, sta, minCP, maxCP, pure) => {
-    let dataList = [];
+export const calStatsProd = (atk: number, def: number, sta: number, minCP: number | null, maxCP: number | null, pure: boolean | undefined) => {
+    const dataList: { IV: { atk: number; def: number; sta: number; }; CP: number; level: number; stats: { statsATK: number; statsDEF: number; statsSTA: number; }; statsProds: number; }[] = [];
     if (atk === 0 || def === 0 || sta === 0) return dataList;
     for (let l = MIN_LEVEL; l <= MAX_LEVEL; l+=0.5) {
         for (let i = MIN_IV; i <= MAX_IV; ++i) {
@@ -382,8 +387,8 @@ export const calStatsProd = (atk, def, sta, minCP, maxCP, pure) => {
     } else return dataList;
 }
 
-export const calculateStatsByTag = (baseStats, tag) => {
-    let checkNerf = tag && tag.toLowerCase().includes("mega") ? false : true;
+export const calculateStatsByTag = (baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number; }, tag: string | null) => {
+    const checkNerf = tag && tag.toLowerCase().includes("mega") ? false : true;
     const atk  = calBaseATK(baseStats, checkNerf);
     const def  = calBaseDEF(baseStats, checkNerf);
     const sta  = tag !== "shedinja" ? calBaseSTA(baseStats, checkNerf) : 1;
@@ -394,7 +399,7 @@ export const calculateStatsByTag = (baseStats, tag) => {
     };
 }
 
-export const calculateDamagePVE = (globalOptions, atk, defObj, power, eff, notPure, stab) => {
+export const calculateDamagePVE = (globalOptions: any, atk: number, defObj: number, power: number, eff: { stab: any; wb: any; dodge?: any; mega?: any; trainer?: any; flevel?: any; clevel?: any; effective: any; }, notPure: boolean | undefined, stab: undefined) => {
     const StabMultiply = STAB_MULTIPLY(globalOptions)
     let modifier;
     if (eff) {
@@ -417,7 +422,7 @@ export const calculateDamagePVE = (globalOptions, atk, defObj, power, eff, notPu
     return Math.floor(0.5 * power * (atk/defObj) * modifier) + 1
 }
 
-export const getBarCharge = (isRaid, energy) => {
+export const getBarCharge = (isRaid: boolean, energy: number) => {
     energy = Math.abs(energy);
     if (isRaid) {
         const bar = Math.ceil(100 / energy)
@@ -425,7 +430,7 @@ export const getBarCharge = (isRaid, energy) => {
     } else return energy > 50 ? 1 : 2;
 }
 
-export const calculateAvgDPS = (globalOptions, fmove, cmove, Atk, Def, HP, typePoke, options, shadow) => {
+export const calculateAvgDPS = (globalOptions: any, fmove: any, cmove: any, Atk: number, Def: number, HP: number, typePoke: string | string[], options: any = null, shadow: any = null) => {
     const StabMultiply = STAB_MULTIPLY(globalOptions),
     ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
     ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
@@ -473,7 +478,7 @@ export const calculateAvgDPS = (globalOptions, fmove, cmove, Atk, Def, HP, typeP
     let x = 0.5*CE+0.5*FE;
     if (options && options.specific) {
         const bar = getBarCharge(true, CE);
-        let λ;
+        let λ = 0;
         if (bar === 1) λ = 3;
         else if (bar === 2) λ = 1.5;
         else if (bar === 3) λ = 1;
@@ -488,7 +493,7 @@ export const calculateAvgDPS = (globalOptions, fmove, cmove, Atk, Def, HP, typeP
     return Math.max(FDPS, DPS);
 }
 
-export const calculateTDO = (globalOptions, Def, HP, dps, shadow) => {
+export const calculateTDO = (globalOptions: any, Def: number, HP: number, dps: number, shadow: any = null) => {
     const ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions)
 
     let y;
@@ -497,7 +502,7 @@ export const calculateTDO = (globalOptions, Def, HP, dps, shadow) => {
     return HP/y*dps;
 }
 
-export const calculateBattleDPSDefender = (globalOptions, Attacker, Defender) => {
+export const calculateBattleDPSDefender = (globalOptions: any, Attacker: { atk?: number; def: any; hp?: number; fmove?: any; cmove?: any; types: any; shadow?: any; WEATHER_BOOSTS?: boolean; POKEMON_FRIEND?: boolean; POKEMON_FRIEND_LEVEL?: number; }, Defender: { atk: any; def?: number; hp?: number; fmove: any; cmove: any; types: any; WEATHER_BOOSTS: any; shadow?: any; }) => {
     const StabMultiply = STAB_MULTIPLY(globalOptions),
     ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
     ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions)
@@ -526,7 +531,7 @@ export const calculateBattleDPSDefender = (globalOptions, Attacker, Defender) =>
     return DefDmg/defDuration;
 }
 
-export const calculateBattleDPS = (globalOptions, Attacker, Defender, DPSDef) => {
+export const calculateBattleDPS = (globalOptions: any, Attacker: { atk: any; def?: number; hp: any; fmove: any; cmove: any; types: any; shadow?: any; WEATHER_BOOSTS: any; POKEMON_FRIEND?: any; POKEMON_FRIEND_LEVEL?: any; isDoubleCharge?: any; cmove2?: any; }, Defender: { atk?: number; def: any; hp?: number; fmove?: any; cmove?: any; types: any; WEATHER_BOOSTS?: boolean; shadow?: any; }, DPSDef: number) => {
     const StabMultiply = STAB_MULTIPLY(globalOptions),
     ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
     ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions)
@@ -595,24 +600,24 @@ export const calculateBattleDPS = (globalOptions, Attacker, Defender, DPSDef) =>
     return Math.max(FDPS, DPS, DPSSec);
 }
 
-export const TimeToKill = (HP, dpsDef) => {
+export const TimeToKill = (HP: number, dpsDef: number) => {
     return HP/dpsDef;
 }
 
-export const queryTopMove = (globalOptions, pokemonCombatList, move) => {
-    let dataPri = [];
+export const queryTopMove = (globalOptions: any, pokemonCombatList: any[], move: any) => {
+    const dataPri: { num: number; forme: string | null; name: any; baseSpecies: string | null; sprite: string; releasedGO: boolean; dps: number; tdo: number; }[] = [];
     Object.values(pokemonData).forEach(value => {
-        let combatPoke = pokemonCombatList.filter(item => item.id === value.num
+        let combatPoke: any = pokemonCombatList.filter((item: { id: number; baseSpecies: any; }) => item.id === value.num
             && item.baseSpecies === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
         );
-        let result = combatPoke.find(item => item.name === convertName(value.name));
+        const result = combatPoke.find((item: { name: any; }) => item.name === convertName(value.name));
         if (result === undefined) combatPoke = combatPoke[0]
         else combatPoke = result;
         if (combatPoke !== undefined) {
             let pokemonList;
             if (move.type_move === "FAST") {
-                pokemonList = combatPoke.quickMoves.map(item => item.replaceAll("_FAST", "")).includes(move.name);
-                if (!pokemonList) pokemonList = combatPoke.eliteQuickMoves.map(item => item.replaceAll("_FAST", "")).includes(move.name);
+                pokemonList = combatPoke.quickMoves.map((item: string) => item.replaceAll("_FAST", "")).includes(move.name);
+                if (!pokemonList) pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item.replaceAll("_FAST", "")).includes(move.name);
             }
             else if (move.type_move === "CHARGE") {
                 pokemonList = combatPoke.cinematicMoves.includes(move.name);
@@ -622,14 +627,14 @@ export const queryTopMove = (globalOptions, pokemonCombatList, move) => {
             }
             if (pokemonList) {
                 const stats = calculateStatsByTag(value.baseStats, value.forme);
-                let dps = calculateAvgDPS(globalOptions, move,
+                const dps = calculateAvgDPS(globalOptions, move,
                     move,
                     calculateStatsBattle(stats.atk, MAX_IV, 40),
                     calculateStatsBattle(stats.def, MAX_IV, 40),
                     calculateStatsBattle(stats.sta, MAX_IV, 40),
                     value.types
                 );
-                let tdo = calculateTDO(globalOptions,
+                const tdo = calculateTDO(globalOptions,
                     calculateStatsBattle(stats.def, MAX_IV, 40),
                     calculateStatsBattle(stats.sta, MAX_IV, 40),
                     dps
@@ -641,17 +646,17 @@ export const queryTopMove = (globalOptions, pokemonCombatList, move) => {
     return dataPri;
 }
 
-const queryMove = (globalOptions, combat, dataList, vf, atk, def, sta, type, cmove, felite, celite, shadow, purified) => {
-    cmove.forEach(vc => {
-        let mf = combat.find(item => item.name === vf.replaceAll("_FAST", ""));
-        let mc = combat.find(item => item.name === vc);
+const queryMove = (globalOptions: any, combat: any[], dataList: any[], vf: string, atk: any, def: any, sta: any, type: any, cmove: any[], felite: boolean, celite: boolean, shadow: boolean, purified: boolean | undefined) => {
+    cmove.forEach((vc: any) => {
+        const mf = combat.find((item: { name: any; }) => item.name === vf.replaceAll("_FAST", ""));
+        const mc = combat.find((item: { name: any; }) => item.name === vc);
 
         mf["elite"] = felite;
         mc["elite"] = celite;
         mc["shadow"] = shadow;
         mc["purified"] = purified;
 
-        let options = {
+        const options = {
             delay: {
                 ftime: DEFAULT_ENEMY_ATK_DELAY,
                 ctime: DEFAULT_ENEMY_ATK_DELAY
@@ -663,11 +668,11 @@ const queryMove = (globalOptions, combat, dataList, vf, atk, def, sta, type, cmo
             POKEMON_LEVEL: 40
         }
 
-        let offensive = calculateAvgDPS(globalOptions, mf, mc,
+        const offensive = calculateAvgDPS(globalOptions, mf, mc,
             calculateStatsBattle(atk, options.IV_ATK, options.POKEMON_LEVEL, true),
             calculateStatsBattle(def, options.IV_DEF, options.POKEMON_LEVEL, true),
             calculateStatsBattle(sta, options.IV_HP, options.POKEMON_LEVEL, true), type);
-        let defensive = calculateAvgDPS(globalOptions, mf, mc,
+        const defensive = calculateAvgDPS(globalOptions, mf, mc,
             calculateStatsBattle(atk, options.IV_ATK, options.POKEMON_LEVEL, true),
             calculateStatsBattle(def, options.IV_DEF, options.POKEMON_LEVEL, true),
             calculateStatsBattle(sta, options.IV_HP, options.POKEMON_LEVEL, true), type, options);
@@ -676,18 +681,18 @@ const queryMove = (globalOptions, combat, dataList, vf, atk, def, sta, type, cmo
     });
 }
 
-export const rankMove = (globalOptions, combat, move, atk, def, sta, type) => {
+export const rankMove = (globalOptions: any, combat: any, move: { quickMoves: any[]; cinematicMoves: any; eliteCinematicMoves: any; shadowMoves: any; purifiedMoves: any; eliteQuickMoves: any[]; }, atk: any, def: any, sta: any, type: any) => {
     if (!move) return {data: []};
-    let dataPri = []
-    move.quickMoves.forEach(vf => {
+    const dataPri: any[] = []
+    move.quickMoves.forEach((vf: any) => {
         queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.cinematicMoves, false, false, false, false);
         queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.eliteCinematicMoves, false, true, false, false);
         queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.shadowMoves, false, false, true, false);
         queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.purifiedMoves, false, false, false, true);
     });
-    move.eliteQuickMoves.forEach(vf => {
+    move.eliteQuickMoves.forEach((vf: any) => {
         queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.cinematicMoves, true, false, false, false);
-        queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.eliteCinematicMoves, true, true, false);
+        queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.eliteCinematicMoves, true, true, false, false);
         queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.shadowMoves, true, false, true, false);
         queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.purifiedMoves, true, false, false, true);
     });
@@ -699,27 +704,27 @@ export const rankMove = (globalOptions, combat, move, atk, def, sta, type) => {
     };
 }
 
-export const queryStatesEvoChain = (globalOptions, item, level, atkIV, defIV, staIV) => {
-    let pokemon;
+export const queryStatesEvoChain = (globalOptions: any, item: { form: string; id: number; name: string; }, level: any, atkIV: number, defIV: number, staIV: number) => {
+    let pokemon: any;
     if (item.form === "") pokemon = Object.values(pokemonData).find(value => value.num === item.id && value.slug === item.name.toLowerCase());
     else pokemon = Object.values(pokemonData).find(value => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
     if (!pokemon) pokemon = Object.values(pokemonData).find(value => value.num === item.id);
-    let pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
-    let dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 500);
-    let dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 1500);
-    let dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 2500);
-    let dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, null);
+    const pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+    const dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 500);
+    const dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 1500);
+    const dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 2500);
+    const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, null);
 
-    let statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null, null, true);
-    let ultraStatsProd = sortStatsProd(statsProd.filter(item => item.CP <= 2500));
-    let greatStatsProd = sortStatsProd(ultraStatsProd.filter(item => item.CP <= 1500));
-    let littleStatsProd = sortStatsProd(greatStatsProd.filter(item => item.CP <= 500));
+    const statsProd: any[] = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null, null, true);
+    const ultraStatsProd = sortStatsProd(statsProd.filter((item: { CP: number; }) => item.CP <= 2500));
+    const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item: any) => item.CP <= 1500));
+    const littleStatsProd = sortStatsProd(greatStatsProd.filter((item: any) => item.CP <= 500));
 
-    let battleLeague = {
-        little: littleStatsProd.find(item => item.level === dataLittle.level && item.CP === dataLittle.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        great: greatStatsProd.find(item => item.level === dataGreat.level && item.CP === dataGreat.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        ultra: ultraStatsProd.find(item => item.level === dataUltra.level && item.CP === dataUltra.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
-        master: sortStatsProd(statsProd).find(item => item.level === dataMaster.level && item.CP === dataMaster.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV)
+    const battleLeague: any = {
+        little: littleStatsProd.find((item: any) => item.level === dataLittle.level && item.CP === dataLittle.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        great: greatStatsProd.find((item: any) => item.level === dataGreat.level && item.CP === dataGreat.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        ultra: ultraStatsProd.find((item: any) => item.level === dataUltra.level && item.CP === dataUltra.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV),
+        master: sortStatsProd(statsProd).find((item: any) => item.level === dataMaster.level && item.CP === dataMaster.cp && item.IV.atk === atkIV && item.IV.def === defIV && item.IV.sta === staIV)
     }
 
     if (battleLeague.little) battleLeague.little = {...battleLeague.little, ...calculateBetweenLevel(globalOptions, pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, battleLeague.little.level)};
@@ -729,13 +734,13 @@ export const queryStatesEvoChain = (globalOptions, item, level, atkIV, defIV, st
     return {...item, battleLeague, maxCP: battleLeague.master.CP, form: pokemon.forme}
 }
 
-const queryMoveCounter = (globalOptions, dataList, combat, pokemon, stats, def, types, vf, cmove, felite, celite, shadow, purified) => {
-    cmove.forEach(vc => {
-        let mf = combat.find(item => item.name === vf);
-        let mc = combat.find(item => item.name === vc);
+const queryMoveCounter = (globalOptions: any, dataList: any[], combat: any[], pokemon: any, stats: any, def: number, types: string | string[], vf: any, cmove: any, felite: boolean, celite: boolean, shadow: boolean, purified: boolean) => {
+    cmove.forEach((vc: any) => {
+        const mf = combat.find((item: { name: any; }) => item.name === vf);
+        const mc = combat.find((item: { name: any; }) => item.name === vc);
 
         if (mf && mc) {
-            let options = {
+            const options = {
                 objTypes: types,
                 POKEMON_DEF_OBJ: calculateStatsBattle(def, 15, 40, true),
                 IV_ATK: 15,
@@ -744,7 +749,7 @@ const queryMoveCounter = (globalOptions, dataList, combat, pokemon, stats, def, 
                 POKEMON_LEVEL: 40
             }
 
-            let dpsOff = calculateAvgDPS(globalOptions, mf, mc,
+            const dpsOff = calculateAvgDPS(globalOptions, mf, mc,
                 calculateStatsBattle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL, true),
                 calculateStatsBattle(stats.def, options.IV_DEF, options.POKEMON_LEVEL, true),
                 calculateStatsBattle(stats.sta, options.IV_HP, options.POKEMON_LEVEL, true), pokemon.types, options);
@@ -762,16 +767,16 @@ const queryMoveCounter = (globalOptions, dataList, combat, pokemon, stats, def, 
     });
 }
 
-const sortCounterDPS = (data) => {
-    data = data.sort((a,b) => b.dps - a.dps);
-    return data.map((item, index) => ({...item, ratio: item.dps*100/data[0].dps}));
+const sortCounterDPS = (data: any[]) => {
+    data = data.sort((a: { dps: number; },b: { dps: number; }) => b.dps - a.dps);
+    return data.map((item: any) => ({...item, ratio: item.dps*100/data[0].dps}));
 }
 
-export const counterPokemon = (globalOptions, def, types, combat, combatList) => {
-    let dataList = [];
-    combatList.forEach(value => {
+export const counterPokemon = (globalOptions: any, def: any, types: any, combat: any, combatList: any[]) => {
+    const dataList: never[] = [];
+    combatList.forEach((value: { quickMoves: any[]; cinematicMoves: string[]; name: string; id: any; eliteCinematicMoves: any; shadowMoves: any; purifiedMoves: any; eliteQuickMoves: any[]; }) => {
         if (value.quickMoves[0] !== "STRUGGLE" && value.cinematicMoves[0] !== "STRUGGLE") {
-            let pokemon = Object.values(pokemonData).find(item => {
+            const pokemon = Object.values(pokemonData).find(item => {
                 const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()));
                 // if (item.num === value.id && item.slug !== name) console.log(name, item.slug)
                 return item.slug === name;
@@ -780,14 +785,14 @@ export const counterPokemon = (globalOptions, def, types, combat, combatList) =>
                 console.log(value.id, value.name, convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase())));
                 return;
             }
-            let stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
-            value.quickMoves.forEach(vf => {
+            const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+            value.quickMoves.forEach((vf: any) => {
                 queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.cinematicMoves, false, false, false, false);
                 queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.eliteCinematicMoves, false, true, false, false);
                 queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.shadowMoves, false, false, true, false);
                 queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.purifiedMoves, false, false, false, true);
             });
-            value.eliteQuickMoves.forEach(vf => {
+            value.eliteQuickMoves.forEach((vf: any) => {
                 queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.cinematicMoves, true, false, false, false);
                 queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.eliteCinematicMoves, true, true, false, false);
                 queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.shadowMoves, true, false, true, false);

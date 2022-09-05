@@ -1,7 +1,7 @@
 import { getOption } from "../options/options";
 import APIService from "../services/API.service";
 
-export const RAID_BOSS_TIER = {
+export const RAID_BOSS_TIER: any = {
     1: {
         level: 20,
         CPm: 0.61,
@@ -57,16 +57,15 @@ export const MAX_LEVEL = 51;
 export const MIN_IV = 0;
 export const MAX_IV = 15;
 
-export const STAB_MULTIPLY = (options) => { return getOption(options, "battle_options", "stab"); }
-export const MULTIPLY_LEVEL_FRIENDSHIP = (options, level) => {
-    level = level ?? DEFAULT_POKEMON_FRIEND_LEVEL;
+export const STAB_MULTIPLY = (options: any) => { return getOption(options, "battle_options", "stab"); }
+export const MULTIPLY_LEVEL_FRIENDSHIP = (options: any, level: number = DEFAULT_POKEMON_FRIEND_LEVEL) => {
     return getOption(options, "trainer_friendship", level.toString(), "atk_bonus");
 }
-export const MULTIPLY_THROW_CHARGE = (options, type) => { return getOption(options, "throw_charge", type);}
+export const MULTIPLY_THROW_CHARGE = (options: any, type: string) => { return getOption(options, "throw_charge", type);}
 
 /* Shadow exclusive bonus for Pokémon in battle */
-export const SHADOW_ATK_BONUS = (options) => { return getOption(options, "combat_options", "shadow_bonus", "atk"); }
-export const SHADOW_DEF_BONUS = (options) => { return getOption(options, "combat_options", "shadow_bonus", "def"); }
+export const SHADOW_ATK_BONUS = (options: any) => { return getOption(options, "combat_options", "shadow_bonus", "atk"); }
+export const SHADOW_DEF_BONUS = (options: any) => { return getOption(options, "combat_options", "shadow_bonus", "def"); }
 
 export const regionList = {
     1: "Kanto",
@@ -79,7 +78,7 @@ export const regionList = {
     8: "Galar",
 }
 
-export const typeCostPowerUp = (type) => {
+export const typeCostPowerUp = (type: string) => {
     if (type === "shadow") {
         return {
             stadust: 1.2,

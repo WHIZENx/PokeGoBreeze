@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { RootStateOrAny, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import logo from '../assets/pokedex.png';
@@ -10,7 +10,7 @@ import "./Navbar.css"
 
 const NavbarComponent = () => {
 
-    const dataStore = useSelector((state) => state.store);
+    const dataStore = useSelector((state: RootStateOrAny) => state.store);
 
     return (
         <Navbar collapseOnSelect bg="dark" expand="lg" variant="dark">

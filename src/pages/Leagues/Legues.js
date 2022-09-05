@@ -9,7 +9,7 @@ import './Leagues.css';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize } from '../../util/Utils';
-import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';
+import { rankIconCenterName, rankIconName } from '../../util/Compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -44,7 +44,7 @@ const Leagues = () => {
 
     const [show, setShow] = useState(false);
 
-    const handleShow = (type, track, step) => {
+    const handleShow = (type, track) => {
         let result = [];
         if (type === "pokemon") {
             setShow(true);

@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service'
 
-const CardWeather = (props) => {
+const CardWeather = (props: { value: string; }) => {
 
     return (
         <Fragment>

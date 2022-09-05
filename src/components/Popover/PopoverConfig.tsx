@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect } from "react";
 import { Popover } from "react-bootstrap";
 
 const PopoverConfig = forwardRef(
-    ({ id, popper, children, show: _, ...props }, ref) => {
+    ({ id, popper, children, ...props }: any, ref) => {
       useEffect(() => {
         popper.scheduleUpdate();
       }, [children, popper]);

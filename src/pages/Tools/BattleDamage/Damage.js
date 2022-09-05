@@ -255,7 +255,7 @@ const Damage = () => {
                                             name="clevel"
                                             value={battleState.clevel}
                                             label="Charge ablility"
-                                            onChange={(event, value) => {
+                                            onChange={(event) => {
                                                 setBattleState({
                                                     ...battleState,
                                                     [event.target.name]: event.target.value,

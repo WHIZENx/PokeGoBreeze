@@ -4,27 +4,27 @@ import { calculateStatsByTag } from '../../../util/Calculate';
 import { convertNameRanking, splitAndCapitalize } from '../../../util/Utils';
 import CardPokemonLarge from '../../Card/CardPokemonLarge';
 
-const SelectFind = (props) => {
+const SelectFind = (props: { data: any[]; clearData: () => void; setStatATK: (arg0: number | null) => void; setStatDEF: (arg0: number | null) => void; setStatSTA: (arg0: number | null) => void; setForm: (arg0: any) => void; setName: (arg0: string) => void; setId: (arg0: null) => void; }) => {
 
     const [startIndex, setStartIndex] = useState(0);
     const firstInit = 20;
     const eachCounter = 10;
 
-    const [currentPokemon, setCurrentPokemon] = useState(null);
+    const [currentPokemon, setCurrentPokemon]: any = useState(null);
     const [showPokemon, setShowPokemon] = useState(false);
 
     const [search, setSearch] = useState('');
 
     const result = useRef(Object.values(pokemonData)
-    .filter(pokemon => props.data ? props.data.map(item => item.speciesId).includes(convertNameRanking(pokemon.slug)) : true))
+    .filter(pokemon => props.data ? props.data.map((item: { speciesId: any; }) => item.speciesId).includes(convertNameRanking(pokemon.slug)) : true))
 
-    const listenScrollEvent = (ele) => {
+    const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any; }; }) => {
         const scrollTop = ele.currentTarget.scrollTop;
         const fullHeight = ele.currentTarget.offsetHeight;
         if (scrollTop*0.3 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
     }
 
-    const changePokemon = (pokemon) => {
+    const changePokemon = (pokemon: any) => {
         setCurrentPokemon(pokemon);
         setShowPokemon(false);
         const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
@@ -37,7 +37,7 @@ const SelectFind = (props) => {
         if (props.setId) props.setId(pokemon.num);
     }
 
-    const removePokemon = (pokemon) => {
+    const removePokemon = () => {
         setCurrentPokemon(null);
         setShowPokemon(false);
         if (props.clearData) props.clearData();
@@ -53,7 +53,7 @@ const SelectFind = (props) => {
             <div className="input-group border-input">
                 <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
                 value={search}
-                onInput={e => setSearch(e.target.value)}
+                onInput={(e: any) => setSearch(e.target.value)}
                 onFocus={() => setShowPokemon(true)}
                 onBlur={() => setShowPokemon(false)}
                 />

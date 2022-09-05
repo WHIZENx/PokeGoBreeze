@@ -7,12 +7,12 @@ import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
 import './Counter.css';
-import { useSelector } from "react-redux";
+import { RootStateOrAny, useSelector } from "react-redux";
 
-const Counter = ({def, form, changeForm, setLoadCounter}) => {
+const Counter = ({def, form, changeForm}: any) => {
 
-    const data = useSelector((state) => state.store.data);
-    const [counterList, setCounterList] = useState([]);
+    const data = useSelector((state: RootStateOrAny) => state.store.data);
+    const [counterList, setCounterList]: any = useState([]);
     const [open, setOpen] = useState(false);
     const [releasedGO, setReleaseGO] = useState(true);
 
@@ -24,7 +24,7 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
         if (changeForm) setOpen(false);
     }, [changeForm])
 
-    const listenScrollEvent = (ele) => {
+    const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any; }; }) => {
         const scrollTop = ele.currentTarget.scrollTop;
         const fullHeight = ele.currentTarget.offsetHeight;
         if (scrollTop*0.8 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
@@ -43,7 +43,7 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
                 <colgroup className="main-move-counter" />
                 <colgroup />
                 <thead>
-                    <tr className="text-center"><th className="table-sub-header" colSpan="4">
+                    <tr className="text-center"><th className="table-sub-header" colSpan={4}>
                         <div className="input-group align-items-center justify-content-center">
                             <span>Best Pokémon Counter</span>
                             <FormControlLabel control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)}/>} label="Released in GO" disabled={!open}/>
@@ -59,7 +59,7 @@ const Counter = ({def, form, changeForm, setLoadCounter}) => {
                 <tbody>
                     {open ?
                     <Fragment>
-                    {counterList.filter(pokemon => releasedGO ? pokemon.releasedGO : true).slice(0, firstInit + eachCounter*startIndex).map((value, index) => (
+                    {counterList.filter((pokemon: { releasedGO: any; }) => releasedGO ? pokemon.releasedGO : true).slice(0, firstInit + eachCounter*startIndex).map((value: any, index: React.Key | null | undefined) => (
                         <Fragment key={index}>
                             <tr>
                                 <td className="text-origin text-center">

@@ -11,15 +11,15 @@ import sta_logo from '../../assets/stamina.png';
 
 import pokemonData from '../../data/pokemon.json';
 
-const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBossATK, setStatBossDEF, setStatBossHP, setTimeAllow}) => {
+const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBossATK, setStatBossDEF, setStatBossHP, setTimeAllow}: any) => {
 
-    const [tier, setTier] = useState(1);
+    const [tier, setTier]: any = useState(1);
 
     useEffect(() => {
         if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes("mega")) setTier(5);
         else if (parseInt(tier) === 5 &&
             currForm && currForm.form.form_name.includes("mega") &&
-            Object.values(pokemonData).find(item => item.num === id).pokemonClass) setTier(6);
+            Object.values(pokemonData).find(item => item.num === id)?.pokemonClass) setTier(6);
         if (setTierBoss) setTierBoss(parseInt(tier));
         if (setStatBossATK && setStatBossDEF && setStatBossHP) {
             setStatBossATK(calculateRaidStat(statATK, tier));
@@ -47,7 +47,7 @@ const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBo
                     </optgroup>
                     {currForm && currForm.form.form_name.includes("mega") &&
                     <Fragment>
-                        {Object.values(pokemonData).find(item => item.num === id).pokemonClass ?
+                        {Object.values(pokemonData).find(item => item.num === id)?.pokemonClass ?
                         <optgroup label="Legendary Mega Tiers">
                             <option value={6}>Tier Mega</option>
                         </optgroup>
@@ -85,7 +85,7 @@ const Raid = ({clearData, setTierBoss, currForm, id, statATK, statDEF, setStatBo
                     <table className="table-info">
                         <thead></thead>
                         <tbody>
-                            <tr className="text-center"><td className="table-sub-header" colSpan="2">Stats</td></tr>
+                            <tr className="text-center"><td className="table-sub-header" colSpan={2}>Stats</td></tr>
                             <tr>
                                 <td><img style={{marginRight: 10}} alt='img-logo' width={20} height={20} src={atk_logo}/>ATK</td>
                                 <td className="text-center">{calculateRaidStat(statATK, tier)}</td>

@@ -1,7 +1,7 @@
 import React from 'react';
 import Type from '../Sprites/Type/Type';
 
-const WeatherEffective = (props) => {
+const WeatherEffective = (props: { weatherEffective: any; }) => {
 
     if (!props.weatherEffective) return false;
 
