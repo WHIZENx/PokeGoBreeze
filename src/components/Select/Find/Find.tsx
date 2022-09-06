@@ -7,7 +7,7 @@ import pokemonData from '../../../data/pokemon.json';
 import pokeListName from '../../../data/pokemon_names.json';
 import { convertArrStats } from "../../../util/Utils";
 
-const Find = (props: { setId: (arg0: number) => void; setName: (arg0: any) => void; clearStats: () => void; setStatATK: (arg0: any) => void; setStatDEF: (arg0: any) => void; setStatSTA: (arg0: any) => void; hide: any; raid: any; setRaid: any; tier: any; setTier: any; setForm: any; setUrlEvo: any; title: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; swap: any; }) => {
+const Find = (props: any) => {
 
     const [startIndex, setStartIndex] = useState(0);
     const firstInit = 20;

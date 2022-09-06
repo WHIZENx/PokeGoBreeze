@@ -8,7 +8,7 @@ import './Select.css';
 import { splitAndCapitalize } from "../../util/Utils";
 import APIService from "../../services/API.service";
 
-const SelectPokemon = (props) => {
+const SelectPokemon = (props: any) => {
 
     const [startIndex, setStartIndex] = useState(0);
     const firstInit = 20;
@@ -18,13 +18,13 @@ const SelectPokemon = (props) => {
     const [showPokemon, setShowPokemon] = useState(false);
     const [search, setSearch] = useState(props.pokemon ? splitAndCapitalize(props.pokemon.name, "-", " ") : '');
 
-    const listenScrollEvent = (ele) => {
+    const listenScrollEvent = (ele: any) => {
         const scrollTop = ele.currentTarget.scrollTop;
         const fullHeight = ele.currentTarget.offsetHeight;
         if (scrollTop*0.8 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
     }
 
-    const changePokemon = (value) => {
+    const changePokemon = (value: any) => {
         setShowPokemon(false);
         const name = splitAndCapitalize(value.name, "-", " ");
         const iconName = pokemonIcon ? splitAndCapitalize(pokemonIcon.split("/")[9].replace(".png", ""), "-", " ") : "";
@@ -62,7 +62,7 @@ const SelectPokemon = (props) => {
                     onBlur={() => setShowPokemon(false)}
                     value={search}
                     type="text"
-                    onInput={(e) => setSearch(e.target.value)}
+                    onInput={(e: any) => setSearch(e.target.value)}
                     placeholder="Enter Name or ID"
                     style={{background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat`: "",
                     paddingLeft: pokemonIcon ? 56 : ""}}/>

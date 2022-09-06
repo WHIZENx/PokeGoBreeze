@@ -5,7 +5,7 @@ import { capitalize, splitAndCapitalize } from "../../util/Utils";
 
 import './TypeEffectiveSelect.css';
 
-const TypeEffectiveSelect = (props: { block: any; effect: any; types: any; }) => {
+const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any; }) => {
 
     const renderEffective = (text: string, data: any[]) => {
         return (

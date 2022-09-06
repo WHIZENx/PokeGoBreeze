@@ -8,7 +8,7 @@ import { splitAndCapitalize, TypeRadioGroup } from "../../../util/Utils";
 import Type from "../../Sprites/Type/Type";
 import { FormControlLabel, Radio } from "@mui/material";
 
-const Tools = (props: { raid: any; tier: any; id: any; onClearStats: any; setTier: (arg0: any) => void; onSetPrev: () => void; count: number; onSetNext: () => void; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; hide: any; setRaid: (arg0: boolean) => void; setForm: any; stats: any; onHandleSetStats: any; }) => {
+const Tools = (props: any) => {
 
     const [pokeData, setPokeData] = useState([]);
     const [formList, setFormList] = useState([]);

@@ -3,7 +3,7 @@ import Weather from '../Sprites/Weather';
 
 const WeatherTypeEffective = (props: any) => {
 
-    if (!props.weatherEffective) return false;
+    if (!props.weatherEffective) return <></>;
 
     return (
         <div className="element-top">

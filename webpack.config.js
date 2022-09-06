@@ -17,7 +17,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 
 const isProduction = process.env.NODE_ENV === 'production';
-// const isDevelopment = !isProduction;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const isDevelopment = !isProduction;
 
 const publicPath = process.env.PUBLIC_URL || '/';
 
@@ -143,39 +144,14 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx$/,
-                include: path.resolve(__dirname, 'src'),
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                use: [{
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            ['@babel/preset-env', {
-                                "targets": "defaults"
-                            }],
-                            '@babel/preset-react',
-                            "@babel/typescript"
-                        ]
-                    }
-                    }
-                ]
+                use: ["babel-loader"],
             },
             {
-                test: /\.(jsx|js)$/,
-                include: path.resolve(__dirname, 'src'),
+                test: /\.(ts|tsx)$/,
                 exclude: /node_modules/,
-                use: [{
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            ['@babel/preset-env', {
-                                "targets": "defaults"
-                            }],
-                            '@babel/preset-react'
-                        ]
-                    }
-                    }
-                ]
+                use: ["ts-loader"],
             },
             {
                 test: /\.css$/i,

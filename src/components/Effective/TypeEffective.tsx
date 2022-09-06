@@ -2,9 +2,9 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import Type from '../Sprites/Type/Type';
 
-const TypeEffective = (props: { typeEffective: { very_weak: string | any[]; weak: string | any[]; super_resist: string | any[]; very_resist: string | any[]; resist: string | any[]; neutral: any; }; }) => {
+const TypeEffective = (props: any) => {
 
-    if (!props.typeEffective) return false;
+    if (!props.typeEffective) return <></>;
 
     const noneSprit = () => {
         return (

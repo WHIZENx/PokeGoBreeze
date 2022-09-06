@@ -3,7 +3,7 @@ import CardType from '../Card/CardType';
 import { splitAndCapitalize } from '../../util/Utils';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
-const Move = (props: { type: any; id: any; form: any; move: any; setMove: (arg0: any) => void; text: string; selectDefault: any; }) => {
+const Move = (props: any) => {
 
     const data = useSelector((state: RootStateOrAny) => state.store.data);
 
@@ -20,7 +20,7 @@ const Move = (props: { type: any; id: any; form: any; move: any; setMove: (arg0:
         const resultFirst = data.pokemonCombat.filter((item: { id: any; }) => item.id === id);
         form = form.replaceAll("-", "_").replaceAll("_standard", "").toUpperCase();
         const result = resultFirst.find((item: { name: any; }) => item.name === form);
-        const simpleMove: React.SetStateAction<null> | { name: any; elite: boolean; shadow: boolean; purified: boolean; }[] = [];
+        const simpleMove: { name: any; elite: boolean; shadow: boolean; purified: boolean; }[] = [];
         if (resultFirst.length === 1 || result == null) {
             if (resultFirst.length === 0) return setResultMove('');
             if (props.type !== "CHARGE") {

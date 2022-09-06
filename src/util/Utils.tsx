@@ -115,7 +115,7 @@ export const reversedCapitalize = (str: string, splitBy: string, joinBy: string)
   return str.replaceAll(joinBy, splitBy).toLowerCase();
 };
 
-export const getTime = (value: string, notFull: boolean | undefined) => {
+export const getTime = (value: string, notFull = false) => {
   return notFull ? Moment((new Date(parseInt(value)))).format('D MMMM YYYY') : Moment((new Date(parseInt(value)))).format('HH:mm D MMMM YYYY')
 }
 
@@ -209,7 +209,7 @@ export const getStyleSheet = (style: string, selector: string) => {
   return null;
 }
 
-export const getStyleRuleValue = (style: string, selector: string, sheet: any = null) => {
+export const getStyleRuleValue = (style: string, selector: string, sheet?: any) => {
   const sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
       sheet = sheets[i];

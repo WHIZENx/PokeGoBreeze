@@ -357,7 +357,7 @@ export const sortStatsProd = (data: any[]) => {
     return data.map((item: { statsProds: number; }, index: number) => ({...item, ratio: item.statsProds*100/data[data.length-1].statsProds, rank: data.length-index}));
 }
 
-export const calStatsProd = (atk: number, def: number, sta: number, minCP: number | null, maxCP: number | null, pure: boolean | undefined) => {
+export const calStatsProd = (atk: number, def: number, sta: number, minCP: number | null, maxCP: number | null, pure = false) => {
     const dataList: { IV: { atk: number; def: number; sta: number; }; CP: number; level: number; stats: { statsATK: number; statsDEF: number; statsSTA: number; }; statsProds: number; }[] = [];
     if (atk === 0 || def === 0 || sta === 0) return dataList;
     for (let l = MIN_LEVEL; l <= MAX_LEVEL; l+=0.5) {
@@ -399,7 +399,7 @@ export const calculateStatsByTag = (baseStats: { hp: number; atk: number; def: n
     };
 }
 
-export const calculateDamagePVE = (globalOptions: any, atk: number, defObj: number, power: number, eff: { stab: any; wb: any; dodge?: any; mega?: any; trainer?: any; flevel?: any; clevel?: any; effective: any; }, notPure: boolean | undefined, stab: undefined) => {
+export const calculateDamagePVE = (globalOptions: any, atk: number, defObj: number, power: number, eff: { stab: any; wb: any; dodge?: any; mega?: any; trainer?: any; flevel?: any; clevel?: any; effective: any; }, notPure?: boolean | undefined, stab?: any) => {
     const StabMultiply = STAB_MULTIPLY(globalOptions)
     let modifier;
     if (eff) {

@@ -107,7 +107,7 @@ class APIService {
         return `${POGO_ASSET_API_URL}Weather/weatherIcon_large_${weather}${timeOfSun}.png`;
     }
 
-    getWeatherIconSprite(weather: string) {
+    getWeatherIconSprite(weather = '') {
         weather = weather.replaceAll(' ', '').replaceAll('Rainy', 'Rain');
 
         if (weather === "Overcast") weather = "Cloudy"
@@ -182,7 +182,7 @@ class APIService {
         return `${POGO_SOUND_API_URL}Pokemon Moves/${sound}.wav`;
     }
 
-    getAssetPokeGo(image: string) {
+    getAssetPokeGo(image: string | string[]) {
         return image.includes("gofestCatch2022") ? `${POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/${image}` : `${POGO_PROD_ASSET_URL}${image}`;
     }
 
@@ -206,7 +206,7 @@ class APIService {
         return `${POKE_TYPES_API_URL}${type.toLowerCase()}.png`
     }
 
-    getPokemonAsset(type: string, gen: number, name: string, file: string) {
+    getPokemonAsset(type: string, gen: number | string, name: string, file: string) {
         return `${POKE_ASSETS_URL}${type}/${gen}/${name}.${file}`
     }
 }

@@ -25,8 +25,8 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
         const assetSoundFiles = optionPokeSound(assets.data);
         const league = optionLeagues(gm.data, pokemon);
 
-        const pvpRank = pvpFindPath(pvp.data, "rankings");
-        const pvpTrain = pvpFindPath(pvp.data, "training/analysis")
+        const pvpRank: any = pvpFindPath(pvp.data, "rankings");
+        const pvpTrain: any = pvpFindPath(pvp.data, "training/analysis")
 
         dispatch({
             type: LOAD_STORE,

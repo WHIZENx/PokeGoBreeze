@@ -21,7 +21,7 @@ const SelectMove = ({move, setMovePokemon, clearData, pokemon, moveType, inputTy
         const resultFirst = data.filter((item: { id: any; }) => item.id === id);
         form = form ? form.toLowerCase().replaceAll("-", "_").replaceAll("_standard", "").toUpperCase() : "";
         const result = resultFirst.find((item: { name: string; baseSpecies: string; }) => item.name.replace(item.baseSpecies+"_", "") === form);
-        const simpleMove: any[] | React.SetStateAction<null> = [];
+        const simpleMove: any[] = [];
         if (resultFirst.length === 1 || result == null) {
             if (type === "FAST") {
                 resultFirst[0].quickMoves.forEach((value: any) => {simpleMove.push({name: value, elite: false, shadow: false, purified: false})});

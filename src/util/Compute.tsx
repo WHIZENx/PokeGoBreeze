@@ -44,7 +44,7 @@ export const computeCandyColor = (id: number) => {
   return `rgb(${Math.round(255*(data as any).PrimaryColor.r)}, ${Math.round(255*(data as any).PrimaryColor.g)}, ${Math.round(255*(data as any).PrimaryColor.b)}, ${(data as any).PrimaryColor.a})`
 }
 
-export const computeBgType = (types: any[], shadow: any, purified: undefined, opacity: number | undefined, styleSheet: null | undefined) => {
+export const computeBgType = (types: any[], shadow = false, purified = false, opacity = 1, styleSheet?: any) => {
     const colorsPalette: any[] = [];
     types.forEach((type: string) => {
         type = type.toLowerCase();
