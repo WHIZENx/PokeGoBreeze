@@ -1,6 +1,6 @@
 {
   "name": "pokego-breeze",
-  "version": "2.2.0-a",
+  "version": "2.2.0a",
   "main": "index.tsx",
   "license": "MIT",
   "description": "Web Application for Pokemon GO Tools&Information",
