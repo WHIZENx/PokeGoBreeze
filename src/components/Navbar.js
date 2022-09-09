@@ -8,11 +8,11 @@ import "./Navbar.css"
 
 const NavbarComponent = () => {
 
-    const baseUrl = window.location.origin.split("poke-go-breeze");
+    const baseUrl = window.location.origin.split(process.env.REACT_APP_HOSTNAME);
     const [alphaUrl, setAlphaUrl] = useState(null);
 
     useEffect(() => {
-        baseUrl.splice(1, 0, "poke-go-breeze-develop");
+        baseUrl.splice(1, 0, `${process.env.REACT_APP_HOSTNAME}-develop`);
         setAlphaUrl(baseUrl.join(""));
     }, []);
 
