@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +7,15 @@ import logo from '../assets/pokedex.png';
 import "./Navbar.css"
 
 const NavbarComponent = () => {
+
+    const baseUrl = window.location.origin.split(window.location.hostname);
+    const [alphaUrl, setAlphaUrl] = useState(null);
+
+    useEffect(() => {
+        baseUrl.splice(1, 0, window.location.hostname+"-develop");
+        setAlphaUrl(baseUrl.join(""));
+    }, []);
+
     return (
         <Navbar style={{zIndex: 5}} collapseOnSelect bg="dark" expand="lg" variant="dark">
             <Link className="navbar-brand" to="/">
@@ -40,6 +49,9 @@ const NavbarComponent = () => {
                     <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>
                     <Link className="nav-link" to="/stickers">Stickers</Link>
                 </Nav>
+                <Navbar.Collapse className="justify-content-end">
+                    {alphaUrl && <a type='button' href={alphaUrl} className='btn btn-outline-success' style={{marginLeft: 10, marginRight: 10}}>See Alpha version</a>}
+                </Navbar.Collapse>
             </Navbar.Collapse>
         </Navbar>
     );
