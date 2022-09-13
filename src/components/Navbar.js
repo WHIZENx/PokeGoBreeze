@@ -50,7 +50,7 @@ const NavbarComponent = () => {
                     <Link className="nav-link" to="/stickers">Stickers</Link>
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
-                    {alphaUrl && <a type='button' href={alphaUrl} className='btn btn-outline-success' style={{marginLeft: 10, marginRight: 10}}>See Alpha version</a>}
+                    {alphaUrl && <a type='button' href={alphaUrl} className='btn btn-outline-success' style={{marginLeft: 10, marginRight: 10}}>Try Alpha version</a>}
                 </Navbar.Collapse>
             </Navbar.Collapse>
         </Navbar>

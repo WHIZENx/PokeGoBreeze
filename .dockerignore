@@ -8,3 +8,4 @@ docker-compose.yml
 node_modules
 npm-debug.log
 build
+dist
