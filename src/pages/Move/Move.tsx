@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useParams } from "react-router-dom";
 
-import { capitalize, splitAndCapitalize } from '../../util/Utils';
+import { capitalize, convertName, splitAndCapitalize } from '../../util/Utils';
 import { STAB_MULTIPLY } from "../../util/Constants";
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
@@ -274,7 +274,20 @@ const Move = (props: { id?: any; }) => {
                                     <td className="table-top-of-move" colSpan={2} style={{padding: 0}}>
                                         <DataTable
                                             columns={columns}
-                                            data={topList.filter((pokemon: { releasedGO: any; }) => releasedGO ? pokemon.releasedGO : true)}
+                                            data={topList.filter((pokemon: { num: any; name: string; }) => {
+                                                if (!releasedGO) {
+                                                    return true;
+                                                }
+                                                const result = data.details.find((item: {name: string; id: any;}) =>
+                                                    item.id === pokemon.num &&
+                                                    item.name === (item.id === 555 && !pokemon.name.toLowerCase().includes("zen")
+                                                    ?
+                                                    pokemon.name.toUpperCase().replaceAll(" ", "_").replace("_GALAR", "_GALARIAN")+"_STANDARD"
+                                                    :
+                                                    convertName(pokemon.name))
+                                                )
+                                                return result ? result.releasedGO : false
+                                            })}
                                             pagination
                                             defaultSortFieldId={4}
                                             defaultSortAsc={false}

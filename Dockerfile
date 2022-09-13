@@ -2,7 +2,8 @@
 FROM node:16.15-alpine as builder
 WORKDIR /app
 COPY . .
-RUN npm install --silent && npm run build --silent
+RUN npm install --location=global npm@latest
+RUN npm install && npm run build
 
 # production environment
 FROM nginx:alpine

@@ -282,7 +282,22 @@ const DpsTable = () => {
                 const boolOnlyElite = enableElite && (item.elite.fmove || item.elite.cmove);
                 const boolOnlyMega = enableMega && item.pokemon.forme && item.pokemon.forme.toLowerCase().includes("mega");
 
-                const boolReleaseGO = releasedGO ? item.pokemon.releasedGO : true;
+                let boolReleaseGO = true;
+                if (releasedGO) {
+                    const result = data.details.find((pokemon: {name: string; id: any;}) => {
+                        if (item.pokemon.name.toLowerCase().includes("_mega")) {
+                            return pokemon.id === item.pokemon.num && pokemon.name === item.pokemon.name.toUpperCase().replaceAll("-", "_")
+                        } else {
+                            return pokemon.id === item.pokemon.num &&
+                            pokemon.name === (pokemon.id === 555 && !item.pokemon.name.toLowerCase().includes("zen")
+                            ?
+                            item.pokemon.name.toUpperCase().replaceAll("-", "_").replace("_GALAR", "_GALARIAN")+"_STANDARD"
+                            :
+                            convertName(item.pokemon.name))
+                        }
+                    });
+                    boolReleaseGO = result ? result.releasedGO : false;
+                }
                 if (enableShadow || enableElite || enableMega) return (boolFilterType && boolFilterPoke && boolReleaseGO && !(boolShowShadow || boolShowElite || boolShowMega) && boolReleaseGO) && (boolOnlyShadow || boolOnlyElite || boolOnlyMega);
                 else return boolFilterType && boolFilterPoke && boolReleaseGO && !(boolShowShadow || boolShowElite || boolShowMega);
             });

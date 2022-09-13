@@ -70,7 +70,7 @@ export const sortStatsPokemon = (states: any[]) => {
 
     const minATK = Math.min(...attackRanking);
     const maxATK = Math.max(...attackRanking);
-    const attackStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { attack: unknown; }; }) => {
+    const attackStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { attack: any; }; }) => {
         return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", attack: item.baseStatsPokeGo.attack, rank: attackRanking.length-attackRanking.indexOf(item.baseStatsPokeGo.attack)};
     });
 
@@ -81,7 +81,7 @@ export const sortStatsPokemon = (states: any[]) => {
 
     const minDEF = Math.min(...defenseRanking);
     const maxDEF = Math.max(...defenseRanking);
-    const defenseStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { defense: unknown; }; }) => {
+    const defenseStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { defense: any; }; }) => {
         return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", defense: item.baseStatsPokeGo.defense, rank: defenseRanking.length-defenseRanking.indexOf(item.baseStatsPokeGo.defense)};
     });
 
@@ -92,7 +92,7 @@ export const sortStatsPokemon = (states: any[]) => {
 
     const minSTA = Math.min(...staminaRanking);
     const maxSTA = Math.max(...staminaRanking);
-    const staminaStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { stamina: unknown; }; }) => {
+    const staminaStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { stamina: any; }; }) => {
         return {id: item.id, form: item.name.split("-")[1] ? item.name.slice(item.name.indexOf("-")+1, item.name.length) : "Normal", stamina: item.baseStatsPokeGo.stamina, rank: staminaRanking.length-staminaRanking.indexOf(item.baseStatsPokeGo.stamina)};
     });
 
@@ -778,11 +778,9 @@ export const counterPokemon = (globalOptions: any, def: any, types: any, combat:
         if (value.quickMoves[0] !== "STRUGGLE" && value.cinematicMoves[0] !== "STRUGGLE") {
             const pokemon = Object.values(pokemonData).find(item => {
                 const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()));
-                // if (item.num === value.id && item.slug !== name) console.log(name, item.slug)
                 return item.slug === name;
             });
             if (pokemon === undefined) {
-                console.log(value.id, value.name, convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase())));
                 return;
             }
             const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);

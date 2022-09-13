@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { loadStore } from './store/actions/store.action';
-import { hideSpinner, showSpinner } from './store/actions/spinner.action';
+import { hideSpinner } from './store/actions/spinner.action';
 import APIService from './services/API.service';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import importedComponent from 'react-imported-component';
@@ -141,7 +141,6 @@ const App = () => {
     if (data.data) dispatch(hideSpinner());
     else {
       loadStore(dispatch, axios, source);
-      dispatch(showSpinner());
     }
   }, [dispatch, data])
 

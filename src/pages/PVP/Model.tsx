@@ -80,7 +80,7 @@ export const Keys = (assets: any[], pokemonData: any[], data: { matchups: any[];
     )
 }
 
-export const OverAllStats = (data: any, statsRanking: React.MutableRefObject<{ attack: { ranking: { id: any; form: string; attack: unknown; rank: number; }[]; min_rank: number; max_rank: number; min_stats: number; max_stats: number; }; defense: { ranking: { id: any; form: string; defense: unknown; rank: number; }[]; min_rank: number; max_rank: number; min_stats: number; max_stats: number; }; stamina: { ranking: { id: any; form: string; stamina: unknown; rank: number; }[]; min_rank: number; max_rank: number; min_stats: number; max_stats: number; }; }>, cp: any) => {
+export const OverAllStats = (data: any, statsRanking: React.MutableRefObject<{ attack: { ranking: { id: any; form: string; attack: any; rank: number; }[]; min_rank: number; max_rank: number; min_stats: number; max_stats: number; }; defense: { ranking: { id: any; form: string; defense: any; rank: number; }[]; min_rank: number; max_rank: number; min_stats: number; max_stats: number; }; stamina: { ranking: { id: any; form: string; stamina: any; rank: number; }[]; min_rank: number; max_rank: number; min_stats: number; max_stats: number; }; }>, cp: any) => {
 
     const calculateStatsTopRank = (stats: { atk: number; def: number; sta: number; }) => {
         const maxCP = parseInt(cp);

@@ -150,7 +150,8 @@ export const convertNameRankingToForm = (text: string) => {
 
 export const convertNameRankingToOri = (text: string, form: string) => {
   const formOri = form;
-  if (text.includes("_mega") || text === "ho_oh" || text.includes("castform") || text.includes("tapu")) return text.replaceAll("_", "-");
+  if (text.includes("pyroar") || text.includes("frillish") || text.includes("jellicent") || text.includes("urshifu")) return text.split("_")[0]
+  if (text.includes("_mega") || text === "ho_oh" || text.includes("castform") || text.includes("tapu") || text.includes("basculin_blue")) return text.replaceAll("_", "-");
   if (formOri.includes("(") && formOri.includes(")")) form = "-"+form.split(" (")[1].replace(")", "").toLowerCase();
   text = text.toLowerCase()
   .replaceAll("_", "-")
@@ -180,13 +181,17 @@ export const convertNameRankingToOri = (text: string, form: string) => {
   form !== "-defense" &&
   form !== "-sunshine" &&
   form !== "-jr" &&
+  form !== "-mime" &&
+  form !== "-rime" &&
+  form !== "-null" &&
+  form !== "-low" &&
   form !== "-small" &&
   form !== "-large" &&
   form !== "-average" &&
   form !== "-super" ? text.replaceAll(form.toLowerCase(), "") : text;
 };
 
-export const convertArrStats = (data: { [s: string]: unknown; } | ArrayLike<unknown>) => {
+export const convertArrStats = (data: { [s: string]: any; } | ArrayLike<any>) => {
   return Object.values(data).map((value: any) => {
       const stats = calculateStatsByTag(value.baseStats, value.forme);
       return {id: value.num, name: value.slug, base_stats: value.baseStats,

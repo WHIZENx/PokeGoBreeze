@@ -15,7 +15,7 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Raid from '../../Raid/Raid';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 
 const Form = ({
@@ -39,7 +39,7 @@ const Form = ({
 }: any) => {
 
     const dispatch = useDispatch();
-    
+
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -106,8 +106,8 @@ const Form = ({
         if (!region && formName) {
             let findForm = formList.map((item: any[]) => item.find((item: { form: { name: string; }; }) => item.form.name === reversedCapitalize(formName, "-", " "))).find((item: any) => item);
             if (!findForm) findForm = formList.map((item: any[]) => item.find((item: { form: { form_name: string; }; }) => item.form.form_name === "normal" || item.form.form_name === "standard" || item.form.form_name === "incarnate")).find((item: any) => item);
-            const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));
-            if (findForm.form.form_name !== "" && region) setRegion(region);
+            const region = Object.values(regionList).find((item: any) => findForm?.form.form_name.includes(item.toLowerCase()));
+            if (findForm?.form.form_name !== "" && region) setRegion(region);
             else setRegion(regionList[parseInt(species.generation.url.split("/")[6])]);
         }
     }, [formList, region, setRegion, species.generation.url, formName])

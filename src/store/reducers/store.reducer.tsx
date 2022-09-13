@@ -1,9 +1,14 @@
-const inititaialize = {
+interface storeModel {
+  data: any;
+  timestamp: any;
+}
+
+const inititaialize: storeModel = {
     data: null,
     timestamp: null
 }
 
-const StoreReducer = (state = inititaialize, action: any) => {
+const StoreReducer = (state: storeModel = inititaialize, action: any) => {
     switch (action.type) {
       case 'LOAD_STORE':
         return action.payload;

@@ -160,7 +160,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
             <Fragment>
             {data &&
                 <Fragment>
-                <div className="w-100 row prev-next-block sticky-top" style={{margin:0, height: 60}}>
+                <div className="w-100 row prev-next-block sticky-top">
                     {params.id ?
                     <Fragment>
                     {data.id > 1 && <div title="Previous Pokémon" className={`prev-block col${data.id < maxPokemon-1 ? "-6" : ""}`} style={{padding:0}}>
@@ -243,8 +243,9 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                 </div>
                 <div className={'element-bottom position-relative poke-container'+(props.isSearch ? "" : " container")}>
                     <div className="w-100 text-center d-inline-block align-middle" style={{marginTop: 15, marginBottom: 15}}>
-                        {Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName) &&
-                        !Object.values(pokemonData).find(item => item.num === data.id && splitAndCapitalize(item.name, "-", " ") === formName)?.releasedGO &&
+                        {formName && (dataStore.details.find((item: { id: any; }) => item.id === data.id) === undefined ||
+                        (dataStore.details.find((item: { id: any; name: string; }) => item.id === data.id && splitAndCapitalize(item.name.toLowerCase(), "_", " ") === formName) &&
+                        !dataStore.details.find((item: { id: any; name: string; }) => item.id === data.id && splitAndCapitalize(item.name.toLowerCase(), "_", " ") === formName).releasedGO)) &&
                             <Alert variant="danger">
                                 <h5 className='text-danger' style={{margin: 0}}>* <b>{formName}</b> not released in Pokémon GO
                                 <img width={50} height={50} style={{marginLeft: 10}} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/>

@@ -291,8 +291,8 @@ const RaidBattle = () => {
                 return result;
             }, {});
             dataList = Object.values(group).map((pokemon: any) => pokemon.reduce((p: { tdoAtk: number; }, c: { tdoAtk: number; }) => p.tdoAtk > c.tdoAtk ? p : c)).sort((a,b) => b.tdoAtk - a.tdoAtk);
-            dispatch(hideSpinner());
             setResult(dataList);
+            dispatch(hideSpinner());
         }
     }
 
@@ -555,7 +555,21 @@ const RaidBattle = () => {
                         </div>
                     </div>
                     <div className="top-raid-group">
-                        {result.filter((value: { pokemon: { releasedGO: any; }; }) => releasedGO ? value.pokemon.releasedGO : true).slice(0, 10).map((value: any, index: React.Key | null | undefined) => (
+                        {result.filter((obj: { pokemon: { num: any; name: string; } }) => {
+                                if (!releasedGO) {
+                                    return true;
+                                }
+                                obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, "-", " ");
+                                const result = data.details.find((item: {name: string; id: any;}) =>
+                                    item.id === obj.pokemon.num &&
+                                    item.name === (item.id === 555 && !obj.pokemon.name.toLowerCase().includes("zen")
+                                    ?
+                                    obj.pokemon.name.toUpperCase().replaceAll(" ", "_").replace("_GALAR", "_GALARIAN")+"_STANDARD"
+                                    :
+                                    convertName(obj.pokemon.name))
+                                )
+                                return result ? result.releasedGO : false
+                            }).slice(0, 10).map((value: any, index: React.Key | null | undefined) => (
                             <div className="top-raid-pokemon" key={index}>
                                 <div className="d-flex justify-content-center w-100">
                                     <Link to={`/pokemon/${value.pokemon.num}${value.pokemon.forme ? `?form=${value.pokemon.forme.toLowerCase()}`: ""}`} className="sprite-raid position-relative">

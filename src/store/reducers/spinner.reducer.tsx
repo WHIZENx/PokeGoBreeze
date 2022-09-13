@@ -1,9 +1,26 @@
-const SpinnerReducer = (state = false, action: any) => {
+interface spinnerModel {
+  loading: boolean;
+  error: boolean;
+}
+
+const inititaialize: spinnerModel = {
+  loading: false,
+  error: false
+}
+
+const SpinnerReducer = (state: spinnerModel = inititaialize, action: any) => {
     switch (action.type) {
       case 'SHOW_SPINNER':
-        return true;
+        return {
+          ...state,
+          loading: true,
+          error: action.payload.error
+        };
       case 'HIDE_SPINNER':
-        return false;
+        return {
+          ...state,
+          loading: false || state.error
+        };
       default:
         return state;
     }

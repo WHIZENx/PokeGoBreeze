@@ -1,6 +1,6 @@
 export interface leaguePVP {
-    id: string
-    name: string
+    id: string;
+    name: string;
     cp: number;
     logo: any;
 }
@@ -25,20 +25,20 @@ export interface leagueCondition {
 }
 
 export interface leagueReward {
-    type: boolean | string,
-    count: number,
-    step: number
+    type: boolean | string;
+    count: number;
+    step: number;
 }
 
 export interface leagueRewardPokemon {
-    guaranteedLimited: boolean,
-    id: number | null,
-    name: string,
-    form: string
+    guaranteedLimited: boolean;
+    id: number | null;
+    name: string;
+    form: string;
 }
 
 export interface leagueData {
-    allowLeagues: string[],
-    data: any[],
-    season: any
+    allowLeagues: string[];
+    data: any[];
+    season: any;
 }

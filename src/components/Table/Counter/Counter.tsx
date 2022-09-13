@@ -2,7 +2,7 @@ import { capitalize, FormControlLabel, Switch } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import APIService from "../../../services/API.service";
-import { splitAndCapitalize } from "../../../util/Utils";
+import { convertName, splitAndCapitalize } from "../../../util/Utils";
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
@@ -59,7 +59,20 @@ const Counter = ({def, form, changeForm}: any) => {
                 <tbody>
                     {open ?
                     <Fragment>
-                    {counterList.filter((pokemon: { releasedGO: any; }) => releasedGO ? pokemon.releasedGO : true).slice(0, firstInit + eachCounter*startIndex).map((value: any, index: React.Key | null | undefined) => (
+                    {counterList.filter((pokemon: { pokemon_id: any; pokemon_name: string; }) => {
+                        if (!releasedGO) {
+                            return true;
+                        }
+                        const result = data.details.find((item: {name: string; id: any;}) =>
+                            item.id === pokemon.pokemon_id &&
+                            item.name === (item.id === 555 && !pokemon.pokemon_name.toLowerCase().includes("zen")
+                            ?
+                            pokemon.pokemon_name.toUpperCase().replaceAll("-", "_").replace("_GALAR", "_GALARIAN")+"_STANDARD"
+                            :
+                            convertName(pokemon.pokemon_name))
+                        )
+                        return result ? result.releasedGO : false
+                    }).slice(0, firstInit + eachCounter*startIndex).map((value: any, index: React.Key | null | undefined) => (
                         <Fragment key={index}>
                             <tr>
                                 <td className="text-origin text-center">

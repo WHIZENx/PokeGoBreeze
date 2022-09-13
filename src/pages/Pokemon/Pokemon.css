@@ -166,6 +166,9 @@ td h5, td h6 {
     border: 1px solid lightgray;
     background-color: #eeeeee;
     z-index: 3 !important;
+    box-shadow: 0px 5px 3px rgb(0 0 0 / 30%);
+    margin: 0;
+    height: 60;
 }
 
 .prev-next-block a {

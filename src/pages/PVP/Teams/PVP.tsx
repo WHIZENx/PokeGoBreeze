@@ -132,7 +132,7 @@ const TeamPVP = () => {
 
                 file.teams = file.teams.map((item: { team: string; }) => {
                     const teams = item.team.split("|");
-                    const teamsData: { id: any; name: string; speciesId: any; pokemonData: any; form: any; stats: { atk: number; def: number; sta: number; }; atk: { id: any; form: string; attack: unknown; rank: number; } | undefined; def: { id: any; form: string; defense: unknown; rank: number; } | undefined; sta: { id: any; form: string; stamina: unknown; rank: number; } | undefined; fmove: any; cmovePri: any; cmoveSec: any; combatPoke: any; shadow: any; purified: any; }[] = [];
+                    const teamsData: { id: any; name: string; speciesId: any; pokemonData: any; form: any; stats: { atk: number; def: number; sta: number; }; atk: { id: any; form: string; attack: any; rank: number; } | undefined; def: { id: any; form: string; defense: any; rank: number; } | undefined; sta: { id: any; form: string; stamina: any; rank: number; } | undefined; fmove: any; cmovePri: any; cmoveSec: any; combatPoke: any; shadow: any; purified: any; }[] = [];
                     teams.forEach((value: any) => {
                         teamsData.push(mappingPokemonData(value))
                     })

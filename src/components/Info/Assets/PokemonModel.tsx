@@ -1,5 +1,4 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import pokemonData from '../../../data/pokemon.json';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -14,14 +13,16 @@ const PokemonModel = (props: { id: any; name: string; }) => {
     const data = useSelector((state: RootStateOrAny) => state.store.data);
 
     const [pokeAssets, setPokeAssets]: any = useState([]);
-    const gender = useRef(Object.values(pokemonData).find(item => item.num === props.id)?.genderRatio);
+    const gender: any = useRef(null);
     const sound: any = useRef(null);
 
     const getImageList = useCallback((id: any) => {
         const model = data.assets.find((item: { id: any; }) => item.id === id);
         sound.current = data.assets.find((item: { id: any; }) => item.id === id);
+        const detail = data.details.find((item: { id: any; }) => item.id === id);
+        gender.current = detail ? detail.gender : null;
         return model ? Array.from(new Set(model.image.map((item: { form: any; }) => item.form))).map(value => {
-            return {form: value, image: model.image.filter((item: { form: unknown; }) => value === item.form)}
+            return {form: value, image: model.image.filter((item: { form: any; }) => value === item.form)}
         }) : [];
     }, [data.assets]);
 
@@ -38,12 +39,12 @@ const PokemonModel = (props: { id: any; name: string; }) => {
                         {assets.image.map((value: { gender: number; shiny: string; default: string; }, index: React.Key | null | undefined) => (
                         <div key={index} className="d-inline-block" style={{width: value.gender === 3 ? '100%': 'auto'}}>
                             <div className='sub-group-model'>
-                                {(gender.current?.M !== 0 || gender.current?.F !== 0) &&
+                                {gender.current && !gender.current.genderlessPercent &&
                                 <div className='gender'>
                                     {value.gender === 3 ?
                                     <Fragment>
-                                        {gender.current?.M !== 0 && <MaleIcon sx={{ color: 'blue' }}/>}
-                                        {gender.current?.F !== 0 && <FemaleIcon sx={{ color: 'red' }}/>}
+                                        {gender.current.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }}/>}
+                                        {gender.current.FemalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }}/>}
                                     </Fragment>
                                     :
                                     <Fragment>{value.gender === 1 ?

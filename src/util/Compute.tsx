@@ -60,7 +60,8 @@ export const findAssetForm = (pokemonAssets: any[], id: number, name: string) =>
     if (name.split("-")[1] === "A") name = name.replace("-A", "-Armor")
     const pokemon = pokemonAssets.find((item: { id: any; }) => item.id === id);
     const standard = pokemon.image.filter((item: { form: string | string[]; }) => item.form.includes("STANDARD"));
-    if (pokemon.name === convertName(name) || standard.length > 0) {
+    name = convertName(name)
+    if (pokemon.name === name || standard.length > 0) {
         const image = pokemon.image.find((item: { form: string; }) => item.form === "NORMAL")
         if (image) return image.default;
         if (standard.length > 0) {
@@ -73,7 +74,7 @@ export const findAssetForm = (pokemonAssets: any[], id: number, name: string) =>
         try {return pokemon.image[0].default;}
         catch { return null }
     }
-    try {return pokemon.image.find((item: { form: any; }) => convertName(name).replaceAll(pokemon.name+"_", "") === item.form).default;}
+    try {return pokemon.image.find((item: { form: any; }) => name.replaceAll(pokemon.name+"_", "") === item.form).default;}
     catch { return null; }
 }
 

@@ -83,12 +83,7 @@ module.exports = {
                     test: /[\\/]node_modules[\\/](!react-bootstrap)(!lodash)(!moment)(!moment-timezone)[\\/]/,
                     name: "vendor",
                     enforce: true
-                },
-                styles: {
-                    test: /\.css$/,
-                    name: "styles",
-                    enforce: true
-                },
+                }
             },
         },
         minimizer: [
@@ -116,7 +111,6 @@ module.exports = {
             { directory: path.resolve(__dirname, 'dist') },
             { directory: path.resolve(__dirname, 'public') },
         ],
-        hot: true,
         historyApiFallback: true,
         open: true,
         compress: true,
