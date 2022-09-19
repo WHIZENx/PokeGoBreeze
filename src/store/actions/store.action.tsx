@@ -54,7 +54,6 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
                 }
             });
       }).catch((e) => {
-        console.log(e)
         source.cancel();
         dispatch(showSpinner(true));
       });

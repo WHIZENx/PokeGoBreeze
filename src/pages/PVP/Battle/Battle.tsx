@@ -7,7 +7,7 @@ import APIService from "../../../services/API.service";
 import { convertNameRankingToOri, splitAndCapitalize } from "../../../util/Utils";
 import { findAssetForm } from "../../../util/Compute";
 import { calculateStatsBattle, calculateStatsByTag, getTypeEffective } from "../../../util/Calculate";
-import { SHADOW_ATK_BONUS, STAB_MULTIPLY } from "../../../util/Constants";
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from "../../../util/Constants";
 import { Accordion, Form } from "react-bootstrap";
 import TypeBadge from "../../../components/Sprites/TypeBadge/TypeBadge";
 import { TimeLine, TimeLineFit, TimeLineVertical } from "./Timeline";
@@ -64,7 +64,8 @@ const Battle = () => {
         cMoveSec: null,
         timeline: [],
         energy: 0,
-        block: 2
+        block: 2,
+        shadow: false
     })
 
     const [pokemonObj, setPokemonObj]: any = useState({
@@ -74,7 +75,8 @@ const Battle = () => {
         cMoveSec: null,
         timeline: [],
         energy: 0,
-        block: 2
+        block: 2,
+        shadow: false
     })
 
     const [playTimeline, setPlayTimeline]: any = useState({
@@ -98,17 +100,22 @@ const Battle = () => {
         }
     }
 
-    const calculateMoveDmgActual = (poke: { hp?: any; stats: any; bestStats: any; pokemon: any; fmove?: any; cmove?: any; cmoveSec?: any; energy?: any; block?: any; turn?: number; }, pokeObj: { hp?: any; stats: any; bestStats: any; pokemon: any; fmove?: any; cmove?: any; cmoveSec?: any; energy?: any; block?: any; turn?: number; }, move: { pvp_power: number; type: string; }) => {
+    const calculateMoveDmgActual = (
+        poke: { shadow: boolean; hp?: any; stats: any; bestStats: any; pokemon: any; fmove?: any; cmove?: any; cmoveSec?: any; energy?: any; block?: any; turn?: number;},
+        pokeObj: { shadow: boolean; hp?: any; stats: any; bestStats: any; pokemon: any; fmove?: any; cmove?: any; cmoveSec?: any; energy?: any; block?: any; turn?: number; },
+        move: { pvp_power: number; type: string; }) => {
         const atkPoke = calculateStatsBattle(poke.stats.atk, poke.bestStats.IV.atk, poke.bestStats.level, true);
         const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.bestStats.IV.def, pokeObj.bestStats.level, true);
+        poke.shadow = poke.shadow ?? false;
+        pokeObj.shadow = pokeObj.shadow ?? false;
         return atkPoke
         *move.pvp_power
         *(poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore.options) : 1)
-        *(poke.pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1)
-        *(getTypeEffective(move.type, pokeObj.pokemon.types))/defPokeObj;
+        *(poke.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1)
+        *(getTypeEffective(move.type, pokeObj.pokemon.types))/(defPokeObj*(pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore.options) : 1));
     }
 
-    const Pokemon = (poke: { pokemonData: any; fMove: any; cMovePri: any; cMoveSec: any; timeline?: never[]; energy: any; block: any; }) => {
+    const Pokemon = (poke: {shadow: any; pokemonData: any; fMove: any; cMovePri: any; cMoveSec: any; timeline?: never[]; energy: any; block: any;}) => {
         return {
             hp: poke.pokemonData.bestStats.stats.statsSTA,
             stats: poke.pokemonData.stats,
@@ -119,7 +126,8 @@ const Battle = () => {
             cmoveSec: poke.cMoveSec === "" ? null : poke.cMoveSec,
             energy: poke.energy ?? 0,
             block: poke.block ?? 2,
-            turn: Math.ceil(poke.fMove.durationMs/500)
+            turn: Math.ceil(poke.fMove.durationMs/500),
+            shadow: poke.shadow
         }
     }
 
@@ -487,7 +495,8 @@ const Battle = () => {
                 cMoveSec: null,
                 timeline: [],
                 energy: 0,
-                block: 2
+                block: 2,
+                shadow: false
             });
         }
     }
@@ -506,7 +515,8 @@ const Battle = () => {
                 cMoveSec: null,
                 timeline: [],
                 energy: 0,
-                block: 2
+                block: 2,
+                shadow: false
             });
         }
     }
@@ -795,6 +805,10 @@ const Battle = () => {
                                         <option value={2}>2</option>
                                 </Form.Select>
                             </div>
+                            <div className="border-input" style={{padding: '0 8px'}}>
+                                <FormControlLabel control={<Checkbox checked={pokemonCurr.shadow ?? false} onChange={(event, check) => setPokemonCurr({...pokemonCurr, shadow: check})}/>}
+                                label={<span><img height={32} alt="img-shadow" src={APIService.getPokeShadow()}/> Shadow</span>}/>
+                            </div>
                             {renderInfoPokemon(pokemonCurr)}
                             {pokemonCurr.timeline.length > 0 &&
                             <div className="w-100 bg-ref-pokemon">
@@ -883,6 +897,10 @@ const Battle = () => {
                                         <option value={2}>2</option>
                                 </Form.Select>
                             </div>
+                            <div className="border-input" style={{padding: '0 8px'}}>
+                                <FormControlLabel control={<Checkbox checked={pokemonObj.shadow ?? false} onChange={(event, check) => setPokemonObj({...pokemonObj, shadow: check})}/>}
+                                label={<span><img height={32} alt="img-shadow" src={APIService.getPokeShadow()}/> Shadow</span>}/>
+                            </div>
                             {renderInfoPokemon(pokemonObj)}
                             {pokemonObj.timeline.length > 0 &&
                             <div className="w-100 bg-ref-pokemon">
@@ -899,7 +917,7 @@ const Battle = () => {
                     }
                 </div>
             </div>
-            <div className="text-center element-top">
+            <div className="text-center element-top" style={{marginBottom: 15}}>
                 <button className="btn btn-primary" onClick={() => battleAnimation()}>Battle Simulator</button>
             </div>
         </div>
