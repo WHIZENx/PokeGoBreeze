@@ -11,10 +11,12 @@ export const rankName = (rank: number) => {
 }
 
 export const rankIconName = (rank: number) => {
-    if (rank === 21) return APIService.getPokeOtherLeague("special_combat_rank_1");
+    if (rank === 20) return APIService.getPokeOtherLeague("CombatRank03");
+    else if (rank === 21) return APIService.getPokeOtherLeague("special_combat_rank_1");
     else if (rank === 22) return APIService.getPokeOtherLeague("special_combat_rank_2");
     else if (rank === 23) return APIService.getPokeOtherLeague("special_combat_rank_3");
     else if (rank === 24) return APIService.getPokeOtherLeague("special_combat_rank_4");
+    else return APIService.getPokeOtherLeague(`CombatRank${Math.floor(rank/5).toString().padStart(2, '0')}`);
 }
 
 export const rankIconCenterName = (rank: number) => {

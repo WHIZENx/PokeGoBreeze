@@ -9,16 +9,18 @@ import './Leagues.css';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize } from '../../util/Utils';
-import { rankIconCenterName, rankIconName } from '../../util/Compute';
+import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
+import Xarrow from 'react-xarrows';
 
 const Leagues = () => {
 
     const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
     const [rank, setRank] = useState(1);
+    const [setting, setSetting]: any = useState(dataStore.leagues.season.settings.find((data: { rankLevel: number; }) => data.rankLevel === rank+1))
     const [showData, setShowData]: any = useState(null);
 
     const getAssetPokeGo = (id: any, form: any) => {
@@ -45,8 +47,9 @@ const Leagues = () => {
     const [show, setShow] = useState(false);
 
     const handleShow = (type: string, track: string, step: number) => {
-        const result: any[] = [];
+        const data: any = {};
         if (type === "pokemon") {
+            const result: any[] = [];
             setShow(true);
             Object.values(dataStore.leagues.season.rewards.pokemon).forEach((value: any) => {
                 if (value.rank <= rank) {
@@ -61,8 +64,12 @@ const Leagues = () => {
                     }))
                 }
             })
+            data.data = result.sort((a,b) => a.id-b.id);
+            data.step = step;
+            data.track = track.toLowerCase();
+            data.type = type;
         }
-        setShowData(result.sort((a,b) => a.id-b.id));
+        setShowData(data);
     }
 
     const handleClose = () => {
@@ -81,9 +88,14 @@ const Leagues = () => {
                     </span>
                 </div>
                 <div className='col-md-4 d-flex justify-content-end' style={{padding: 0}}>
-                <Form.Select onChange={(e) => setRank(parseInt(e.target.value))} defaultValue={rank}>
-                    {Object.keys(dataStore.leagues.season.rewards.rank).map((value, index) => (
-                        <option key={index} value={value}>Rank {value}</option>
+                <Form.Select onChange={(e) => {
+                    setRank(parseInt(e.target.value));
+                    if (parseInt(e.target.value) < 24) {
+                        setSetting(dataStore.leagues.season.settings.find((data: { rankLevel: number; }) => data.rankLevel === parseInt(e.target.value)+1));
+                    }
+                }} defaultValue={rank}>
+                    {Object.keys(dataStore.leagues.season.rewards.rank).map((value: any, index: number) => (
+                        <option key={index} value={value}>Rank {value} {value > 20 && `( ${rankName(parseInt(value))} )`}</option>
                     ))
                     }
                 </Form.Select>
@@ -184,7 +196,63 @@ const Leagues = () => {
                     }
                 </div>
             </div>
-            <Accordion alwaysOpen style={{marginTop: 15}}>
+            <div className='w-100 text-center' style={{marginTop: 15, marginBottom: 15}}>
+                <div className='d-flex justify-content-center' style={{marginBottom: 10, columnGap: '10%'}}>
+                    <div id='currRank' className='combat-league-info'>
+                        <img className='main-combat-league-info' alt='img-pokemon' src={rankIconName(rank)}/>
+                        {rank > 20 ?
+                            <Fragment>
+                                <span className='combat-center-league-top'>{rankName(rank)}</span>
+                                <span className='combat-center-league-info'>
+                                    <img alt='img-league' height={36} src={rankIconCenterName(rank)}/>
+                                </span>
+                            </Fragment>
+                        :
+                            <span className='combat-center-league-text'>{rank}</span>
+                        }
+                    </div>
+                    {rank < 24 &&
+                        <div id='nextRank' className='combat-league-info'>
+                            <img className='main-combat-league-info' alt='img-pokemon' src={rankIconName(rank+1)}/>
+                            {rank+1 > 20 ?
+                                <Fragment>
+                                    <span className='combat-center-league-top'>{rankName(rank+1)}</span>
+                                    <span className='combat-center-league-info'>
+                                        <img alt='img-league' height={36} src={rankIconCenterName(rank+1)}/>
+                                    </span>
+                                </Fragment>
+                            :
+                                <span className='combat-center-league-text'>{rank+1}</span>
+                            }
+                        </div>
+                    }
+                    {rank < 24 &&
+                        <Xarrow
+                            strokeWidth={2} path="grid" color='red'
+                            start="currRank"
+                            end="nextRank"
+                        />
+                    }
+                </div>
+                {rank < 24 ?
+                    <span className='require-rank-info'>
+                        {setting.additionalTotalBattlesRequired &&
+                            <li>Complete <b>{setting.additionalTotalBattlesRequired}</b> battle{setting.additionalTotalBattlesRequired > 1 && 's'}.</li>
+                        }
+                        {setting.additionalWinsRequired &&
+                            <li>Win <b>{setting.additionalWinsRequired}</b> battle{setting.additionalWinsRequired > 1 && 's'}.</li>
+                        }
+                        {setting.minRatingRequired &&
+                            <li>Reach a battle rating of <b>{setting.minRatingRequired}</b> or higher.</li>
+                        }
+                    </span>
+                    :
+                    <span className='require-rank-info'>
+                        Reach highest rank.
+                    </span>
+                }
+            </div>
+            <Accordion alwaysOpen>
                 {dataStore.leagues.data.map((value: { id: string; iconUrl: string | string[]; enabled: any; title: string; league: string; conditions: { max_cp: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; max_level: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; timestamp: { start: string; end: string; }; unique_selected: any; unique_type: any; whiteList: any[]; banned: any[]; }; }, index: any) => (
                     <Accordion.Item key={index} eventKey={index}>
                         <Accordion.Header className={dataStore.leagues.allowLeagues.includes(value.id) ? "league-opened" : ""}>
@@ -290,20 +358,36 @@ const Leagues = () => {
             {showData &&
             <Modal size="lg" show={show} onHide={handleClose} centered>
                 <Modal.Header closeButton>
-                <Modal.Title>
-                    <span>{rank > 20 &&
-                    <div className='combat-league'>
-                        <img className='main-combat-league' alt='img-pokemon' src={rankIconName(rank)}/>
-                        <span className='combat-center-league'>
-                            <img alt='img-league' height={24} src={rankIconCenterName(rank)}/>
-                        </span>
+                <Modal.Title className='d-flex flex-column' style={{rowGap: 10}}>
+                    <div>
+                        <span>{rank > 20 &&
+                        <div className='combat-league'>
+                            <img className='main-combat-league' alt='img-pokemon' src={rankIconName(rank)}/>
+                            <span className='combat-center-league'>
+                                <img alt='img-league' height={24} src={rankIconCenterName(rank)}/>
+                            </span>
+                        </div>
+                        }</span>
+                        Rank {rank} {rank > 20 && `(${rankName(rank)})`}
                     </div>
-                    }</span>
-                    Rank {rank}</Modal.Title>
+                    <div className='reward-info'>
+                        {showData.track === 'free' ?
+                        <div className='d-flex' style={{columnGap: 8}}>
+                            <img className='pokemon-sprite-small filter-shadow' style={{width: 16}} alt='img-pokemon' src={APIService.getPokeOtherLeague("BattleIconColor")}/>
+                            <span>Free</span> (Win stack {showData.step})
+                        </div>
+                        :
+                        <div className='d-flex' style={{columnGap: 8}}>
+                            <img className='pokemon-sprite-small filter-shadow' style={{width: 16}} alt='img-pokemon' src={APIService.getItemSprite("Item_1402")}/>
+                            <span style={{color: 'crimson'}}>Premium</span> (Win stack {showData.step})
+                        </div>
+                        }
+                    </div>
+                </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='text-center'>
                     <h5 style={{textDecoration: 'underline'}}>Random Pokemon</h5>
-                    {showData.filter((item: { guaranteedLimited: any; }) => !item.guaranteedLimited).map((item: { id: string; name: string; form: any; }, index: React.Key | null | undefined) => (
+                    {showData.data.filter((item: { guaranteedLimited: any; }) => !item.guaranteedLimited).map((item: { id: string; name: string; form: any; }, index: React.Key | null | undefined) => (
                         <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                             <div className="d-flex justify-content-center">
                                 <span style={{width: 64}}>
@@ -313,11 +397,11 @@ const Leagues = () => {
                             <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
                         </Link>
                     ))}
-                    {showData.filter((item: { guaranteedLimited: any; rank: number; }) => item.guaranteedLimited && item.rank === rank).length > 0 &&
+                    {showData.data.filter((item: { guaranteedLimited: any; rank: number; }) => item.guaranteedLimited && item.rank === rank).length > 0 &&
                     <Fragment>
                         <hr />
                         <h5 style={{textDecoration: 'underline'}}>Garanteed Pokemon in first time</h5>
-                        {showData.filter((item: { guaranteedLimited: any; rank: number; }) => item.guaranteedLimited && item.rank === rank).map((item: { id: string; name: string; form: any; }, index: React.Key | null | undefined) => (
+                        {showData.data.filter((item: { guaranteedLimited: any; rank: number; }) => item.guaranteedLimited && item.rank === rank).map((item: { id: string; name: string; form: any; }, index: React.Key | null | undefined) => (
                         <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                             <div className="d-flex justify-content-center">
                                 <span style={{width: 64}}>

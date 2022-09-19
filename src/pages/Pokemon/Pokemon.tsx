@@ -10,7 +10,7 @@ import { sortStatsPokemon } from '../../util/Calculate';
 
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import Form from "../../components/Info/Form/FormNew";
+import Form from "../../components/Info/Form/Form-v2";
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
