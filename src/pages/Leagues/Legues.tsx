@@ -320,13 +320,13 @@ const Leagues = () => {
                             <li style={{fontWeight: 500}}>
                                 <h6 className='title-leagues text-success'>White List</h6>
                                 {value.conditions.whiteList.map((item: { id: string; name: string; form: any; }, index: React.Key | null | undefined) => (
-                                    <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                    <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id + (item.form === "NORMAL" ? "" : "?form="+item.form.toLowerCase())} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                         <div className="d-flex justify-content-center">
                                             <span style={{width: 64}}>
                                                 <img className='pokemon-sprite-medium filter-shadow-hover' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
                                             </span>
                                         </div>
-                                        <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                                        <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")+(item.form === "NORMAL" ? "" : " "+splitAndCapitalize(item.form.toLowerCase(), "_", " "))}</span>
                                     </Link>
                                 ))}
                             </li>
@@ -335,13 +335,13 @@ const Leagues = () => {
                             <li style={{fontWeight: 500}}>
                                 <h6 className='title-leagues text-danger'>Ban List</h6>
                                 {value.conditions.banned.map((item: { id: string; name: string; form: any; }, index: React.Key | null | undefined) => (
-                                    <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
+                                    <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id + (item.form === "NORMAL" ? "" : "?form="+item.form.toLowerCase())} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                                         <div className="d-flex justify-content-center">
                                             <span style={{width: 64}}>
                                                 <img className='pokemon-sprite-medium filter-shadow-hover' alt='img-pokemon' src={getAssetPokeGo(item.id, item.form)}/>
                                             </span>
                                         </div>
-                                        <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")}</span>
+                                        <span className='caption'>{splitAndCapitalize(item.name.toLowerCase(), "_", " ")+(item.form === "NORMAL" ? "" : " "+splitAndCapitalize(item.form.toLowerCase(), "_", " "))}</span>
                                     </Link>
                                 ))}
                             </li>

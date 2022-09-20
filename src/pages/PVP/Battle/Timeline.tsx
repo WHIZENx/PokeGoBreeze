@@ -91,12 +91,19 @@ export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false
                             </div>
                         </div>
                     }
-                    {value.type === "Q" &&
-                        <div className={`winner-container bg-success text-white turn-battle ${end ? "justify-content-end":""}`}>WIN!</div>
+                    {value.type === "X" && (pokeObj.timeline[index] && pokeObj.timeline[index].type === "X") ?
+                        <div className={`winner-container bg-dark text-white turn-battle ${end ? "justify-content-end":""}`}>TIE!</div>
+                    :
+                    <Fragment>
+                        {value.type === "Q" &&
+                            <div className={`winner-container bg-success text-white turn-battle ${end ? "justify-content-end":""}`}>WIN!</div>
+                        }
+                        {value.type === "X" &&
+                            <div className={`loser-container bg-danger text-white turn-battle ${end ? "justify-content-end":""}`}>LOSE!</div>
+                        }
+                    </Fragment>
                     }
-                    {value.type === "X" &&
-                        <div className={`loser-container bg-danger text-white turn-battle ${end ? "justify-content-end":""}`}>LOSE!</div>
-                    }
+
                 </Fragment>
             ))
             }

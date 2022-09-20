@@ -568,7 +568,7 @@ export const optionLeagues = (data: { find: (arg0: { (item: any): boolean; (item
         result.title = item.data.combatLeague.title.replace("combat_", "").replace("_title", "").toUpperCase()
         result.enabled = item.data.combatLeague.enabled
         result.conditions = leagueConditionModel();
-        item.data.combatLeague.pokemonCondition.forEach((con: { type: string; pokemonCaughtTimestamp: { afterTimestamp: any; beforeTimestamp: null; }; withPokemonType: { pokemonType: any[]; }; pokemonLevelRange: { maxLevel: any; }; withPokemonCpLimit: { maxCp: any; }; pokemonWhiteList: { pokemon: any[]; }; }) => {
+        item.data.combatLeague.pokemonCondition.forEach((con: {pokemonBanList: any; type: string; pokemonCaughtTimestamp: { afterTimestamp: any; beforeTimestamp: null; }; withPokemonType: { pokemonType: any[]; }; pokemonLevelRange: { maxLevel: any; }; withPokemonCpLimit: { maxCp: any; }; pokemonWhiteList: { pokemon: any[]; };}) => {
             if (con.type === "POKEMON_CAUGHT_TIMESTAMP") {
                 result.conditions.timestamp = {}
                 result.conditions.timestamp.start = con.pokemonCaughtTimestamp.afterTimestamp
@@ -591,24 +591,62 @@ export const optionLeagues = (data: { find: (arg0: { (item: any): boolean; (item
                     const whiteList: any = {};
                     whiteList.id = pokemon.find((item: { name: any; }) => item.name === poke.id).id
                     whiteList.name = poke.id
-                    whiteList.form = poke.form ? poke.form.replace(whiteList.name+"_", "") : "NORMAL";
-                    if (poke.forms && poke.forms.length === 1) whiteList.form = poke.forms[0].replace(whiteList.name+"_", "");
+                    whiteList.form = poke.forms ? poke.forms : "NORMAL";
                     return whiteList;
                 });
-                result.conditions.whiteList = result.conditions.whiteList.sort((a: { id: number; },b: { id: number; }) => a.id-b.id);
+                const whiteList: any[] = [];
+                result.conditions.whiteList.forEach((value: any) => {
+                    if (typeof value.form !== "string") {
+                        value.form.forEach((form: string) => {
+                            if (form === "FORM_UNSET" && value.form.length === 1) {
+                                whiteList.push({...value, form: "NORMAL"})
+                            } else if (form !== "FORM_UNSET") {
+                                whiteList.push({...value, form: form.replace(value.name+"_", "")})
+                            }
+                        });
+                    } else {
+                        whiteList.push({...value, form: "NORMAL"})
+                    }
+                });
+                result.conditions.whiteList = whiteList.sort((a: { id: number; },b: { id: number; }) => a.id-b.id);
             }
-            result.iconUrl = item.data.combatLeague.iconUrl.replace("https://storage.googleapis.com/prod-public-images/", "").replace("https://prodholoholo-public-images.nianticlabs.com/LeagueIcons/", "")
-            result.league = item.data.combatLeague.badgeType.replace("BADGE_", "")
-            if (item.data.combatLeague.bannedPokemon) {
-                result.conditions.banned = item.data.combatLeague.bannedPokemon.map((poke: any) => {
+            if (con.type === "POKEMON_BANLIST") {
+                result.conditions.banned = con.pokemonBanList.pokemon.map((poke: { id: any; form: string; forms: string | any[]; }) => {
                     const banList: any = {};
-                    banList.id = pokemon.find((item: { name: any; }) => item.name === poke).id;
-                    banList.name = poke;
+                    banList.id = pokemon.find((item: { name: any; }) => item.name === poke.id).id
+                    banList.name = poke.id
+                    banList.form = poke.forms ? poke.forms : "NORMAL";
                     return banList;
                 });
-                result.conditions.banned = result.conditions.banned.sort((a: { id: number; },b: { id: number; }) => a.id-b.id);
+                const banList: any[] = [];
+                result.conditions.banned.forEach((value: any) => {
+                    if (typeof value.form !== "string") {
+                        value.form.forEach((form: string) => {
+                            if (form === "FORM_UNSET" && value.form.length === 1) {
+                                banList.push({...value, form: "NORMAL"})
+                            } else if (form !== "FORM_UNSET") {
+                                banList.push({...value, form: form.replace(value.name+"_", "")})
+                            }
+                        });
+                    } else {
+                        banList.push({...value, form: "NORMAL"})
+                    }
+                });
+                result.conditions.banned = banList.sort((a: { id: number; },b: { id: number; }) => a.id-b.id);
             }
-        })
+        });
+        result.iconUrl = item.data.combatLeague.iconUrl.replace("https://storage.googleapis.com/prod-public-images/", "").replace("https://prodholoholo-public-images.nianticlabs.com/LeagueIcons/", "")
+        result.league = item.data.combatLeague.badgeType.replace("BADGE_", "")
+        if (item.data.combatLeague.bannedPokemon) {
+            const banList = result.conditions.banned.concat(item.data.combatLeague.bannedPokemon.map((poke: any) => {
+                const banList: any = {};
+                banList.id = pokemon.find((item: { name: any; }) => item.name === poke).id;
+                banList.name = poke;
+                banList.form = "NORMAL";
+                return banList;
+            }));
+            result.conditions.banned = banList.sort((a: { id: number; },b: { id: number; }) => a.id-b.id);
+        }
         return result;
     })
 

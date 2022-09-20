@@ -427,13 +427,21 @@ const Battle = () => {
                 clearInterval(turnInterval);
                 if (player1.hp <= 0) {
                     timelinePri.push(State(timer, "X", null, null, null, null, player1.energy, player1.hp))
-                    if (timelinePri.length === timelineSec.length) timelineSec[timelineSec.length-1] = State(timer, "Q", null, null, null, null, player2.energy, player2.hp);
-                    else timelineSec.push(State(timer, "Q", null, null, null, null, player2.energy, player2.hp))
+                    if (player2.hp <= 0) {
+                        timelineSec.push(State(timer, "X", null, null, null, null, player2.energy, player2.hp))
+                    } else {
+                        if (timelinePri.length === timelineSec.length) timelineSec[timelineSec.length-1] = State(timer, "Q", null, null, null, null, player2.energy, player2.hp);
+                        else timelineSec.push(State(timer, "Q", null, null, null, null, player2.energy, player2.hp))
+                    }
                 }
                 else if (player2.hp <= 0) {
                     timelineSec.push(State(timer, "X", null, null, null, null, player2.energy, player2.hp))
-                    if (timelinePri.length === timelineSec.length) timelinePri[timelinePri.length-1] = State(timer, "Q", null, null, null, null, player1.energy, player1.hp);
-                    else timelinePri.push(State(timer, "Q", null, null, null, null, player1.energy, player1.hp))
+                    if (player1.hp <= 0) {
+                        timelinePri.push(State(timer, "X", null, null, null, null, player1.energy, player1.hp))
+                    } else {
+                        if (timelinePri.length === timelineSec.length) timelinePri[timelinePri.length-1] = State(timer, "Q", null, null, null, null, player1.energy, player1.hp);
+                        else timelinePri.push(State(timer, "Q", null, null, null, null, player1.energy, player1.hp))
+                    }
                 }
                 if (timelinePri.length === timelineSec.length) {
                     setPokemonCurr({...pokemonCurr, timeline: timelinePri});
