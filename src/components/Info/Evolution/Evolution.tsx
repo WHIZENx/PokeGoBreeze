@@ -385,7 +385,7 @@ const Evolution = ({forme, region, formDefault, id, onSetIDPoke, gen}: any) => {
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </div>
                                         :
-                                        <Link className="select-evo" to={"/pokemon/"+value.id} onClick={() => {handlePokeID(value.id)}} title={`#${value.id} ${splitAndCapitalize(value.name, "-", " ")}`}>
+                                        <Link className="select-evo" to={"/pokemon/"+value.id} title={`#${value.id} ${splitAndCapitalize(value.name, "-", " ")}`}>
                                             {renderImageEvo(value, values, evo, index, arrEvoList.length)}
                                         </Link>
                                         }
