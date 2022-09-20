@@ -486,7 +486,7 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
         }
     }
 
-    return pokemon.filter((item: { name: any; }) => !formSpecial.includes(item.name)).map((item: { id: number; name: string; pokemonId: string; quickMoves: { map: (arg0: (move: any) => any) => never[]; }; cinematicMoves: never[]; eliteQuickMove: { map: (arg0: (move: any) => any) => never[]; }; eliteCinematicMove: never[]; shadow: { shadowChargeMove: any; purifiedChargeMove: any; }; }) => {
+    return pokemon.filter((item: { name: any; }) => !formSpecial.includes(item.name)).map((item: { id: number; name: string; pokemonId: string; quickMoves: { map: (arg0: (move: any) => any) => any[]; }; cinematicMoves: any[]; eliteQuickMove: { map: (arg0: (move: any) => any) => any[]; }; eliteCinematicMove: any[]; shadow: { shadowChargeMove: any; purifiedChargeMove: any; }; }) => {
         const result: combatPokemon = combatPokemonModel();
         result.id = item.id;
         result.name = item.name;
@@ -510,7 +510,7 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
 
 }
 
-export const optionLeagues = (data: { find: (arg0: { (item: any): boolean; (item: any): boolean; (item: any): boolean; }) => { (): any; new(): any; data: { (): any; new(): any; vsSeekerClientSettings: { (): any; new(): any; allowedVsSeekerLeagueTemplateId: { (): any; new(): any; map: { (arg0: (item: any) => any): never[]; new(): any; }; }; }; combatCompetitiveSeasonSettings: { (): any; new(): any; seasonEndTimeTimestamp: any; }; combatRankingProtoSettings: { (): any; new(): any; rankLevel: any; }; }; }; filter: (arg0: { (item: any): any; (item: any): any; (item: any): any; }) => { (): any; new(): any; map: { (arg0: (item: any) => { id: null; title: string; enabled: boolean; conditions: any; iconUrl: null; league: string; }): never[]; new(): any; }; forEach: { (arg0: { (item: any): void; (item: any): void; }): void; new(): any; }; }; }, pokemon: any[]) => {
+export const optionLeagues = (data: { find: (arg0: { (item: any): boolean; (item: any): boolean; (item: any): boolean; }) => { (): any; new(): any; data: { (): any; new(): any; vsSeekerClientSettings: { (): any; new(): any; allowedVsSeekerLeagueTemplateId: { (): any; new(): any; map: { (arg0: (item: any) => any): any[]; new(): any; }; }; }; combatCompetitiveSeasonSettings: { (): any; new(): any; seasonEndTimeTimestamp: any; }; combatRankingProtoSettings: { (): any; new(): any; rankLevel: any; }; }; }; filter: (arg0: { (item: any): any; (item: any): any; (item: any): any; }) => { (): any; new(): any; map: { (arg0: (item: any) => { id: null; title: string; enabled: boolean; conditions: any; iconUrl: null; league: string; }): any[]; new(): any; }; forEach: { (arg0: { (item: any): void; (item: any): void; }): void; new(): any; }; }; }, pokemon: any[]) => {
 
     const leagueModel = () => {
         return {

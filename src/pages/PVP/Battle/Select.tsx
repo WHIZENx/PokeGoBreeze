@@ -7,6 +7,7 @@ import CardMoveSmall from "../../../components/Card/CardMoveSmall";
 import { calculateStatsByTag, calStatsProd } from "../../../util/Calculate";
 import CardPokemon from "../../../components/Card/CardPokemon";
 import { RootStateOrAny, useSelector } from "react-redux";
+import { Checkbox } from "@mui/material";
 
 const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}: any) => {
 
@@ -51,7 +52,8 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}: any)
         const stats = calculateStatsByTag(value.pokemon.baseStats, value.pokemon.forme);
         const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
         const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
-        setPokemonBattle({...pokemonBattle, pokemonData: {...value, bestStats: allStats[allStats.length-1]}, fMove: fmove, cMovePri: cMovePri, cMoveSec: cMoveSec})
+
+        setPokemonBattle({...pokemonBattle, pokemonData: {...value, allStats: allStats, currentStats: allStats[Math.floor(Math.random()*allStats.length)], bestStats: allStats[allStats.length-1]}, fMove: fmove, cMovePri: cMovePri, cMoveSec: cMoveSec})
     }
 
     const selectFMove = (value: any) => {
@@ -144,55 +146,73 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}: any)
                 </div>
             </div>
             <h5>Charged Moves Primary</h5>
-            <div className={'position-relative d-flex align-items-center form-control '+(pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0, borderRadius: 0}}>
-                <div className='card-move-input' tabIndex={ 0 } onClick={() => setShowCMovePri(true)} onBlur={() => setShowCMovePri(false)}>
-                    <CardMoveSmall value={cMovePri} show={pokemon ? true : false}/>
-                    {showCMovePri && data && pokemon &&
-                        <div className="result-move-select">
-                            <div>
-                            {data
-                            .find((value: { speciesId: any; }) => value.speciesId === pokemon.speciesId).moves.chargedMoves
-                            .map((value: { moveId: any; }) => {
-                                let move = value.moveId;
-                                if (move === "FUTURE_SIGHT") move = "FUTURESIGHT";
-                                if (move === "TECHNO_BLAST_DOUSE") move = "TECHNO_BLAST_WATER";
-                                return combat.find((item: { name: any; }) => item.name === move);
-                            })
-                            .filter((value: { name: any; }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
-                            .map((value: any, index: React.Key | null | undefined) => (
-                                    <div className="card-move" key={ index } onMouseDown={() => selectCMovePri(value)}>
-                                        <CardMoveSmall value={value}/>
-                                    </div>
-                                ))}
+            <div className="d-flex align-items-center" style={{columnGap: 10}}>
+                <Checkbox checked={!pokemonBattle.disableCMovePri} onChange={(event, check) => setPokemonBattle({...pokemonBattle, disableCMovePri: !check})} />
+                <div className={'position-relative d-flex align-items-center form-control '+(pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0, borderRadius: 0}}>
+                    <div className={'card-move-input '+(pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')} tabIndex={ 0 } onClick={() => {
+                        if (!pokemonBattle.disableCMovePri) setShowCMovePri(true)
+                    }} onBlur={() => {
+                        if (!pokemonBattle.disableCMovePri) setShowCMovePri(false)
+                    }}>
+                        <CardMoveSmall value={cMovePri} show={pokemon ? true : false} disable={pokemonBattle.disableCMovePri}/>
+                        {showCMovePri && data && pokemon &&
+                            <div className="result-move-select">
+                                <div>
+                                {data
+                                .find((value: { speciesId: any; }) => value.speciesId === pokemon.speciesId).moves.chargedMoves
+                                .map((value: { moveId: any; }) => {
+                                    let move = value.moveId;
+                                    if (move === "FUTURE_SIGHT") move = "FUTURESIGHT";
+                                    if (move === "TECHNO_BLAST_DOUSE") move = "TECHNO_BLAST_WATER";
+                                    return combat.find((item: { name: any; }) => item.name === move);
+                                })
+                                .filter((value: { name: any; }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
+                                .map((value: any, index: React.Key | null | undefined) => (
+                                        <div className={"card-move "+(pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')} key={ index } onMouseDown={() => {
+                                            if (!pokemonBattle.disableCMovePri) selectCMovePri(value)
+                                        }}>
+                                            <CardMoveSmall value={value}/>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
             </div>
             <h5>Charged Moves Secondary</h5>
-            <div className={'position-relative d-flex align-items-center form-control '+(pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0, borderRadius: 0}}>
-                <div className='card-move-input' tabIndex={ 0 } onClick={() => setShowCMoveSec(true)} onBlur={() => setShowCMoveSec(false)}>
-                    <CardMoveSmall value={cMoveSec} empty={cMoveSec === ""} show={pokemon ? true : false} clearData={removeChargeMoveSec}/>
-                    {showCMoveSec && data && pokemon &&
-                        <div className="result-move-select">
-                            <div>
-                            {data
-                            .find((value: { speciesId: any; }) => value.speciesId === pokemon.speciesId).moves.chargedMoves
-                            .map((value: { moveId: any; }) => {
-                                let move = value.moveId;
-                                if (move === "FUTURE_SIGHT") move = "FUTURESIGHT";
-                                if (move === "TECHNO_BLAST_DOUSE") move = "TECHNO_BLAST_WATER";
-                                return combat.find((item: { name: any; }) => item.name === move);
-                            })
-                            .filter((value: { name: any; }) => (cMoveSec === "" || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
-                            .map((value: any, index: React.Key | null | undefined) => (
-                                    <div className="card-move" key={ index } onMouseDown={() => selectCMoveSec(value)}>
-                                        <CardMoveSmall value={value}/>
-                                    </div>
-                                ))}
+            <div className="d-flex align-items-center" style={{columnGap: 10}}>
+                <Checkbox checked={!pokemonBattle.disableCMoveSec} onChange={(event, check) => setPokemonBattle({...pokemonBattle, disableCMoveSec: !check})} />
+                <div className={'position-relative d-flex align-items-center form-control '+(pokemon ? "card-select-enabled" : "card-select-disabled")} style={{padding: 0, borderRadius: 0}}>
+                    <div className={'card-move-input '+(pokemonBattle.disableCMoveSec ? 'cursor-not-allowed' : 'cursor-pointer')} tabIndex={ 0 } onClick={() => {
+                        if (!pokemonBattle.disableCMoveSec) setShowCMoveSec(true)
+                    }} onBlur={() => {
+                        if (!pokemonBattle.disableCMoveSec) setShowCMoveSec(false)
+                    }}>
+                        <CardMoveSmall value={cMoveSec} empty={cMoveSec === ""} show={pokemon ? true : false} clearData={pokemonBattle.disableCMovePri ? false : removeChargeMoveSec} disable={pokemonBattle.disableCMoveSec}/>
+                        {showCMoveSec && data && pokemon &&
+                            <div className="result-move-select">
+                                <div>
+                                {data
+                                .find((value: { speciesId: any; }) => value.speciesId === pokemon.speciesId).moves.chargedMoves
+                                .map((value: { moveId: any; }) => {
+                                    let move = value.moveId;
+                                    if (move === "FUTURE_SIGHT") move = "FUTURESIGHT";
+                                    if (move === "TECHNO_BLAST_DOUSE") move = "TECHNO_BLAST_WATER";
+                                    return combat.find((item: { name: any; }) => item.name === move);
+                                })
+                                .filter((value: { name: any; }) => (cMoveSec === "" || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
+                                .map((value: any, index: React.Key | null | undefined) => (
+                                        <div className="card-move" key={ index } onMouseDown={() => {
+                                            if (!pokemonBattle.disableCMoveSec) selectCMoveSec(value)
+                                        }}>
+                                            <CardMoveSmall value={value}/>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
             </div>
         </Fragment>

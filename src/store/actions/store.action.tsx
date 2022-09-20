@@ -53,7 +53,7 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
                 timestamp: timestamp.data
                 }
             });
-      }).catch((e) => {
+      }).catch(() => {
         source.cancel();
         dispatch(showSpinner(true));
       });

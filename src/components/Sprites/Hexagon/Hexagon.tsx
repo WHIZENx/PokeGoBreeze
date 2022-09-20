@@ -39,7 +39,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
         ctx.closePath();
     }, [getHexConerCord]);
 
-    const drawStatsHex = useCallback((ctx: { beginPath: () => void; moveTo: (arg0: any, arg1: any) => void; lineTo: (arg0: any, arg1: any) => void; setLineDash: (arg0: never[]) => void; lineWidth: number; fillStyle: string; fill: () => void; strokeStyle: string; stroke: () => void; closePath: () => void; }, center: any, stat: { switching: any; charger: any; closer: any; cons: any; atk: any; lead: any; }, hexSize: number) => {
+    const drawStatsHex = useCallback((ctx: { beginPath: () => void; moveTo: (arg0: any, arg1: any) => void; lineTo: (arg0: any, arg1: any) => void; setLineDash: (arg0: any[]) => void; lineWidth: number; fillStyle: string; fill: () => void; strokeStyle: string; stroke: () => void; closePath: () => void; }, center: any, stat: { switching: any; charger: any; closer: any; cons: any; atk: any; lead: any; }, hexSize: number) => {
         const stats: any = {
             "0": (stat.switching || 0)*hexSize/100,
             "1": (stat.charger || 0)*hexSize/100,

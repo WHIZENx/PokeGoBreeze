@@ -3,6 +3,7 @@ import React, { Fragment } from "react"
 import APIService from "../../../services/API.service"
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, splitAndCapitalize } from "../../../util/Utils";
+import CloseIcon from '@mui/icons-material/Close';
 
 export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false) => {
 
@@ -173,7 +174,7 @@ export const TimeLine = (pokemonCurr: any, pokemonObj: any, elem: React.LegacyRe
                             {value.type === "C" && <div id={index} className={`charge-attack ${value.color} ${value.color}-border`} style={{width: value.size, height: value.size}}></div>}
                             {(value.type === "W" || value.type === "N") && <div id={index} className="wait-attack"></div>}
                             {!value.type && <div id={index} className="wait-charge-attack" style={{width: value.size, height: value.size}}></div>}
-                            {value.type === "X" && <div id={index} className="text-danger">X</div>}
+                            {value.type === "X" && <div id={index}><CloseIcon color="error"/></div>}
                         </Fragment>
                     ))}
                 </div>
@@ -201,7 +202,7 @@ export const TimeLine = (pokemonCurr: any, pokemonObj: any, elem: React.LegacyRe
 export const TimeLineFit = (pokemonCurr: any, pokemonObj: any, timeline: React.LegacyRef<HTMLDivElement> | undefined, eRef: React.LegacyRef<HTMLDivElement> | undefined, move: { (e: { currentTarget: { getBoundingClientRect: () => any; }; clientX: number; }): void; bind?: any; }, left: string | number, showTap: any, hide = false) => {
 
     const calculateFitPoint = (length: number, index: number) => {
-        return `${index*100/(length-2)}%`;
+        return `${index*100/length-2}%`;
     }
 
     const renderTimelineFit = (poke: { timeline: any[]; }, pokeObj: { timeline: { [x: string]: { type: string; }; }; }) => {
@@ -252,7 +253,7 @@ export const TimeLineFit = (pokemonCurr: any, pokemonObj: any, timeline: React.L
                             {value.type === "C" && <div id={index} className={`charge-attack ${value.color} ${value.color}-border`} style={{width: value.size, height: value.size, left: calculateFitPoint(poke.timeline.length, index)}}></div>}
                             {(value.type === "W" || value.type === "N") && <div id={index} className="wait-attack" style={{left: calculateFitPoint(poke.timeline.length, index)}}></div>}
                             {!value.type && <div id={index} className="wait-charge-attack" style={{width: value.size, height: value.size, left: calculateFitPoint(poke.timeline.length, index)}}></div>}
-                            {value.type === "X" && <div id={index} className="text-danger" style={{left: calculateFitPoint(poke.timeline.length, index)}}>X</div>}
+                            {value.type === "X" && <div id={index} style={{left: calculateFitPoint(poke.timeline.length, index)}}><CloseIcon color="error"/></div>}
                         </Fragment>
                     ))}
                 </div>

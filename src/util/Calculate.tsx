@@ -773,7 +773,7 @@ const sortCounterDPS = (data: any[]) => {
 }
 
 export const counterPokemon = (globalOptions: any, def: any, types: any, combat: any, combatList: any[]) => {
-    const dataList: never[] = [];
+    const dataList: any[] = [];
     combatList.forEach((value: { quickMoves: any[]; cinematicMoves: string[]; name: string; id: any; eliteCinematicMoves: any; shadowMoves: any; purifiedMoves: any; eliteQuickMoves: any[]; }) => {
         if (value.quickMoves[0] !== "STRUGGLE" && value.cinematicMoves[0] !== "STRUGGLE") {
             const pokemon = Object.values(pokemonData).find(item => {

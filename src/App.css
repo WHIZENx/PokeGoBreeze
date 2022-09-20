@@ -175,6 +175,20 @@ ul {
     text-shadow: 1px 1px white;
 }
 
+.disable-card-move {
+    color: gray;
+    filter: grayscale(1);
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}
+
+
 .shadow-ic {background-color:#c184ec}
 .bug{background-color:#9cb820}
 .dark{background-color:#504843}

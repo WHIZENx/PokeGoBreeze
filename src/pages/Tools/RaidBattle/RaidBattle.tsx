@@ -257,7 +257,7 @@ const RaidBattle = () => {
     };
 
     const calculateTopBatlle = (pokemonTarget: boolean) => {
-        let dataList: any[] | ((prevState: never[]) => never[]) = []
+        let dataList: any[] | ((prevState: any[]) => any[]) = []
         Object.values(pokemonData).forEach(pokemon => {
             if (pokemon.forme !== "Gmax") {
                 let combatPoke = data.pokemonCombat.filter((item: { id: number; baseSpecies: string; }) => item.id === pokemon.num
@@ -373,7 +373,7 @@ const RaidBattle = () => {
                 turn[index].push({...trainer[id][index], trainerId: id})
             })
         })
-        const result: React.SetStateAction<null> | { pokemon: never[]; summary: { dpsAtk: number; dpsDef: number; tdoAtk: number; tdoDef: number; timer: number; bossHp: number; }; }[] = [];
+        const result: React.SetStateAction<null> | { pokemon: any[]; summary: { dpsAtk: number; dpsDef: number; tdoAtk: number; tdoDef: number; timer: number; bossHp: number; }; }[] = [];
         let timer = 0, bossHp = statBossHP;
         turn.forEach(group => {
             const dataList: any = {
