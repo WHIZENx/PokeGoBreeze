@@ -30,7 +30,7 @@ const Mega = (props: { formList: any; id: string | number | boolean | React.Reac
         <Fragment>
             <h4 className="title-evo"><b>Mega Evolution</b></h4>
             <div className="mega-container scroll-evolution">
-                <ul className="ul-evo">
+                <ul className="ul-evo d-flex justify-content-center" style={{gap: 15}}>
                     {arrEvoList.map((value: any, evo) => (
                         <li key={evo} className='img-form-gender-group li-evo' style={{width: 'fit-content', height: 'fit-content'}}>
                             <img id="img-pokemon" height="96" alt="img-pokemon" src={APIService.getPokeGifSprite(value.name)}

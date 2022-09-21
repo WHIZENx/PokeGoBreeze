@@ -62,7 +62,7 @@ export const Keys = (assets: any[], pokemonData: any[], data: { matchups: any[];
                     </div>
                 </div>
                 {data.matchups.sort((a: { rating: number; },b: { rating: number; }) => b.rating-a.rating).map((matchup: any, index: React.Key | null | undefined) => (
-                    <Fragment key={index}>{renderItemList(matchup, 1)}</Fragment>
+                    <Fragment key={index}>{renderItemList(matchup, 0)}</Fragment>
                 ))}
             </div>
             <div className="col-lg-6 element-top" style={{padding: 0}}>
@@ -73,7 +73,7 @@ export const Keys = (assets: any[], pokemonData: any[], data: { matchups: any[];
                     </div>
                 </div>
                 {data.counters.sort((a: { rating: number; },b: { rating: number; }) => a.rating-b.rating).map((counter: any, index: React.Key | null | undefined) => (
-                    <Fragment key={index}>{renderItemList(counter, 0)}</Fragment>
+                    <Fragment key={index}>{renderItemList(counter, 1)}</Fragment>
                 ))}
             </div>
         </div>

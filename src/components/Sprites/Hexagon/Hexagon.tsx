@@ -7,6 +7,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
     const canvasHex: any = useRef();
     const [initHex, setInitHex] = useState(false);
     const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
+    let interval: NodeJS.Timeout;
 
     const getHexConerCord = useCallback((center: { x: number; y: number; }, size: number, i: number) => {
         const angle_deg = 60 * i - 30;
@@ -96,7 +97,6 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
             defaultStats.cons !== props.stats.cons ||
             defaultStats.atk !== props.stats.atk ||
             defaultStats.switching !== props.stats.switching) {
-            let interval: string | number | NodeJS.Timeout | undefined
             if (props.animation) {
                 interval = setInterval(() => {
                     setDefaultStats({
@@ -115,8 +115,6 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
     }, [drawHexagon, defaultStats, setDefaultStats, props.animation, props.stats]);
 
     const onPlayAnimaion = () => {
-        // eslint-disable-next-line prefer-const
-        let interval: any;
         clearInterval(interval);
 
         let initStats = {

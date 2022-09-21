@@ -19,6 +19,8 @@ import Xarrow from 'react-xarrows';
 const Leagues = () => {
 
     const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
+
+    const [search, setSearch] = useState('');
     const [rank, setRank] = useState(1);
     const [setting, setSetting]: any = useState(dataStore.leagues.season.settings.find((data: { rankLevel: number; }) => data.rankLevel === rank+1))
     const [showData, setShowData]: any = useState(null);
@@ -252,8 +254,28 @@ const Leagues = () => {
                     </span>
                 }
             </div>
+            <div className="w-25 input-group border-input" style={{minWidth: 300}}>
+                <span className="input-group-text">Find League</span>
+                <input type="text" className='form-control input-search' placeholder='Enter League Name'
+                value={search}
+                onInput={(e: any) => setSearch(e.target.value)}
+                />
+            </div>
             <Accordion alwaysOpen>
-                {dataStore.leagues.data.map((value: { id: string; iconUrl: string | string[]; enabled: any; title: string; league: string; conditions: { max_cp: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; max_level: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; timestamp: { start: string; end: string; }; unique_selected: any; unique_type: any; whiteList: any[]; banned: any[]; }; }, index: any) => (
+                {dataStore.leagues.data
+                .filter((value: { id: string; title: string; }) => {
+                    let textTitle = '';
+                    if (value.id.includes("SEEKER") && ["GREAT_LEAGUE", "ULTRA_LEAGUE", "MASTER_LEAGUE"].includes(value.title)) {
+                        textTitle = splitAndCapitalize(value.id.replace("VS_","").toLowerCase(), "_", " ");
+                    } else {
+                        textTitle = splitAndCapitalize(value.title.toLowerCase(), "_", " ");
+                    }
+                    if (value.id.includes("SAFARI_ZONE")) {
+                        textTitle += ` ${value.id.split("_")[3]} ${capitalize(value.id.split("_")[4].toLowerCase())}`
+                    }
+                    return search === '' || textTitle.toLowerCase().includes(search.toLowerCase())
+                })
+                .map((value: { id: string; iconUrl: string | string[]; enabled: any; title: string; league: string; conditions: { max_cp: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; max_level: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; timestamp: { start: string; end: string; }; unique_selected: any; unique_type: any; whiteList: any[]; banned: any[]; }; }, index: any) => (
                     <Accordion.Item key={index} eventKey={index}>
                         <Accordion.Header className={dataStore.leagues.allowLeagues.includes(value.id) ? "league-opened" : ""}>
                             <div className='d-flex align-items-center' style={{columnGap: 10}}>

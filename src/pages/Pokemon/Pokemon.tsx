@@ -269,7 +269,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                                     </tr>
                                     <tr>
                                         <td><h5>Generation</h5></td>
-                                        <td colSpan={2}><h5 className="d-flex" style={{gap: 5}}><b>{data.generation.name.split("-")[1].toUpperCase()}</b> <span className="text-gen">({getNumGen(data.generation.url)})</span></h5></td>
+                                        <td colSpan={2}><h5 className="d-flex align-items-center" style={{gap: 5}}><b>{data.generation.name.split("-")[1].toUpperCase()}</b> <span className="text-gen">({getNumGen(data.generation.url)})</span></h5></td>
                                     </tr>
                                     <tr>
                                         <td><h5>Region</h5></td>

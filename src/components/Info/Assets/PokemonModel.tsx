@@ -32,7 +32,7 @@ const PokemonModel = (props: { id: any; name: string; }) => {
 
     return (
         <div className='element-top'>
-            <h4 className="title-evo"><b>{"Assets of "+splitAndCapitalize(props.name, "_", " ")+" in Pokémon Go"}</b> <img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/></h4>
+            <h4 className="title-evo"><img width={36} height={36} alt='pokemon-go-icon' src={APIService.getPokemonGoIcon('Standard')}/> <b>{"Assets of "+splitAndCapitalize(props.name, "_", " ")+" in Pokémon Go"}</b></h4>
             <div>
                 {pokeAssets.map((assets: { image: { gender: number; shiny: string; default: string; }[]; form: string; }, index: React.Key | null | undefined) => (
                     <div key={index} className="d-inline-block group-model text-center">

@@ -142,10 +142,6 @@ const RankingPVP = () => {
         fetchPokemon();
     }, [dispatch, params.serie, params.cp, params.type, dataStore]);
 
-    const onSearch = (value: string) => {
-        setSearch(value)
-    }
-
     const renderItem = (data: any, key: string) => {
         return (
             <Accordion.Item eventKey={key}>
@@ -258,7 +254,7 @@ const RankingPVP = () => {
             <div className="input-group border-input">
                 <input type="text" className='form-control input-search' placeholder='Enter Name or ID'
                 value={search}
-                onInput={(e: any) => onSearch(e.target.value)}
+                onInput={(e: any) => setSearch(e.target.value)}
                 />
             </div>
             <div className="ranking-container">
