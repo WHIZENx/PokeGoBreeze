@@ -31,11 +31,11 @@ import { RootStateOrAny, useSelector } from "react-redux";
 
 const theme = createTheme({
     palette: {
-      primary: {
-        main: '#a6efff80',
-        contrastText: 'gray',
-        fontSize: 10
-      },
+        secondary: {
+            main: '#a6efff80',
+            contrastText: 'gray',
+            fontSize: '0.75rem'
+        }
     },
 } as any);
 
@@ -74,7 +74,7 @@ const Evolution = ({forme, region, formDefault, id, onSetIDPoke, gen}: any) => {
                             tempData.push({...evoInAPI,
                                 species: {
                                     name: pokemonToEvo.name.toLowerCase(),
-                                    url: `https://pokeapi.co/api/v2/pokemon-species/${pokemonToEvo.id}/`
+                                    url: APIService.getPokeAPI('pokemon-species', pokemonToEvo.id)
                                 }
                             })
                         });
@@ -309,7 +309,7 @@ const Evolution = ({forme, region, formDefault, id, onSetIDPoke, gen}: any) => {
                         <Fragment>
                         {form !== "" && !form.includes("mega") ?
                         <ThemeProvider theme={theme}>
-                            <Badge color="primary" overlap="circular" badgeContent={splitAndCapitalize(form, "-", " ")} anchorOrigin={{
+                            <Badge color="secondary" overlap="circular" badgeContent={splitAndCapitalize(form, "-", " ")} anchorOrigin={{
                                 vertical: 'top',
                                 horizontal: 'left',
                             }}>

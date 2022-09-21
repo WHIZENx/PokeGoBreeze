@@ -9,12 +9,6 @@
 }
 
 .img-gender {
-    float: left;
-    margin-right: 15px;
-}
-
-.img-gender img {
-    display: block;
     -webkit-filter: drop-shadow(3px 3px 3px #222);
     filter: drop-shadow(3px 3px 3px #222);
 }

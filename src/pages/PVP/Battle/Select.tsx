@@ -53,7 +53,7 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}: any)
         const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
         const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
 
-        setPokemonBattle({...pokemonBattle, pokemonData: {...value, allStats: allStats, currentStats: allStats[Math.floor(Math.random()*allStats.length)], bestStats: allStats[allStats.length-1]}, fMove: fmove, cMovePri: cMovePri, cMoveSec: cMoveSec})
+        setPokemonBattle({...pokemonBattle, pokemonData: {...value, allStats: allStats, currentStats: allStats[allStats.length-1], bestStats: allStats[allStats.length-1]}, fMove: fmove, cMovePri: cMovePri, cMoveSec: cMoveSec})
     }
 
     const selectFMove = (value: any) => {
@@ -96,7 +96,7 @@ const Select = ({data, league, pokemonBattle, setPokemonBattle, clearData}: any)
 
     return (
         <Fragment>
-            <h5>Pokemon</h5>
+            <h5>Pokémon</h5>
             <div className="border-box-battle position-relative">
                 {pokemonIcon && <span className="remove-pokemon-select-right"><span onClick={() => removePokemon()} className="remove-pokemon-select"><CloseIcon sx={{color: 'red'}}/></span></span>}
                 <input className="input-pokemon-select form-control shadow-none"

@@ -122,7 +122,7 @@ const Counter = ({def, form, changeForm}: any) => {
                     <Fragment>
                         <tr className="counter-none">
                             <td className="text-origin text-center" colSpan={4}>
-                                <span onClick={() => loadMetaData()} className="link-url">Click to load all best Pokémon counter</span>
+                                <span onClick={() => loadMetaData()} className="link-url">Click to load all the best Pokémon counters.</span>
                             </td>
                         </tr>
                     </Fragment>

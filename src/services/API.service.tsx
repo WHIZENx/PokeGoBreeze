@@ -40,19 +40,23 @@ class APIService {
     }
 
     getPokeInfo(value: number, options: any = null) {
-        return this.axios.get(`${POKE_API_URL}pokemon/${value}`, options);
+        return this.axios.get(this.getPokeAPI('pokemon', value), options);
     }
 
     getPokeSpicies(value: number, options: any = null) {
-        return this.axios.get(`${POKE_API_URL}pokemon-species/${value}`, options);
+        return this.axios.get(this.getPokeAPI('pokemon-species', value), options);
     }
 
     getPokeForm(value: number, options: any = null) {
-        return this.axios.get(`${POKE_API_URL}pokemon-form/${value}`, options);
+        return this.axios.get(this.getPokeAPI('pokemon-form', value), options);
     }
 
     getPokeJSON(path: string, options: any = null) {
         return this.axios.get(`${POGO_API_URL}${path}`, options);
+    }
+
+    getPokeAPI(path: string, value: number) {
+        return `${POKE_API_URL}${path}/${value}`;
     }
 
     getPokemonModel(item: string) {

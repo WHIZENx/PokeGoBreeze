@@ -758,7 +758,7 @@ const Battle = () => {
         const cp: number = calculateCP(atk, def, sta, level);
 
         if (cp > parseInt(params.cp as any)) {
-            enqueueSnackbar('This stats Pokemon CP is greater than ' + params.cp + ', which is not permitted by the league.', { variant: 'error' });
+            enqueueSnackbar('This stats Pokémon CP is greater than ' + params.cp + ', which is not permitted by the league.', { variant: 'error' });
             return;
         }
 

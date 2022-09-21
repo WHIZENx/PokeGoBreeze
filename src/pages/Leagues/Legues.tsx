@@ -124,7 +124,7 @@ const Leagues = () => {
                                     {value.type === "pokemon" &&
                                     <Fragment>
                                         <img className='pokemon-sprite-medium' style={{width: 64}} alt='img-pokemon' src={APIService.getIconSprite("ic_grass")}/>
-                                        <span className='caption text-black'>Random Pokemon</span>
+                                        <span className='caption text-black'>Random Pokémon</span>
                                         <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow(value.type, "FREE", value.step)}/>
                                     </Fragment>
                                     }
@@ -160,7 +160,7 @@ const Leagues = () => {
                                     {dataStore.leagues.season.rewards.rank[rank].premium[index].type === "pokemon" &&
                                     <Fragment>
                                         <img className='pokemon-sprite-medium' style={{width: 64}} alt='img-pokemon' src={APIService.getIconSprite("ic_grass")}/>
-                                        <span className='caption text-black'>Random Pokemon</span>
+                                        <span className='caption text-black'>Random Pokémon</span>
                                         <VisibilityIcon className="view-pokemon" sx={{fontSize: '1rem', color: 'black'}} onClick={() => handleShow(dataStore.leagues.season.rewards.rank[rank].premium[index].type, "PREMIUM", value.step)}/>
                                     </Fragment>
                                     }
@@ -386,7 +386,7 @@ const Leagues = () => {
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='text-center'>
-                    <h5 style={{textDecoration: 'underline'}}>Random Pokemon</h5>
+                    <h5 style={{textDecoration: 'underline'}}>Random Pokémon</h5>
                     {showData.data.filter((item: { guaranteedLimited: any; }) => !item.guaranteedLimited).map((item: { id: string; name: string; form: any; }, index: React.Key | null | undefined) => (
                         <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                             <div className="d-flex justify-content-center">
@@ -400,7 +400,7 @@ const Leagues = () => {
                     {showData.data.filter((item: { guaranteedLimited: any; rank: number; }) => item.guaranteedLimited && item.rank === rank).length > 0 &&
                     <Fragment>
                         <hr />
-                        <h5 style={{textDecoration: 'underline'}}>Garanteed Pokemon in first time</h5>
+                        <h5 style={{textDecoration: 'underline'}}>Garanteed Pokémon in first time</h5>
                         {showData.data.filter((item: { guaranteedLimited: any; rank: number; }) => item.guaranteedLimited && item.rank === rank).map((item: { id: string; name: string; form: any; }, index: React.Key | null | undefined) => (
                         <Link target="_blank" className='img-link text-center' key={index} to={"/pokemon/" + item.id} title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), "_", " ")}`}>
                             <div className="d-flex justify-content-center">

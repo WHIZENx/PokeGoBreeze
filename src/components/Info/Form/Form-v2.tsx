@@ -205,11 +205,10 @@ const Form = ({
                 </div>
             </div>
             {ratio.M !== 0 || ratio.F !== 0 ?
-            <Fragment>
-            {ratio.M !== 0 && <Fragment><Gender ratio={ratio} sex='Male' default_m={currForm && currForm.form.sprites.front_default} shiny_m={currForm && currForm.form.sprites.front_shiny} default_f={currForm && currForm.form.sprites.front_female} shiny_f={currForm && currForm.form.sprites.front_shiny_female}/></Fragment>}
-            {ratio.M !== 0 && ratio.F !== 0 && <hr/>}
-            {ratio.F !== 0 && <Fragment><Gender ratio={ratio} sex='Female' default_m={currForm && currForm.form.sprites.front_default} shiny_m={currForm && currForm.form.sprites.front_shiny} default_f={currForm && currForm.form.sprites.front_female} shiny_f={currForm && currForm.form.sprites.front_shiny_female}/></Fragment>}
-            </Fragment>
+            <div className='d-flex flex-wrap' style={{columnGap: 50, rowGap: 15}}>
+            {ratio.M !== 0 && <Gender ratio={ratio} sex='Male' default_m={currForm && currForm.form.sprites.front_default} shiny_m={currForm && currForm.form.sprites.front_shiny} default_f={currForm && currForm.form.sprites.front_female} shiny_f={currForm && currForm.form.sprites.front_shiny_female}/>}
+            {ratio.F !== 0 && <Gender ratio={ratio} sex='Female' default_m={currForm && currForm.form.sprites.front_default} shiny_m={currForm && currForm.form.sprites.front_shiny} default_f={currForm && currForm.form.sprites.front_female} shiny_f={currForm && currForm.form.sprites.front_shiny_female}/>}
+            </div>
             : <Gender sex='Genderless' default_m={currForm && currForm.form.sprites.front_default} shiny_m={currForm && currForm.form.sprites.front_shiny} default_f={currForm && currForm.form.sprites.front_female} shiny_f={currForm && currForm.form.sprites.front_shiny_female}/>
             }
             <Stats statATK={statATK}
