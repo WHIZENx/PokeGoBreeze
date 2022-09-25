@@ -1,104 +1,111 @@
-import React, { Fragment } from "react";
+import React, { Fragment } from 'react';
 import typeEffective from '../../data/type_effectiveness.json';
-import APIService from "../../services/API.service";
-import { capitalize, splitAndCapitalize } from "../../util/Utils";
+import APIService from '../../services/API.service';
+import { capitalize, splitAndCapitalize } from '../../util/Utils';
 
 import './TypeEffectiveSelect.css';
 
-const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any; }) => {
-
-    const renderEffective = (text: string, data: any[]) => {
-        return (
-            <Fragment>
-                {data.length > 0 &&
-                    <Fragment>
-                    <h6 className={props.block ? "element-top" : ""}><b className="text-shadow">x{text}</b></h6>
-                    <div className="d-flex flex-wrap" style={{gap: 5}}>{data.map((value: string, index: React.Key) => (
-                        <span key={index} className={value.toLowerCase()+" type-select-bg d-flex align-items-center filter-shadow"}>
-                            <div style={{display: 'contents', width: 16}}>
-                                <img className="pokemon-sprite-small sprite-type-select filter-shadow" alt="img-type-pokemon" src={APIService.getTypeHqSprite(capitalize(value.toLowerCase()))}/>
-                            </div>
-                            <span className="filter-shadow">{value}</span>
-                        </span>
-                    ))}
-                    </div>
-                    </Fragment>
-                }
-            </Fragment>
-        )
-    }
-
-    const getTypeEffect = (effect: number, types: any[]) => {
-        let data: { very_weak?: any; weak?: any; neutral?: any; super_resist?: any; very_resist?: any; resist?: any; };
-        if (effect === 0) {
-            data = {
-                "weak": [],
-                "very_weak": []
-            }
-            Object.entries(typeEffective).forEach(([key, value]) => {
-                let value_effective = 1;
-                types.forEach((type: string) => {
-                    value_effective *= (value as any)[splitAndCapitalize(type, "-", " ")];
-                });
-                if (value_effective >= 2.56) data.very_weak.push(key);
-                else if (value_effective >= 1.6) data.weak.push(key);
-            });
-
-            return (
-                <div className="container" style={{paddingBottom: '0.5rem'}}>
-                    {renderEffective("2.56", data.very_weak)}
-                    {renderEffective("1.6", data.weak)}
-                </div>
-            )
-        } else if (effect === 1) {
-            data = {
-                "neutral": []
-            }
-            Object.entries(typeEffective).forEach(([key, value]) => {
-                let value_effective = 1;
-                types.forEach((type: string) => {
-                    value_effective *= (value as any)[splitAndCapitalize(type, "-", " ")];
-                });
-                if (value_effective === 1) data.neutral.push(key);
-            });
-            return (
-                <div className="container" style={{paddingBottom: '0.5rem'}}>
-                    {renderEffective("1", data.neutral)}
-                </div>
-            )
-        } else if (effect === 2) {
-            data = {
-                "resist": [],
-                "very_resist": [],
-                "super_resist": []
-            }
-            Object.entries(typeEffective).forEach(([key, value]) => {
-                let value_effective = 1;
-                types.forEach((type: string) => {
-                    value_effective *= (value as any)[splitAndCapitalize(type, "-", " ")];
-                });
-                if (value_effective <= 0.3) data.super_resist.push(key);
-                else if (value_effective <= 0.39) data.very_resist.push(key);
-                else if (value_effective <= 0.625) data.resist.push(key);
-            });
-            return (
-                <div className="container" style={{paddingBottom: '0.5rem'}}>
-                    {renderEffective("0.244", data.super_resist)}
-                    {renderEffective("0.391", data.very_resist)}
-                    {renderEffective("0.625", data.resist)}
-                </div>
-            )
-        }
-        return (
-            <></>
-        )
-    }
-
+const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any }) => {
+  const renderEffective = (text: string, data: any[]) => {
     return (
-        <Fragment>
-            {getTypeEffect(props.effect, props.types)}
-        </Fragment>
-    )
-}
+      <Fragment>
+        {data.length > 0 && (
+          <Fragment>
+            <h6 className={props.block ? 'element-top' : ''}>
+              <b className="text-shadow">x{text}</b>
+            </h6>
+            <div className="d-flex flex-wrap" style={{ gap: 5 }}>
+              {data.map((value: string, index: React.Key) => (
+                <span key={index} className={value.toLowerCase() + ' type-select-bg d-flex align-items-center filter-shadow'}>
+                  <div style={{ display: 'contents', width: 16 }}>
+                    <img
+                      className="pokemon-sprite-small sprite-type-select filter-shadow"
+                      alt="img-type-pokemon"
+                      src={APIService.getTypeHqSprite(capitalize(value.toLowerCase()))}
+                    />
+                  </div>
+                  <span className="filter-shadow">{value}</span>
+                </span>
+              ))}
+            </div>
+          </Fragment>
+        )}
+      </Fragment>
+    );
+  };
+
+  const getTypeEffect = (effect: number, types: any[]) => {
+    let data: {
+      very_weak?: any;
+      weak?: any;
+      neutral?: any;
+      super_resist?: any;
+      very_resist?: any;
+      resist?: any;
+    };
+    if (effect === 0) {
+      data = {
+        weak: [],
+        very_weak: [],
+      };
+      Object.entries(typeEffective).forEach(([key, value]) => {
+        let valueEffective = 1;
+        types.forEach((type: string) => {
+          valueEffective *= (value as any)[splitAndCapitalize(type, '-', ' ')];
+        });
+        if (valueEffective >= 2.56) data.very_weak.push(key);
+        else if (valueEffective >= 1.6) data.weak.push(key);
+      });
+
+      return (
+        <div className="container" style={{ paddingBottom: '0.5rem' }}>
+          {renderEffective('2.56', data.very_weak)}
+          {renderEffective('1.6', data.weak)}
+        </div>
+      );
+    } else if (effect === 1) {
+      data = {
+        neutral: [],
+      };
+      Object.entries(typeEffective).forEach(([key, value]) => {
+        let valueEffective = 1;
+        types.forEach((type: string) => {
+          valueEffective *= (value as any)[splitAndCapitalize(type, '-', ' ')];
+        });
+        if (valueEffective === 1) data.neutral.push(key);
+      });
+      return (
+        <div className="container" style={{ paddingBottom: '0.5rem' }}>
+          {renderEffective('1', data.neutral)}
+        </div>
+      );
+    } else if (effect === 2) {
+      data = {
+        resist: [],
+        very_resist: [],
+        super_resist: [],
+      };
+      Object.entries(typeEffective).forEach(([key, value]) => {
+        let valueEffective = 1;
+        types.forEach((type: string) => {
+          valueEffective *= (value as any)[splitAndCapitalize(type, '-', ' ')];
+        });
+        if (valueEffective <= 0.3) data.super_resist.push(key);
+        else if (valueEffective <= 0.39) data.very_resist.push(key);
+        else if (valueEffective <= 0.625) data.resist.push(key);
+      });
+      return (
+        <div className="container" style={{ paddingBottom: '0.5rem' }}>
+          {renderEffective('0.244', data.super_resist)}
+          {renderEffective('0.391', data.very_resist)}
+          {renderEffective('0.625', data.resist)}
+        </div>
+      );
+    }
+    return <></>;
+  };
+
+  return <Fragment>{getTypeEffect(props.effect, props.types)}</Fragment>;
+};
 
 export default TypeEffectiveSelect;

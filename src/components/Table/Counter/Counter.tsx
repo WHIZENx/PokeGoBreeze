@@ -1,136 +1,191 @@
-import { capitalize, FormControlLabel, Switch } from "@mui/material";
-import React, { Fragment, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import APIService from "../../../services/API.service";
-import { convertName, splitAndCapitalize } from "../../../util/Utils";
+import { capitalize, FormControlLabel, Switch } from '@mui/material';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import APIService from '../../../services/API.service';
+import { convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
 import './Counter.css';
-import { RootStateOrAny, useSelector } from "react-redux";
+import { RootStateOrAny, useSelector } from 'react-redux';
 
-const Counter = ({def, form, changeForm}: any) => {
+const Counter = ({ def, form, changeForm }: any) => {
+  const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const [counterList, setCounterList]: any = useState([]);
+  const [open, setOpen] = useState(false);
+  const [releasedGO, setReleaseGO] = useState(true);
 
-    const data = useSelector((state: RootStateOrAny) => state.store.data);
-    const [counterList, setCounterList]: any = useState([]);
-    const [open, setOpen] = useState(false);
-    const [releasedGO, setReleaseGO] = useState(true);
+  const [startIndex, setStartIndex] = useState(0);
+  const firstInit = 20;
+  const eachCounter = 10;
 
-    const [startIndex, setStartIndex] = useState(0);
-    const firstInit = 20;
-    const eachCounter = 10;
+  useEffect(() => {
+    if (changeForm) setOpen(false);
+  }, [changeForm]);
 
-    useEffect(() => {
-        if (changeForm) setOpen(false);
-    }, [changeForm])
+  const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
+    const scrollTop = ele.currentTarget.scrollTop;
+    const fullHeight = ele.currentTarget.offsetHeight;
+    if (scrollTop * 0.8 >= fullHeight * (startIndex + 1)) setStartIndex(startIndex + 1);
+  };
 
-    const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any; }; }) => {
-        const scrollTop = ele.currentTarget.scrollTop;
-        const fullHeight = ele.currentTarget.offsetHeight;
-        if (scrollTop*0.8 >= fullHeight*(startIndex+1)) setStartIndex(startIndex+1);
-    }
+  const loadMetaData = () => {
+    setCounterList(counterPokemon(data.options, def, form.types, data.combat, data.pokemonCombat));
+    setOpen(true);
+  };
 
-    const loadMetaData = () => {
-        setCounterList(counterPokemon(data.options, def, form.types, data.combat, data.pokemonCombat));
-        setOpen(true);
-    }
-
-    return (
-        <div className="table-counter-container" onScroll={listenScrollEvent.bind(this)}>
-            <table className="table-info table-counter">
-                <colgroup className="main-name" />
-                <colgroup className="main-move-counter" />
-                <colgroup className="main-move-counter" />
-                <colgroup />
-                <thead>
-                    <tr className="text-center"><th className="table-sub-header" colSpan={4}>
-                        <div className="input-group align-items-center justify-content-center">
-                            <span>Best Pokémon Counter</span>
-                            <FormControlLabel control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)}/>} label="Released in GO" disabled={!open}/>
-                        </div>
-                    </th></tr>
-                    <tr className="text-center">
-                        <th className="table-column-head main-move-name">Pokémon</th>
-                        <th className="table-column-head main-move-counter">Fast</th>
-                        <th className="table-column-head main-move-counter">Charged</th>
-                        <th className="table-column-head">%</th>
+  return (
+    <div className="table-counter-container" onScroll={listenScrollEvent.bind(this)}>
+      <table className="table-info table-counter">
+        <colgroup className="main-name" />
+        <colgroup className="main-move-counter" />
+        <colgroup className="main-move-counter" />
+        <colgroup />
+        <thead>
+          <tr className="text-center">
+            <th className="table-sub-header" colSpan={4}>
+              <div className="input-group align-items-center justify-content-center">
+                <span>Best Pokémon Counter</span>
+                <FormControlLabel
+                  control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
+                  label="Released in GO"
+                  disabled={!open}
+                />
+              </div>
+            </th>
+          </tr>
+          <tr className="text-center">
+            <th className="table-column-head main-move-name">Pokémon</th>
+            <th className="table-column-head main-move-counter">Fast</th>
+            <th className="table-column-head main-move-counter">Charged</th>
+            <th className="table-column-head">%</th>
+          </tr>
+        </thead>
+        <tbody>
+          {open ? (
+            <Fragment>
+              {counterList
+                .filter((pokemon: { pokemon_id: any; pokemon_name: string }) => {
+                  if (!releasedGO) {
+                    return true;
+                  }
+                  const result = data.details.find(
+                    (item: { name: string; id: any }) =>
+                      item.id === pokemon.pokemon_id &&
+                      item.name ===
+                        (item.id === 555 && !pokemon.pokemon_name.toLowerCase().includes('zen')
+                          ? pokemon.pokemon_name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+                          : convertName(pokemon.pokemon_name))
+                  );
+                  return result ? result.releasedGO : false;
+                })
+                .slice(0, firstInit + eachCounter * startIndex)
+                .map((value: any, index: React.Key | null | undefined) => (
+                  <Fragment key={index}>
+                    <tr>
+                      <td className="text-origin text-center">
+                        <Link
+                          to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}` : ''}`}
+                          target="_blank"
+                        >
+                          <div className="d-flex justify-content-center">
+                            <div className="position-relative group-pokemon-sprite filter-shadow-hover">
+                              {value.cmove.shadow && (
+                                <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                              )}
+                              {value.cmove.purified && (
+                                <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
+                              )}
+                              <img
+                                className="pokemon-sprite-counter"
+                                alt="img-pokemon"
+                                src={
+                                  findAssetForm(data.assets, value.pokemon_id, value.pokemon_name)
+                                    ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon_id, value.pokemon_name))
+                                    : APIService.getPokeFullSprite(value.pokemon_id)
+                                }
+                              />
+                            </div>
+                          </div>
+                          <span className="caption text-black">
+                            #{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, '-', ' ')}
+                          </span>
+                        </Link>
+                      </td>
+                      <td className="text-origin text-center">
+                        <Link to={'../moves/' + value.fmove.id} target="_blank" className="d-grid">
+                          <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+                            <img
+                              width={28}
+                              height={28}
+                              alt="img-pokemon"
+                              src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}
+                            />
+                          </div>
+                          <span style={{ marginRight: 5, fontSize: '0.9rem' }}>
+                            {splitAndCapitalize(value.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+                          </span>
+                          <span className="w-100">
+                            {value.fmove.elite && (
+                              <span className="type-icon-small ic elite-ic">
+                                <span>Elite</span>
+                              </span>
+                            )}
+                          </span>
+                        </Link>
+                      </td>
+                      <td className="text-origin text-center">
+                        <Link to={'../moves/' + value.cmove.id} target="_blank" className="d-grid">
+                          <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+                            <img
+                              width={28}
+                              height={28}
+                              alt="img-pokemon"
+                              src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}
+                            />
+                          </div>
+                          <span style={{ marginRight: 5, fontSize: '0.9rem' }}>
+                            {splitAndCapitalize(value.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+                          </span>
+                          <span className="w-100">
+                            {value.cmove.elite && (
+                              <span className="type-icon-small ic elite-ic">
+                                <span>Elite</span>
+                              </span>
+                            )}
+                            {value.cmove.shadow && (
+                              <span className="type-icon-small ic shadow-ic">
+                                <span>Shadow</span>
+                              </span>
+                            )}
+                            {value.cmove.purified && (
+                              <span className="type-icon-small ic purified-ic">
+                                <span>Purified</span>
+                              </span>
+                            )}
+                          </span>
+                        </Link>
+                      </td>
+                      <td className="text-center">{value.ratio.toFixed(2)}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {open ?
-                    <Fragment>
-                    {counterList.filter((pokemon: { pokemon_id: any; pokemon_name: string; }) => {
-                        if (!releasedGO) {
-                            return true;
-                        }
-                        const result = data.details.find((item: {name: string; id: any;}) =>
-                            item.id === pokemon.pokemon_id &&
-                            item.name === (item.id === 555 && !pokemon.pokemon_name.toLowerCase().includes("zen")
-                            ?
-                            pokemon.pokemon_name.toUpperCase().replaceAll("-", "_").replace("_GALAR", "_GALARIAN")+"_STANDARD"
-                            :
-                            convertName(pokemon.pokemon_name))
-                        )
-                        return result ? result.releasedGO : false
-                    }).slice(0, firstInit + eachCounter*startIndex).map((value: any, index: React.Key | null | undefined) => (
-                        <Fragment key={index}>
-                            <tr>
-                                <td className="text-origin text-center">
-                                    <Link  to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}`: ""}`} target="_blank">
-                                        <div className="d-flex justify-content-center">
-                                            <div className="position-relative group-pokemon-sprite filter-shadow-hover">
-                                                {value.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()}/>}
-                                                {value.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()}/>}
-                                                <img className="pokemon-sprite-counter" alt="img-pokemon" src={findAssetForm(data.assets, value.pokemon_id, value.pokemon_name) ?
-                                                APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon_id, value.pokemon_name)) : APIService.getPokeFullSprite(value.pokemon_id)}/>
-                                            </div>
-                                        </div>
-                                        <span className="caption text-black">#{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, "-", " ")}</span>
-                                    </Link>
-                                </td>
-                                <td className="text-origin text-center">
-                                    <Link to={"../moves/"+value.fmove.id} target="_blank" className="d-grid">
-                                        <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
-                                            <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}/>
-                                        </div>
-                                        <span style={{marginRight: 5, fontSize: '0.9rem'}} >{splitAndCapitalize(value.fmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
-                                        <span className="w-100">
-                                            {value.fmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
-                                        </span>
-                                    </Link>
-                                </td>
-                                <td className="text-origin text-center">
-                                    <Link to={"../moves/"+value.cmove.id} target="_blank" className="d-grid">
-                                        <div style={{verticalAlign: "text-bottom", marginRight: 5}}>
-                                            <img width={28} height={28} alt='img-pokemon' src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}/>
-                                        </div>
-                                        <span style={{marginRight: 5, fontSize: '0.9rem'}}>{splitAndCapitalize(value.cmove.name.toLowerCase(), "_", " ").replaceAll(" Plus", "+")}</span>
-                                        <span className="w-100">
-                                            {value.cmove.elite && <span className="type-icon-small ic elite-ic"><span>Elite</span></span>}
-                                            {value.cmove.shadow && <span className="type-icon-small ic shadow-ic"><span>Shadow</span></span>}
-                                            {value.cmove.purified && <span className="type-icon-small ic purified-ic"><span>Purified</span></span>}
-                                        </span>
-                                    </Link>
-                                </td>
-                                <td className="text-center">{value.ratio.toFixed(2)}</td>
-                            </tr>
-                        </Fragment>
-                    ))
-                    }
-                    </Fragment>
-                    :
-                    <Fragment>
-                        <tr className="counter-none">
-                            <td className="text-origin text-center" colSpan={4}>
-                                <span onClick={() => loadMetaData()} className="link-url">Click to load all the best Pokémon counters.</span>
-                            </td>
-                        </tr>
-                    </Fragment>
-                    }
-                </tbody>
-            </table>
-        </div>
-    )
-}
+                  </Fragment>
+                ))}
+            </Fragment>
+          ) : (
+            <Fragment>
+              <tr className="counter-none">
+                <td className="text-origin text-center" colSpan={4}>
+                  <span onClick={() => loadMetaData()} className="link-url">
+                    Click to load all the best Pokémon counters.
+                  </span>
+                </td>
+              </tr>
+            </Fragment>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 export default Counter;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
@@ -6,7 +5,7 @@ const autoprefixer = require('autoprefixer');
 const manifest = require('./public/manifest.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
+const TSLintPlugin = require('tslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -15,9 +14,7 @@ const CssnanoPlugin = require('cssnano-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-
 const isProduction = process.env.NODE_ENV === 'production';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const isDevelopment = !isProduction;
 
 const publicPath = process.env.PUBLIC_URL || '/';
@@ -41,7 +38,9 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env': JSON.stringify(process.env)
         }),
-        new ESLintPlugin(),
+        new TSLintPlugin({
+            files: ['./src/**/*.ts']
+        }),
         new WebpackFavicons({
             src: 'src/assets/pokedex.png',
             path: 'img',

@@ -36,6 +36,7 @@ import TeamPVP from './pages/PVP/Teams/PVP';
 import Battle from './pages/PVP/Battle/Battle';
 
 import Spinner from './components/Spinner/Spinner';
+import { loadStats } from './store/actions/stats.action';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -130,57 +131,62 @@ import Spinner from './components/Spinner/Spinner';
 // );
 
 const App = () => {
-
   const dispatch = useDispatch();
   const data = useSelector((state: RootStateOrAny) => state.store);
+  const stats = useSelector((state: RootStateOrAny) => state.stats);
 
   useEffect(() => {
     const axios = APIService;
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();
-    if (data.data) dispatch(hideSpinner());
-    else {
-      loadStore(dispatch, axios, source);
-    }
-  }, [dispatch, data])
+    loadStore(dispatch, axios, source);
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(loadStats());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (data.data && stats) dispatch(hideSpinner());
+  }, [dispatch, data.data, stats]);
 
   return (
     <Fragment>
       <BrowserRouter>
-          <NavbarComponent />
-          {data.data &&
+        <NavbarComponent />
+        {data.data && stats && (
           <Routes>
-            <Route path="/" element={<Home/>}></Route>
-            <Route path="/type-effective" element={<TypeEffect/>}></Route>
-            <Route path="/weather-boosts" element={<Weather/>}></Route>
-            <Route path="/search-pokemon" element={<SearchPokemon/>}></Route>
-            <Route path="/search-move" element={<SearchMove/>}></Route>
-            <Route path="/pokemon/:id" element={<Pokemon/>}></Route>
-            <Route path="/moves/:id" element={<Move/>}></Route>
-            <Route path="/find-cp-iv" element={<FindTable/>}></Route>
-            <Route path="/calculate-stats" element={<CalculateStats/>}></Route>
-            <Route path="/search-battle-stats" element={<SearchBattle/>}></Route>
-            <Route path="/stats-table" element={<StatsTable/>}></Route>
-            <Route path="/damage-calculate" element={<Damage/>}></Route>
-            <Route path="/raid-battle" element={<RaidBattle/>}></Route>
-            <Route path="/calculate-point" element={<CalculatePoint/>}></Route>
-            <Route path="/pvp" element={<PVPHome/>}></Route>
-            <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP/>}></Route>
-            <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP/>}></Route>
-            <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP/>}></Route>
-            <Route path="/pvp/battle" element={<Battle/>}></Route>
-            <Route path="/pvp/battle/:cp" element={<Battle/>}></Route>
-            <Route path="/dps-tdo-table" element={<DpsTable/>}></Route>
-            <Route path="/battle-leagues" element={<Leagues/>}></Route>
-            <Route path="/stickers" element={<Sticker/>}></Route>
-            <Route path="*" element={<Error/>}></Route>
+            <Route path="/" element={<Home />} />
+            <Route path="/type-effective" element={<TypeEffect />} />
+            <Route path="/weather-boosts" element={<Weather />} />
+            <Route path="/search-pokemon" element={<SearchPokemon />} />
+            <Route path="/search-move" element={<SearchMove />} />
+            <Route path="/pokemon/:id" element={<Pokemon />} />
+            <Route path="/moves/:id" element={<Move />} />
+            <Route path="/find-cp-iv" element={<FindTable />} />
+            <Route path="/calculate-stats" element={<CalculateStats />} />
+            <Route path="/search-battle-stats" element={<SearchBattle />} />
+            <Route path="/stats-table" element={<StatsTable />} />
+            <Route path="/damage-calculate" element={<Damage />} />
+            <Route path="/raid-battle" element={<RaidBattle />} />
+            <Route path="/calculate-point" element={<CalculatePoint />} />
+            <Route path="/pvp" element={<PVPHome />} />
+            <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP />} />
+            <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP />} />
+            <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP />} />
+            <Route path="/pvp/battle" element={<Battle />} />
+            <Route path="/pvp/battle/:cp" element={<Battle />} />
+            <Route path="/dps-tdo-table" element={<DpsTable />} />
+            <Route path="/battle-leagues" element={<Leagues />} />
+            <Route path="/stickers" element={<Sticker />} />
+            <Route path="*" element={<Error />} />
           </Routes>
-          }
-          {/* <FooterComponent /> */}
+        )}
+        {/* <FooterComponent /> */}
       </BrowserRouter>
       <Spinner />
     </Fragment>
   );
-}
+};
 
 export default App;

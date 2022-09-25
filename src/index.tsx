@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App'
+import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { Provider } from 'react-redux';
-import thunk from "redux-thunk"
+import thunk from 'redux-thunk';
 import { applyMiddleware, createStore } from 'redux';
 
 import { SnackbarProvider } from 'notistack';
@@ -15,27 +15,22 @@ import { composeWithDevTools } from '@redux-devtools/extension';
 
 if (module.hot) module.hot.accept();
 
-const devTools =
-  process.env.NODE_ENV === "production"
-    ? applyMiddleware(thunk)
-    : composeWithDevTools(applyMiddleware(thunk));
+const devTools = process.env.NODE_ENV === 'production' ? applyMiddleware(thunk) : composeWithDevTools(applyMiddleware(thunk));
 
-const store = createStore(
-  rootReducer,
-  devTools
-);
+const store = createStore(rootReducer, devTools);
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <SnackbarProvider
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          maxSnack={1}>
-            <App />
-        </SnackbarProvider>
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        maxSnack={1}
+      >
+        <App />
+      </SnackbarProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

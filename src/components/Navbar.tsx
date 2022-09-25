@@ -6,53 +6,86 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/pokedex.png';
 import { getTime } from '../util/Utils';
 
-import "./Navbar.css"
+import './Navbar.css';
 
 const NavbarComponent = () => {
+  const dataStore = useSelector((state: RootStateOrAny) => state.store);
 
-    const dataStore = useSelector((state: RootStateOrAny) => state.store);
-
-    return (
-        <Navbar collapseOnSelect bg="dark" expand="lg" variant="dark">
-            <Link className="navbar-brand" to="/">
-                <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{marginLeft: 10, marginRight: 10}}/>
-                PokéGoBreeze
+  return (
+    <Navbar collapseOnSelect={true} bg="dark" expand="lg" variant="dark">
+      <Link className="navbar-brand" to="/">
+        <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{ marginLeft: 10, marginRight: 10 }} />
+        PokéGoBreeze
+      </Link>
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="me-auto">
+          <Link className="nav-link" to="/">
+            Home
+          </Link>
+          <NavDropdown title="Search">
+            <Link className="dropdown-item" to="/search-pokemon">
+              Pokémon
             </Link>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse id="responsive-navbar-nav">
-                <Nav className="me-auto">
-                    <Link className="nav-link" to="/">Home</Link>
-                    <NavDropdown title="Search">
-                        <Link className="dropdown-item" to="/search-pokemon">Pokémon</Link>
-                        <Link className="dropdown-item" to="/search-move">Moves</Link>
-                    </NavDropdown>
-                    <NavDropdown title="Effective">
-                        <Link className="dropdown-item" to="/type-effective">Type Effective</Link>
-                        <Link className="dropdown-item" to="/weather-boosts">Weather Boosts</Link>
-                    </NavDropdown>
-                    <NavDropdown title="Tools">
-                        <Link className="dropdown-item" to="/find-cp-iv">Find IV&CP</Link>
-                        <Link className="dropdown-item" to="/search-battle-stats">Search Battle Leagues Stats</Link>
-                        <Link className="dropdown-item" to="/stats-table">Stats Table</Link>
-                        <Link className="dropdown-item" to="/raid-battle">Raid Battle</Link>
-                        <NavDropdown.Divider />
-                        <Link className="dropdown-item" to="/calculate-stats">Calculate Stats</Link>
-                        <Link className="dropdown-item" to="/damage-calculate">Damage Simulator</Link>
-                        <Link className="dropdown-item" to="/calculate-point">Calculate Point Stats</Link>
-                    </NavDropdown>
-                    <Link className="nav-link" to="/dps-tdo-table">DPS&TDO Table</Link>
-                    <Link className="nav-link" to="/pvp">PVP</Link>
-                    <Link className="nav-link" to="/battle-leagues">Battle Leagues</Link>
-                    <Link className="nav-link" to="/stickers">Stickers</Link>
-                </Nav>
-                {dataStore.timestamp &&
-                <Navbar.Text>
-                    <span className='text-white' style={{marginLeft: 10, marginRight: 10}}>Update: {getTime(dataStore.timestamp, true)}</span>
-                </Navbar.Text>
-                }
-            </Navbar.Collapse>
-        </Navbar>
-    );
-}
+            <Link className="dropdown-item" to="/search-move">
+              Moves
+            </Link>
+          </NavDropdown>
+          <NavDropdown title="Effective">
+            <Link className="dropdown-item" to="/type-effective">
+              Type Effective
+            </Link>
+            <Link className="dropdown-item" to="/weather-boosts">
+              Weather Boosts
+            </Link>
+          </NavDropdown>
+          <NavDropdown title="Tools">
+            <Link className="dropdown-item" to="/find-cp-iv">
+              Find IV&CP
+            </Link>
+            <Link className="dropdown-item" to="/search-battle-stats">
+              Search Battle Leagues Stats
+            </Link>
+            <Link className="dropdown-item" to="/stats-table">
+              Stats Table
+            </Link>
+            <Link className="dropdown-item" to="/raid-battle">
+              Raid Battle
+            </Link>
+            <NavDropdown.Divider />
+            <Link className="dropdown-item" to="/calculate-stats">
+              Calculate Stats
+            </Link>
+            <Link className="dropdown-item" to="/damage-calculate">
+              Damage Simulator
+            </Link>
+            <Link className="dropdown-item" to="/calculate-point">
+              Calculate Point Stats
+            </Link>
+          </NavDropdown>
+          <Link className="nav-link" to="/dps-tdo-table">
+            DPS&TDO Table
+          </Link>
+          <Link className="nav-link" to="/pvp">
+            PVP
+          </Link>
+          <Link className="nav-link" to="/battle-leagues">
+            Battle Leagues
+          </Link>
+          <Link className="nav-link" to="/stickers">
+            Stickers
+          </Link>
+        </Nav>
+        {dataStore.timestamp && (
+          <Navbar.Text>
+            <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
+              Update: {getTime(dataStore.timestamp, true)}
+            </span>
+          </Navbar.Text>
+        )}
+      </Navbar.Collapse>
+    </Navbar>
+  );
+};
 
 export default NavbarComponent;

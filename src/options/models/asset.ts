@@ -1,10 +1,10 @@
-interface sound {
-    cry: any[];
+interface Sound {
+  cry: any[];
 }
 
-export interface asset {
-    id: number;
-    name: string;
-    image: any[];
-    sound: sound;
+export interface Asset {
+  id: number;
+  name: string;
+  image: any[];
+  sound: Sound;
 }
