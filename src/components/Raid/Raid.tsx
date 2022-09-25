@@ -10,6 +10,7 @@ import def_logo from '../../assets/defense.png';
 import sta_logo from '../../assets/stamina.png';
 
 import pokemonData from '../../data/pokemon.json';
+import { useSelector, RootStateOrAny } from 'react-redux';
 
 const Raid = ({
   clearData,
@@ -23,6 +24,7 @@ const Raid = ({
   setStatBossHP,
   setTimeAllow,
 }: any) => {
+  const details = useSelector((state: RootStateOrAny) => state.store.data.details);
   const [tier, setTier]: any = useState(1);
 
   useEffect(() => {
@@ -100,7 +102,11 @@ const Raid = ({
           <img
             className={parseInt(tier) === 2 ? 'img-type-icon' : ''}
             alt="img-raid-egg"
-            src={raidEgg(parseInt(tier), currForm && currForm.form.form_name.includes('mega'))}
+            src={raidEgg(
+              parseInt(tier),
+              currForm && currForm.form.form_name.includes('mega'),
+              details.find((pokemon: { id: any }) => pokemon.id === id).pokemonClass === 'ULTRA_BEAST'
+            )}
           />
         </div>
         <div className="col d-flex justify-content-center" style={{ marginBottom: 15 }}>

@@ -45,7 +45,8 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
       const assetSoundFiles = optionPokeSound(assets.data);
       const league = optionLeagues(gm.data, pokemon);
       const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
-      const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon);
+      const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
+      const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
 
       const pvpRank: any = pvpFindPath(pvp.data, 'rankings');
       const pvpTrain: any = pvpFindPath(pvp.data, 'training/analysis');
@@ -60,7 +61,7 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
             stickers: optionSticker(gm.data, pokemon),
             assets: assetsPokemon,
             combat: optionCombat(gm.data),
-            pokemonCombat: optionPokemonCombat(gm.data, pokemon, formSpecial),
+            pokemonCombat,
             leagues: optionLeagues(gm.data, pokemon),
             details,
             pvp: {

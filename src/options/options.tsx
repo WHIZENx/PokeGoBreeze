@@ -922,7 +922,7 @@ export const optionLeagues = (
   return result;
 };
 
-export const optionDetailsPokemon = (data: any[], pokemon: any[], formSpecial: any[], assets: any[]) => {
+export const optionDetailsPokemon = (data: any[], pokemon: any[], formSpecial: any[], assets: any[], pokemonCombat: any[]) => {
   const datailsPokemonModel = () => {
     return {
       id: 0,
@@ -983,7 +983,9 @@ export const optionDetailsPokemon = (data: any[], pokemon: any[], formSpecial: a
         .find((asset: { id: number }) => asset.id === result.id)
         .image.find((img: { form: string }) => img.form === result.form);
 
-      if (form && form.default) {
+      const combat = pokemonCombat.find((pokemon: { id: number }) => pokemon.id === result.id);
+
+      if (combat.quickMoves[0] !== combat.cinematicMoves[0] && form && form.default) {
         result.releasedGO = form.default.includes('Addressable Assets/');
       }
       return result;

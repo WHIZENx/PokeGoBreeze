@@ -29,7 +29,8 @@ export const rankIconCenterName = (rank: number) => {
   else if (rank === 24) return APIService.getPokeOtherLeague('special_combat_rank_4_center');
 };
 
-export const raidEgg = (tier: number, mega: any) => {
+export const raidEgg = (tier: number, mega: any, ultra?: boolean) => {
+  if (tier === 5 && ultra) return APIService.getRaidSprite('raid_ultra_icon');
   if (tier === 1) return APIService.getRaidSprite('raid_egg_0_icon');
   else if (tier === 3) return APIService.getRaidSprite('raid_egg_1_icon');
   else if (tier === 4) return APIService.getRaidSprite('raid_egg_5_icon');
