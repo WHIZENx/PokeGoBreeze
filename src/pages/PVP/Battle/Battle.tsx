@@ -669,7 +669,7 @@ const Battle = () => {
             const id = pokemon.num;
             const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
-            const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+            const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
 
             return {
               ...item,
@@ -931,7 +931,7 @@ const Battle = () => {
     );
 
     if (!stats) {
-      const statsBattle = calculateStatsByTag(pokemon.pokemonData.pokemon.baseStats, pokemon.pokemonData.pokemon.forme);
+      const statsBattle = calculateStatsByTag(pokemon.pokemonData.pokemon.baseStats, pokemon.pokemonData.pokemon.slug);
 
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);

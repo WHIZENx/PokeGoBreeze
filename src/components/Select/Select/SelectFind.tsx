@@ -38,7 +38,7 @@ const SelectFind = (props: {
   const changePokemon = (pokemon: any) => {
     setCurrentPokemon(pokemon);
     setShowPokemon(false);
-    const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+    const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
     if (props.clearData) props.clearData();
     if (props.setStatATK) props.setStatATK(stats.atk);
     if (props.setStatDEF) props.setStatDEF(stats.def);

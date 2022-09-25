@@ -236,6 +236,7 @@ const RaidBattle = () => {
     value: {
       baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
       forme: string | null;
+      slug: string;
       types: any;
     },
     vf: string,
@@ -250,7 +251,7 @@ const RaidBattle = () => {
       const fmove = data.combat.find((item: { name: any }) => item.name === vf.replaceAll('_FAST', ''));
       const cmove = data.combat.find((item: { name: any }) => item.name === vc);
       if (fmove && cmove) {
-        const stats = calculateStatsByTag(value.baseStats, value.forme);
+        const stats = calculateStatsByTag(value.baseStats, value.slug);
         const statsAttackerTemp = {
           atk: calculateStatsBattle(stats.atk, 15, 40),
           def: calculateStatsBattle(stats.def, 15, 40),
@@ -386,6 +387,7 @@ const RaidBattle = () => {
       dataTargetPokemon: {
         baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
         forme: string | null;
+        slug: string;
         types: any;
       };
     },
@@ -396,7 +398,7 @@ const RaidBattle = () => {
     const cmove = data.combat.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
 
     if (fmove && cmove) {
-      const stats = calculateStatsByTag(pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.forme);
+      const stats = calculateStatsByTag(pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
       const statsAttacker = {
         atk: calculateStatsBattle(stats.atk, 15, 40),
         def: calculateStatsBattle(stats.def, 15, 40),

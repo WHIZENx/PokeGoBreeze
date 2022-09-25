@@ -245,7 +245,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: any) => {
               sta: k,
               level: l,
               percent: parseFloat((((i + j + k) * 100) / 45).toFixed(2)),
-              hp: Math.floor((sta + k) * (data as any).find((item: any) => item.level === l).multiplier),
+              hp: Math.min(1, Math.floor((sta + k) * (data as any).find((item: any) => item.level === l).multiplier)),
             });
         }
       }
@@ -268,7 +268,7 @@ export const predictCPList = (atk: number, def: number, sta: number, IVatk: any,
     predictArr.push({
       level: i,
       cp: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i),
-      hp: Math.floor((sta + IVsta) * (data as any).find((item: any) => item.level === i).multiplier),
+      hp: Math.min(1, Math.floor((sta + IVsta) * (data as any).find((item: any) => item.level === i).multiplier)),
     });
   }
   dataStat.result = predictArr;
@@ -942,7 +942,7 @@ export const queryTopMove = (globalOptions: any, pokemonCombatList: any[], move:
         if (!pokemonList) pokemonList = combatPoke.eliteCinematicMoves.includes(move.name);
       }
       if (pokemonList) {
-        const stats = calculateStatsByTag(value.baseStats, value.forme);
+        const stats = calculateStatsByTag(value.baseStats, value.slug);
         const dps = calculateAvgDPS(
           globalOptions,
           move,
@@ -1085,7 +1085,7 @@ export const queryStatesEvoChain = (
     pokemon = Object.values(pokemonData).find((value) => value.num === item.id && value.slug === item.name.toLowerCase());
   else pokemon = Object.values(pokemonData).find((value) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
   if (!pokemon) pokemon = Object.values(pokemonData).find((value) => value.num === item.id);
-  const pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+  const pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
   const dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 500);
   const dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 1500);
   const dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 2500);
@@ -1273,7 +1273,7 @@ export const counterPokemon = (globalOptions: any, def: any, types: any, combat:
         if (pokemon === undefined) {
           return;
         }
-        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
         value.quickMoves.forEach((vf: any) => {
           queryMoveCounter(
             globalOptions,

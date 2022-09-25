@@ -133,10 +133,10 @@ const Form = ({
   }, [formList, region, setRegion, species.generation.url, formName]);
 
   useEffect(() => {
-    if (currForm && pokeID) {
+    if ((currForm || currForm === undefined) && pokeID) {
       dispatch(hideSpinner());
     }
-  }, [currForm, pokeID, dispatch]);
+  }, [pokeID, dispatch]);
 
   useEffect(() => {
     if (currForm && currForm.form && pokeID) {

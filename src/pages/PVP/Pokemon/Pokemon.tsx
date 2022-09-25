@@ -50,7 +50,7 @@ const PokemonPVP = () => {
           cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
         } (${capitalize(params.type)})`;
 
-        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
 
         let fmoveData = data.moveset[0],
           cMoveDataPri = data.moveset[1],

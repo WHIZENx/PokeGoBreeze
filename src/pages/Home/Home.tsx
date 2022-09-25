@@ -93,6 +93,7 @@ const Home = () => {
                 spe: number;
               };
               forme: string | null;
+              slug: string;
               num: any;
               name: any;
               types: any;
@@ -100,7 +101,7 @@ const Home = () => {
               sprite: string;
               baseSpecies: any;
             }) => {
-              const stats = calculateStatsByTag(item.baseStats, item.forme);
+              const stats = calculateStatsByTag(item.baseStats, item.slug);
               return {
                 id: item.num,
                 name: item.name,

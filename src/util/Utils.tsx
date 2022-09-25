@@ -202,7 +202,7 @@ export const convertNameRankingToOri = (text: string, form: string) => {
 
 export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => {
   return Object.values(data).map((value: any) => {
-    const stats = calculateStatsByTag(value.baseStats, value.forme);
+    const stats = calculateStatsByTag(value.baseStats, value.slug);
     return {
       id: value.num,
       name: value.slug,

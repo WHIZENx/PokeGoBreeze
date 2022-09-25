@@ -274,7 +274,7 @@ const DpsTable = () => {
         const cmove = data.combat.find((item: { name: any }) => item.name === vc);
 
         if (fmove && cmove) {
-          const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+          const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
           const statsAttacker = {
             atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
             def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
@@ -290,7 +290,7 @@ const DpsTable = () => {
 
           let dps, tdo;
           if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
-            const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.forme);
+            const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.slug);
             const statsDefender = {
               atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
               def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),

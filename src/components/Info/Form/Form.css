@@ -41,9 +41,9 @@
     box-shadow: 0 0 0 3px rgba(100, 100, 100, 0.4) !important;
 }
 
-.btn-form:hover {
-    border: 1px solid black;
-    background-color: rgb(200, 200, 200);
+.btn-form:hover:not(.form-selected) {
+    border: 1px solid black !important;
+    background-color: rgb(200, 200, 200) !important;
     color: black;
 }
 

@@ -151,7 +151,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
 
   const queryPokemon = useCallback(
     (id: any, axios: any, source: { token: any; cancel: () => void }) => {
-      dispatch(showSpinner());
+      if (!params.id || (params.id && data && parseInt(id) !== data.id)) dispatch(showSpinner());
       axios
         .getPokeSpicies(id, {
           cancelToken: source.token,

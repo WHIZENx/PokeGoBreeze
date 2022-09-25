@@ -51,7 +51,7 @@ const TeamPVP = () => {
       const id = pokemon.num;
       const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
-      const stats = calculateStatsByTag(pokemon.baseStats, pokemon.forme);
+      const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
 
       if (!styleSheet.current) styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`);
 
