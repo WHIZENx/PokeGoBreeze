@@ -13,7 +13,7 @@ const Move = (props: any) => {
 
   const findMoveData = useCallback(
     (move: string) => {
-      return data.combat.find((item: { name: any }) => item.name === move.replaceAll('_FAST', ''));
+      return data.combat.find((item: { name: any }) => item.name === move);
     },
     [data.combat]
   );
@@ -103,7 +103,7 @@ const Move = (props: any) => {
             {currentMove ? (
               <CardType
                 value={findType(currentMove.name)}
-                name={splitAndCapitalize(currentMove.name.replaceAll('_PLUS', '+').replaceAll('_FAST', ''), '_', ' ')}
+                name={splitAndCapitalize(currentMove.name.replaceAll('_PLUS', '+'), '_', ' ')}
                 elite={currentMove.elite}
                 shadow={currentMove.shadow}
                 purified={currentMove.purified}
@@ -134,7 +134,7 @@ const Move = (props: any) => {
                           <li className="container card-pokemon" onMouseDown={() => changeMove(value)}>
                             <CardType
                               value={findType(value.name)}
-                              name={splitAndCapitalize(value.name.replaceAll('_PLUS', '+').replaceAll('_FAST', ''), '_', ' ')}
+                              name={splitAndCapitalize(value.name.replaceAll('_PLUS', '+'), '_', ' ')}
                               elite={value.elite}
                               shadow={value.shadow}
                               purified={value.purified}

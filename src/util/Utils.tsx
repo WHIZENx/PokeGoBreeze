@@ -250,24 +250,29 @@ export const findMoveTeam = (move: any, moveSet: any) => {
   move = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
     if (value === 'FUTURESIGHT') value = 'FUTURE_SIGHT';
+    if (value === 'ROLLOUT') value = 'ROLL_OUT';
     if (value === 'TECHNO_BLAST_DOUSE') value = 'TECHNO_BLAST_WATER';
-    const m = value.replace('_FAST', '').split('_');
+    const m = value.split('_');
     if (m.length === move.length) {
       let count = 0;
       for (let i = 0; i < move.length; i++) {
         if (capitalize(m[i].toLowerCase()).includes(move[i])) count++;
       }
-      if (count === m.length) return value.replace('FUTURE_SIGHT', 'FUTURESIGHT').replace('_FAST', '');
+      if (count === m.length)
+        return value
+          .replace('FUTURE_SIGHT', 'FUTURESIGHT')
+          .replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE')
+          .replace('ROLL_OUT', 'ROLLOUT');
     }
   }
   for (const value of moveSet) {
-    const m = value.replace('_FAST', '').split('_');
+    const m = value.split('_');
     if (m.length === move.length) {
       let count = 0;
       for (let i = 0; i < move.length; i++) {
         if (m[i][0] === move[i][0]) count++;
       }
-      if (count === m.length) return value.replace('_FAST', '');
+      if (count === m.length) return value;
     }
   }
   return null;

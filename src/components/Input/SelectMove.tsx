@@ -94,7 +94,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
         style={{ padding: 0, borderRadius: 0 }}
       >
         <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-          <CardMoveSmall value={move === '' ? null : move} show={pokemon ? true : false} />
+          <CardMoveSmall value={move === '' ? null : move} show={pokemon ? true : false} select={resultMove && resultMove.length > 1} />
           {showMove && resultMove && (
             <div className="result-move-select">
               <div>

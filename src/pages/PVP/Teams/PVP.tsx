@@ -177,10 +177,17 @@ const TeamPVP = () => {
           };
         });
         setRankingData(file);
-      } catch (e) {
+        dispatch(hideSpinner());
+      } catch (e: any) {
+        source.cancel();
         setFound(false);
+        dispatch(
+          showSpinner({
+            error: true,
+            msg: e.message,
+          })
+        );
       }
-      dispatch(hideSpinner());
     };
     fetchPokemon();
 

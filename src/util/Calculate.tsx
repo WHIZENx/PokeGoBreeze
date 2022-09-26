@@ -933,8 +933,8 @@ export const queryTopMove = (globalOptions: any, pokemonCombatList: any[], move:
     if (combatPoke !== undefined) {
       let pokemonList;
       if (move.type_move === 'FAST') {
-        pokemonList = combatPoke.quickMoves.map((item: string) => item.replaceAll('_FAST', '')).includes(move.name);
-        if (!pokemonList) pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item.replaceAll('_FAST', '')).includes(move.name);
+        pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
+        if (!pokemonList) pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
       } else if (move.type_move === 'CHARGE') {
         pokemonList = combatPoke.cinematicMoves.includes(move.name);
         if (!pokemonList) pokemonList = combatPoke.shadowMoves.includes(move.name);
@@ -990,7 +990,7 @@ const queryMove = (
   purified: boolean | undefined
 ) => {
   cmove.forEach((vc: any) => {
-    const mf = combat.find((item: { name: any }) => item.name === vf.replaceAll('_FAST', ''));
+    const mf = combat.find((item: { name: any }) => item.name === vf);
     const mc = combat.find((item: { name: any }) => item.name === vc);
 
     mf.elite = felite;

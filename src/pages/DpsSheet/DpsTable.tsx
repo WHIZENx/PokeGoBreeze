@@ -270,7 +270,7 @@ const DpsTable = () => {
       specialMove: any = null
     ) => {
       movePoke.forEach((vc: any) => {
-        const fmove = data.combat.find((item: { name: any }) => item.name === vf.replaceAll('_FAST', ''));
+        const fmove = data.combat.find((item: { name: any }) => item.name === vf);
         const cmove = data.combat.find((item: { name: any }) => item.name === vc);
 
         if (fmove && cmove) {
@@ -295,7 +295,7 @@ const DpsTable = () => {
               atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
               def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
               hp: calculateStatsBattle(statsDef.sta, IV_HP, POKEMON_LEVEL),
-              fmove: data.combat.find((item: { name: any }) => item.name === fmoveTargetPokemon.name.replaceAll('_FAST', '')),
+              fmove: data.combat.find((item: { name: any }) => item.name === fmoveTargetPokemon.name),
               cmove: data.combat.find((item: { name: any }) => item.name === cmoveTargetPokemon.name),
               types: dataTargetPokemon.types,
               WEATHER_BOOSTS: options.WEATHER_BOOSTS,

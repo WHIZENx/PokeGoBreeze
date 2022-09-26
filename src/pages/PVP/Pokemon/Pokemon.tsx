@@ -116,11 +116,17 @@ const PokemonPVP = () => {
           shadow: data.speciesName.includes('(Shadow)'),
           purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec)),
         });
-      } catch (e) {
+        dispatch(hideSpinner());
+      } catch (e: any) {
         source.cancel();
         setFound(false);
+        dispatch(
+          showSpinner({
+            error: true,
+            msg: e.message,
+          })
+        );
       }
-      dispatch(hideSpinner());
     };
     fetchPokemon();
   }, [dispatch, params.cp, params.type, params.pokemon, dataStore]);

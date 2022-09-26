@@ -150,7 +150,7 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
         style={{ padding: 0, borderRadius: 0 }}
       >
         <div className="card-move-input" tabIndex={0} onClick={() => setShowFMove(true)} onBlur={() => setShowFMove(false)}>
-          <CardMoveSmall value={fMove} show={pokemon ? true : false} />
+          <CardMoveSmall value={fMove} show={pokemon ? true : false} select={data && data.length > 1} />
           {showFMove && data && pokemon && (
             <div className="result-move-select">
               <div>
@@ -196,7 +196,12 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
               if (!pokemonBattle.disableCMovePri) setShowCMovePri(false);
             }}
           >
-            <CardMoveSmall value={cMovePri} show={pokemon ? true : false} disable={pokemonBattle.disableCMovePri} />
+            <CardMoveSmall
+              value={cMovePri}
+              show={pokemon ? true : false}
+              disable={pokemonBattle.disableCMovePri}
+              select={data && data.length > 1}
+            />
             {showCMovePri && data && pokemon && (
               <div className="result-move-select">
                 <div>
@@ -254,6 +259,7 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
               show={pokemon ? true : false}
               clearData={pokemonBattle.disableCMovePri ? false : removeChargeMoveSec}
               disable={pokemonBattle.disableCMoveSec}
+              select={data && data.length > 1}
             />
             {showCMoveSec && data && pokemon && (
               <div className="result-move-select">

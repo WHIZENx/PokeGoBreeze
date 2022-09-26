@@ -5,7 +5,7 @@ import { capitalize, splitAndCapitalize } from '../../util/Utils';
 
 const CardMove = (props: { value: { name: string; elite: any; shadow: any; purified: any } }) => {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
-  const data = props.value ? combat.find((item: any) => item.name === props.value.name.replace('_FAST', '')) : false;
+  const data = props.value ? combat.find((item: any) => item.name === props.value.name) : false;
   const type = data ? capitalize(data.type.toLowerCase()) : '';
 
   return (
@@ -14,7 +14,7 @@ const CardMove = (props: { value: { name: string; elite: any; shadow: any; purif
         <div className="d-flex align-items-center w-100 h-100" style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}>
           <img width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(type)} />
           <span style={{ marginRight: 5 }}>
-            <b>{splitAndCapitalize(props.value.name.replaceAll('_PLUS', '+').replace('_FAST', ''), '_', ' ')}</b>
+            <b>{splitAndCapitalize(props.value.name.replaceAll('_PLUS', '+'), '_', ' ')}</b>
           </span>
           <span className="d-flex">
             {props.value.elite && <span className="type-icon-small ic elite-ic">Elite</span>}

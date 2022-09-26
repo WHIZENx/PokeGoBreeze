@@ -144,11 +144,17 @@ const RankingPVP = () => {
         });
         setRankingData(file);
         setStoreStats(file.map(() => false));
-      } catch (e) {
+        dispatch(hideSpinner());
+      } catch (e: any) {
         source.cancel();
         setFound(false);
+        dispatch(
+          showSpinner({
+            error: true,
+            msg: e.message,
+          })
+        );
       }
-      dispatch(hideSpinner());
     };
     fetchPokemon();
   }, [dispatch, params.serie, params.cp, params.type, dataStore]);

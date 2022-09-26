@@ -248,7 +248,7 @@ const RaidBattle = () => {
     pokemonTarget: any
   ) => {
     movePoke.forEach((vc: any) => {
-      const fmove = data.combat.find((item: { name: any }) => item.name === vf.replaceAll('_FAST', ''));
+      const fmove = data.combat.find((item: { name: any }) => item.name === vf);
       const cmove = data.combat.find((item: { name: any }) => item.name === vc);
       if (fmove && cmove) {
         const stats = calculateStatsByTag(value.baseStats, value.slug);
@@ -266,7 +266,7 @@ const RaidBattle = () => {
           atk: statBossATK,
           def: statBossDEF,
           hp: statBossHP,
-          fmove: data.combat.find((item: { name: any }) => item.name === fMove.name.replaceAll('_FAST', '')),
+          fmove: data.combat.find((item: { name: any }) => item.name === fMove.name),
           cmove: data.combat.find((item: { name: any }) => item.name === cMove.name),
           types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
           WEATHER_BOOSTS: weatherBoss,
@@ -394,7 +394,7 @@ const RaidBattle = () => {
     HpRemain: number,
     timer: number
   ) => {
-    const fmove = data.combat.find((item: { name: any }) => item.name === pokemon.fmoveTargetPokemon.name.replaceAll('_FAST', ''));
+    const fmove = data.combat.find((item: { name: any }) => item.name === pokemon.fmoveTargetPokemon.name);
     const cmove = data.combat.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
 
     if (fmove && cmove) {
@@ -413,7 +413,7 @@ const RaidBattle = () => {
         atk: statBossATK,
         def: statBossDEF,
         hp: Math.floor(HpRemain),
-        fmove: data.combat.find((item: { name: any }) => item.name === fMove.name.replaceAll('_FAST', '')),
+        fmove: data.combat.find((item: { name: any }) => item.name === fMove.name),
         cmove: data.combat.find((item: { name: any }) => item.name === cMove.name),
         types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
         WEATHER_BOOSTS: weatherBoss,

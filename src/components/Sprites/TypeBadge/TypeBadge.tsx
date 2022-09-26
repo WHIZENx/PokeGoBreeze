@@ -21,7 +21,7 @@ const TypeBadge = (props: {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
 
   let move = props.move;
-  if (!props.find) move = combat.find((item: { name: any }) => item.name === props.move.name.replaceAll('_FAST', ''));
+  if (!props.find) move = combat.find((item: { name: any }) => item.name === props.move.name);
 
   return (
     <div className={'type-badge-container' + (props.grow ? ' filter-shadow' : '')} style={props.style}>
@@ -54,7 +54,7 @@ const TypeBadge = (props: {
               )}
             </span>
           )}
-          <span>{splitAndCapitalize(props.move.name.replaceAll('_FAST', '').replaceAll('_PLUS', '+'), '_', ' ')}</span>
+          <span>{splitAndCapitalize(props.move.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
         </span>
         <span className={move.type.toLowerCase() + ' type-icon-border'}>
           <div style={{ width: 35 }}>
