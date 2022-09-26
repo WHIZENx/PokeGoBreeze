@@ -103,23 +103,20 @@ class APIService {
   }
 
   getWeatherSprite(weather: string) {
-    weather = weather.replaceAll(' ', '').replaceAll('Rainy', 'Rain');
-    weather = weather.charAt(0).toLowerCase() + weather.slice(1);
-
+    weather = weather.toLowerCase().replaceAll('_', '').replaceAll('rainy', 'rain').replace('partlycloudy', 'partlyCloudy');
     const timeOfSun = this.date.getHours() > 6 && this.date.getHours() < 18 ? 'Day' : 'Night';
-
     return `${POGO_ASSET_API_URL}Weather/weatherIcon_large_${weather}${timeOfSun}.png`;
   }
 
-  getWeatherIconSprite(weather = '') {
-    weather = weather.replaceAll(' ', '').replaceAll('Rainy', 'Rain');
+  getWeatherIconSprite(weather: any) {
+    weather = weather.toLowerCase().replaceAll('_', '').replaceAll('rainy', 'rain');
 
-    if (weather === 'Overcast') weather = 'Cloudy';
-    if (weather === 'PartlyCloudy')
-      return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather.toLowerCase()}_${
+    if (weather === 'overcast') weather = 'cloudy';
+    if (weather === 'partlycloudy')
+      return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather}_${
         this.date.getHours() > 6 && this.date.getHours() < 18 ? 'day' : 'night'
       }.png`;
-    return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather.toLowerCase()}.png`;
+    return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather}.png`;
   }
 
   getPokeSprite(id: number) {

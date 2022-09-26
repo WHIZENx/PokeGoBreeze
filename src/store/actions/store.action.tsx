@@ -12,6 +12,8 @@ import {
   optionSettings,
   optionLeagues,
   optionDetailsPokemon,
+  optionPokemonTypes,
+  optionPokemonWeather,
 } from '../../options/options';
 import { convertPVPRankings, convertPVPTrain, pvpFindPath } from '../../options/pvp';
 import { showSpinner } from './spinner.action';
@@ -48,6 +50,9 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
       const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
       const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
 
+      const typeEff = optionPokemonTypes(gm.data);
+      const weatherBoost = optionPokemonWeather(gm.data);
+
       const pvpRank: any = pvpFindPath(pvp.data, 'rankings');
       const pvpTrain: any = pvpFindPath(pvp.data, 'training/analysis');
 
@@ -55,12 +60,14 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
         type: LOAD_STORE,
         payload: {
           data: {
+            typeEff,
+            weatherBoost,
             options: optionSettings(gm.data),
             pokemon,
             evolution: optionEvolution(gm.data, pokemon, formSpecial),
             stickers: optionSticker(gm.data, pokemon),
             assets: assetsPokemon,
-            combat: optionCombat(gm.data),
+            combat: optionCombat(gm.data, typeEff),
             pokemonCombat,
             leagues: optionLeagues(gm.data, pokemon),
             details,

@@ -19,6 +19,8 @@ import { RootStateOrAny, useSelector } from 'react-redux';
 
 const CalculatePoint = () => {
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
+  const typeEff = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
+
   const [id, setId] = useState(1);
   const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: any = useState(null);
@@ -108,6 +110,7 @@ const CalculatePoint = () => {
           !isRaid && pvpDmg ? move.pvp_power : move.pve_power,
           {
             effective: getTypeEffective(
+              typeEff,
               move.type,
               formDef.form.types.map((item: { type: { name: any } }) => item.type.name)
             ),
@@ -147,6 +150,7 @@ const CalculatePoint = () => {
           !isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power,
           {
             effective: getTypeEffective(
+              typeEff,
               moveDef.type,
               form.form.types.map((item: { type: { name: any } }) => item.type.name)
             ),
@@ -208,6 +212,7 @@ const CalculatePoint = () => {
               !isRaid && pvpDmg ? cMove.pvp_power : cMove.pve_power,
               {
                 effective: getTypeEffective(
+                  typeEff,
                   cMove.type,
                   form.form.types.map((item: { type: { name: any } }) => item.type.name)
                 ),
@@ -226,6 +231,7 @@ const CalculatePoint = () => {
             !isRaid && pvpDmg ? fMove.pvp_power : fMove.pve_power,
             {
               effective: getTypeEffective(
+                typeEff,
                 fMove.type,
                 form.form.types.map((item: { type: { name: any } }) => item.type.name)
               ),

@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
+import { capitalize } from '../../util/Utils';
 
 const Attacker = (prop: { types: any }) => {
   const [types, setTypes]: any = useState(null);
 
-  const [currentType, setCurrentType] = useState('Bug');
+  const [currentType, setCurrentType] = useState('BUG');
   const [showType, setShowType] = useState(false);
 
   const [typeEffective, setTypeEffective] = useState(null);
@@ -51,14 +52,14 @@ const Attacker = (prop: { types: any }) => {
       <div className=" d-flex justify-content-center">
         <div className="card-input" tabIndex={0} onClick={() => setShowType(true)} onBlur={() => setShowType(false)}>
           <div className="card-select">
-            <CardType value={currentType} />
+            <CardType value={capitalize(currentType)} />
           </div>
           {showType && (
             <div className="result-type">
               <ul>
                 {types.map((value: any, index: React.Key | null | undefined) => (
                   <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
-                    <CardType value={value} />
+                    <CardType value={capitalize(value)} />
                   </li>
                 ))}
               </ul>

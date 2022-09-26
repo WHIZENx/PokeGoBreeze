@@ -1,11 +1,13 @@
 import React, { Fragment } from 'react';
-import typeEffective from '../../data/type_effectiveness.json';
+import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 
 import './TypeEffectiveSelect.css';
 
 const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any }) => {
+  const typeEffective = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
+
   const renderEffective = (text: string, data: any[]) => {
     return (
       <Fragment>

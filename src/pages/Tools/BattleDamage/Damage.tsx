@@ -31,6 +31,8 @@ const labels: any = {
 
 const Damage = () => {
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
+  const typeEff = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
+
   const [id, setId] = useState(1);
   const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: any = useState(null);
@@ -149,7 +151,7 @@ const Damage = () => {
           trainer: battleState.trainer,
           flevel: enableFriend ? battleState.flevel : 0,
           clevel: battleState.clevel,
-          effective: getTypeEffective(move.type, formObj.form.types),
+          effective: getTypeEffective(typeEff, move.type, formObj.form.types),
         };
         setResult((r: any) => ({
           ...r,

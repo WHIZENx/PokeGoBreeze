@@ -159,7 +159,7 @@ const Battle = () => {
         move.pvp_power *
         (poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
         (poke.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1) *
-        getTypeEffective(move.type, pokeObj.pokemon.types)) /
+        getTypeEffective(dataStore.typeEff, move.type, pokeObj.pokemon.types)) /
       (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))
     );
   };

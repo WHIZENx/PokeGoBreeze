@@ -1,8 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import pokemonData from '../../data/pokemon.json';
-import typesData from '../../data/type_effectiveness.json';
-import weatherBoosts from '../../data/weather_boosts.json';
 import { LevelRating, convertName, splitAndCapitalize } from '../../util/Utils';
 import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
 import {
@@ -187,7 +185,7 @@ const columns: any = [
 
 const DpsTable = () => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
-  const types = Object.keys(typesData);
+  const types = Object.keys(data.typeEff);
 
   const [dpsTable, setDpsTable]: any = useState([]);
   const [dataFilter, setDataFilter]: any = useState([]);
@@ -300,12 +298,14 @@ const DpsTable = () => {
               types: dataTargetPokemon.types,
               WEATHER_BOOSTS: options.WEATHER_BOOSTS,
             };
-            const dpsDef = calculateBattleDPSDefender(data.options, statsAttacker, statsDefender);
-            dps = calculateBattleDPS(data.options, statsAttacker, statsDefender, dpsDef);
+            const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+            dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
             tdo = dps * TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
           } else {
             dps = calculateAvgDPS(
               data.options,
+              data.typeEff,
+              data.weatherBoost,
               statsAttacker.fmove,
               statsAttacker.cmove,
               statsAttacker.atk,
@@ -825,9 +825,9 @@ const DpsTable = () => {
                     }
                   >
                     <option value="false">Extream</option>
-                    {Object.keys(weatherBoosts).map((value, index) => (
+                    {Object.keys(data.weatherBoost).map((value, index) => (
                       <option key={index} value={value}>
-                        {value}
+                        {splitAndCapitalize(value, '_', ' ')}
                       </option>
                     ))}
                   </Form.Select>

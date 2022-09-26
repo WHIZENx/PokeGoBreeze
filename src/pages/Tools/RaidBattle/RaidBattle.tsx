@@ -274,8 +274,8 @@ const RaidBattle = () => {
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
         statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
 
-        const dpsDef = calculateBattleDPSDefender(data.options, statsAttacker, statsDefender);
-        const dpsAtk = calculateBattleDPS(data.options, statsAttacker, statsDefender, dpsDef);
+        const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+        const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
         const ttkAtk = TimeToKill(Math.floor(statsDefender.hp), dpsAtk); // Time to Attacker kill Defender
         const ttkDef = TimeToKill(Math.floor(statsAttacker.hp), dpsDef); // Time to Defender kill Attacker
@@ -419,8 +419,8 @@ const RaidBattle = () => {
         WEATHER_BOOSTS: weatherBoss,
       };
 
-      const dpsDef = calculateBattleDPSDefender(data.options, statsAttacker, statsDefender);
-      const dpsAtk = calculateBattleDPS(data.options, statsAttacker, statsDefender, dpsDef);
+      const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+      const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
       const ttkAtk = enableTimeAllow
         ? Math.min(timeAllow - timer, TimeToKill(Math.floor(statsDefender.hp), dpsAtk))

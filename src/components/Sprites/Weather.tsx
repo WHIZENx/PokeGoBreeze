@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
-import { capitalize } from '../../util/Utils';
+import { capitalize, splitAndCapitalize } from '../../util/Utils';
 
 const Weather = (props: { arr: any[]; style: React.CSSProperties | undefined; text?: string }) => {
   if (!props.arr || props.arr.length === 0)
@@ -23,7 +23,7 @@ const Weather = (props: { arr: any[]; style: React.CSSProperties | undefined; te
           <div className="text-center d-flex" key={index}>
             <div>
               <img height={50} alt="img-pokemon" src={APIService.getWeatherSprite(value)} />
-              <span className="caption text-black">{capitalize(value)}</span>
+              <span className="caption text-black">{splitAndCapitalize(value, '_', ' ')}</span>
             </div>
           </div>
         ))}

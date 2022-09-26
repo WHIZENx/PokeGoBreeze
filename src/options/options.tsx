@@ -7,6 +7,7 @@ import { Details } from './models/details';
 
 import pokemonData from '../data/pokemon.json';
 import { convertName } from '../util/Utils';
+import { TypeSet } from './models/type';
 
 export const getOption = (options: any, args: string[]) => {
   args.forEach((arg: any) => {
@@ -93,6 +94,51 @@ export const optionPokeSound = (data: { tree: any[] }) => {
   return data.tree
     .filter((item: { path: string | string[] }) => item.path.includes('Sounds/Pokemon Cries/'))
     .map((item: { path: string }) => item.path.replace('Sounds/Pokemon Cries/', '').replace('.wav', ''));
+};
+
+export const optionPokemonTypes = (data: any[]) => {
+  const types: any = {};
+  const typeSet = [
+    'NORMAL',
+    'FIGHTING',
+    'FLYING',
+    'POISON',
+    'GROUND',
+    'ROCK',
+    'BUG',
+    'GHOST',
+    'STEEL',
+    'FIRE',
+    'WATER',
+    'GRASS',
+    'ELECTRIC',
+    'PSYCHIC',
+    'ICE',
+    'DRAGON',
+    'DARK',
+    'FAIRY',
+  ];
+  data
+    .filter((item: any) => item.templateId.includes('POKEMON_TYPE') && Object.keys(item.data).includes('typeEffective'))
+    .forEach((item: { data: { typeEffective: { attackScalar: number[] } }; templateId: string }) => {
+      const rootType = item.templateId.replace('POKEMON_TYPE_', '');
+      types[rootType] = {} as TypeSet;
+      typeSet.forEach((type: string, index: number) => {
+        types[rootType][type] = item.data.typeEffective.attackScalar[index];
+      });
+    });
+  return types;
+};
+
+export const optionPokemonWeather = (data: any[]) => {
+  const weather: any = {};
+  data
+    .filter((item: any) => item.templateId.includes('WEATHER_AFFINITY') && Object.keys(item.data).includes('weatherAffinities'))
+    .forEach((item: { data: { weatherAffinities: { weatherCondition: string; pokemonType: string[] } }; templateId: string }) => {
+      const rootType = item.data.weatherAffinities.weatherCondition;
+      weather[rootType] = item.data.weatherAffinities.pokemonType.map((type: string) => type.replace('POKEMON_TYPE_', ''));
+    });
+  return weather;
 };
 
 export const optionPokemonSpawn = (data: any[]) => {
@@ -452,7 +498,7 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
   });
 };
 
-export const optionCombat = (data: any[]) => {
+export const optionCombat = (data: any[], types: any) => {
   const combatModel = () => {
     return {
       name: '',
@@ -463,6 +509,7 @@ export const optionCombat = (data: any[]) => {
       sound: null,
       buffs: [],
       id: 0,
+      track: 0,
       pve_power: 0,
       pve_energy: 0,
       durationMs: 0,
@@ -498,7 +545,7 @@ export const optionCombat = (data: any[]) => {
       };
     });
 
-  return data
+  const moveSet = data
     .filter((item: { templateId: string | string[] }) => item.templateId.includes('COMBAT_V'))
     .map(
       (item: {
@@ -557,6 +604,7 @@ export const optionCombat = (data: any[]) => {
         }
         const move = moves.find((move: { movementId: string }) => move.movementId === result.name);
         result.id = move.id;
+        result.track = move.id;
         result.name = result.name.replace('_FAST', '');
         result.pve_power = move.power ?? 0.0;
         if (result.name === 'STRUGGLE') result.pve_energy = -33;
@@ -570,6 +618,24 @@ export const optionCombat = (data: any[]) => {
         return result;
       }
     );
+
+  const result = moveSet;
+  moveSet.forEach((move) => {
+    if (move.name === 'HIDDEN_POWER') {
+      Object.keys(types)
+        .filter((type: string) => type !== 'NORMAL')
+        .forEach((type: string, index: number) =>
+          result.push({
+            ...move,
+            id: parseInt(`${move.id}${index}`),
+            name: `${move.name}_${type}`,
+            type,
+          })
+        );
+    }
+  });
+
+  return result;
 };
 
 export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: any[]) => {

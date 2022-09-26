@@ -1,7 +1,5 @@
 import data from '../data/cp_multiplier.json';
 import pokemonData from '../data/pokemon.json';
-import typeEffective from '../data/type_effectiveness.json';
-import weatherBoosts from '../data/weather_boosts.json';
 import {
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,
@@ -25,23 +23,25 @@ import {
 } from './Constants';
 import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm } from './Utils';
 
-const weatherMultiple = (globalOptions: any, weather: string | number, type: string) => {
-  return (weatherBoosts as any)[weather].find((item: any) => item === capitalize(type.toLowerCase())) ? STAB_MULTIPLY(globalOptions) : 1;
+const weatherMultiple = (globalOptions: any, weatherBoost: any, weather: string, type: string) => {
+  return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: any) => item === type.toUpperCase().replaceAll(' ', '_'))
+    ? STAB_MULTIPLY(globalOptions)
+    : 1;
 };
 
-export const getTypeEffective = (typeMove: string, typesObj: any[]) => {
+export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj: any[]) => {
   let valueEffective = 1;
-  typesObj.forEach((type: { type: { name: string }; toLowerCase: () => any }) => {
+  typesObj.forEach((type: { type: { name: string }; toUpperCase: () => any }) => {
     try {
-      valueEffective *= (typeEffective as any)[capitalize(typeMove.toLowerCase())][capitalize(type.type.name.toLowerCase())];
+      valueEffective *= typeEffective[typeMove.toUpperCase()][type.type.name.toUpperCase()];
     } catch {
-      valueEffective *= (typeEffective as any)[capitalize(typeMove.toLowerCase())][capitalize(type.toLowerCase())];
+      valueEffective *= typeEffective[typeMove.toUpperCase()][type.toUpperCase()];
     }
   });
   return valueEffective;
 };
 
-/* Thank algorithm from pokemongohub.net */
+/* Algorithm calculate from pokemongohub.net */
 export const calBaseATK = (stats: any, nerf: boolean) => {
   const atk = stats.atk ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'attack').base_stat;
   const spa = stats.spa ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'special-attack').base_stat;
@@ -575,6 +575,8 @@ export const getBarCharge = (isRaid: boolean, energy: number) => {
 
 export const calculateAvgDPS = (
   globalOptions: any,
+  typeEff: any,
+  weatherBoost: any,
   fmove: any,
   cmove: any,
   Atk: number,
@@ -610,7 +612,7 @@ export const calculateAvgDPS = (
       FMulti *
       (shadow ? ShadowAtkBonus : 1) *
       (typeof options.WEATHER_BOOSTS === 'string'
-        ? weatherMultiple(globalOptions, options.WEATHER_BOOSTS, FTYPE)
+        ? weatherMultiple(globalOptions, weatherBoost, options.WEATHER_BOOSTS, FTYPE)
         : options.WEATHER_BOOSTS
         ? StabMultiply
         : 1) *
@@ -621,22 +623,23 @@ export const calculateAvgDPS = (
       CMulti *
       (shadow ? ShadowAtkBonus : 1) *
       (typeof options.WEATHER_BOOSTS === 'string'
-        ? weatherMultiple(globalOptions, options.WEATHER_BOOSTS, CTYPE)
+        ? weatherMultiple(globalOptions, weatherBoost, options.WEATHER_BOOSTS, CTYPE)
         : options.WEATHER_BOOSTS
         ? StabMultiply
         : 1) *
       (options.TRAINER_FRIEND ? MultiplyLevelFriendship : 1);
 
     FDmg =
-      Math.floor((FDmgBase * Atk * (options.objTypes ? getTypeEffective(FTYPE, options.objTypes) : 1)) / options.POKEMON_DEF_OBJ) +
+      Math.floor((FDmgBase * Atk * (options.objTypes ? getTypeEffective(typeEff, FTYPE, options.objTypes) : 1)) / options.POKEMON_DEF_OBJ) +
       DEFAULT_DAMAGE_CONST;
     CDmg =
-      Math.floor((CDmgBase * Atk * (options.objTypes ? getTypeEffective(CTYPE, options.objTypes) : 1)) / options.POKEMON_DEF_OBJ) +
+      Math.floor((CDmgBase * Atk * (options.objTypes ? getTypeEffective(typeEff, CTYPE, options.objTypes) : 1)) / options.POKEMON_DEF_OBJ) +
       DEFAULT_DAMAGE_CONST;
 
     y =
       900 /
-      ((Def / (options.objTypes ? getTypeEffective(FTYPE, options.objTypes) * getTypeEffective(CTYPE, options.objTypes) : 1)) *
+      ((Def /
+        (options.objTypes ? getTypeEffective(typeEff, FTYPE, options.objTypes) * getTypeEffective(typeEff, CTYPE, options.objTypes) : 1)) *
         (shadow ? ShadowDefBonus : 1));
   } else {
     FDmgBase =
@@ -696,6 +699,8 @@ export const calculateTDO = (globalOptions: any, Def: number, HP: number, dps: n
 
 export const calculateBattleDPSDefender = (
   globalOptions: any,
+  typeEff: any,
+  weatherBoost: any,
   Attacker: {
     atk?: number;
     def: any;
@@ -743,7 +748,7 @@ export const calculateBattleDPSDefender = (
     FMultiDef *
     (Defender.shadow ? ShadowAtkBonus : 1) *
     (typeof Defender.WEATHER_BOOSTS === 'string'
-      ? weatherMultiple(globalOptions, Defender.WEATHER_BOOSTS, FTYPEDef)
+      ? weatherMultiple(globalOptions, weatherBoost, Defender.WEATHER_BOOSTS, FTYPEDef)
       : Defender.WEATHER_BOOSTS
       ? StabMultiply
       : 1);
@@ -753,18 +758,20 @@ export const calculateBattleDPSDefender = (
     CMultiDef *
     (Defender.shadow ? ShadowAtkBonus : 1) *
     (typeof Defender.WEATHER_BOOSTS === 'string'
-      ? weatherMultiple(globalOptions, Defender.WEATHER_BOOSTS, CTYPEDef)
+      ? weatherMultiple(globalOptions, weatherBoost, Defender.WEATHER_BOOSTS, CTYPEDef)
       : Defender.WEATHER_BOOSTS
       ? StabMultiply
       : 1);
 
   const FDmgDef =
     Math.floor(
-      (FDmgBaseDef * Defender.atk * getTypeEffective(FTYPEDef, Attacker.types)) / (Attacker.def * (Attacker.shadow ? ShadowDefBonus : 1))
+      (FDmgBaseDef * Defender.atk * getTypeEffective(typeEff, FTYPEDef, Attacker.types)) /
+        (Attacker.def * (Attacker.shadow ? ShadowDefBonus : 1))
     ) + DEFAULT_DAMAGE_CONST;
   const CDmgDef =
     Math.floor(
-      (CDmgBaseDef * Defender.atk * getTypeEffective(CTYPEDef, Attacker.types)) / (Attacker.def * (Attacker.shadow ? ShadowDefBonus : 1))
+      (CDmgBaseDef * Defender.atk * getTypeEffective(typeEff, CTYPEDef, Attacker.types)) /
+        (Attacker.def * (Attacker.shadow ? ShadowDefBonus : 1))
     ) + DEFAULT_DAMAGE_CONST;
 
   const DefDmg = lambdaMod * FDmgDef + CDmgDef;
@@ -773,6 +780,8 @@ export const calculateBattleDPSDefender = (
 
 export const calculateBattleDPS = (
   globalOptions: any,
+  typeEff: any,
+  weatherBoost: any,
   Attacker: {
     atk: any;
     def?: number;
@@ -822,7 +831,7 @@ export const calculateBattleDPS = (
     FMulti *
     (Attacker.shadow ? ShadowAtkBonus : 1) *
     (typeof Attacker.WEATHER_BOOSTS === 'string'
-      ? weatherMultiple(globalOptions, Attacker.WEATHER_BOOSTS, FTYPE)
+      ? weatherMultiple(globalOptions, weatherBoost, Attacker.WEATHER_BOOSTS, FTYPE)
       : Attacker.WEATHER_BOOSTS
       ? StabMultiply
       : 1) *
@@ -833,7 +842,7 @@ export const calculateBattleDPS = (
     CMulti *
     (Attacker.shadow ? ShadowAtkBonus : 1) *
     (typeof Attacker.WEATHER_BOOSTS === 'string'
-      ? weatherMultiple(globalOptions, Attacker.WEATHER_BOOSTS, CTYPE)
+      ? weatherMultiple(globalOptions, weatherBoost, Attacker.WEATHER_BOOSTS, CTYPE)
       : Attacker.WEATHER_BOOSTS
       ? StabMultiply
       : 1) *
@@ -841,11 +850,11 @@ export const calculateBattleDPS = (
 
   const FDmg =
     Math.floor(
-      (FDmgBase * Attacker.atk * getTypeEffective(FTYPE, Defender.types)) / (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
+      (FDmgBase * Attacker.atk * getTypeEffective(typeEff, FTYPE, Defender.types)) / (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
     ) + DEFAULT_DAMAGE_CONST;
   const CDmg =
     Math.floor(
-      (CDmgBase * Attacker.atk * getTypeEffective(CTYPE, Defender.types)) / (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
+      (CDmgBase * Attacker.atk * getTypeEffective(typeEff, CTYPE, Defender.types)) / (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
     ) + DEFAULT_DAMAGE_CONST;
 
   const FDPS = FDmg / FDur;
@@ -881,14 +890,15 @@ export const calculateBattleDPS = (
       CMultiSec *
       (Attacker.shadow ? ShadowAtkBonus : 1) *
       (typeof Attacker.WEATHER_BOOSTS === 'string'
-        ? weatherMultiple(globalOptions, Attacker.WEATHER_BOOSTS, CTYPE)
+        ? weatherMultiple(globalOptions, weatherBoost, Attacker.WEATHER_BOOSTS, CTYPE)
         : Attacker.WEATHER_BOOSTS
         ? StabMultiply
         : 1) *
       (Attacker.POKEMON_FRIEND ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, Attacker.POKEMON_FRIEND_LEVEL) : 1);
     const CDmgSec =
       Math.floor(
-        (CDmgBaseSec * Attacker.atk * getTypeEffective(CTYPESec, Defender.types)) / (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
+        (CDmgBaseSec * Attacker.atk * getTypeEffective(typeEff, CTYPESec, Defender.types)) /
+          (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
       ) + DEFAULT_DAMAGE_CONST;
     const CDPSSec = CDmgSec / CDurSec;
 
@@ -911,7 +921,7 @@ export const TimeToKill = (HP: number, dpsDef: number) => {
   return HP / dpsDef;
 };
 
-export const queryTopMove = (globalOptions: any, pokemonCombatList: any[], move: any) => {
+export const queryTopMove = (globalOptions: any, typeEff: any, weatherBoost: any, pokemonCombatList: any[], move: any) => {
   const dataPri: {
     num: number;
     forme: string | null;
@@ -923,6 +933,9 @@ export const queryTopMove = (globalOptions: any, pokemonCombatList: any[], move:
     tdo: number;
   }[] = [];
   Object.values(pokemonData).forEach((value) => {
+    if (move.track === 281) {
+      move.name = 'HIDDEN_POWER';
+    }
     let combatPoke: any = pokemonCombatList.filter(
       (item: { id: number; baseSpecies: any }) =>
         item.id === value.num && item.baseSpecies === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
@@ -945,6 +958,8 @@ export const queryTopMove = (globalOptions: any, pokemonCombatList: any[], move:
         const stats = calculateStatsByTag(value.baseStats, value.slug);
         const dps = calculateAvgDPS(
           globalOptions,
+          typeEff,
+          weatherBoost,
           move,
           move,
           calculateStatsBattle(stats.atk, MAX_IV, 40),
@@ -976,6 +991,8 @@ export const queryTopMove = (globalOptions: any, pokemonCombatList: any[], move:
 
 const queryMove = (
   globalOptions: any,
+  typeEff: any,
+  weatherBoost: any,
   combat: any[],
   dataList: any[],
   vf: string,
@@ -1012,6 +1029,8 @@ const queryMove = (
 
     const offensive = calculateAvgDPS(
       globalOptions,
+      typeEff,
+      weatherBoost,
       mf,
       mc,
       calculateStatsBattle(atk, options.IV_ATK, options.POKEMON_LEVEL, true),
@@ -1021,6 +1040,8 @@ const queryMove = (
     );
     const defensive = calculateAvgDPS(
       globalOptions,
+      typeEff,
+      weatherBoost,
       mf,
       mc,
       calculateStatsBattle(atk, options.IV_ATK, options.POKEMON_LEVEL, true),
@@ -1036,6 +1057,8 @@ const queryMove = (
 
 export const rankMove = (
   globalOptions: any,
+  typeEff: any,
+  weatherBoost: any,
   combat: any,
   move: {
     quickMoves: any[];
@@ -1053,16 +1076,96 @@ export const rankMove = (
   if (!move) return { data: [] };
   const dataPri: any[] = [];
   move.quickMoves.forEach((vf: any) => {
-    queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.cinematicMoves, false, false, false, false);
-    queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.eliteCinematicMoves, false, true, false, false);
-    queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.shadowMoves, false, false, true, false);
-    queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.purifiedMoves, false, false, false, true);
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.cinematicMoves,
+      false,
+      false,
+      false,
+      false
+    );
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.eliteCinematicMoves,
+      false,
+      true,
+      false,
+      false
+    );
+    queryMove(globalOptions, typeEff, weatherBoost, combat, dataPri, vf, atk, def, sta, type, move.shadowMoves, false, false, true, false);
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.purifiedMoves,
+      false,
+      false,
+      false,
+      true
+    );
   });
   move.eliteQuickMoves.forEach((vf: any) => {
-    queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.cinematicMoves, true, false, false, false);
-    queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.eliteCinematicMoves, true, true, false, false);
-    queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.shadowMoves, true, false, true, false);
-    queryMove(globalOptions, combat, dataPri, vf, atk, def, sta, type, move.purifiedMoves, true, false, false, true);
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.cinematicMoves,
+      true,
+      false,
+      false,
+      false
+    );
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.eliteCinematicMoves,
+      true,
+      true,
+      false,
+      false
+    );
+    queryMove(globalOptions, typeEff, weatherBoost, combat, dataPri, vf, atk, def, sta, type, move.shadowMoves, true, false, true, false);
+    queryMove(globalOptions, typeEff, weatherBoost, combat, dataPri, vf, atk, def, sta, type, move.purifiedMoves, true, false, false, true);
   });
 
   return {
@@ -1196,6 +1299,8 @@ export const queryStatesEvoChain = (
 
 const queryMoveCounter = (
   globalOptions: any,
+  typeEff: any,
+  weatherBoost: any,
   dataList: any[],
   combat: any[],
   pokemon: any,
@@ -1225,6 +1330,8 @@ const queryMoveCounter = (
 
       const dpsOff = calculateAvgDPS(
         globalOptions,
+        typeEff,
+        weatherBoost,
         mf,
         mc,
         calculateStatsBattle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL, true),
@@ -1252,7 +1359,15 @@ const sortCounterDPS = (data: any[]) => {
   return data.map((item: any) => ({ ...item, ratio: (item.dps * 100) / data[0].dps }));
 };
 
-export const counterPokemon = (globalOptions: any, def: any, types: any, combat: any, combatList: any[]) => {
+export const counterPokemon = (
+  globalOptions: any,
+  typeEff: any,
+  weatherBoost: any,
+  def: any,
+  types: any,
+  combat: any,
+  combatList: any[]
+) => {
   const dataList: any[] = [];
   combatList.forEach(
     (value: {
@@ -1277,6 +1392,8 @@ export const counterPokemon = (globalOptions: any, def: any, types: any, combat:
         value.quickMoves.forEach((vf: any) => {
           queryMoveCounter(
             globalOptions,
+            typeEff,
+            weatherBoost,
             dataList,
             combat,
             pokemon,
@@ -1292,6 +1409,8 @@ export const counterPokemon = (globalOptions: any, def: any, types: any, combat:
           );
           queryMoveCounter(
             globalOptions,
+            typeEff,
+            weatherBoost,
             dataList,
             combat,
             pokemon,
@@ -1305,12 +1424,46 @@ export const counterPokemon = (globalOptions: any, def: any, types: any, combat:
             false,
             false
           );
-          queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.shadowMoves, false, false, true, false);
-          queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.purifiedMoves, false, false, false, true);
+          queryMoveCounter(
+            globalOptions,
+            typeEff,
+            weatherBoost,
+            dataList,
+            combat,
+            pokemon,
+            stats,
+            def,
+            types,
+            vf,
+            value.shadowMoves,
+            false,
+            false,
+            true,
+            false
+          );
+          queryMoveCounter(
+            globalOptions,
+            typeEff,
+            weatherBoost,
+            dataList,
+            combat,
+            pokemon,
+            stats,
+            def,
+            types,
+            vf,
+            value.purifiedMoves,
+            false,
+            false,
+            false,
+            true
+          );
         });
         value.eliteQuickMoves.forEach((vf: any) => {
           queryMoveCounter(
             globalOptions,
+            typeEff,
+            weatherBoost,
             dataList,
             combat,
             pokemon,
@@ -1326,6 +1479,8 @@ export const counterPokemon = (globalOptions: any, def: any, types: any, combat:
           );
           queryMoveCounter(
             globalOptions,
+            typeEff,
+            weatherBoost,
             dataList,
             combat,
             pokemon,
@@ -1339,8 +1494,40 @@ export const counterPokemon = (globalOptions: any, def: any, types: any, combat:
             false,
             false
           );
-          queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.shadowMoves, true, false, true, false);
-          queryMoveCounter(globalOptions, dataList, combat, pokemon, stats, def, types, vf, value.purifiedMoves, true, false, false, true);
+          queryMoveCounter(
+            globalOptions,
+            typeEff,
+            weatherBoost,
+            dataList,
+            combat,
+            pokemon,
+            stats,
+            def,
+            types,
+            vf,
+            value.shadowMoves,
+            true,
+            false,
+            true,
+            false
+          );
+          queryMoveCounter(
+            globalOptions,
+            typeEff,
+            weatherBoost,
+            dataList,
+            combat,
+            pokemon,
+            stats,
+            def,
+            types,
+            vf,
+            value.purifiedMoves,
+            true,
+            false,
+            false,
+            true
+          );
         });
       }
     }

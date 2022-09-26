@@ -11,7 +11,7 @@ import './Home.css';
 import { Link } from 'react-router-dom';
 
 import pokemonData from '../../data/pokemon.json';
-import typesData from '../../data/type_effectiveness.json';
+import { useSelector, RootStateOrAny } from 'react-redux';
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,6 +57,7 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 const Home = () => {
+  const typesData = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
   const types = Object.keys(typesData);
 
   const tableScrollID = useRef(1);

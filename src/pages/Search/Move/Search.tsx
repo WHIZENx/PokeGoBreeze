@@ -4,8 +4,6 @@ import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 
-import types from '../../../data/type_effectiveness.json';
-
 import './Search.css';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
@@ -24,7 +22,7 @@ const moveSort = (rowA: { type: string }, rowB: { type: string }) => {
 const columns: any = [
   {
     name: 'id',
-    selector: (row: { id: any }) => row.id,
+    selector: (row: { track: number }) => row.track,
     sortable: true,
   },
   {
@@ -37,8 +35,11 @@ const columns: any = [
   },
   {
     name: 'Name',
-    selector: (row: { id: string; name: string }) => (
-      <Link to={'/moves/' + row.id} target="_blank">
+    selector: (row: { track: number; name: string; type: string }) => (
+      <Link
+        to={'/moves/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type.toLowerCase() : '')}
+        target="_blank"
+      >
         {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
       </Link>
     ),
@@ -60,6 +61,8 @@ const columns: any = [
 
 const Search = () => {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
+  const types = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
+
   const [filters, setFilters] = useState({
     fMoveType: '',
     fMoveName: '',
@@ -81,9 +84,9 @@ const Search = () => {
       combat
         .filter((item: { type_move: string }) => item.type_move === 'FAST')
         .filter(
-          (move: { name: string; id: { toString: () => string | string[] }; type: string }) =>
+          (move: { name: string; track: { toString: () => string | string[] }; type: string }) =>
             (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(fMoveName.toLowerCase()) ||
-              move.id.toString().includes(fMoveName)) &&
+              move.track.toString().includes(fMoveName)) &&
             (fMoveType === '' || fMoveType === capitalize(move.type.toLowerCase()))
         )
     );
@@ -91,9 +94,9 @@ const Search = () => {
       combat
         .filter((item: { type_move: string }) => item.type_move === 'CHARGE')
         .filter(
-          (move: { name: string; id: { toString: () => string | string[] }; type: string }) =>
+          (move: { name: string; track: { toString: () => string | string[] }; type: string }) =>
             (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(cMoveName.toLowerCase()) ||
-              move.id.toString().includes(cMoveName)) &&
+              move.track.toString().includes(cMoveName)) &&
             (cMoveType === '' || cMoveType === capitalize(move.type.toLowerCase()))
         )
     );

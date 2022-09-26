@@ -17,6 +17,8 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       return setMove(
         rankMove(
           data.options,
+          data.typeEff,
+          data.weatherBoost,
           data.combat,
           combatPoke[0],
           props.statATK,
@@ -31,6 +33,8 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       setMove(
         rankMove(
           data.options,
+          data.typeEff,
+          data.weatherBoost,
           data.combat,
           combatPoke[0],
           props.statATK,
@@ -43,6 +47,8 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       setMove(
         rankMove(
           data.options,
+          data.typeEff,
+          data.weatherBoost,
           data.combat,
           result,
           props.statATK,

@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardWeather from '../../components/Card/CardWeather';
 import WeatherEffective from '../../components/Effective/WeatherEffective';
+import { splitAndCapitalize } from '../../util/Utils';
 
 const Affect = (prop: { weathers: any }) => {
   const [weathers, setWeathers]: any = useState([]);
 
-  const [currentWeather, setCurrentWeather] = useState('Clear');
+  const [currentWeather, setCurrentWeather] = useState('CLEAR');
   const [showWeather, setShowWeather] = useState(false);
 
   const [weatherEffective, setWeatherEffective] = useState([]);
@@ -37,14 +38,14 @@ const Affect = (prop: { weathers: any }) => {
       <div className=" d-flex justify-content-center">
         <div className="card-input" tabIndex={0} onClick={() => setShowWeather(true)} onBlur={() => setShowWeather(false)}>
           <div className="card-select">
-            <CardWeather value={currentWeather} />
+            <CardWeather value={splitAndCapitalize(currentWeather, '_', ' ')} />
           </div>
           {showWeather && (
             <div className="result-weather">
               <ul>
                 {weathers.map((value: string, index: React.Key | null | undefined) => (
                   <li className="container card-pokemon" key={index} onMouseDown={() => changeWeather(value)}>
-                    <CardWeather value={value} />
+                    <CardWeather value={splitAndCapitalize(value, '_', ' ')} />
                   </li>
                 ))}
               </ul>

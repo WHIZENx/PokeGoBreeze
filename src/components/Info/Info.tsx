@@ -3,14 +3,16 @@ import TypeEffective from '../Effective/TypeEffective';
 import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
 import Type from '../Sprites/Type/Type';
 
-import typeEffective from '../../data/type_effectiveness.json';
-import weatherEffective from '../../data/weather_boosts.json';
 import { splitAndCapitalize } from '../../util/Utils';
+import { useSelector, RootStateOrAny } from 'react-redux';
 
 const Info = (props: any) => {
+  const typeEffective = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
+  const weatherEffective = useSelector((state: RootStateOrAny) => state.store.data.weatherBoost);
+
   const getWeatherEffective = (types: any[]) => {
     const data: string[] = [];
-    Object.entries(weatherEffective).forEach(([key, value]) => {
+    Object.entries(weatherEffective).forEach(([key, value]: any) => {
       types.forEach((type: { type: { name: string } }) => {
         if (value.includes(splitAndCapitalize(type.type.name, '-', ' ')) && !data.includes(key)) data.push(key);
       });
@@ -27,7 +29,7 @@ const Info = (props: any) => {
       resist: [],
       neutral: [],
     };
-    Object.entries(typeEffective).forEach(([key, value]) => {
+    Object.entries(typeEffective).forEach(([key, value]: any) => {
       let valueEffective = 1;
       types.forEach((type: { type: { name: string } }) => {
         valueEffective *= (value as any)[splitAndCapitalize(type.type.name, '-', ' ')];

@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { capitalize, convertName, splitAndCapitalize } from '../../util/Utils';
 import { STAB_MULTIPLY } from '../../util/Constants';
@@ -9,7 +9,6 @@ import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
-import weathers from '../../data/weather_boosts.json';
 import APIService from '../../services/API.service';
 import './Move.css';
 
@@ -18,6 +17,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import { Form } from 'react-bootstrap';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -27,7 +27,7 @@ const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
 
 const columns: any = [
   {
-    name: 'ID',
+    name: 'id',
     selector: (row: { num: any }) => row.num,
     sortable: true,
     minWidth: '40px',
@@ -84,6 +84,8 @@ const columns: any = [
 const Move = (props: { id?: any }) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const params = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [move, setMove]: any = useState(null);
   const [releasedGO, setReleaseGO] = useState(true);
@@ -92,18 +94,26 @@ const Move = (props: { id?: any }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getWeatherEffective = (type: string) => {
-    const result = Object.entries(weathers).find(([, value]) => {
-      return value.includes(capitalize(type.toLowerCase()));
+    const result = Object.entries(data.weatherBoost).find(([, value]: any) => {
+      return value.includes(type.toUpperCase());
     });
     return result && result[0];
   };
 
-  const queryMove = useCallback(
+  const queryMoveData = useCallback(
     (id: any) => {
-      const move = data.combat.find((item: { id: number }) => item.id === parseInt(id));
+      let move;
+      if (params.id && parseInt(id) === 281) {
+        move = data.combat.find(
+          (item: { type: string; track: number }) =>
+            item.track === parseInt(id) && item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
+        );
+      } else {
+        move = data.combat.find((item: { track: number }) => item.track === parseInt(id));
+      }
       if (move) {
         setMove(move);
-        document.title = `#${move.id} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}`;
+        document.title = `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}`;
       } else {
         enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
         if (params.id) document.title = `#${params.id} - Not Found`;
@@ -115,9 +125,9 @@ const Move = (props: { id?: any }) => {
   useEffect(() => {
     if (move === null) {
       const id = params.id ? params.id.toLowerCase() : props.id;
-      queryMove(id);
-    } else setTopList(queryTopMove(data.options, data.pokemonCombat, move));
-  }, [data, params.id, props.id, queryMove, move]);
+      queryMoveData(id);
+    } else setTopList(queryTopMove(data.options, data.typeEff, data.weatherBoost, data.pokemonCombat, move));
+  }, [data, params.id, props.id, queryMoveData, move]);
 
   return (
     <Fragment>
@@ -129,6 +139,28 @@ const Move = (props: { id?: any }) => {
             </h1>
             <TypeBar type={move.type} />
           </div>
+          {move.track === 281 && (
+            <Form.Select
+              style={{ maxWidth: 250 }}
+              className="element-top w-50"
+              onChange={(e: any) => {
+                searchParams.set('type', e.target.value.toLowerCase());
+                setSearchParams(searchParams);
+                setMove(
+                  data.combat.find(
+                    (item: { type: string; track: number }) => item.track === move.track && item.type === e.target.value.toUpperCase()
+                  )
+                );
+              }}
+              defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
+            >
+              {Object.keys(data.typeEff).map((value: string, index: React.Key | null | undefined) => (
+                <option key={index} value={value}>
+                  {capitalize(value)}
+                </option>
+              ))}
+            </Form.Select>
+          )}
           <hr />
           <div className="row" style={{ margin: 0 }}>
             <div className="col" style={{ padding: 0 }}>
@@ -144,7 +176,7 @@ const Move = (props: { id?: any }) => {
                   <tr>
                     <td>ID</td>
                     <td colSpan={2}>
-                      <b>#{move.id}</b>
+                      <b>#{move.track}</b>
                     </td>
                   </tr>
                   <tr>
@@ -177,7 +209,7 @@ const Move = (props: { id?: any }) => {
                         alt="img-type"
                         src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
                       />
-                      <span className="d-inline-block caption">{getWeatherEffective(move.type)}</span>
+                      <span className="d-inline-block caption">{splitAndCapitalize(getWeatherEffective(move.type) as any, '_', ' ')}</span>
                     </td>
                   </tr>
                   <tr className="text-center">

@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
+import { capitalize } from '../../util/Utils';
 
 const Defender = (prop: { types: any }) => {
   const [types, setTypes]: any = useState(null);
 
   const [typeEffective, setTypeEffective] = useState(null);
 
-  const [currentTypePri, setCurrentTypePri] = useState('Bug');
+  const [currentTypePri, setCurrentTypePri] = useState('BUG');
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
   const [showTypePri, setShowTypePri] = useState(false);
@@ -78,14 +79,14 @@ const Defender = (prop: { types: any }) => {
               onBlur={() => setShowTypePri(false)}
             >
               <div className="card-select">
-                <CardType value={currentTypePri} />
+                <CardType value={capitalize(currentTypePri)} />
               </div>
               {showTypePri && (
                 <div className="result-type">
                   <ul>
                     {types.map((value: any, index: React.Key | null | undefined) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypePri(value)}>
-                        <CardType value={value} />
+                        <CardType value={capitalize(value)} />
                       </li>
                     ))}
                   </ul>
@@ -113,7 +114,7 @@ const Defender = (prop: { types: any }) => {
               ) : (
                 <div className="type-sec">
                   <div className="card-select">
-                    <CardType value={currentTypeSec} />
+                    <CardType value={capitalize(currentTypeSec)} />
                     <button
                       type="button"
                       className="btn-close btn-close-white remove-close"
@@ -128,7 +129,7 @@ const Defender = (prop: { types: any }) => {
                   <ul>
                     {types.map((value: any, index: React.Key | null | undefined) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
-                        <CardType value={value} />
+                        <CardType value={capitalize(value)} />
                       </li>
                     ))}
                   </ul>

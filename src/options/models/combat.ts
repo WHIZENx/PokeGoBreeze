@@ -7,6 +7,7 @@ export interface Combat {
   sound: string | null;
   buffs: any[];
   id: number;
+  track: number;
   pve_power: number;
   pve_energy: number;
   durationMs: number;

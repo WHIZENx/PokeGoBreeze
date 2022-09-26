@@ -106,13 +106,14 @@ export const HundoRate = styled(Rating)(() => ({
 }));
 
 export const capitalize = (str: string) => {
+  str = str.toLowerCase();
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 export const splitAndCapitalize = (str: string, splitBy: string, joinBy: string) => {
   return str
     .split(splitBy)
-    .map((text: string) => capitalize(text.toLowerCase()))
+    .map((text: string) => capitalize(text))
     .join(joinBy);
 };
 

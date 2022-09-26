@@ -30,7 +30,7 @@ const Counter = ({ def, form, changeForm }: any) => {
   };
 
   const loadMetaData = () => {
-    setCounterList(counterPokemon(data.options, def, form.types, data.combat, data.pokemonCombat));
+    setCounterList(counterPokemon(data.options, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat));
     setOpen(true);
   };
 
