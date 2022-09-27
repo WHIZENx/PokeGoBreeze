@@ -22,7 +22,7 @@ import pokemonName from '../../../data/pokemon_names.json';
 
 import './Evolution.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
 import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
 
 import { OverlayTrigger } from 'react-bootstrap';
@@ -146,6 +146,20 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
     };
   };
 
+  const modelEvoChain = (pokemon: { id: number; name: string; form: string }) => {
+    return {
+      name:
+        pokemon.form !== ''
+          ? pokemon.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI').replace(`_${pokemon.form}`, '')
+          : pokemon.name,
+      id: pokemon.id,
+      baby: false,
+      form: pokemon.form,
+      gmax: false,
+      sprite: convertModelSpritName(pokemon.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI')),
+    };
+  };
+
   const getPrevEvoChainJSON = useCallback((name: string, arr: any): void => {
     if (!name) return;
     const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
@@ -177,7 +191,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
   }, []);
 
   const getEvoChainJSON = useCallback(
-    (id: number, forme: { form_name: string | string[]; name: string }) => {
+    (id: number, forme: { form_name: string; name: string }) => {
       let form = forme.form_name === '' || forme.form_name.includes('mega') ? null : forme.form_name;
       if (forme.form_name === '10') form += '%';
       if (forme.name === 'necrozma-dawn') form += '-wings';
@@ -200,6 +214,78 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
     },
     [getPrevEvoChainJSON, getCurrEvoChainJSON, getNextEvoChainJSON]
   );
+
+  const getPrevEvoChainStore = (poke: any, result: any[]) => {
+    const evoList: any[] = [];
+    const pokemon = evoData.filter((pokemon: { evo_list: any[] }) =>
+      pokemon.evo_list.find((evo: { evo_to_id: number; evo_to_form: string }) => evo.evo_to_id === poke.id && evo.evo_to_form === poke.form)
+    );
+    if (pokemon.length === 0) {
+      return;
+    }
+    pokemon.forEach((evo: { id: number; name: string; form: string }) => {
+      evoList.unshift(modelEvoChain(evo));
+      getPrevEvoChainStore(evo, result);
+    });
+    return result.push(evoList);
+  };
+
+  const getCurrEvoChainStore = (poke: any, result: any[]) => {
+    let evoList: any[] = [];
+    const pokemon = evoData.find((pokemon: { evo_list: any[] }) =>
+      pokemon.evo_list.find((evo: { evo_to_id: number; evo_to_form: string }) => evo.evo_to_id === poke.id && evo.evo_to_form === poke.form)
+    );
+    if (!pokemon) {
+      evoList.push(modelEvoChain(poke));
+    } else {
+      evoList = pokemon.evo_list.map((evo: { evo_to_name: string; evo_to_id: number; evo_to_form: string }) =>
+        modelEvoChain({
+          id: evo.evo_to_id,
+          name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
+          form: evo.evo_to_form,
+        })
+      );
+    }
+    return result.push(evoList);
+  };
+
+  const getNextEvoChainStore = (poke: any, result: any[]) => {
+    if (!poke || (poke && poke.evo_list.length === 0)) {
+      return;
+    }
+    const evoList: any[] = poke.evo_list.map((evo: { evo_to_id: number; evo_to_name: string; evo_to_form: string }) =>
+      modelEvoChain({
+        id: evo.evo_to_id,
+        name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
+        form: evo.evo_to_form,
+      })
+    );
+    result.push(evoList);
+    poke.evo_list.forEach((evo: { evo_to_id: number; evo_to_name: string; evo_to_form: string }) => {
+      const pokemon: any = evoData.find(
+        (pokemon: { id: number; form: string }) => pokemon.id === evo.evo_to_id && pokemon.form === evo.evo_to_form
+      );
+      getNextEvoChainStore(pokemon, result);
+    });
+
+    return result;
+  };
+
+  const getEvoChainStore = (id: number, forme: { form_name: string; name: string }) => {
+    const form = forme.form_name === '' || forme.form_name.includes('mega') ? '' : forme.form_name;
+    const result: any[] = [];
+    let pokemon: any = evoData.find((pokemon: { id: number; form: string }) => pokemon.id === id && pokemon.form === form.toUpperCase());
+    if (!pokemon) {
+      pokemon = evoData.find((pokemon: { id: number; form: string }) => pokemon.id === id);
+    }
+    if (!pokemon) {
+      return getEvoChainJSON(id, forme);
+    }
+    getPrevEvoChainStore(pokemon, result);
+    getCurrEvoChainStore(pokemon, result);
+    getNextEvoChainStore(pokemon, result);
+    return setArrEvoList(result);
+  };
 
   const getGmaxChain = useCallback((id: any, form: { name: string }) => {
     return setArrEvoList([
@@ -227,15 +313,19 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
   }, []);
 
   useEffect(() => {
-    const fetchEvolutionJSON = () => {
-      if (forme.form_name !== 'gmax') getEvoChainJSON(id, forme);
-      else getGmaxChain(id, forme);
-    };
-    if (id && forme && gen) fetchEvolutionJSON();
-  }, [forme, id, gen, getGmaxChain, getEvoChainJSON]);
+    if (id && forme) {
+      if (forme.form_name !== 'gmax') {
+        getEvoChainStore(id, forme);
+      } else {
+        getGmaxChain(id, forme);
+      }
+    }
+  }, [forme, id]);
 
   const handlePokeID = (id: string) => {
-    if (id !== id.toString()) onSetIDPoke(parseInt(id));
+    if (id !== id.toString()) {
+      onSetIDPoke(parseInt(id));
+    }
   };
 
   const getQuestEvo = (prevId: number, form: any) => {

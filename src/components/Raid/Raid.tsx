@@ -105,7 +105,7 @@ const Raid = ({
             src={raidEgg(
               parseInt(tier),
               currForm && currForm.form.form_name.includes('mega'),
-              details.find((pokemon: { id: any }) => pokemon.id === id).pokemonClass === 'ULTRA_BEAST'
+              details.find((pokemon: { id: any }) => pokemon.id === id)?.pokemonClass === 'ULTRA_BEAST'
             )}
           />
         </div>

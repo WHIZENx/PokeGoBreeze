@@ -125,6 +125,10 @@ export const getTime = (value: string, notFull = false) => {
   return notFull ? Moment(new Date(parseInt(value))).format('D MMMM YYYY') : Moment(new Date(parseInt(value))).format('HH:mm D MMMM YYYY');
 };
 
+export const convertModelSpritName = (text: string) => {
+  return text.toLowerCase().replaceAll('_', '-').replaceAll('%', '').replace('mime-jr', 'mime_jr').replace('mr-', 'mr.-');
+};
+
 export const convertName = (text: string) => {
   return text
     .toUpperCase()

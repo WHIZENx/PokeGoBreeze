@@ -211,6 +211,11 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
       const result: Evolution = evolutionModel();
       result.id = item.id;
       result.name = item.name;
+      if (item.form) {
+        result.form = item.form.replace(item.pokemonId + '_', '');
+        if (result.form === 'GALARIAN') result.form = 'GALAR';
+        else if (result.form === 'HISUIAN') result.form = 'HISUI';
+      }
       if (item.evolutionBranch) {
         item.evolutionBranch.forEach(
           (evo: {
@@ -235,7 +240,7 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             if (evo.form) {
               dataEvo.evo_to_form = evo.form.replace(name + '_', '').replace('NORMAL', '');
             } else {
-              dataEvo.evo_to_form = '';
+              dataEvo.evo_to_form = result.form;
             }
             dataEvo.evo_to_id = pokemon.find((poke: { name: any }) => poke.name === name).id;
             dataEvo.evo_to_name = name.replace('_NORMAL', '');
@@ -309,11 +314,6 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
       if (item.thirdMove) {
         result.thirdMove.stardust = item.thirdMove.stardustToUnlock;
         result.thirdMove.candy = item.thirdMove.candyToUnlock;
-      }
-      if (item.form) {
-        result.form = item.form.replace(item.pokemonId + '_', '');
-        if (result.form === 'GALARIAN') result.form = 'GALAR';
-        else if (result.form === 'HISUIAN') result.form = 'HISUI';
       }
       return result;
     });

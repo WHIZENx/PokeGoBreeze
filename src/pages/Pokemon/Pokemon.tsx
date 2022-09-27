@@ -198,7 +198,9 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
     }
     const pokemonForm =
       dataStore.details.find(
-        (item: { id: any; name: string }) => item.id === data.id && splitAndCapitalize(item.name.toLowerCase(), '_', ' ') === formName
+        (item: { id: any; name: string }) =>
+          item.id === data.id &&
+          splitAndCapitalize(item.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI').toLowerCase(), '_', ' ') === formName
       )?.releasedGO ?? false;
     return !pokemonForm;
   };
