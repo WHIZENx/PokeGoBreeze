@@ -22,11 +22,22 @@ import { findStabType } from '../../../util/Compute';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const labels: any = {
-  0: '1.00',
-  1: '1.03',
-  2: '1.05',
-  3: '1.07',
-  4: '1.10',
+  0: {
+    color: 'black',
+    style: 'text-danger',
+  },
+  1: {
+    color: 'blue',
+    style: 'text-warning',
+  },
+  2: {
+    color: 'green',
+    style: 'text-warning',
+  },
+  3: {
+    color: 'red',
+    style: 'text-success',
+  },
 };
 
 const Damage = () => {
@@ -334,15 +345,17 @@ const Damage = () => {
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
-                    <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>x{labels[battleState.flevel]}</Box>
+                    <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
+                      x{globalOptions.trainer_friendship[battleState.flevel].atk_bonus.toFixed(2)}
+                    </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
                     <FormControl sx={{ width: 200 }}>
-                      <InputLabel id="demo-simple-select-label">Charge ablility</InputLabel>
+                      <InputLabel id="demo-simple-select-label">Charge ability</InputLabel>
                       <Select
                         name="clevel"
                         value={battleState.clevel}
-                        label="Charge ablility"
+                        label="Charge ability"
                         onChange={(event) => {
                           setBattleState({
                             ...battleState,
@@ -350,22 +363,12 @@ const Damage = () => {
                           });
                         }}
                       >
-                        <MenuItem value={0}>
-                          Normal
-                          <span className="caption-small dropdown-caption text-danger">x0.25</span>
-                        </MenuItem>
-                        <MenuItem value={1} sx={{ color: 'blue' }}>
-                          Nice
-                          <span className="caption-small dropdown-caption text-warning">x0.50</span>
-                        </MenuItem>
-                        <MenuItem value={2} sx={{ color: 'green' }}>
-                          Great
-                          <span className="caption-small dropdown-caption text-warning">x0.75</span>
-                        </MenuItem>
-                        <MenuItem value={3} sx={{ color: 'red' }}>
-                          Excellent
-                          <span className="caption-small dropdown-caption text-success">x1</span>
-                        </MenuItem>
+                        {Object.entries(globalOptions.throw_charge).map(([type, value]: any, index) => (
+                          <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
+                            {capitalize(type)}
+                            <span className={`caption-small dropdown-caption ${labels[index].style}`}>x{value}</span>
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   </Box>

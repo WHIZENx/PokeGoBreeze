@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import { sortStatsPokemon } from '../../../util/Calculate';
 import APIService from '../../../services/API.service';
 import Tools from './Tools';
 

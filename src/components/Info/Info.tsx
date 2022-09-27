@@ -3,7 +3,6 @@ import TypeEffective from '../Effective/TypeEffective';
 import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
 import Type from '../Sprites/Type/Type';
 
-import { splitAndCapitalize } from '../../util/Utils';
 import { useSelector, RootStateOrAny } from 'react-redux';
 
 const Info = (props: any) => {
@@ -14,7 +13,7 @@ const Info = (props: any) => {
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: any) => {
       types.forEach((type: { type: { name: string } }) => {
-        if (value.includes(splitAndCapitalize(type.type.name, '-', ' ')) && !data.includes(key)) data.push(key);
+        if (value.includes(type.type.name.toUpperCase()) && !data.includes(key)) data.push(key);
       });
     });
     return data;
@@ -32,7 +31,7 @@ const Info = (props: any) => {
     Object.entries(typeEffective).forEach(([key, value]: any) => {
       let valueEffective = 1;
       types.forEach((type: { type: { name: string } }) => {
-        valueEffective *= (value as any)[splitAndCapitalize(type.type.name, '-', ' ')];
+        valueEffective *= value[type.type.name.toUpperCase()];
       });
       if (valueEffective >= 2.56) data.very_weak.push(key);
       else if (valueEffective >= 1.6) data.weak.push(key);

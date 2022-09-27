@@ -75,7 +75,7 @@ const Home = () => {
   const [searchMaxCP, setSearchMaxCP]: any = useState('');
 
   useEffect(() => {
-    document.title = 'Pokedex - Home';
+    document.title = 'Home';
   }, []);
 
   useEffect(() => {
@@ -132,7 +132,8 @@ const Home = () => {
     tableScrollID.current = 1;
     const result = dataList.filter((item: any) => {
       const boolFilterType =
-        item.types.map((item: any) => selectTypes.includes(item)).filter((bool: boolean) => bool === true).length === selectTypes.length;
+        item.types.map((item: any) => selectTypes.includes(item.toUpperCase())).filter((bool: boolean) => bool === true).length ===
+        selectTypes.length;
       const boolFilterPoke =
         searchTerm === '' || item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm);
       const boolFilterCP = searchMaxCP === '' || item.maxCP_40 <= searchMaxCP || item.maxCP_50 <= searchMaxCP;

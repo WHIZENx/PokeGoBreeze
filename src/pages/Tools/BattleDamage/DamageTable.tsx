@@ -7,14 +7,8 @@ import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
-import { splitAndCapitalize } from '../../../util/Utils';
-
-const labels: any = {
-  0: 'Normal',
-  1: 'Nice',
-  2: 'Great',
-  3: 'Excellent',
-};
+import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { useSelector, RootStateOrAny } from 'react-redux';
 
 const eff: any = {
   0.244140625: {
@@ -44,6 +38,8 @@ const eff: any = {
 };
 
 const DamageTable = (props: any) => {
+  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
+
   return (
     <div className="container">
       <div className="d-flex justify-content-center">
@@ -163,7 +159,11 @@ const DamageTable = (props: any) => {
             </tr>
             <tr>
               <td>Charge ability</td>
-              <td>{props.result.battleState ? labels[props.result.battleState.clevel] : '-'}</td>
+              <td>
+                {props.result.battleState
+                  ? capitalize((Object.keys(globalOptions.throw_charge) as any)[props.result.battleState.clevel])
+                  : '-'}
+              </td>
             </tr>
             <tr>
               <td>Damage Effective</td>

@@ -424,8 +424,7 @@ const DpsTable = () => {
         }) => {
           const boolFilterType =
             selectTypes.length === 0 ||
-            (selectTypes.includes(capitalize(item.fmove.type.toLowerCase())) &&
-              selectTypes.includes(capitalize(item.cmove.type.toLowerCase())));
+            (selectTypes.includes(item.fmove.type.toUpperCase()) && selectTypes.includes(item.cmove.type.toUpperCase()));
           const boolFilterPoke =
             searchTerm === '' ||
             splitAndCapitalize(item.pokemon.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
