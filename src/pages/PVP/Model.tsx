@@ -22,6 +22,7 @@ import BrokenImageIcon from '@mui/icons-material/BrokenImage';
 import SpokeIcon from '@mui/icons-material/Spoke';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import PersonIcon from '@mui/icons-material/Person';
+import { Candy } from '../../options/models/candy';
 
 export const Keys = (
   assets: any[],
@@ -123,6 +124,7 @@ export const Keys = (
 
 export const OverAllStats = (
   data: any,
+  candyData: Candy[],
   statsRanking: React.MutableRefObject<{
     attack: {
       ranking: { id: any; form: string; attack: any; rank: number }[];
@@ -165,7 +167,7 @@ export const OverAllStats = (
     }
   };
 
-  const renderTopStats = (stats: any, id: number) => {
+  const renderTopStats = (stats: any, id: number, candyData: Candy[]) => {
     const maxCP = parseInt(cp);
     const currStats: any = calculateStatsTopRank(stats);
     return (
@@ -179,8 +181,8 @@ export const OverAllStats = (
             <b>
               (
               <div className="position-relative d-inline-block filter-shadow">
-                <div className="bg-poke-xl-candy" style={{ background: computeCandyBgColor(id), width: 30, height: 30 }} />
-                <div className="poke-xl-candy" style={{ background: computeCandyColor(id), width: 30, height: 30 }} />
+                <div className="bg-poke-xl-candy" style={{ background: computeCandyBgColor(candyData, id), width: 30, height: 30 }} />
+                <div className="poke-xl-candy" style={{ background: computeCandyColor(candyData, id), width: 30, height: 30 }} />
               </div>
               XL Candy required)
             </b>
@@ -230,7 +232,7 @@ export const OverAllStats = (
           <h5>
             <b>Top Rank League</b>
           </h5>
-          {renderTopStats(data.stats, data.id)}
+          {renderTopStats(data.stats, data.id, candyData)}
         </div>
       </div>
     </div>

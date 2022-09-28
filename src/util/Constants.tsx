@@ -1,6 +1,16 @@
 import { getOption } from '../options/options';
 import APIService from '../services/API.service';
 
+export const BASE_CPM: any = {
+  1: 0.094,
+  10: 0.4225,
+  20: 0.5974,
+  30: 0.7317,
+  40: 0.7903,
+  50: 0.84029999,
+  60: 0.91736427,
+};
+
 export const RAID_BOSS_TIER: any = {
   1: {
     level: 20,

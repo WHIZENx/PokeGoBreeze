@@ -19,6 +19,7 @@ import { RootStateOrAny, useSelector } from 'react-redux';
 
 const Calculate = () => {
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
+  const candyData = useSelector((state: RootStateOrAny) => state.store.data.candy);
   const [id, setId] = useState(1);
   const [name, setName] = useState('Bulbasaur');
 
@@ -327,9 +328,9 @@ const Calculate = () => {
                           {statData ? (
                             <div
                               className="d-inline-block bg-poke-candy"
-                              style={{ backgroundColor: computeCandyBgColor(id), marginRight: 8 }}
+                              style={{ backgroundColor: computeCandyBgColor(candyData, id), marginRight: 8 }}
                             >
-                              <div className="poke-candy" style={{ background: computeCandyColor(id), width: 20, height: 20 }} />
+                              <div className="poke-candy" style={{ background: computeCandyColor(candyData, id), width: 20, height: 20 }} />
                             </div>
                           ) : (
                             <img style={{ marginRight: 8 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
@@ -370,12 +371,15 @@ const Calculate = () => {
                               <div
                                 className="bg-poke-xl-candy"
                                 style={{
-                                  background: computeCandyBgColor(id),
+                                  background: computeCandyBgColor(candyData, id),
                                   width: 30,
                                   height: 30,
                                 }}
                               />
-                              <div className="poke-xl-candy" style={{ background: computeCandyColor(id), width: 30, height: 30 }} />
+                              <div
+                                className="poke-xl-candy"
+                                style={{ background: computeCandyColor(candyData, id), width: 30, height: 30 }}
+                              />
                             </div>
                           ) : (
                             <img
@@ -570,14 +574,14 @@ const Calculate = () => {
                               <div
                                 className="bg-poke-candy"
                                 style={{
-                                  backgroundColor: computeCandyBgColor(id),
+                                  backgroundColor: computeCandyBgColor(candyData, id),
                                   marginRight: 10,
                                 }}
                               >
                                 <div
                                   className="poke-candy"
                                   style={{
-                                    background: computeCandyColor(id),
+                                    background: computeCandyColor(candyData, id),
                                     width: 20,
                                     height: 20,
                                   }}
@@ -600,7 +604,7 @@ const Calculate = () => {
                                 <div
                                   className="bg-poke-xl-candy"
                                   style={{
-                                    background: computeCandyBgColor(id),
+                                    background: computeCandyBgColor(candyData, id),
                                     width: 30,
                                     height: 30,
                                   }}
@@ -608,7 +612,7 @@ const Calculate = () => {
                                 <div
                                   className="poke-xl-candy"
                                   style={{
-                                    background: computeCandyColor(id),
+                                    background: computeCandyColor(candyData, id),
                                     width: 30,
                                     height: 30,
                                   }}
@@ -711,14 +715,14 @@ const Calculate = () => {
                               <div
                                 className="bg-poke-candy"
                                 style={{
-                                  backgroundColor: computeCandyBgColor(id),
+                                  backgroundColor: computeCandyBgColor(candyData, id),
                                   marginRight: 10,
                                 }}
                               >
                                 <div
                                   className="poke-candy"
                                   style={{
-                                    background: computeCandyColor(id),
+                                    background: computeCandyColor(candyData, id),
                                     width: 20,
                                     height: 20,
                                   }}
@@ -741,7 +745,7 @@ const Calculate = () => {
                                 <div
                                   className="bg-poke-xl-candy"
                                   style={{
-                                    background: computeCandyBgColor(id),
+                                    background: computeCandyBgColor(candyData, id),
                                     width: 30,
                                     height: 30,
                                   }}
@@ -749,7 +753,7 @@ const Calculate = () => {
                                 <div
                                   className="poke-xl-candy"
                                   style={{
-                                    background: computeCandyColor(id),
+                                    background: computeCandyColor(candyData, id),
                                     width: 30,
                                     height: 30,
                                   }}
@@ -852,14 +856,14 @@ const Calculate = () => {
                               <div
                                 className="bg-poke-candy"
                                 style={{
-                                  backgroundColor: computeCandyBgColor(id),
+                                  backgroundColor: computeCandyBgColor(candyData, id),
                                   marginRight: 10,
                                 }}
                               >
                                 <div
                                   className="poke-candy"
                                   style={{
-                                    background: computeCandyColor(id),
+                                    background: computeCandyColor(candyData, id),
                                     width: 20,
                                     height: 20,
                                   }}
@@ -882,7 +886,7 @@ const Calculate = () => {
                                 <div
                                   className="bg-poke-xl-candy"
                                   style={{
-                                    background: computeCandyBgColor(id),
+                                    background: computeCandyBgColor(candyData, id),
                                     width: 30,
                                     height: 30,
                                   }}
@@ -890,7 +894,7 @@ const Calculate = () => {
                                 <div
                                   className="poke-xl-candy"
                                   style={{
-                                    background: computeCandyColor(id),
+                                    background: computeCandyColor(candyData, id),
                                     width: 30,
                                     height: 30,
                                   }}
@@ -990,14 +994,14 @@ const Calculate = () => {
                               <div
                                 className="bg-poke-candy"
                                 style={{
-                                  backgroundColor: computeCandyBgColor(id),
+                                  backgroundColor: computeCandyBgColor(candyData, id),
                                   marginRight: 10,
                                 }}
                               >
                                 <div
                                   className="poke-candy"
                                   style={{
-                                    background: computeCandyColor(id),
+                                    background: computeCandyColor(candyData, id),
                                     width: 20,
                                     height: 20,
                                   }}
@@ -1020,7 +1024,7 @@ const Calculate = () => {
                                 <div
                                   className="bg-poke-xl-candy"
                                   style={{
-                                    background: computeCandyBgColor(id),
+                                    background: computeCandyBgColor(candyData, id),
                                     width: 30,
                                     height: 30,
                                   }}
@@ -1028,7 +1032,7 @@ const Calculate = () => {
                                 <div
                                   className="poke-xl-candy"
                                   style={{
-                                    background: computeCandyColor(id),
+                                    background: computeCandyColor(candyData, id),
                                     width: 30,
                                     height: 30,
                                   }}

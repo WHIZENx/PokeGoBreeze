@@ -41,6 +41,7 @@ const theme = createTheme({
 
 const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
+  const candyData = useSelector((state: RootStateOrAny) => state.store.data.candy);
   const [arrEvoList, setArrEvoList]: any = useState([]);
 
   const getEvoChain = useCallback(
@@ -146,17 +147,19 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
     };
   };
 
+  const pokeSetName = (name: string) => {
+    return name.replace('_FEMALE', '_F').replace('_MALE', '_M').replaceAll('_', '-');
+  };
+
   const modelEvoChain = (pokemon: { id: number; name: string; form: string }) => {
+    pokemon.name = pokemon.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI');
     return {
-      name:
-        pokemon.form !== ''
-          ? pokemon.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI').replace(`_${pokemon.form}`, '')
-          : pokemon.name,
+      name: pokemon.form !== '' ? pokeSetName(pokemon.name.replace(`_${pokemon.form}`, '')) : pokeSetName(pokemon.name),
       id: pokemon.id,
       baby: false,
       form: pokemon.form,
       gmax: false,
-      sprite: convertModelSpritName(pokemon.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI')),
+      sprite: convertModelSpritName(pokemon.name),
     };
   };
 
@@ -392,11 +395,11 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
                   <div className="position-absolute" style={{ left: -40 }}>
                     {!value.gmax && (
                       <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
-                        <div className="bg-poke-candy" style={{ backgroundColor: computeCandyBgColor(value.id) }}>
+                        <div className="bg-poke-candy" style={{ backgroundColor: computeCandyBgColor(candyData, value.id) }}>
                           <div
                             className="poke-candy"
                             style={{
-                              background: computeCandyColor(value.id),
+                              background: computeCandyColor(candyData, value.id),
                               width: 20,
                               height: 20,
                             }}

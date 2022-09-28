@@ -126,7 +126,14 @@ export const getTime = (value: string, notFull = false) => {
 };
 
 export const convertModelSpritName = (text: string) => {
-  return text.toLowerCase().replaceAll('_', '-').replaceAll('%', '').replace('mime-jr', 'mime_jr').replace('mr-', 'mr.-');
+  return text
+    .toLowerCase()
+    .replaceAll('_', '-')
+    .replaceAll('%', '')
+    .replace('mime-jr', 'mime_jr')
+    .replace('mr-', 'mr.-')
+    .replace('-female', '_f')
+    .replace('-male', '_m');
 };
 
 export const convertName = (text: string) => {

@@ -246,7 +246,7 @@ const RankingPVP = () => {
                 <div className="container">
                   <hr />
                 </div>
-                <div className="stats-container">{OverAllStats(data, statsRanking, params.cp)}</div>
+                <div className="stats-container">{OverAllStats(data, dataStore.candy, statsRanking, params.cp)}</div>
                 <div className="container">
                   <hr />
                   {TypeEffective(data.pokemon.types)}

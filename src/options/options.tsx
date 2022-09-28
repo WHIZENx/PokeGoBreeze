@@ -8,6 +8,7 @@ import { Details } from './models/details';
 import pokemonData from '../data/pokemon.json';
 import { convertName } from '../util/Utils';
 import { TypeSet } from './models/type';
+import { Candy } from './models/candy';
 
 export const getOption = (options: any, args: string[]) => {
   args.forEach((arg: any) => {
@@ -190,6 +191,63 @@ export const optionformSpecial = (data: any[]) => {
 
 export const optionPokemonFamily = (pokemon: any[]) => {
   return Array.from(new Set(pokemon.map((item: { pokemonId: any }) => item.pokemonId)));
+};
+
+export const optionPokemonFamilyGroup = (data: any[]) => {
+  return data
+    .filter(
+      (item: { templateId: string | string[]; data: { formSettings?: any } }) =>
+        item.templateId.includes('FAMILY') && Object.keys(item.data).includes('pokemonFamily')
+    )
+    .map((item) => {
+      return {
+        familyId: parseInt(item.templateId.split('_')[0].replace('V', '')),
+        familyName: item.data.pokemonFamily.familyId,
+      };
+    });
+};
+
+export const optionPokemonCandy = (candyData: any[], family: any[], pokemon: any[], pokemonFamily: any[]) => {
+  const candyModel = () => {
+    return {
+      familyId: 0,
+      familyGroup: [],
+      primaryColor: {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0,
+      },
+      secondaryColor: {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0,
+      },
+      familyName: null,
+    };
+  };
+
+  const resultCandy: Candy[] = [];
+  pokemonFamily.forEach((poke, index) => {
+    const candy: any = candyData.find((item) => index + 1 === item.FamilyId);
+    if (candy) {
+      const result: Candy = candyModel();
+      result.familyId = index + 1;
+      result.familyName = `FAMILY_${poke}`;
+      result.primaryColor = candy.PrimaryColor;
+      result.secondaryColor = candy.SecondaryColor;
+
+      result.familyGroup = pokemon
+        .filter((item) => result.familyId === candy.FamilyId && result.familyName === item.familyId && item.pokemonId === item.name)
+        .map((item: any) => {
+          return { id: item.id, name: item.pokemonId };
+        });
+      resultCandy.push(result);
+    }
+  });
+
+  return resultCandy;
 };
 
 export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string | any[]) => {

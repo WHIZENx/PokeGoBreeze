@@ -494,14 +494,14 @@ const FindBattle = () => {
                                           <div
                                             className="d-inline-block bg-poke-candy"
                                             style={{
-                                              backgroundColor: computeCandyBgColor(item.id),
+                                              backgroundColor: computeCandyBgColor(dataStore.candy, item.id),
                                               marginRight: 5,
                                             }}
                                           >
                                             <div
                                               className="poke-candy"
                                               style={{
-                                                background: computeCandyColor(item.id),
+                                                background: computeCandyColor(dataStore.candy, item.id),
                                                 width: 20,
                                                 height: 20,
                                               }}
@@ -515,7 +515,7 @@ const FindBattle = () => {
                                             <div
                                               className="bg-poke-xl-candy"
                                               style={{
-                                                background: computeCandyBgColor(id),
+                                                background: computeCandyBgColor(dataStore.candy, id),
                                                 width: 30,
                                                 height: 30,
                                               }}
@@ -523,7 +523,7 @@ const FindBattle = () => {
                                             <div
                                               className="poke-xl-candy"
                                               style={{
-                                                background: computeCandyColor(id),
+                                                background: computeCandyColor(dataStore.candy, id),
                                                 width: 30,
                                                 height: 30,
                                               }}
@@ -580,14 +580,14 @@ const FindBattle = () => {
                                           <div
                                             className="d-inline-block bg-poke-candy"
                                             style={{
-                                              backgroundColor: computeCandyBgColor(item.id),
+                                              backgroundColor: computeCandyBgColor(dataStore.candy, item.id),
                                               marginRight: 5,
                                             }}
                                           >
                                             <div
                                               className="poke-candy"
                                               style={{
-                                                background: computeCandyColor(item.id),
+                                                background: computeCandyColor(dataStore.candy, item.id),
                                                 width: 20,
                                                 height: 20,
                                               }}
@@ -601,7 +601,7 @@ const FindBattle = () => {
                                             <div
                                               className="bg-poke-xl-candy"
                                               style={{
-                                                background: computeCandyBgColor(id),
+                                                background: computeCandyBgColor(dataStore.candy, id),
                                                 width: 30,
                                                 height: 30,
                                               }}
@@ -609,7 +609,7 @@ const FindBattle = () => {
                                             <div
                                               className="poke-xl-candy"
                                               style={{
-                                                background: computeCandyColor(id),
+                                                background: computeCandyColor(dataStore.candy, id),
                                                 width: 30,
                                                 height: 30,
                                               }}
@@ -666,14 +666,14 @@ const FindBattle = () => {
                                           <div
                                             className="d-inline-block bg-poke-candy"
                                             style={{
-                                              backgroundColor: computeCandyBgColor(item.id),
+                                              backgroundColor: computeCandyBgColor(dataStore.candy, item.id),
                                               marginRight: 5,
                                             }}
                                           >
                                             <div
                                               className="poke-candy"
                                               style={{
-                                                background: computeCandyColor(item.id),
+                                                background: computeCandyColor(dataStore.candy, item.id),
                                                 width: 20,
                                                 height: 20,
                                               }}
@@ -687,7 +687,7 @@ const FindBattle = () => {
                                             <div
                                               className="bg-poke-xl-candy"
                                               style={{
-                                                background: computeCandyBgColor(id),
+                                                background: computeCandyBgColor(dataStore.candy, id),
                                                 width: 30,
                                                 height: 30,
                                               }}
@@ -695,7 +695,7 @@ const FindBattle = () => {
                                             <div
                                               className="poke-xl-candy"
                                               style={{
-                                                background: computeCandyColor(id),
+                                                background: computeCandyColor(dataStore.candy, id),
                                                 width: 30,
                                                 height: 30,
                                               }}
@@ -752,14 +752,14 @@ const FindBattle = () => {
                                           <div
                                             className="d-inline-block bg-poke-candy"
                                             style={{
-                                              backgroundColor: computeCandyBgColor(item.id),
+                                              backgroundColor: computeCandyBgColor(dataStore.candy, item.id),
                                               marginRight: 5,
                                             }}
                                           >
                                             <div
                                               className="poke-candy"
                                               style={{
-                                                background: computeCandyColor(item.id),
+                                                background: computeCandyColor(dataStore.candy, item.id),
                                                 width: 20,
                                                 height: 20,
                                               }}
@@ -773,7 +773,7 @@ const FindBattle = () => {
                                             <div
                                               className="bg-poke-xl-candy"
                                               style={{
-                                                background: computeCandyBgColor(id),
+                                                background: computeCandyBgColor(dataStore.candy, id),
                                                 width: 30,
                                                 height: 30,
                                               }}
@@ -781,7 +781,7 @@ const FindBattle = () => {
                                             <div
                                               className="poke-xl-candy"
                                               style={{
-                                                background: computeCandyColor(id),
+                                                background: computeCandyColor(dataStore.candy, id),
                                                 width: 30,
                                                 height: 30,
                                               }}

@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 
 import './Pokemon.css';
 
-import { splitAndCapitalize } from '../../util/Utils';
+import { convertName, splitAndCapitalize } from '../../util/Utils';
 import { computeCandyBgColor, computeCandyColor } from '../../util/Compute';
 import { regionList } from '../../util/Constants';
 
@@ -198,9 +198,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
     }
     const pokemonForm =
       dataStore.details.find(
-        (item: { id: any; name: string }) =>
-          item.id === data.id &&
-          splitAndCapitalize(item.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI').toLowerCase(), '_', ' ') === formName
+        (item: { id: any; name: string }) => item.id === data.id && item.name === convertName(formName.replaceAll(' ', '-'))
       )?.releasedGO ?? false;
     return !pokemonForm;
   };
@@ -396,7 +394,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           </td>
                           <td colSpan={2}>
                             <h5 className="d-flex">
-                              <b>{formName}</b>
+                              <b>{formName && splitAndCapitalize(convertName(formName.replaceAll(' ', '-')), '_', ' ')}</b>
                             </h5>
                           </td>
                         </tr>
@@ -474,14 +472,14 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                               <div
                                 className="d-inline-block bg-poke-candy"
                                 style={{
-                                  backgroundColor: computeCandyBgColor(data.id),
+                                  backgroundColor: computeCandyBgColor(dataStore.candy, data.id),
                                   marginRight: 5,
                                 }}
                               >
                                 <div
                                   className="poke-candy"
                                   style={{
-                                    background: computeCandyColor(data.id),
+                                    background: computeCandyColor(dataStore.candy, data.id),
                                     width: 20,
                                     height: 20,
                                   }}
@@ -518,14 +516,14 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                               <div
                                 className="d-inline-block bg-poke-candy"
                                 style={{
-                                  backgroundColor: computeCandyBgColor(data.id),
+                                  backgroundColor: computeCandyBgColor(dataStore.candy, data.id),
                                   marginRight: 5,
                                 }}
                               >
                                 <div
                                   className="poke-candy"
                                   style={{
-                                    background: computeCandyColor(data.id),
+                                    background: computeCandyColor(dataStore.candy, data.id),
                                     width: 20,
                                     height: 20,
                                   }}

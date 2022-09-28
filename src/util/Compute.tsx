@@ -1,5 +1,4 @@
-import candyData from '../data/candy_pokemon_go.json';
-
+import { Candy } from '../options/models/candy';
 import APIService from '../services/API.service';
 import { convertName, getStyleRuleValue } from './Utils';
 
@@ -40,20 +39,20 @@ export const raidEgg = (tier: number, mega: any, ultra?: boolean) => {
   else return APIService.getRaidSprite('ic_raid_small');
 };
 
-export const computeCandyBgColor = (id: number) => {
-  let data = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+export const computeCandyBgColor = (candyData: Candy[], id: number) => {
+  let data: any = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) data = candyData.find((item) => item.familyId === 0);
-  return `rgb(${Math.round(255 * (data as any).SecondaryColor.r)}, ${Math.round(255 * (data as any).SecondaryColor.g)}, ${Math.round(
-    255 * (data as any).SecondaryColor.b
-  )}, ${(data as any).SecondaryColor.a})`;
+  return `rgb(${Math.round(255 * data.secondaryColor.r)}, ${Math.round(255 * data.secondaryColor.g)}, ${Math.round(
+    255 * data.secondaryColor.b
+  )}, ${data.secondaryColor.a})`;
 };
 
-export const computeCandyColor = (id: number) => {
-  let data = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
-  if (!data) data = candyData.find((item) => item.familyId === 0);
-  return `rgb(${Math.round(255 * (data as any).PrimaryColor.r)}, ${Math.round(255 * (data as any).PrimaryColor.g)}, ${Math.round(
-    255 * (data as any).PrimaryColor.b
-  )}, ${(data as any).PrimaryColor.a})`;
+export const computeCandyColor = (candyData: Candy[], id: number) => {
+  let data: any = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  if (!data) data = candyData.find((item: any) => item.familyId === 0);
+  return `rgb(${Math.round(255 * data.primaryColor.r)}, ${Math.round(255 * data.primaryColor.g)}, ${Math.round(
+    255 * data.primaryColor.b
+  )}, ${data.primaryColor.a})`;
 };
 
 export const computeBgType = (types: any[], shadow = false, purified = false, opacity = 1, styleSheet?: any) => {

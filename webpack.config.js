@@ -22,172 +22,172 @@ const publicPath = process.env.PUBLIC_URL || '/';
 dotenv.config();
 
 module.exports = {
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './public/index.html',
-            favicon: './public/favicon.ico'
-        }),
-        new MiniCssExtractPlugin({
-            filename: '[contenthash].css',
-            chunkFilename: '[hash].css'
-        }),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.ProvidePlugin({
-            process: 'process/browser',
-        }),
-        new webpack.DefinePlugin({
-            'process.env': JSON.stringify(process.env)
-        }),
-        new TSLintPlugin({
-            files: ['./src/**/*.ts']
-        }),
-        new WebpackFavicons({
-            src: 'src/assets/pokedex.png',
-            path: 'img',
-            background: '#000',
-            theme_color: '#000',
-            icons: {
-                favicons: true
-            }
-        }),
-        new WebpackManifestPlugin({
-            fileName: './manifest.json',
-            seed: manifest
-        }),
-        new CleanWebpackPlugin()
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+      favicon: './public/favicon.ico'
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[contenthash].css',
+      chunkFilename: '[hash].css'
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
+    }),
+    new TSLintPlugin({
+      files: ['./src/**/*.ts']
+    }),
+    new WebpackFavicons({
+      src: 'src/assets/pokedex.png',
+      path: 'img',
+      background: '#000',
+      theme_color: '#000',
+      icons: {
+        favicons: true
+      }
+    }),
+    new WebpackManifestPlugin({
+      fileName: './manifest.json',
+      seed: manifest
+    }),
+    new CleanWebpackPlugin()
+  ],
+  optimization: {
+    runtimeChunk: 'single',
+    splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        reactVendor: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: "reactVendor",
+          enforce: true
+        },
+        utilityVendor: {
+          test: /[\\/]node_modules[\\/](lodash|moment|moment-timezone)[\\/]/,
+          name: "utilityVendor",
+          enforce: true
+        },
+        bootstrapVendor: {
+          test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
+          name: "bootstrapVendor",
+          enforce: true
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/](!react-bootstrap)(!lodash)(!moment)(!moment-timezone)[\\/]/,
+          name: "vendor",
+          enforce: true
+        }
+      },
+    },
+    minimizer: [
+      new UglifyJSPlugin({
+        uglifyOptions: {
+          warnings: false,
+          output: {
+            comments: false,
+          },
+          sourceMap: true,
+          minimize: false,
+        }
+      }),
+      new CssnanoPlugin({
+        sourceMap: true
+      })
+    ]
+  },
+  mode: isProduction ? 'production' : 'development',
+  bail: isProduction,
+  target: 'web',
+  devtool: false,
+  devServer: {
+    static: [
+      { directory: path.resolve(__dirname, 'dist') },
+      { directory: path.resolve(__dirname, 'public') },
     ],
-    optimization: {
-        runtimeChunk: 'single',
-        splitChunks: {
-            chunks: 'all',
-            maxInitialRequests: Infinity,
-            minSize: 0,
-            cacheGroups: {
-                reactVendor: {
-                    test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-                    name: "reactVendor",
-                    enforce: true
-                },
-                utilityVendor: {
-                    test: /[\\/]node_modules[\\/](lodash|moment|moment-timezone)[\\/]/,
-                    name: "utilityVendor",
-                    enforce: true
-                },
-                bootstrapVendor: {
-                    test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
-                    name: "bootstrapVendor",
-                    enforce: true
-                },
-                vendor: {
-                    test: /[\\/]node_modules[\\/](!react-bootstrap)(!lodash)(!moment)(!moment-timezone)[\\/]/,
-                    name: "vendor",
-                    enforce: true
-                }
-            },
-        },
-        minimizer: [
-            new UglifyJSPlugin({
-                uglifyOptions: {
-                    warnings: false,
-                    output: {
-                        comments: false,
-                    },
-                    sourceMap: true,
-                    minimize: false,
-                }
-            }),
-            new CssnanoPlugin({
+    historyApiFallback: true,
+    open: true,
+    compress: true,
+    port: 9000,
+  },
+  entry: {
+    src: ['./src/index.tsx'],
+    vendors: ['react']
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[contenthash].js',
+    chunkFilename: "[chunkhash].js",
+    publicPath,
+    clean: true,
+  },
+  resolve: {
+    modules: [path.join(__dirname, 'src'), 'node_modules'],
+    alias: {
+      react: path.join(__dirname, 'node_modules', 'react'),
+      process: "process/browser"
+    },
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ["babel-loader"],
+      },
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: ["ts-loader"],
+      },
+      {
+        test: /\.css$/i,
+        include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/,
+        use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                url: true,
+                importLoaders: 1,
                 sourceMap: true
-            })
+              }
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                    plugins: [
+                      "postcss-preset-env",
+                      autoprefixer
+                    ]
+                  }
+              }
+            },
         ]
-    },
-    mode: isProduction ? 'production' : 'development',
-    bail: isProduction,
-    target: 'web',
-    devtool: false,
-    devServer: {
-        static: [
-            { directory: path.resolve(__dirname, 'dist') },
-            { directory: path.resolve(__dirname, 'public') },
+      },
+      {
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/,
+        use: [
+          'file-loader',
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              bypassOnDebug: true, // webpack@1.x
+              disable: true, // webpack@2.x and newer
+            },
+          },
         ],
-        historyApiFallback: true,
-        open: true,
-        compress: true,
-        port: 9000,
-    },
-    entry: {
-        src: ['./src/index.tsx'],
-        vendors: ['react']
-    },
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: '[contenthash].js',
-        chunkFilename: "[chunkhash].js",
-        publicPath,
-        clean: true,
-    },
-    resolve: {
-        modules: [path.join(__dirname, 'src'), 'node_modules'],
-        alias: {
-            react: path.join(__dirname, 'node_modules', 'react'),
-            process: "process/browser"
-        },
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
-                use: ["babel-loader"],
-            },
-            {
-                test: /\.(ts|tsx)$/,
-                exclude: /node_modules/,
-                use: ["ts-loader"],
-            },
-            {
-                test: /\.css$/i,
-                include: path.resolve(__dirname, 'src'),
-                exclude: /node_modules/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            url: true,
-                            importLoaders: 1,
-                            sourceMap: true
-                        }
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            postcssOptions: {
-                                plugins: [
-                                    "postcss-preset-env",
-                                    autoprefixer
-                                ]
-                            }
-                        }
-                    },
-                ]
-            },
-            {
-                test: /\.(gif|png|jpe?g|svg)$/i,
-                include: path.resolve(__dirname, 'src'),
-                exclude: /node_modules/,
-                use: [
-                    'file-loader',
-                    {
-                        loader: 'image-webpack-loader',
-                        options: {
-                            bypassOnDebug: true, // webpack@1.x
-                            disable: true, // webpack@2.x and newer
-                        },
-                    },
-                ],
-            }
-        ]
-    }
+      }
+    ]
+  }
 }
