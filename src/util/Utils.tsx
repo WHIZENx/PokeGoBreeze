@@ -149,6 +149,7 @@ export const convertName = (text: string) => {
     .replaceAll('É', 'E')
     .replace('PUMPKABOO_AVERAGE', 'PUMPKABOO')
     .replace('GOURGEIST_AVERAGE', 'GOURGEIST')
+    .replace('_ARMOR', '_A')
     .replace('_GALAR', '_GALARIAN')
     .replace('_HISUI', '_HISUIAN');
 };

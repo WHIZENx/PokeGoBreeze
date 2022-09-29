@@ -186,7 +186,8 @@ export const optionformSpecial = (data: any[]) => {
           (item.form.includes('NORMAL') || (!item.form.includes('UNOWN') && item.form.split('_')[item.form.split('_').length - 1] === 'S')))
       );
     })
-    .map((item: { form: any }) => item.form);
+    .map((item: { form: string }) => item.form)
+    .filter((form: string) => form !== 'MEWTWO_A');
 };
 
 export const optionPokemonFamily = (pokemon: any[]) => {

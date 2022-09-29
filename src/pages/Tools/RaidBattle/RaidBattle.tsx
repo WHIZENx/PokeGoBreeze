@@ -746,7 +746,7 @@ const RaidBattle = () => {
                     item.name ===
                       (item.id === 555 && !obj.pokemon.name.toLowerCase().includes('zen')
                         ? obj.pokemon.name.toUpperCase().replaceAll(' ', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
-                        : convertName(obj.pokemon.name))
+                        : convertName(obj.pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
                 );
                 return result ? result.releasedGO : false;
               })

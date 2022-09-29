@@ -5,14 +5,14 @@ import Type from '../Sprites/Type/Type';
 
 import { useSelector, RootStateOrAny } from 'react-redux';
 
-const Info = (props: any) => {
+const Info = (props: { data: { types: any }; currForm: { form: { id: any; types: any[] } } }) => {
   const typeEffective = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
   const weatherEffective = useSelector((state: RootStateOrAny) => state.store.data.weatherBoost);
 
   const getWeatherEffective = (types: any[]) => {
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: any) => {
-      types.forEach((type: { type: { name: string } }) => {
+      types?.forEach((type: { type: { name: string } }) => {
         if (value.includes(type.type.name.toUpperCase()) && !data.includes(key)) data.push(key);
       });
     });
@@ -30,7 +30,7 @@ const Info = (props: any) => {
     };
     Object.entries(typeEffective).forEach(([key, value]: any) => {
       let valueEffective = 1;
-      types.forEach((type: { type: { name: string } }) => {
+      types?.forEach((type: { type: { name: string } }) => {
         valueEffective *= value[type.type.name.toUpperCase()];
       });
       if (valueEffective >= 2.56) data.very_weak.push(key);

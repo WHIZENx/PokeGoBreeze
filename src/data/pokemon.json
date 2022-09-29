@@ -12123,23 +12123,23 @@
         "cosmeticFormesAliases": [],
         "cosmeticFormesSprites": [],
         "otherFormes": [
-            "Mewtwo-A",
+            "Mewtwo-Armor",
             "Mewtwo-Mega-X",
             "Mewtwo-Mega-Y"
         ],
         "otherFormesAliases": [
-            "mewtwoa",
+            "mewtwoarmor",
             "mewtwomegax",
             "mewtwomegay"
         ],
         "otherFormesSprites": [
-            "mewtwo-a",
+            "mewtwo-armor",
             "mewtwo-mega-x",
             "mewtwo-mega-y"
         ],
         "formeOrder": [
             "Mewtwo",
-            "Mewtwo-A",
+            "Mewtwo-Armor",
             "Mewtwo-Mega-X",
             "Mewtwo-Mega-Y"
         ],
@@ -12157,11 +12157,11 @@
         "disableTransferToPokemonHome": false,
         "isBaby": false
     },
-    "mewtwoa": {
+    "mewtwoarmor": {
         "num": 150,
-        "name": "Mewtwo-A",
-        "alias": "mewtwoa",
-        "slug": "mewtwo-a",
+        "name": "Mewtwo-Armor",
+        "alias": "mewtwoarmor",
+        "slug": "mewtwo-armor",
         "sprite": "unknown-pokemon",
         "types": [
             "Psychic"

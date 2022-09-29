@@ -12,7 +12,11 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
   const [move, setMove]: any = useState({ data: [] });
 
   const findMove = useCallback(() => {
-    const combatPoke = data.pokemonCombat.filter((item: { id: number }) => item.id === parseInt(props.data.species.url.split('/')[6]));
+    const combatPoke = data.pokemonCombat.filter((item: { id: number; name: string }) =>
+      props.form?.id
+        ? item.id === parseInt(props.data.species.url.split('/')[6])
+        : item.name === props.form?.name.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
+    );
     if (combatPoke && combatPoke.length === 1)
       return setMove(
         rankMove(
@@ -60,7 +64,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
   useEffect(() => {
-    if (props.data) findMove();
+    if (props.data && props.data.types) findMove();
   }, [findMove, props.data]);
 
   const renderMovesetTable = (value: any, max: number, type: string) => {

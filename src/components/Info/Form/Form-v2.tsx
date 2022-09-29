@@ -53,17 +53,16 @@ const Form = ({
       .map((item: any[]) => {
         return item.find((item: { form: { is_default: any } }) => item.form.is_default);
       })
-      .find((item: { id: any }) => item.id === id_default);
+      .find((item: { id: any }) => item && item.id === id_default);
   }, [formList, id_default]);
 
   const findForm = useCallback(() => {
-    let form = paramForm;
-    if (id_default === 555 && form === 'galar') form += '-standard';
+    if (id_default === 555 && paramForm === 'galar') paramForm += '-standard';
     return formList
       .map((form: any[]) => {
         let curFrom = form.find(
           (item: { form: { form_name: any; name: string }; default_name: string }) =>
-            form && (item.form.form_name === form || item.form.name === item.default_name + '-' + form)
+            item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm
         );
         curFrom = curFrom ?? form.find((item: { form: { is_default: any } }) => item.form.is_default);
         if (paramForm && curFrom.form.form_name !== paramForm.toLowerCase()) {
@@ -73,7 +72,9 @@ const Form = ({
         return curFrom;
       })
       .find((item: { form: { form_name: any; name: string }; default_name: string; id: any }) => {
-        return form ? item.form.form_name === form || item.form.name === item.default_name + '-' + form : item.id === id_default;
+        return paramForm
+          ? item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm
+          : item.id === id_default;
       });
   }, [formList, id_default, paramForm]);
 
@@ -106,7 +107,7 @@ const Form = ({
       const filterForm = stats.find((item: { id: any; form: any }) => item.id === id && filterFormName(formName, item.form));
       if (filterId.length === 1 && formLength === 1 && !filterForm) return filterId[0];
       else if (filterId.length === formLength && !filterForm)
-        return stats.find((item: { id: any; form: string }) => item.id === id && item.form === 'Normal');
+        return stats.find((item: { id: any; form: string }) => item && item.id === id && item.form === 'Normal');
       else return filterForm;
     },
     [filterFormName]
@@ -160,9 +161,11 @@ const Form = ({
 
   useEffect(() => {
     if (!onChangeForm || (!currForm && id_default && pokeData && formList.length > 0 && pokeData.length > 0)) {
-      setCurrForm(findForm() ?? findFirst());
+      const currentForm = findForm() ?? findFirst();
+      setCurrForm(currentForm);
       setPokeID(findFirst() ? findFirst().form.id : id_default);
-      setDataPoke(pokeData.find((item: { id: any }) => item.id === id_default));
+      const data = pokeData.find((item: { id: any }) => item.id === id_default);
+      setDataPoke(data);
     }
   }, [currForm, findForm, findFirst, setPokeID, id_default, formList.length, onChangeForm, pokeData]);
 
@@ -210,7 +213,7 @@ const Form = ({
     <Fragment>
       <div className="form-container">
         <div className="scroll-form">
-          {formList.map((value: any[], index: React.Key | null | undefined) => (
+          {formList.map((value: any[], index: React.Key | number) => (
             <Fragment key={index}>
               {value.map(
                 (
@@ -218,7 +221,7 @@ const Form = ({
                     form: { id: null; name: string; form_name: string };
                     default_name: string;
                   },
-                  index: React.Key | null | undefined
+                  index: React.Key | number
                 ) => (
                   <button
                     key={index}
@@ -256,6 +259,7 @@ const Form = ({
                         <small>(Default)</small>
                       </b>
                     )}
+                    {!value.form.id && <small className="text-danger">* Only in GO</small>}
                   </button>
                 )
               )}
@@ -289,10 +293,10 @@ const Form = ({
       ) : (
         <Gender
           sex="Genderless"
-          default_m={currForm && currForm.form.sprites.front_default}
-          shiny_m={currForm && currForm.form.sprites.front_shiny}
-          default_f={currForm && currForm.form.sprites.front_female}
-          shiny_f={currForm && currForm.form.sprites.front_shiny_female}
+          default_m={currForm && (currForm.form.sprites ? currForm.form.sprites.front_default : APIService.getPokeSprite(0))}
+          shiny_m={currForm && (currForm.form.sprites ? currForm.form.sprites.front_shiny : APIService.getPokeSprite(0))}
+          default_f={currForm && (currForm.form.sprites ? currForm.form.sprites.front_female : APIService.getPokeSprite(0))}
+          shiny_f={currForm && (currForm.form.sprites ? currForm.form.sprites.front_shiny_female : APIService.getPokeSprite(0))}
         />
       )}
       <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} pokemonStats={stats} stats={dataPoke} />

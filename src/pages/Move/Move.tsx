@@ -469,7 +469,7 @@ const Move = (props: { id?: any }) => {
                               item.name ===
                                 (item.id === 555 && !pokemon.name.toLowerCase().includes('zen')
                                   ? pokemon.name.toUpperCase().replaceAll(' ', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
-                                  : convertName(pokemon.name))
+                                  : convertName(pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
                           );
                           return result ? result.releasedGO : false;
                         })}

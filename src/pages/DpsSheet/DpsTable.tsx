@@ -449,7 +449,7 @@ const DpsTable = () => {
                   pokemon.name ===
                     (pokemon.id === 555 && !item.pokemon.name.toLowerCase().includes('zen')
                       ? item.pokemon.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
-                      : convertName(item.pokemon.name))
+                      : convertName(item.pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
                 );
               }
             });

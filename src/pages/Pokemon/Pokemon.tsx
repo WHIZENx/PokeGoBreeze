@@ -72,6 +72,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
           dataFromList.push(pokeForm);
         })
       );
+
       setPokeData(dataPokeList);
       let modify = false;
       dataFromList = dataFromList.map((value) => {
@@ -96,6 +97,26 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
             .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
         })
         .sort((a, b) => a[0].form.id - b[0].form.id);
+      if (data.id === 150) {
+        dataFromList.push([
+          {
+            default_name: 'mewtwo',
+            name: 'mewtwo',
+            form: {
+              form_name: 'armor',
+              form_names: [],
+              form_order: 4,
+              id: null,
+              is_battle_only: true,
+              is_default: true,
+              is_mega: false,
+              name: 'mewtwo-armor',
+              version_group: { name: 'Pokémon-GO' },
+              types: [{ type: { name: 'psychic' } }],
+            },
+          },
+        ]);
+      }
       setFormList(dataFromList);
       let defaultFrom,
         isDefaultForm: {
@@ -137,8 +158,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
       defaultData = dataPokeList.find((value) => value.name === isDefaultForm.form.name);
       if (!defaultData) defaultData = dataPokeList.find((value) => value.name === isDefaultForm.name);
       setWH((prevWH) => ({ ...prevWH, weight: defaultData.weight, height: defaultData.height }));
-      if (isDefaultForm) setVersion(splitAndCapitalize(isDefaultForm.form.version_group.name, '-', ' '));
-      else setVersion(splitAndCapitalize(defaultFrom[0].form.version_group.name, '-', ' '));
+      setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom[0]).form.version_group.name, '-', ' '));
       if (!params.id) setRegion(regionList[parseInt(data.generation.url.split('/')[6])]);
       const nameInfo = splitAndCapitalize(form ? isDefaultForm.form.name : data.name, '-', ' ');
       setLoadForm(true);
@@ -394,7 +414,14 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           </td>
                           <td colSpan={2}>
                             <h5 className="d-flex">
-                              <b>{formName && splitAndCapitalize(convertName(formName.replaceAll(' ', '-')), '_', ' ')}</b>
+                              <b>
+                                {formName &&
+                                  splitAndCapitalize(
+                                    convertName(formName.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'),
+                                    '_',
+                                    ' '
+                                  )}
+                              </b>
                             </h5>
                           </td>
                         </tr>
@@ -422,7 +449,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                             <h5>Version</h5>
                           </td>
                           <td colSpan={2}>
-                            <h5 className="d-flex">{version}</h5>
+                            <h5 className="d-flex">{version && version.replace('Go', 'GO')}</h5>
                           </td>
                         </tr>
                         <tr>
