@@ -2,7 +2,16 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import Type from '../Sprites/Type/Type';
 
-const TypeEffective = (props: any) => {
+const TypeEffective = (props: {
+  typeEffective: {
+    very_weak?: any[];
+    weak?: any[];
+    super_resist?: any[];
+    very_resist?: any[];
+    resist?: any[];
+    neutral?: any[];
+  };
+}) => {
   if (!props.typeEffective) return <></>;
 
   const noneSprit = () => {
@@ -24,7 +33,7 @@ const TypeEffective = (props: any) => {
       <h6 className="element-top">
         <b>Weakness</b>
       </h6>
-      {props.typeEffective.very_weak.length !== 0 || props.typeEffective.weak.length !== 0 ? (
+      {props.typeEffective.very_weak?.length !== 0 || props.typeEffective.weak?.length !== 0 ? (
         <Fragment>
           <Type text={'2.56x damage from'} arr={props.typeEffective.very_weak} style={{ marginLeft: 15 }} />
           <Type text={'1.6x damage from'} arr={props.typeEffective.weak} style={{ marginLeft: 15 }} />
@@ -35,9 +44,9 @@ const TypeEffective = (props: any) => {
       <h6 className="element-top">
         <b>Resistance</b>
       </h6>
-      {props.typeEffective.super_resist.length !== 0 ||
-      props.typeEffective.very_resist.length !== 0 ||
-      props.typeEffective.resist.length !== 0 ? (
+      {props.typeEffective.super_resist?.length !== 0 ||
+      props.typeEffective.very_resist?.length !== 0 ||
+      props.typeEffective.resist?.length !== 0 ? (
         <Fragment>
           <Type text={'0.244x damage from'} arr={props.typeEffective.super_resist} style={{ marginLeft: 15 }} />
           <Type text={'0.391x damage from'} arr={props.typeEffective.very_resist} style={{ marginLeft: 15 }} />

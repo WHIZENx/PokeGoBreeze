@@ -6,7 +6,14 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
-const CardMoveSmall = (props: any) => {
+const CardMoveSmall = (props: {
+  value: { name: string; elite: any; shadow: any; purified: any };
+  empty?: any;
+  disable?: any;
+  show?: any;
+  select?: any;
+  clearData?: any;
+}) => {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
   const type = props.value ? capitalize(combat.find((item: any) => item.name === props.value.name).type.toLowerCase()) : '';
 
@@ -32,7 +39,7 @@ const CardMoveSmall = (props: any) => {
                 <div className="select-down d-flex align-items-center">
                   {props.select && <KeyboardArrowDownIcon fontSize="small" />}
                   {props.clearData && (
-                    <CloseIcon className="remove-pokemon-select" sx={{ color: 'red' }} onClick={() => props.clearData()} />
+                    <CloseIcon className="remove-pokemon-select" sx={{ color: 'red' }} onClick={() => props.clearData?.()} />
                   )}
                 </div>
               )}

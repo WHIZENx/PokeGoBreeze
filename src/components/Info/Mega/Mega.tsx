@@ -5,18 +5,7 @@ import { splitAndCapitalize } from '../../../util/Utils';
 
 import './Mega.css';
 
-const Mega = (props: {
-  formList: any;
-  id:
-    | string
-    | number
-    | boolean
-    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-    | React.ReactFragment
-    | React.ReactPortal
-    | null
-    | undefined;
-}) => {
+const Mega = (props: { formList: any; id: number }) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
   const [arrEvoList, setArrEvoList] = useState([]);
 

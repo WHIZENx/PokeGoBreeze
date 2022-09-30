@@ -11,7 +11,24 @@ import { FormControlLabel, Radio } from '@mui/material';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
-const Tools = (props: any) => {
+const Tools = (props: {
+  raid?: any;
+  tier?: any;
+  id?: any;
+  onClearStats?: any;
+  setTier?: (arg0: any) => void;
+  onSetPrev?: () => void;
+  count: number;
+  onSetNext: () => void;
+  name: string;
+  hide?: any;
+  setRaid?: (arg0: boolean) => void;
+  setForm?: any;
+  stats: any;
+  onHandleSetStats?: any;
+  data: any;
+  setUrlEvo: any;
+}) => {
   const [pokeData, setPokeData] = useState([]);
   const [formList, setFormList] = useState([]);
 
@@ -140,7 +157,7 @@ const Tools = (props: any) => {
     <Fragment>
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
         {props.id > 1 && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev()}>
+          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
             <div>
               <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id - 1)} />
             </div>

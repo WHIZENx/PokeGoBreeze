@@ -226,7 +226,7 @@ export const OverAllStats = (
           <h5>
             <b>Overall Stats</b>
           </h5>
-          <Stats statATK={data.atk} statDEF={data.def} statSTA={data.sta} pokemonStats={statsRanking} />
+          <Stats statATK={data.atk} statDEF={data.def} statSTA={data.sta} pokemonStats={statsRanking as any} />
         </div>
         <div>
           <h5>

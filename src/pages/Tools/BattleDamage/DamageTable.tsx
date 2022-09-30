@@ -37,7 +37,31 @@ const eff: any = {
   },
 };
 
-const DamageTable = (props: any) => {
+const DamageTable = (props: {
+  result: {
+    objPoke: { form: { pokemon: { name: string } } };
+    type: string;
+    currPoke: { form: { pokemon: { name: string } } };
+    currLevel: any;
+    typeObj: string;
+    objLevel: any;
+    move: {
+      name: string;
+      pve_power: number;
+    };
+    battleState: {
+      stab: any;
+      wb: any;
+      dodge: any;
+      trainer: any;
+      flevel: number;
+      clevel: string | number;
+      effective: string | number;
+    };
+    damage: number;
+    hp: number;
+  };
+}) => {
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
 
   return (

@@ -14,7 +14,7 @@ import pokemonData from '../../../data/pokemon.json';
 import { capitalize } from '../../../util/Utils';
 
 const FormTools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide }: any) => {
-  const [currDataPoke, setCurrDataPoke] = useState(null);
+  const [currDataPoke, setCurrDataPoke]: any = useState(null);
   const [currTier, setCurrTier] = useState(tier);
 
   const [statATK, setStatATK]: any = useState(null);

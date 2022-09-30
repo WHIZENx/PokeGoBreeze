@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 
-const CardType = (props: any) => {
+const CardType = (props: { value?: any; name?: any; elite?: any; shadow?: any; purified?: any }) => {
   return (
     <Fragment>
       {props.value ? (

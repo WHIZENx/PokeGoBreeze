@@ -557,7 +557,7 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
   });
 };
 
-export const optionCombat = (data: any[], types: any) => {
+export const optionCombat = (data: any[], movesData: any[], types: any) => {
   const combatModel = () => {
     return {
       name: '',
@@ -682,7 +682,7 @@ export const optionCombat = (data: any[], types: any) => {
   moveSet.forEach((move) => {
     if (move.name === 'HIDDEN_POWER') {
       Object.keys(types)
-        .filter((type: string) => type !== 'NORMAL')
+        .filter((type: string) => type !== 'NORMAL' && type !== 'FAIRY')
         .forEach((type: string, index: number) =>
           result.push({
             ...move,
@@ -694,7 +694,17 @@ export const optionCombat = (data: any[], types: any) => {
     }
   });
 
-  return result;
+  return result.map((move) => {
+    const movePVP = movesData.find(
+      (data) =>
+        data.moveId ===
+        (move.name === 'HIDDEN_POWER'
+          ? 'HIDDEN_POWER_BUG'
+          : move.name.replace('_BLASTOISE', '').replaceAll('_PLUS', '').replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE'))
+    );
+    move.archetype = movePVP?.archetype;
+    return move;
+  });
 };
 
 export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: any[]) => {

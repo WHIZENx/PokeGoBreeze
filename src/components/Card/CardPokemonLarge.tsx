@@ -3,7 +3,7 @@ import { RootStateOrAny, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { findAssetForm } from '../../util/Compute';
 
-const CardPokemonLarge = (props: any) => {
+const CardPokemonLarge = (props: { value: any; id: number; name: string; elite?: any; shadow?: any; purified?: any }) => {
   const assets = useSelector((state: RootStateOrAny) => state.store.data.assets);
 
   return (

@@ -9,7 +9,7 @@ const Attacker = (prop: { types: any }) => {
   const [currentType, setCurrentType] = useState('BUG');
   const [showType, setShowType] = useState(false);
 
-  const [typeEffective, setTypeEffective] = useState(null);
+  const [typeEffective, setTypeEffective]: any = useState(null);
 
   const getTypeEffective = useCallback(() => {
     const data: any = {

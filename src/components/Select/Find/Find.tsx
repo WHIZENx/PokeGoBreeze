@@ -6,7 +6,24 @@ import pokemonData from '../../../data/pokemon.json';
 import pokeListName from '../../../data/pokemon_names.json';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
-const Find = (props: any) => {
+const Find = (props: {
+  setId?: (arg0: number) => void;
+  setName?: (arg0: any) => void;
+  clearStats?: any;
+  setStatATK?: (arg0: any) => void;
+  setStatDEF?: (arg0: any) => void;
+  setStatSTA?: (arg0: any) => void;
+  hide?: any;
+  raid?: any;
+  setRaid?: any;
+  tier?: any;
+  setTier?: any;
+  setForm?: any;
+  urlEvo?: any;
+  setUrlEvo?: any;
+  title?: string;
+  swap?: any;
+}) => {
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;

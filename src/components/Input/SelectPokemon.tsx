@@ -8,7 +8,14 @@ import './Select.css';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 
-const SelectPokemon = (props: any) => {
+const SelectPokemon = (props: {
+  pokemon?: any;
+  setCurrentPokemon: (arg0: null) => void;
+  selected: any;
+  setFMovePokemon: (arg0: null) => void;
+  setCMovePokemon: (arg0: null) => void;
+  clearData: () => void;
+}) => {
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;

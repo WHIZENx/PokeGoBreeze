@@ -4,7 +4,16 @@ import { capitalize } from '../../../util/Utils';
 
 import './Type.css';
 
-const Type = (props: any) => {
+const Type = (props: {
+  arr: any;
+  block?: any;
+  shadow?: any;
+  style?: React.CSSProperties | undefined;
+  text?: string;
+  hideText?: any;
+  height?: string | number | undefined;
+  color?: any;
+}) => {
   if (!props.arr || props.arr.length === 0) return <></>;
 
   return (

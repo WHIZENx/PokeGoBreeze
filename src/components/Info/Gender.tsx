@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 
-const Gender = (props: any) => {
+const Gender = (props: { sex: string; ratio?: { M: any; F: any }; default_m?: any; default_f?: any; shiny_m?: any; shiny_f?: any }) => {
   const calculateRatio = (sex: string, ratio: { M: any; F: any }) => {
     const maleRatio = ratio.M;
     const femaleRatio = ratio.F;

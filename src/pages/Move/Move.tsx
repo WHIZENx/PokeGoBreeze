@@ -154,11 +154,13 @@ const Move = (props: { id?: any }) => {
               }}
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
-              {Object.keys(data.typeEff).map((value: string, index: React.Key | null | undefined) => (
-                <option key={index} value={value}>
-                  {capitalize(value)}
-                </option>
-              ))}
+              {Object.keys(data.typeEff)
+                .filter((type) => type !== 'FAIRY')
+                .map((value: string, index: React.Key | number) => (
+                  <option key={index} value={value}>
+                    {capitalize(value)}
+                  </option>
+                ))}
             </Form.Select>
           )}
           <hr />

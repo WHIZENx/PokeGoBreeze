@@ -37,6 +37,9 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
     axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Candy Color Data/PokemonCandyColorData.json', {
       cancelToken: source.token,
     }),
+    axios.getFetchUrl('https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/gamemaster/moves.json', {
+      cancelToken: source.token,
+    }),
     axios.getFetchUrl('https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/master?recursive=1', {
       headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
       cancelToken: source.token,
@@ -46,7 +49,7 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
       cancelToken: source.token,
     }),
   ])
-    .then(([gm, timestamp, candy, assets, pvp]) => {
+    .then(([gm, timestamp, candy, moves, assets, pvp]) => {
       const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
       const pokemon = optionPokemon(gm.data);
       const pokemonFamily = optionPokemonFamily(pokemon);
@@ -78,7 +81,7 @@ export const loadStore = (dispatch: any, axios: any, source: any) => {
             evolution: optionEvolution(gm.data, pokemon, formSpecial),
             stickers: optionSticker(gm.data, pokemon),
             assets: assetsPokemon,
-            combat: optionCombat(gm.data, typeEff),
+            combat: optionCombat(gm.data, moves.data, typeEff),
             pokemonCombat,
             leagues: optionLeagues(gm.data, pokemon),
             details,

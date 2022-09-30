@@ -250,6 +250,9 @@ const PokemonPVP = () => {
                           </h3>
                           <Type shadow={true} block={true} color={'white'} arr={rankingPoke.pokemon.types} />
                         </div>
+                        <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
+                          Recommend Moveset in PVP
+                        </h6>
                         <div className="d-flex flex-wrap element-top" style={{ columnGap: 10 }}>
                           <TypeBadge
                             grow={true}

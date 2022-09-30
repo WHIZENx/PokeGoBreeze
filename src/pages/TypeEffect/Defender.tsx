@@ -6,7 +6,7 @@ import { capitalize } from '../../util/Utils';
 const Defender = (prop: { types: any }) => {
   const [types, setTypes]: any = useState(null);
 
-  const [typeEffective, setTypeEffective] = useState(null);
+  const [typeEffective, setTypeEffective]: any = useState(null);
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');
   const [currentTypeSec, setCurrentTypeSec] = useState('');

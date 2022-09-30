@@ -42,17 +42,17 @@ export const raidEgg = (tier: number, mega: any, ultra?: boolean) => {
 export const computeCandyBgColor = (candyData: Candy[], id: number) => {
   let data: any = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) data = candyData.find((item) => item.familyId === 0);
-  return `rgb(${Math.round(255 * data.secondaryColor.r)}, ${Math.round(255 * data.secondaryColor.g)}, ${Math.round(
-    255 * data.secondaryColor.b
-  )}, ${data.secondaryColor.a})`;
+  return `rgb(${Math.round(255 * data?.secondaryColor.r)}, ${Math.round(255 * data?.secondaryColor.g)}, ${Math.round(
+    255 * data?.secondaryColor.b
+  )}, ${data?.secondaryColor.a})`;
 };
 
 export const computeCandyColor = (candyData: Candy[], id: number) => {
   let data: any = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) data = candyData.find((item: any) => item.familyId === 0);
-  return `rgb(${Math.round(255 * data.primaryColor.r)}, ${Math.round(255 * data.primaryColor.g)}, ${Math.round(
-    255 * data.primaryColor.b
-  )}, ${data.primaryColor.a})`;
+  return `rgb(${Math.round(255 * data?.primaryColor.r)}, ${Math.round(255 * data?.primaryColor.g)}, ${Math.round(
+    255 * data?.primaryColor.b
+  )}, ${data?.primaryColor.a})`;
 };
 
 export const computeBgType = (types: any[], shadow = false, purified = false, opacity = 1, styleSheet?: any) => {
