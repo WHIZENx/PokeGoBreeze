@@ -86,15 +86,11 @@ export const optionSettings = (data: any[]) => {
 };
 
 export const optionPokeImg = (data: { tree: any[] }) => {
-  return data.tree
-    .filter((item: { path: string | string[] }) => item.path.includes('Images/Pokemon/'))
-    .map((item: { path: string }) => item.path.replace('Images/Pokemon/', '').replace('.png', ''));
+  return data.tree.map((item: { path: string }) => item.path.replace('.png', ''));
 };
 
 export const optionPokeSound = (data: { tree: any[] }) => {
-  return data.tree
-    .filter((item: { path: string | string[] }) => item.path.includes('Sounds/Pokemon Cries/'))
-    .map((item: { path: string }) => item.path.replace('Sounds/Pokemon Cries/', '').replace('.wav', ''));
+  return data.tree.map((item: { path: string }) => item.path.replace('.wav', ''));
 };
 
 export const optionPokemonTypes = (data: any[]) => {

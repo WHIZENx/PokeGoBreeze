@@ -14,9 +14,6 @@ const CssnanoPlugin = require('cssnano-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-const isProduction = process.env.NODE_ENV === 'production';
-const isDevelopment = !isProduction;
-
 const publicPath = process.env.PUBLIC_URL || '/';
 
 dotenv.config();
@@ -101,10 +98,10 @@ module.exports = {
       })
     ]
   },
-  mode: isProduction ? 'production' : 'development',
-  bail: isProduction,
+  mode: 'development',
+  bail: false,
   target: 'web',
-  devtool: false,
+  devtool: 'inline-source-map',
   devServer: {
     static: [
       { directory: path.resolve(__dirname, 'dist') },

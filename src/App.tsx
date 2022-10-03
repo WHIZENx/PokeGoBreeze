@@ -37,6 +37,13 @@ import Battle from './pages/PVP/Battle/Battle';
 
 import Spinner from './components/Spinner/Spinner';
 import { loadStats } from './store/actions/stats.action';
+import { useStorageReducer } from 'react-storage-hooks';
+import GameMasterReducer from './store/locals/reducers/gamemaster.reducer';
+import CandyReducer from './store/locals/reducers/candy.reducer';
+import MovesReducer from './store/locals/reducers/moves.reducer';
+import AssetsReducer from './store/locals/reducers/assets.reducer';
+import PVPReducer from './store/locals/reducers/pvp.reducer';
+import SoundsReducer from './store/locals/reducers/sounds.reducer';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -135,11 +142,58 @@ const App = () => {
   const data = useSelector((state: RootStateOrAny) => state.store);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
 
+  const [stateGM, dispatchLocalGM, writeErrorGM] = useStorageReducer(localStorage, 'gamemaster', GameMasterReducer, {
+    data: null,
+    timestamp: null,
+  });
+  const [stateMove, dispatchLocalMove, writeErrorMove] = useStorageReducer(localStorage, 'moves', MovesReducer, {
+    data: null,
+    timestamp: null,
+  });
+  const [stateCandy, dispatchLocalCandy, writeErrorCandy] = useStorageReducer(localStorage, 'candy', CandyReducer, {
+    data: null,
+    timestamp: null,
+  });
+  const [stateImage, dispatchLocalImage, writeErrorImage] = useStorageReducer(localStorage, 'assets', AssetsReducer, {
+    data: null,
+    timestamp: null,
+  });
+  const [stateSound, dispatchLocalSound, writeErrorSound] = useStorageReducer(localStorage, 'sounds', SoundsReducer, {
+    data: null,
+    timestamp: null,
+  });
+  const [statePVP, dispatchLocalPVP, writeErrorPVP] = useStorageReducer(localStorage, 'pvp', PVPReducer, {
+    data: null,
+    timestamp: null,
+  });
+
   useEffect(() => {
     const axios = APIService;
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();
-    loadStore(dispatch, axios, source);
+    loadStore(
+      dispatch,
+      stateGM,
+      stateMove,
+      stateCandy,
+      stateImage,
+      stateSound,
+      statePVP,
+      dispatchLocalGM,
+      dispatchLocalMove,
+      dispatchLocalCandy,
+      dispatchLocalImage,
+      dispatchLocalSound,
+      dispatchLocalPVP,
+      writeErrorGM,
+      writeErrorMove,
+      writeErrorCandy,
+      writeErrorImage,
+      writeErrorSound,
+      writeErrorPVP,
+      axios,
+      source
+    );
   }, [dispatch]);
 
   useEffect(() => {

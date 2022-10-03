@@ -32,6 +32,7 @@
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.0",
+    "react-storage-hooks": "^4.0.1",
     "react-xarrows": "^2.0.2",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
@@ -45,9 +46,9 @@
     "eject": "react-scripts eject",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "lint": "tslint -c tslint.json \"src/**/*.{ts,tsx}\" --format verbose",
-    "develop": "webpack-dev-server --mode development",
+    "develop": "webpack-dev-server --mode development --config webpack.config.dev.js",
     "prebuild": "rimraf dist",
-    "deploy": "webpack --mode production --config webpack.config.js"
+    "deploy": "webpack --mode production --config webpack.config.prod.js"
   },
   "browserslist": {
     "production": [

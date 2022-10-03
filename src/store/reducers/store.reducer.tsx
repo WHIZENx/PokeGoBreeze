@@ -1,7 +1,4 @@
-interface StoreModel {
-  data: any;
-  timestamp: any;
-}
+import { StoreModel } from '../models/store.model';
 
 const inititaialize: StoreModel = {
   data: null,
@@ -15,7 +12,7 @@ const StoreReducer = (state: StoreModel = inititaialize, action: any) => {
     case 'RESET_STORE':
       return {
         ...state,
-        data: new Date(),
+        timestamp: new Date(),
       };
     default:
       return state;

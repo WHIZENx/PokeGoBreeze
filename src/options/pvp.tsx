@@ -12,8 +12,8 @@ const leagueModel = () => {
 
 export const pvpFindPath = (data: { tree: any[] }, path: string) => {
   return data.tree
-    .filter((item: { path: string | string[] }) => item.path.includes(`src/data/${path}/`))
-    .map((item: { path: string }) => item.path.replace(`src/data/${path}/`, ''));
+    .filter((item: { path: string | string[] }) => item.path.includes(path))
+    .map((item: { path: string }) => item.path.replace(path, ''));
 };
 
 export const convertPVPRankings = (
