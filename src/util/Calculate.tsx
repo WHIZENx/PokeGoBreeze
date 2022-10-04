@@ -212,6 +212,16 @@ export const calculateDuelAbility = (dmgOutput: number, tanki: number) => {
   return dmgOutput * tanki;
 };
 
+export const calculateCatchChance = (baseCaptureRate: number, level: number, multiplier: number) => {
+  return (
+    1 -
+    Math.pow(
+      Math.max(0, 1 - baseCaptureRate / (2 * (data as any).find((data: { level: number }) => data.level === level).multiplier)),
+      multiplier
+    )
+  );
+};
+
 export const predictStat = (atk: number, def: number, sta: number, cp: any) => {
   cp = parseInt(cp);
   const dataStat: any = {};

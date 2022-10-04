@@ -1,15 +1,15 @@
-import Type from '../../components/Sprites/Type/Type';
+import Type from '../../../components/Sprites/Type/Type';
 
 import { Accordion, Form, useAccordionButton } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import APIService from '../../services/API.service';
+import APIService from '../../../services/API.service';
 
 import './Leagues.css';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize } from '../../util/Utils';
-import { rankIconCenterName, rankIconName, rankName } from '../../util/Compute';
+import { getTime, splitAndCapitalize, capitalize } from '../../../util/Utils';
+import { rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';

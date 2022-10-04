@@ -10,10 +10,14 @@ const leagueModel = () => {
   };
 };
 
-export const pvpFindPath = (data: { tree: any[] }, path: string) => {
+export const pvpConvertPath = (data: { tree: any[] }, path: string) => {
   return data.tree
     .filter((item: { path: string | string[] }) => item.path.includes(path))
     .map((item: { path: string }) => item.path.replace(path, ''));
+};
+
+export const pvpFindPath = (data: any[], path: string) => {
+  return data.filter((item: string) => item.includes(path));
 };
 
 export const convertPVPRankings = (

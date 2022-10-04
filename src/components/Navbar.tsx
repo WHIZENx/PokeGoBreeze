@@ -40,6 +40,7 @@ const NavbarComponent = () => {
             </Link>
           </NavDropdown>
           <NavDropdown title="Tools">
+            <NavDropdown.Header>Search&Find</NavDropdown.Header>
             <Link className="dropdown-item" to="/find-cp-iv">
               Find IV&CP
             </Link>
@@ -49,29 +50,37 @@ const NavbarComponent = () => {
             <Link className="dropdown-item" to="/stats-table">
               Stats Table
             </Link>
-            <Link className="dropdown-item" to="/raid-battle">
-              Raid Battle
-            </Link>
             <NavDropdown.Divider />
+            <NavDropdown.Header>Calculation</NavDropdown.Header>
+            <Link className="dropdown-item" to="/calculate-catch-chance">
+              Calculate Catch Chance
+            </Link>
             <Link className="dropdown-item" to="/calculate-stats">
               Calculate Stats
             </Link>
+            <Link className="dropdown-item" to="/calculate-point">
+              Calculate Bulkpoint
+            </Link>
+            <NavDropdown.Divider />
+            <NavDropdown.Header>Battle Simulator</NavDropdown.Header>
             <Link className="dropdown-item" to="/damage-calculate">
               Damage Simulator
             </Link>
-            <Link className="dropdown-item" to="/calculate-point">
-              Calculate Point Stats
+            <Link className="dropdown-item" to="/raid-battle">
+              Raid Battle
             </Link>
           </NavDropdown>
           <Link className="nav-link" to="/dps-tdo-table">
             DPS&TDO Table
           </Link>
-          <Link className="nav-link" to="/pvp">
-            PVP
-          </Link>
-          <Link className="nav-link" to="/battle-leagues">
-            Battle Leagues
-          </Link>
+          <NavDropdown title="PVP">
+            <Link className="dropdown-item" to="/pvp">
+              PVP Simulator
+            </Link>
+            <Link className="dropdown-item" to="/battle-leagues">
+              PVP Battle Leagues
+            </Link>
+          </NavDropdown>
           <Link className="nav-link" to="/stickers">
             Stickers
           </Link>

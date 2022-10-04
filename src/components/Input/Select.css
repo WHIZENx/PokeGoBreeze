@@ -109,7 +109,27 @@
 .input-move.form-control:focus {
     border-color: #FF0000;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
-  }
+}
+
+.frame-badge {
+    border: 1px solid lightgray;
+    background-color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.frame-badge-select, .frame-badge:hover {
+    border: 1px solid gray !important;
+    background-color: lightgray !important;
+}
+
+.position-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
 @media screen and (max-width: 420px) {
     .result-pokemon {

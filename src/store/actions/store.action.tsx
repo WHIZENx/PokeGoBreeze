@@ -18,7 +18,7 @@ import {
   optionPokemonFamilyGroup,
   optionPokemonCandy,
 } from '../../options/options';
-import { convertPVPRankings, convertPVPTrain, pvpFindPath } from '../../options/pvp';
+import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindPath } from '../../options/pvp';
 import { BASE_CPM, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
 import { loadData } from '../locals/actions/action';
 import { LOAD_ASSETS } from '../locals/reducers/assets.reducer';
@@ -62,8 +62,6 @@ export const loadStore = (
     gmData: any,
     pokemon: any[],
     candyData: any[],
-    pokemonFamilyGroup: any[],
-    pokemonFamily: any[],
     formSpecial: string | any[],
     assetsPokemon: any,
     movesDate: number,
@@ -81,35 +79,45 @@ export const loadStore = (
           headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
           cancelToken: source.token,
         }),
-      ]).then(([moves, pvp]) => {
-        loadData(LOAD_MOVES, dispatch, dispatchLocalMoves, writeErrorMoves, moves.data, movesDate);
-        loadData(LOAD_PVP, dispatch, dispatchLocalPVP, writeErrorPVP, pvp.data, movesDate);
+      ])
+        .then(([moves, pvp]) => {
+          const pvpRank: any = pvpConvertPath(pvp.data, 'rankings/');
+          const pvpTrain: any = pvpConvertPath(pvp.data, 'training/analysis/');
 
-        const pvpRank: any = pvpFindPath(pvp.data, 'rankings/');
-        const pvpTrain: any = pvpFindPath(pvp.data, 'training/analysis/');
-        dispatchStore(
-          cpm,
-          typeEff,
-          weatherBoost,
-          gmData,
-          pokemon,
-          candyData,
-          pokemonFamilyGroup,
-          pokemonFamily,
-          formSpecial,
-          assetsPokemon,
-          moves.data,
-          pokemonCombat,
-          details,
-          pvpRank,
-          pvpTrain,
-          league,
-          timestamp
-        );
-      });
+          const pvpData = pvpRank.concat(pvpTrain);
+          loadData(LOAD_MOVES, dispatch, dispatchLocalMoves, writeErrorMoves, JSON.stringify(moves.data), movesDate);
+          loadData(LOAD_PVP, dispatch, dispatchLocalPVP, writeErrorPVP, JSON.stringify(pvpData), movesDate);
+
+          dispatchStore(
+            cpm,
+            typeEff,
+            weatherBoost,
+            gmData,
+            pokemon,
+            candyData,
+            formSpecial,
+            assetsPokemon,
+            moves.data,
+            pokemonCombat,
+            details,
+            pvpRank,
+            pvpTrain,
+            league,
+            timestamp
+          );
+        })
+        .catch((e) => {
+          source.cancel();
+          dispatch(
+            showSpinner({
+              error: true,
+              msg: e.message,
+            })
+          );
+        });
     } else {
-      const pvpRank: any = pvpFindPath(statePVP.data, 'rankings/');
-      const pvpTrain: any = pvpFindPath(statePVP.data, 'training/analysis/');
+      const pvpRank: any = pvpFindPath(JSON.parse(statePVP.data), 'rankings/');
+      const pvpTrain: any = pvpFindPath(JSON.parse(statePVP.data), 'training/analysis/');
 
       dispatchStore(
         cpm,
@@ -118,11 +126,9 @@ export const loadStore = (
         gmData,
         pokemon,
         candyData,
-        pokemonFamilyGroup,
-        pokemonFamily,
         formSpecial,
         assetsPokemon,
-        stateMoves.data,
+        JSON.parse(stateMoves.data),
         pokemonCombat,
         details,
         pvpRank,
@@ -140,8 +146,6 @@ export const loadStore = (
     gmData: any,
     pokemon: any[],
     candyData: any[],
-    pokemonFamilyGroup: any[],
-    pokemonFamily: any[],
     formSpecial: string | any[],
     assetsPokemon: any,
     movesData: any[],
@@ -161,7 +165,7 @@ export const loadStore = (
           weatherBoost,
           options: optionSettings(gmData),
           pokemon,
-          candy: optionPokemonCandy(candyData, pokemonFamilyGroup, pokemon, pokemonFamily),
+          candy: candyData,
           evolution: optionEvolution(gmData, pokemon, formSpecial),
           stickers: optionSticker(gmData, pokemon),
           assets: assetsPokemon,
@@ -181,6 +185,9 @@ export const loadStore = (
 
   dispatch(showSpinner());
   Promise.all([
+    axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json', {
+      cancelToken: source.token,
+    }),
     axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/timestamp.txt', {
       cancelToken: source.token,
     }),
@@ -189,11 +196,9 @@ export const loadStore = (
       cancelToken: source.token,
     }),
   ])
-    .then(([timestamp, movesTimestamp]) => {
+    .then(([gm, timestamp, movesTimestamp]) => {
       const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
       if (
-        !stateGM?.data ||
-        stateGM?.timestamp !== timestamp.data ||
         !stateCandy?.data ||
         stateCandy?.timestamp !== timestamp.data ||
         !stateImage?.data ||
@@ -202,9 +207,6 @@ export const loadStore = (
         stateSound?.timestamp !== timestamp.data
       ) {
         Promise.all([
-          axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json', {
-            cancelToken: source.token,
-          }),
           axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Candy Color Data/PokemonCandyColorData.json', {
             cancelToken: source.token,
           }),
@@ -222,70 +224,75 @@ export const loadStore = (
               cancelToken: source.token,
             }
           ),
-        ]).then(([gm, candy, image, sounds]) => {
-          const assetImgFiles = optionPokeImg(image.data);
-          const assetSoundFiles = optionPokeSound(sounds.data);
+        ])
+          .then(([candy, image, sounds]) => {
+            const assetImgFiles = optionPokeImg(image.data);
+            const assetSoundFiles = optionPokeSound(sounds.data);
+            const pokemon = optionPokemon(gm.data);
+            const pokemonFamily = optionPokemonFamily(pokemon);
+            const pokemonFamilyGroup = optionPokemonFamilyGroup(gm.data);
+            const candyData = optionPokemonCandy(candy.data.CandyColors, pokemonFamilyGroup, pokemon, pokemonFamily);
 
-          loadData(LOAD_GM, dispatch, dispatchLocalGM, writeErrorGM, gm.data, timestamp.data);
-          loadData(LOAD_CANDY, dispatch, dispatchLocalCandy, writeErrorCandy, candy.data.CandyColors, timestamp.data);
-          loadData(LOAD_ASSETS, dispatch, dispatchLocalImage, writeErrorImage, assetImgFiles, timestamp.data);
-          loadData(LOAD_SOUNDS, dispatch, dispatchLocalSound, writeErrorSound, assetSoundFiles, timestamp.data);
+            loadData(LOAD_CANDY, dispatch, dispatchLocalCandy, writeErrorCandy, JSON.stringify(candyData), timestamp.data);
+            loadData(LOAD_ASSETS, dispatch, dispatchLocalImage, writeErrorImage, JSON.stringify(assetImgFiles), timestamp.data);
+            loadData(LOAD_SOUNDS, dispatch, dispatchLocalSound, writeErrorSound, JSON.stringify(assetSoundFiles), timestamp.data);
 
-          const pokemon = optionPokemon(gm.data);
-          const pokemonFamily = optionPokemonFamily(pokemon);
-          const pokemonFamilyGroup = optionPokemonFamilyGroup(gm.data);
-          const formSpecial = optionformSpecial(gm.data);
+            const formSpecial = optionformSpecial(gm.data);
 
-          const league = optionLeagues(gm.data, pokemon);
-          const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
-          const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
-          const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
+            const league = optionLeagues(gm.data, pokemon);
+            const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
+            const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
+            const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
 
-          const typeEff = optionPokemonTypes(gm.data);
-          const weatherBoost = optionPokemonWeather(gm.data);
+            const typeEff = optionPokemonTypes(gm.data);
+            const weatherBoost = optionPokemonWeather(gm.data);
 
-          selectorDispatch(
-            cpm,
-            typeEff,
-            weatherBoost,
-            gm.data,
-            pokemon,
-            candy.data.CandyColors,
-            pokemonFamilyGroup,
-            pokemonFamily,
-            formSpecial,
-            assetsPokemon,
-            new Date(movesTimestamp.data[0].commit.committer.date).getTime(),
-            pokemonCombat,
-            details,
-            league,
-            timestamp.data
-          );
-        });
+            selectorDispatch(
+              cpm,
+              typeEff,
+              weatherBoost,
+              gm.data,
+              pokemon,
+              candyData,
+              formSpecial,
+              assetsPokemon,
+              new Date(movesTimestamp.data[0].commit.committer.date).getTime(),
+              pokemonCombat,
+              details,
+              league,
+              timestamp.data
+            );
+          })
+          .catch((e) => {
+            source.cancel();
+            dispatch(
+              showSpinner({
+                error: true,
+                msg: e.message,
+              })
+            );
+          });
       } else {
         const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
-        const pokemon = optionPokemon(stateGM.data);
+        const pokemon = optionPokemon(gm.data);
         const pokemonFamily = optionPokemonFamily(pokemon);
-        const pokemonFamilyGroup = optionPokemonFamilyGroup(stateGM.data);
-        const formSpecial = optionformSpecial(stateGM.data);
+        const formSpecial = optionformSpecial(gm.data);
 
-        const league = optionLeagues(stateGM.data, pokemon);
-        const assetsPokemon = optionAssets(pokemon, pokemonFamily, stateImage.data, stateSound.data);
-        const pokemonCombat = optionPokemonCombat(stateGM.data, pokemon, formSpecial);
-        const details = optionDetailsPokemon(stateGM.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
+        const league = optionLeagues(gm.data, pokemon);
+        const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage.data), JSON.parse(stateSound.data));
+        const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
+        const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
 
-        const typeEff = optionPokemonTypes(stateGM.data);
-        const weatherBoost = optionPokemonWeather(stateGM.data);
+        const typeEff = optionPokemonTypes(gm.data);
+        const weatherBoost = optionPokemonWeather(gm.data);
 
         selectorDispatch(
           cpm,
           typeEff,
           weatherBoost,
-          stateGM.data,
+          gm.data,
           pokemon,
-          stateCandy.data,
-          pokemonFamilyGroup,
-          pokemonFamily,
+          JSON.parse(stateCandy.data),
           formSpecial,
           assetsPokemon,
           new Date(movesTimestamp.data[0].commit.committer.date).getTime(),

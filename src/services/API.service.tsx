@@ -76,6 +76,10 @@ class APIService {
     return `${POGO_ASSET_API_URL}App Icons/${icon}.png`;
   }
 
+  getBadgeSprite(name: string) {
+    return `${POGO_ASSET_API_URL}Badges/${name}.png`;
+  }
+
   getIconSprite(icon: string) {
     return `${POGO_ASSET_API_URL}Menu Icons/${icon}.png`;
   }

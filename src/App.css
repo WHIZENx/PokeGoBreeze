@@ -88,6 +88,18 @@ img.block-spirit-timelime {
     object-fit: contain;
 }
 
+img.frame-type-sprit {
+    width: 100%;
+    height: 40px;
+    object-fit: contain;
+}
+
+img.badge-type-sprit {
+    width: 100%;
+    height: 20px;
+    object-fit: contain;
+}
+
 .text-timestamp {
     color: red !important;
     font-size: 16px;

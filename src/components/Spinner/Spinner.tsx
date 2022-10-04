@@ -21,6 +21,15 @@ const Spinner = () => {
                       Oops
                       <br />
                       Something went wrong on our end.
+                      <p
+                        className="reload-text"
+                        onClick={() => {
+                          localStorage.clear();
+                          window.location.reload();
+                        }}
+                      >
+                        Retry Again
+                      </p>
                     </Fragment>
                   ) : (
                     <Fragment>

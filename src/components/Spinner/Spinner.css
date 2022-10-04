@@ -53,3 +53,15 @@
         opacity: 1;
     }
 }
+
+.reload-text {
+    margin: 10px 0;
+    text-decoration: underline;
+    font-weight: 500;
+    color: lightgray;
+    cursor: pointer;
+}
+
+.reload-text:hover {
+    color: rgb(226, 226, 226);
+}

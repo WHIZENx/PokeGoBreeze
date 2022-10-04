@@ -480,33 +480,6 @@ const Calculate = () => {
                         </td>
                         <td>{statData ? calculateStatsBattle(statSTA, pokeStats.IV.sta, statLevel, true) : '-'}</td>
                       </tr>
-                      {/* <EvoChain id={id} url={urlEvo.url} /> */}
-                      {/* <tr className="text-center"><td className="table-sub-header" colSpan="2">Evolution Chains</td></tr>
-                                            {arrEvoList.map((value, index) => (
-                                                <Fragment key={index}>
-                                                {value.map((value, index) => (
-                                                    <Fragment key={index}>
-                                                        {parseInt(value.id) !== id &&
-                                                            <Fragment>
-                                                                <tr className="text-center">
-                                                                    <td className="img-table-evo" colSpan="2"><img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)}/></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Name</td>
-                                                                    <td>{splitAndCapitalize(value.name)}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>CP</td>
-                                                                    <td>5555</td>
-                                                                </tr>
-                                                            </Fragment>
-                                                        }
-                                                    </Fragment>
-                                                ))
-                                                }
-                                                </Fragment>
-                                            ))
-                                            } */}
                     </tbody>
                   </table>
                 </div>

@@ -61,6 +61,21 @@ export const DEFAULT_DAMAGE_MULTIPLY = 0.5;
 export const DEFAULT_DAMAGE_CONST = 1;
 export const DEFAULT_ENEMY_ATK_DELAY = 2;
 
+export const CURVE_INC_CHANCE = 1.5;
+export const GOLD_INC_CHANCE = 1.3;
+export const SILVER_INC_CHANCE = 1.2;
+export const BRONZE_INC_CHANCE = 1.1;
+export const POKE_BALL_INC_CHANCE = 1.0;
+export const GREAT_BALL_INC_CHANCE = 1.5;
+export const ULTRA_BALL_INC_CHANCE = 2.0;
+export const RAZZ_BERRY_INC_CHANCE = 1.5;
+export const GOLD_RAZZ_BERRY_INC_CHANCE = 2.5;
+
+export const NORMAL_THROW_INC_CHANCE = 1.0;
+export const NICE_THROW_INC_CHANCE = 1.15;
+export const GREAT_THROW_INC_CHANCE = 1.5;
+export const EXCELLENT_THROW_INC_CHANCE = 1.85;
+
 export const MIN_LEVEL = 1;
 export const MAX_LEVEL = 51;
 

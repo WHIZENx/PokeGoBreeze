@@ -2,6 +2,13 @@ import { Candy } from '../options/models/candy';
 import APIService from '../services/API.service';
 import { convertName, getStyleRuleValue } from './Utils';
 
+export const priorityBadge = (priority: number) => {
+  if (priority === 0) {
+    return APIService.getPokeSprite(0);
+  }
+  return APIService.getBadgeSprite(`Frames/badge_ring_${priority}`);
+};
+
 export const rankName = (rank: number) => {
   if (rank === 21) return 'Ace';
   else if (rank === 22) return 'Veteren';

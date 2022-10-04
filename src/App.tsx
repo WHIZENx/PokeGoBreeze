@@ -23,7 +23,7 @@ import Damage from './pages/Tools/BattleDamage/Damage';
 import DpsTable from './pages/DpsSheet/DpsTable';
 import Move from './pages/Move/Move';
 import Error from './pages/Error/Error';
-import Leagues from './pages/Leagues/Legues';
+import Leagues from './pages/PVP/Leagues/Legues';
 import SearchBattle from './pages/Tools/SearchBattle/SearchBattle';
 import StatsTable from './pages/Tools/StatsTable/Stats';
 import Sticker from './pages/Sticker/Sticker';
@@ -44,6 +44,7 @@ import MovesReducer from './store/locals/reducers/moves.reducer';
 import AssetsReducer from './store/locals/reducers/assets.reducer';
 import PVPReducer from './store/locals/reducers/pvp.reducer';
 import SoundsReducer from './store/locals/reducers/sounds.reducer';
+import CatchChance from './pages/Tools/CatchChance/CatchChane';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -142,10 +143,6 @@ const App = () => {
   const data = useSelector((state: RootStateOrAny) => state.store);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
 
-  const [stateGM, dispatchLocalGM, writeErrorGM] = useStorageReducer(localStorage, 'gamemaster', GameMasterReducer, {
-    data: null,
-    timestamp: null,
-  });
   const [stateMove, dispatchLocalMove, writeErrorMove] = useStorageReducer(localStorage, 'moves', MovesReducer, {
     data: null,
     timestamp: null,
@@ -173,19 +170,19 @@ const App = () => {
     const source = cancelToken.source();
     loadStore(
       dispatch,
-      stateGM,
+      null,
       stateMove,
       stateCandy,
       stateImage,
       stateSound,
       statePVP,
-      dispatchLocalGM,
+      null,
       dispatchLocalMove,
       dispatchLocalCandy,
       dispatchLocalImage,
       dispatchLocalSound,
       dispatchLocalPVP,
-      writeErrorGM,
+      null,
       writeErrorMove,
       writeErrorCandy,
       writeErrorImage,
@@ -224,6 +221,7 @@ const App = () => {
             <Route path="/damage-calculate" element={<Damage />} />
             <Route path="/raid-battle" element={<RaidBattle />} />
             <Route path="/calculate-point" element={<CalculatePoint />} />
+            <Route path="/calculate-catch-chance" element={<CatchChance />} />
             <Route path="/pvp" element={<PVPHome />} />
             <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP />} />
             <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP />} />
