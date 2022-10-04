@@ -145,7 +145,7 @@ const Tools = (props: {
       .map((item: any) => item.find((item: { form: { name: any } }) => item.form.name === e.currentTarget.value))
       .find((item) => item);
     setCurrForm(findForm);
-    props.onClearStats();
+    if (props.onClearStats) props.onClearStats();
   };
 
   const onSetTier = (tier: any) => {
