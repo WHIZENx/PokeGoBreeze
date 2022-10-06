@@ -16,8 +16,12 @@ export const pvpConvertPath = (data: { tree: any[] }, path: string) => {
     .map((item: { path: string }) => item.path.replace(path, ''));
 };
 
+export const pvpFindFirstPath = (data: any[], path: string) => {
+  return data.filter((item: { path: string | string[] }) => item.path.includes(path)).map((item: { path: string }) => item.path);
+};
+
 export const pvpFindPath = (data: any[], path: string) => {
-  return data.filter((item: string) => item.includes(path));
+  return data.filter((item: string) => item.includes(path)).map((item: string) => item.replace(path, ''));
 };
 
 export const convertPVPRankings = (

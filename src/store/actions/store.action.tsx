@@ -18,15 +18,8 @@ import {
   optionPokemonFamilyGroup,
   optionPokemonCandy,
 } from '../../options/options';
-import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindPath } from '../../options/pvp';
+import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../options/pvp';
 import { BASE_CPM, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
-import { loadData } from '../locals/actions/action';
-import { LOAD_ASSETS } from '../locals/reducers/assets.reducer';
-import { LOAD_CANDY } from '../locals/reducers/candy.reducer';
-import { LOAD_GM } from '../locals/reducers/gamemaster.reducer';
-import { LOAD_MOVES } from '../locals/reducers/moves.reducer';
-import { LOAD_PVP } from '../locals/reducers/pvp.reducer';
-import { LOAD_SOUNDS } from '../locals/reducers/sounds.reducer';
 import { showSpinner } from './spinner.action';
 
 export const LOAD_STORE = 'LOAD_STORE';
@@ -35,23 +28,19 @@ export const RESET_STORE = 'RESET_STORE';
 export const loadStore = (
   dispatch: any,
   stateGM: any,
+  stateTimestamp: any,
   stateMoves: any,
   stateCandy: any,
   stateImage: any,
   stateSound: any,
   statePVP: any,
-  dispatchLocalGM: any,
-  dispatchLocalMoves: any,
-  dispatchLocalCandy: any,
-  dispatchLocalImage: any,
-  dispatchLocalSound: any,
-  dispatchLocalPVP: any,
-  writeErrorGM: any,
-  writeErrorMoves: any,
-  writeErrorCandy: any,
-  writeErrorImage: any,
-  writeErrorSound: any,
-  writeErrorPVP: any,
+  setStateGM: any,
+  setStateTimestamp: any,
+  setStateMoves: any,
+  setStateCandy: any,
+  setStateImage: any,
+  setStateSound: any,
+  setStatePVP: any,
   axios: any,
   source: any
 ) => {
@@ -70,7 +59,7 @@ export const loadStore = (
     league: any,
     timestamp: any
   ) => {
-    if (movesDate !== stateMoves.timestamp) {
+    if (movesDate !== JSON.parse(stateTimestamp).battle) {
       Promise.all([
         axios.getFetchUrl('https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/gamemaster/moves.json', {
           cancelToken: source.token,
@@ -84,9 +73,15 @@ export const loadStore = (
           const pvpRank: any = pvpConvertPath(pvp.data, 'rankings/');
           const pvpTrain: any = pvpConvertPath(pvp.data, 'training/analysis/');
 
-          const pvpData = pvpRank.concat(pvpTrain);
-          loadData(LOAD_MOVES, dispatch, dispatchLocalMoves, writeErrorMoves, JSON.stringify(moves.data), movesDate);
-          loadData(LOAD_PVP, dispatch, dispatchLocalPVP, writeErrorPVP, JSON.stringify(pvpData), movesDate);
+          const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(pvpFindFirstPath(pvp.data.tree, 'training/analysis/'));
+          setStateTimestamp(
+            JSON.stringify({
+              gamemaster: timestamp,
+              battle: movesDate,
+            })
+          );
+          setStateMoves(JSON.stringify(moves.data));
+          setStatePVP(JSON.stringify(pvpData));
 
           dispatchStore(
             cpm,
@@ -116,8 +111,8 @@ export const loadStore = (
           );
         });
     } else {
-      const pvpRank: any = pvpFindPath(JSON.parse(statePVP.data), 'rankings/');
-      const pvpTrain: any = pvpFindPath(JSON.parse(statePVP.data), 'training/analysis/');
+      const pvpRank: any = pvpFindPath(JSON.parse(statePVP), 'rankings/');
+      const pvpTrain: any = pvpFindPath(JSON.parse(statePVP), 'training/analysis/');
 
       dispatchStore(
         cpm,
@@ -128,7 +123,7 @@ export const loadStore = (
         candyData,
         formSpecial,
         assetsPokemon,
-        JSON.parse(stateMoves.data),
+        JSON.parse(stateMoves),
         pokemonCombat,
         details,
         pvpRank,
@@ -198,14 +193,7 @@ export const loadStore = (
   ])
     .then(([gm, timestamp, movesTimestamp]) => {
       const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
-      if (
-        !stateCandy?.data ||
-        stateCandy?.timestamp !== timestamp.data ||
-        !stateImage?.data ||
-        stateImage?.timestamp !== timestamp.data ||
-        !stateSound?.data ||
-        stateSound?.timestamp !== timestamp.data
-      ) {
+      if (JSON.parse(stateTimestamp).gamemaster !== parseInt(timestamp.data)) {
         Promise.all([
           axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Candy Color Data/PokemonCandyColorData.json', {
             cancelToken: source.token,
@@ -233,9 +221,15 @@ export const loadStore = (
             const pokemonFamilyGroup = optionPokemonFamilyGroup(gm.data);
             const candyData = optionPokemonCandy(candy.data.CandyColors, pokemonFamilyGroup, pokemon, pokemonFamily);
 
-            loadData(LOAD_CANDY, dispatch, dispatchLocalCandy, writeErrorCandy, JSON.stringify(candyData), timestamp.data);
-            loadData(LOAD_ASSETS, dispatch, dispatchLocalImage, writeErrorImage, JSON.stringify(assetImgFiles), timestamp.data);
-            loadData(LOAD_SOUNDS, dispatch, dispatchLocalSound, writeErrorSound, JSON.stringify(assetSoundFiles), timestamp.data);
+            setStateTimestamp(
+              JSON.stringify({
+                ...JSON.parse(stateTimestamp),
+                gamemaster: parseInt(timestamp.data),
+              })
+            );
+            setStateCandy(JSON.stringify(candyData));
+            setStateImage(JSON.stringify(assetImgFiles));
+            setStateSound(JSON.stringify(assetSoundFiles));
 
             const formSpecial = optionformSpecial(gm.data);
 
@@ -260,7 +254,7 @@ export const loadStore = (
               pokemonCombat,
               details,
               league,
-              timestamp.data
+              parseInt(timestamp.data)
             );
           })
           .catch((e) => {
@@ -279,7 +273,7 @@ export const loadStore = (
         const formSpecial = optionformSpecial(gm.data);
 
         const league = optionLeagues(gm.data, pokemon);
-        const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage.data), JSON.parse(stateSound.data));
+        const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage), JSON.parse(stateSound));
         const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
         const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
 
@@ -292,14 +286,14 @@ export const loadStore = (
           weatherBoost,
           gm.data,
           pokemon,
-          JSON.parse(stateCandy.data),
+          JSON.parse(stateCandy),
           formSpecial,
           assetsPokemon,
           new Date(movesTimestamp.data[0].commit.committer.date).getTime(),
           pokemonCombat,
           details,
           league,
-          timestamp.data
+          parseInt(timestamp.data)
         );
       }
     })

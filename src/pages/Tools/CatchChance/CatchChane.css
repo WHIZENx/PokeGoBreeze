@@ -1,0 +1,15 @@
+.impossible-encounter {
+    z-index: 2;
+    background-color: #ffffffba;
+}
+
+.text-not-encounter {
+    padding: 10px;
+    background-color: #e7e7e7;
+    border-radius: 10px;
+}
+
+.circle-ring {
+    top: 50%;
+    transform: translateY(-50%);
+}

@@ -33,7 +33,7 @@ const SelectBadge = ({ type, priority, setPriority }: any) => {
           {capitalize(type.toLowerCase())} Badge
         </div>
       </div>
-      <div className="d-flex justify-content-center align-items-center element-top" style={{ gap: 10 }}>
+      <div className="d-flex flex-wrap justify-content-center align-items-center element-top" style={{ gap: 10 }}>
         {Badge('None', type, 0)}
         {Badge('Bronze', type, 1)}
         {Badge('Silver', type, 2)}

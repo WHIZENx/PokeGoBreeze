@@ -32,11 +32,11 @@
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.0",
-    "react-storage-hooks": "^4.0.1",
     "react-xarrows": "^2.0.2",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.5",
+    "usehooks-ts": "^2.7.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

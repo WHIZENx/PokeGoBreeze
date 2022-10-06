@@ -37,14 +37,8 @@ import Battle from './pages/PVP/Battle/Battle';
 
 import Spinner from './components/Spinner/Spinner';
 import { loadStats } from './store/actions/stats.action';
-import { useStorageReducer } from 'react-storage-hooks';
-import GameMasterReducer from './store/locals/reducers/gamemaster.reducer';
-import CandyReducer from './store/locals/reducers/candy.reducer';
-import MovesReducer from './store/locals/reducers/moves.reducer';
-import AssetsReducer from './store/locals/reducers/assets.reducer';
-import PVPReducer from './store/locals/reducers/pvp.reducer';
-import SoundsReducer from './store/locals/reducers/sounds.reducer';
 import CatchChance from './pages/Tools/CatchChance/CatchChane';
+import { useLocalStorage } from 'usehooks-ts';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -143,26 +137,18 @@ const App = () => {
   const data = useSelector((state: RootStateOrAny) => state.store);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
 
-  const [stateMove, dispatchLocalMove, writeErrorMove] = useStorageReducer(localStorage, 'moves', MovesReducer, {
-    data: null,
-    timestamp: null,
-  });
-  const [stateCandy, dispatchLocalCandy, writeErrorCandy] = useStorageReducer(localStorage, 'candy', CandyReducer, {
-    data: null,
-    timestamp: null,
-  });
-  const [stateImage, dispatchLocalImage, writeErrorImage] = useStorageReducer(localStorage, 'assets', AssetsReducer, {
-    data: null,
-    timestamp: null,
-  });
-  const [stateSound, dispatchLocalSound, writeErrorSound] = useStorageReducer(localStorage, 'sounds', SoundsReducer, {
-    data: null,
-    timestamp: null,
-  });
-  const [statePVP, dispatchLocalPVP, writeErrorPVP] = useStorageReducer(localStorage, 'pvp', PVPReducer, {
-    data: null,
-    timestamp: null,
-  });
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
+    'timestamp',
+    JSON.stringify({
+      gamemaster: null,
+      battle: null,
+    })
+  );
+  const [stateMove, setStateMove] = useLocalStorage('moves', null);
+  const [stateCandy, setStateCandy] = useLocalStorage('candy', null);
+  const [stateImage, setStateImage] = useLocalStorage('assets', null);
+  const [stateSound, setStateSound] = useLocalStorage('sounds', null);
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
 
   useEffect(() => {
     const axios = APIService;
@@ -171,23 +157,19 @@ const App = () => {
     loadStore(
       dispatch,
       null,
+      stateTimestamp,
       stateMove,
       stateCandy,
       stateImage,
       stateSound,
       statePVP,
       null,
-      dispatchLocalMove,
-      dispatchLocalCandy,
-      dispatchLocalImage,
-      dispatchLocalSound,
-      dispatchLocalPVP,
-      null,
-      writeErrorMove,
-      writeErrorCandy,
-      writeErrorImage,
-      writeErrorSound,
-      writeErrorPVP,
+      setStateTimestamp,
+      setStateMove,
+      setStateCandy,
+      setStateImage,
+      setStateSound,
+      setStatePVP,
       axios,
       source
     );
