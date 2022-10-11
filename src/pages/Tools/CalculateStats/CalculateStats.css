@@ -1,69 +1,74 @@
 .table-info {
-    width: 100%;
-    min-width: 250px;
+  width: 100%;
+  min-width: 250px;
 }
 
 th {
-    font-size: 18px;
-    padding: 15px 0 15px 0;
+  font-size: 18px;
+  padding: 15px 0;
 }
 
 tbody tr.text-center td.table-sub-header {
-    background-color: #f1f1ff !important;
-}
-
-.table-info td:nth-child(1) {
-    width: 50%;
-}
-
-.battle-league td:nth-child(1) {
-    width: 35%;
+  background-color: #f1f1ff !important;
 }
 
 td {
-    height: 35px;
-    padding: 5px 10px 5px 10px;
+  height: 35px;
+  padding: 5px 10px;
 }
 
-.table-info, th, td {
-    border: 1px solid #b8d4da;
+.table-info,
+th,
+td {
+  border: 1px solid #b8d4da;
+}
+
+.table-info td:nth-child(1) {
+  width: 50%;
+}
+
+.battle-league td:nth-child(1) {
+  width: 35%;
 }
 
 .table-info thead tr {
-    background-color: #409ff1;
-    color: #f1ffff;
-    font-weight: bolder;
+  background-color: #409ff1;
+  color: #f1ffff;
+  font-weight: bolder;
 }
 
 .table-info tbody tr td:nth-child(1) {
-   background-color: #f1ffff;
-   color: #0571c2;
-   font-weight: bolder;
+  background-color: #f1ffff;
+  color: #0571c2;
+  font-weight: bolder;
 }
 
 .td-style {
-    height: 100%;
-    padding: 5px 10px 5px 10px;
+  height: 100%;
+  padding: 5px 10px;
 }
 
 .shadow-text {
-    color: #c184ec;
-    font-weight: 500;
-    /* text-shadow: 0.01px 0.01px black; */
+  color: #c184ec;
+  font-weight: 500;
+
+  /* text-shadow: 0.01px 0.01px black; */
 }
 
 .purified-text {
-    color: #74e1e6;
-    font-weight: 500;
-    /* text-shadow: 0.01px 0.01px black; */
+  color: #74e1e6;
+  font-weight: 500;
+
+  /* text-shadow: 0.01px 0.01px black; */
 }
 
 .lucky-text {
-    color: #f4e474;
-    font-weight: 500;
-    /* text-shadow: 0.01px 0.01px black; */
+  color: #f4e474;
+  font-weight: 500;
+
+  /* text-shadow: 0.01px 0.01px black; */
 }
 
 .img-table-evo {
-    background-color: white !important;
+  background-color: white !important;
 }

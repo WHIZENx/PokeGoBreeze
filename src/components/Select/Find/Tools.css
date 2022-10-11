@@ -1,90 +1,91 @@
 .btn-group-search input {
-    width: 300px !important;
+  width: 300px !important;
 }
 
 .tools {
-    z-index: 0;
-    margin-top: 38px;
-    box-shadow: 0 4px 8px 0 #000;
+  z-index: 0;
+  margin-top: 38px;
+  box-shadow: 0 4px 8px 0 black;
 }
 
 .selected {
-    background-color: rgb(170, 170, 170);
+  background-color: rgb(170 170 170);
 }
 
 .select-pokemon {
-    height: 650px;
+  height: 650px;
 }
 
 .search-container {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .scroll-card {
-    position: relative;
-    height: 180px !important;
-    width: 350px;
-    white-space: nowrap;
-    overflow-x: auto;
+  position: relative;
+  height: 180px !important;
+  width: 350px;
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .scroll-card .btn-form:not(:first-child) {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .col-cal {
-    margin-bottom: 15px;
-    /* max-width: 50%; */
+  margin-bottom: 15px;
+
+  /* max-width: 50%; */
 }
 
 .loading-group {
-    display: inline-block;
-    text-align: center;
+  display: inline-block;
+  text-align: center;
 }
 
 .vertical-center {
-    margin: 0;
+  margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
-  -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
 
 .four-star {
-    border: 1px solid red;
-    padding: 5px;
-    border-radius: 8px;
-    background-color: rgb(255, 215, 215);
-    margin: 10px;
+  border: 1px solid red;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: rgb(255 215 215);
+  margin: 10px;
 }
 
-.three-star, .two-star, .one-star {
-    border: 1px solid yellow;
-    padding: 5px;
-    border-radius: 8px;
-    background-color: rgb(255, 255, 215);
-    margin: 10px;
+.three-star,
+.two-star,
+.one-star {
+  border: 1px solid yellow;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: rgb(255 255 215);
+  margin: 10px;
 }
 
 .zero-star {
-    border: 1px solid yellow;
-    padding: 5px;
-    border-radius: 8px;
-    margin: 10px;
+  border: 1px solid yellow;
+  padding: 5px;
+  border-radius: 8px;
+  margin: 10px;
 }
 
 .loading {
-    animation: loading-spin 1s linear infinite;
+  animation: loading-spin 1s linear infinite;
 }
 
 @keyframes loading-spin {
-    from {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
-    to {
-        -webkit-transform: rotate(1turn);
-        transform: rotate(1turn);
-    }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
 }

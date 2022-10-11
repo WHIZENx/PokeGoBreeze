@@ -36,7 +36,7 @@ const PokemonPVP = () => {
         const cp = parseInt(params.cp);
         const paramName = params.pokemon.replaceAll('-', '_').toLowerCase();
         const data = (
-          await axios.getFetchUrl(axios.getRankingFile('all', cp, params.type), {
+          await axios.getFetchUrl(axios.getRankingFile(paramName.includes('_mega') ? 'mega' : 'all', cp, params.type), {
             cancelToken: source.token,
           })
         ).data.find((pokemon: { speciesId: any }) => pokemon.speciesId === paramName);
@@ -115,17 +115,11 @@ const PokemonPVP = () => {
           shadow: data.speciesName.includes('(Shadow)'),
           purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec)),
         });
-        dispatch(hideSpinner());
       } catch (e: any) {
         source.cancel();
         setFound(false);
-        dispatch(
-          showSpinner({
-            error: true,
-            msg: e.message,
-          })
-        );
       }
+      dispatch(hideSpinner());
     };
     fetchPokemon();
   }, [dispatch, params.cp, params.type, params.pokemon, dataStore]);

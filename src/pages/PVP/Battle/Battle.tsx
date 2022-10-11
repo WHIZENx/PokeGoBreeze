@@ -883,7 +883,7 @@ const Battle = () => {
     if (move.buffs.length === 0) return;
     return (
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
-        {move.buffs.map((value: { type: string; power: number; buffChance: number }, index: React.Key | null | undefined) => (
+        {move.buffs.map((value: { type: string; power: number; buffChance: number }, index: React.Key) => (
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
             <img width={15} height={15} alt="img-atk" src={value.type === 'atk' ? atk_logo : def_logo} />
             <div className="position-absolute icon-buff">

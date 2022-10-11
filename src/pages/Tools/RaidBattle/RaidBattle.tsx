@@ -751,7 +751,7 @@ const RaidBattle = () => {
                 return result ? result.releasedGO : false;
               })
               .slice(0, 10)
-              .map((value: any, index: React.Key | null | undefined) => (
+              .map((value: any, index: React.Key) => (
                 <div className="top-raid-pokemon" key={index}>
                   <div className="d-flex justify-content-center w-100">
                     <Link
@@ -1011,7 +1011,7 @@ const RaidBattle = () => {
                                       ttkDef: number;
                                       hp: number;
                                     },
-                                    index: React.Key | null | undefined
+                                    index: React.Key
                                   ) => (
                                     <tr key={index}>
                                       <td>#{data.trainerId + 1}</td>
@@ -1088,7 +1088,7 @@ const RaidBattle = () => {
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>
             {trainerBattleId !== null && (
               <Fragment>
-                {pokemonBattle.map((pokemon: any, index: React.Key | null | undefined) => (
+                {pokemonBattle.map((pokemon: any, index: React.Key) => (
                   <div className={'' + (index === 0 ? '' : 'element-top')} key={index}>
                     <PokemonRaid
                       controls={true}

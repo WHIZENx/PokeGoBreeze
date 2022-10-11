@@ -1,64 +1,64 @@
 .card-input div h5 {
-    text-align: center;
-    margin-bottom: 10px;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .card-input {
-    width: 300px;
-    height: 86px;
-    border: 1px solid #ddd;
+  width: 300px;
+  height: 86px;
+  border: 1px solid #dddddd;
 }
 
 .card-input:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .card-select {
-    position: relative;
-    padding: 10px;
+  position: relative;
+  padding: 10px;
 }
 
 .type-none {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .remove-close {
-    filter: invert(19%) sepia(82%) saturate(7008%) hue-rotate(357deg) brightness(102%) contrast(114%);
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+  filter: invert(19%) sepia(82%) saturate(7008%) hue-rotate(357deg) brightness(102%) contrast(114%);
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .result-type {
-    position: absolute;
-    z-index: 2;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    width: 300px;
-    max-height: 50%;
-    overflow-y: auto;
-    background-color: white;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+  width: 300px;
+  max-height: 50%;
+  overflow-y: auto;
+  background-color: white;
 }
 
 .type-title {
-    padding: 4px 6px;
-    border-radius: 5px;
+  padding: 4px 6px;
+  border-radius: 5px;
 }
 
 .weakness-title {
-    background-color: red;
-    color: white;
+  background-color: red;
+  color: white;
 }
 
 .resistance-title {
-    background-color: green;
-    color: white;
+  background-color: green;
+  color: white;
 }
 
 .neutral-title {
-    background-color: gray;
-    color: white;
+  background-color: gray;
+  color: white;
 }

@@ -24,6 +24,10 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import PersonIcon from '@mui/icons-material/Person';
 import { Candy } from '../../options/models/candy';
 
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { OverlayTrigger } from 'react-bootstrap';
+import PopoverConfig from '../../components/Popover/PopoverConfig';
+
 export const Keys = (
   assets: any[],
   pokemonData: any[],
@@ -101,7 +105,7 @@ export const Keys = (
         </div>
         {data.matchups
           .sort((a: { rating: number }, b: { rating: number }) => b.rating - a.rating)
-          .map((matchup: any, index: React.Key | null | undefined) => (
+          .map((matchup: any, index: React.Key) => (
             <Fragment key={index}>{renderItemList(matchup, 0)}</Fragment>
           ))}
       </div>
@@ -114,7 +118,7 @@ export const Keys = (
         </div>
         {data.counters
           .sort((a: { rating: number }, b: { rating: number }) => a.rating - b.rating)
-          .map((counter: any, index: React.Key | null | undefined) => (
+          .map((counter: any, index: React.Key) => (
             <Fragment key={index}>{renderItemList(counter, 1)}</Fragment>
           ))}
       </div>
@@ -352,10 +356,70 @@ export const MoveSet = (
     );
   };
 
+  const moveOverlay = () => {
+    return (
+      <OverlayTrigger
+        placement="auto"
+        overlay={
+          <PopoverConfig id="popover-info-evo">
+            <span className="info-evo">
+              <span className="d-block caption">
+                - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> General
+              </span>
+              <span className="d-block caption">
+                - <RocketLaunchIcon className="filter-shadow" sx={{ color: 'gray' }} /> Nuke
+              </span>
+              <span className="d-block caption">
+                - <BakeryDiningIcon className="filter-shadow" sx={{ color: 'pink' }} /> Spam/Bait
+              </span>
+              <span className="d-block caption">
+                - <EnergySavingsLeafIcon className="filter-shadow" sx={{ color: 'orange' }} /> High Energy
+              </span>
+              <span className="d-block caption">
+                - <StairsIcon className="filter-shadow" sx={{ color: 'lightgray' }} /> Low Quality
+              </span>
+              <span className="d-block caption">
+                - <ArrowDownwardIcon className="filter-shadow" sx={{ color: 'lightcoral' }} /> Debuff
+              </span>
+              <span className="d-block caption">
+                - <ArrowUpwardIcon className="filter-shadow" sx={{ color: 'lightgreen' }} /> Boost
+              </span>
+              <span className="d-block caption">
+                - <BoltIcon className="filter-shadow" sx={{ color: '#f8d030' }} /> Fast Charge
+              </span>
+              <span className="d-block caption">
+                - <BrokenImageIcon className="filter-shadow" sx={{ color: 'brown' }} /> Heavy Damage
+              </span>
+              <span className="d-block caption">
+                - <SpokeIcon className="filter-shadow" sx={{ color: 'lightskyblue' }} /> Multipurpose
+              </span>
+              <span className="d-block caption">
+                -{' '}
+                <span className="position-relative filter-shadow" style={{ marginRight: 5 }}>
+                  <PersonIcon sx={{ color: 'black' }} />
+                  <KeyboardDoubleArrowDownIcon
+                    fontSize="small"
+                    className="position-absolute"
+                    sx={{ color: 'red', left: '50%', bottom: 0 }}
+                  />
+                </span>{' '}
+                Self-Debuff
+              </span>
+            </span>
+          </PopoverConfig>
+        }
+      >
+        <span className="tooltips-info">
+          <InfoOutlinedIcon color="primary" />
+        </span>
+      </OverlayTrigger>
+    );
+  };
+
   return (
     <div className="row" style={{ margin: 0 }}>
       <div className="col-xl-6" style={{ padding: 0, backgroundColor: 'lightgray' }}>
-        <div className="moves-title">Fast Moves</div>
+        <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {moves.fastMoves
             .map((move: { uses: number }) => {
@@ -363,13 +427,13 @@ export const MoveSet = (
               return move;
             })
             .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)
-            .map((value: any, index: React.Key | null | undefined) => (
+            .map((value: any, index: React.Key) => (
               <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
             ))}
         </div>
       </div>
       <div className="col-xl-6" style={{ padding: 0, backgroundColor: 'lightgray' }}>
-        <div className="moves-title">Charged Moves</div>
+        <div className="moves-title">Charged Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {moves.chargedMoves
             .map((move: { moveId: string; uses: number }) => {
@@ -379,7 +443,7 @@ export const MoveSet = (
               return move;
             })
             .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)
-            .map((value: { moveId: any; uses: any }, index: React.Key | null | undefined) => (
+            .map((value: { moveId: any; uses: any }, index: React.Key) => (
               <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
             ))}
         </div>

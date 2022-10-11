@@ -822,7 +822,7 @@ const CalculatePoint = () => {
                                       | React.ReactPortal
                                       | null
                                       | undefined,
-                                    index: React.Key | null | undefined
+                                    index: React.Key
                                   ) => (
                                     <td className="text-iv-bulk" key={index}>
                                       {value}

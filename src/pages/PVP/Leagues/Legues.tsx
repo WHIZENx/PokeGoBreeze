@@ -457,7 +457,7 @@ const Leagues = () => {
                               dataStore.leagues.data.find((item: { title: any }) => item.title === value.league).iconUrl
                             )}
                           />
-                          <span className={'badge-league ' + value.league.toLowerCase()}>
+                          <span className={'badge-league ' + value.league.toLowerCase().replaceAll('_', '-')}>
                             <div className="sub-badge">
                               <img alt="img-league" height={50} src={APIService.getAssetPokeGo(value.iconUrl)} />
                             </div>

@@ -1,177 +1,179 @@
 .top-raid-group {
-    border: 1px solid #b8d4da;
-    white-space: nowrap;
-    overflow-x: auto;
-    margin-bottom: 15px;
+  border: 1px solid #b8d4da;
+  white-space: nowrap;
+  overflow-x: auto;
+  margin-bottom: 15px;
 }
 
 .top-raid-pokemon {
-    min-width: 250px;
-    display: inline-block;
-    border: 1px solid #b8d4da;
-    padding: 10px;
+  min-width: 250px;
+  display: inline-block;
+  border: 1px solid #b8d4da;
+  padding: 10px;
 }
 
 .trainer-battle {
-    width: 100%;
-    border: 1px solid #b8d4da;
-    padding: 10px;
-    margin-bottom: 15px;
-
+  width: 100%;
+  border: 1px solid #b8d4da;
+  padding: 10px;
+  margin-bottom: 15px;
 }
 
 .pokemon-battle {
-    display: inline-block;
-    border: 1px solid #b8d4da;
+  display: inline-block;
+  border: 1px solid #b8d4da;
 }
 
 .pokemon-battle span {
-    display: flex;
-    width: 45px;
-    height: 45px;
-    padding: 5px;
+  display: flex;
+  width: 45px;
+  height: 45px;
+  padding: 5px;
 }
 
 img.pokemon-sprite-battle {
-    margin-right: 10px;
-    width: 36px;
-    object-fit: contain;
+  margin-right: 10px;
+  width: 36px;
+  object-fit: contain;
 }
 
 .pokemon-battle-group {
-    white-space: nowrap;
-    overflow-y: auto;
+  white-space: nowrap;
+  overflow-y: auto;
 }
 
 .sprite-raid {
-    width: 128px;
+  width: 128px;
 }
 
 .sprite-raid:hover {
-    -webkit-filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.8));
+  filter: drop-shadow(2px 2px 2px rgb(0 0 0 / 80%));
 }
 
 .border-box {
-    border-bottom: 2px solid lightgray;
+  border-bottom: 2px solid lightgray;
 }
 
 .stats-boss {
-    border: 2px solid lightgray;
-    padding: 1rem;
+  border: 2px solid lightgray;
+  padding: 1rem;
 }
 
 .line-dps {
-    color: yellow;
-    margin-left: 1px;
+  color: yellow;
+  margin-left: 1px;
 }
 
-.line-left, .line-right {
-    position: absolute;
-    top: -10px;
+.line-left,
+.line-right {
+  position: absolute;
+  top: -10px;
 }
 
 .line-dps span.line-left {
-    left: -1.5px;
+  left: -1.5px;
 }
 
 .line-dps span.line-right {
-    right: -1.5px;
+  right: -1.5px;
 }
 
 .line-dps hr {
-    position: absolute;
-    margin: 0;
-    opacity: 1;
-    height: 2px;
+  position: absolute;
+  margin: 0;
+  opacity: 1;
+  height: 2px;
 }
 
 .line-dps div.text-dps {
-    position: absolute;
-    color: yellow;
-    top: -15.5px;
-    left: calc(50% - 7.5px);
-    font-size: 8px;
-    font-weight: 500;
+  position: absolute;
+  color: yellow;
+  top: -15.5px;
+  left: calc(50% - 7.5px);
+  font-size: 8px;
+  font-weight: 500;
 }
 
 .cursor-pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .count-pokemon {
-    border: 1px solid gray;
-    border-radius: 5px;
-    padding: 8px 15px;
-    margin: 0 15px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 8px 15px;
+  margin: 0 15px;
 }
 
 .click-none {
-    cursor: not-allowed !important;
-    color: lightgray !important;
+  cursor: not-allowed !important;
+  color: lightgray !important;
 }
 
 .flag-pokemon {
-    margin-top: 5px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: white !important;
-    width: fit-content;
-}
-
-.table-round-battle thead tr.table-header th {
-    background-color: #f1f1ff!important;
-    border: 1px solid #b8d4da;
-    color: #0571c2;
+  margin-top: 5px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white !important;
+  width: fit-content;
 }
 
 .table-round-battle thead tr th {
-    font-size: 16px;
-    height: 35px;
-    padding: 5px 10px;
+  font-size: 16px;
+  height: 35px;
+  padding: 5px 10px;
+}
+
+.table-round-battle thead tr.table-header th {
+  background-color: #f1f1ff !important;
+  border: 1px solid #b8d4da;
+  color: #0571c2;
 }
 
 .table-round-battle tbody tr td:nth-child(1) {
-    width: auto;
-    min-width: auto;
-    background-color: white;
-    text-align: center;
-    color: black;
-    font-weight: bold;
+  width: auto;
+  min-width: auto;
+  background-color: white;
+  text-align: center;
+  color: black;
+  font-weight: bold;
 }
 
 .table-info tbody tr td .table-pokemon {
-    width: max-content;
-    height: 36px;
+  width: max-content;
+  height: 36px;
 }
 
 .text-summary {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .ic-group {
-    position: absolute;
-    top: -10px;
-    right: -10px;
+  position: absolute;
+  top: -10px;
+  right: -10px;
 }
 
-.ic-copy, .ic-remove {
-    padding: 3px 8px;
-    border-radius: 50%;
-    cursor: pointer;
+.ic-copy,
+.ic-remove {
+  padding: 3px 8px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .ic-group-small {
-    position: absolute;
-    right: 5px;
+  position: absolute;
+  right: 5px;
 }
 
-.ic-copy-small, .ic-remove-small {
-    padding: 3px 8px;
-    border-radius: 50%;
-    cursor: pointer;
+.ic-copy-small,
+.ic-remove-small {
+  padding: 3px 8px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
-.ic-copy:hover, .ic-copy-small {
-    background-color: #076dbb !important;
+.ic-copy:hover,
+.ic-copy-small {
+  background-color: #076dbb !important;
 }

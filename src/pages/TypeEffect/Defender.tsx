@@ -84,7 +84,7 @@ const Defender = (prop: { types: any }) => {
               {showTypePri && (
                 <div className="result-type">
                   <ul>
-                    {types.map((value: any, index: React.Key | null | undefined) => (
+                    {types.map((value: any, index: React.Key) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypePri(value)}>
                         <CardType value={capitalize(value)} />
                       </li>
@@ -127,7 +127,7 @@ const Defender = (prop: { types: any }) => {
               {showTypeSec && (
                 <div className="result-type">
                   <ul>
-                    {types.map((value: any, index: React.Key | null | undefined) => (
+                    {types.map((value: any, index: React.Key) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
                         <CardType value={capitalize(value)} />
                       </li>

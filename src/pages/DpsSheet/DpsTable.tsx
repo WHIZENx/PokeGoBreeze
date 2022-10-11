@@ -406,8 +406,9 @@ const DpsTable = () => {
   }, []);
 
   useEffect(() => {
-    if (!finished && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) setDpsTable(calculateDPSTable());
-    else if (!dataTargetPokemon && !finished) setDpsTable(calculateDPSTable());
+    if (!finished && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
+      setDpsTable(calculateDPSTable());
+    } else if (!dataTargetPokemon && !finished) setDpsTable(calculateDPSTable());
     if (finished) {
       let result = dpsTable.filter(
         (item: {

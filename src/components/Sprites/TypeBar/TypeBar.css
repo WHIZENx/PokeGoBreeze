@@ -1,17 +1,16 @@
 .border-type {
-    border-radius: 10px;
-    color: white;
-    padding: 8px;
+  border-radius: 10px;
+  color: white;
+  padding: 8px;
 }
 
 .border-type img {
-    border-radius: 50%;
+  border-radius: 50%;
 }
 
 .border-type h3 {
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 0;
-    text-shadow: 2px 2px black;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 0;
+  text-shadow: 2px 2px black;
 }
-

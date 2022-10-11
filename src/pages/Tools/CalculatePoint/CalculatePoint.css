@@ -1,64 +1,64 @@
 .tab-body {
-    border-left: 1px solid #dee2e6;
-    border-right: 1px solid #dee2e6;
-    border-bottom: 1px solid #dee2e6;
-    padding: 1.5rem;
-}
-
-.table-raid-cal thead tr.table-header th {
-    background-color: #f1f1ff !important;
-    border: 1px solid #b8d4da;
-    color: #0571c2;
+  border-left: 1px solid #dee2e6;
+  border-right: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1.5rem;
 }
 
 .table-raid-cal thead tr th {
-    font-size: 16px;
-    height: 35px;
-    padding: 5px 10px;
+  font-size: 16px;
+  height: 35px;
+  padding: 5px 10px;
+}
+
+.table-raid-cal thead tr.table-header th {
+  background-color: #f1f1ff !important;
+  border: 1px solid #b8d4da;
+  color: #0571c2;
 }
 
 .table-raid-cal thead tr th:nth-child(1) {
-    background-color: white !important;
-    width: 75px !important;
-    min-width: 75px !important;
-}
-
-.table-raid-cal tbody tr td:nth-child(1) {
-    width: auto;
-    min-width: auto;
-    background-color: #f1f1ff;
-    text-align: center;
-    color: black;
-    font-weight: bold;
-}
-
-.sticky-left {
-    position: sticky;
-    left: 0;
-}
-
-.sticky-table-left tbody tr td:nth-child(1) {
-    position: sticky;
-    left: 0;
+  background-color: white !important;
+  width: 75px !important;
+  min-width: 75px !important;
 }
 
 .table-raid-cal tbody tr td {
-    text-align: center !important;
-    font-size: medium !important;
+  text-align: center !important;
+  font-size: medium !important;
+}
+
+.table-raid-cal tbody tr td:nth-child(1) {
+  width: auto;
+  min-width: auto;
+  background-color: #f1f1ff;
+  text-align: center;
+  color: black;
+  font-weight: bold;
+}
+
+.sticky-left {
+  position: sticky;
+  left: 0;
+}
+
+.sticky-table-left tbody tr td:nth-child(1) {
+  position: sticky;
+  left: 0;
 }
 
 .text-iv {
-    font-weight: initial;
-    color: white;
-    text-shadow: 1px 1px black;
+  font-weight: initial;
+  color: white;
+  text-shadow: 1px 1px black;
 }
 
 .text-iv-bulk {
-    font-weight: initial;
+  font-weight: initial;
 }
 
 .border-type-stat {
-    border: 1px solid lightgray;
-    padding: 10px;
-    margin: 10px 0;
+  border: 1px solid lightgray;
+  padding: 10px;
+  margin: 10px 0;
 }

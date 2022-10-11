@@ -137,7 +137,7 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
             .filter((pokemon: { pokemon: { name: string } }) =>
               splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase())
             )
-            .map((value: { pokemon: { sprite: string; name: string } }, index: React.Key | null | undefined) => (
+            .map((value: { pokemon: { sprite: string; name: string } }, index: React.Key) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
                 <CardPokemon value={value.pokemon} />
               </div>
@@ -164,7 +164,7 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
                     return fmove;
                   })
                   .filter((value: { name: any }) => value.name !== fMove.name)
-                  .map((value: any, index: React.Key | null | undefined) => (
+                  .map((value: any, index: React.Key) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
                       <CardMoveSmall value={value} />
                     </div>
@@ -214,7 +214,7 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
                       return combat.find((item: { name: any }) => item.name === move);
                     })
                     .filter((value: { name: any }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
-                    .map((value: any, index: React.Key | null | undefined) => (
+                    .map((value: any, index: React.Key) => (
                       <div
                         className={'card-move ' + (pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
                         key={index}
@@ -273,7 +273,7 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
                       return combat.find((item: { name: any }) => item.name === move);
                     })
                     .filter((value: { name: any }) => (cMoveSec === '' || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
-                    .map((value: any, index: React.Key | null | undefined) => (
+                    .map((value: any, index: React.Key) => (
                       <div
                         className="card-move"
                         key={index}

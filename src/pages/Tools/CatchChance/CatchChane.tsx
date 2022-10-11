@@ -353,10 +353,15 @@ const CatchChance = () => {
                   value={level}
                   defaultValue={1}
                   valueLabelDisplay="off"
+                  marks={[
+                    {
+                      value: 30,
+                      label: 'Max LV counter in wild',
+                    },
+                  ]}
                   step={0.5}
                   min={1}
                   max={MAX_LEVEL - 1}
-                  marks={false}
                   disabled={data ? false : true}
                   onChange={(data ? onHandleLevel : null) as any}
                 />
@@ -463,7 +468,7 @@ const CatchChance = () => {
       </div>
       <hr />
       {!advance && encounter && data && Object.keys(data).includes('result') && (
-        <div className="d-flex flex-wrap justify-content-center">
+        <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
           <div className="table-container">
             <table className="table-catch-chance">
               <thead>
@@ -520,6 +525,23 @@ const CatchChance = () => {
                         {Math.round(value)} %
                       </td>
                     ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="container element-top">
+            <table>
+              <thead />
+              <tbody>
+                <tr>
+                  <td className="text-center w-25" style={{ backgroundColor: '#f1ffff' }}>
+                    <b>The Throw</b>
+                  </td>
+                  <td className="w-75">
+                    Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging between 1 - 2 times.
+                    We've taken the averages of the circles, where the nice throw gives you a 1.15 times multiplier, the great throw gives
+                    you a 1.5 times multiplier and excellent throw gives you a 1.85 times multiplier.
+                  </td>
                 </tr>
               </tbody>
             </table>

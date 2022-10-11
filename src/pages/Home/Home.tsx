@@ -271,7 +271,7 @@ const Home = () => {
                   </StyledTableRow>
                 ) : (
                   <Fragment>
-                    {listOfPokemon.map((row: any, index: React.Key | null | undefined) => (
+                    {listOfPokemon.map((row: any, index: React.Key) => (
                       <StyledTableRow key={index}>
                         <StyledTableCell component="th" scope="row">
                           <Link to={`/pokemon/${row.id}${row.forme ? `?form=${row.forme.toLowerCase()}` : ''}`} target="_blank">

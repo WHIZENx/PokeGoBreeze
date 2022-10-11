@@ -57,7 +57,7 @@ const Attacker = (prop: { types: any }) => {
           {showType && (
             <div className="result-type">
               <ul>
-                {types.map((value: any, index: React.Key | null | undefined) => (
+                {types.map((value: any, index: React.Key) => (
                   <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                     <CardType value={capitalize(value)} />
                   </li>

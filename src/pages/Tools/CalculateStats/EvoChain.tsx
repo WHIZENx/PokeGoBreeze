@@ -32,9 +32,9 @@ const EvoChain = (props: { url: any; id: number }) => {
           Evolution Chains
         </td>
       </tr>
-      {arrEvoList.map((value: any, index: React.Key | null | undefined) => (
+      {arrEvoList.map((value: any, index: React.Key) => (
         <Fragment key={index}>
-          {value.map((value: any, index: React.Key | null | undefined) => (
+          {value.map((value: any, index: React.Key) => (
             <Fragment key={index}>
               {parseInt(value.id) !== props.id && (
                 <Fragment>

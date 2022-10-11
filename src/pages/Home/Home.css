@@ -1,38 +1,39 @@
 .border-types {
-    border: 1px solid #b8d4da;
+  border: 1px solid #b8d4da;
 }
 
 .border-input {
-    border: 1px solid #b8c3da;
+  border: 1px solid #b8c3da;
 }
 
 .head-types {
-    padding: 10px;
-    background-color: rgb(64, 159, 241);
-    color: white;
-    font-weight: bolder;
+  padding: 10px;
+  background-color: rgb(64 159 241);
+  color: white;
+  font-weight: bolder;
 }
 
 .btn-select-type .img-group {
-    margin: 0 !important;
+  margin: 0 !important;
 }
 
 .btn-select-type {
-    outline: none;
+  outline: none;
 }
 
 .btn-select-type:hover {
-    background-color: lightgray;
+  background-color: lightgray;
 }
 
-.select-type, .select-type:hover {
-    background-color: gray !important;
+.select-type,
+.select-type:hover {
+  background-color: gray !important;
 }
 
 .select-type span.caption {
-    color: white !important;
+  color: white !important;
 }
 
 .input-search {
-    border-radius: 0;
+  border-radius: 0;
 }

@@ -137,7 +137,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
             <tbody>
               {move.data
                 .sort((a: any, b: any) => b.eDPS.offensive - a.eDPS.offensive)
-                .map((value: any, index: React.Key | null | undefined) => (
+                .map((value: any, index: React.Key) => (
                   <Fragment key={index}>{renderMovesetTable(value, move.maxOff, 'offensive')}</Fragment>
                 ))}
             </tbody>
@@ -162,7 +162,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
             <tbody>
               {move.data
                 .sort((a: { eDPS: { defensive: number } }, b: { eDPS: { defensive: number } }) => b.eDPS.defensive - a.eDPS.defensive)
-                .map((value: any, index: React.Key | null | undefined) => (
+                .map((value: any, index: React.Key) => (
                   <Fragment key={index}>{renderMovesetTable(value, move.maxDef, 'defensive')}</Fragment>
                 ))}
             </tbody>

@@ -480,7 +480,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
                             )}
                             {data.quest.condition.desc === 'POKEMON_TYPE' && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
-                                {data.quest.condition.pokemonType.map((value: string, index: React.Key | null | undefined) => (
+                                {data.quest.condition.pokemonType.map((value: string, index: React.Key) => (
                                   <img
                                     key={index}
                                     alt="img-stardust"

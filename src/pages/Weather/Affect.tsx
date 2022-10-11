@@ -43,7 +43,7 @@ const Affect = (prop: { weathers: any }) => {
           {showWeather && (
             <div className="result-weather">
               <ul>
-                {weathers.map((value: string, index: React.Key | null | undefined) => (
+                {weathers.map((value: string, index: React.Key) => (
                   <li className="container card-pokemon" key={index} onMouseDown={() => changeWeather(value)}>
                     <CardWeather value={splitAndCapitalize(value, '_', ' ')} />
                   </li>

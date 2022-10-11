@@ -1,57 +1,56 @@
 .scroll-form {
-    position: relative;
-    height: 180px !important;
-    white-space: nowrap;
-    overflow-x: auto;
-    display: inline-flex;
-    column-gap: 10px;
-    width: 100%;
+  position: relative;
+  height: 180px !important;
+  white-space: nowrap;
+  overflow-x: auto;
+  display: inline-flex;
+  column-gap: 10px;
+  width: 100%;
 }
 
 .img-gender {
-    -webkit-filter: drop-shadow(3px 3px 3px #222);
-    filter: drop-shadow(3px 3px 3px #222);
+  filter: drop-shadow(3px 3px 3px #222222);
 }
 
 .img-form-gender-group {
-    vertical-align: top;
-    display: inline-block;
-    text-align: center;
-    margin-right: 5%;
-    width: 96px;
-    height: 130px;
+  vertical-align: top;
+  display: inline-block;
+  text-align: center;
+  margin-right: 5%;
+  width: 96px;
+  height: 130px;
 }
 
 .btn-form {
-    height: 142px;
-    margin: 2px 0;
-    border: 1px solid gray;
-    background-color: rgb(225, 225, 225);
-    color: black;
+  height: 142px;
+  margin: 2px 0;
+  border: 1px solid gray;
+  background-color: rgb(225 225 225);
+  color: black;
 }
 
 .form-selected {
-    background-color: rgb(150, 150, 150) !important;
+  background-color: rgb(150 150 150) !important;
 }
 
 .btn-form:focus {
-    border: 1px solid black;
-    background-color: gray;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(100, 100, 100, 0.4) !important;
+  border: 1px solid black;
+  background-color: gray;
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(100 100 100 / 40%) !important;
 }
 
 .btn-form:hover:not(.form-selected) {
-    border: 1px solid black !important;
-    background-color: rgb(200, 200, 200) !important;
-    color: black;
+  border: 1px solid black !important;
+  background-color: rgb(200 200 200) !important;
+  color: black;
 }
 
 .form-border {
-    display: inline-block;
-    border: 2px solid red;
-    border-radius: 5px;
-    padding: 5px 15px 0 15px;
-    margin-top: 5px;
-    background-color:floralwhite;
+  display: inline-block;
+  border: 2px solid red;
+  border-radius: 5px;
+  padding: 5px 15px 0;
+  margin-top: 5px;
+  background-color: floralwhite;
 }

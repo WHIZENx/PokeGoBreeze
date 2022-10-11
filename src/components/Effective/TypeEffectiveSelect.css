@@ -1,10 +1,10 @@
 .type-select-bg {
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: white;
-    column-gap: 5px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  column-gap: 5px;
 }
 
 .sprite-type-select {
-    width: auto !important;
+  width: auto !important;
 }

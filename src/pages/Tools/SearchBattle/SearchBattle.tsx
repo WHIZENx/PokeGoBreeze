@@ -367,7 +367,7 @@ const FindBattle = () => {
                       | null
                       | undefined;
                   },
-                  index: React.Key | null | undefined
+                  index: React.Key
                 ) => (
                   <Link
                     to={`/pokemon/${value.id}${value.form ? `?form=${value.form.toLowerCase()}` : ''}`}
@@ -422,7 +422,7 @@ const FindBattle = () => {
                 )
               )}
             </div>
-            {evoChain.map((value: any[], index: React.Key | null | undefined) => (
+            {evoChain.map((value: any[], index: React.Key) => (
               <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%' }}>
                 <div className="form-header">
                   {!value[0].form ? 'Normal' : splitAndCapitalize(value[0].form, '-', ' ')}

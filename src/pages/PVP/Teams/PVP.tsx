@@ -310,7 +310,7 @@ const TeamPVP = () => {
                   .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
                     sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy]
                   )
-                  .map((value: any, index: React.Key | null | undefined) => (
+                  .map((value: any, index: React.Key) => (
                     <div
                       className="d-flex align-items-center card-ranking"
                       key={index}
@@ -445,7 +445,7 @@ const TeamPVP = () => {
                                     id: any;
                                     name: string;
                                   },
-                                  index: React.Key | null | undefined
+                                  index: React.Key
                                 ) => (
                                   <div className="text-center" key={index}>
                                     <div className="d-flex justify-content-center">
@@ -503,7 +503,7 @@ const TeamPVP = () => {
                                   cmovePri: { name: any; id?: string; type?: any };
                                   cmoveSec: { name: any; id?: string; type?: any };
                                 },
-                                index: React.Key | null | undefined
+                                index: React.Key
                               ) => (
                                 <div
                                   className="d-flex align-items-center"

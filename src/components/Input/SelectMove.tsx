@@ -100,7 +100,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
               <div>
                 {resultMove
                   .filter((value: { name: any }) => value.name !== move.name)
-                  .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key | null | undefined) => (
+                  .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
                     <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
                       <CardMoveSmall value={value} />
                     </div>
@@ -128,7 +128,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
             <div>
               {resultMove
                 .filter((value: { name: any }) => value.name !== move.name)
-                .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key | null | undefined) => (
+                .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
                   <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
                     <CardMove value={value} />
                   </div>

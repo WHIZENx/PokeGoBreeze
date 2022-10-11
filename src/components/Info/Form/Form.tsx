@@ -173,7 +173,7 @@ const Form = ({
         <div className="scroll-form">
           {currForm && pokeID.current && (
             <Fragment>
-              {formList.map((value: any[], index: React.Key | null | undefined) => (
+              {formList.map((value: any[], index: React.Key) => (
                 <Fragment key={index}>
                   {value.map(
                     (
@@ -181,7 +181,7 @@ const Form = ({
                         form: { name: string; form_name: string; id: null };
                         default_name: string;
                       },
-                      index: React.Key | null | undefined
+                      index: React.Key
                     ) => (
                       <button
                         value={value.form.name + '=' + value.form.form_name}

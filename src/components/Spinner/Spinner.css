@@ -1,67 +1,69 @@
 .spinner-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 4;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 4;
 }
 
 .loading-group-spin {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: #4545451c;
-    z-index: 4;
-    top: 0;
-    left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #4545451c;
+  z-index: 4;
+  top: 0;
+  left: 0;
 }
 
 .loading-spin-container {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(closest-side, #464646b3, #46464666);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(closest-side, #464646b3, #46464666);
 }
 
 .loading-spin {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 5;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
 }
 
-#p1, #p2, #p3 {
-    opacity: 0;
+#p1,
+#p2,
+#p3 {
+  opacity: 0;
 }
 
 #p1 {
-    animation: fade-in 1s 0s infinite ease-in-out;
+  animation: fade-in 1s 0s infinite ease-in-out;
 }
 
 #p2 {
-    animation: fade-in 1s 0.1s infinite ease-in-out;
+  animation: fade-in 1s 0.1s infinite ease-in-out;
 }
 
 #p3 {
-    animation: fade-in 1s 0.2s infinite ease-in-out;
+  animation: fade-in 1s 0.2s infinite ease-in-out;
 }
 
 @keyframes fade-in {
-    100% {
-        opacity: 1;
-    }
+  100% {
+    opacity: 1;
+  }
 }
 
 .reload-text {
-    margin: 10px 0;
-    text-decoration: underline;
-    font-weight: 500;
-    color: lightgray;
-    cursor: pointer;
+  margin: 10px 0;
+  text-decoration: underline;
+  font-weight: 500;
+  color: lightgray;
+  cursor: pointer;
 }
 
 .reload-text:hover {
-    color: rgb(226, 226, 226);
+  color: rgb(226 226 226);
 }

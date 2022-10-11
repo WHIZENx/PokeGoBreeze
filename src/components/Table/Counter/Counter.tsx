@@ -80,7 +80,7 @@ const Counter = ({ def, form, changeForm }: any) => {
                   return result ? result.releasedGO : false;
                 })
                 .slice(0, firstInit + eachCounter * startIndex)
-                .map((value: any, index: React.Key | null | undefined) => (
+                .map((value: any, index: React.Key) => (
                   <Fragment key={index}>
                     <tr>
                       <td className="text-origin text-center">

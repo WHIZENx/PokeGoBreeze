@@ -1,39 +1,40 @@
 .impossible-encounter {
-    z-index: 2;
-    background-color: #ffffffba;
+  z-index: 2;
+  background-color: #ffffffba;
 }
 
 .text-not-encounter {
-    padding: 10px;
-    background-color: #e7e7e7;
-    border-radius: 10px;
+  padding: 10px;
+  background-color: #e7e7e7;
+  border-radius: 10px;
 }
 
 .circle-ring {
-    top: 50%;
-    transform: translateY(-50%);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .table-container {
-    min-width: 50%;
-    overflow-x: auto;
-    padding: 0 15px;
+  min-width: 50%;
+  overflow-x: auto;
+  padding: 0 15px;
 }
 
-.table-catch-chance tbody td, .table-catch-chance thead th {
-    font-size: 1.8rem;
-    font-weight: lighter;
-    padding: 10px 20px;
-    text-align: center;
-    width: 25%;
+.table-catch-chance tbody td,
+.table-catch-chance thead th {
+  font-size: 1.8rem;
+  font-weight: lighter;
+  padding: 10px 20px;
+  text-align: center;
+  width: 25%;
 }
 
 .table-catch-chance thead th {
-    background-color: #f1ffff;
+  background-color: #f1ffff;
 }
 
 .table-catch-chance tbody td:not(.table-catch-chance tbody td:nth-child(1)) {
-    background-color: gray;
-    font-weight: 500;
-    transition: 0.1ms;
+  background-color: rgb(150 150 150);
+  font-weight: 500;
+  transition: 0.1ms;
 }

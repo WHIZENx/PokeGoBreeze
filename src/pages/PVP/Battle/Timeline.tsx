@@ -189,7 +189,7 @@ export const TimeLine = (
                   <Fragment>
                     {value.type === 'C' && value.buff && value.buff.length > 0 ? (
                       <div className="position-absolute icon-buff-timeline">
-                        {value.buff.map((b: { power: number; type: string }, i: React.Key | null | undefined) => (
+                        {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                             {b.type.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
@@ -199,7 +199,7 @@ export const TimeLine = (
                       <Fragment>
                         {pokeObj.timeline[index] && pokeObj.timeline[index].type === 'C' && value.buff && value.buff.length > 0 ? (
                           <div className="position-absolute icon-buff-timeline">
-                            {value.buff.map((b: { power: number; type: string }, i: React.Key | null | undefined) => (
+                            {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                                 {b.type.toUpperCase()} {b.power}
                               </span>
@@ -312,7 +312,7 @@ export const TimeLineFit = (
                         className="position-absolute icon-buff-timeline"
                         style={{ left: calculateFitPoint(poke.timeline.length, index), top: 10 }}
                       >
-                        {value.buff.map((b: { power: number; type: string }, i: React.Key | null | undefined) => (
+                        {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                             {b.type.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
@@ -328,7 +328,7 @@ export const TimeLineFit = (
                               top: 10,
                             }}
                           >
-                            {value.buff.map((b: { power: number; type: string }, i: React.Key | null | undefined) => (
+                            {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                                 {b.type.toUpperCase()} {b.power}
                               </span>

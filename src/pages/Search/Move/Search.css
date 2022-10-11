@@ -1,28 +1,28 @@
 .table-head {
-    background-color: rgb(64, 159, 241);
-    color: #f1ffff;
-    border: 1px solid #b8d4da;
-    font-size: 18px;
-    padding: 15px 0 15px 0;
-    text-align: center;
-    vertical-align: inherit;
-    font-weight: bold;
+  background-color: rgb(64 159 241);
+  color: #f1ffff;
+  border: 1px solid #b8d4da;
+  font-size: 18px;
+  padding: 15px 0;
+  text-align: center;
+  vertical-align: inherit;
+  font-weight: bold;
 }
 
 .table-movesets-col {
-    position: relative;
-    overflow-y: auto;
-    border: 1px solid #b8d4da;
-    height: auto;
+  position: relative;
+  overflow-y: auto;
+  border: 1px solid #b8d4da;
+  height: auto;
 }
 
 td.data-table {
-    padding: 0;
+  padding: 0;
 }
 
 .type-icon-small {
-    padding: 5px 8px;
-    text-shadow: 1px 1px black;
-    border-radius: 5px;
-    color: white;
+  padding: 5px 8px;
+  text-shadow: 1px 1px black;
+  border-radius: 5px;
+  color: white;
 }

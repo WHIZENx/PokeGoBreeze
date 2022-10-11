@@ -28,31 +28,29 @@ const Sticker = () => {
           <span>Sticker</span>
         </h5>
         <div className="sticker-group">
-          {pokeStickerList.map(
-            (value: { shop: any; pack: any[]; pokemonId: any; stickerUrl: any; id: string }, index: React.Key | null | undefined) => (
-              <OverlayTrigger
-                key={index}
-                placement="auto"
-                overlay={
-                  <PopoverConfig id={`popover-sticker-${index}`}>
-                    {value.shop ? <span>Available in shop sell pack: {value.pack.join(', ')}</span> : <span>Unavailable in shop</span>}
-                  </PopoverConfig>
-                }
-              >
-                <div className="sticker-detail position-relative">
-                  <Badge color="primary" overlap="circular" badgeContent={value.pokemonId ? 'Pokémon' : null}>
-                    <img height={64} alt="img-sticker" src={value.stickerUrl ?? APIService.getSticker(value.id.toLowerCase())} />
-                  </Badge>
-                  {value.shop && (
-                    <span className="icon-shop">
-                      <ShoppingCartIcon fontSize="small" sx={{ color: 'white' }} />
-                    </span>
-                  )}
-                  <span className="caption">{splitAndCapitalize(value.id.toLowerCase(), '_', ' ')}</span>
-                </div>
-              </OverlayTrigger>
-            )
-          )}
+          {pokeStickerList.map((value: { shop: any; pack: any[]; pokemonId: any; stickerUrl: any; id: string }, index: React.Key) => (
+            <OverlayTrigger
+              key={index}
+              placement="auto"
+              overlay={
+                <PopoverConfig id={`popover-sticker-${index}`}>
+                  {value.shop ? <span>Available in shop sell pack: {value.pack.join(', ')}</span> : <span>Unavailable in shop</span>}
+                </PopoverConfig>
+              }
+            >
+              <div className="sticker-detail position-relative">
+                <Badge color="primary" overlap="circular" badgeContent={value.pokemonId ? 'Pokémon' : null}>
+                  <img height={64} alt="img-sticker" src={value.stickerUrl ?? APIService.getSticker(value.id.toLowerCase())} />
+                </Badge>
+                {value.shop && (
+                  <span className="icon-shop">
+                    <ShoppingCartIcon fontSize="small" sx={{ color: 'white' }} />
+                  </span>
+                )}
+                <span className="caption">{splitAndCapitalize(value.id.toLowerCase(), '_', ' ')}</span>
+              </div>
+            </OverlayTrigger>
+          ))}
         </div>
       </div>
     </div>

@@ -1,63 +1,62 @@
 .table-counter-container {
-    height: 100%;
-    max-height: 700px;
-    overflow-y: auto;
-    border: 1px solid #b8d4da;
+  height: 100%;
+  max-height: 700px;
+  overflow-y: auto;
+  border: 1px solid #b8d4da;
 }
 
 .table-counter {
-    width: 100%;
-    height: 100%;
-    table-layout: -webkit-fixed;
-    table-layout: fixed;
+  width: 100%;
+  height: 100%;
+  table-layout: -webkit-fixed;
+  table-layout: fixed;
 }
 
 .table-counter thead {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 1;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .table-counter thead tr th.table-sub-header {
-    background-color: #f1f1ff !important;
-    color: #0571c2;
-    border: 1px solid #b8d4da;
+  background-color: #f1f1ff !important;
+  color: #0571c2;
+  border: 1px solid #b8d4da;
 }
 
 .table-counter thead tr th {
-    font-size: 16px;
-    padding: 5px 10px 5px 10px;
-    height: 35px;
+  font-size: 16px;
+  padding: 5px 10px;
+  height: 35px;
 }
 
 .table-counter tbody tr td {
-    color: #0571c2;
-    font-weight: bolder;
+  color: #0571c2;
+  font-weight: bolder;
 }
 
 .table-column-head {
-    background-color: #f1ffff !important;
-    color: black !important;
-    border: 1px solid #b8d4da;
+  background-color: #f1ffff !important;
+  color: black !important;
+  border: 1px solid #b8d4da;
 }
 
 .counter-none {
-    height: 600px;
+  height: 600px;
 }
 
 .link-pokemon-sprite {
-    width: 100%;
+  width: 100%;
 }
 
 .group-pokemon-sprite {
-    width: 64px;
+  width: 64px;
 }
 
 .main-name {
-    width: 30%;
+  width: 30%;
 }
 
 .main-move-counter {
-    width: 25%;
+  width: 25%;
 }

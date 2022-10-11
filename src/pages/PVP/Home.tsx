@@ -75,7 +75,7 @@ const PVPHome = () => {
         </Form.Select>
       </div>
       <div className="group-selected">
-        {rank.cp.map((value: number, index: React.Key | null | undefined) => (
+        {rank.cp.map((value: number, index: React.Key) => (
           <Button
             key={index}
             className="btn btn-form"
@@ -120,7 +120,7 @@ const PVPHome = () => {
         </Form.Select>
       </div>
       <div className="group-selected">
-        {team.cp.map((value: number, index: React.Key | null | undefined) => (
+        {team.cp.map((value: number, index: React.Key) => (
           <Button key={index} className="btn btn-form" style={{ height: 200 }} target="_blank" href={`/pvp/teams/${team.id}/${value}`}>
             <img alt="img-league" width={128} height={128} src={renderLeagueLogo(team.logo, value)} />
             <div>

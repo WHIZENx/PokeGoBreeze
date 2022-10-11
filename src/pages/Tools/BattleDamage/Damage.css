@@ -1,56 +1,56 @@
 .table-result td:nth-child(1) {
-    width: 40% !important;
+  width: 40% !important;
 }
 
 .battle-game {
-    margin: 0;
-    padding: 10px;
+  margin: 0;
+  padding: 10px;
 }
 
 .border-window {
-    border: 1px solid gray;
-    padding: 15px;
+  border: 1px solid gray;
+  padding: 15px;
 }
 
 .result-move {
-    height: auto !important;
-    max-height: 250px !important;
+  height: auto !important;
+  max-height: 250px !important;
 }
 
 .card-header {
-    cursor: auto !important;
-    text-align: center;
-    background-color: rgb(230, 230, 230);
+  cursor: auto !important;
+  text-align: center;
+  background-color: rgb(230 230 230);
 }
 
 .caption-small {
-    font-size: 13px;
+  font-size: 13px;
 }
 
 .dropdown-caption {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .eff-weakness {
-    color: red;
+  color: red;
 }
 
 .eff-super-weakness {
-    color: darkred;
+  color: darkred;
 }
 
 .eff-neutral {
-    color: black;
+  color: black;
 }
 
 .eff-resistance {
-    color: lightgreen;
+  color: lightgreen;
 }
 
 .eff-very-resistance {
-    color: green;
+  color: green;
 }
 
 .eff-super-resistance {
-    color: darkgreen;
+  color: darkgreen;
 }

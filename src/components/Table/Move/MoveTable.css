@@ -1,66 +1,65 @@
 .table-moves-col {
-    height: 10%;
-    max-height: 700px;
-    overflow-y: auto;
-    border: 1px solid #b8d4da;
+  height: 10%;
+  max-height: 700px;
+  overflow-y: auto;
+  border: 1px solid #b8d4da;
 }
 
 .table-moves {
-    width: 100%;
-    table-layout: -webkit-fixed;
-    table-layout: fixed;
+  width: 100%;
+  table-layout: -webkit-fixed;
+  table-layout: fixed;
 }
 
 .table-moves thead {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
+  position: sticky;
+  top: 0;
 }
 
 .table-moves thead tr th.table-sub-header {
-    background-color: #f1f1ff !important;
-    color: #0571c2;
-    border: 1px solid #b8d4da;
+  background-color: #f1f1ff !important;
+  color: #0571c2;
+  border: 1px solid #b8d4da;
 }
 
 .table-moves thead tr th {
-    font-size: 16px;
-    padding: 5px 10px 5px 10px;
-    height: 35px;
+  font-size: 16px;
+  padding: 5px 10px;
+  height: 35px;
 }
 
 .table-moves tbody tr td {
-    color: #0571c2;
-    font-weight: bolder;
+  color: #0571c2;
+  font-weight: bolder;
 }
 
 .table-column-head {
-    background-color: #f1ffff !important;
-    color: black !important;
-    border: 1px solid #b8d4da;
+  background-color: #f1ffff !important;
+  color: black !important;
+  border: 1px solid #b8d4da;
 }
 
 .main-move {
-    width: 42%;
+  width: 42%;
 }
 
 .text-origin {
-    background-color: white !important;
-    color: black !important;
-    font-weight: lighter !important;
+  background-color: white !important;
+  color: black !important;
+  font-weight: lighter !important;
 }
 
 .text-b-ic {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
 .ic {
-    display: inline-block;
-    font-size: 10px;
-    padding: 1px 6px !important;
-    font-weight: bold !important;
-    text-shadow: none !important;
-    text-align: center;
-    color: black !important;
-    width: fit-content !important;
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px !important;
+  font-weight: bold !important;
+  text-shadow: none !important;
+  text-align: center;
+  color: black !important;
+  width: fit-content !important;
 }

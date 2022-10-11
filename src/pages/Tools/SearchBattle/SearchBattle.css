@@ -1,71 +1,71 @@
 .contain-poke-best-league {
-    margin: 10px;
+  margin: 10px;
 }
 
 .poke-best-league {
-    padding: 10px;
+  padding: 10px;
 }
 
 .best-poke-desc {
-    padding: 13px;
+  padding: 13px;
 }
 
 .best-name {
-    padding: 0 5px;
+  padding: 0 5px;
 }
 
 .list-best-league li {
-    padding-left: 2rem;
+  padding-left: 2rem;
 }
 
 .border-best-poke {
-    border: 1px solid lightgray;
+  border: 1px solid lightgray;
 }
 
 .evo-item-desc {
-    margin: 10px 5%;
+  margin: 10px 5%;
 }
 
 .form-header {
-    padding: 1rem 1.25rem;
-    text-align: start;
-    font-weight: bolder;
-    background-color: lightgray;
+  padding: 1rem 1.25rem;
+  text-align: start;
+  font-weight: bolder;
+  background-color: lightgray;
 }
 
 .rank-max {
-    color: red;
-    background-color: rgb(236, 200, 200);
+  color: red;
+  background-color: rgb(236 200 200);
+}
+
+.rank-nice b,
+.rank-nice div b {
+  text-shadow: white 1px 1px;
 }
 
 .rank-max div b {
-    text-shadow: white 1px 1px;
+  text-shadow: white 1px 1px;
 }
 
 .rank-excellent {
-
-    color: blueviolet;
-    background-color: rgb(236, 200, 236);
+  color: blueviolet;
+  background-color: rgb(236 200 236);
 }
 
 .rank-excellent div b {
-    text-shadow: white 1px 1px;
+  text-shadow: white 1px 1px;
 }
 
 .rank-great {
-    color: green;
-    background-color: rgb(200, 236, 200);
+  color: green;
+  background-color: rgb(200 236 200);
 }
 
 .rank-great div b {
-    text-shadow: white 1px 1px;
+  text-shadow: white 1px 1px;
 }
 
 .rank-nice {
-    color: orange;
-    background-color: rgb(236, 236, 200);
-}
-
-.rank-nice div b, .rank-nice b {
-    text-shadow: white 1px 1px;
+  color: orange;
+  background-color: rgb(236 236 200);
 }

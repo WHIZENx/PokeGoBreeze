@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect } from 'react';
+import packageInfo from '../package.json';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { loadStore } from './store/actions/store.action';
 import { hideSpinner } from './store/actions/spinner.action';
@@ -149,6 +150,7 @@ const App = () => {
   const [stateImage, setStateImage] = useLocalStorage('assets', null);
   const [stateSound, setStateSound] = useLocalStorage('sounds', null);
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
+  const [, setVersion] = useLocalStorage('version', '');
 
   useEffect(() => {
     const axios = APIService;
@@ -176,6 +178,7 @@ const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    setVersion(packageInfo.version);
     dispatch(loadStats());
   }, [dispatch]);
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useLocalStorage } from 'usehooks-ts';
 
 import logo from '../assets/pokedex.png';
 import { getTime } from '../util/Utils';
@@ -10,6 +11,7 @@ import './Navbar.css';
 
 const NavbarComponent = () => {
   const dataStore = useSelector((state: RootStateOrAny) => state.store);
+  const [version] = useLocalStorage('version', '');
 
   return (
     <Navbar collapseOnSelect={true} bg="dark" expand="lg" variant="dark">
@@ -86,9 +88,12 @@ const NavbarComponent = () => {
           </Link>
         </Nav>
         {dataStore.timestamp && (
-          <Navbar.Text>
+          <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
             <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
               Update: {getTime(dataStore.timestamp, true)}
+            </span>
+            <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
+              <b>{version}</b>
             </span>
           </Navbar.Text>
         )}

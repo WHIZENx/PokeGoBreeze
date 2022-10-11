@@ -205,7 +205,7 @@ const Tools = (props: {
                       form: { name: string; id: any; form_name: string };
                       default_name: string;
                     },
-                    index: React.Key | null | undefined
+                    index: React.Key
                   ) => (
                     <button
                       value={value.form.name}

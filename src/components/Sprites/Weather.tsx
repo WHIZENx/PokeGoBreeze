@@ -19,7 +19,7 @@ const Weather = (props: { arr: any[]; style: React.CSSProperties | undefined; te
     <div className="element-top" style={props.style}>
       {props.text && <p>{props.text}</p>}
       <div className="d-inline-flex flex-wrap type-list align-items-center">
-        {props.arr.map((value: string, index: React.Key | null | undefined) => (
+        {props.arr.map((value: string, index: React.Key) => (
           <div className="text-center d-flex" key={index}>
             <div>
               <img height={50} alt="img-pokemon" src={APIService.getWeatherSprite(value)} />

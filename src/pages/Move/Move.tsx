@@ -313,7 +313,7 @@ const Move = (props: { id?: any }) => {
                             type: string;
                             buffChance: number;
                           },
-                          index: React.Key | null | undefined
+                          index: React.Key
                         ) => (
                           <tr key={index}>
                             <td className="target-buff">

@@ -119,7 +119,7 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
                   <Fragment>
                     {resultMove
                       .filter((value: { name: any }) => props.selectDefault || (!props.selectDefault && value.name !== currentMove.name))
-                      .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key | null | undefined) => (
+                      .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
                         <Fragment key={index}>
                           {!props.type && index === 0 && (
                             <li className="card-header">

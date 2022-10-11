@@ -1,148 +1,158 @@
 .card-select-disabled {
-    background-color: #e9ecef;
-    cursor: default !important;
+  background-color: #e9ecef;
+  cursor: default !important;
 }
 
 .card-select-enabled {
-    background-color: white;
-    cursor: pointer !important;
+  background-color: white;
+  cursor: pointer !important;
 }
 
 .card-pokemon-input {
-    width: 100%;
-    height: 38px;
-    border: 1px solid #ddd;
+  width: 100%;
+  height: 38px;
+  border: 1px solid #dddddd;
 }
 
 .card-move-input {
-    width: 100%;
-    height: 38px;
-    border: 1px solid #ddd;
+  width: 100%;
+  height: 38px;
+  border: 1px solid #dddddd;
 }
 
 .input-pokemon-select {
-    background-size: auto 36px !important;
-    border: none;
-    height: 38px;
-    outline: none;
-    border-radius: 0;
+  background-size: auto 36px !important;
+  border: none;
+  height: 38px;
+  outline: none;
+  border-radius: 0;
 }
 
 .card-pokemon-select {
-    width: 100%;
-    border-top: 1px solid #ddd;
-    padding-left: 23px;
-    padding-right: 15px;
-    cursor: pointer;
-}
-
-.card-pokemon-select:hover, .card-move:hover {
-    background-color: lightgray;
+  width: 100%;
+  border-top: 1px solid #dddddd;
+  padding-left: 23px;
+  padding-right: 15px;
+  cursor: pointer;
 }
 
 .remove-pokemon-select {
-    cursor: pointer;
-    opacity: 0.5;
+  cursor: pointer;
+  opacity: 0.5;
 }
 
 .remove-pokemon-select-right {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: white;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
 }
 
 .remove-pokemon-select:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 .card-move {
-    width: 100%;
-    border-top: 1px solid #ddd;
-    padding: 5px;
-    cursor: pointer;
+  width: 100%;
+  border-top: 1px solid #dddddd;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.card-pokemon-select:hover,
+.card-move:hover {
+  background-color: lightgray;
 }
 
 .result-pokemon {
-    text-align: start !important;
-    position: absolute;
-    z-index: 2;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    width: max-content;
-    max-height: 274px;
-    overflow-y: auto;
-    background-color: white;
+  text-align: start !important;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+  width: max-content;
+  max-height: 274px;
+  overflow-y: auto;
+  background-color: white;
 }
 
 .result-move-select {
-    text-align: start !important;
-    position: absolute;
-    z-index: 2;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    width: auto; /* 275px; */
-    max-height: 180px;
-    overflow-y: auto;
-    background-color: white;
+  text-align: start !important;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+  width: auto; /* 275px; */
+  max-height: 180px;
+  overflow-y: auto;
+  background-color: white;
 }
 
 .result-move-select-default {
-    position: absolute;
-    z-index: 2;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    width: 298px;
-    max-height: 300px;
-    overflow-y: auto;
-    background-color: white;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+  width: 298px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: white;
 }
 
 .select-down {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: calc(100% - 2px);
-    margin-top: 1px;
-    padding-right: 10px;
-    background-color: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: calc(100% - 2px);
+  margin-top: 1px;
+  padding-right: 10px;
+  background-color: white;
 }
 
 .input-move.form-control:focus {
-    border-color: #FF0000;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
+  border-color: red;
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 7.5%), 0 0 8px rgb(255 0 0 / 60%);
 }
 
 .frame-badge {
-    border: 1px solid lightgray;
-    background-color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    padding: 10px;
+  border: 1px solid lightgray;
+  background-color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px;
 }
 
-.frame-badge-select, .frame-badge:hover {
-    border: 1px solid gray !important;
-    background-color: lightgray !important;
+.frame-badge-select,
+.frame-badge:hover {
+  border: 1px solid gray !important;
+  background-color: lightgray !important;
 }
 
 .position-badge {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .filter-platinum {
-    filter: brightness(0) saturate(100%) invert(86%) sepia(4%) saturate(80%) hue-rotate(2deg) brightness(102%) contrast(102%);
+  filter:
+    brightness(0)
+    saturate(100%)
+    invert(86%)
+    sepia(4%)
+    saturate(80%)
+    hue-rotate(2deg)
+    brightness(102%)
+    contrast(102%);
 }
 
 @media screen and (max-width: 420px) {
-    .result-pokemon {
-        max-width: 250px;
-    }
+  .result-pokemon {
+    max-width: 250px;
+  }
 }
 
 @media screen and (max-width: 375px) {
-    .result-pokemon {
-        max-width: 230px;
-    }
+  .result-pokemon {
+    max-width: 230px;
+  }
 }

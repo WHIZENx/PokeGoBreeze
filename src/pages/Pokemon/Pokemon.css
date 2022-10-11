@@ -1,192 +1,189 @@
 .bg-poke-candy {
-    border-radius: 50%;
-    width: fit-content;
-    height: fit-content;
+  border-radius: 50%;
+  width: fit-content;
+  height: fit-content;
 }
 
 .bg-poke-xl-candy {
-    position: absolute;
-    clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
+  position: absolute;
+  clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
 }
 
 .poke-candy {
-    -webkit-mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Menu Icons/ic_candy.png") center/contain;
-    mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Menu Icons/ic_candy.png") center/contain;
+  mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Menu Icons/ic_candy.png") center/contain;
 }
 
 .poke-xl-candy {
-    -webkit-mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Today View/TodayView_Icon_CandyXL.png") center/contain;
-    mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Today View/TodayView_Icon_CandyXL.png") center/contain;
+  mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Today View/TodayView_Icon_CandyXL.png") center/contain;
 }
 
 .poke-container {
-    margin-bottom: 15px;
-    overflow: hidden;
+  margin-bottom: 15px;
+  overflow: hidden;
 }
 
 .poke-parent {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .group-desc {
-    margin: 15px 5px;
-    overflow-y: hidden;
+  margin: 15px 5px;
+  overflow-y: hidden;
 }
 
 .img-desc {
-    width: 210px;
-    height: 210px;
-    border: 2px solid lightgray;
-    padding: 5px;
+  width: 210px;
+  height: 210px;
+  border: 2px solid lightgray;
+  padding: 5px;
 }
 
 .text-gen {
-    font-size: 16px;
-    color: gray;
+  font-size: 16px;
+  color: gray;
 }
 
 .img-form-group hr {
-    width: 350px;
+  width: 350px;
 }
 
 .img-group {
-    vertical-align: top;
-    display: inline-block;
-    text-align: center;
-    margin-right: 10px;
-    margin-bottom: 10px;
+  vertical-align: top;
+  display: inline-block;
+  text-align: center;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .caption {
-    font-size: 12px;
-    color: gray;
-    display: block;
-    text-decoration: none !important;
+  font-size: 12px;
+  color: gray;
+  display: block;
+  text-decoration: none !important;
 }
 
 a {
-    text-decoration: none !important;
+  text-decoration: none !important;
 }
 
-a b.link-title, .title-evo b, .info-title {
-    text-decoration: underline !important;
+a b.link-title,
+.title-evo b,
+.info-title {
+  text-decoration: underline !important;
 }
 
-.table-main, .table-desc {
-    max-width: 500px !important;
+.table-main,
+.table-desc {
+  max-width: 500px !important;
 }
 
 .table-main tbody tr td.table-sub-header {
-    background-color: #f1f1ff !important;
-    color: #0571c2;
-    border: 1px solid #b8d4da;
+  background-color: #f1f1ff !important;
+  color: #0571c2;
+  border: 1px solid #b8d4da;
 }
 
 .table-main thead tr th {
-    font-size: 16px;
-    padding: 5px 10px 5px 10px;
-    height: 35px;
+  font-size: 16px;
+  padding: 5px 10px;
+  height: 35px;
 }
 
-td h5, td h6 {
-    margin: 0;
+td h5,
+td h6 {
+  margin: 0;
 }
 
 .table-desc tbody tr td {
-    border: 1px solid lightgray
-}
-
-.table-desc tbody tr td:nth-child(1) {
-    color: black !important;
-    min-width: 0 !important;
-    text-align: start !important;
-}
-
-.table-desc tbody tr:nth-child(odd) td {
-    background-color: #eeeeee !important;
-    text-align: start;
-}
-
-.table-desc tbody tr td div.first-extra-col {
-    border-right: 1px solid lightgray
-}
-
-.table-desc tbody tr td div.h-100 {
-    padding: 5px 10px;
-}
-
-.table-desc tbody tr:nth-child(even) td {
-    background-color: white !important;
-    text-align: start;
-}
-
-.table-info tbody tr.text-center td.table-sub-header:nth-child(2) {
-    font-weight: bolder;
-}
-
-.table-info tbody tr.info-costs td:nth-child(1) {
-    background-color: white !important;
-}
-
-.table-info tbody tr.info-costs td:nth-child(2) {
-    background-color: #f1ffff !important;
-}
-
-.table-info tbody tr:nth-child(even) td:nth-child(2) {
-    text-align: start;
+  border: 1px solid lightgray;
 }
 
 .table-info tbody tr td:nth-child(1) {
-    width: 25%;
-    min-width: 180px;
+  width: 25%;
+  min-width: 180px;
 }
 
 .table-desc tbody tr td:nth-child(1) {
-    text-align: center;
-    width: 25% !important;
-    min-width: 180px;
+  text-align: start;
+  width: 25% !important;
+  min-width: 180px;
+  color: black !important;
+}
+
+.table-desc tbody tr:nth-child(odd) td {
+  background-color: #eeeeee !important;
+  text-align: start;
+}
+
+.table-desc tbody tr td div.first-extra-col {
+  border-right: 1px solid lightgray;
+}
+
+.table-desc tbody tr td div.h-100 {
+  padding: 5px 10px;
+}
+
+.table-desc tbody tr:nth-child(even) td {
+  background-color: white !important;
+  text-align: start;
+}
+
+.table-info tbody tr.text-center td.table-sub-header:nth-child(2) {
+  font-weight: bolder;
+}
+
+.table-info tbody tr.info-costs td:nth-child(1) {
+  background-color: white !important;
+}
+
+.table-info tbody tr.info-costs td:nth-child(2) {
+  background-color: #f1ffff !important;
+}
+
+.table-info tbody tr:nth-child(even) td:nth-child(2) {
+  text-align: start;
 }
 
 .table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs {
-    border-bottom: 1px solid #b8d4da;
+  border-bottom: 1px solid #b8d4da;
 }
 
 .table-info tbody tr:nth-child(even) td:nth-child(2) div.row-extra {
-    padding: 5px 10px 5px 10px;
+  padding: 5px 10px;
 }
 
 .text-navigate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 .prev-next-block {
-    border: 1px solid lightgray;
-    background-color: #eeeeee;
-    z-index: 3 !important;
-    box-shadow: 0px 5px 3px rgb(0 0 0 / 30%);
-    margin: 0;
-    height: 60;
+  border: 1px solid lightgray;
+  background-color: #eeeeee;
+  z-index: 3 !important;
+  box-shadow: 0 5px 3px rgb(0 0 0 / 30%);
+  margin: 0;
+  height: 60;
 }
 
 .prev-next-block a {
-    color: black !important;
+  color: black !important;
 }
 
 .prev-block {
-    border-right: 0.5px solid lightgray;
+  border-right: 0.5px solid lightgray;
 }
 
 .prev-block .text-navigate {
-    padding-right: 5%;
+  padding-right: 5%;
 }
 
 .next-block {
-    border-left: 0.5px solid lightgray;
+  border-left: 0.5px solid lightgray;
 }
 
 .next-block .text-navigate {
-    padding-left: 10%;
+  padding-left: 10%;
 }
