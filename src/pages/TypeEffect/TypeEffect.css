@@ -42,3 +42,23 @@
     overflow-y: auto;
     background-color: white;
 }
+
+.type-title {
+    padding: 4px 6px;
+    border-radius: 5px;
+}
+
+.weakness-title {
+    background-color: red;
+    color: white;
+}
+
+.resistance-title {
+    background-color: green;
+    color: white;
+}
+
+.neutral-title {
+    background-color: gray;
+    color: white;
+}

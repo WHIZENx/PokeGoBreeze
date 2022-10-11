@@ -416,24 +416,8 @@ const Leagues = () => {
                 title: string;
                 league: string;
                 conditions: {
-                  max_cp:
-                    | string
-                    | number
-                    | boolean
-                    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-                    | React.ReactFragment
-                    | React.ReactPortal
-                    | null
-                    | undefined;
-                  max_level:
-                    | string
-                    | number
-                    | boolean
-                    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-                    | React.ReactFragment
-                    | React.ReactPortal
-                    | null
-                    | undefined;
+                  max_cp: number;
+                  max_level: number;
                   timestamp: { start: string; end: string };
                   unique_selected: any;
                   unique_type: any;
@@ -524,61 +508,69 @@ const Leagues = () => {
                       {value.conditions.whiteList.length !== 0 && (
                         <li style={{ fontWeight: 500 }}>
                           <h6 className="title-leagues text-success">White List</h6>
-                          {value.conditions.whiteList.map(
-                            (item: { id: string; name: string; form: any }, index: React.Key | null | undefined) => (
-                              <Link
-                                target="_blank"
-                                className="img-link text-center"
-                                key={index}
-                                to={'/pokemon/' + item.id + (item.form === 'NORMAL' ? '' : '?form=' + item.form.toLowerCase())}
-                                title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
-                              >
-                                <div className="d-flex justify-content-center">
-                                  <span style={{ width: 64 }}>
-                                    <img
-                                      className="pokemon-sprite-medium filter-shadow-hover"
-                                      alt="img-pokemon"
-                                      src={getAssetPokeGo(item.id, item.form)}
-                                    />
-                                  </span>
-                                </div>
-                                <span className="caption">
-                                  {splitAndCapitalize(item.name.toLowerCase(), '_', ' ') +
-                                    (item.form === 'NORMAL' ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                          {value.conditions.whiteList.map((item: { id: string; name: string; form: any }, index: React.Key) => (
+                            <Link
+                              target="_blank"
+                              className="img-link text-center"
+                              key={index}
+                              to={
+                                '/pokemon/' +
+                                item.id +
+                                (item.form === 'NORMAL'
+                                  ? ''
+                                  : '?form=' + item.form.toLowerCase().replace('galarian', 'galar').replace('hisuian', 'hisui'))
+                              }
+                              title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
+                            >
+                              <div className="d-flex justify-content-center">
+                                <span style={{ width: 64 }}>
+                                  <img
+                                    className="pokemon-sprite-medium filter-shadow-hover"
+                                    alt="img-pokemon"
+                                    src={getAssetPokeGo(item.id, item.form)}
+                                  />
                                 </span>
-                              </Link>
-                            )
-                          )}
+                              </div>
+                              <span className="caption">
+                                {splitAndCapitalize(item.name.toLowerCase(), '_', ' ') +
+                                  (item.form === 'NORMAL' ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                              </span>
+                            </Link>
+                          ))}
                         </li>
                       )}
                       {value.conditions.banned.length !== 0 && (
                         <li style={{ fontWeight: 500 }}>
                           <h6 className="title-leagues text-danger">Ban List</h6>
-                          {value.conditions.banned.map(
-                            (item: { id: string; name: string; form: any }, index: React.Key | null | undefined) => (
-                              <Link
-                                target="_blank"
-                                className="img-link text-center"
-                                key={index}
-                                to={'/pokemon/' + item.id + (item.form === 'NORMAL' ? '' : '?form=' + item.form.toLowerCase())}
-                                title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
-                              >
-                                <div className="d-flex justify-content-center">
-                                  <span style={{ width: 64 }}>
-                                    <img
-                                      className="pokemon-sprite-medium filter-shadow-hover"
-                                      alt="img-pokemon"
-                                      src={getAssetPokeGo(item.id, item.form)}
-                                    />
-                                  </span>
-                                </div>
-                                <span className="caption">
-                                  {splitAndCapitalize(item.name.toLowerCase(), '_', ' ') +
-                                    (item.form === 'NORMAL' ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                          {value.conditions.banned.map((item: { id: string; name: string; form: any }, index: React.Key) => (
+                            <Link
+                              target="_blank"
+                              className="img-link text-center"
+                              key={index}
+                              to={
+                                '/pokemon/' +
+                                item.id +
+                                (item.form === 'NORMAL'
+                                  ? ''
+                                  : '?form=' + item.form.toLowerCase().replace('galarian', 'galar').replace('hisuian', 'hisui'))
+                              }
+                              title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
+                            >
+                              <div className="d-flex justify-content-center">
+                                <span style={{ width: 64 }}>
+                                  <img
+                                    className="pokemon-sprite-medium filter-shadow-hover"
+                                    alt="img-pokemon"
+                                    src={getAssetPokeGo(item.id, item.form)}
+                                  />
                                 </span>
-                              </Link>
-                            )
-                          )}
+                              </div>
+                              <span className="caption">
+                                {splitAndCapitalize(item.name.toLowerCase(), '_', ' ') +
+                                  (item.form === 'NORMAL' ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                              </span>
+                            </Link>
+                          ))}
                         </li>
                       )}
                     </ul>
@@ -636,7 +628,7 @@ const Leagues = () => {
             <h5 style={{ textDecoration: 'underline' }}>Random Pokémon</h5>
             {showData.data
               .filter((item: { guaranteedLimited: any }) => !item.guaranteedLimited)
-              .map((item: { id: string; name: string; form: any }, index: React.Key | null | undefined) => (
+              .map((item: { id: string; name: string; form: any }, index: React.Key) => (
                 <Link
                   target="_blank"
                   className="img-link text-center"
@@ -663,7 +655,7 @@ const Leagues = () => {
                 <h5 style={{ textDecoration: 'underline' }}>Garanteed Pokémon in first time</h5>
                 {showData.data
                   .filter((item: { guaranteedLimited: any; rank: number }) => item.guaranteedLimited && item.rank === rank)
-                  .map((item: { id: string; name: string; form: any }, index: React.Key | null | undefined) => (
+                  .map((item: { id: string; name: string; form: any }, index: React.Key) => (
                     <Link
                       target="_blank"
                       className="img-link text-center"

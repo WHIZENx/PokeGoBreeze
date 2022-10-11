@@ -13,7 +13,7 @@ const SelectBadge = ({ type, priority, setPriority }: any) => {
           onClick={() => setPriority(priorityNumber)}
         >
           <span style={{ width: 40 }}>
-            <img alt="frame-type" className="frame-type-sprit" src={spiritBadge} />
+            <img alt="frame-type" className={'frame-type-sprit' + (priorityNumber === 4 ? ' filter-platinum' : '')} src={spiritBadge} />
           </span>
           {priorityNumber > 0 && (
             <span className="position-badge" style={{ width: 20 }}>
@@ -38,6 +38,7 @@ const SelectBadge = ({ type, priority, setPriority }: any) => {
         {Badge('Bronze', type, 1)}
         {Badge('Silver', type, 2)}
         {Badge('Gold', type, 3)}
+        {Badge('Platinum', type, 4)}
       </div>
     </div>
   );

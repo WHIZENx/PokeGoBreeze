@@ -131,7 +131,6 @@ export const convertModelSpritName = (text: string) => {
     .replaceAll('_', '-')
     .replaceAll('%', '')
     .replace('mime-jr', 'mime_jr')
-    .replace('mr-', 'mr.-')
     .replace('-female', '_f')
     .replace('-male', '_m');
 };
@@ -144,6 +143,7 @@ export const convertName = (text: string) => {
     .replaceAll('NIDORAN_M', 'NIDORAN_MALE')
     .replaceAll('’', '')
     .replaceAll('.', '')
+    .replaceAll('MR_', 'MR._')
     .replaceAll(':', '')
     .replaceAll(' ', '_')
     .replaceAll('É', 'E')
@@ -191,7 +191,7 @@ export const convertNameRankingToOri = (text: string, form: string) => {
     .replace('cherrim-sunny', 'cherrim-sunshine')
     .replace('-5th-anniversary', '')
     .replace('-shadow', '')
-    .replace('-armored', '-a');
+    .replace('-armored', '-armor');
   if (text.includes('standard')) form = '-standard';
   return formOri.includes('(') &&
     formOri.includes(')') &&

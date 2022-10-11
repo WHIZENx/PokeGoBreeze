@@ -16,7 +16,6 @@ import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import update from 'immutability-helper';
 import { Link, useParams } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
-import { leaguesRanking } from '../../../util/Constants';
 
 import Error from '../../Error/Error';
 
@@ -265,7 +264,8 @@ const RankingPVP = () => {
   };
 
   const renderLeague = () => {
-    const league = leaguesRanking.find((item) => item.id === params.serie && item.cp === parseInt(params.cp));
+    const cp = parseInt(params.cp);
+    const league = dataStore.pvp.rankings.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (
@@ -276,18 +276,28 @@ const RankingPVP = () => {
               height={64}
               src={
                 !league.logo
-                  ? league.cp === 500
+                  ? cp === 500
                     ? APIService.getPokeOtherLeague('GBL_littlecup')
-                    : league.cp === 1500
+                    : cp === 1500
                     ? APIService.getPokeLeague('great_league')
-                    : league.cp === 2500
+                    : cp === 2500
                     ? APIService.getPokeLeague('ultra_league')
                     : APIService.getPokeLeague('master_league')
-                  : league.logo
+                  : APIService.getAssetPokeGo(league.logo)
               }
             />
             <h2>
-              <b>{league.name}</b>
+              <b>
+                {league.name === 'All'
+                  ? cp === 500
+                    ? 'Little Cup'
+                    : cp === 1500
+                    ? 'Great league'
+                    : cp === 2500
+                    ? 'Ultra league'
+                    : 'Master league'
+                  : league.name}
+              </b>
             </h2>
           </div>
         )}

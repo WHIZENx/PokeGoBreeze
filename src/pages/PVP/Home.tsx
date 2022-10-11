@@ -62,18 +62,10 @@ const PVPHome = () => {
           {pvp.rankings.map(
             (
               value: {
-                id: string | number | readonly string[] | undefined;
-                name:
-                  | string
-                  | number
-                  | boolean
-                  | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-                  | React.ReactFragment
-                  | React.ReactPortal
-                  | null
-                  | undefined;
+                id: any;
+                name: any;
               },
-              index: React.Key | null | undefined
+              index: React.Key
             ) => (
               <option key={index} value={value.id}>
                 {value.name}
@@ -115,18 +107,10 @@ const PVPHome = () => {
           {pvp.trains.map(
             (
               value: {
-                id: string | number | readonly string[] | undefined;
-                name:
-                  | string
-                  | number
-                  | boolean
-                  | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-                  | React.ReactFragment
-                  | React.ReactPortal
-                  | null
-                  | undefined;
+                id: any;
+                name: any;
               },
-              index: React.Key | null | undefined
+              index: React.Key
             ) => (
               <option key={index} value={value.id}>
                 {value.name}

@@ -75,10 +75,10 @@ const NavbarComponent = () => {
           </Link>
           <NavDropdown title="PVP">
             <Link className="dropdown-item" to="/pvp">
-              PVP Simulator
+              Simulator
             </Link>
             <Link className="dropdown-item" to="/battle-leagues">
-              PVP Battle Leagues
+              Battle Leagues
             </Link>
           </NavDropdown>
           <Link className="nav-link" to="/stickers">

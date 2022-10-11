@@ -267,9 +267,10 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
       result.id = item.id;
       result.name = item.name;
       if (item.form) {
-        result.form = item.form.replace(item.pokemonId + '_', '');
-        if (result.form === 'GALARIAN') result.form = 'GALAR';
-        else if (result.form === 'HISUIAN') result.form = 'HISUI';
+        result.form = item.form
+          .replace(item.pokemonId + '_', '')
+          .replace('GALARIAN', 'GALAR')
+          .replace('HISUIAN', 'HISUI');
       }
       if (item.evolutionBranch) {
         item.evolutionBranch.forEach(
@@ -293,9 +294,13 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             const dataEvo: any = {};
             const name = evo.evolution ?? result.name;
             if (evo.form) {
-              dataEvo.evo_to_form = evo.form.replace(name + '_', '').replace('NORMAL', '');
+              dataEvo.evo_to_form = evo.form
+                .replace(name + '_', '')
+                .replace('NORMAL', '')
+                .replace('GALARIAN', 'GALAR')
+                .replace('HISUIAN', 'HISUI');
             } else {
-              dataEvo.evo_to_form = result.form;
+              dataEvo.evo_to_form = result.form.replace('GALARIAN', 'GALAR').replace('HISUIAN', '_HISUI');
             }
             dataEvo.evo_to_id = pokemon.find((poke: { name: any }) => poke.name === name).id;
             dataEvo.evo_to_name = name.replace('_NORMAL', '');

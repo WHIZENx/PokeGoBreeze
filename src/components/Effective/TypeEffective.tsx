@@ -31,7 +31,9 @@ const TypeEffective = (props: {
         <li>Pokémon Type Effective</li>
       </h5>
       <h6 className="element-top">
-        <b>Weakness</b>
+        <span className="type-title weakness-title">
+          <b>Weakness</b>
+        </span>
       </h6>
       {props.typeEffective.very_weak?.length !== 0 || props.typeEffective.weak?.length !== 0 ? (
         <Fragment>
@@ -42,7 +44,9 @@ const TypeEffective = (props: {
         noneSprit()
       )}
       <h6 className="element-top">
-        <b>Resistance</b>
+        <span className="type-title resistance-title">
+          <b>Resistance</b>
+        </span>
       </h6>
       {props.typeEffective.super_resist?.length !== 0 ||
       props.typeEffective.very_resist?.length !== 0 ||
@@ -56,7 +60,9 @@ const TypeEffective = (props: {
         noneSprit()
       )}
       <h6 className="element-top">
-        <b>Neutral</b>
+        <span className="type-title neutral-title">
+          <b>Neutral</b>
+        </span>
       </h6>
       <Type text={'1x damage from'} arr={props.typeEffective.neutral} style={{ marginLeft: 15 }} />
     </div>

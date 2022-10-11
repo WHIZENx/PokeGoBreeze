@@ -16,7 +16,6 @@ import { calculateStatsByTag } from '../../../util/Calculate';
 import { Accordion } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import Type from '../../../components/Sprites/Type/Type';
-import { leaguesTeam } from '../../../util/Constants';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -198,7 +197,8 @@ const TeamPVP = () => {
   }, [dispatch, params.cp, params.serie, dataStore.spinner, mappingPokemonData]);
 
   const renderLeague = () => {
-    const league = leaguesTeam.find((item) => item.id === params.serie && item.cp === parseInt(params.cp));
+    const cp = parseInt(params.cp);
+    const league = dataStore.pvp.trains.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (
@@ -209,18 +209,28 @@ const TeamPVP = () => {
               height={64}
               src={
                 !league.logo
-                  ? league.cp === 500
+                  ? cp === 500
                     ? APIService.getPokeOtherLeague('GBL_littlecup')
-                    : league.cp === 1500
+                    : cp === 1500
                     ? APIService.getPokeLeague('great_league')
-                    : league.cp === 2500
+                    : cp === 2500
                     ? APIService.getPokeLeague('ultra_league')
                     : APIService.getPokeLeague('master_league')
-                  : league.logo
+                  : APIService.getAssetPokeGo(league.logo)
               }
             />
             <h2>
-              <b>{league.name}</b>
+              <b>
+                {league.name === 'All'
+                  ? cp === 500
+                    ? 'Little Cup'
+                    : cp === 1500
+                    ? 'Great league'
+                    : cp === 2500
+                    ? 'Ultra league'
+                    : 'Master league'
+                  : league.name}
+              </b>
             </h2>
           </div>
         )}

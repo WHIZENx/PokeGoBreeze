@@ -148,7 +148,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
   };
 
   const pokeSetName = (name: string) => {
-    return name.replace('_FEMALE', '_F').replace('_MALE', '_M').replaceAll('_', '-');
+    return name.replace('_FEMALE', '_F').replace('_MALE', '_M').replaceAll('_', '-').replaceAll('MR', 'MR.');
   };
 
   const modelEvoChain = (pokemon: { id: number; name: string; form: string }) => {

@@ -1,9 +1,10 @@
-import { Checkbox, FormControlLabel } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Fragment, useEffect, useState } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Select/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
+import APIService from '../../../services/API.service';
 import { calculateCatchChance, calculateCP } from '../../../util/Calculate';
 import {
   BRONZE_INC_CHANCE,
@@ -17,6 +18,7 @@ import {
   MIN_LEVEL,
   NICE_THROW_INC_CHANCE,
   NORMAL_THROW_INC_CHANCE,
+  PLATINUM_INC_CHANCE,
   POKE_BALL_INC_CHANCE,
   RAZZ_BERRY_INC_CHANCE,
   SILVER_INC_CHANCE,
@@ -29,6 +31,8 @@ import './CatchChane.css';
 const CatchChance = () => {
   const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemon);
 
+  const CIRCLR_DISTANCE = 200;
+
   const [id, setId] = useState(1);
   const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: any = useState(null);
@@ -38,17 +42,42 @@ const CatchChance = () => {
   const [statSTA, setStatSTA] = useState(0);
 
   const [data, setData]: any = useState(null);
+  const [dataAdv, setDataAdv]: any = useState(null);
   const [medal, setMedal]: any = useState(null);
   const [level, setLevel] = useState(MIN_LEVEL);
-  const [radius, setRadius] = useState(0);
+  const [radius, setRadius] = useState(100);
+  const [throwTitle, setThrowTitle]: any = useState({
+    title: 'Nice!',
+    type: 'Nice Throw',
+    threshold: NICE_THROW_INC_CHANCE,
+  });
+  const [advanceOption, setAdvanceOption] = useState({
+    ballType: 0,
+    normalThrow: false,
+  });
+  const { ballType, normalThrow } = advanceOption;
+  const [colorCircle, setColorCirCle] = useState('rgb(0, 255, 0)');
   const [encounter, setEncounter] = useState(true);
   const [options, setOptions] = useState({
+    advance: false,
     curveBall: false,
     razzBerry: false,
     goldenRazzBerry: false,
     shadow: false,
   });
-  const { curveBall, razzBerry, goldenRazzBerry } = options;
+  const { advance, curveBall, razzBerry, goldenRazzBerry } = options;
+
+  const pokeballType = [
+    { name: 'Poke Ball', threshold: POKE_BALL_INC_CHANCE },
+    { name: 'Great Ball', threshold: GREAT_BALL_INC_CHANCE },
+    { name: 'Ultra Ball', threshold: ULTRA_BALL_INC_CHANCE },
+  ];
+  const throwType = [
+    { name: 'Normal Throw', threshold: NORMAL_THROW_INC_CHANCE },
+    { name: 'Nice Throw', threshold: NICE_THROW_INC_CHANCE },
+    { name: 'Great Throw', threshold: GREAT_THROW_INC_CHANCE },
+    { name: 'Excellent Throw', threshold: EXCELLENT_THROW_INC_CHANCE },
+  ];
 
   useEffect(() => {
     document.title = 'Calculate Catch Chance - Tool';
@@ -61,10 +90,29 @@ const CatchChance = () => {
   }, [form]);
 
   useEffect(() => {
-    if (data && medal) {
+    if (!advance && data && medal) {
       calculateCatch();
     }
-  }, [medal, level, curveBall, razzBerry, goldenRazzBerry]);
+  }, [advance, medal, level, curveBall, razzBerry, goldenRazzBerry]);
+
+  useEffect(() => {
+    if (data && medal) {
+      renderRingColor();
+    }
+  }, [ballType, medal, level, razzBerry, goldenRazzBerry]);
+
+  useEffect(() => {
+    if (advance) {
+      setThrowTitle(renderTitleThrow());
+      calculateAdvance();
+    }
+  }, [advance, radius]);
+
+  useEffect(() => {
+    if (advance) {
+      calculateAdvance();
+    }
+  }, [advance, radius, medal, level, razzBerry, goldenRazzBerry, ballType, normalThrow]);
 
   const medalCatchChance = (priority: number) => {
     if (priority === 1) {
@@ -73,47 +121,32 @@ const CatchChance = () => {
       return SILVER_INC_CHANCE;
     } else if (priority === 3) {
       return GOLD_INC_CHANCE;
+    } else if (priority === 4) {
+      return PLATINUM_INC_CHANCE;
     } else {
       return 1.0;
     }
   };
 
   const calculateCatch = () => {
-    const pokeballType = [
-      { name: 'Poke Ball', threshold: POKE_BALL_INC_CHANCE },
-      { name: 'Great Ball', threshold: GREAT_BALL_INC_CHANCE },
-      { name: 'Ultra Ball', threshold: ULTRA_BALL_INC_CHANCE },
-    ];
-    const throwType = [
-      { name: 'Normal Throw', threshold: NORMAL_THROW_INC_CHANCE },
-      { name: 'Nice Throw', threshold: NICE_THROW_INC_CHANCE },
-      { name: 'Great Throw', threshold: GREAT_THROW_INC_CHANCE },
-      { name: 'Excellent Throw', threshold: EXCELLENT_THROW_INC_CHANCE },
-    ];
     const result: any = {};
-
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
 
-    // tslint:disable-next-line: prefer-for-of
-    for (let i = 0; i < pokeballType.length; i++) {
-      result[pokeballType[i].name.toLowerCase().replace(' ball', '')] = {};
-      // tslint:disable-next-line: prefer-for-of
-      for (let j = 0; j < throwType.length; j++) {
+    pokeballType.forEach((ball) => {
+      result[ball.name.toLowerCase().replace(' ball', '')] = {};
+      throwType.forEach((type) => {
         const multiplier =
-          pokeballType[i].threshold *
-          throwType[j].threshold *
+          ball.threshold *
+          ((type.threshold[0] + type.threshold[1]) / 2) *
           medalChance *
           (curveBall ? CURVE_INC_CHANCE : 1) *
           (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
           (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1);
         const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
-        result[pokeballType[i].name.toLowerCase().replace(' ball', '')][throwType[j].name.toLowerCase().replace(' throw', '')] = Math.min(
-          prob * 100,
-          100
-        );
-      }
-    }
+        result[ball.name.toLowerCase().replace(' ball', '')][type.name.toLowerCase().replace(' throw', '')] = Math.min(prob * 100, 100);
+      });
+    });
     setData({
       ...data,
       result,
@@ -184,6 +217,71 @@ const CatchChance = () => {
     setRadius(v);
   };
 
+  const handleChangeBallType = (event: SelectChangeEvent) => {
+    setAdvanceOption({ ...advanceOption, ballType: parseInt(event.target.value) });
+  };
+
+  const renderRingColor = () => {
+    setColorCirCle(checkValueColor(calculateProb(true)));
+  };
+
+  const checkValueColor = (value: number) => {
+    if (value >= 66) {
+      return `rgb(${255 - Math.round(((value - 66) * 255) / 34)}, 255, 0)`;
+    } else if (value >= 36) {
+      return `rgb(255, ${165 + Math.round(((value - 36) * 165) / 64)}, 0)`;
+    } else if (value >= 26) {
+      return `rgb(255, ${(165 / 10) * Math.round(value - 26)}, 0)`;
+    } else {
+      return 'rgb(255, 0, 0)';
+    }
+  };
+
+  const titleThrowModel = (title: string, type: string, threshold: any) => {
+    return {
+      title,
+      type,
+      threshold,
+    };
+  };
+
+  const renderTitleThrow = () => {
+    if (radius >= 70) {
+      return titleThrowModel('Nice!', 'Nice Throw', NICE_THROW_INC_CHANCE);
+    } else if (radius >= 30) {
+      return titleThrowModel('Great!', 'Great Throw', GREAT_THROW_INC_CHANCE);
+    } else {
+      return titleThrowModel('Excellent!', 'Excellent Throw', EXCELLENT_THROW_INC_CHANCE);
+    }
+  };
+
+  const calculateProb = (disable = false, threshold = 1) => {
+    const medalChance =
+      (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
+    const pokeball: any = Object.entries(pokeballType).find((item, index) => index === ballType);
+    const multiplier =
+      pokeball[1].threshold *
+      threshold *
+      medalChance *
+      (curveBall && !disable ? CURVE_INC_CHANCE : 1) *
+      (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
+      (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1);
+    const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
+    const result = Math.min(prob * 100, 100);
+    return result;
+  };
+
+  const calculateAdvance = () => {
+    const threshold = normalThrow ? 1 : 1 + (100 - radius) / 100;
+    const result = calculateProb(false, threshold);
+    const pokeball: any = Object.entries(pokeballType).find((item, index) => index === ballType);
+    setDataAdv({
+      result,
+      ballName: pokeball[1].name,
+      throwType: normalThrow ? 'Normal Throw' : throwTitle.type,
+    });
+  };
+
   return (
     <div className="contanier element-top" style={{ paddingBottom: 15 }}>
       <div className="row" style={{ margin: 0 }}>
@@ -227,7 +325,11 @@ const CatchChance = () => {
                       onChange={(event, check) => setOptions({ ...options, razzBerry: check, goldenRazzBerry: check ? false : check })}
                     />
                   }
-                  label="Razz Berry"
+                  label={
+                    <span>
+                      <img height={32} src={APIService.getItemSprite('Item_0701')} /> Razz Berry
+                    </span>
+                  }
                 />
                 <FormControlLabel
                   control={
@@ -236,7 +338,11 @@ const CatchChance = () => {
                       onChange={(event, check) => setOptions({ ...options, goldenRazzBerry: check, razzBerry: check ? false : check })}
                     />
                   }
-                  label="Golden Razz Berry"
+                  label={
+                    <span>
+                      <img height={32} src={APIService.getItemSprite('Item_0706')} /> Golden Razz Berry
+                    </span>
+                  }
                 />
               </div>
               <div className="d-flex w-100 justify-content-center element-top" style={{ paddingLeft: 15, paddingRight: 15 }}>
@@ -269,42 +375,180 @@ const CatchChance = () => {
               </div>
             </div>
           </div>
-          <div className="row element-top" style={{ margin: 0 }}>
-            <div className="col-md-6">
-              <div className="d-flex flex-wrap h-100 justify-content-center align-items-center">
-                <div className="w-100 text-center">
-                  <LevelSlider
-                    aria-label="Radius"
-                    className="w-100"
-                    style={{ maxWidth: 400 }}
-                    value={radius}
-                    defaultValue={0}
-                    valueLabelDisplay="off"
-                    step={1}
-                    min={0}
-                    max={100}
-                    marks={false}
-                    disabled={data ? false : true}
-                    onChange={(data ? onHandleRadius : null) as any}
-                  />
-                </div>
-                <div className="w-50 text-center d-inline-block">
-                  <h1>Radius</h1>
-                  <hr className="w-100" />
-                  <h5>{radius}</h5>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 d-flex justify-content-center position-relative">
-              <Circle line={2} color={'lightgray'} size={200} />
-              <div className="position-absolute circle-ring">
-                <Circle line={2} color={'red'} size={200 - (radius * 200) / 100} />
-              </div>
-            </div>
+          <div className="d-flex justify-content-center">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={advance}
+                  onChange={(event, check) => {
+                    setOptions({ ...options, advance: check });
+                    if (check) {
+                      calculateAdvance();
+                    }
+                  }}
+                />
+              }
+              label="Advance options"
+            />
           </div>
+          {advance && (
+            <Fragment>
+              <div className="d-flex flex-wrap justify-content-center" style={{ gap: 10 }}>
+                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                  <InputLabel id="demo-select-small">Ball</InputLabel>
+                  <Select value={ballType.toString()} label="Ball" onChange={handleChangeBallType}>
+                    <MenuItem value={0} className="d-flex" style={{ gap: 5 }}>
+                      <img height={16} src={APIService.getItemSprite('pokeball_sprite')} /> Poke Ball
+                    </MenuItem>
+                    <MenuItem value={1} className="d-flex" style={{ gap: 5 }}>
+                      <img height={16} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball
+                    </MenuItem>
+                    <MenuItem value={2} className="d-flex" style={{ gap: 5 }}>
+                      <img height={16} src={APIService.getItemSprite('ultraball_sprite')} /> Ultra Ball
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={normalThrow}
+                      onChange={(event, check) => setAdvanceOption({ ...advanceOption, normalThrow: check })}
+                    />
+                  }
+                  label="Normal Throw "
+                />
+              </div>
+              <div className="row element-top position-relative" style={{ margin: 0 }}>
+                {normalThrow && (
+                  <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter" />
+                )}
+                <div className="col-md-6">
+                  <div className="d-flex flex-wrap h-100 justify-content-center align-items-center">
+                    <div className="w-100 text-center">
+                      <LevelSlider
+                        aria-label="Radius"
+                        className="w-100"
+                        style={{ maxWidth: 400 }}
+                        value={radius}
+                        defaultValue={100}
+                        valueLabelDisplay="off"
+                        step={1}
+                        min={0}
+                        max={100}
+                        marks={false}
+                        disabled={data ? false : true}
+                        onChange={(data ? onHandleRadius : null) as any}
+                      />
+                    </div>
+                    <div className="w-50 text-center d-inline-block" style={{ marginBottom: 15 }}>
+                      <h1>Radius</h1>
+                      <hr className="w-100" />
+                      <h5>{radius}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 d-flex flex-column justify-content-center align-items-center" style={{ padding: 0 }}>
+                  <h5 className="text-center">{throwTitle.title}</h5>
+                  <div className="d-flex justify-content-center position-relative">
+                    <Circle line={2} color={'lightgray'} size={CIRCLR_DISTANCE} />
+                    <div className="position-absolute circle-ring">
+                      <Circle line={2} color={colorCircle} size={CIRCLR_DISTANCE - ((100 - radius) * CIRCLR_DISTANCE) / 100} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Fragment>
+          )}
         </div>
       </div>
       <hr />
+      {!advance && encounter && data && Object.keys(data).includes('result') && (
+        <div className="d-flex flex-wrap justify-content-center">
+          <div className="table-container">
+            <table className="table-catch-chance">
+              <thead>
+                <tr>
+                  <th>Throwing</th>
+                  <th>
+                    <img height={48} src={APIService.getItemSprite('pokeball_sprite')} /> Poke Ball
+                  </th>
+                  <th>
+                    <img height={48} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball
+                  </th>
+                  <th>
+                    <img height={48} src={APIService.getItemSprite('ultraball_sprite')} /> Ultra Ball
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="text-center">
+                  <td>Normal Throw</td>
+                  {Object.entries(data.result)
+                    .reduce((p: number[], c: any) => [...p, c[1].normal], [] as number[])
+                    .map((value, index) => (
+                      <td key={index} style={{ color: checkValueColor(value) }}>
+                        {Math.round(value)} %
+                      </td>
+                    ))}
+                </tr>
+                <tr className="text-center">
+                  <td>Nice Throw</td>
+                  {Object.entries(data.result)
+                    .reduce((p: number[], c: any) => [...p, c[1].nice], [] as number[])
+                    .map((value, index) => (
+                      <td key={index} style={{ color: checkValueColor(value) }}>
+                        {Math.round(value)} %
+                      </td>
+                    ))}
+                </tr>
+                <tr className="text-center">
+                  <td>Great Throw</td>
+                  {Object.entries(data.result)
+                    .reduce((p: number[], c: any) => [...p, c[1].great], [] as number[])
+                    .map((value, index) => (
+                      <td key={index} style={{ color: checkValueColor(value) }}>
+                        {Math.round(value)} %
+                      </td>
+                    ))}
+                </tr>
+                <tr className="text-center">
+                  <td>Excellent Throw</td>
+                  {Object.entries(data.result)
+                    .reduce((p: number[], c: any) => [...p, c[1].excellent], [] as number[])
+                    .map((value, index) => (
+                      <td key={index} style={{ color: checkValueColor(value) }}>
+                        {Math.round(value)} %
+                      </td>
+                    ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {advance && encounter && dataAdv && (
+        <div className="d-flex flex-wrap justify-content-center">
+          <div className="table-container">
+            <table className="table-catch-chance">
+              <thead>
+                <tr>
+                  <th>Throwing</th>
+                  <th>
+                    <img height={48} src={APIService.getItemSprite(`${dataAdv.ballName.replace(' ', '').toLowerCase()}_sprite`)} />{' '}
+                    {dataAdv.ballName}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="text-center">
+                  <td>{dataAdv.throwType}</td>
+                  <td style={{ color: checkValueColor(dataAdv.result) }}>{Math.round(dataAdv.result)} %</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

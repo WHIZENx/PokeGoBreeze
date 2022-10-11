@@ -218,7 +218,8 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
     }
     const pokemonForm =
       dataStore.details.find(
-        (item: { id: any; name: string }) => item.id === data.id && item.name === convertName(formName.replaceAll(' ', '-'))
+        (item: { id: any; name: string }) =>
+          item.id === data.id && item.name === convertName(formName.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
       )?.releasedGO ?? false;
     return !pokemonForm;
   };
