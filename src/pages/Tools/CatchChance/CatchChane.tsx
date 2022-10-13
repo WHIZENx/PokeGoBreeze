@@ -58,6 +58,7 @@ const CatchChance = () => {
   const { ballType, normalThrow } = advanceOption;
   const [colorCircle, setColorCirCle] = useState('rgb(0, 255, 0)');
   const [encounter, setEncounter] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState({
     advance: false,
     curveBall: false,
@@ -113,6 +114,10 @@ const CatchChance = () => {
       calculateAdvance();
     }
   }, [advance, radius, medal, level, razzBerry, goldenRazzBerry, ballType, normalThrow]);
+
+  useEffect(() => {
+    setLoading(false);
+  }, [form]);
 
   const medalCatchChance = (priority: number) => {
     if (priority === 1) {
@@ -282,6 +287,10 @@ const CatchChance = () => {
     });
   };
 
+  const clearStats = () => {
+    setLoading(true);
+  };
+
   return (
     <div className="contanier element-top" style={{ paddingBottom: 15 }}>
       <div className="row" style={{ margin: 0 }}>
@@ -289,6 +298,7 @@ const CatchChance = () => {
           <div className="d-flex justify-content-center">
             <Find
               hide={true}
+              clearStats={clearStats}
               title="Select Pokémon"
               setStatATK={setStatATK}
               setStatDEF={setStatDEF}
@@ -467,110 +477,113 @@ const CatchChance = () => {
         </div>
       </div>
       <hr />
-      {!advance && encounter && data && Object.keys(data).includes('result') && (
-        <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
-          <div className="container table-container">
-            <table className="table-catch-chance w-100">
-              <thead>
-                <tr>
-                  <th>Throwing</th>
-                  <th>
-                    <img height={48} src={APIService.getItemSprite('pokeball_sprite')} /> Poke Ball
-                  </th>
-                  <th>
-                    <img height={48} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball
-                  </th>
-                  <th>
-                    <img height={48} src={APIService.getItemSprite('ultraball_sprite')} /> Ultra Ball
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="text-center">
-                  <td>Normal Throw</td>
-                  {Object.entries(data.result)
-                    .reduce((p: number[], c: any) => [...p, c[1].normal], [] as number[])
-                    .map((value, index) => (
-                      <td key={index} style={{ color: checkValueColor(value) }}>
-                        {Math.round(value)} %
-                      </td>
-                    ))}
-                </tr>
-                <tr className="text-center">
-                  <td>Nice Throw</td>
-                  {Object.entries(data.result)
-                    .reduce((p: number[], c: any) => [...p, c[1].nice], [] as number[])
-                    .map((value, index) => (
-                      <td key={index} style={{ color: checkValueColor(value) }}>
-                        {Math.round(value)} %
-                      </td>
-                    ))}
-                </tr>
-                <tr className="text-center">
-                  <td>Great Throw</td>
-                  {Object.entries(data.result)
-                    .reduce((p: number[], c: any) => [...p, c[1].great], [] as number[])
-                    .map((value, index) => (
-                      <td key={index} style={{ color: checkValueColor(value) }}>
-                        {Math.round(value)} %
-                      </td>
-                    ))}
-                </tr>
-                <tr className="text-center">
-                  <td>Excellent Throw</td>
-                  {Object.entries(data.result)
-                    .reduce((p: number[], c: any) => [...p, c[1].excellent], [] as number[])
-                    .map((value, index) => (
-                      <td key={index} style={{ color: checkValueColor(value) }}>
-                        {Math.round(value)} %
-                      </td>
-                    ))}
-                </tr>
-              </tbody>
-            </table>
+      <div className="position-relative">
+        {loading && <div className="position-absolute w-100 h-100 impossible-encounter" />}
+        {!advance && encounter && data && Object.keys(data).includes('result') && (
+          <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
+            <div className="container table-container">
+              <table className="table-catch-chance w-100">
+                <thead>
+                  <tr>
+                    <th>Throwing</th>
+                    <th>
+                      <img height={48} src={APIService.getItemSprite('pokeball_sprite')} /> Poke Ball
+                    </th>
+                    <th>
+                      <img height={48} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball
+                    </th>
+                    <th>
+                      <img height={48} src={APIService.getItemSprite('ultraball_sprite')} /> Ultra Ball
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="text-center">
+                    <td>Normal Throw</td>
+                    {Object.entries(data.result)
+                      .reduce((p: number[], c: any) => [...p, c[1].normal], [] as number[])
+                      .map((value, index) => (
+                        <td key={index} style={{ color: checkValueColor(value) }}>
+                          {Math.round(value)} %
+                        </td>
+                      ))}
+                  </tr>
+                  <tr className="text-center">
+                    <td>Nice Throw</td>
+                    {Object.entries(data.result)
+                      .reduce((p: number[], c: any) => [...p, c[1].nice], [] as number[])
+                      .map((value, index) => (
+                        <td key={index} style={{ color: checkValueColor(value) }}>
+                          {Math.round(value)} %
+                        </td>
+                      ))}
+                  </tr>
+                  <tr className="text-center">
+                    <td>Great Throw</td>
+                    {Object.entries(data.result)
+                      .reduce((p: number[], c: any) => [...p, c[1].great], [] as number[])
+                      .map((value, index) => (
+                        <td key={index} style={{ color: checkValueColor(value) }}>
+                          {Math.round(value)} %
+                        </td>
+                      ))}
+                  </tr>
+                  <tr className="text-center">
+                    <td>Excellent Throw</td>
+                    {Object.entries(data.result)
+                      .reduce((p: number[], c: any) => [...p, c[1].excellent], [] as number[])
+                      .map((value, index) => (
+                        <td key={index} style={{ color: checkValueColor(value) }}>
+                          {Math.round(value)} %
+                        </td>
+                      ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="container element-top">
+              <table>
+                <thead />
+                <tbody>
+                  <tr>
+                    <td className="text-center w-25" style={{ backgroundColor: '#f1ffff' }}>
+                      <b>The Throw</b>
+                    </td>
+                    <td className="w-75">
+                      Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging between 1 - 2 times.
+                      We've taken the averages of the circles, where the nice throw gives you a 1.15 times multiplier, the great throw gives
+                      you a 1.5 times multiplier and excellent throw gives you a 1.85 times multiplier.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div className="container element-top">
-            <table>
-              <thead />
-              <tbody>
-                <tr>
-                  <td className="text-center w-25" style={{ backgroundColor: '#f1ffff' }}>
-                    <b>The Throw</b>
-                  </td>
-                  <td className="w-75">
-                    Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging between 1 - 2 times.
-                    We've taken the averages of the circles, where the nice throw gives you a 1.15 times multiplier, the great throw gives
-                    you a 1.5 times multiplier and excellent throw gives you a 1.85 times multiplier.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        )}
+        {advance && encounter && dataAdv && (
+          <div className="d-flex flex-wrap justify-content-center">
+            <div className="container table-container">
+              <table className="table-catch-chance w-100">
+                <thead>
+                  <tr>
+                    <th>Throwing</th>
+                    <th>
+                      <img height={48} src={APIService.getItemSprite(`${dataAdv.ballName.replace(' ', '').toLowerCase()}_sprite`)} />{' '}
+                      {dataAdv.ballName}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="text-center">
+                    <td>{dataAdv.throwType}</td>
+                    <td style={{ color: checkValueColor(dataAdv.result) }}>{Math.round(dataAdv.result)} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
-      {advance && encounter && dataAdv && (
-        <div className="d-flex flex-wrap justify-content-center">
-          <div className="container table-container">
-            <table className="table-catch-chance w-100">
-              <thead>
-                <tr>
-                  <th>Throwing</th>
-                  <th>
-                    <img height={48} src={APIService.getItemSprite(`${dataAdv.ballName.replace(' ', '').toLowerCase()}_sprite`)} />{' '}
-                    {dataAdv.ballName}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="text-center">
-                  <td>{dataAdv.throwType}</td>
-                  <td style={{ color: checkValueColor(dataAdv.result) }}>{Math.round(dataAdv.result)} %</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

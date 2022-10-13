@@ -128,6 +128,10 @@ td h6 {
   text-align: start;
 }
 
+.table-desc.table-info tbody tr td:first-child {
+  text-align: start !important;
+}
+
 .table-info tbody tr.text-center td.table-sub-header:nth-child(2) {
   font-weight: bolder;
 }

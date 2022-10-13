@@ -160,7 +160,7 @@ const Tools = (props: {
             </div>
             <span>
               <b>
-                <span className="text-navigate">{'<'}</span> <span>#{props.id - 1}</span>
+                <span className="text-navigater">{'<'}</span> <span>#{props.id - 1}</span>
               </b>
             </span>
           </div>
@@ -175,7 +175,7 @@ const Tools = (props: {
             </div>
             <span>
               <b>
-                <span>#{props.id + 1}</span> <span className="text-navigate">{'>'}</span>
+                <span>#{props.id + 1}</span> <span className="text-navigater">{'>'}</span>
               </b>
             </span>
           </div>
