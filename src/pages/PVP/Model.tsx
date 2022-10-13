@@ -38,15 +38,7 @@ export const Keys = (
   const renderItemList = (
     data: {
       opponent: string;
-      rating:
-        | string
-        | number
-        | boolean
-        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-        | React.ReactFragment
-        | React.ReactPortal
-        | null
-        | undefined;
+      rating: number;
     },
     bgtype: number
   ) => {

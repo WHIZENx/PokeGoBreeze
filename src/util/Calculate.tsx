@@ -1390,9 +1390,9 @@ export const counterPokemon = (
       purifiedMoves: any;
       eliteQuickMoves: any[];
     }) => {
-      if (value.quickMoves[0] !== 'STRUGGLE' && value.cinematicMoves[0] !== 'STRUGGLE') {
+      if (value.quickMoves[0] !== 'STRUGGLE' && value.cinematicMoves[0] !== 'STRUGGLE' && !value.name.includes('_FEMALE')) {
         const pokemon = Object.values(pokemonData).find((item) => {
-          const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()));
+          const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()), true);
           return item.slug === name;
         });
         if (pokemon === undefined) {

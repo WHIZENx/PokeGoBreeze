@@ -2,6 +2,12 @@
   width: 300px !important;
 }
 
+.text-navigate {
+  color: red;
+  font-weight: bolder;
+  font-size: 1.5rem;
+}
+
 .tools {
   z-index: 0;
   margin-top: 38px;

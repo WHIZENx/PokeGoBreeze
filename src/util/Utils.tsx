@@ -105,12 +105,14 @@ export const HundoRate = styled(Rating)(() => ({
   },
 }));
 
-export const capitalize = (str: string) => {
+export const capitalize = (str: string | undefined) => {
+  if (!str) return '';
   str = str.toLowerCase();
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export const splitAndCapitalize = (str: string, splitBy: string, joinBy: string) => {
+export const splitAndCapitalize = (str: string | undefined, splitBy: string, joinBy: string) => {
+  if (!str) return '';
   return str
     .split(splitBy)
     .map((text: string) => capitalize(text))
@@ -135,7 +137,8 @@ export const convertModelSpritName = (text: string) => {
     .replace('-male', '_m');
 };
 
-export const convertName = (text: string) => {
+export const convertName = (text: string | undefined) => {
+  if (!text) return '';
   return text
     .toUpperCase()
     .replaceAll('-', '_')
@@ -164,7 +167,7 @@ export const convertNameRankingToForm = (text: string) => {
   return text + form;
 };
 
-export const convertNameRankingToOri = (text: string, form: string) => {
+export const convertNameRankingToOri = (text: string, form: string, local: boolean = false) => {
   const formOri = form;
   if (text.includes('pyroar') || text.includes('frillish') || text.includes('jellicent') || text.includes('urshifu'))
     return text.split('_')[0];
@@ -191,26 +194,29 @@ export const convertNameRankingToOri = (text: string, form: string) => {
     .replace('cherrim-sunny', 'cherrim-sunshine')
     .replace('-5th-anniversary', '')
     .replace('-shadow', '')
-    .replace('-armored', '-armor');
+    .replace(local ? 'mewtwo-a' : '-armored', local ? 'mewtwo-armor' : '-armor');
+  if (local && text === 'mewtwo-armor') return text;
   if (text.includes('standard')) form = '-standard';
-  return formOri.includes('(') &&
-    formOri.includes(')') &&
-    form !== '-therian' &&
-    form !== '-o' &&
-    form !== '-origin' &&
-    form !== '-defense' &&
-    form !== '-sunshine' &&
-    form !== '-jr' &&
-    form !== '-mime' &&
-    form !== '-rime' &&
-    form !== '-null' &&
-    form !== '-low' &&
-    form !== '-small' &&
-    form !== '-large' &&
-    form !== '-average' &&
-    form !== '-super'
-    ? text.replaceAll(form.toLowerCase(), '')
-    : text;
+  let invalidForm: string[] = [
+    '-therian',
+    '-o',
+    '-origin',
+    '-defense',
+    '-sunshine',
+    '-jr',
+    '-mime',
+    '-rime',
+    '-null',
+    '-low',
+    '-small',
+    '-large',
+    '-average',
+    '-super',
+  ];
+  if (local) {
+    invalidForm = invalidForm.concat(['-attack', '-speed', '-standard', '-zen', '-confined', '-unbound', '-incarnate']);
+  }
+  return formOri.includes('(') && formOri.includes(')') && !invalidForm.includes(form) ? text.replaceAll(form.toLowerCase(), '') : text;
 };
 
 export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => {

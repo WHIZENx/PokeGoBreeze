@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import pokemonData from '../../data/pokemon.json';
-import { LevelRating, convertName, splitAndCapitalize } from '../../util/Utils';
+import { LevelRating, convertName, splitAndCapitalize, capitalize } from '../../util/Utils';
 import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
 import {
   calculateAvgDPS,
@@ -19,7 +19,7 @@ import APIService from '../../services/API.service';
 
 import loadingImg from '../../assets/loading.png';
 import Type from '../../components/Sprites/Type/Type';
-import { Checkbox, FormControlLabel, Switch, capitalize } from '@mui/material';
+import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
@@ -51,7 +51,7 @@ const cmoveSort = (rowA: { cmove: { name: string } }, rowB: { cmove: { name: str
 const columns: any = [
   {
     name: 'ID',
-    selector: (row: { pokemon: { num: any } }) => row.pokemon.num,
+    selector: (row: { pokemon: { num: any } }) => row.pokemon?.num,
     sortable: true,
     minWidth: '60px',
     maxWidth: '120px',
@@ -64,9 +64,9 @@ const columns: any = [
       purified: any;
     }) => (
       <Link
-        to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase()}` : ''}`}
+        to={`/pokemon/${row.pokemon?.num}${row.pokemon?.forme ? `?form=${row.pokemon?.forme.toLowerCase()}` : ''}`}
         target="_blank"
-        title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
+        title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
       >
         {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
         {row.purified && <img height={25} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
@@ -74,13 +74,13 @@ const columns: any = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.pokemon.sprite, true)}
+          src={APIService.getPokeIconSprite(row.pokemon?.sprite, true)}
           onError={(e: any) => {
             e.onerror = null;
-            e.target.src = APIService.getPokeIconSprite(row.pokemon.baseSpecies);
+            e.target.src = APIService.getPokeIconSprite(row.pokemon?.baseSpecies);
           }}
         />
-        {splitAndCapitalize(row.pokemon.name, '-', ' ')}
+        {splitAndCapitalize(row.pokemon?.name, '-', ' ')}
       </Link>
     ),
     sortable: true,
@@ -92,20 +92,20 @@ const columns: any = [
     selector: (row: { fmove: { id: string; name: string; type: string }; elite: { fmove: any } }) => (
       <Link
         className="d-flex align-items-center"
-        to={'/moves/' + row.fmove.id}
+        to={'/moves/' + row.fmove?.id}
         target="_blank"
-        title={`${splitAndCapitalize(row.fmove.name, '_', ' ')}`}
+        title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}
       >
         <img
           style={{ marginRight: 10 }}
           width={25}
           height={25}
           alt="img-pokemon"
-          src={APIService.getTypeSprite(capitalize(row.fmove.type))}
+          src={APIService.getTypeSprite(capitalize(row.fmove?.type))}
         />{' '}
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.fmove.name, '_', ' ')}</span>
-          {row.elite.fmove && (
+          <span className="text-b-ic">{splitAndCapitalize(row.fmove?.name, '_', ' ')}</span>
+          {row.elite?.fmove && (
             <span className="type-icon-small ic elite-ic">
               <span>Elite</span>
             </span>
@@ -122,20 +122,20 @@ const columns: any = [
     selector: (row: { cmove: { id: string; name: string; type: string }; elite: { cmove: any }; mShadow: any; purified: any }) => (
       <Link
         className="d-flex align-items-center"
-        to={'/moves/' + row.cmove.id}
+        to={'/moves/' + row.cmove?.id}
         target="_blank"
-        title={`${splitAndCapitalize(row.cmove.name, '_', ' ')}`}
+        title={`${splitAndCapitalize(row.cmove?.name, '_', ' ')}`}
       >
         <img
           style={{ marginRight: 10 }}
           width={25}
           height={25}
           alt="img-pokemon"
-          src={APIService.getTypeSprite(capitalize(row.cmove.type))}
+          src={APIService.getTypeSprite(capitalize(row.cmove?.type))}
         />{' '}
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.cmove.name, '_', ' ').replaceAll(' Plus', '+')}</span>
-          {row.elite.cmove && (
+          <span className="text-b-ic">{splitAndCapitalize(row.cmove?.name, '_', ' ').replaceAll(' Plus', '+')}</span>
+          {row.elite?.cmove && (
             <span className="type-icon-small ic elite-ic">
               <span>Elite</span>
             </span>
@@ -159,25 +159,25 @@ const columns: any = [
   },
   {
     name: 'DPS',
-    selector: (row: { dps: number }) => parseFloat(row.dps.toFixed(3)),
+    selector: (row: { dps: number }) => (row.dps ? parseFloat(row.dps?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '80px',
   },
   {
     name: 'TDO',
-    selector: (row: { tdo: number }) => parseFloat(row.tdo.toFixed(3)),
+    selector: (row: { tdo: number }) => (row.tdo ? parseFloat(row.tdo?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '100px',
   },
   {
     name: 'DPS^3*TDO',
-    selector: (row: { multiDpsTdo: number }) => parseFloat(row.multiDpsTdo.toFixed(3)),
+    selector: (row: { multiDpsTdo: number }) => (row.multiDpsTdo ? parseFloat(row.multiDpsTdo?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '140px',
   },
   {
     name: 'CP',
-    selector: (row: { cp: any }) => row.cp,
+    selector: (row: { cp: any }) => row.cp ?? '',
     sortable: true,
     minWidth: '100px',
   },
@@ -187,8 +187,27 @@ const DpsTable = () => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const types = Object.keys(data.typeEff);
 
+  const initData = (count: number) => {
+    const data: any = [];
+    const initObj = {
+      pokemon: null,
+      fmove: null,
+      cmove: null,
+      elite: null,
+      dps: null,
+      tdo: null,
+      multiDpsTdo: null,
+      cp: null,
+    };
+
+    for (let i = 0; i < count; i++) {
+      data.push(initObj);
+    }
+    return data;
+  };
+
   const [dpsTable, setDpsTable]: any = useState([]);
-  const [dataFilter, setDataFilter]: any = useState([]);
+  const [dataFilter, setDataFilter]: any = useState(initData(10));
   const [searchTerm, setSearchTerm]: any = useState('');
 
   const [dataTargetPokemon, setDataTargetPokemon]: any = useState(null);
@@ -243,132 +262,126 @@ const DpsTable = () => {
   const [showSpinner, setShowSpinner]: any = useState(true);
   const [selectTypes, setSelectTypes]: any = useState([]);
 
-  const addCPokeData = useCallback(
-    (
-      dataList: {
-        pokemon: any;
-        fmove: any;
-        cmove: any;
-        dps: number;
-        tdo: number;
-        multiDpsTdo: number;
-        shadow: any;
-        purified: any;
-        mShadow: any;
-        elite: { fmove: any; cmove: any };
-        cp: number;
-      }[],
-      movePoke: any,
-      pokemon: any,
-      vf: string,
-      shadow: any,
-      purified: any,
-      felite: any,
-      celite: any,
-      specialMove: any = null
-    ) => {
-      movePoke.forEach((vc: any) => {
-        const fmove = data.combat.find((item: { name: any }) => item.name === vf);
-        const cmove = data.combat.find((item: { name: any }) => item.name === vc);
+  const addCPokeData = (
+    dataList: {
+      pokemon: any;
+      fmove: any;
+      cmove: any;
+      dps: number;
+      tdo: number;
+      multiDpsTdo: number;
+      shadow: any;
+      purified: any;
+      mShadow: any;
+      elite: { fmove: any; cmove: any };
+      cp: number;
+    }[],
+    movePoke: any,
+    pokemon: any,
+    vf: string,
+    shadow: any,
+    purified: any,
+    felite: any,
+    celite: any,
+    specialMove: any = null
+  ) => {
+    movePoke.forEach((vc: any) => {
+      const fmove = data.combat.find((item: { name: any }) => item.name === vf);
+      const cmove = data.combat.find((item: { name: any }) => item.name === vc);
 
-        if (fmove && cmove) {
-          const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
-          const statsAttacker = {
-            atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
-            def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
-            hp: calculateStatsBattle(stats.sta, IV_HP, POKEMON_LEVEL),
-            fmove,
-            cmove,
-            types: pokemon.types,
-            shadow,
+      if (fmove && cmove) {
+        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+        const statsAttacker = {
+          atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
+          def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
+          hp: calculateStatsBattle(stats.sta, IV_HP, POKEMON_LEVEL),
+          fmove,
+          cmove,
+          types: pokemon.types,
+          shadow,
+          WEATHER_BOOSTS: options.WEATHER_BOOSTS,
+          POKEMON_FRIEND: options.TRAINER_FRIEND,
+          POKEMON_FRIEND_LEVEL: options.TRAINER_FRIEND_LEVEL,
+        };
+
+        let dps, tdo;
+        if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
+          const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.slug);
+          const statsDefender = {
+            atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
+            def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
+            hp: calculateStatsBattle(statsDef.sta, IV_HP, POKEMON_LEVEL),
+            fmove: data.combat.find((item: { name: any }) => item.name === fmoveTargetPokemon.name),
+            cmove: data.combat.find((item: { name: any }) => item.name === cmoveTargetPokemon.name),
+            types: dataTargetPokemon.types,
             WEATHER_BOOSTS: options.WEATHER_BOOSTS,
-            POKEMON_FRIEND: options.TRAINER_FRIEND,
-            POKEMON_FRIEND_LEVEL: options.TRAINER_FRIEND_LEVEL,
           };
-
-          let dps, tdo;
-          if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
-            const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.slug);
-            const statsDefender = {
-              atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
-              def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
-              hp: calculateStatsBattle(statsDef.sta, IV_HP, POKEMON_LEVEL),
-              fmove: data.combat.find((item: { name: any }) => item.name === fmoveTargetPokemon.name),
-              cmove: data.combat.find((item: { name: any }) => item.name === cmoveTargetPokemon.name),
-              types: dataTargetPokemon.types,
-              WEATHER_BOOSTS: options.WEATHER_BOOSTS,
-            };
-            const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-            dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
-            tdo = dps * TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
-          } else {
-            dps = calculateAvgDPS(
-              data.options,
-              data.typeEff,
-              data.weatherBoost,
-              statsAttacker.fmove,
-              statsAttacker.cmove,
-              statsAttacker.atk,
-              statsAttacker.def,
-              statsAttacker.hp,
-              statsAttacker.types,
-              options,
-              statsAttacker.shadow
-            );
-            tdo = calculateTDO(data.options, statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
-          }
-          dataList.push({
-            pokemon,
-            fmove: statsAttacker.fmove,
-            cmove: statsAttacker.cmove,
-            dps,
-            tdo,
-            multiDpsTdo: Math.pow(dps, 3) * tdo,
-            shadow,
-            purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
-            mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
-            elite: {
-              fmove: felite,
-              cmove: celite,
-            },
-            cp: calculateCP(stats.atk + IV_ATK, stats.def + IV_DEF, stats.sta + IV_HP, POKEMON_LEVEL),
-          });
+          const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+          dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+          tdo = dps * TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
+        } else {
+          dps = calculateAvgDPS(
+            data.options,
+            data.typeEff,
+            data.weatherBoost,
+            statsAttacker.fmove,
+            statsAttacker.cmove,
+            statsAttacker.atk,
+            statsAttacker.def,
+            statsAttacker.hp,
+            statsAttacker.types,
+            options,
+            statsAttacker.shadow
+          );
+          tdo = calculateTDO(data.options, statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
         }
-      });
-    },
-    [data, IV_ATK, IV_DEF, IV_HP, POKEMON_LEVEL, options, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]
-  );
+        dataList.push({
+          pokemon,
+          fmove: statsAttacker.fmove,
+          cmove: statsAttacker.cmove,
+          dps,
+          tdo,
+          multiDpsTdo: Math.pow(dps, 3) * tdo,
+          shadow,
+          purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
+          mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
+          elite: {
+            fmove: felite,
+            cmove: celite,
+          },
+          cp: calculateCP(stats.atk + IV_ATK, stats.def + IV_DEF, stats.sta + IV_HP, POKEMON_LEVEL),
+        });
+      }
+    });
+  };
 
-  const addFPokeData = useCallback(
-    (
-      dataList: any,
-      combat: {
-        cinematicMoves: any;
-        shadowMoves: string | any[];
-        eliteCinematicMoves: any;
-        purifiedMoves: any;
-      },
-      movePoke: any[],
-      pokemon: any,
-      felite: any
-    ) => {
-      movePoke.forEach((vf: any) => {
-        addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false);
-        if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
-          if (combat.shadowMoves.length > 0) {
-            addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
-            addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves);
-          }
-          addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
-          addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves);
+  const addFPokeData = (
+    dataList: any,
+    combat: {
+      cinematicMoves: any;
+      shadowMoves: string | any[];
+      eliteCinematicMoves: any;
+      purifiedMoves: any;
+    },
+    movePoke: any[],
+    pokemon: any,
+    felite: any
+  ) => {
+    movePoke.forEach((vf: any) => {
+      addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false);
+      if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
+        if (combat.shadowMoves.length > 0) {
+          addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
+          addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves);
         }
-        addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true);
-      });
-    },
-    [addCPokeData]
-  );
+        addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
+        addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves);
+      }
+      addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true);
+    });
+  };
 
-  const calculateDPSTable = useCallback(() => {
+  const calculateDPSTable = () => {
     const dataList: any[] = [];
     Object.values(pokemonData).forEach((pokemon) => {
       let combatPoke = data.pokemonCombat.filter(
@@ -386,9 +399,11 @@ const DpsTable = () => {
       }
     });
     setFinished(true);
-    setShowSpinner(false);
+    setTimeout(() => {
+      setShowSpinner(false);
+    }, 700);
     return dataList;
-  }, [addFPokeData, data.pokemonCombat]);
+  };
 
   const filterBestOptions = (result: any[], best: string | number) => {
     best = best === 1 ? 'dps' : best === 2 ? 'tdo' : 'multiDpsTdo';
@@ -403,77 +418,78 @@ const DpsTable = () => {
 
   useEffect(() => {
     document.title = 'DPS&TDO Table';
+    setDpsTable(calculateDPSTable());
   }, []);
 
   useEffect(() => {
-    if (!finished && dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
+    setShowSpinner(true);
+    setTimeout(() => {
       setDpsTable(calculateDPSTable());
-    } else if (!dataTargetPokemon && !finished) setDpsTable(calculateDPSTable());
-    if (finished) {
-      let result = dpsTable.filter(
-        (item: {
-          fmove: { type: string };
-          cmove: { type: string };
-          pokemon: {
-            name: string;
-            num: { toString: () => string | any[] };
-            forme: string;
-            releasedGO: any;
-          };
-          shadow: any;
-          elite: { fmove: any; cmove: any };
-        }) => {
-          const boolFilterType =
-            selectTypes.length === 0 ||
-            (selectTypes.includes(item.fmove.type.toUpperCase()) && selectTypes.includes(item.cmove.type.toUpperCase()));
-          const boolFilterPoke =
-            searchTerm === '' ||
-            splitAndCapitalize(item.pokemon.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.pokemon.num.toString().includes(searchTerm);
+    }, 300);
+  }, [dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
 
-          const boolShowShadow = !showShadow && item.shadow;
-          const boolShowElite = !showEliteMove && (item.elite.fmove || item.elite.cmove);
-          const boolShowMega = !showMega && item.pokemon.forme && item.pokemon.forme.toLowerCase().includes('mega');
+  useEffect(() => {
+    let result = dpsTable.filter(
+      (item: {
+        fmove?: { type: string };
+        cmove?: { type: string };
+        pokemon?: {
+          name: string;
+          num: { toString: () => string | any[] };
+          forme: string;
+          releasedGO: any;
+        };
+        shadow?: any;
+        elite?: { fmove: any; cmove: any };
+      }) => {
+        const boolFilterType =
+          selectTypes.length === 0 ||
+          (selectTypes.includes(item.fmove?.type.toUpperCase()) && selectTypes.includes(item.cmove?.type.toUpperCase()));
+        const boolFilterPoke =
+          searchTerm === '' ||
+          splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.pokemon?.num.toString().includes(searchTerm);
 
-          const boolOnlyShadow = enableShadow && item.shadow;
-          const boolOnlyElite = enableElite && (item.elite.fmove || item.elite.cmove);
-          const boolOnlyMega = enableMega && item.pokemon.forme && item.pokemon.forme.toLowerCase().includes('mega');
+        const boolShowShadow = !showShadow && item.shadow;
+        const boolShowElite = !showEliteMove && (item.elite?.fmove || item.elite?.cmove);
+        const boolShowMega = !showMega && item.pokemon?.forme && item.pokemon?.forme.toLowerCase().includes('mega');
 
-          let boolReleaseGO = true;
-          if (releasedGO) {
-            const result = data.details.find((pokemon: { name: string; id: any }) => {
-              if (item.pokemon.name.toLowerCase().includes('_mega')) {
-                return pokemon.id === item.pokemon.num && pokemon.name === item.pokemon.name.toUpperCase().replaceAll('-', '_');
-              } else {
-                return (
-                  pokemon.id === item.pokemon.num &&
-                  pokemon.name ===
-                    (pokemon.id === 555 && !item.pokemon.name.toLowerCase().includes('zen')
-                      ? item.pokemon.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
-                      : convertName(item.pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
-                );
-              }
-            });
-            boolReleaseGO = result ? result.releasedGO : false;
-          }
-          if (enableShadow || enableElite || enableMega)
-            return (
-              boolFilterType &&
-              boolFilterPoke &&
-              boolReleaseGO &&
-              !(boolShowShadow || boolShowElite || boolShowMega) &&
-              boolReleaseGO &&
-              (boolOnlyShadow || boolOnlyElite || boolOnlyMega)
-            );
-          else return boolFilterType && boolFilterPoke && boolReleaseGO && !(boolShowShadow || boolShowElite || boolShowMega);
+        const boolOnlyShadow = enableShadow && item.shadow;
+        const boolOnlyElite = enableElite && (item.elite?.fmove || item.elite?.cmove);
+        const boolOnlyMega = enableMega && item.pokemon?.forme && item.pokemon?.forme.toLowerCase().includes('mega');
+
+        let boolReleaseGO = true;
+        if (releasedGO) {
+          const result = data.details.find((pokemon: { name: string; id: any }) => {
+            if (item.pokemon?.name.toLowerCase().includes('_mega')) {
+              return pokemon.id === item.pokemon?.num && pokemon.name === item.pokemon?.name.toUpperCase().replaceAll('-', '_');
+            } else {
+              return (
+                pokemon.id === item.pokemon?.num &&
+                pokemon.name ===
+                  (pokemon.id === 555 && !item.pokemon?.name.toLowerCase().includes('zen')
+                    ? item.pokemon?.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+                    : convertName(item.pokemon?.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
+              );
+            }
+          });
+          boolReleaseGO = result ? result.releasedGO : false;
         }
-      );
-      if (enableBest) result = filterBestOptions(result, bestOf);
-      setDataFilter(result);
-    }
+        if (enableShadow || enableElite || enableMega)
+          return (
+            boolFilterType &&
+            boolFilterPoke &&
+            boolReleaseGO &&
+            !(boolShowShadow || boolShowElite || boolShowMega) &&
+            boolReleaseGO &&
+            (boolOnlyShadow || boolOnlyElite || boolOnlyMega)
+          );
+        else return boolFilterType && boolFilterPoke && boolReleaseGO && !(boolShowShadow || boolShowElite || boolShowMega);
+      }
+    );
+    if (enableBest) result = filterBestOptions(result, bestOf);
+    setDataFilter(result);
   }, [
-    finished,
-    calculateDPSTable,
     dpsTable,
     selectTypes,
     searchTerm,
@@ -485,9 +501,6 @@ const DpsTable = () => {
     enableMega,
     enableBest,
     bestOf,
-    dataTargetPokemon,
-    fmoveTargetPokemon,
-    cmoveTargetPokemon,
     releasedGO,
   ]);
 
@@ -499,15 +512,15 @@ const DpsTable = () => {
   };
 
   const clearData = () => {
-    setShowSpinner(true);
-    setTimeout(() => {
-      setFinished(false);
-    }, 300);
+    setFinished(false);
   };
 
   const onCalculateTable = useCallback((e: { preventDefault: () => void }) => {
     e.preventDefault();
-    clearData();
+    setShowSpinner(true);
+    setTimeout(() => {
+      setDpsTable(calculateDPSTable());
+    }, 300);
   }, []);
 
   return (

@@ -179,7 +179,6 @@ const TeamPVP = () => {
         dispatch(hideSpinner());
       } catch (e: any) {
         source.cancel();
-        setFound(false);
         dispatch(
           showSpinner({
             error: true,

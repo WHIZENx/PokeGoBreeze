@@ -118,6 +118,8 @@
   border-radius: 8px;
   cursor: pointer;
   padding: 10px;
+  width: 62px;
+  height: 62px;
 }
 
 .frame-badge-select,

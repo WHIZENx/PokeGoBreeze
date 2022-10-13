@@ -91,7 +91,7 @@ const Find = (props: {
       if (props.setName) props.setName((pokeList as any).find((item: any) => item.id === id - 1)?.name);
       if (props.clearStats) props.clearStats();
     }, 300);
-    props.clearStats();
+    if (props.clearStats) props.clearStats();
   };
 
   const incId = () => {
@@ -101,7 +101,7 @@ const Find = (props: {
       if (props.setName) props.setName((pokeList as any).find((item: any) => item.id === id + 1)?.name);
       if (props.clearStats) props.clearStats();
     }, 300);
-    props.clearStats();
+    if (props.clearStats) props.clearStats();
   };
 
   const searchPokemon = () => {

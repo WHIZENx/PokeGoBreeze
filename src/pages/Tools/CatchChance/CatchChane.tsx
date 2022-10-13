@@ -433,7 +433,7 @@ const CatchChance = () => {
                       <LevelSlider
                         aria-label="Radius"
                         className="w-100"
-                        style={{ maxWidth: 400 }}
+                        style={{ maxWidth: 300 }}
                         value={radius}
                         defaultValue={100}
                         valueLabelDisplay="off"
@@ -469,8 +469,8 @@ const CatchChance = () => {
       <hr />
       {!advance && encounter && data && Object.keys(data).includes('result') && (
         <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
-          <div className="table-container">
-            <table className="table-catch-chance">
+          <div className="container table-container">
+            <table className="table-catch-chance w-100">
               <thead>
                 <tr>
                   <th>Throwing</th>
@@ -550,8 +550,8 @@ const CatchChance = () => {
       )}
       {advance && encounter && dataAdv && (
         <div className="d-flex flex-wrap justify-content-center">
-          <div className="table-container">
-            <table className="table-catch-chance">
+          <div className="container table-container">
+            <table className="table-catch-chance w-100">
               <thead>
                 <tr>
                   <th>Throwing</th>

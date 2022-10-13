@@ -8,9 +8,6 @@ import { splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
 import Type from '../../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-
 const Tools = (props: {
   raid?: any;
   tier?: any;
@@ -163,7 +160,7 @@ const Tools = (props: {
             </div>
             <span>
               <b>
-                <NavigateBeforeIcon sx={{ fontSize: '2rem', color: 'red' }} /> #{props.id - 1}
+                <span className="text-navigate">{'<'}</span> <span>#{props.id - 1}</span>
               </b>
             </span>
           </div>
@@ -178,7 +175,7 @@ const Tools = (props: {
             </div>
             <span>
               <b>
-                #{props.id + 1} <NavigateNextIcon sx={{ fontSize: '2rem', color: 'red' }} />
+                <span>#{props.id + 1}</span> <span className="text-navigate">{'>'}</span>
               </b>
             </span>
           </div>
