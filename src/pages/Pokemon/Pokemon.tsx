@@ -401,7 +401,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                       <tbody>
                         <tr>
                           <td>
-                            <h5>ID</h5>
+                            <h5 className="d-flex">ID</h5>
                           </td>
                           <td colSpan={2}>
                             <h5 className="d-flex">
@@ -411,7 +411,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                         </tr>
                         <tr>
                           <td>
-                            <h5>Name</h5>
+                            <h5 className="d-flex">Name</h5>
                           </td>
                           <td colSpan={2}>
                             <h5 className="d-flex">
@@ -428,7 +428,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                         </tr>
                         <tr>
                           <td>
-                            <h5>Generation</h5>
+                            <h5 className="d-flex">Generation</h5>
                           </td>
                           <td colSpan={2}>
                             <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
@@ -439,7 +439,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                         </tr>
                         <tr>
                           <td>
-                            <h5>Region</h5>
+                            <h5 className="d-flex">Region</h5>
                           </td>
                           <td colSpan={2}>
                             <h5 className="d-flex">{region}</h5>
@@ -447,7 +447,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                         </tr>
                         <tr>
                           <td>
-                            <h5>Version</h5>
+                            <h5 className="d-flex">Version</h5>
                           </td>
                           <td colSpan={2}>
                             <h5 className="d-flex">{version && version.replace('Go', 'GO')}</h5>
@@ -455,7 +455,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                         </tr>
                         <tr>
                           <td>
-                            <h5>Body</h5>
+                            <h5 className="d-flex">Body</h5>
                           </td>
                           <td colSpan={2} style={{ padding: 0 }}>
                             <div className="d-flex align-items-center first-extra-col h-100" style={{ float: 'left', width: '50%' }}>
