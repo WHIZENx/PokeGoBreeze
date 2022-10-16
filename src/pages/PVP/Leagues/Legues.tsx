@@ -198,11 +198,7 @@ const Leagues = () => {
                           src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                         />
                         <span className="caption text-black">Random Item</span>
-                        <VisibilityIcon
-                          className="view-pokemon"
-                          sx={{ fontSize: '1rem', color: 'black' }}
-                          onClick={() => handleShow(value.type, 'FREE', value.step)}
-                        />
+                        <VisibilityIcon className="view-pokemon" sx={{ fontSize: '1rem', color: 'black' }} />
                       </Fragment>
                     )}
                     {value.type === 'ITEM_RARE_CANDY' && (

@@ -196,14 +196,19 @@ const Battle = () => {
 
   const battleAnimation = () => {
     if (pokemonCurr.timeline.length === 0 && pokemonObj.timeline.length === 0) arrBound.current = [];
+    if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
+      return false;
+    }
+
+    if ((pokemonCurr.disableCMovePri && pokemonCurr.cMoveSec === '') || (pokemonObj.disableCMovePri && pokemonObj.cMoveSec === '')) {
+      return false;
+    }
     resetTimeLine();
     clearInterval(timelineInterval);
     clearInterval(turnInterval);
 
     let player1 = Pokemon(pokemonCurr);
     let player2 = Pokemon(pokemonObj);
-
-    // console.log(pokemonCurr, player1, pokemonObj, player2)
 
     if (player1.disableCMovePri) {
       player1.cmove = player1.cmoveSec;
@@ -565,7 +570,6 @@ const Battle = () => {
           delay -= 1;
         }
       }
-      // console.log("Turn:", timer, player1.hp, player2.hp)
       if (player1.hp <= 0 || player2.hp <= 0) {
         clearInterval(timelineInterval);
         clearInterval(turnInterval);
@@ -594,7 +598,6 @@ const Battle = () => {
         } else {
           battleAnimation();
         }
-        // console.log(timelinePri, timelineSec)
       }
     }, 1);
   };
@@ -830,7 +833,6 @@ const Battle = () => {
 
   const overlappingNormal = (range: number, arr: any[]) => {
     const index = arr.filter((dom: { left: number }) => dom.left <= xNormal.current).length;
-    // console.log(index)
     if (index >= 0 && index < range) updateTimeine(index);
   };
 

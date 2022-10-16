@@ -63,7 +63,7 @@ const CircleBar = ({ text, type, size, moveEnergy, energy, maxEnergy }: any) => 
   const fillCount = Math.min(Math.ceil(maxEnergy / moveEnergy), 3);
 
   return (
-    <div className="d-flex flex-column align-items-center" style={{ rowGap: 10 }}>
+    <div className="d-flex flex-column align-items-center justify-content-between" style={{ rowGap: 10 }}>
       {text && (
         <span>
           <b>{text}</b>
