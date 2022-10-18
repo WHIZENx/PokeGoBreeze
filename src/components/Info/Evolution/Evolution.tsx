@@ -46,7 +46,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
 
   const getEvoChain = useCallback(
     (data: any) => {
-      if (data.length === 0) return false;
+      if (data.length === 0) {
+        return false;
+      }
       const evoList = data.map((item: { species: { url: string } }) => {
         return item && evoData.filter((e: { id: number }) => e.id === parseInt(item.species.url.split('/')[6]));
       })[0];
@@ -57,7 +59,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
         : forme.form_name;
       if (!evoList) {
         const pokemon = evoData.find((e: { id: any }) => e.id === id);
-        if (pokemon)
+        if (pokemon) {
           return setArrEvoList((oldArr: any) => [
             ...oldArr,
             [
@@ -69,6 +71,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
               },
             ],
           ]);
+        }
         return setArrEvoList((oldArr: any) => [...oldArr, [{ name: (pokemonName as any)[id].name, id, baby: false, form: null }]]);
       } else if (evoList.length > 1) {
         const evoInJSON = evoList.find((item: { name: string | any[] }) => item.name.includes(currForm.toUpperCase()));
@@ -79,7 +82,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
             if (evoInAPI.evolves_to.length > 0) {
               evoInJSON.evo_list.forEach((item: { evo_to_id: number }) => {
                 evoInAPI.evolves_to.forEach((value: { species: { url: string } }) => {
-                  if (parseInt(value.species.url.split('/')[6]) === item.evo_to_id) return tempData.push(value);
+                  if (parseInt(value.species.url.split('/')[6]) === item.evo_to_id) {
+                    return tempData.push(value);
+                  }
                 });
               });
             } else {
@@ -99,8 +104,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
         }
       } else {
         let evoInJSON = evoList.find((item: { name: string | any[] }) => item.name.includes(currForm.toUpperCase()));
-        if (!evoInJSON && ['Alola', 'Galar'].includes(region))
+        if (!evoInJSON && ['Alola', 'Galar'].includes(region)) {
           evoInJSON = evoList.find((item: { name: string | string[] }) => item.name.includes(''));
+        }
         if (evoInJSON) {
           const evoInAPI = data.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
           if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
@@ -108,11 +114,12 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
             evoInJSON.evo_list.forEach((value: { evo_to_form: string }) =>
               data.forEach((item: { evolves_to: any[] }) => {
                 item.evolves_to.forEach((i: any) => {
-                  if (['kubfu', 'rockruff'].includes(forme.name) || value.evo_to_form.toLowerCase().replaceAll('_', '-') === currForm)
+                  if (['kubfu', 'rockruff'].includes(forme.name) || value.evo_to_form.toLowerCase().replaceAll('_', '-') === currForm) {
                     tempArr.push({
                       ...i,
                       form: value.evo_to_form.toLowerCase().replaceAll('_', '-'),
                     });
+                  }
                 });
               })
             );
@@ -164,7 +171,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
   };
 
   const getPrevEvoChainJSON = useCallback((name: string, arr: any): void => {
-    if (!name) return;
+    if (!name) {
+      return;
+    }
     const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
     arr.unshift([formatEvoChain(pokemon)]);
     return getPrevEvoChainJSON(pokemon?.prevo, arr);
@@ -180,7 +189,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
   }, []);
 
   const getNextEvoChainJSON = useCallback((evos: any[], arr: any[]) => {
-    if (evos.length === 0) return;
+    if (evos.length === 0) {
+      return;
+    }
     arr.push(
       evos.map((name: string) => {
         const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
@@ -196,21 +207,31 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
   const getEvoChainJSON = useCallback(
     (id: number, forme: { form_name: string; name: string }) => {
       let form = forme.form_name === '' || forme.form_name.includes('mega') ? null : forme.form_name;
-      if (forme.form_name === '10') form += '%';
-      if (forme.name === 'necrozma-dawn') form += '-wings';
-      else if (forme.name === 'necrozma-dusk') form += '-mane';
+      if (forme.form_name === '10') {
+        form += '%';
+      }
+      if (forme.name === 'necrozma-dawn') {
+        form += '-wings';
+      } else if (forme.name === 'necrozma-dusk') {
+        form += '-mane';
+      }
       let pokemon: any = Object.values(pokemonData).find(
         (pokemon) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
       );
-      if (!pokemon) pokemon = Object.values(pokemonData).find((pokemon) => pokemon.num === id && pokemon.forme === null);
+      if (!pokemon) {
+        pokemon = Object.values(pokemonData).find((pokemon) => pokemon.num === id && pokemon.forme === null);
+      }
 
       const prevEvo: any[] = [],
         curr: any = [],
         evo: any = [];
       getPrevEvoChainJSON(pokemon.prevo, prevEvo);
       const prev = Object.values(pokemonData).find((p) => p.name === pokemon.prevo);
-      if (prev) getCurrEvoChainJSON(prev, curr);
-      else curr.push([formatEvoChain(pokemon)]);
+      if (prev) {
+        getCurrEvoChainJSON(prev, curr);
+      } else {
+        curr.push([formatEvoChain(pokemon)]);
+      }
       getNextEvoChainJSON(pokemon.evos, evo);
       const result = prevEvo.concat(curr).concat(evo);
       return setArrEvoList(result);

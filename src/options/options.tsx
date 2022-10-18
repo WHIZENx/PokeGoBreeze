@@ -304,31 +304,58 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             }
             dataEvo.evo_to_id = pokemon.find((poke: { name: any }) => poke.name === name).id;
             dataEvo.evo_to_name = name.replace('_NORMAL', '');
-            if (evo.candyCost) dataEvo.candyCost = evo.candyCost;
+            if (evo.candyCost) {
+              dataEvo.candyCost = evo.candyCost;
+            }
             dataEvo.quest = {};
-            if (evo.genderRequirement) dataEvo.quest.genderRequirement = evo.genderRequirement;
-            if (evo.kmBuddyDistanceRequirement) dataEvo.quest.kmBuddyDistanceRequirement = evo.kmBuddyDistanceRequirement;
-            if (evo.mustBeBuddy) dataEvo.quest.mustBeBuddy = evo.mustBeBuddy;
-            if (evo.onlyDaytime) dataEvo.quest.onlyDaytime = evo.onlyDaytime;
-            if (evo.onlyNighttime) dataEvo.quest.onlyNighttime = evo.onlyNighttime;
+            if (evo.genderRequirement) {
+              dataEvo.quest.genderRequirement = evo.genderRequirement;
+            }
+            if (evo.kmBuddyDistanceRequirement) {
+              dataEvo.quest.kmBuddyDistanceRequirement = evo.kmBuddyDistanceRequirement;
+            }
+            if (evo.mustBeBuddy) {
+              dataEvo.quest.mustBeBuddy = evo.mustBeBuddy;
+            }
+            if (evo.onlyDaytime) {
+              dataEvo.quest.onlyDaytime = evo.onlyDaytime;
+            }
+            if (evo.onlyNighttime) {
+              dataEvo.quest.onlyNighttime = evo.onlyNighttime;
+            }
             if (evo.lureItemRequirement) {
-              if (evo.lureItemRequirement === 'ITEM_TROY_DISK_MAGNETIC') item = 'magnetic';
-              else if (evo.lureItemRequirement === 'ITEM_TROY_DISK_MOSSY') item = 'moss';
-              else if (evo.lureItemRequirement === 'ITEM_TROY_DISK_GLACIAL') item = 'glacial';
-              else if (evo.lureItemRequirement === 'ITEM_TROY_DISK_RAINY') item = 'rainy';
+              if (evo.lureItemRequirement === 'ITEM_TROY_DISK_MAGNETIC') {
+                item = 'magnetic';
+              } else if (evo.lureItemRequirement === 'ITEM_TROY_DISK_MOSSY') {
+                item = 'moss';
+              } else if (evo.lureItemRequirement === 'ITEM_TROY_DISK_GLACIAL') {
+                item = 'glacial';
+              } else if (evo.lureItemRequirement === 'ITEM_TROY_DISK_RAINY') {
+                item = 'rainy';
+              }
               dataEvo.quest.lureItemRequirement = item;
             }
             if (evo.evolutionItemRequirement) {
-              if (evo.evolutionItemRequirement === 'ITEM_SUN_STONE') item = 'Sun_Stone';
-              else if (evo.evolutionItemRequirement === 'ITEM_KINGS_ROCK') item = "King's_Rock";
-              else if (evo.evolutionItemRequirement === 'ITEM_METAL_COAT') item = 'Metal_Coat';
-              else if (evo.evolutionItemRequirement === 'ITEM_GEN4_EVOLUTION_STONE') item = 'Sinnoh_Stone';
-              else if (evo.evolutionItemRequirement === 'ITEM_DRAGON_SCALE') item = 'Dragon_Scale';
-              else if (evo.evolutionItemRequirement === 'ITEM_UP_GRADE') item = 'Up-Grade';
-              else if (evo.evolutionItemRequirement === 'ITEM_GEN5_EVOLUTION_STONE') item = 'Unova_Stone';
+              if (evo.evolutionItemRequirement === 'ITEM_SUN_STONE') {
+                item = 'Sun_Stone';
+              } else if (evo.evolutionItemRequirement === 'ITEM_KINGS_ROCK') {
+                item = "King's_Rock";
+              } else if (evo.evolutionItemRequirement === 'ITEM_METAL_COAT') {
+                item = 'Metal_Coat';
+              } else if (evo.evolutionItemRequirement === 'ITEM_GEN4_EVOLUTION_STONE') {
+                item = 'Sinnoh_Stone';
+              } else if (evo.evolutionItemRequirement === 'ITEM_DRAGON_SCALE') {
+                item = 'Dragon_Scale';
+              } else if (evo.evolutionItemRequirement === 'ITEM_UP_GRADE') {
+                item = 'Up-Grade';
+              } else if (evo.evolutionItemRequirement === 'ITEM_GEN5_EVOLUTION_STONE') {
+                item = 'Unova_Stone';
+              }
               dataEvo.quest.evolutionItemRequirement = item;
             }
-            if (evo.onlyUpsideDown) dataEvo.quest.onlyUpsideDown = evo.onlyUpsideDown;
+            if (evo.onlyUpsideDown) {
+              dataEvo.quest.onlyUpsideDown = evo.onlyUpsideDown;
+            }
             if (evo.questDisplay) {
               const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
               const template = data.find((template: { templateId: any }) => template.templateId === questDisplay);
@@ -443,12 +470,22 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
       let form = formSet[count].split('.'),
         shiny = false,
         gender = 3;
-      if (form[1] === 'icon' || form[1] === 'g2') form = 'NORMAL';
-      else form = form[1].replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
-      if (formSet.includes(formSet[count].replace('.icon', '') + '.s.icon')) shiny = true;
-      if (!formSet[count].includes('.g2.') && formSet.includes(formSet[count].replace('.icon', '') + '.g2.icon')) gender = 1;
-      else if (formSet[count].includes('.g2.')) gender = 2;
-      if (form.includes('MEGA')) mega = true;
+      if (form[1] === 'icon' || form[1] === 'g2') {
+        form = 'NORMAL';
+      } else {
+        form = form[1].replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
+      }
+      if (formSet.includes(formSet[count].replace('.icon', '') + '.s.icon')) {
+        shiny = true;
+      }
+      if (!formSet[count].includes('.g2.') && formSet.includes(formSet[count].replace('.icon', '') + '.g2.icon')) {
+        gender = 1;
+      } else if (formSet[count].includes('.g2.')) {
+        gender = 2;
+      }
+      if (form.includes('MEGA')) {
+        mega = true;
+      }
       result.image.push({
         gender,
         pokemonId: result.id,
@@ -521,9 +558,14 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
     let soundForm = sounds.filter((sound: string) => sound.includes(`Addressable Assets/pm${result.id}.`));
     result.sound.cry = soundForm.map((sound: string) => {
       let form: any = sound.split('.');
-      if (form[1] === 'cry') form = 'NORMAL';
-      else form = form[1].replace(/[a-z]/g, '');
-      if (form.includes('MEGA')) mega = true;
+      if (form[1] === 'cry') {
+        form = 'NORMAL';
+      } else {
+        form = form[1].replace(/[a-z]/g, '');
+      }
+      if (form.includes('MEGA')) {
+        mega = true;
+      }
       return {
         form,
         path: sound,
@@ -623,8 +665,11 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
         const result: Combat = combatModel();
         result.name = item.data.combatMove.uniqueId;
         result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-        if (item.templateId.includes('FAST')) result.type_move = 'FAST';
-        else result.type_move = 'CHARGE';
+        if (item.templateId.includes('FAST')) {
+          result.type_move = 'FAST';
+        } else {
+          result.type_move = 'CHARGE';
+        }
         result.pvp_power = item.data.combatMove.power ?? 0.0;
         result.pvp_energy = item.data.combatMove.energyDelta ?? 0;
         const seq = sequence.find((seq: { id: string }) => seq.id === result.name);
@@ -633,31 +678,33 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
           const buffKey = Object.keys(item.data.combatMove.buffs);
           buffKey.forEach((buff) => {
             if (buff.includes('AttackStat')) {
-              if (buff.includes('target'))
+              if (buff.includes('target')) {
                 result.buffs.push({
                   type: 'atk',
                   target: 'target',
                   power: item.data.combatMove.buffs[buff],
                 });
-              else
+              } else {
                 result.buffs.push({
                   type: 'atk',
                   target: 'attacker',
                   power: item.data.combatMove.buffs[buff],
                 });
+              }
             } else if (buff.includes('DefenseStat')) {
-              if (buff.includes('target'))
+              if (buff.includes('target')) {
                 result.buffs.push({
                   type: 'def',
                   target: 'target',
                   power: item.data.combatMove.buffs[buff],
                 });
-              else
+              } else {
                 result.buffs.push({
                   type: 'def',
                   target: 'attacker',
                   power: item.data.combatMove.buffs[buff],
                 });
+              }
             }
             result.buffs[result.buffs.length - 1].buffChance = item.data.combatMove.buffs[buffKey[buffKey.length - 1]];
           });
@@ -667,8 +714,11 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
         result.track = move.id;
         result.name = result.name.replace('_FAST', '');
         result.pve_power = move.power ?? 0.0;
-        if (result.name === 'STRUGGLE') result.pve_energy = -33;
-        else result.pve_energy = move.energyDelta ?? 0;
+        if (result.name === 'STRUGGLE') {
+          result.pve_energy = -33;
+        } else {
+          result.pve_energy = move.energyDelta ?? 0;
+        }
         result.durationMs = move.durationMs;
         result.damageWindowStartMs = move.damageWindowStartMs;
         result.damageWindowEndMs = move.damageWindowEndMs;
@@ -1033,8 +1083,11 @@ export const optionLeagues = (
           }
           result.id = pokemon.find((item: { name: any }) => item.name === poke.pokemonId).id;
           result.name = poke.pokemonId;
-          if (poke.pokemonDisplay) result.form = poke.pokemonDisplay.form.replace(poke.pokemonId + '_', '');
-          else result.form = 'NORMAL';
+          if (poke.pokemonDisplay) {
+            result.form = poke.pokemonDisplay.form.replace(poke.pokemonId + '_', '');
+          } else {
+            result.form = 'NORMAL';
+          }
           if (track === 'FREE') {
             rewards.pokemon[value.unlockedAtRank].free.push(result);
           } else {

@@ -17,7 +17,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
         ? item.id === parseInt(props.data.species.url.split('/')[6])
         : item.name === props.form?.name.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
     );
-    if (combatPoke && combatPoke.length === 1)
+    if (combatPoke && combatPoke.length === 1) {
       return setMove(
         rankMove(
           data.options,
@@ -31,9 +31,10 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
           props.data.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
         )
       );
+    }
 
     const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form.name));
-    if (result === undefined)
+    if (result === undefined) {
       setMove(
         rankMove(
           data.options,
@@ -47,7 +48,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
           props.data.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
         )
       );
-    else
+    } else {
       setMove(
         rankMove(
           data.options,
@@ -61,10 +62,13 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
           props.form.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
         )
       );
+    }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
   useEffect(() => {
-    if (props.data && props.data.types) findMove();
+    if (props.data && props.data.types) {
+      findMove();
+    }
   }, [findMove, props.data]);
 
   const renderMovesetTable = (value: any, max: number, type: string) => {

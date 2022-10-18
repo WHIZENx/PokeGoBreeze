@@ -54,11 +54,21 @@ const PokemonPVP = () => {
         let fmoveData = data.moveset[0],
           cMoveDataPri = data.moveset[1],
           cMoveDataSec = data.moveset[2];
-        if (fmoveData.includes('HIDDEN_POWER')) fmoveData = 'HIDDEN_POWER';
-        if (cMoveDataPri === 'FUTURE_SIGHT') cMoveDataPri = 'FUTURESIGHT';
-        if (cMoveDataSec === 'FUTURE_SIGHT') cMoveDataSec = 'FUTURESIGHT';
-        if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') cMoveDataPri = 'TECHNO_BLAST_WATER';
-        if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') cMoveDataSec = 'TECHNO_BLAST_WATER';
+        if (fmoveData.includes('HIDDEN_POWER')) {
+          fmoveData = 'HIDDEN_POWER';
+        }
+        if (cMoveDataPri === 'FUTURE_SIGHT') {
+          cMoveDataPri = 'FUTURESIGHT';
+        }
+        if (cMoveDataSec === 'FUTURE_SIGHT') {
+          cMoveDataSec = 'FUTURESIGHT';
+        }
+        if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') {
+          cMoveDataPri = 'TECHNO_BLAST_WATER';
+        }
+        if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') {
+          cMoveDataSec = 'TECHNO_BLAST_WATER';
+        }
 
         let fmove = dataStore.combat.find((item: { name: any }) => item.name === fmoveData);
         const cmovePri = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataPri);
@@ -67,7 +77,9 @@ const PokemonPVP = () => {
           cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataSec);
         }
 
-        if (data.moveset[0].includes('HIDDEN_POWER')) fmove = { ...fmove, type: data.moveset[0].split('_')[2] };
+        if (data.moveset[0].includes('HIDDEN_POWER')) {
+          fmove = { ...fmove, type: data.moveset[0].split('_')[2] };
+        }
 
         let combatPoke = dataStore.pokemonCombat.filter(
           (item: { id: number; baseSpecies: string }) =>
@@ -75,8 +87,11 @@ const PokemonPVP = () => {
             item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
         const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
-        if (!result) combatPoke = combatPoke[0];
-        else combatPoke = result;
+        if (!result) {
+          combatPoke = combatPoke[0];
+        } else {
+          combatPoke = result;
+        }
 
         const maxCP = parseInt(params.cp);
 

@@ -13,7 +13,9 @@ import { SnackbarProvider } from 'notistack';
 import rootReducer from './store/reducers';
 import { composeWithDevTools } from '@redux-devtools/extension';
 
-if (module.hot) module.hot.accept();
+if (module.hot) {
+  module.hot.accept();
+}
 
 const devTools = process.env.NODE_ENV === 'production' ? applyMiddleware(thunk) : composeWithDevTools(applyMiddleware(thunk));
 

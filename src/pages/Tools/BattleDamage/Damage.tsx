@@ -99,13 +99,17 @@ const Damage = () => {
   }, []);
 
   useEffect(() => {
-    if (statATK !== 0)
+    if (statATK !== 0) {
       setStatLvATK(calculateStatsBattle(statATK, 15, statLevel, false, statType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1));
-    if (statDEFObj !== 0)
+    }
+    if (statDEFObj !== 0) {
       setStatLvDEFObj(
         calculateStatsBattle(statDEFObj, 15, statLevelObj, false, statTypeObj === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
       );
-    if (statSTAObj !== 0) setStatLvSTAObj(calculateStatsBattle(statSTAObj, 15, statLevelObj));
+    }
+    if (statSTAObj !== 0) {
+      setStatLvSTAObj(calculateStatsBattle(statSTAObj, 15, statLevelObj));
+    }
   }, [globalOptions, statATK, statLevel, statType, statATKObj, statDEF, statDEFObj, statLevelObj, statSTA, statSTAObj, statTypeObj]);
 
   const clearData = () => {

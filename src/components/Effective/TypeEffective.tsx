@@ -12,7 +12,9 @@ const TypeEffective = (props: {
     neutral?: any[];
   };
 }) => {
-  if (!props.typeEffective) return <></>;
+  if (!props.typeEffective) {
+    return <></>;
+  }
 
   const noneSprit = () => {
     return (

@@ -14,7 +14,9 @@ const Type = (props: {
   height?: string | number | undefined;
   color?: any;
 }) => {
-  if (!props.arr || props.arr.length === 0) return <></>;
+  if (!props.arr || props.arr.length === 0) {
+    return <></>;
+  }
 
   return (
     <div className={(props.block ? '' : 'element-top') + (props.shadow ? ' filter-shadow' : '')} style={props.style}>

@@ -15,6 +15,7 @@
     "jsx-no-bind": false,
     "radix": false,
     "no-shadowed-variable": false,
-    "one-variable-per-declaration": false
+    "one-variable-per-declaration": false,
+    "curly": true
   }
 }

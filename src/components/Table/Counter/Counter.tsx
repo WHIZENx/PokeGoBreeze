@@ -20,13 +20,17 @@ const Counter = ({ def, form, changeForm }: any) => {
   const eachCounter = 10;
 
   useEffect(() => {
-    if (changeForm) setOpen(false);
+    if (changeForm) {
+      setOpen(false);
+    }
   }, [changeForm]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 0.8 >= fullHeight * (startIndex + 1)) setStartIndex(startIndex + 1);
+    if (scrollTop * 0.8 >= fullHeight * (startIndex + 1)) {
+      setStartIndex(startIndex + 1);
+    }
   };
 
   const loadMetaData = () => {

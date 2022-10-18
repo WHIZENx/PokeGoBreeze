@@ -21,7 +21,9 @@ const TypeBadge = (props: {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
 
   let move = props.move;
-  if (!props.find) move = combat.find((item: { name: any }) => item.name === props.move.name);
+  if (!props.find) {
+    move = combat.find((item: { name: any }) => item.name === props.move.name);
+  }
 
   return (
     <div className={'type-badge-container' + (props.grow ? ' filter-shadow' : '')} style={props.style}>

@@ -12,8 +12,12 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
 
   const changeMove = (value: any) => {
     setShowMove(false);
-    if (setMovePokemon) setMovePokemon(value);
-    if (clearData) clearData();
+    if (setMovePokemon) {
+      setMovePokemon(value);
+    }
+    if (clearData) {
+      clearData();
+    }
   };
 
   const findMove = useCallback(
@@ -46,7 +50,9 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
             simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
           });
         }
-        if (setMovePokemon && !selected) setMovePokemon(simpleMove[0]);
+        if (setMovePokemon && !selected) {
+          setMovePokemon(simpleMove[0]);
+        }
         return setResultMove(simpleMove);
       }
       if (type === 'FAST') {
@@ -70,7 +76,9 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
           simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
         });
       }
-      if (setMovePokemon && !selected) setMovePokemon(simpleMove[0]);
+      if (setMovePokemon && !selected) {
+        setMovePokemon(simpleMove[0]);
+      }
       return setResultMove(simpleMove);
     },
     [setMovePokemon, data]
@@ -78,11 +86,17 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
 
   useEffect(() => {
     if (result !== '' && move !== '') {
-      if (result) setResultMove(result);
-      else {
-        if (pokemon && !move) findMove(pokemon.num, pokemon.forme, moveType);
-        if (!pokemon) setResultMove(null);
-        else if (selected) findMove(pokemon.num, pokemon.forme, moveType, selected);
+      if (result) {
+        setResultMove(result);
+      } else {
+        if (pokemon && !move) {
+          findMove(pokemon.num, pokemon.forme, moveType);
+        }
+        if (!pokemon) {
+          setResultMove(null);
+        } else if (selected) {
+          findMove(pokemon.num, pokemon.forme, moveType, selected);
+        }
       }
     }
   }, [findMove, pokemon, moveType, move, result, selected, setMovePokemon]);

@@ -27,12 +27,19 @@ const Defender = (prop: { types: any }) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= currentTypeSec === '' ? 1 : value[currentTypeSec];
-      if (valueEffective >= 2.56) data.very_weak.push(key);
-      else if (valueEffective >= 1.6) data.weak.push(key);
-      else if (valueEffective >= 1) data.neutral.push(key);
-      else if (valueEffective >= 0.625) data.resist.push(key);
-      else if (valueEffective >= 0.39) data.very_resist.push(key);
-      else data.super_resist.push(key);
+      if (valueEffective >= 2.56) {
+        data.very_weak.push(key);
+      } else if (valueEffective >= 1.6) {
+        data.weak.push(key);
+      } else if (valueEffective >= 1) {
+        data.neutral.push(key);
+      } else if (valueEffective >= 0.625) {
+        data.resist.push(key);
+      } else if (valueEffective >= 0.39) {
+        data.very_resist.push(key);
+      } else {
+        data.super_resist.push(key);
+      }
     });
     setTypeEffective(data);
   }, [currentTypePri, currentTypeSec, prop.types]);

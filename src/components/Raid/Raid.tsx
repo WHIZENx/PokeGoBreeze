@@ -28,21 +28,27 @@ const Raid = ({
   const [tier, setTier]: any = useState(1);
 
   useEffect(() => {
-    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) setTier(5);
-    else if (
+    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) {
+      setTier(5);
+    } else if (
       parseInt(tier) === 5 &&
       currForm &&
       currForm.form.form_name.includes('mega') &&
       Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass
-    )
+    ) {
       setTier(6);
-    if (setTierBoss) setTierBoss(parseInt(tier));
+    }
+    if (setTierBoss) {
+      setTierBoss(parseInt(tier));
+    }
     if (setStatBossATK && setStatBossDEF && setStatBossHP) {
       setStatBossATK(calculateRaidStat(statATK, tier));
       setStatBossDEF(calculateRaidStat(statDEF, tier));
       setStatBossHP(RAID_BOSS_TIER[tier].sta);
     }
-    if (setTimeAllow) setTimeAllow(RAID_BOSS_TIER[tier].timer);
+    if (setTimeAllow) {
+      setTimeAllow(RAID_BOSS_TIER[tier].timer);
+    }
   }, [tier, currForm, id, setTierBoss, setStatBossATK, setStatBossDEF, setStatBossHP, statATK, statDEF, setTimeAllow]);
 
   return (
@@ -52,7 +58,9 @@ const Raid = ({
           className="w-50"
           onChange={(e) => {
             setTier(e.target.value);
-            if (clearData) clearData();
+            if (clearData) {
+              clearData();
+            }
           }}
           value={tier}
         >

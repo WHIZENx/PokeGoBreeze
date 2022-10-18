@@ -25,7 +25,9 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
       const result = resultFirst.find((item: { name: any }) => item.name === form);
       const simpleMove: { name: any; elite: boolean; shadow: boolean; purified: boolean }[] = [];
       if (resultFirst.length === 1 || result == null) {
-        if (resultFirst.length === 0) return setResultMove('');
+        if (resultFirst.length === 0) {
+          return setResultMove('');
+        }
         if (props.type !== 'CHARGE') {
           resultFirst[0].quickMoves.forEach((value: any) => {
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
@@ -35,7 +37,9 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
           });
           setCountFM(simpleMove.length);
         }
-        if (props.type === 'FAST') return setResultMove(simpleMove);
+        if (props.type === 'FAST') {
+          return setResultMove(simpleMove);
+        }
         resultFirst[0].cinematicMoves.forEach((value: any) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
@@ -59,7 +63,9 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
         });
         setCountFM(simpleMove.length);
       }
-      if (props.type === 'FAST') return setResultMove(simpleMove);
+      if (props.type === 'FAST') {
+        return setResultMove(simpleMove);
+      }
       result.cinematicMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
       });
@@ -79,7 +85,9 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
 
   useEffect(() => {
     findMove(props.id, props.form);
-    if (!props.move) setCurrentMove(null);
+    if (!props.move) {
+      setCurrentMove(null);
+    }
   }, [props.id, props.form, findMove, props.move]);
 
   const findType = (move: any) => {

@@ -318,13 +318,21 @@ export const MoveSet = (
 
   const findMove = (name: string, uses: number) => {
     const oldName: string = name;
-    if (name.includes('HIDDEN_POWER')) name = 'HIDDEN_POWER';
+    if (name.includes('HIDDEN_POWER')) {
+      name = 'HIDDEN_POWER';
+    }
     let move = combatData.find((move: { name: any }) => move.name === name);
-    if (oldName.includes('HIDDEN_POWER')) move = { ...move, type: oldName.split('_')[2] };
+    if (oldName.includes('HIDDEN_POWER')) {
+      move = { ...move, type: oldName.split('_')[2] };
+    }
 
     let elite = false;
-    if (combatList.eliteQuickMoves.includes(name)) elite = true;
-    if (combatList.eliteCinematicMoves.includes(name)) elite = true;
+    if (combatList.eliteQuickMoves.includes(name)) {
+      elite = true;
+    }
+    if (combatList.eliteCinematicMoves.includes(name)) {
+      elite = true;
+    }
 
     return (
       <Link
@@ -415,7 +423,9 @@ export const MoveSet = (
         <div className="type-rank-list">
           {moves.fastMoves
             .map((move: { uses: number }) => {
-              if (!move.uses) move.uses = 0;
+              if (!move.uses) {
+                move.uses = 0;
+              }
               return move;
             })
             .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)
@@ -429,9 +439,15 @@ export const MoveSet = (
         <div className="type-rank-list">
           {moves.chargedMoves
             .map((move: { moveId: string; uses: number }) => {
-              if (move.moveId === 'FUTURE_SIGHT') move.moveId = 'FUTURESIGHT';
-              if (move.moveId === 'TECHNO_BLAST_DOUSE') move.moveId = 'TECHNO_BLAST_WATER';
-              if (!move.uses) move.uses = 0;
+              if (move.moveId === 'FUTURE_SIGHT') {
+                move.moveId = 'FUTURESIGHT';
+              }
+              if (move.moveId === 'TECHNO_BLAST_DOUSE') {
+                move.moveId = 'TECHNO_BLAST_WATER';
+              }
+              if (!move.uses) {
+                move.uses = 0;
+              }
               return move;
             })
             .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)

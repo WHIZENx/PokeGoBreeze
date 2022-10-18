@@ -57,7 +57,9 @@ const Form = ({
   }, [formList, id_default]);
 
   const findForm = useCallback(() => {
-    if (id_default === 555 && paramForm === 'galar') paramForm += '-standard';
+    if (id_default === 555 && paramForm === 'galar') {
+      paramForm += '-standard';
+    }
     return formList
       .map((form: any[]) => {
         let curFrom = form.find(
@@ -67,7 +69,9 @@ const Form = ({
         curFrom = curFrom ?? form.find((item: { form: { is_default: any } }) => item.form.is_default);
         if (paramForm && curFrom.form.form_name !== paramForm.toLowerCase()) {
           const changeForm = form.find((item: { form: { form_name: any } }) => item.form.form_name === paramForm.toLowerCase());
-          if (changeForm) curFrom = changeForm;
+          if (changeForm) {
+            curFrom = changeForm;
+          }
         }
         return curFrom;
       })
@@ -103,12 +107,17 @@ const Form = ({
       const firstFilter = stats.find(
         (item: { id: any; form: string }) => item.id === id && formName.toLowerCase() === item.form.toLowerCase()
       );
-      if (firstFilter) return firstFilter;
+      if (firstFilter) {
+        return firstFilter;
+      }
       const filterForm = stats.find((item: { id: any; form: any }) => item.id === id && filterFormName(formName, item.form));
-      if (filterId.length === 1 && formLength === 1 && !filterForm) return filterId[0];
-      else if (filterId.length === formLength && !filterForm)
+      if (filterId.length === 1 && formLength === 1 && !filterForm) {
+        return filterId[0];
+      } else if (filterId.length === formLength && !filterForm) {
         return stats.find((item: { id: any; form: string }) => item && item.id === id && item.form === 'Normal');
-      else return filterForm;
+      } else {
+        return filterForm;
+      }
     },
     [filterFormName]
   );
@@ -118,7 +127,7 @@ const Form = ({
       let findForm = formList
         .map((item: any[]) => item.find((item: { form: { name: string } }) => item.form.name === reversedCapitalize(formName, '-', ' ')))
         .find((item: any) => item);
-      if (!findForm)
+      if (!findForm) {
         findForm = formList
           .map((item: any[]) =>
             item.find(
@@ -127,9 +136,13 @@ const Form = ({
             )
           )
           .find((item: any) => item);
+      }
       const region = Object.values(regionList).find((item: any) => findForm?.form.form_name.includes(item.toLowerCase()));
-      if (findForm?.form.form_name !== '' && region) setRegion(region);
-      else setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+      if (findForm?.form.form_name !== '' && region) {
+        setRegion(region);
+      } else {
+        setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+      }
     }
   }, [formList, region, setRegion, species.generation.url, formName]);
 
@@ -170,7 +183,9 @@ const Form = ({
   }, [currForm, findForm, findFirst, setPokeID, id_default, formList.length, onChangeForm, pokeData]);
 
   const changeForm = (name: any, form: string) => {
-    if (setOnChangeForm) setOnChangeForm(true);
+    if (setOnChangeForm) {
+      setOnChangeForm(true);
+    }
     if (params.id) {
       searchParams.set('form', form);
       setSearchParams(searchParams);
@@ -182,8 +197,11 @@ const Form = ({
       .find((item: any) => item);
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));
-    if (findForm.form.form_name !== '' && region) setRegion(region);
-    else setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+    if (findForm.form.form_name !== '' && region) {
+      setRegion(region);
+    } else {
+      setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+    }
     setFormName(splitAndCapitalize(findForm.form.name, '-', ' '));
     if (findData && findForm) {
       const oriForm = findData;

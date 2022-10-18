@@ -82,10 +82,11 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
         }
         return value;
       });
-      if (modify)
+      if (modify) {
         dataFromList = dataFromList.map((value, index) => {
           return [value[index]];
         });
+      }
       dataFromList = dataFromList
         .map((item) => {
           return item
@@ -129,7 +130,9 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
       let form: any = searchParams.get('form');
 
       if (form) {
-        if (data.id === 555 && form === 'galar') form += '-standard';
+        if (data.id === 555 && form === 'galar') {
+          form += '-standard';
+        }
         defaultFrom = dataFromList.find((value) =>
           value.find(
             (item: { form: { form_name: string; name: string }; default_name: string }) =>
@@ -156,14 +159,20 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
         isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
       }
       defaultData = dataPokeList.find((value) => value.name === isDefaultForm.form.name);
-      if (!defaultData) defaultData = dataPokeList.find((value) => value.name === isDefaultForm.name);
+      if (!defaultData) {
+        defaultData = dataPokeList.find((value) => value.name === isDefaultForm.name);
+      }
       setWH((prevWH) => ({ ...prevWH, weight: defaultData.weight, height: defaultData.height }));
       setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom[0]).form.version_group.name, '-', ' '));
-      if (!params.id) setRegion(regionList[parseInt(data.generation.url.split('/')[6])]);
+      if (!params.id) {
+        setRegion(regionList[parseInt(data.generation.url.split('/')[6])]);
+      }
       const nameInfo = splitAndCapitalize(form ? isDefaultForm.form.name : data.name, '-', ' ');
       setLoadForm(true);
       setFormName(nameInfo);
-      if (params.id) document.title = `#${data.id} - ${nameInfo}`;
+      if (params.id) {
+        document.title = `#${data.id} - ${nameInfo}`;
+      }
       setOnChangeForm(false);
     },
     [searchParams, setSearchParams, params.id]
@@ -171,7 +180,9 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
 
   const queryPokemon = useCallback(
     (id: any, axios: any, source: { token: any; cancel: () => void }) => {
-      if (!params.id || (params.id && data && parseInt(id) !== data.id)) dispatch(showSpinner());
+      if (!params.id || (params.id && data && parseInt(id) !== data.id)) {
+        dispatch(showSpinner());
+      }
       axios
         .getPokeSpicies(id, {
           cancelToken: source.token,
@@ -183,7 +194,9 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
         })
         .catch(() => {
           enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
-          if (params.id) document.title = `#${params.id} - Not Found`;
+          if (params.id) {
+            document.title = `#${params.id} - Not Found`;
+          }
           setIsFound(false);
           source.cancel();
           dispatch(hideSpinner());

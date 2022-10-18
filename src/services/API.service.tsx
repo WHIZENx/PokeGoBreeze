@@ -97,12 +97,16 @@ class APIService {
   }
 
   getTypeSprite(type: string) {
-    if (type.toLowerCase() === 'unknown') return this.getPokeSprite(0);
+    if (type.toLowerCase() === 'unknown') {
+      return this.getPokeSprite(0);
+    }
     return `${POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
   }
 
   getTypeHqSprite(type: string) {
-    if (type === 'Fighting') type = 'Fight';
+    if (type === 'Fighting') {
+      type = 'Fight';
+    }
     return `${POKE_ICON_SPRITES_TYPE_API_URL}Badge_Type_${type}_01.png`;
   }
 
@@ -115,11 +119,14 @@ class APIService {
   getWeatherIconSprite(weather: any) {
     weather = weather.toLowerCase().replaceAll('_', '').replaceAll('rainy', 'rain');
 
-    if (weather === 'overcast') weather = 'cloudy';
-    if (weather === 'partlycloudy')
+    if (weather === 'overcast') {
+      weather = 'cloudy';
+    }
+    if (weather === 'partlycloudy') {
       return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather}_${
         this.date.getHours() > 6 && this.date.getHours() < 18 ? 'day' : 'night'
       }.png`;
+    }
     return `${POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather}.png`;
   }
 
@@ -134,8 +141,11 @@ class APIService {
 
   getPokeIconSprite(name: string, fix = false) {
     if (!fix) {
-      if (name.includes('necrozma-dawn')) name += '-wings';
-      else if (name.includes('necrozma-dusk')) name += '-mane';
+      if (name.includes('necrozma-dawn')) {
+        name += '-wings';
+      } else if (name.includes('necrozma-dusk')) {
+        name += '-mane';
+      }
       name = name.replace('-incarnate', '');
     }
     return `${POKE_ICON_SPRITES_API_URL}${name}.png`;
@@ -143,9 +153,15 @@ class APIService {
 
   getPokeGifSprite(name: string) {
     name = name.replace('mega-x', 'megax').replace('mega-y', 'megay');
-    if (!name.includes('mega') && name.includes('-m')) name = name.replace('-m', '');
-    if (name.includes('gengar')) name += '_2';
-    if (!name.includes('-mega')) name = name.replace('-', '');
+    if (!name.includes('mega') && name.includes('-m')) {
+      name = name.replace('-m', '');
+    }
+    if (name.includes('gengar')) {
+      name += '_2';
+    }
+    if (!name.includes('-mega')) {
+      name = name.replace('-', '');
+    }
     return `${POKE_GIF_SPRITES_API_URL}${name}.gif`;
   }
 

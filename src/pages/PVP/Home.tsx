@@ -26,20 +26,30 @@ const PVPHome = () => {
       logo.includes('ultra_league') ||
       logo.includes('master_league')
     ) {
-      if (cp === 500) return APIService.getPokeOtherLeague('GBL_littlecup');
-      else if (cp === 1500) return APIService.getPokeLeague('great_league');
-      else if (cp === 2500) return APIService.getPokeLeague('ultra_league');
-      else return APIService.getPokeLeague('master_league');
+      if (cp === 500) {
+        return APIService.getPokeOtherLeague('GBL_littlecup');
+      } else if (cp === 1500) {
+        return APIService.getPokeLeague('great_league');
+      } else if (cp === 2500) {
+        return APIService.getPokeLeague('ultra_league');
+      } else {
+        return APIService.getPokeLeague('master_league');
+      }
     }
     return APIService.getAssetPokeGo(logo);
   };
 
   const renderLeagueName = (name: string, cp: number) => {
     if (name === 'All') {
-      if (cp === 500) return 'Little Cup';
-      else if (cp === 1500) return 'Great League';
-      else if (cp === 2500) return 'Ultra League';
-      else return 'Master League';
+      if (cp === 500) {
+        return 'Little Cup';
+      } else if (cp === 1500) {
+        return 'Great League';
+      } else if (cp === 2500) {
+        return 'Ultra League';
+      } else {
+        return 'Master League';
+      }
     }
     return name;
   };

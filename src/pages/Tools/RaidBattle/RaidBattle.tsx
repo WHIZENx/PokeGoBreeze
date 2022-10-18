@@ -320,14 +320,17 @@ const RaidBattle = () => {
     movePoke.forEach((vf: any) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
       if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
-        if (combat.shadowMoves.length > 0)
+        if (combat.shadowMoves.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
+        }
         addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves, pokemonTarget);
       }
-      if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) && combat.shadowMoves.length > 0)
+      if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) && combat.shadowMoves.length > 0) {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves, pokemonTarget);
-      else addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true, null, pokemonTarget);
+      } else {
+        addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true, null, pokemonTarget);
+      }
     });
   };
 
@@ -341,8 +344,11 @@ const RaidBattle = () => {
             item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
         const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
-        if (!result) combatPoke = combatPoke[0];
-        else combatPoke = result;
+        if (!result) {
+          combatPoke = combatPoke[0];
+        } else {
+          combatPoke = result;
+        }
         if (combatPoke) {
           addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false, pokemonTarget);
           addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true, pokemonTarget);
@@ -861,7 +867,9 @@ const RaidBattle = () => {
                       className={'ic-remove text-white ' + (index > 0 ? 'bg-danger' : 'click-none bg-secondary')}
                       title="Remove"
                       onClick={() => {
-                        if (index > 0) setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }));
+                        if (index > 0) {
+                          setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }));
+                        }
                       }}
                     >
                       <DeleteIcon sx={{ fontSize: 14 }} />
@@ -879,7 +887,9 @@ const RaidBattle = () => {
                   className={'cursor-pointer link-danger ' + (trainerBattle.length > 1 ? '' : 'click-none')}
                   fontSize="large"
                   onClick={() => {
-                    if (trainerBattle.length > 1) setTrainerBattle(update(trainerBattle, { $splice: [[trainerBattle.length - 1]] }));
+                    if (trainerBattle.length > 1) {
+                      setTrainerBattle(update(trainerBattle, { $splice: [[trainerBattle.length - 1]] }));
+                    }
                   }}
                 />
                 <div className="count-pokemon">{trainerBattle.length}</div>

@@ -9,7 +9,7 @@ import CardPokemon from '../../../components/Card/CardPokemon';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 
-const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
+const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
@@ -32,19 +32,31 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
     setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
-    if (fMove.includes('HIDDEN_POWER')) fMove = 'HIDDEN_POWER';
+    if (fMove.includes('HIDDEN_POWER')) {
+      fMove = 'HIDDEN_POWER';
+    }
 
     let fmove = combat.find((item: { name: any }) => item.name === fMove);
-    if (value.moveset[0].includes('HIDDEN_POWER')) fmove = { ...fmove, type: value.moveset[0].split('_')[2] };
+    if (value.moveset[0].includes('HIDDEN_POWER')) {
+      fmove = { ...fmove, type: value.moveset[0].split('_')[2] };
+    }
     setFMove(fmove);
 
-    if (cMovePri === 'FUTURE_SIGHT') cMovePri = 'FUTURESIGHT';
-    if (cMovePri === 'TECHNO_BLAST_DOUSE') cMovePri = 'TECHNO_BLAST_WATER';
+    if (cMovePri === 'FUTURE_SIGHT') {
+      cMovePri = 'FUTURESIGHT';
+    }
+    if (cMovePri === 'TECHNO_BLAST_DOUSE') {
+      cMovePri = 'TECHNO_BLAST_WATER';
+    }
     cMovePri = combat.find((item: { name: any }) => item.name === cMovePri);
     setCMovePri(cMovePri);
 
-    if (cMoveSec === 'FUTURE_SIGHT') cMoveSec = 'FUTURESIGHT';
-    if (cMoveSec === 'TECHNO_BLAST_DOUSE') cMoveSec = 'TECHNO_BLAST_WATER';
+    if (cMoveSec === 'FUTURE_SIGHT') {
+      cMoveSec = 'FUTURESIGHT';
+    }
+    if (cMoveSec === 'TECHNO_BLAST_DOUSE') {
+      cMoveSec = 'TECHNO_BLAST_WATER';
+    }
     cMoveSec = combat.find((item: { name: any }) => item.name === cMoveSec);
     setCMoveSec(cMoveSec);
 
@@ -103,7 +115,9 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
   };
 
   useEffect(() => {
-    if (pokemon && !pokemonBattle.pokemonData) removePokemon();
+    if (pokemon && !pokemonBattle.pokemonData) {
+      removePokemon();
+    }
   }, [pokemon, pokemonBattle.pokemonData, removePokemon]);
 
   return (
@@ -158,9 +172,13 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
                   .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
                   .moves.fastMoves.map((value: { moveId: string }) => {
                     let move = value.moveId;
-                    if (move.includes('HIDDEN_POWER')) move = 'HIDDEN_POWER';
+                    if (move.includes('HIDDEN_POWER')) {
+                      move = 'HIDDEN_POWER';
+                    }
                     let fmove = combat.find((item: { name: any }) => item.name === move);
-                    if (value.moveId.includes('HIDDEN_POWER')) fmove = { ...fmove, type: value.moveId.split('_')[2] };
+                    if (value.moveId.includes('HIDDEN_POWER')) {
+                      fmove = { ...fmove, type: value.moveId.split('_')[2] };
+                    }
                     return fmove;
                   })
                   .filter((value: { name: any }) => value.name !== fMove.name)
@@ -190,10 +208,14 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
             className={'card-move-input ' + (pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
             tabIndex={0}
             onClick={() => {
-              if (!pokemonBattle.disableCMovePri) setShowCMovePri(true);
+              if (!pokemonBattle.disableCMovePri) {
+                setShowCMovePri(true);
+              }
             }}
             onBlur={() => {
-              if (!pokemonBattle.disableCMovePri) setShowCMovePri(false);
+              if (!pokemonBattle.disableCMovePri) {
+                setShowCMovePri(false);
+              }
             }}
           >
             <CardMoveSmall
@@ -209,8 +231,12 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
                     .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
                     .moves.chargedMoves.map((value: { moveId: any }) => {
                       let move = value.moveId;
-                      if (move === 'FUTURE_SIGHT') move = 'FUTURESIGHT';
-                      if (move === 'TECHNO_BLAST_DOUSE') move = 'TECHNO_BLAST_WATER';
+                      if (move === 'FUTURE_SIGHT') {
+                        move = 'FUTURESIGHT';
+                      }
+                      if (move === 'TECHNO_BLAST_DOUSE') {
+                        move = 'TECHNO_BLAST_WATER';
+                      }
                       return combat.find((item: { name: any }) => item.name === move);
                     })
                     .filter((value: { name: any }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
@@ -219,7 +245,9 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
                         className={'card-move ' + (pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
                         key={index}
                         onMouseDown={() => {
-                          if (!pokemonBattle.disableCMovePri) selectCMovePri(value);
+                          if (!pokemonBattle.disableCMovePri) {
+                            selectCMovePri(value);
+                          }
                         }}
                       >
                         <CardMoveSmall value={value} />
@@ -247,10 +275,14 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
             className={'card-move-input ' + (pokemonBattle.disableCMoveSec ? 'cursor-not-allowed' : 'cursor-pointer')}
             tabIndex={0}
             onClick={() => {
-              if (!pokemonBattle.disableCMoveSec) setShowCMoveSec(true);
+              if (!pokemonBattle.disableCMoveSec) {
+                setShowCMoveSec(true);
+              }
             }}
             onBlur={() => {
-              if (!pokemonBattle.disableCMoveSec) setShowCMoveSec(false);
+              if (!pokemonBattle.disableCMoveSec) {
+                setShowCMoveSec(false);
+              }
             }}
           >
             <CardMoveSmall
@@ -268,8 +300,12 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
                     .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
                     .moves.chargedMoves.map((value: { moveId: any }) => {
                       let move = value.moveId;
-                      if (move === 'FUTURE_SIGHT') move = 'FUTURESIGHT';
-                      if (move === 'TECHNO_BLAST_DOUSE') move = 'TECHNO_BLAST_WATER';
+                      if (move === 'FUTURE_SIGHT') {
+                        move = 'FUTURESIGHT';
+                      }
+                      if (move === 'TECHNO_BLAST_DOUSE') {
+                        move = 'TECHNO_BLAST_WATER';
+                      }
                       return combat.find((item: { name: any }) => item.name === move);
                     })
                     .filter((value: { name: any }) => (cMoveSec === '' || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
@@ -278,7 +314,9 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
                         className="card-move"
                         key={index}
                         onMouseDown={() => {
-                          if (!pokemonBattle.disableCMoveSec) selectCMoveSec(value);
+                          if (!pokemonBattle.disableCMoveSec) {
+                            selectCMoveSec(value);
+                          }
                         }}
                       >
                         <CardMoveSmall value={value} />
@@ -294,4 +332,4 @@ const Select = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: an
   );
 };
 
-export default Select;
+export default SelectPoke;

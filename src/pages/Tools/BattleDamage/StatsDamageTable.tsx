@@ -21,15 +21,19 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
   const onHandleLevel = useCallback(
     (e: any, v: any) => {
       setStatLevel(v);
-      if (setStatLvATK)
+      if (setStatLvATK) {
         setStatLvATK(
           calculateStatsBattle(statATK, 15, currStatLevel, false, currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1)
         );
-      if (setStatLvDEF)
+      }
+      if (setStatLvDEF) {
         setStatLvDEF(
           calculateStatsBattle(statDEF, 15, currStatLevel, false, currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
         );
-      if (setStatLvSTA) setStatLvSTA(calculateStatsBattle(statSTA, 15, currStatLevel));
+      }
+      if (setStatLvSTA) {
+        setStatLvSTA(calculateStatsBattle(statSTA, 15, currStatLevel));
+      }
       setCurrStatLevel(v);
     },
     [globalOptions, setStatLevel, setStatLvATK, setStatLvDEF, setStatLvSTA, statATK, statDEF, statSTA, currStatType, currStatLevel]

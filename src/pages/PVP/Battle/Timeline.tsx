@@ -4,10 +4,13 @@ import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
+import PlayLine from './PlayLine';
 
 export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false) => {
   const renderMoveBadgeBorder = (move: { type: string; name: string }, border: boolean, shadow = false) => {
-    if (!move) return;
+    if (!move) {
+      return;
+    }
     return (
       <div className="d-flex flex-wrap align-items-center" style={{ gap: 5 }}>
         <span
@@ -283,7 +286,7 @@ export const TimeLineFit = (
   hide = false
 ) => {
   const calculateFitPoint = (length: number, index: number) => {
-    return `${(index * 100) / length - 2}%`;
+    return `${(index * 100) / (length - 2)}%`;
   };
 
   const renderTimelineFit = (poke: { timeline: any[] }, pokeObj: { timeline: { [x: string]: { type: string } } }) => {

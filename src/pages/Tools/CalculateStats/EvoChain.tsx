@@ -6,7 +6,9 @@ const EvoChain = (props: { url: any; id: number }) => {
   const [arrEvoList, setArrEvoList]: any = useState([]);
 
   const getEvoChain = useCallback((data: any) => {
-    if (data.length === 0) return false;
+    if (data.length === 0) {
+      return false;
+    }
     setArrEvoList((oldArr: any) => [
       ...oldArr,
       data.map((item: { species: { name: any; url: string }; is_baby: any }) => {
@@ -22,7 +24,9 @@ const EvoChain = (props: { url: any; id: number }) => {
       const dataEvo = await APIService.getFetchUrl(props.url);
       getEvoChain([dataEvo.data.chain]);
     };
-    if (props.url) fetchEvolution();
+    if (props.url) {
+      fetchEvolution();
+    }
   }, [getEvoChain, props.url]);
 
   return (

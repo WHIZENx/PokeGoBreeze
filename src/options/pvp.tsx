@@ -57,7 +57,9 @@ export const convertPVPRankings = (
     const result: LeaguePVP = leagueModel();
     result.id = league;
     result.name = splitAndCapitalize(item ? item.title : league, '_', ' ');
-    if (!result.name.toLowerCase().includes(result.id)) result.name = splitAndCapitalize(league, '_', ' ');
+    if (!result.name.toLowerCase().includes(result.id)) {
+      result.name = splitAndCapitalize(league, '_', ' ');
+    }
     result.cp = data
       .filter(
         (item: { startsWith: (arg0: any) => any; includes: (arg0: string) => any }) =>
@@ -102,7 +104,9 @@ export const convertPVPTrain = (
     const result: LeaguePVP = leagueModel();
     result.id = league;
     result.name = splitAndCapitalize(item ? item.title : league, '_', ' ');
-    if (!result.name.toLowerCase().includes(result.id)) result.name = splitAndCapitalize(league, '_', ' ');
+    if (!result.name.toLowerCase().includes(result.id)) {
+      result.name = splitAndCapitalize(league, '_', ' ');
+    }
     result.cp = data
       .filter(
         (item: { startsWith: (arg0: any) => any; includes: (arg0: string) => any }) =>

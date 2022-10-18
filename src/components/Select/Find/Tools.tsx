@@ -71,10 +71,11 @@ const Tools = (props: {
         }
         return value;
       });
-      if (modify)
+      if (modify) {
         dataFromList = dataFromList.map((value: { [x: string]: any }, index: string | number) => {
           return [value[index]];
         });
+      }
       dataFromList = dataFromList
         .map(
           (item: {
@@ -142,11 +143,15 @@ const Tools = (props: {
       .map((item: any) => item.find((item: { form: { name: any } }) => item.form.name === e.currentTarget.value))
       .find((item) => item);
     setCurrForm(findForm);
-    if (props.onClearStats) props.onClearStats();
+    if (props.onClearStats) {
+      props.onClearStats();
+    }
   };
 
   const onSetTier = (tier: any) => {
-    if (props.setTier) props.setTier(tier);
+    if (props.setTier) {
+      props.setTier(tier);
+    }
     setTier(tier);
   };
 
@@ -260,8 +265,12 @@ const Tools = (props: {
             value={typePoke}
             onChange={(e) => {
               setTypePoke(e.target.value);
-              if (props.setRaid) props.setRaid(e.target.value === 'pokemon' ? false : true);
-              if (props.onClearStats) props.onClearStats(true);
+              if (props.setRaid) {
+                props.setRaid(e.target.value === 'pokemon' ? false : true);
+              }
+              if (props.onClearStats) {
+                props.onClearStats(true);
+              }
             }}
           >
             <FormControlLabel

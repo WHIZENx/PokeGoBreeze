@@ -2,7 +2,9 @@ import React from 'react';
 import Weather from '../Sprites/Weather';
 
 const WeatherTypeEffective = (props: { weatherEffective: any[] }) => {
-  if (!props.weatherEffective) return <></>;
+  if (!props.weatherEffective) {
+    return <></>;
+  }
 
   return (
     <div className="element-top">

@@ -108,7 +108,9 @@ const FindTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
-    if (parseInt(searchCP) < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+    if (parseInt(searchCP) < 10) {
+      return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+    }
     const result = predictStat(statATK, statDEF, statSTA, searchCP);
     setPreIvArr(result);
   }, [enqueueSnackbar, searchCP, statATK, statDEF, statSTA]);
@@ -135,8 +137,9 @@ const FindTable = () => {
   }, []);
 
   const findStatsCP = useCallback(() => {
-    if (searchATKIv < 0 || searchATKIv > 15 || searchDEFIv < 0 || searchDEFIv > 15 || searchSTAIv < 0 || searchSTAIv > 15)
+    if (searchATKIv < 0 || searchATKIv > 15 || searchDEFIv < 0 || searchDEFIv > 15 || searchSTAIv < 0 || searchSTAIv > 15) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+    }
     const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
     setPreCpArr(result);
   }, [enqueueSnackbar, statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv]);

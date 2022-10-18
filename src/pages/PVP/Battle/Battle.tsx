@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 
 import pokemonData from '../../../data/pokemon.json';
 
-import Select from './Select';
+import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
@@ -10,8 +10,8 @@ import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffectiv
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from '../../../util/Constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
-import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
-import { Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { TimeLine, TimeLineVertical } from './Timeline';
+import { Checkbox, FormControl, FormControlLabel, Select, InputLabel, MenuItem, Radio, RadioGroup } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -35,6 +35,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
+import TimelineFit from './Timeline/Fit';
 
 const Battle = () => {
   const dispatch = useDispatch();
@@ -48,9 +49,10 @@ const Battle = () => {
   const [options, setOptions] = useState({
     showTap: false,
     timelineType: 0,
+    duration: 3,
     league: params.cp ? parseInt(params.cp) : 500,
   });
-  const { showTap, timelineType, league }: any = options;
+  const { showTap, timelineType, duration, league }: any = options;
 
   const [leftFit, setLeftFit] = useState(0);
   const [leftNormal, setLeftNormal] = useState(0);
@@ -195,7 +197,9 @@ const Battle = () => {
   };
 
   const battleAnimation = () => {
-    if (pokemonCurr.timeline.length === 0 && pokemonObj.timeline.length === 0) arrBound.current = [];
+    if (pokemonCurr.timeline.length === 0 && pokemonObj.timeline.length === 0) {
+      arrBound.current = [];
+    }
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
       return false;
     }
@@ -304,7 +308,9 @@ const Battle = () => {
               move: player2.cmoveSec,
             };
           }
-          if (tapSec) immuneSec = true;
+          if (tapSec) {
+            immuneSec = true;
+          }
           preChargePri = true;
           chargedPriCount = 16;
         }
@@ -337,7 +343,9 @@ const Battle = () => {
               move: player2.cmoveSec,
             };
           }
-          if (tapPri) immunePri = true;
+          if (tapPri) {
+            immunePri = true;
+          }
           preChargeSec = true;
           chargedSecCount = 16;
         }
@@ -345,16 +353,23 @@ const Battle = () => {
         if (!preChargePri) {
           if (!tapPri) {
             tapPri = true;
-            if (!preChargeSec) timelinePri[timer] = { ...timelinePri[timer], tap: true, move: player1.fmove };
-            else timelinePri[timer].tap = false;
+            if (!preChargeSec) {
+              timelinePri[timer] = { ...timelinePri[timer], tap: true, move: player1.fmove };
+            } else {
+              timelinePri[timer].tap = false;
+            }
             fastPriDelay = player1.turn - 1;
           } else {
-            if (timelinePri[timer]) timelinePri[timer].tap = false;
+            if (timelinePri[timer]) {
+              timelinePri[timer].tap = false;
+            }
           }
 
           if (tapPri && fastPriDelay === 0) {
             tapPri = false;
-            if (!preChargeSec) player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
+            if (!preChargeSec) {
+              player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
+            }
             player1.energy += player1.fmove.pvp_energy;
             timelinePri[timer] = {
               ...timelinePri[timer],
@@ -366,24 +381,34 @@ const Battle = () => {
             };
           } else {
             fastPriDelay -= 1;
-            if (!preChargePri) timelinePri[timer].type = 'W';
+            if (!preChargePri) {
+              timelinePri[timer].type = 'W';
+            }
           }
         }
 
         if (!preChargeSec) {
           if (!tapSec) {
             tapSec = true;
-            if (!preChargePri) timelineSec[timer] = { ...timelineSec[timer], tap: true, move: player2.fmove };
-            else timelineSec[timer].tap = false;
+            if (!preChargePri) {
+              timelineSec[timer] = { ...timelineSec[timer], tap: true, move: player2.fmove };
+            } else {
+              timelineSec[timer].tap = false;
+            }
             fastSecDelay = player2.turn - 1;
           } else {
-            if (timelineSec[timer]) timelineSec[timer].tap = false;
+            if (timelineSec[timer]) {
+              timelineSec[timer].tap = false;
+            }
           }
 
           if (tapSec && fastSecDelay === 0) {
             tapSec = false;
-            if (!preChargePri) player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
-            else immuneSec = true;
+            if (!preChargePri) {
+              player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
+            } else {
+              immuneSec = true;
+            }
             player2.energy += player2.fmove.pvp_energy;
             timelineSec[timer] = {
               ...timelineSec[timer],
@@ -395,14 +420,17 @@ const Battle = () => {
             };
           } else {
             fastSecDelay -= 1;
-            if (!preChargeSec) timelineSec[timer].type = 'W';
+            if (!preChargeSec) {
+              timelineSec[timer].type = 'W';
+            }
           }
         }
       } else {
         if (chargedPri) {
-          if (isDelay || chargedPriCount % 2 === 0) timelinePri[timer].type = 'N';
-          else {
-            if (chargeType === 1)
+          if (isDelay || chargedPriCount % 2 === 0) {
+            timelinePri[timer].type = 'N';
+          } else {
+            if (chargeType === 1) {
               timelinePri[timer] = {
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? 'C' : 'S',
@@ -410,7 +438,8 @@ const Battle = () => {
                 size: timelinePri[timer - 2].size + 2,
                 move: player1.cmove,
               };
-            if (chargeType === 2)
+            }
+            if (chargeType === 2) {
               timelinePri[timer] = {
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? 'C' : 'S',
@@ -418,15 +447,21 @@ const Battle = () => {
                 size: timelinePri[timer - 2].size + 2,
                 move: player1.cmoveSec,
               };
+            }
           }
-          if (timelinePri[timer - 2]) timelineSec[timer - 2].size = timelinePri[timer - 2].size;
+          if (timelinePri[timer - 2]) {
+            timelineSec[timer - 2].size = timelinePri[timer - 2].size;
+          }
         } else {
-          if (!isDelay && player1.block > 0 && chargedSecCount === -1) timelinePri[timer].type = 'B';
+          if (!isDelay && player1.block > 0 && chargedSecCount === -1) {
+            timelinePri[timer].type = 'B';
+          }
         }
         if (chargedSec) {
-          if (isDelay || chargedSecCount % 2 === 0) timelineSec[timer].type = 'N';
-          else {
-            if (chargeType === 1)
+          if (isDelay || chargedSecCount % 2 === 0) {
+            timelineSec[timer].type = 'N';
+          } else {
+            if (chargeType === 1) {
               timelineSec[timer] = {
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? 'C' : 'S',
@@ -434,7 +469,8 @@ const Battle = () => {
                 size: timelineSec[timer - 2].size + 2,
                 move: player2.cmove,
               };
-            if (chargeType === 2)
+            }
+            if (chargeType === 2) {
               timelineSec[timer] = {
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? 'C' : 'S',
@@ -442,10 +478,15 @@ const Battle = () => {
                 size: timelineSec[timer - 2].size + 2,
                 move: player2.cmoveSec,
               };
+            }
           }
-          if (timelineSec[timer - 2]) timelinePri[timer - 2].size = timelineSec[timer - 2].size;
+          if (timelineSec[timer - 2]) {
+            timelinePri[timer - 2].size = timelineSec[timer - 2].size;
+          }
         } else {
-          if (!isDelay && player2.block > 0 && chargedPriCount === -1) timelineSec[timer].type = 'B';
+          if (!isDelay && player2.block > 0 && chargedPriCount === -1) {
+            timelineSec[timer].type = 'B';
+          }
         }
         timelinePri[timer].tap = false;
         timelineSec[timer].tap = false;
@@ -456,12 +497,19 @@ const Battle = () => {
     turnInterval = setInterval(() => {
       if (!isDelay) {
         if (chargedPri) {
-          if (chargedPriCount >= 0) chargedPriCount--;
-          else {
+          if (chargedPriCount >= 0) {
+            chargedPriCount--;
+          } else {
             if (player2.block === 0) {
-              if (chargeType === 1) player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmove);
-              if (chargeType === 2) player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmoveSec);
-            } else player2.block -= 1;
+              if (chargeType === 1) {
+                player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmove);
+              }
+              if (chargeType === 2) {
+                player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmoveSec);
+              }
+            } else {
+              player2.block -= 1;
+            }
             const moveType = chargeType === 1 ? player1.cmove : player1.cmoveSec;
             const arrBufAtk: any[] = [],
               arrBufTarget: any[] = [];
@@ -497,15 +545,25 @@ const Battle = () => {
             delay = 1;
           }
         } else if (preChargePri) {
-          if (chargedPriCount === 16) chargedPri = true;
-          else chargedPriCount--;
+          if (chargedPriCount === 16) {
+            chargedPri = true;
+          } else {
+            chargedPriCount--;
+          }
         } else if (chargedSec) {
-          if (chargedSecCount >= 0) chargedSecCount--;
-          else {
+          if (chargedSecCount >= 0) {
+            chargedSecCount--;
+          } else {
             if (player1.block === 0) {
-              if (chargeType === 1) player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmove);
-              if (chargeType === 2) player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmoveSec);
-            } else player1.block -= 1;
+              if (chargeType === 1) {
+                player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmove);
+              }
+              if (chargeType === 2) {
+                player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmoveSec);
+              }
+            } else {
+              player1.block -= 1;
+            }
             const moveType = chargeType === 1 ? player2.cmove : player2.cmoveSec;
             const arrBufAtk: any[] = [],
               arrBufTarget: any[] = [];
@@ -541,8 +599,11 @@ const Battle = () => {
             delay = 1;
           }
         } else if (preChargeSec) {
-          if (chargedSecCount === 16) chargedSec = true;
-          else chargedSecCount--;
+          if (chargedSecCount === 16) {
+            chargedSec = true;
+          } else {
+            chargedSecCount--;
+          }
         }
       } else {
         if (delay === 0) {
@@ -578,18 +639,22 @@ const Battle = () => {
           if (player2.hp <= 0) {
             timelineSec.push(State(timer, 'X', null, null, null, null, player2.energy, player2.hp));
           } else {
-            if (timelinePri.length === timelineSec.length)
+            if (timelinePri.length === timelineSec.length) {
               timelineSec[timelineSec.length - 1] = State(timer, 'Q', null, null, null, null, player2.energy, player2.hp);
-            else timelineSec.push(State(timer, 'Q', null, null, null, null, player2.energy, player2.hp));
+            } else {
+              timelineSec.push(State(timer, 'Q', null, null, null, null, player2.energy, player2.hp));
+            }
           }
         } else if (player2.hp <= 0) {
           timelineSec.push(State(timer, 'X', null, null, null, null, player2.energy, player2.hp));
           if (player1.hp <= 0) {
             timelinePri.push(State(timer, 'X', null, null, null, null, player1.energy, player1.hp));
           } else {
-            if (timelinePri.length === timelineSec.length)
+            if (timelinePri.length === timelineSec.length) {
               timelinePri[timelinePri.length - 1] = State(timer, 'Q', null, null, null, null, player1.energy, player1.hp);
-            else timelinePri.push(State(timer, 'Q', null, null, null, null, player1.energy, player1.hp));
+            } else {
+              timelinePri.push(State(timer, 'Q', null, null, null, null, player1.energy, player1.hp));
+            }
           }
         }
         if (timelinePri.length === timelineSec.length) {
@@ -602,15 +667,15 @@ const Battle = () => {
     }, 1);
   };
 
-  useEffect(() => {
-    if (timelineType && arrBound.current.length === 0 && pokemonCurr.timeline.length > 0) {
-      setTimeout(() => {
-        for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-          arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
-        }
-      }, 100);
-    }
-  }, [timelineType, pokemonCurr.timeline.length]);
+  // useEffect(() => {
+  //   if (timelineType && arrBound.current.length === 0 && pokemonCurr.timeline.length > 0) {
+  //     setTimeout(() => {
+  //       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+  //         arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+  //       }
+  //     }, 100);
+  //   }
+  // }, [timelineType, pokemonCurr.timeline.length]);
 
   const clearData = useCallback(() => {
     setPokemonObj({
@@ -741,7 +806,12 @@ const Battle = () => {
   };
 
   const timelinePlay: any = useRef(null);
-  const [playState, setPlayState] = useState(false);
+  const [playState, setPlayState]: any = useState(false);
+  const [state, setState] = useState({
+    play: false,
+    stop: false,
+  });
+  const { play, stop } = state;
   const scrollWidth = useRef(0);
   const xFit = useRef(0);
   const xNormal = useRef(0);
@@ -771,57 +841,69 @@ const Battle = () => {
     overlapping(range, arr);
   };
 
+  const arr: any = useRef([]);
+  useEffect(() => {
+    if (arr.current.length > 0) {
+      overlapping(arr.current.length, arr.current, leftFit);
+    }
+  }, [leftFit, arr.current]);
+
   const playTimeLine = () => {
     setPlayState(true);
-    let x: number, clientX: number;
-    const arr: any[] = [];
-    const range = pokemonCurr.timeline.length;
-    if (timelineType) {
-      clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
-      timelineNormalContainer.current.scrollTo(Math.max(0, xNormal.current - clientX - timelineNormalContainer.current.clientWidth / 2), 0);
-    } else {
-      x = (xFit.current * timelineFit.current.clientWidth) / 100;
-      for (let i = 0; i < range; i++) {
-        arr.push(document.getElementById(i.toString())?.getBoundingClientRect());
-      }
+    setState({
+      play: true,
+      stop: false,
+    });
+    // let x: number, clientX: number;
+    arr.current = [];
+    for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+      arr.current.push(document.getElementById(i.toString())?.getBoundingClientRect().left);
     }
-    timelinePlay.current = setInterval(() => {
-      if (timelineType) {
-        xNormal.current += 1;
-        setLeftNormal(xNormal.current - clientX);
-        if (xNormal.current - clientX >= timelineNormalContainer.current.clientWidth / 2) {
-          timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
-          timelineNormalContainer.current.scrollTo(scrollWidth.current + 1, 0);
-        }
-        if (xNormal.current - clientX > timelineNormal.current.clientWidth) stopTimeLine();
-        overlappingNormal(range, arrBound.current);
-      } else {
-        xFit.current = (x * 100) / timelineFit.current.clientWidth;
-        setLeftFit(xFit.current);
-        if (x > timelineFit.current.clientWidth) stopTimeLine();
-        overlapping(range, arr);
-        x += 1;
-      }
-    }, 0);
+    // timelinePlay.current = setInterval(() => {
+    //   if (timelineType) {
+    //     xNormal.current += 1;
+    //     setLeftNormal(xNormal.current - clientX);
+    //     if (xNormal.current - clientX >= timelineNormalContainer.current.clientWidth / 2) {
+    //       timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
+    //       timelineNormalContainer.current.scrollTo(scrollWidth.current + 1, 0);
+    //     }
+    //     if (xNormal.current - clientX > timelineNormal.current.clientWidth) stopTimeLine();
+    //     overlappingNormal(range, arrBound.current);
+    //   } else {
+    //     xFit.current = (x * 100) / timelineFit.current.clientWidth;
+    //     setLeftFit(xFit.current);
+    //     if (x > timelineFit.current.clientWidth) stopTimeLine();
+    //     overlapping(range, arr);
+    //     x += 1;
+    //   }
+    // }, 0);
   };
 
   const stopTimeLine = () => {
-    setPlayState(false);
-    clearInterval(timelinePlay.current);
+    // setPlayState(false);
+    setState({
+      play: false,
+      stop: true,
+    });
+    // clearInterval(timelinePlay.current);
   };
 
   const resetTimeLine = () => {
-    stopTimeLine();
-    if (timelineType && timelineNormalContainer.current) {
-      if (timelineNormalContainer.current) {
-        xNormal.current = timelineNormalContainer.current.getBoundingClientRect().left + 1;
-        timelineNormalContainer.current.scrollTo(0, 0);
-      }
-      setLeftNormal(0);
-    } else {
-      xFit.current = 0;
-      setLeftFit(xFit.current);
-    }
+    // stopTimeLine();
+    setState({
+      play: false,
+      stop: false,
+    });
+    // if (timelineType && timelineNormalContainer.current) {
+    //   if (timelineNormalContainer.current) {
+    //     xNormal.current = timelineNormalContainer.current.getBoundingClientRect().left + 1;
+    //     timelineNormalContainer.current.scrollTo(0, 0);
+    //   }
+    //   setLeftNormal(0);
+    // } else {
+    //   xFit.current = 0;
+    //   setLeftFit(xFit.current);
+    // }
     setPlayTimeline({
       pokemonCurr: {
         hp: Math.floor(pokemonCurr.pokemonData.currentStats.stats.statsSTA),
@@ -833,14 +915,20 @@ const Battle = () => {
 
   const overlappingNormal = (range: number, arr: any[]) => {
     const index = arr.filter((dom: { left: number }) => dom.left <= xNormal.current).length;
-    if (index >= 0 && index < range) updateTimeine(index);
+    if (index >= 0 && index < range) {
+      updateTimeine(index);
+    }
   };
 
-  const overlapping = (range: number, arr: any[]) => {
-    const rect1 = playLine.current.getBoundingClientRect();
-    let index = arr.filter((dom: { left: number }) => dom.left <= rect1.right).length;
-    if (index === range) index -= 1;
-    if (index >= 0 && index < range) updateTimeine(index);
+  const overlapping = (range: number, arr: any[], pos = 0) => {
+    const rect1 = pos >= 0 ? pos : playLine.current.getBoundingClientRect();
+    let index = arr.filter((left: number) => left <= pos + 1 ?? rect1.right).length;
+    if (index === range) {
+      index -= 1;
+    }
+    if (index >= 0 && index < range) {
+      updateTimeine(index);
+    }
   };
 
   const updateTimeine = (index: string | number) => {
@@ -860,8 +948,11 @@ const Battle = () => {
   const onChangeTimeline = (type: number) => {
     stopTimeLine();
     let width: number, clientX;
-    if (type) width = timelineFit.current.clientWidth;
-    else width = timelineNormal.current.clientWidth;
+    if (type) {
+      width = timelineFit.current.clientWidth;
+    } else {
+      width = timelineNormal.current.clientWidth;
+    }
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
       if (type) {
@@ -882,7 +973,9 @@ const Battle = () => {
   };
 
   const findBuff = (move: { buffs: any[] }) => {
-    if (move.buffs.length === 0) return;
+    if (move.buffs.length === 0) {
+      return;
+    }
     return (
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
         {move.buffs.map((value: { type: string; power: number; buffChance: number }, index: React.Key) => (
@@ -1107,7 +1200,7 @@ const Battle = () => {
   const renderPokemonInfo = (type: string, pokemon: any, setPokemon: any, clearDataPokemon: any) => {
     return (
       <Fragment>
-        <Select data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
+        <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
         {pokemon.pokemonData && (
           <Fragment>
             <div className="input-group">
@@ -1281,7 +1374,7 @@ const Battle = () => {
               </Accordion>
               <div>
                 {timelineType ? (
-                  <Fragment>
+                  <div id="normal-timeline">
                     {TimeLine(
                       pokemonCurr,
                       pokemonObj,
@@ -1293,9 +1386,19 @@ const Battle = () => {
                       leftNormal,
                       showTap
                     )}
-                  </Fragment>
+                  </div>
                 ) : (
-                  <Fragment>{TimeLineFit(pokemonCurr, pokemonObj, timelineFit, playLine, onPlayLineFitMove, leftFit, showTap)}</Fragment>
+                  <div id="fit-timeline">
+                    <TimelineFit
+                      pokemonCurr={pokemonCurr}
+                      pokemonObj={pokemonObj}
+                      showTap={showTap}
+                      state={state}
+                      setState={setState}
+                      duration={duration}
+                      setLeft={setLeftFit}
+                    />
+                  </div>
                 )}
                 <div className="d-flex justify-content-center">
                   <FormControlLabel
@@ -1310,12 +1413,24 @@ const Battle = () => {
                     onChange={(e) => onChangeTimeline(parseInt(e.target.value))}
                   >
                     <FormControlLabel value={0} control={<Radio />} label={<span>Fit Timeline</span>} />
-                    <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
+                    <FormControlLabel disabled={true} value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
                   </RadioGroup>
+                  <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} disabled={state.play}>
+                    <InputLabel>Duration</InputLabel>
+                    <Select
+                      value={duration}
+                      onChange={(event: any) => setOptions({ ...options, duration: parseInt(event.target.value) })}
+                      label="Duration"
+                    >
+                      <MenuItem value={3}>3 Second</MenuItem>
+                      <MenuItem value={5}>5 Second</MenuItem>
+                      <MenuItem value={10}>10 Second</MenuItem>
+                    </Select>
+                  </FormControl>
                 </div>
                 <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
-                  <button className="btn btn-primary" onClick={() => (playState ? stopTimeLine() : playTimeLine())}>
-                    {playState ? (
+                  <button className="btn btn-primary" onClick={() => (play ? stopTimeLine() : playTimeLine())}>
+                    {play ? (
                       <Fragment>
                         <PauseIcon /> Stop
                       </Fragment>

@@ -47,7 +47,9 @@ const Search = () => {
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) setStartIndex(startIndex + 1);
+    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
+      setStartIndex(startIndex + 1);
+    }
   };
 
   const getInfoPoke = (value: any) => {

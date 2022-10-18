@@ -52,7 +52,9 @@ const Form = ({
 
   const findForm = () => {
     let form = paramForm;
-    if (id_default === 555 && form === 'galar') form += '-standard';
+    if (id_default === 555 && form === 'galar') {
+      form += '-standard';
+    }
     return formList
       .map((form: any[]) => {
         const curFrom = form.find(
@@ -87,12 +89,17 @@ const Form = ({
       const firstFilter = stats.find(
         (item: { id: any; form: string }) => item.id === id && currForm.form.form_name.toLowerCase() === item.form.toLowerCase()
       );
-      if (firstFilter) return firstFilter;
+      if (firstFilter) {
+        return firstFilter;
+      }
       const filterForm = stats.find((item: { id: any; form: any }) => item.id === id && filterFormName(currForm.form.form_name, item.form));
-      if (filterId.length === 1 && formList.length === 1 && !filterForm) return filterId[0];
-      else if (filterId.length === formList.length && !filterForm)
+      if (filterId.length === 1 && formList.length === 1 && !filterForm) {
+        return filterId[0];
+      } else if (filterId.length === formList.length && !filterForm) {
         return stats.find((item: { id: any; form: string }) => item.id === id && item.form === 'Normal');
-      else return filterForm;
+      } else {
+        return filterForm;
+      }
     },
     [currForm, formList, filterFormName]
   );
@@ -140,8 +147,11 @@ const Form = ({
       .find((item: any) => item);
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));
-    if (findForm.form.form_name !== '' && region) setRegion(region);
-    else setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+    if (findForm.form.form_name !== '' && region) {
+      setRegion(region);
+    } else {
+      setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+    }
     setFormName(splitAndCapitalize(findForm.form.name, '-', ' '));
     if (findData && findForm) {
       const oriForm = findData;

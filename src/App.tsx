@@ -183,7 +183,9 @@ const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (data.data && stats) dispatch(hideSpinner());
+    if (data.data && stats) {
+      dispatch(hideSpinner());
+    }
   }, [dispatch, data.data, stats]);
 
   return (

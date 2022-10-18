@@ -52,7 +52,9 @@ const TeamPVP = () => {
 
       const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
 
-      if (!styleSheet.current) styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`);
+      if (!styleSheet.current) {
+        styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`);
+      }
 
       let combatPoke = dataStore.pokemonCombat.filter(
         (item: { id: any; baseSpecies: string }) =>
@@ -62,9 +64,14 @@ const TeamPVP = () => {
 
       const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
       if (!result) {
-        if (combatPoke) combatPoke = combatPoke[0];
-        else combatPoke = combatPoke.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(pokemon.name));
-      } else combatPoke = result;
+        if (combatPoke) {
+          combatPoke = combatPoke[0];
+        } else {
+          combatPoke = combatPoke.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(pokemon.name));
+        }
+      } else {
+        combatPoke = result;
+      }
 
       let fmove: any, cmovePri: { name: any }, cmoveSec: { name: any }, cmove;
       if (moveSet.includes('+')) {
@@ -81,7 +88,9 @@ const TeamPVP = () => {
         .concat(combatPoke.purifiedMoves);
       fmove = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(fmove, fastMoveSet));
       cmovePri = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(cmovePri, chargedMoveSet));
-      if (cmoveSec) cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(cmoveSec, chargedMoveSet));
+      if (cmoveSec) {
+        cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(cmoveSec, chargedMoveSet));
+      }
 
       return {
         id,
@@ -118,11 +127,11 @@ const TeamPVP = () => {
             cancelToken: source.token,
           })
         ).data;
-        if (params.serie === 'all')
+        if (params.serie === 'all') {
           document.title = `PVP Teams - ${
             cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
           }`;
-        else
+        } else {
           document.title = `PVP Teams - ${
             params.serie === 'remix'
               ? cp === 500
@@ -135,6 +144,7 @@ const TeamPVP = () => {
               : ''
           }
                     ${splitAndCapitalize(params.serie, '-', ' ')}`;
+        }
 
         const performersTotalGames = file.performers.reduce((p: any, c: { games: any }) => p + c.games, 0);
         const teamsTotalGames = file.teams.reduce((p: any, c: { games: any }) => p + c.games, 0);
@@ -191,7 +201,9 @@ const TeamPVP = () => {
 
     return () => {
       source.cancel();
-      if (dataStore.spinner) dispatch(hideSpinner());
+      if (dataStore.spinner) {
+        dispatch(hideSpinner());
+      }
     };
   }, [dispatch, params.cp, params.serie, dataStore.spinner, mappingPokemonData]);
 
@@ -266,7 +278,9 @@ const TeamPVP = () => {
                       style={{ width: 'max-content' }}
                       onClick={() => {
                         setSortedBy('teamScore');
-                        if (sortedBy === 'teamScore') setSorted(!sorted);
+                        if (sortedBy === 'teamScore') {
+                          setSorted(!sorted);
+                        }
                       }}
                     >
                       <span className={'ranking-sort ranking-score' + (sortedBy === 'teamScore' ? ' ranking-selected' : '')}>
@@ -279,7 +293,9 @@ const TeamPVP = () => {
                       style={{ width: 'max-content' }}
                       onClick={() => {
                         setSortedBy('individualScore');
-                        if (sortedBy === 'individualScore') setSorted(!sorted);
+                        if (sortedBy === 'individualScore') {
+                          setSorted(!sorted);
+                        }
                       }}
                     >
                       <span className={'ranking-sort ranking-score' + (sortedBy === 'individualScore' ? ' ranking-selected' : '')}>
@@ -292,7 +308,9 @@ const TeamPVP = () => {
                       style={{ width: 'max-content' }}
                       onClick={() => {
                         setSortedBy('games');
-                        if (sortedBy === 'games') setSorted(!sorted);
+                        if (sortedBy === 'games') {
+                          setSorted(!sorted);
+                        }
                       }}
                     >
                       <span className={'ranking-sort ranking-score' + (sortedBy === 'games' ? ' ranking-selected' : '')}>
@@ -402,7 +420,9 @@ const TeamPVP = () => {
                       style={{ width: 'max-content' }}
                       onClick={() => {
                         setSortedTeamBy('teamScore');
-                        if (sortedTeamBy === 'teamScore') setSortedTeam(!sortedTeam);
+                        if (sortedTeamBy === 'teamScore') {
+                          setSortedTeam(!sortedTeam);
+                        }
                       }}
                     >
                       <span className={'ranking-sort ranking-score' + (sortedTeamBy === 'teamScore' ? ' ranking-selected' : '')}>
@@ -415,7 +435,9 @@ const TeamPVP = () => {
                       style={{ width: 'max-content' }}
                       onClick={() => {
                         setSortedTeamBy('games');
-                        if (sortedTeamBy === 'games') setSortedTeam(!sortedTeam);
+                        if (sortedTeamBy === 'games') {
+                          setSortedTeam(!sortedTeam);
+                        }
                       }}
                     >
                       <span className={'ranking-sort ranking-score' + (sortedTeamBy === 'games' ? ' ranking-selected' : '')}>

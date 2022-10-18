@@ -17,8 +17,12 @@ const Effect = (prop: any) => {
   const getWeatherEffective = useCallback(() => {
     const data: any = [];
     Object.entries(prop.weathers).forEach(([key, value]: any) => {
-      if (value.includes(currentTypePri) && !data.includes(key)) data.push(key);
-      if (currentTypeSec !== '' && value.includes(currentTypeSec) && !data.includes(key)) data.push(key);
+      if (value.includes(currentTypePri) && !data.includes(key)) {
+        data.push(key);
+      }
+      if (currentTypeSec !== '' && value.includes(currentTypeSec) && !data.includes(key)) {
+        data.push(key);
+      }
     });
     setWeatherEffective(data);
   }, [currentTypePri, currentTypeSec, prop.weathers]);

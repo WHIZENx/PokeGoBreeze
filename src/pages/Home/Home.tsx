@@ -173,7 +173,9 @@ const Home = () => {
   const addTypeArr = (value: string) => {
     if (selectTypes.includes(value)) {
       return setSelectTypes([...selectTypes].filter((item) => item !== value));
-    } else setSelectTypes([...selectTypes].slice(0, 1));
+    } else {
+      setSelectTypes([...selectTypes].slice(0, 1));
+    }
     return setSelectTypes((oldArr: any) => [...oldArr, value]);
   };
 
@@ -182,7 +184,9 @@ const Home = () => {
     const navbarHeight = document.documentElement.getElementsByClassName('navbar')[0];
     const fullHeight = window.innerHeight;
     if (headHight && navbarHeight) {
-      if (headHight.clientHeight > fullHeight / 2) return '100%';
+      if (headHight.clientHeight > fullHeight / 2) {
+        return '100%';
+      }
       return fullHeight - headHight.clientHeight - navbarHeight.clientHeight - 2;
     }
   };
@@ -225,8 +229,11 @@ const Home = () => {
               value={searchMaxCP}
               min={10}
               onInput={(e: any) => {
-                if (e.target.value === '') setSearchMaxCP(e.target.value);
-                else setSearchMaxCP(parseInt(e.target.value));
+                if (e.target.value === '') {
+                  setSearchMaxCP(e.target.value);
+                } else {
+                  setSearchMaxCP(parseInt(e.target.value));
+                }
               }}
             />
           </div>

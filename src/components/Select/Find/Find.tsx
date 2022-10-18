@@ -68,40 +68,68 @@ const Find = (props: {
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) setStartIndex(startIndex + 1);
+    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
+      setStartIndex(startIndex + 1);
+    }
   };
 
   const getInfoPoke = (value: any) => {
     setId(value.id);
-    if (props.setId) props.setId(value.id);
-    if (props.setName) props.setName((pokeList as any).find((item: any) => item.id === value.id)?.name);
-    if (props.clearStats) props.clearStats();
+    if (props.setId) {
+      props.setId(value.id);
+    }
+    if (props.setName) {
+      props.setName((pokeList as any).find((item: any) => item.id === value.id)?.name);
+    }
+    if (props.clearStats) {
+      props.clearStats();
+    }
   };
 
   const handleSetStats = (type: string, value: any) => {
-    if (type === 'atk' && props.setStatATK) props.setStatATK(value);
-    else if (type === 'def' && props.setStatDEF) props.setStatDEF(value);
-    else if (type === 'sta' && props.setStatSTA) props.setStatSTA(value);
+    if (type === 'atk' && props.setStatATK) {
+      props.setStatATK(value);
+    } else if (type === 'def' && props.setStatDEF) {
+      props.setStatDEF(value);
+    } else if (type === 'sta' && props.setStatSTA) {
+      props.setStatSTA(value);
+    }
   };
 
   const decId = () => {
     setTimeout(() => {
       setId(id - 1);
-      if (props.setId) props.setId(id - 1);
-      if (props.setName) props.setName((pokeList as any).find((item: any) => item.id === id - 1)?.name);
-      if (props.clearStats) props.clearStats();
+      if (props.setId) {
+        props.setId(id - 1);
+      }
+      if (props.setName) {
+        props.setName((pokeList as any).find((item: any) => item.id === id - 1)?.name);
+      }
+      if (props.clearStats) {
+        props.clearStats();
+      }
     }, 300);
-    if (props.clearStats) props.clearStats();
+    if (props.clearStats) {
+      props.clearStats();
+    }
   };
 
   const incId = () => {
     setTimeout(() => {
       setId(id + 1);
-      if (props.setId) props.setId(id + 1);
-      if (props.setName) props.setName((pokeList as any).find((item: any) => item.id === id + 1)?.name);
-      if (props.clearStats) props.clearStats();
+      if (props.setId) {
+        props.setId(id + 1);
+      }
+      if (props.setName) {
+        props.setName((pokeList as any).find((item: any) => item.id === id + 1)?.name);
+      }
+      if (props.clearStats) {
+        props.clearStats();
+      }
     }, 300);
-    if (props.clearStats) props.clearStats();
+    if (props.clearStats) {
+      props.clearStats();
+    }
   };
 
   const searchPokemon = () => {

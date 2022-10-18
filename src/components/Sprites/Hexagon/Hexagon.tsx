@@ -190,8 +190,9 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
         initStats.cons === props.stats.cons &&
         initStats.atk === props.stats.atk &&
         initStats.switching === props.stats.switching
-      )
+      ) {
         clearInterval(interval);
+      }
     }, 10);
   };
 

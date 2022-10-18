@@ -21,10 +21,15 @@ const Attacker = (prop: { types: any }) => {
       neutral: [],
     };
     Object.entries(prop.types[currentType]).forEach(([key, value]) => {
-      if (value === 1.6) data.weak.push(key);
-      else if (value === 1) data.neutral.push(key);
-      else if (value === 0.625) data.resist.push(key);
-      else data.very_resist.push(key);
+      if (value === 1.6) {
+        data.weak.push(key);
+      } else if (value === 1) {
+        data.neutral.push(key);
+      } else if (value === 0.625) {
+        data.resist.push(key);
+      } else {
+        data.very_resist.push(key);
+      }
     });
     setTypeEffective(data);
   }, [currentType, prop.types]);

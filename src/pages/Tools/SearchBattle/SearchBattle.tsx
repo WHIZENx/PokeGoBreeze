@@ -54,13 +54,21 @@ const FindBattle = () => {
 
   const currEvoChain = useCallback(
     (currId: any, form: string, arr: any): void => {
-      if (form === 'GALARIAN') form = 'GALAR';
-      if (currId.length === 0) return arr;
+      if (form === 'GALARIAN') {
+        form = 'GALAR';
+      }
+      if (currId.length === 0) {
+        return arr;
+      }
       let curr;
-      if (form === '') curr = dataStore.evolution.find((item: { id: any; form: any }) => currId.includes(item.id) && form === item.form);
-      else
+      if (form === '') {
+        curr = dataStore.evolution.find((item: { id: any; form: any }) => currId.includes(item.id) && form === item.form);
+      } else {
         curr = dataStore.evolution.find((item: { id: any; form: string | any[] }) => currId.includes(item.id) && item.form.includes(form));
-      if (!arr.map((i: { id: any }) => i.id).includes(curr.id)) arr.push({ ...curr, form });
+      }
+      if (!arr.map((i: { id: any }) => i.id).includes(curr.id)) {
+        arr.push({ ...curr, form });
+      }
       return currEvoChain(
         curr.evo_list.map((i: { evo_to_id: any }) => i.evo_to_id),
         form,
@@ -72,16 +80,22 @@ const FindBattle = () => {
 
   const prevEvoChain = useCallback(
     (obj: { id: any; evo_list: any[] }, defaultForm: any, arr: any[]): any => {
-      if (!arr.map((i: { id: any }) => i.id).includes(obj.id)) arr.push({ ...obj, form: defaultForm });
+      if (!arr.map((i: { id: any }) => i.id).includes(obj.id)) {
+        arr.push({ ...obj, form: defaultForm });
+      }
       obj.evo_list.forEach((i: { evo_to_id: any; evo_to_form: any }) => {
         currEvoChain([i.evo_to_id], i.evo_to_form, arr);
       });
       const curr = dataStore.evolution.filter((item: { evo_list: any[] }) =>
         item.evo_list.find((i: { evo_to_id: any; evo_to_form: any }) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
       );
-      if (curr.length === 0) return arr;
-      else if (curr.length === 1) return prevEvoChain(curr[0], defaultForm, arr);
-      else return curr.map((item: any) => prevEvoChain(item, defaultForm, arr));
+      if (curr.length === 0) {
+        return arr;
+      } else if (curr.length === 1) {
+        return prevEvoChain(curr[0], defaultForm, arr);
+      } else {
+        return curr.map((item: any) => prevEvoChain(item, defaultForm, arr));
+      }
     },
     [currEvoChain, dataStore.evolution]
   );
@@ -93,10 +107,15 @@ const FindBattle = () => {
         item.evo_list.find((i: { evo_to_id: any; evo_to_form: any }) => id === i.evo_to_id && isForm === i.evo_to_form)
       );
       if (curr.length === 0) {
-        if (isForm === '') curr = dataStore.evolution.filter((item: { id: any; form: any }) => id === item.id && isForm === item.form);
-        else curr = dataStore.evolution.filter((item: { id: any; form: string | any[] }) => id === item.id && item.form.includes(isForm));
+        if (isForm === '') {
+          curr = dataStore.evolution.filter((item: { id: any; form: any }) => id === item.id && isForm === item.form);
+        } else {
+          curr = dataStore.evolution.filter((item: { id: any; form: string | any[] }) => id === item.id && item.form.includes(isForm));
+        }
       }
-      if (curr.length === 0) curr = dataStore.evolution.filter((item: { id: any; form: string }) => id === item.id && item.form === '');
+      if (curr.length === 0) {
+        curr = dataStore.evolution.filter((item: { id: any; form: string }) => id === item.id && item.form === '');
+      }
       return curr.map((item: any) => prevEvoChain(item, isForm, []));
     },
     [prevEvoChain, form, dataStore.evolution]
@@ -109,7 +128,9 @@ const FindBattle = () => {
         const tempArr: { battleLeague: any; maxCP: any; form: any; id: number; name: string }[] = [];
         item.forEach((value: { form: string; id: number; name: string }) => {
           const data = queryStatesEvoChain(dataStore.options, value, level, ATKIv, DEFIv, STAIv);
-          if (data.id === id) setMaxCP(data.maxCP);
+          if (data.id === id) {
+            setMaxCP(data.maxCP);
+          }
           tempArr.push(data);
         });
         arr.push(tempArr.sort((a, b) => a.maxCP - b.maxCP));
@@ -119,7 +140,7 @@ const FindBattle = () => {
       const evoBaseStats: any[] = [];
       arr.forEach((item) => {
         item.forEach((value: any) => {
-          if (value.id !== id)
+          if (value.id !== id) {
             evoBaseStats.push({
               ...(Object.values(value.battleLeague).reduce((a: any, b: any) => (!a ? b : !b ? a : a.ratio > b.ratio ? a : b)) as any),
               id: value.id,
@@ -130,7 +151,7 @@ const FindBattle = () => {
                 !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b
               ),
             });
-          else
+          } else {
             currBastStats = {
               ...(Object.values(value.battleLeague).reduce((a: any, b: any) => (!a ? b : !b ? a : a.ratio > b.ratio ? a : b)) as any),
               id: value.id,
@@ -141,6 +162,7 @@ const FindBattle = () => {
                 !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b
               ),
             };
+          }
         });
       });
       let bestLeague = evoBaseStats.filter((item) => item.ratio > currBastStats.ratio);
@@ -150,9 +172,15 @@ const FindBattle = () => {
           (item.league === 'ultra' && item.CP > 1500) ||
           (item.league === 'great' && item.CP > 500)
       );
-      if (bestLeague.length === 0) bestLeague = evoBaseStats.filter((item) => item.ratio > currBastStats.ratio);
-      if (bestLeague.length === 0) return setBestInLeague([currBastStats]);
-      if (currBastStats.ratio >= 90) bestLeague.push(currBastStats);
+      if (bestLeague.length === 0) {
+        bestLeague = evoBaseStats.filter((item) => item.ratio > currBastStats.ratio);
+      }
+      if (bestLeague.length === 0) {
+        return setBestInLeague([currBastStats]);
+      }
+      if (currBastStats.ratio >= 90) {
+        bestLeague.push(currBastStats);
+      }
       setBestInLeague(bestLeague.sort((a, b) => a.maxCP - b.maxCP));
       dispatch(hideSpinner());
     },
@@ -162,13 +190,16 @@ const FindBattle = () => {
   const onSearchStatsPoke = useCallback(
     (e: { preventDefault: () => void }) => {
       e.preventDefault();
-      if (parseInt(searchCP) < 10) return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+      if (parseInt(searchCP) < 10) {
+        return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+      }
       const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
-      if (result.level == null)
+      if (result.level == null) {
         return enqueueSnackbar(
           'At CP: ' + result.CP + ' and IV ' + result.IV.atk + '/' + result.IV.def + '/' + result.IV.sta + ' impossible found in ' + name,
           { variant: 'error' }
         );
+      }
       dispatch(showSpinner());
       enqueueSnackbar(
         'Search success at CP: ' +
@@ -201,7 +232,9 @@ const FindBattle = () => {
     let img = dataStore.assets
       .find((item: { id: any }) => item.id === id)
       .image.find((item: { form: string | any[] }) => item.form.includes(isForm));
-    if (!img) img = dataStore.assets.find((item: { id: any }) => item.id === id).image[0];
+    if (!img) {
+      img = dataStore.assets.find((item: { id: any }) => item.id === id).image[0];
+    }
     try {
       return img.default;
     } catch {
@@ -210,11 +243,17 @@ const FindBattle = () => {
   };
 
   const getCandyEvo = (item: any[], evoId: number, candy: number): any => {
-    if (evoId === id) return candy;
+    if (evoId === id) {
+      return candy;
+    }
     const data = item.find((i: { evo_list: any[] }) => i.evo_list.find((e: { evo_to_id: any }) => e.evo_to_id === evoId));
-    if (!data) return candy;
+    if (!data) {
+      return candy;
+    }
     const prevEvo = data.evo_list.find((e: { evo_to_id: any }) => e.evo_to_id === evoId);
-    if (!prevEvo) return candy;
+    if (!prevEvo) {
+      return candy;
+    }
     candy += prevEvo.candyCost;
     return getCandyEvo(item, data.id, candy);
   };

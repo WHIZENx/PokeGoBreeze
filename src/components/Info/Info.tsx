@@ -13,7 +13,9 @@ const Info = (props: { data: { types: any }; currForm: { form: { id: any; types:
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: any) => {
       types?.forEach((type: { type: { name: string } }) => {
-        if (value.includes(type.type.name.toUpperCase()) && !data.includes(key)) data.push(key);
+        if (value.includes(type.type.name.toUpperCase()) && !data.includes(key)) {
+          data.push(key);
+        }
       });
     });
     return data;
@@ -33,13 +35,21 @@ const Info = (props: { data: { types: any }; currForm: { form: { id: any; types:
       types?.forEach((type: { type: { name: string } }) => {
         valueEffective *= value[type.type.name.toUpperCase()];
       });
-      if (valueEffective >= 2.56) data.very_weak.push(key);
-      else if (valueEffective >= 1.6) data.weak.push(key);
-      else if (valueEffective === 1) data.neutral.push(key);
-      else if (valueEffective >= 0.625) data.resist.push(key);
-      else if (valueEffective >= 0.39) data.very_resist.push(key);
-      else if (valueEffective >= 0.2) data.super_resist.push(key);
-      else data.neutral.push(key);
+      if (valueEffective >= 2.56) {
+        data.very_weak.push(key);
+      } else if (valueEffective >= 1.6) {
+        data.weak.push(key);
+      } else if (valueEffective === 1) {
+        data.neutral.push(key);
+      } else if (valueEffective >= 0.625) {
+        data.resist.push(key);
+      } else if (valueEffective >= 0.39) {
+        data.very_resist.push(key);
+      } else if (valueEffective >= 0.2) {
+        data.super_resist.push(key);
+      } else {
+        data.neutral.push(key);
+      }
     });
     return data;
   };

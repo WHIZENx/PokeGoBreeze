@@ -27,7 +27,9 @@ const SelectPokemon = (props: {
   const listenScrollEvent = (ele: any) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 0.8 >= fullHeight * (startIndex + 1)) setStartIndex(startIndex + 1);
+    if (scrollTop * 0.8 >= fullHeight * (startIndex + 1)) {
+      setStartIndex(startIndex + 1);
+    }
   };
 
   const changePokemon = (value: any) => {
@@ -37,20 +39,36 @@ const SelectPokemon = (props: {
     if (iconName !== name) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
       setSearch(name);
-      if (props.setCurrentPokemon) props.setCurrentPokemon(value);
-      if (props.selected && props.setFMovePokemon) props.setFMovePokemon(null);
-      if (props.selected && props.setCMovePokemon) props.setCMovePokemon(null);
-      if (props.clearData) props.clearData();
+      if (props.setCurrentPokemon) {
+        props.setCurrentPokemon(value);
+      }
+      if (props.selected && props.setFMovePokemon) {
+        props.setFMovePokemon(null);
+      }
+      if (props.selected && props.setCMovePokemon) {
+        props.setCMovePokemon(null);
+      }
+      if (props.clearData) {
+        props.clearData();
+      }
     }
   };
 
   const removePokemon = () => {
     setPokemonIcon(null);
     setSearch('');
-    if (props.setCurrentPokemon) props.setCurrentPokemon(null);
-    if (props.setFMovePokemon) props.setFMovePokemon(null);
-    if (props.setCMovePokemon) props.setCMovePokemon(null);
-    if (props.clearData) props.clearData();
+    if (props.setCurrentPokemon) {
+      props.setCurrentPokemon(null);
+    }
+    if (props.setFMovePokemon) {
+      props.setFMovePokemon(null);
+    }
+    if (props.setCMovePokemon) {
+      props.setCMovePokemon(null);
+    }
+    if (props.clearData) {
+      props.clearData();
+    }
   };
 
   useEffect(() => {

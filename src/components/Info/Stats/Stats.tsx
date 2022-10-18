@@ -36,9 +36,13 @@ const Stats = (props: {
     }
     let avgRank =
       props.pokemonStats[type].max_rank - props.pokemonStats[type].ranking.find((item: { [x: string]: number }) => item[type] > stats).rank;
-    if (avgRank < 1) avgRank = 1;
+    if (avgRank < 1) {
+      avgRank = 1;
+    }
     const ratioRank = (avgRank * 100) / props.pokemonStats[type].max_rank;
-    if (ratioRank > 100) return 100;
+    if (ratioRank > 100) {
+      return 100;
+    }
     return ratioRank;
   };
 

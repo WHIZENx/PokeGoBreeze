@@ -71,12 +71,16 @@ const CalculatePoint = () => {
 
   const clearDataAtk = (reset: any) => {
     setResultBreakPointAtk(null);
-    if (!reset) setMove(null);
+    if (!reset) {
+      setMove(null);
+    }
   };
 
   const clearDataDef = (reset: any) => {
     setResultBreakPointDef(null);
-    if (!reset) setMoveDef(null);
+    if (!reset) {
+      setMoveDef(null);
+    }
   };
 
   const clearDataBulk = (reset: any) => {
@@ -193,8 +197,12 @@ const CalculatePoint = () => {
       colorTone[value.toString()].number = value;
       colorTone[value.toString()].color = `rgb(${Math.max(0, r)}, ${Math.max(0, g)}, ${Math.max(0, b)})`;
       g -= diff;
-      if (index % 2 === 0) b -= diff;
-      if (g <= 0 && b <= 0) r -= diff;
+      if (index % 2 === 0) {
+        b -= diff;
+      }
+      if (g <= 0 && b <= 0) {
+        r -= diff;
+      }
     });
     return colorTone;
   };

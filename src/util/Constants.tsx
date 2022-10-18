@@ -131,12 +131,13 @@ export const typeCostPowerUp = (type: string) => {
       candy: 1,
       type,
     };
-  } else
+  } else {
     return {
       stadust: 1,
       candy: 1,
       type,
     };
+  }
 };
 
 export const leaguesTeamBattle = [

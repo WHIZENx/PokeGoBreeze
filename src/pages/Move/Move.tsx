@@ -116,7 +116,9 @@ const Move = (props: { id?: any }) => {
         document.title = `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}`;
       } else {
         enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
-        if (params.id) document.title = `#${params.id} - Not Found`;
+        if (params.id) {
+          document.title = `#${params.id} - Not Found`;
+        }
       }
     },
     [enqueueSnackbar, params.id, data.combat]
@@ -126,7 +128,9 @@ const Move = (props: { id?: any }) => {
     if (move === null) {
       const id = params.id ? params.id.toLowerCase() : props.id;
       queryMoveData(id);
-    } else setTopList(queryTopMove(data.options, data.typeEff, data.weatherBoost, data.pokemonCombat, move));
+    } else {
+      setTopList(queryTopMove(data.options, data.typeEff, data.weatherBoost, data.pokemonCombat, move));
+    }
   }, [data, params.id, props.id, queryMoveData, move]);
 
   return (

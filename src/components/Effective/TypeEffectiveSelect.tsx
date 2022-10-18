@@ -55,8 +55,11 @@ const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any }) =>
         types.forEach((type: string) => {
           valueEffective *= value[type.toUpperCase()];
         });
-        if (valueEffective >= 2.56) data.very_weak.push(key);
-        else if (valueEffective >= 1.6) data.weak.push(key);
+        if (valueEffective >= 2.56) {
+          data.very_weak.push(key);
+        } else if (valueEffective >= 1.6) {
+          data.weak.push(key);
+        }
       });
 
       return (
@@ -74,7 +77,9 @@ const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any }) =>
         types.forEach((type: string) => {
           valueEffective *= value[type.toUpperCase()];
         });
-        if (valueEffective === 1) data.neutral.push(key);
+        if (valueEffective === 1) {
+          data.neutral.push(key);
+        }
       });
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
@@ -92,9 +97,13 @@ const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any }) =>
         types.forEach((type: string) => {
           valueEffective *= value[type.toUpperCase()];
         });
-        if (valueEffective <= 0.3) data.super_resist.push(key);
-        else if (valueEffective <= 0.39) data.very_resist.push(key);
-        else if (valueEffective <= 0.625) data.resist.push(key);
+        if (valueEffective <= 0.3) {
+          data.super_resist.push(key);
+        } else if (valueEffective <= 0.39) {
+          data.very_resist.push(key);
+        } else if (valueEffective <= 0.625) {
+          data.resist.push(key);
+        }
       });
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>

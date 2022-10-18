@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 
 const Weather = (props: { arr: any[]; style: React.CSSProperties | undefined; text?: string }) => {
-  if (!props.arr || props.arr.length === 0)
+  if (!props.arr || props.arr.length === 0) {
     return (
       <Fragment>
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
@@ -14,6 +14,7 @@ const Weather = (props: { arr: any[]; style: React.CSSProperties | undefined; te
         </div>
       </Fragment>
     );
+  }
 
   return (
     <div className="element-top" style={props.style}>

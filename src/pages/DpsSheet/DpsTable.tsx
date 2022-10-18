@@ -391,8 +391,11 @@ const DpsTable = () => {
       );
 
       const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
-      if (!result) combatPoke = combatPoke[0];
-      else combatPoke = result;
+      if (!result) {
+        combatPoke = combatPoke[0];
+      } else {
+        combatPoke = result;
+      }
       if (combatPoke) {
         addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false);
         addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true);
@@ -475,7 +478,7 @@ const DpsTable = () => {
           });
           boolReleaseGO = result ? result.releasedGO : false;
         }
-        if (enableShadow || enableElite || enableMega)
+        if (enableShadow || enableElite || enableMega) {
           return (
             boolFilterType &&
             boolFilterPoke &&
@@ -484,10 +487,14 @@ const DpsTable = () => {
             boolReleaseGO &&
             (boolOnlyShadow || boolOnlyElite || boolOnlyMega)
           );
-        else return boolFilterType && boolFilterPoke && boolReleaseGO && !(boolShowShadow || boolShowElite || boolShowMega);
+        } else {
+          return boolFilterType && boolFilterPoke && boolReleaseGO && !(boolShowShadow || boolShowElite || boolShowMega);
+        }
       }
     );
-    if (enableBest) result = filterBestOptions(result, bestOf);
+    if (enableBest) {
+      result = filterBestOptions(result, bestOf);
+    }
     setDataFilter(result);
   }, [
     dpsTable,

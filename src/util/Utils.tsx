@@ -106,13 +106,17 @@ export const HundoRate = styled(Rating)(() => ({
 }));
 
 export const capitalize = (str: string | undefined) => {
-  if (!str) return '';
+  if (!str) {
+    return '';
+  }
   str = str.toLowerCase();
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 export const splitAndCapitalize = (str: string | undefined, splitBy: string, joinBy: string) => {
-  if (!str) return '';
+  if (!str) {
+    return '';
+  }
   return str
     .split(splitBy)
     .map((text: string) => capitalize(text))
@@ -138,7 +142,9 @@ export const convertModelSpritName = (text: string) => {
 };
 
 export const convertName = (text: string | undefined) => {
-  if (!text) return '';
+  if (!text) {
+    return '';
+  }
   return text
     .toUpperCase()
     .replaceAll('-', '_')
@@ -163,17 +169,23 @@ export const convertNameRanking = (text: string) => {
 
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
-  if (text.includes('_')) form = ` (${capitalize(text.split('_')[1])})`;
+  if (text.includes('_')) {
+    form = ` (${capitalize(text.split('_')[1])})`;
+  }
   return text + form;
 };
 
 export const convertNameRankingToOri = (text: string, form: string, local: boolean = false) => {
   const formOri = form;
-  if (text.includes('pyroar') || text.includes('frillish') || text.includes('jellicent') || text.includes('urshifu'))
+  if (text.includes('pyroar') || text.includes('frillish') || text.includes('jellicent') || text.includes('urshifu')) {
     return text.split('_')[0];
-  if (text.includes('_mega') || text === 'ho_oh' || text.includes('castform') || text.includes('tapu') || text.includes('basculin_blue'))
+  }
+  if (text.includes('_mega') || text === 'ho_oh' || text.includes('castform') || text.includes('tapu') || text.includes('basculin_blue')) {
     return text.replaceAll('_', '-');
-  if (formOri.includes('(') && formOri.includes(')')) form = '-' + form.split(' (')[1].replace(')', '').toLowerCase();
+  }
+  if (formOri.includes('(') && formOri.includes(')')) {
+    form = '-' + form.split(' (')[1].replace(')', '').toLowerCase();
+  }
   text = text
     .toLowerCase()
     .replaceAll('_', '-')
@@ -195,8 +207,12 @@ export const convertNameRankingToOri = (text: string, form: string, local: boole
     .replace('-5th-anniversary', '')
     .replace('-shadow', '')
     .replace(local ? 'mewtwo-a' : '-armored', local ? 'mewtwo-armor' : '-armor');
-  if (local && text === 'mewtwo-armor') return text;
-  if (text.includes('standard')) form = '-standard';
+  if (local && text === 'mewtwo-armor') {
+    return text;
+  }
+  if (text.includes('standard')) {
+    form = '-standard';
+  }
   let invalidForm: string[] = [
     '-therian',
     '-o',
@@ -268,20 +284,29 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: any) 
 export const findMoveTeam = (move: any, moveSet: any) => {
   move = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
-    if (value === 'FUTURESIGHT') value = 'FUTURE_SIGHT';
-    if (value === 'ROLLOUT') value = 'ROLL_OUT';
-    if (value === 'TECHNO_BLAST_DOUSE') value = 'TECHNO_BLAST_WATER';
+    if (value === 'FUTURESIGHT') {
+      value = 'FUTURE_SIGHT';
+    }
+    if (value === 'ROLLOUT') {
+      value = 'ROLL_OUT';
+    }
+    if (value === 'TECHNO_BLAST_DOUSE') {
+      value = 'TECHNO_BLAST_WATER';
+    }
     const m = value.split('_');
     if (m.length === move.length) {
       let count = 0;
       for (let i = 0; i < move.length; i++) {
-        if (capitalize(m[i].toLowerCase()).includes(move[i])) count++;
+        if (capitalize(m[i].toLowerCase()).includes(move[i])) {
+          count++;
+        }
       }
-      if (count === m.length)
+      if (count === m.length) {
         return value
           .replace('FUTURE_SIGHT', 'FUTURESIGHT')
           .replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE')
           .replace('ROLL_OUT', 'ROLLOUT');
+      }
     }
   }
   for (const value of moveSet) {
@@ -289,9 +314,13 @@ export const findMoveTeam = (move: any, moveSet: any) => {
     if (m.length === move.length) {
       let count = 0;
       for (let i = 0; i < move.length; i++) {
-        if (m[i][0] === move[i][0]) count++;
+        if (m[i][0] === move[i][0]) {
+          count++;
+        }
       }
-      if (count === m.length) return value;
+      if (count === m.length) {
+        return value;
+      }
     }
   }
   return null;

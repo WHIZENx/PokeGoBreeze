@@ -69,11 +69,11 @@ const RankingPVP = () => {
             cancelToken: source.token,
           })
         ).data;
-        if (params.serie === 'all')
+        if (params.serie === 'all') {
           document.title = `PVP Ranking - ${
             cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
           }`;
-        else
+        } else {
           document.title = `PVP Ranking - ${
             params.serie === 'remix'
               ? cp === 500
@@ -86,6 +86,7 @@ const RankingPVP = () => {
               : ''
           }
                     ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
+        }
         file = file.map((item: { speciesId: string; speciesName: string; moveset: string[] }) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
           const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.slug === name);
@@ -94,23 +95,39 @@ const RankingPVP = () => {
 
           const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
 
-          if (!styleSheet.current) styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`);
+          if (!styleSheet.current) {
+            styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`);
+          }
 
           let fmoveData = item.moveset[0],
             cMoveDataPri = item.moveset[1],
             cMoveDataSec = item.moveset[2];
-          if (fmoveData.includes('HIDDEN_POWER')) fmoveData = 'HIDDEN_POWER';
-          if (cMoveDataPri === 'FUTURE_SIGHT') cMoveDataPri = 'FUTURESIGHT';
-          if (cMoveDataSec === 'FUTURE_SIGHT') cMoveDataSec = 'FUTURESIGHT';
-          if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') cMoveDataPri = 'TECHNO_BLAST_WATER';
-          if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') cMoveDataSec = 'TECHNO_BLAST_WATER';
+          if (fmoveData.includes('HIDDEN_POWER')) {
+            fmoveData = 'HIDDEN_POWER';
+          }
+          if (cMoveDataPri === 'FUTURE_SIGHT') {
+            cMoveDataPri = 'FUTURESIGHT';
+          }
+          if (cMoveDataSec === 'FUTURE_SIGHT') {
+            cMoveDataSec = 'FUTURESIGHT';
+          }
+          if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') {
+            cMoveDataPri = 'TECHNO_BLAST_WATER';
+          }
+          if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') {
+            cMoveDataSec = 'TECHNO_BLAST_WATER';
+          }
 
           let fmove = dataStore.combat.find((item: { name: any }) => item.name === fmoveData);
           const cmovePri = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataPri);
           let cmoveSec;
-          if (cMoveDataSec) cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataSec);
+          if (cMoveDataSec) {
+            cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataSec);
+          }
 
-          if (item.moveset[0].includes('HIDDEN_POWER')) fmove = { ...fmove, type: item.moveset[0].split('_')[2] };
+          if (item.moveset[0].includes('HIDDEN_POWER')) {
+            fmove = { ...fmove, type: item.moveset[0].split('_')[2] };
+          }
 
           let combatPoke = dataStore.pokemonCombat.filter(
             (item: { id: number; baseSpecies: string }) =>
@@ -119,9 +136,14 @@ const RankingPVP = () => {
           );
           const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
           if (!result) {
-            if (combatPoke) combatPoke = combatPoke[0];
-            else combatPoke = combatPoke.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon.name));
-          } else combatPoke = result;
+            if (combatPoke) {
+              combatPoke = combatPoke[0];
+            } else {
+              combatPoke = combatPoke.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon.name));
+            }
+          } else {
+            combatPoke = result;
+          }
 
           return {
             ...item,
@@ -162,7 +184,9 @@ const RankingPVP = () => {
       <Accordion.Item eventKey={key}>
         <Accordion.Header
           onClick={() => {
-            if (!storeStats[key]) setStoreStats(update(storeStats, { [key]: { $set: true } }));
+            if (!storeStats[key]) {
+              setStoreStats(update(storeStats, { [key]: { $set: true } }));
+            }
           }}
         >
           <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>

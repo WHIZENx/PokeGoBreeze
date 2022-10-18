@@ -32,31 +32,59 @@ const SelectFind = (props: {
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
-    if (scrollTop * 0.3 >= fullHeight * (startIndex + 1)) setStartIndex(startIndex + 1);
+    if (scrollTop * 0.3 >= fullHeight * (startIndex + 1)) {
+      setStartIndex(startIndex + 1);
+    }
   };
 
   const changePokemon = (pokemon: any) => {
     setCurrentPokemon(pokemon);
     setShowPokemon(false);
     const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
-    if (props.clearData) props.clearData();
-    if (props.setStatATK) props.setStatATK(stats.atk);
-    if (props.setStatDEF) props.setStatDEF(stats.def);
-    if (props.setStatSTA) props.setStatSTA(stats.sta);
-    if (props.setForm) props.setForm(pokemon);
-    if (props.setName) props.setName(splitAndCapitalize(pokemon.name, '-', ' '));
-    if (props.setId) props.setId(pokemon.num);
+    if (props.clearData) {
+      props.clearData();
+    }
+    if (props.setStatATK) {
+      props.setStatATK(stats.atk);
+    }
+    if (props.setStatDEF) {
+      props.setStatDEF(stats.def);
+    }
+    if (props.setStatSTA) {
+      props.setStatSTA(stats.sta);
+    }
+    if (props.setForm) {
+      props.setForm(pokemon);
+    }
+    if (props.setName) {
+      props.setName(splitAndCapitalize(pokemon.name, '-', ' '));
+    }
+    if (props.setId) {
+      props.setId(pokemon.num);
+    }
   };
 
   const removePokemon = () => {
     setCurrentPokemon(null);
     setShowPokemon(false);
-    if (props.clearData) props.clearData();
-    if (props.setStatATK) props.setStatATK(null);
-    if (props.setStatDEF) props.setStatDEF(null);
-    if (props.setStatSTA) props.setStatSTA(null);
-    if (props.setName) props.setName('');
-    if (props.setId) props.setId(null);
+    if (props.clearData) {
+      props.clearData();
+    }
+    if (props.setStatATK) {
+      props.setStatATK(null);
+    }
+    if (props.setStatDEF) {
+      props.setStatDEF(null);
+    }
+    if (props.setStatSTA) {
+      props.setStatSTA(null);
+    }
+    if (props.setName) {
+      props.setName('');
+    }
+    if (props.setId) {
+      props.setId(null);
+    }
   };
 
   return (

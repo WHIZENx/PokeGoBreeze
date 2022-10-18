@@ -34,10 +34,13 @@ const FormTools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStat
       const filterForm = stats.find(
         (item: { id: any; form: string }) => item.id === id && item.form !== 'a' && filterFormName(currForm.form.form_name, item.form)
       );
-      if (filterId.length === 1 && formList.length === 1 && !filterForm) return filterId[0];
-      else if (filterId.length === formList.length && !filterForm)
+      if (filterId.length === 1 && formList.length === 1 && !filterForm) {
+        return filterId[0];
+      } else if (filterId.length === formList.length && !filterForm) {
         return stats.find((item: { id: any; form: string }) => item.id === id && item.form === 'Normal');
-      else return filterForm;
+      } else {
+        return filterForm;
+      }
     },
     [currForm, filterFormName, formList.length]
   );
@@ -45,7 +48,9 @@ const FormTools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStat
   useEffect(() => {
     if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) {
       setCurrTier(5);
-      if (setTier) setTier(5);
+      if (setTier) {
+        setTier(5);
+      }
     } else if (
       parseInt(tier) === 5 &&
       currForm &&
@@ -53,7 +58,9 @@ const FormTools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStat
       Object.values(pokemonData).find((item: any) => item.num === id)?.pokemonClass
     ) {
       setCurrTier(6);
-      if (setTier) setTier(6);
+      if (setTier) {
+        setTier(6);
+      }
     }
   }, [currForm, id, setTier, tier]);
 
@@ -72,7 +79,9 @@ const FormTools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStat
         onSetStats('atk', raid && tier && !hide ? calculateRaidStat(formATK.attack, tier) : formATK.attack);
         onSetStats('def', raid && tier && !hide ? calculateRaidStat(formDEF.defense, tier) : formDEF.defense);
         onSetStats('sta', raid && tier && !hide ? RAID_BOSS_TIER[tier].sta : formSTA.stamina);
-        if (setForm) setForm(currForm);
+        if (setForm) {
+          setForm(currForm);
+        }
       }
     }
   }, [
@@ -98,8 +107,12 @@ const FormTools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStat
             className="w-100"
             onChange={(e) => {
               setCurrTier(e.target.value);
-              if (setTier) setTier(e.target.value);
-              if (onClearStats) onClearStats(true);
+              if (setTier) {
+                setTier(e.target.value);
+              }
+              if (onClearStats) {
+                onClearStats(true);
+              }
             }}
             value={currTier}
           >
