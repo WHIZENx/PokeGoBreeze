@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 
 import pokemonData from '../../../data/pokemon.json';
 
-import SelectPoke from './Select';
+import Select from './Select';
 import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
@@ -10,8 +10,8 @@ import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffectiv
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from '../../../util/Constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
-import { TimeLine, TimeLineVertical } from './Timeline';
-import { Checkbox, FormControl, FormControlLabel, Select, InputLabel, MenuItem, Radio, RadioGroup } from '@mui/material';
+import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
+import { Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -35,7 +35,6 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
-import TimelineFit from './Timeline/Fit';
 
 const Battle = () => {
   const dispatch = useDispatch();
@@ -49,10 +48,9 @@ const Battle = () => {
   const [options, setOptions] = useState({
     showTap: false,
     timelineType: 0,
-    duration: 3,
     league: params.cp ? parseInt(params.cp) : 500,
   });
-  const { showTap, timelineType, duration, league }: any = options;
+  const { showTap, timelineType, league }: any = options;
 
   const [leftFit, setLeftFit] = useState(0);
   const [leftNormal, setLeftNormal] = useState(0);
@@ -207,6 +205,7 @@ const Battle = () => {
     if ((pokemonCurr.disableCMovePri && pokemonCurr.cMoveSec === '') || (pokemonObj.disableCMovePri && pokemonObj.cMoveSec === '')) {
       return false;
     }
+    arrStore.current = [];
     resetTimeLine();
     clearInterval(timelineInterval);
     clearInterval(turnInterval);
@@ -667,15 +666,15 @@ const Battle = () => {
     }, 1);
   };
 
-  // useEffect(() => {
-  //   if (timelineType && arrBound.current.length === 0 && pokemonCurr.timeline.length > 0) {
-  //     setTimeout(() => {
-  //       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-  //         arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
-  //       }
-  //     }, 100);
-  //   }
-  // }, [timelineType, pokemonCurr.timeline.length]);
+  useEffect(() => {
+    if (timelineType && arrBound.current.length === 0 && pokemonCurr.timeline.length > 0) {
+      setTimeout(() => {
+        for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+          arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+        }
+      }, 100);
+    }
+  }, [timelineType, pokemonCurr.timeline.length]);
 
   const clearData = useCallback(() => {
     setPokemonObj({
@@ -806,16 +805,12 @@ const Battle = () => {
   };
 
   const timelinePlay: any = useRef(null);
-  const [playState, setPlayState]: any = useState(false);
-  const [state, setState] = useState({
-    play: false,
-    stop: false,
-  });
-  const { play, stop } = state;
+  const [playState, setPlayState] = useState(false);
   const scrollWidth = useRef(0);
   const xFit = useRef(0);
   const xNormal = useRef(0);
   const arrBound: any = useRef([]);
+  const arrStore: any = useRef([]);
   const onPlayLineMove = (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }) => {
     stopTimeLine();
     const clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
@@ -827,83 +822,102 @@ const Battle = () => {
     overlappingNormal(range, arrBound.current);
   };
 
-  const onPlayLineFitMove = (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }) => {
+  const onPlayLineFitMove = (e: any) => {
     stopTimeLine();
+    const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, e.clientX - rect.left);
-    xFit.current = (x * 100) / timelineFit.current.clientWidth;
-    setLeftFit(xFit.current);
-    const range = pokemonCurr.timeline.length;
-    const arr = [];
-    for (let i = 0; i < range; i++) {
-      arr.push(document.getElementById(i.toString())?.getBoundingClientRect());
+    if (elem) {
+      elem.style.left = (x * 100) / timelineFit.current.clientWidth + '%';
     }
-    overlapping(range, arr);
+    // setLeftFit(xFit.current);
+    if (arrStore.current.length === 0) {
+      const range = pokemonCurr.timeline.length;
+      for (let i = 0; i < range; i++) {
+        arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+      }
+    }
+    overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
   };
 
-  const arr: any = useRef([]);
-  useEffect(() => {
-    if (arr.current.length > 0) {
-      overlapping(arr.current.length, arr.current, leftFit);
-    }
-  }, [leftFit, arr.current]);
-
-  const playTimeLine = () => {
+  const playingTimeLine = () => {
     setPlayState(true);
-    setState({
-      play: true,
-      stop: false,
-    });
-    // let x: number, clientX: number;
-    arr.current = [];
-    for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-      arr.current.push(document.getElementById(i.toString())?.getBoundingClientRect().left);
+    let x: number, clientX: number;
+    const range = pokemonCurr.timeline.length;
+    const elem = document.getElementById('play-line');
+    let xCurrent = 0;
+    if (elem) {
+      xCurrent = elem.style.left ? parseInt(elem.style.left.replace('%', '')) : 0;
     }
-    // timelinePlay.current = setInterval(() => {
-    //   if (timelineType) {
-    //     xNormal.current += 1;
-    //     setLeftNormal(xNormal.current - clientX);
-    //     if (xNormal.current - clientX >= timelineNormalContainer.current.clientWidth / 2) {
-    //       timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
-    //       timelineNormalContainer.current.scrollTo(scrollWidth.current + 1, 0);
-    //     }
-    //     if (xNormal.current - clientX > timelineNormal.current.clientWidth) stopTimeLine();
-    //     overlappingNormal(range, arrBound.current);
-    //   } else {
-    //     xFit.current = (x * 100) / timelineFit.current.clientWidth;
-    //     setLeftFit(xFit.current);
-    //     if (x > timelineFit.current.clientWidth) stopTimeLine();
-    //     overlapping(range, arr);
-    //     x += 1;
-    //   }
-    // }, 0);
+    if (timelineType) {
+      clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
+      timelineNormalContainer.current.scrollTo(Math.max(0, xNormal.current - clientX - timelineNormalContainer.current.clientWidth / 2), 0);
+    } else {
+      x = (xCurrent * timelineFit.current.clientWidth) / 100;
+      if (arrStore.current.length === 0) {
+        for (let i = 0; i < range; i++) {
+          arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+        }
+      }
+    }
+    timelinePlay.current = requestAnimationFrame(function animate() {
+      if (timelineType) {
+        xNormal.current += 1;
+        setLeftNormal(xNormal.current - clientX);
+        if (xNormal.current - clientX >= timelineNormalContainer.current.clientWidth / 2) {
+          timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
+          timelineNormalContainer.current.scrollTo(scrollWidth.current + 1, 0);
+        }
+        if (!timelinePlay.current || xNormal.current - clientX > timelineNormal.current.clientWidth) {
+          return stopTimeLine();
+        }
+        overlappingNormal(range, arrBound.current);
+        if (timelinePlay.current && xNormal.current - clientX <= timelineNormal.current.clientWidth) {
+          timelinePlay.current = requestAnimationFrame(animate);
+        }
+      } else {
+        xCurrent = (x * 100) / timelineFit.current.clientWidth;
+        // setLeftFit(xFit.current);
+
+        if (elem) {
+          elem.style.left = xCurrent + '%';
+        }
+
+        if (!timelinePlay.current || x > timelineFit.current.clientWidth) {
+          return stopTimeLine();
+        }
+        overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
+        x += 1;
+        if (timelinePlay.current && x - 1 <= timelineFit.current.clientWidth) {
+          timelinePlay.current = requestAnimationFrame(animate);
+        }
+      }
+    });
   };
 
   const stopTimeLine = () => {
-    // setPlayState(false);
-    setState({
-      play: false,
-      stop: true,
-    });
+    setPlayState(false);
     // clearInterval(timelinePlay.current);
+    cancelAnimationFrame(timelinePlay.current);
+    timelinePlay.current = null;
   };
 
   const resetTimeLine = () => {
-    // stopTimeLine();
-    setState({
-      play: false,
-      stop: false,
-    });
-    // if (timelineType && timelineNormalContainer.current) {
-    //   if (timelineNormalContainer.current) {
-    //     xNormal.current = timelineNormalContainer.current.getBoundingClientRect().left + 1;
-    //     timelineNormalContainer.current.scrollTo(0, 0);
-    //   }
-    //   setLeftNormal(0);
-    // } else {
-    //   xFit.current = 0;
-    //   setLeftFit(xFit.current);
-    // }
+    stopTimeLine();
+    if (timelineType && timelineNormalContainer.current) {
+      if (timelineNormalContainer.current) {
+        xNormal.current = timelineNormalContainer.current.getBoundingClientRect().left + 1;
+        timelineNormalContainer.current.scrollTo(0, 0);
+      }
+      setLeftNormal(0);
+    } else {
+      // xFit.current = 0;
+      // setLeftFit(xFit.current);
+      const elem = document.getElementById('play-line');
+      if (elem) {
+        elem.style.left = '0%';
+      }
+    }
     setPlayTimeline({
       pokemonCurr: {
         hp: Math.floor(pokemonCurr.pokemonData.currentStats.stats.statsSTA),
@@ -920,9 +934,19 @@ const Battle = () => {
     }
   };
 
-  const overlapping = (range: number, arr: any[], pos = 0) => {
-    const rect1 = pos >= 0 ? pos : playLine.current.getBoundingClientRect();
-    let index = arr.filter((left: number) => left <= pos + 1 ?? rect1.right).length;
+  const overlappingPos = (arr: any[], pos = 0) => {
+    let index = arr.filter((dom: { left: number }) => dom.left <= pos).length;
+    if (index === arr.length) {
+      index -= 1;
+    }
+    if (index >= 0 && index < arr.length) {
+      updateTimeine(index);
+    }
+  };
+
+  const overlapping = (range: number, arr: any[]) => {
+    const rect1 = playLine.current.getBoundingClientRect();
+    let index = arr.filter((dom: { left: number }) => dom.left <= rect1.right).length;
     if (index === range) {
       index -= 1;
     }
@@ -1200,7 +1224,7 @@ const Battle = () => {
   const renderPokemonInfo = (type: string, pokemon: any, setPokemon: any, clearDataPokemon: any) => {
     return (
       <Fragment>
-        <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
+        <Select data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
         {pokemon.pokemonData && (
           <Fragment>
             <div className="input-group">
@@ -1374,7 +1398,7 @@ const Battle = () => {
               </Accordion>
               <div>
                 {timelineType ? (
-                  <div id="normal-timeline">
+                  <Fragment>
                     {TimeLine(
                       pokemonCurr,
                       pokemonObj,
@@ -1386,19 +1410,9 @@ const Battle = () => {
                       leftNormal,
                       showTap
                     )}
-                  </div>
+                  </Fragment>
                 ) : (
-                  <div id="fit-timeline">
-                    <TimelineFit
-                      pokemonCurr={pokemonCurr}
-                      pokemonObj={pokemonObj}
-                      showTap={showTap}
-                      state={state}
-                      setState={setState}
-                      duration={duration}
-                      setLeft={setLeftFit}
-                    />
-                  </div>
+                  <Fragment>{TimeLineFit(pokemonCurr, pokemonObj, timelineFit, playLine, onPlayLineFitMove, showTap)}</Fragment>
                 )}
                 <div className="d-flex justify-content-center">
                   <FormControlLabel
@@ -1413,24 +1427,12 @@ const Battle = () => {
                     onChange={(e) => onChangeTimeline(parseInt(e.target.value))}
                   >
                     <FormControlLabel value={0} control={<Radio />} label={<span>Fit Timeline</span>} />
-                    <FormControlLabel disabled={true} value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
+                    <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
                   </RadioGroup>
-                  <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} disabled={state.play}>
-                    <InputLabel>Duration</InputLabel>
-                    <Select
-                      value={duration}
-                      onChange={(event: any) => setOptions({ ...options, duration: parseInt(event.target.value) })}
-                      label="Duration"
-                    >
-                      <MenuItem value={3}>3 Second</MenuItem>
-                      <MenuItem value={5}>5 Second</MenuItem>
-                      <MenuItem value={10}>10 Second</MenuItem>
-                    </Select>
-                  </FormControl>
                 </div>
                 <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
-                  <button className="btn btn-primary" onClick={() => (play ? stopTimeLine() : playTimeLine())}>
-                    {play ? (
+                  <button className="btn btn-primary" onClick={() => (playState ? stopTimeLine() : playingTimeLine())}>
+                    {playState ? (
                       <Fragment>
                         <PauseIcon /> Stop
                       </Fragment>

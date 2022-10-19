@@ -67,7 +67,7 @@ const CircleBar = ({ text, type, size, moveEnergy, energy, maxEnergy }: any) => 
   return (
     <div className="d-flex flex-column align-items-center justify-content-between" style={{ rowGap: 10 }}>
       {text && (
-        <span>
+        <span className="text-center">
           <b>{text}</b>
         </span>
       )}

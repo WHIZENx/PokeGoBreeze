@@ -421,7 +421,9 @@ const DpsTable = () => {
 
   useEffect(() => {
     document.title = 'DPS&TDO Table';
-    setDpsTable(calculateDPSTable());
+    setTimeout(() => {
+      setDpsTable(calculateDPSTable());
+    }, 300);
   }, []);
 
   useEffect(() => {

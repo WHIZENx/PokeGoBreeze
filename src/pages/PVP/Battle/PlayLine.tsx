@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import '../PVP.css';
 
-const animate = ({ setState, start, requestId, timing, draw, duration, timer }: any) => {
+const animate = ({ setState, start, requestId, timing, draw, left, duration, timer }: any) => {
   const animateLoop = (timestamp: number) => {
     const time = timestamp - start;
     const durationFraction = Math.min(1, Math.max(0, time / timer));
@@ -10,6 +10,7 @@ const animate = ({ setState, start, requestId, timing, draw, duration, timer }: 
     }
     const progress = timing(durationFraction);
     draw(progress);
+    left(progress);
     if (requestId.current) {
       if (durationFraction < 1) {
         requestId.current = requestAnimationFrame(animateLoop);
@@ -32,14 +33,17 @@ const stopAnimate = (requestId: any) => {
   requestId.current = null;
 };
 
-const PlayLine = ({ state, start, setState, setLeft, width, duration }: any) => {
+const PlayLine = ({ timeline, state, setState, setLeft, width, duration }: any) => {
   const [pos, setPos] = useState(0);
   const [timer, setTimer] = useState(0);
   const ref: any = useRef(null);
   const requestId: any = useRef(null);
+  const start = useRef(0);
 
   useEffect(() => {
-    setLeft(start + document.getElementById('play-line')?.getBoundingClientRect().left);
+    if (pos === 0) {
+      start.current = ref.current.getBoundingClientRect()?.left;
+    }
   }, [pos]);
 
   useEffect(() => {
@@ -57,6 +61,7 @@ const PlayLine = ({ state, start, setState, setLeft, width, duration }: any) => 
         requestId,
         timing: (fraction: number) => (width - offsetPlayLine) * fraction,
         draw: (progress: number) => setPos(progress + offsetPlayLine),
+        left: (progress: number) => setLeft(progress + offsetPlayLine),
         duration: (duration: number) => setTimer(duration),
         timer,
       });

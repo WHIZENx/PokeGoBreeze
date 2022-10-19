@@ -281,7 +281,6 @@ export const TimeLineFit = (
     (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }): void;
     bind?: any;
   },
-  left: string | number,
   showTap: any,
   hide = false
 ) => {
@@ -426,7 +425,7 @@ export const TimeLineFit = (
             {renderTimelineFit(pokemonCurr, pokemonObj)}
             <hr className="w-100" style={{ margin: 0 }} />
             {renderTimelineFit(pokemonObj, pokemonCurr)}
-            <div id="play-line" ref={eRef} className="play-line" style={{ left: left + '%' }} />
+            <div id="play-line" ref={eRef} className="play-line" />
           </div>
         </div>
       )}

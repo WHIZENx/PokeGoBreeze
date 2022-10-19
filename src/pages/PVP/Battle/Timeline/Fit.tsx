@@ -3,7 +3,7 @@ import HexagonIcon from '@mui/icons-material/Hexagon';
 import CloseIcon from '@mui/icons-material/Close';
 import PlayLine from '../PlayLine';
 
-const TimelineFit = ({ pokemonCurr, pokemonObj, state, setState, showTap, duration, setLeft, hide = false }: any) => {
+const TimelineFit = ({ timeline, pokemonCurr, pokemonObj, state, setState, showTap, duration, setLeft, length, hide = false }: any) => {
   const elem: any = useRef(null);
   const [show, setShow] = useState(false);
 
@@ -149,19 +149,20 @@ const TimelineFit = ({ pokemonCurr, pokemonObj, state, setState, showTap, durati
   return (
     <Fragment>
       {!hide && (
-        <div id="fit-timeline" className="w-100 fit-timeline d-flex justify-content-center" ref={elem}>
-          <div className="position-relative h-100">
+        <div className="w-100 fit-timeline d-flex justify-content-center" ref={elem}>
+          <div id="fit-timeline" className="position-relative h-100">
             {renderTimelineFit(pokemonCurr, pokemonObj)}
             <hr className="w-100" style={{ margin: 0 }} />
             {renderTimelineFit(pokemonObj, pokemonCurr)}
             {show && (
               <PlayLine
-                start={document.getElementById('fit-timeline')?.getBoundingClientRect().left}
+                timeline={timeline}
                 state={state}
                 setState={setState}
                 setLeft={setLeft}
                 width={elem.current?.clientWidth - 20}
                 duration={duration * 1000}
+                length={length}
               />
             )}
           </div>
