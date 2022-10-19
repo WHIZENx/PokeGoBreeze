@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 
 import pokemonData from '../../../data/pokemon.json';
 
-import Select from './Select';
+import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
@@ -11,7 +11,7 @@ import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from '../../../util
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
-import { Checkbox, FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Radio, RadioGroup, Select } from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -48,9 +48,10 @@ const Battle = () => {
   const [options, setOptions] = useState({
     showTap: false,
     timelineType: 0,
+    duration: 0,
     league: params.cp ? parseInt(params.cp) : 500,
   });
-  const { showTap, timelineType, league }: any = options;
+  const { showTap, timelineType, duration, league }: any = options;
 
   const [leftFit, setLeftFit] = useState(0);
   const [leftNormal, setLeftNormal] = useState(0);
@@ -846,6 +847,7 @@ const Battle = () => {
     const range = pokemonCurr.timeline.length;
     const elem = document.getElementById('play-line');
     let xCurrent = 0;
+    let incX = 0;
     if (elem) {
       xCurrent = elem.style.left ? parseInt(elem.style.left.replace('%', '')) : 0;
     }
@@ -876,19 +878,24 @@ const Battle = () => {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
+        if (!timelinePlay.current || x > timelineFit.current.clientWidth) {
+          if (elem) {
+            elem.style.left = '100%';
+          }
+          return stopTimeLine();
+        }
         xCurrent = (x * 100) / timelineFit.current.clientWidth;
-        // setLeftFit(xFit.current);
-
         if (elem) {
           elem.style.left = xCurrent + '%';
         }
-
-        if (!timelinePlay.current || x > timelineFit.current.clientWidth) {
-          return stopTimeLine();
-        }
         overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
-        x += 1;
-        if (timelinePlay.current && x - 1 <= timelineFit.current.clientWidth) {
+        if (duration) {
+          incX = (timelineFit.current.clientWidth / range / timelineFit.current.clientWidth) * (duration * 1000);
+        } else {
+          incX = 1;
+        }
+        x += incX;
+        if (timelinePlay.current && x - incX <= timelineFit.current.clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       }
@@ -1224,7 +1231,7 @@ const Battle = () => {
   const renderPokemonInfo = (type: string, pokemon: any, setPokemon: any, clearDataPokemon: any) => {
     return (
       <Fragment>
-        <Select data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
+        <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
         {pokemon.pokemonData && (
           <Fragment>
             <div className="input-group">
@@ -1429,6 +1436,19 @@ const Battle = () => {
                     <FormControlLabel value={0} control={<Radio />} label={<span>Fit Timeline</span>} />
                     <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
                   </RadioGroup>
+                  <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} disabled={playState}>
+                    <InputLabel>Duration</InputLabel>
+                    <Select
+                      value={duration}
+                      onChange={(event: any) => setOptions({ ...options, duration: parseInt(event.target.value) })}
+                      label="Duration"
+                    >
+                      <MenuItem value={0}>None</MenuItem>
+                      <MenuItem value={3}>3 Second</MenuItem>
+                      <MenuItem value={5}>5 Second</MenuItem>
+                      <MenuItem value={10}>10 Second</MenuItem>
+                    </Select>
+                  </FormControl>
                 </div>
                 <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
                   <button className="btn btn-primary" onClick={() => (playState ? stopTimeLine() : playingTimeLine())}>
