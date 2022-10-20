@@ -882,21 +882,23 @@ const Battle = () => {
           if (elem) {
             elem.style.left = '100%';
           }
-          return stopTimeLine();
-        }
-        xCurrent = (x * 100) / timelineFit.current.clientWidth;
-        if (elem) {
-          elem.style.left = xCurrent + '%';
-        }
-        overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
-        if (duration) {
-          incX = (timelineFit.current.clientWidth / range / timelineFit.current.clientWidth) * (duration * 1000);
+          stopTimeLine();
+          return;
         } else {
-          incX = 1;
-        }
-        x += incX;
-        if (timelinePlay.current && x - incX <= timelineFit.current.clientWidth) {
-          timelinePlay.current = requestAnimationFrame(animate);
+          xCurrent = (x * 100) / timelineFit.current.clientWidth;
+          if (elem) {
+            elem.style.left = xCurrent + '%';
+          }
+          overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
+          if (duration) {
+            incX = (timelineFit.current.clientWidth / range / timelineFit.current.clientWidth) * (duration * 1000);
+          } else {
+            incX = 1;
+          }
+          x += incX;
+          if (timelinePlay.current && x - incX <= timelineFit.current.clientWidth) {
+            timelinePlay.current = requestAnimationFrame(animate);
+          }
         }
       }
     });
@@ -907,6 +909,7 @@ const Battle = () => {
     // clearInterval(timelinePlay.current);
     cancelAnimationFrame(timelinePlay.current);
     timelinePlay.current = null;
+    return;
   };
 
   const resetTimeLine = () => {
