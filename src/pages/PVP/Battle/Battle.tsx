@@ -1454,7 +1454,12 @@ const Battle = () => {
                   </FormControl>
                 </div>
                 <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
-                  <button className="btn btn-primary" onClick={() => (playState ? stopTimeLine() : playingTimeLine())}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => (playState ? stopTimeLine() : playingTimeLine())}
+                    onMouseDown={() => (playState ? stopTimeLine() : playingTimeLine())}
+                    onTouchEnd={() => (playState ? stopTimeLine() : playingTimeLine())}
+                  >
                     {playState ? (
                       <Fragment>
                         <PauseIcon /> Stop
