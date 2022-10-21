@@ -421,7 +421,13 @@ export const TimeLineFit = (
     <Fragment>
       {!hide && (
         <div className="w-100 fit-timeline d-flex justify-content-center">
-          <div className="position-relative h-100" ref={timeline} onMouseMove={move.bind(this)} onMouseOver={move.bind(this)}>
+          <div
+            className="position-relative h-100"
+            ref={timeline}
+            onMouseMove={move.bind(this)}
+            onMouseOver={move.bind(this)}
+            onTouchMove={move.bind(this)}
+          >
             {renderTimelineFit(pokemonCurr, pokemonObj)}
             <hr className="w-100" style={{ margin: 0 }} />
             {renderTimelineFit(pokemonObj, pokemonCurr)}
