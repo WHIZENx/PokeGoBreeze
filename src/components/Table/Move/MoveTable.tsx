@@ -6,10 +6,41 @@ import './MoveTable.css';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import { Tab, Tabs } from 'react-bootstrap';
+
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any }) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [move, setMove]: any = useState({ data: [] });
+  const [moveOrigin, setMoveOrigin]: any = useState(null);
+
+  const [stateSorted, setStateSorted]: any = useState({
+    offensive: {
+      fast: false,
+      charged: false,
+      eff: true,
+      sortBy: 'eff',
+    },
+    defensive: {
+      fast: false,
+      charged: false,
+      eff: true,
+      sortBy: 'eff',
+    },
+  });
+
+  const filterMoveType = (combat: any) => {
+    return setMoveOrigin({
+      fastMoves: combat.quickMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
+      chargedMoves: combat.cinematicMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
+      eliteFastMoves: combat.eliteQuickMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
+      eliteChargedMoves: combat.eliteCinematicMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
+      purifiedMoves: combat.purifiedMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
+      shadowMoves: combat.shadowMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
+    });
+  };
 
   const findMove = useCallback(() => {
     const combatPoke = data.pokemonCombat.filter((item: { id: number; name: string }) =>
@@ -18,6 +49,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
         : item.name === props.form?.name.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
     );
     if (combatPoke && combatPoke.length === 1) {
+      filterMoveType(combatPoke[0]);
       return setMove(
         rankMove(
           data.options,
@@ -71,7 +103,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     }
   }, [findMove, props.data]);
 
-  const renderMovesetTable = (value: any, max: number, type: string) => {
+  const renderBestMovesetTable = (value: any, max: number, type: string) => {
     return (
       <tr>
         <td className="text-origin">
@@ -119,61 +151,190 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     );
   };
 
+  const renderMoveSetTable = (data: any) => {
+    return (
+      <Fragment>
+        {data.map((value: any, index: React.Key) => (
+          <tr key={index}>
+            <td className="text-origin">
+              <Link to={'../moves/' + value.id} target="_blank" className="d-block">
+                <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type.toLowerCase()))} />
+                </div>
+                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+                <span style={{ width: 'max-content' }}>
+                  {value.elite && (
+                    <span className="type-icon-small ic elite-ic">
+                      <span>Elite</span>
+                    </span>
+                  )}
+                  {value.shadow && (
+                    <span className="type-icon-small ic shadow-ic">
+                      <span>Shadow</span>
+                    </span>
+                  )}
+                  {value.purified && (
+                    <span className="type-icon-small ic purified-ic">
+                      <span>Purified</span>
+                    </span>
+                  )}
+                </span>
+              </Link>
+            </td>
+          </tr>
+        ))}
+      </Fragment>
+    );
+  };
+
+  const arrowSort = (table: string, type: string) => {
+    const sortedTable = stateSorted[table];
+    if (stateSorted[table].sortBy === type) {
+      stateSorted[table][type] = !stateSorted[table][type];
+    }
+    stateSorted[table].sortBy = type;
+    return setStateSorted({
+      ...stateSorted,
+      sortedTable,
+    });
+  };
+
   return (
-    <Fragment>
-      <div className="row w-100" style={{ margin: 0 }}>
-        <div className="col-xl table-moves-col" style={{ padding: 0 }}>
-          <table className="table-info table-moves">
-            <colgroup className="main-move" />
-            <colgroup className="main-move" />
-            <thead>
-              <tr className="text-center">
-                <th className="table-sub-header" colSpan={3}>
-                  Best Moves Offensive
-                </th>
-              </tr>
-              <tr className="text-center">
-                <th className="table-column-head main-move">Fast</th>
-                <th className="table-column-head main-move">Charge</th>
-                <th className="table-column-head">%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {move.data
-                .sort((a: any, b: any) => b.eDPS.offensive - a.eDPS.offensive)
-                .map((value: any, index: React.Key) => (
-                  <Fragment key={index}>{renderMovesetTable(value, move.maxOff, 'offensive')}</Fragment>
-                ))}
-            </tbody>
-          </table>
+    <Tabs defaultActiveKey="movesList" className="lg-2">
+      <Tab eventKey="movesList" title="Moves List">
+        <div className="row w-100" style={{ margin: 0, border: '2px solid #b8d4da', background: '#f1ffff' }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+            <table className="table-info table-movesets">
+              <colgroup className="main-move" />
+              <thead>
+                <tr className="text-center">
+                  <th className="table-sub-header">Fast Moves</th>
+                </tr>
+              </thead>
+              <tbody>{moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}</tbody>
+            </table>
+          </div>
+          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+            <table className="table-info table-moves">
+              <colgroup className="main-move" />
+              <thead>
+                <tr className="text-center">
+                  <th className="table-sub-header">Charged Moves</th>
+                </tr>
+              </thead>
+              <tbody>
+                {moveOrigin &&
+                  renderMoveSetTable(
+                    moveOrigin.chargedMoves.concat(moveOrigin.eliteChargedMoves, moveOrigin.purifiedMoves, moveOrigin.shadowMoves)
+                  )}
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div className="col-xl table-moves-col" style={{ padding: 0 }}>
-          <table className="table-info table-moves">
-            <colgroup className="main-move" />
-            <colgroup className="main-move" />
-            <thead>
-              <tr className="text-center">
-                <th className="table-sub-header" colSpan={3}>
-                  Best Moves Defensive
-                </th>
-              </tr>
-              <tr className="text-center">
-                <th className="table-column-head">Fast</th>
-                <th className="table-column-head">Charge</th>
-                <th className="table-column-head">%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {move.data
-                .sort((a: { eDPS: { defensive: number } }, b: { eDPS: { defensive: number } }) => b.eDPS.defensive - a.eDPS.defensive)
-                .map((value: any, index: React.Key) => (
-                  <Fragment key={index}>{renderMovesetTable(value, move.maxDef, 'defensive')}</Fragment>
-                ))}
-            </tbody>
-          </table>
+      </Tab>
+      <Tab eventKey="bestEffList" title="Best Moves List">
+        <div className="row w-100" style={{ margin: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+            <table className="table-info table-moves">
+              <colgroup className="main-move" />
+              <colgroup className="main-move" />
+              <thead>
+                <tr className="text-center">
+                  <th className="table-sub-header" colSpan={3}>
+                    Best Moves Offensive
+                  </th>
+                </tr>
+                <tr className="text-center">
+                  <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('offensive', 'fast')}>
+                    Fast
+                    <span style={{ opacity: stateSorted.offensive.sortBy === 'fast' ? 1 : 0.5 }}>
+                      {stateSorted.offensive.fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                    </span>
+                  </th>
+                  <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('offensive', 'charged')}>
+                    Charge
+                    <span style={{ opacity: stateSorted.offensive.sortBy === 'charged' ? 1 : 0.5 }}>
+                      {stateSorted.offensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                    </span>
+                  </th>
+                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort('offensive', 'eff')}>
+                    %
+                    <span style={{ opacity: stateSorted.offensive.sortBy === 'eff' ? 1 : 0.5 }}>
+                      {stateSorted.offensive.eff ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {move.data
+                  .sort((a: any, b: any) => {
+                    const sortedBy = stateSorted.offensive.sortBy;
+                    if (sortedBy === 'eff') {
+                      return stateSorted.offensive.eff ? b.eDPS.offensive - a.eDPS.offensive : a.eDPS.offensive - b.eDPS.offensive;
+                    } else {
+                      return stateSorted.offensive[sortedBy === 'fast' ? 'fast' : 'charged']
+                        ? b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name
+                        : a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name >= b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name;
+                    }
+                  })
+                  .map((value: any, index: React.Key) => (
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff, 'offensive')}</Fragment>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+            <table className="table-info table-moves">
+              <colgroup className="main-move" />
+              <colgroup className="main-move" />
+              <thead>
+                <tr className="text-center">
+                  <th className="table-sub-header" colSpan={3}>
+                    Best Moves Defensive
+                  </th>
+                </tr>
+                <tr className="text-center">
+                  <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('defensive', 'fast')}>
+                    Fast
+                    <span style={{ opacity: stateSorted.defensive.sortBy === 'fast' ? 1 : 0.5 }}>
+                      {stateSorted.defensive.fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                    </span>
+                  </th>
+                  <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('defensive', 'charged')}>
+                    Charge
+                    <span style={{ opacity: stateSorted.defensive.sortBy === 'charged' ? 1 : 0.5 }}>
+                      {stateSorted.defensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                    </span>
+                  </th>
+                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort('defensive', 'eff')}>
+                    %
+                    <span className="cursor-pointer" style={{ opacity: stateSorted.defensive.sortBy === 'eff' ? 1 : 0.5 }}>
+                      {stateSorted.defensive.eff ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {move.data
+                  .sort((a: any, b: any) => {
+                    const sortedBy = stateSorted.defensive.sortBy;
+                    if (sortedBy === 'eff') {
+                      return stateSorted.defensive.eff ? b.eDPS.defensive - a.eDPS.defensive : a.eDPS.defensive - b.eDPS.defensive;
+                    } else {
+                      return stateSorted.defensive[sortedBy === 'fast' ? 'fast' : 'charged']
+                        ? b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name
+                        : a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name >= b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name;
+                    }
+                  })
+                  .map((value: any, index: React.Key) => (
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef, 'defensive')}</Fragment>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </Fragment>
+      </Tab>
+    </Tabs>
   );
 };
 

@@ -33,6 +33,27 @@
   font-weight: bolder;
 }
 
+.table-movesets {
+  border: none;
+}
+
+.table-movesets thead tr th.table-sub-header {
+  background-color: #f1f1ff !important;
+  color: #0571c2;
+  border: none;
+}
+
+.table-movesets thead tr th {
+  font-size: 16px;
+  padding: 5px 10px;
+  height: 35px;
+}
+
+.table-movesets tbody tr td {
+  color: #0571c2;
+  font-weight: bolder;
+}
+
 .table-column-head {
   background-color: #f1ffff !important;
   color: black !important;
@@ -40,7 +61,7 @@
 }
 
 .main-move {
-  width: 42%;
+  width: 40%;
 }
 
 .text-origin {

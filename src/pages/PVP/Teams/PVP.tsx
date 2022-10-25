@@ -82,10 +82,11 @@ const TeamPVP = () => {
       }
 
       const fastMoveSet = combatPoke.quickMoves.concat(combatPoke.eliteQuickMoves);
-      const chargedMoveSet = combatPoke.cinematicMoves
-        .concat(combatPoke.eliteCinematicMoves)
-        .concat(combatPoke.shadowMoves)
-        .concat(combatPoke.purifiedMoves);
+      const chargedMoveSet = combatPoke.cinematicMoves.concat(
+        combatPoke.eliteCinematicMoves,
+        combatPoke.shadowMoves,
+        combatPoke.purifiedMoves
+      );
       fmove = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(fmove, fastMoveSet));
       cmovePri = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(cmovePri, chargedMoveSet));
       if (cmoveSec) {

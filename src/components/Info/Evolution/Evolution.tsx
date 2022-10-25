@@ -233,7 +233,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
         curr.push([formatEvoChain(pokemon)]);
       }
       getNextEvoChainJSON(pokemon.evos, evo);
-      const result = prevEvo.concat(curr).concat(evo);
+      const result = prevEvo.concat(curr, evo);
       return setArrEvoList(result);
     },
     [getPrevEvoChainJSON, getCurrEvoChainJSON, getNextEvoChainJSON]
