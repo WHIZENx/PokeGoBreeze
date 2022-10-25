@@ -15,6 +15,7 @@ const SelectPokemon = (props: {
   setFMovePokemon: (arg0: null) => void;
   setCMovePokemon: (arg0: null) => void;
   clearData: () => void;
+  disable?: boolean;
 }) => {
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -77,7 +78,10 @@ const SelectPokemon = (props: {
   }, [props.pokemon]);
 
   return (
-    <div className="position-relative d-flex align-items-center form-control" style={{ padding: 0, borderRadius: 0 }}>
+    <div
+      className={'position-relative d-flex align-items-center form-control' + (props.disable ? ' card-select-disabled' : '')}
+      style={{ padding: 0, borderRadius: 0 }}
+    >
       <div className="card-pokemon-input">
         <div className="d-flex align-items-center border-box">
           {pokemonIcon && (

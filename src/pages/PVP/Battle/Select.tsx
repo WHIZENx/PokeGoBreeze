@@ -79,18 +79,21 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
   };
 
   const selectFMove = (value: any) => {
+    clearData();
     setFMove(value);
     setPokemonBattle({ ...pokemonBattle, fMove: value });
     setShowFMove(false);
   };
 
   const selectCMovePri = (value: any) => {
+    clearData();
     setCMovePri(value);
     setPokemonBattle({ ...pokemonBattle, cMovePri: value });
     setShowCMovePri(false);
   };
 
   const selectCMoveSec = (value: any) => {
+    clearData();
     setCMoveSec(value);
     setPokemonBattle({ ...pokemonBattle, cMoveSec: value });
     setShowCMoveSec(false);
@@ -196,7 +199,10 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
         <Checkbox
           checked={!pokemonBattle.disableCMovePri}
-          onChange={(event, check) => setPokemonBattle({ ...pokemonBattle, disableCMovePri: !check })}
+          onChange={(event, check) => {
+            clearData();
+            setPokemonBattle({ ...pokemonBattle, disableCMovePri: !check });
+          }}
         />
         <div
           className={
@@ -263,7 +269,10 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
         <Checkbox
           checked={!pokemonBattle.disableCMoveSec}
-          onChange={(event, check) => setPokemonBattle({ ...pokemonBattle, disableCMoveSec: !check })}
+          onChange={(event, check) => {
+            clearData();
+            setPokemonBattle({ ...pokemonBattle, disableCMoveSec: !check });
+          }}
         />
         <div
           className={

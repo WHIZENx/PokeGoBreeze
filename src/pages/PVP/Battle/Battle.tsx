@@ -35,6 +35,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
+import { ControlPointDuplicate } from '@mui/icons-material';
 
 const Battle = () => {
   const dispatch = useDispatch();
@@ -91,8 +92,8 @@ const Battle = () => {
   });
 
   const [playTimeline, setPlayTimeline]: any = useState({
-    pokemonCurr: { hp: 0, energyPri: 0, energySec: 0 },
-    pokemonObj: { hp: 0, energyPri: 0, energySec: 0 },
+    pokemonCurr: { hp: 0, energyPri: null, energySec: null },
+    pokemonObj: { hp: 0, energyPri: null, energySec: null },
   });
 
   const State = (
@@ -764,10 +765,14 @@ const Battle = () => {
   }, [dispatch, league, clearData, dataStore]);
 
   const clearDataPokemonCurr = (removeCMoveSec: any) => {
+    setPokemonObj({ ...pokemonObj, timeline: [] });
+    setPlayTimeline({
+      pokemonCurr: { hp: 0, energyPri: null, energySec: null },
+      pokemonObj: { hp: 0, energyPri: null, energySec: null },
+    });
     if (removeCMoveSec) {
-      setPokemonCurr({ ...pokemonCurr, cMoveSec: '' });
+      setPokemonCurr({ ...pokemonCurr, cMoveSec: '', timeline: [] });
     } else {
-      setPokemonObj({ ...pokemonObj, timeline: [] });
       setPokemonCurr({
         ...pokemonCurr,
         pokemonData: null,
@@ -775,7 +780,6 @@ const Battle = () => {
         cMovePri: null,
         cMoveSec: null,
         timeline: [],
-        energy: 0,
         block: 2,
         shadow: false,
         disableCMovePri: false,
@@ -785,10 +789,14 @@ const Battle = () => {
   };
 
   const clearDataPokemonObj = (removeCMoveSec: any) => {
+    setPokemonCurr({ ...pokemonCurr, timeline: [] });
+    setPlayTimeline({
+      pokemonCurr: { hp: 0, energyPri: null, energySec: null },
+      pokemonObj: { hp: 0, energyPri: null, energySec: null },
+    });
     if (removeCMoveSec) {
-      setPokemonObj({ ...pokemonObj, cMoveSec: '' });
+      setPokemonObj({ ...pokemonObj, cMoveSec: '', timeline: [] });
     } else {
-      setPokemonCurr({ ...pokemonCurr, timeline: [] });
       setPokemonObj({
         ...pokemonObj,
         pokemonData: null,
@@ -796,7 +804,6 @@ const Battle = () => {
         cMovePri: null,
         cMoveSec: null,
         timeline: [],
-        energy: 0,
         block: 2,
         shadow: false,
         disableCMovePri: false,
@@ -827,8 +834,8 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, e.clientX - rect.left);
-    if (elem) {
+    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
+    if (elem && x <= timelineFit.current.clientWidth) {
       elem.style.left = (x * 100) / timelineFit.current.clientWidth + '%';
     }
     // setLeftFit(xFit.current);
@@ -931,9 +938,9 @@ const Battle = () => {
     setPlayTimeline({
       pokemonCurr: {
         hp: Math.floor(pokemonCurr.pokemonData.currentStats.stats.statsSTA),
-        energy: 0,
+        energy: pokemonCurr.energy,
       },
-      pokemonObj: { hp: Math.floor(pokemonObj.pokemonData.currentStats.stats.statsSTA), energy: 0 },
+      pokemonObj: { hp: Math.floor(pokemonObj.pokemonData.currentStats.stats.statsSTA), energy: pokemonObj.energy },
     });
   };
 
@@ -1082,6 +1089,7 @@ const Battle = () => {
 
     return setPokemon({
       ...pokemon,
+      timeline: [],
       pokemonData: {
         ...pokemon.pokemonData,
         currentStats: stats,
@@ -1104,6 +1112,7 @@ const Battle = () => {
 
     return setPokemon({
       ...pokemon,
+      timeline: [],
       pokemonData: {
         ...pokemon.pokemonData,
         currentStats: stats,
@@ -1135,6 +1144,11 @@ const Battle = () => {
             </h6>
             CP: <b>{Math.floor(pokemon.pokemonData.currentStats.CP)}</b> | Level: <b>{pokemon.pokemonData.currentStats.level}</b>
             <br />
+            IV:{' '}
+            <b>
+              {pokemon.pokemonData.currentStats.IV.atk}/{pokemon.pokemonData.currentStats.IV.def}/{pokemon.pokemonData.currentStats.IV.sta}
+            </b>
+            <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
             Attack: <b>{Math.floor(pokemon.pokemonData.currentStats.stats.statsATK)}</b>
             <br />
@@ -1143,6 +1157,15 @@ const Battle = () => {
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
             HP: <b>{Math.floor(pokemon.pokemonData.currentStats.stats.statsSTA)}</b>
+            <br />
+            Stats Prod:{' '}
+            <b>
+              {Math.round(
+                pokemon.pokemonData.currentStats.stats.statsATK *
+                  pokemon.pokemonData.currentStats.stats.statsDEF *
+                  pokemon.pokemonData.currentStats.stats.statsSTA
+              )}
+            </b>
             <br />
             <form
               onSubmit={(e: any) => {
@@ -1244,8 +1267,20 @@ const Battle = () => {
                 defaultValue={pokemon.energy}
                 type="number"
                 min={0}
+                max={100}
                 onInput={(e: any) => {
-                  setPokemon({ ...pokemon, energy: parseInt(e.target.value) });
+                  if (type === 'pokemonCurr') {
+                    setPlayTimeline({
+                      ...playTimeline,
+                      pokemonCurr: { ...playTimeline.pokemonCurr, energy: parseInt(e.target.value) },
+                    });
+                  } else if (type === 'pokemonObj') {
+                    setPlayTimeline({
+                      ...playTimeline,
+                      pokemonObj: { ...playTimeline.pokemonObj, energy: parseInt(e.target.value) },
+                    });
+                  }
+                  setPokemon({ ...pokemon, timeline: [], energy: parseInt(e.target.value) });
                 }}
               />
             </div>
@@ -1255,7 +1290,9 @@ const Battle = () => {
                 style={{ borderRadius: 0 }}
                 className="form-control"
                 defaultValue={pokemon.block}
-                onChange={(e) => setPokemon({ ...pokemon, block: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  setPokemon({ ...pokemon, timeline: [], block: parseInt(e.target.value) });
+                }}
               >
                 <option value={0}>0</option>
                 <option value={1}>1</option>
@@ -1265,7 +1302,10 @@ const Battle = () => {
             <div className="border-input" style={{ padding: '0 8px' }}>
               <FormControlLabel
                 control={
-                  <Checkbox checked={pokemon.shadow ?? false} onChange={(event, check) => setPokemon({ ...pokemon, shadow: check })} />
+                  <Checkbox
+                    checked={pokemon.shadow ?? false}
+                    onChange={(event, check) => setPokemon({ ...pokemon, timeline: [], shadow: check })}
+                  />
                 }
                 label={
                   <span>
@@ -1275,7 +1315,7 @@ const Battle = () => {
               />
             </div>
             {renderInfoPokemon(type, pokemon, setPokemon)}
-            {pokemon.timeline.length > 0 && (
+            {pokemon && (
               <div className="w-100 bg-ref-pokemon">
                 <div className="w-100 bg-type-moves">
                   <CircleBar
@@ -1284,7 +1324,8 @@ const Battle = () => {
                     size={80}
                     maxEnergy={100}
                     moveEnergy={Math.abs(pokemon.cMovePri.pvp_energy)}
-                    energy={playTimeline[type].energy ?? 0}
+                    energy={playTimeline[type].energy ?? pokemon.energy ?? 0}
+                    disable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && pokemon.cMoveSec !== '' && (
                     <CircleBar
@@ -1293,16 +1334,21 @@ const Battle = () => {
                       size={80}
                       maxEnergy={100}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvp_energy)}
-                      energy={playTimeline[type].energy ?? 0}
+                      energy={playTimeline[type].energy ?? pokemon.energy ?? 0}
+                      disable={pokemon.disableCMoveSec}
                     />
                   )}
                 </div>
-                <ProgressBar
-                  text={'HP'}
-                  height={15}
-                  hp={Math.floor(playTimeline[type].hp)}
-                  maxHp={Math.floor(pokemon.pokemonData.currentStats.stats.statsSTA)}
-                />
+                {pokemonCurr.timeline.length > 0 && pokemonObj.timeline.length > 0 && (
+                  <Fragment>
+                    <ProgressBar
+                      text={'HP'}
+                      height={15}
+                      hp={Math.floor(playTimeline[type].hp)}
+                      maxHp={Math.floor(pokemon.pokemonData.currentStats.stats.statsSTA)}
+                    />
+                  </Fragment>
+                )}
               </div>
             )}
           </Fragment>
@@ -1456,7 +1502,6 @@ const Battle = () => {
                 <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
                   <button
                     className="btn btn-primary"
-                    onClick={() => (playState ? stopTimeLine() : playingTimeLine())}
                     onMouseDown={() => (playState ? stopTimeLine() : playingTimeLine())}
                     onTouchEnd={() => (playState ? stopTimeLine() : playingTimeLine())}
                   >
@@ -1480,11 +1525,13 @@ const Battle = () => {
         </div>
         <div className="col-lg-3">{renderPokemonInfo('pokemonObj', pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
       </div>
-      <div className="text-center element-top" style={{ marginBottom: 15 }}>
-        <button className="btn btn-primary" onClick={() => battleAnimation()}>
-          Battle Simulator
-        </button>
-      </div>
+      {(pokemonCurr.timeline.length === 0 || pokemonObj.timeline.length === 0) && (
+        <div className="text-center element-top">
+          <button className="btn btn-primary" onClick={() => battleAnimation()}>
+            Battle Simulator
+          </button>
+        </div>
+      )}
     </div>
   );
 };

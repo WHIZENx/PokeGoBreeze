@@ -15,7 +15,6 @@ const CardMoveSmall = (props: {
   clearData?: any;
 }) => {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
-  const type = props.value ? capitalize(combat.find((item: any) => item.name === props.value.name).type.toLowerCase()) : '';
 
   return (
     <Fragment>
@@ -28,7 +27,15 @@ const CardMoveSmall = (props: {
               className={'d-flex align-items-center w-100 h-100' + (props.disable ? ' disable-card-move' : '')}
               style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
             >
-              <img width={18} height={18} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(type)} />
+              <img
+                width={18}
+                height={18}
+                alt="type-logo"
+                style={{ marginRight: 10 }}
+                src={APIService.getTypeSprite(
+                  props.value ? capitalize(combat.find((item: any) => item.name === props.value.name).type.toLowerCase()) : ''
+                )}
+              />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
               <span className="d-flex">
                 {props.value.elite && <span className="type-icon-small ic elite-ic">Elite</span>}

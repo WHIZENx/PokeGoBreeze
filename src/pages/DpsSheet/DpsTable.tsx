@@ -206,7 +206,7 @@ const DpsTable = () => {
     return data;
   };
 
-  const [dpsTable, setDpsTable]: any = useState([]);
+  const [dpsTable, setDpsTable]: any = useState(initData(10));
   const [dataFilter, setDataFilter]: any = useState(initData(10));
   const [searchTerm, setSearchTerm]: any = useState('');
 
@@ -423,7 +423,7 @@ const DpsTable = () => {
     document.title = 'DPS&TDO Table';
     setTimeout(() => {
       setDpsTable(calculateDPSTable());
-    }, 300);
+    }, 1);
   }, []);
 
   useEffect(() => {
@@ -635,6 +635,7 @@ const DpsTable = () => {
                       setCurrentPokemon={setDataTargetPokemon}
                       setFMovePokemon={setFmoveTargetPokemon}
                       setCMovePokemon={setCmoveTargetPokemon}
+                      disable={showSpinner}
                     />
                   </div>
                 </Box>
@@ -648,6 +649,7 @@ const DpsTable = () => {
                       move={fmoveTargetPokemon}
                       setMovePokemon={setFmoveTargetPokemon}
                       moveType="FAST"
+                      disable={showSpinner}
                     />
                   </div>
                 </Box>
@@ -661,6 +663,7 @@ const DpsTable = () => {
                       move={cmoveTargetPokemon}
                       setMovePokemon={setCmoveTargetPokemon}
                       moveType="CHARGE"
+                      disable={showSpinner}
                     />
                   </div>
                 </Box>

@@ -6,7 +6,6 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
   const canvasHex: any = useRef();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
-  let interval: NodeJS.Timeout;
 
   const getHexConerCord = useCallback((center: { x: number; y: number }, size: number, i: number) => {
     const angleDeg = 60 * i - 30;
@@ -143,7 +142,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
       defaultStats.switching !== props.stats.switching
     ) {
       if (props.animation) {
-        interval = setInterval(() => {
+        animateId.current = requestAnimationFrame(function animate() {
           setDefaultStats({
             lead: loop(props.animation, defaultStats.lead, props.stats.lead),
             charger: loop(props.animation, defaultStats.charger, props.stats.charger),
@@ -152,15 +151,25 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
             atk: loop(props.animation, defaultStats.atk, props.stats.atk),
             switching: loop(props.animation, defaultStats.switching, props.stats.switching),
           });
-        }, 25);
+          animateId.current = requestAnimationFrame(animate);
+        });
       }
       drawHexagon(defaultStats);
-      return () => clearInterval(interval);
+      return () => {
+        if (animateId.current) {
+          cancelAnimationFrame(animateId.current);
+          animateId.current = null;
+        }
+      };
     }
   }, [drawHexagon, defaultStats, setDefaultStats, props.animation, props.stats]);
 
+  const animateId: any = useRef(null);
   const onPlayAnimaion = () => {
-    clearInterval(interval);
+    if (animateId.current) {
+      cancelAnimationFrame(animateId.current);
+      animateId.current = null;
+    }
 
     let initStats = {
       lead: 0,
@@ -171,7 +180,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
       switching: 0,
     };
 
-    interval = setInterval(() => {
+    animateId.current = requestAnimationFrame(function animate() {
       initStats = {
         lead: loop(1, initStats.lead, props.stats.lead),
         charger: loop(1, initStats.charger, props.stats.charger),
@@ -184,16 +193,18 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
       drawHexagon(initStats);
 
       if (
-        initStats.lead === props.stats.lead &&
-        initStats.charger === props.stats.charger &&
-        initStats.closer === props.stats.closer &&
-        initStats.cons === props.stats.cons &&
-        initStats.atk === props.stats.atk &&
-        initStats.switching === props.stats.switching
+        !(
+          initStats.lead === props.stats.lead &&
+          initStats.charger === props.stats.charger &&
+          initStats.closer === props.stats.closer &&
+          initStats.cons === props.stats.cons &&
+          initStats.atk === props.stats.atk &&
+          initStats.switching === props.stats.switching
+        )
       ) {
-        clearInterval(interval);
+        animateId.current = requestAnimationFrame(animate);
       }
-    }, 10);
+    });
   };
 
   return (

@@ -5,7 +5,7 @@ import './Select.css';
 import CardMove from '../Card/CardMove';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
-const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, result, selected }: any) => {
+const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, result, selected, disable }: any) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
   const [resultMove, setResultMove]: any = useState(null);
   const [showMove, setShowMove] = useState(false);
@@ -104,11 +104,19 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
   const smallInput = () => {
     return (
       <div
-        className={'position-relative d-flex align-items-center form-control ' + (pokemon ? 'card-select-enabled' : 'card-select-disabled')}
+        className={
+          'position-relative d-flex align-items-center form-control ' +
+          (!disable && pokemon ? 'card-select-enabled' : 'card-select-disabled')
+        }
         style={{ padding: 0, borderRadius: 0 }}
       >
         <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-          <CardMoveSmall value={move === '' ? null : move} show={pokemon ? true : false} select={resultMove && resultMove.length > 1} />
+          <CardMoveSmall
+            value={move === '' ? null : move}
+            show={pokemon ? true : false}
+            disable={disable}
+            select={resultMove && resultMove.length > 1}
+          />
           {showMove && resultMove && (
             <div className="result-move-select">
               <div>

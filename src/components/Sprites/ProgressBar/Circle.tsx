@@ -58,14 +58,17 @@ const IconFill: any = styled.div`
   transition: 0.1s;
 `;
 
-const CircleBar = ({ text, type, size, moveEnergy, energy, maxEnergy }: any) => {
+const CircleBar = ({ text, type, size, moveEnergy, energy, maxEnergy, disable }: any) => {
   if (energy > maxEnergy) {
     energy = maxEnergy;
   }
   const fillCount = Math.min(Math.ceil(maxEnergy / moveEnergy), 3);
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-between" style={{ rowGap: 10 }}>
+    <div
+      className="d-flex flex-column align-items-center justify-content-between"
+      style={{ rowGap: 10, color: disable ? ' red' : 'black' }}
+    >
       {text && (
         <span className="text-center">
           <b>{text}</b>
