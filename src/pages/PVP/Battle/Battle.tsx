@@ -35,7 +35,6 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
-import { ControlPointDuplicate } from '@mui/icons-material';
 
 const Battle = () => {
   const dispatch = useDispatch();
@@ -813,6 +812,7 @@ const Battle = () => {
   };
 
   const timelinePlay: any = useRef(null);
+  const start = useRef(0);
   const [playState, setPlayState] = useState(false);
   const scrollWidth = useRef(0);
   const xFit = useRef(0);
@@ -856,7 +856,11 @@ const Battle = () => {
     let xCurrent = 0;
     let incX = 0;
     if (elem) {
-      xCurrent = elem.style.left ? parseInt(elem.style.left.replace('%', '')) : 0;
+      xCurrent = elem.style.left
+        ? parseInt(elem.style.left.replace('%', '')) === 100
+          ? 0
+          : parseInt(elem.style.left.replace('%', ''))
+        : 0;
     }
     if (timelineType) {
       clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
@@ -869,7 +873,11 @@ const Battle = () => {
         }
       }
     }
-    timelinePlay.current = requestAnimationFrame(function animate() {
+    if (!start.current) {
+      start.current = performance.now();
+    }
+    start.current = performance.now();
+    timelinePlay.current = requestAnimationFrame(function animate(time: number) {
       if (timelineType) {
         xNormal.current += 1;
         setLeftNormal(xNormal.current - clientX);
@@ -885,26 +893,39 @@ const Battle = () => {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
-        if (!timelinePlay.current || x > timelineFit.current.clientWidth) {
-          if (elem) {
-            elem.style.left = '100%';
+        if (duration === 0) {
+          if (!timelinePlay.current || x > timelineFit.current.clientWidth) {
+            if (elem) {
+              elem.style.left = '100%';
+            }
+            stopTimeLine();
+            return;
+          } else {
+            xCurrent = (x * 100) / timelineFit.current.clientWidth;
+            if (elem) {
+              elem.style.left = xCurrent + '%';
+            }
+            overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
+            incX = timelineFit.current.clientWidth / arrStore.current.length;
+            x += incX;
+            if (timelinePlay.current && x - incX <= timelineFit.current.clientWidth) {
+              timelinePlay.current = requestAnimationFrame(animate);
+            }
           }
-          stopTimeLine();
-          return;
         } else {
-          xCurrent = (x * 100) / timelineFit.current.clientWidth;
+          const durationFraction = Math.min(
+            1,
+            Math.max(0, (time - start.current) / (duration === -1 ? 500 * arrStore.current.length : duration * 1000))
+          );
           if (elem) {
-            elem.style.left = xCurrent + '%';
+            elem.style.left = xCurrent + durationFraction * 100 + '%';
           }
           overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
-          if (duration) {
-            incX = (timelineFit.current.clientWidth / range / timelineFit.current.clientWidth) * (duration * 1000);
-          } else {
-            incX = 1;
-          }
-          x += incX;
-          if (timelinePlay.current && x - incX <= timelineFit.current.clientWidth) {
+          if (xCurrent / 100 + durationFraction < 1) {
             timelinePlay.current = requestAnimationFrame(animate);
+          } else {
+            stopTimeLine();
+            return;
           }
         }
       }
@@ -921,6 +942,7 @@ const Battle = () => {
 
   const resetTimeLine = () => {
     stopTimeLine();
+    start.current = 0;
     if (timelineType && timelineNormalContainer.current) {
       if (timelineNormalContainer.current) {
         xNormal.current = timelineNormalContainer.current.getBoundingClientRect().left + 1;
@@ -1272,15 +1294,15 @@ const Battle = () => {
                   if (type === 'pokemonCurr') {
                     setPlayTimeline({
                       ...playTimeline,
-                      pokemonCurr: { ...playTimeline.pokemonCurr, energy: parseInt(e.target.value) },
+                      pokemonCurr: { ...playTimeline.pokemonCurr, energy: e.target.value ? parseInt(e.target.value) : 0 },
                     });
                   } else if (type === 'pokemonObj') {
                     setPlayTimeline({
                       ...playTimeline,
-                      pokemonObj: { ...playTimeline.pokemonObj, energy: parseInt(e.target.value) },
+                      pokemonObj: { ...playTimeline.pokemonObj, energy: e.target.value ? parseInt(e.target.value) : 0 },
                     });
                   }
-                  setPokemon({ ...pokemon, timeline: [], energy: parseInt(e.target.value) });
+                  setPokemon({ ...pokemon, timeline: [], energy: e.target.value ? parseInt(e.target.value) : 0 });
                 }}
               />
             </div>
@@ -1492,7 +1514,8 @@ const Battle = () => {
                       onChange={(event: any) => setOptions({ ...options, duration: parseInt(event.target.value) })}
                       label="Duration"
                     >
-                      <MenuItem value={0}>None</MenuItem>
+                      <MenuItem value={-1}>Real</MenuItem>
+                      <MenuItem value={0}>Auto</MenuItem>
                       <MenuItem value={3}>3 Second</MenuItem>
                       <MenuItem value={5}>5 Second</MenuItem>
                       <MenuItem value={10}>10 Second</MenuItem>
