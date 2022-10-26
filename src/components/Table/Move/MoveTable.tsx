@@ -247,34 +247,37 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                 <tr className="text-center">
                   <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('offensive', 'fast')}>
                     Fast
-                    <span style={{ opacity: stateSorted.offensive.sortBy === 'fast' ? 1 : 0.5 }}>
+                    <span style={{ opacity: stateSorted.offensive.sortBy === 'fast' ? 1 : 0.3 }}>
                       {stateSorted.offensive.fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                   <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('offensive', 'charged')}>
                     Charge
-                    <span style={{ opacity: stateSorted.offensive.sortBy === 'charged' ? 1 : 0.5 }}>
+                    <span style={{ opacity: stateSorted.offensive.sortBy === 'charged' ? 1 : 0.3 }}>
                       {stateSorted.offensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                   <th className="table-column-head cursor-pointer" onClick={() => arrowSort('offensive', 'eff')}>
                     %
-                    <span style={{ opacity: stateSorted.offensive.sortBy === 'eff' ? 1 : 0.5 }}>
+                    <span style={{ opacity: stateSorted.offensive.sortBy === 'eff' ? 1 : 0.3 }}>
                       {stateSorted.offensive.eff ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {move.data
+                {[...move.data]
                   .sort((a: any, b: any) => {
                     const sortedBy = stateSorted.offensive.sortBy;
                     if (sortedBy === 'eff') {
                       return stateSorted.offensive.eff ? b.eDPS.offensive - a.eDPS.offensive : a.eDPS.offensive - b.eDPS.offensive;
                     } else {
-                      return stateSorted.offensive[sortedBy === 'fast' ? 'fast' : 'charged']
-                        ? b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name
-                        : a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name >= b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name;
+                      if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name < b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
+                        return stateSorted.offensive[sortedBy] ? -1 : 1;
+                      } else if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
+                        return stateSorted.offensive[sortedBy] ? 1 : -1;
+                      }
+                      return 0;
                     }
                   })
                   .map((value: any, index: React.Key) => (
@@ -296,34 +299,37 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                 <tr className="text-center">
                   <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('defensive', 'fast')}>
                     Fast
-                    <span style={{ opacity: stateSorted.defensive.sortBy === 'fast' ? 1 : 0.5 }}>
+                    <span style={{ opacity: stateSorted.defensive.sortBy === 'fast' ? 1 : 0.3 }}>
                       {stateSorted.defensive.fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                   <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('defensive', 'charged')}>
                     Charge
-                    <span style={{ opacity: stateSorted.defensive.sortBy === 'charged' ? 1 : 0.5 }}>
+                    <span style={{ opacity: stateSorted.defensive.sortBy === 'charged' ? 1 : 0.3 }}>
                       {stateSorted.defensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                   <th className="table-column-head cursor-pointer" onClick={() => arrowSort('defensive', 'eff')}>
                     %
-                    <span className="cursor-pointer" style={{ opacity: stateSorted.defensive.sortBy === 'eff' ? 1 : 0.5 }}>
+                    <span className="cursor-pointer" style={{ opacity: stateSorted.defensive.sortBy === 'eff' ? 1 : 0.3 }}>
                       {stateSorted.defensive.eff ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {move.data
+                {[...move.data]
                   .sort((a: any, b: any) => {
                     const sortedBy = stateSorted.defensive.sortBy;
                     if (sortedBy === 'eff') {
                       return stateSorted.defensive.eff ? b.eDPS.defensive - a.eDPS.defensive : a.eDPS.defensive - b.eDPS.defensive;
                     } else {
-                      return stateSorted.defensive[sortedBy === 'fast' ? 'fast' : 'charged']
-                        ? b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name
-                        : a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name >= b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name;
+                      if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name < b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
+                        return stateSorted.defensive[sortedBy] ? -1 : 1;
+                      } else if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
+                        return stateSorted.defensive[sortedBy] ? 1 : -1;
+                      }
+                      return 0;
                     }
                   })
                   .map((value: any, index: React.Key) => (
