@@ -24,6 +24,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
   const [cMoveSec, setCMoveSec]: any = useState(null);
 
   const [pokemonIcon, setPokemonIcon]: any = useState(null);
+  const [score, setScore]: any = useState(null);
 
   const selectPokemon = (value: any) => {
     clearData();
@@ -64,6 +65,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
     const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
 
+    setScore(value.score);
     setPokemonBattle({
       ...pokemonBattle,
       pokemonData: {
@@ -107,6 +109,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     setFMove(null);
     setCMovePri(null);
     setCMoveSec(null);
+    setScore(null);
   }, [clearData]);
 
   const removeChargeMoveSec = () => {
@@ -127,11 +130,18 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     <Fragment>
       <h5>Pokémon</h5>
       <div className="border-box-battle position-relative">
-        {pokemonIcon && (
-          <span className="remove-pokemon-select-right">
-            <span onClick={() => removePokemon()} className="remove-pokemon-select">
-              <CloseIcon sx={{ color: 'red' }} />
-            </span>
+        {(score || pokemonIcon) && (
+          <span className="pokemon-select-right">
+            {score && (
+              <span style={{ marginRight: 5 }} className="type-icon-small ic elite-ic">
+                {score}
+              </span>
+            )}
+            {pokemonIcon && (
+              <span onClick={() => removePokemon()} className="remove-pokemon-select">
+                <CloseIcon sx={{ color: 'red' }} />
+              </span>
+            )}
           </span>
         )}
         <input
@@ -154,9 +164,9 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
             .filter((pokemon: { pokemon: { name: string } }) =>
               splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase())
             )
-            .map((value: { pokemon: { sprite: string; name: string } }, index: React.Key) => (
+            .map((value: { pokemon: { sprite: string; name: string }; score: number }, index: React.Key) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
-                <CardPokemon value={value.pokemon} />
+                <CardPokemon value={value.pokemon} score={value.score} />
               </div>
             ))}
         </div>

@@ -48,7 +48,7 @@ const Battle = () => {
   const [options, setOptions] = useState({
     showTap: false,
     timelineType: 0,
-    duration: 0,
+    duration: 1,
     league: params.cp ? parseInt(params.cp) : 500,
   });
   const { showTap, timelineType, duration, league }: any = options;
@@ -812,7 +812,6 @@ const Battle = () => {
   };
 
   const timelinePlay: any = useRef(null);
-  const start = useRef(0);
   const [playState, setPlayState] = useState(false);
   const scrollWidth = useRef(0);
   const xFit = useRef(0);
@@ -873,11 +872,7 @@ const Battle = () => {
         }
       }
     }
-    if (!start.current) {
-      start.current = performance.now();
-    }
-    start.current = performance.now();
-    timelinePlay.current = requestAnimationFrame(function animate(time: number) {
+    timelinePlay.current = requestAnimationFrame(function animate() {
       if (timelineType) {
         xNormal.current += 1;
         setLeftNormal(xNormal.current - clientX);
@@ -893,40 +888,21 @@ const Battle = () => {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
-        if (duration === 0) {
-          if (!timelinePlay.current || x > timelineFit.current.clientWidth) {
-            if (elem) {
-              elem.style.left = '100%';
-            }
-            stopTimeLine();
-            return;
-          } else {
-            xCurrent = (x * 100) / timelineFit.current.clientWidth;
-            if (elem) {
-              elem.style.left = xCurrent + '%';
-            }
-            overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
-            incX = timelineFit.current.clientWidth / arrStore.current.length;
-            x += incX;
-            if (timelinePlay.current && x - incX <= timelineFit.current.clientWidth) {
-              timelinePlay.current = requestAnimationFrame(animate);
-            }
-          }
+        xCurrent = (x * 100) / timelineFit.current.clientWidth;
+        if (elem) {
+          elem.style.left = xCurrent + '%';
+        }
+        overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
+        incX = timelineFit.current.clientWidth / (arrStore.current.length * 2);
+        x += incX * duration;
+        if (timelinePlay.current && x <= timelineFit.current.clientWidth) {
+          timelinePlay.current = requestAnimationFrame(animate);
         } else {
-          const durationFraction = Math.min(
-            1,
-            Math.max(0, (time - start.current) / (duration === -1 ? 500 * arrStore.current.length : duration * 1000))
-          );
           if (elem) {
-            elem.style.left = xCurrent + durationFraction * 100 + '%';
+            elem.style.left = '100%';
           }
-          overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
-          if (xCurrent / 100 + durationFraction < 1) {
-            timelinePlay.current = requestAnimationFrame(animate);
-          } else {
-            stopTimeLine();
-            return;
-          }
+          stopTimeLine();
+          return;
         }
       }
     });
@@ -942,7 +918,6 @@ const Battle = () => {
 
   const resetTimeLine = () => {
     stopTimeLine();
-    start.current = 0;
     if (timelineType && timelineNormalContainer.current) {
       if (timelineNormalContainer.current) {
         xNormal.current = timelineNormalContainer.current.getBoundingClientRect().left + 1;
@@ -1508,17 +1483,17 @@ const Battle = () => {
                     <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
                   </RadioGroup>
                   <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} disabled={playState}>
-                    <InputLabel>Duration</InputLabel>
+                    <InputLabel>Speed</InputLabel>
                     <Select
                       value={duration}
-                      onChange={(event: any) => setOptions({ ...options, duration: parseInt(event.target.value) })}
-                      label="Duration"
+                      onChange={(event: any) => setOptions({ ...options, duration: parseFloat(event.target.value) })}
+                      label="Speed"
                     >
-                      <MenuItem value={-1}>Real</MenuItem>
-                      <MenuItem value={0}>Auto</MenuItem>
-                      <MenuItem value={3}>3 Second</MenuItem>
-                      <MenuItem value={5}>5 Second</MenuItem>
-                      <MenuItem value={10}>10 Second</MenuItem>
+                      <MenuItem value={1}>Normal</MenuItem>
+                      <MenuItem value={1.5}>x1.5</MenuItem>
+                      <MenuItem value={2}>x2</MenuItem>
+                      <MenuItem value={5}>x5</MenuItem>
+                      <MenuItem value={10}>x10</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
