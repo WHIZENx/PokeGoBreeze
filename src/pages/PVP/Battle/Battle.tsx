@@ -812,6 +812,7 @@ const Battle = () => {
   };
 
   const timelinePlay: any = useRef(null);
+  const start: any = useRef(0);
   const [playState, setPlayState] = useState(false);
   const scrollWidth = useRef(0);
   const xFit = useRef(0);
@@ -835,7 +836,7 @@ const Battle = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
     if (elem && x <= timelineFit.current.clientWidth) {
-      elem.style.left = (x * 100) / timelineFit.current.clientWidth + '%';
+      elem.style.transform = 'translate(' + x + 'px, -50%)';
     }
     // setLeftFit(xFit.current);
     if (arrStore.current.length === 0) {
@@ -849,30 +850,31 @@ const Battle = () => {
 
   const playingTimeLine = () => {
     setPlayState(true);
-    let x: number, clientX: number;
+    let clientX: number;
     const range = pokemonCurr.timeline.length;
     const elem = document.getElementById('play-line');
     let xCurrent = 0;
-    let incX = 0;
     if (elem) {
-      xCurrent = elem.style.left
-        ? parseInt(elem.style.left.replace('%', '')) === 100
+      xCurrent = elem.style.transform
+        ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) === timelineFit.current.clientWidth
           ? 0
-          : parseInt(elem.style.left.replace('%', ''))
+          : parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''))
         : 0;
     }
     if (timelineType) {
       clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
       timelineNormalContainer.current.scrollTo(Math.max(0, xNormal.current - clientX - timelineNormalContainer.current.clientWidth / 2), 0);
     } else {
-      x = (xCurrent * timelineFit.current.clientWidth) / 100;
       if (arrStore.current.length === 0) {
         for (let i = 0; i < range; i++) {
           arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
         }
       }
     }
-    timelinePlay.current = requestAnimationFrame(function animate() {
+    if (!start.current) {
+      start.current = performance.now();
+    }
+    timelinePlay.current = requestAnimationFrame(function animate(timestamp: number) {
       if (timelineType) {
         xNormal.current += 1;
         setLeftNormal(xNormal.current - clientX);
@@ -888,19 +890,15 @@ const Battle = () => {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
-        xCurrent = (x * 100) / timelineFit.current.clientWidth;
+        const durationFractor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
+        const width = Math.min(timelineFit.current.clientWidth, xCurrent + durationFractor * timelineFit.current.clientWidth);
         if (elem) {
-          elem.style.left = xCurrent + '%';
+          elem.style.transform = 'translate(' + width + 'px, -50%)';
+          overlappingPos(arrStore.current, elem.getBoundingClientRect().left);
         }
-        overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
-        incX = timelineFit.current.clientWidth / (arrStore.current.length * 2);
-        x += incX * duration;
-        if (timelinePlay.current && x <= timelineFit.current.clientWidth) {
+        if (width < timelineFit.current.clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
         } else {
-          if (elem) {
-            elem.style.left = '100%';
-          }
           stopTimeLine();
           return;
         }
@@ -910,9 +908,9 @@ const Battle = () => {
 
   const stopTimeLine = () => {
     setPlayState(false);
-    // clearInterval(timelinePlay.current);
     cancelAnimationFrame(timelinePlay.current);
     timelinePlay.current = null;
+    start.current = 0;
     return;
   };
 
@@ -929,7 +927,7 @@ const Battle = () => {
       // setLeftFit(xFit.current);
       const elem = document.getElementById('play-line');
       if (elem) {
-        elem.style.left = '0%';
+        elem.style.transform = 'translate(0px, -50%)';
       }
     }
     setPlayTimeline({
@@ -1005,7 +1003,7 @@ const Battle = () => {
       } else {
         clientX = timelineNormalX.current;
         xFit.current = ((xNormal.current - clientX) / width) * 100;
-        setLeftFit(xFit.current);
+        // setLeftFit(xFit.current);
       }
     }, 100);
   };
