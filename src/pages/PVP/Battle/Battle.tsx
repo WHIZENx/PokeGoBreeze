@@ -47,7 +47,7 @@ const Battle = () => {
   const [data, setData] = useState(null);
   const [options, setOptions] = useState({
     showTap: false,
-    timelineType: 0,
+    timelineType: 1,
     duration: 1,
     league: params.cp ? parseInt(params.cp) : 500,
   });
@@ -193,9 +193,6 @@ const Battle = () => {
   };
 
   const battleAnimation = () => {
-    if (pokemonCurr.timeline.length === 0 && pokemonObj.timeline.length === 0) {
-      arrBound.current = [];
-    }
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
       return false;
     }
@@ -203,6 +200,7 @@ const Battle = () => {
     if ((pokemonCurr.disableCMovePri && pokemonCurr.cMoveSec === '') || (pokemonObj.disableCMovePri && pokemonObj.cMoveSec === '')) {
       return false;
     }
+    arrBound.current = [];
     arrStore.current = [];
     resetTimeLine();
     clearInterval(timelineInterval);
@@ -872,8 +870,8 @@ const Battle = () => {
         }
       } else {
         xCurrent = elem.style.transform ? (getTranslation(elem) >= timelineFit.current.clientWidth - 1 ? 0 : getTranslation(elem)) : 0;
-        if (xFit.current !== timelineFit.current.clientWidth || arrStore.current.length === 0) {
-          xFit.current = timelineFit.current.clientWidth;
+        xFit.current = timelineFit.current.clientWidth;
+        if (arrStore.current.length === 0) {
           for (let i = 0; i < range; i++) {
             arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
@@ -1127,6 +1125,7 @@ const Battle = () => {
           <Accordion.Body>
             <div className="w-100 d-flex justify-content-center">
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
+                {pokemon.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
                 <img
                   alt="img-league"
                   className="pokemon-sprite-raid"
@@ -1495,8 +1494,8 @@ const Battle = () => {
                       onChange={(event: any) => setOptions({ ...options, duration: parseFloat(event.target.value) })}
                       label="Speed"
                     >
+                      <MenuItem value={0.5}>x0.5</MenuItem>
                       <MenuItem value={1}>Normal</MenuItem>
-                      <MenuItem value={1.5}>x1.5</MenuItem>
                       <MenuItem value={2}>x2</MenuItem>
                       <MenuItem value={5}>x5</MenuItem>
                       <MenuItem value={10}>x10</MenuItem>
