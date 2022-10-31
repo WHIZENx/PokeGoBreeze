@@ -1148,10 +1148,16 @@ const Battle = () => {
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
-            Attack: <b>{Math.floor(pokemon.pokemonData.currentStats.stats.statsATK)}</b>
+            Attack:{' '}
+            <b>
+              {Math.floor(pokemon.pokemonData.currentStats.stats.statsATK * (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1))}
+            </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
-            Defense: <b>{Math.floor(pokemon.pokemonData.currentStats.stats.statsDEF)}</b>
+            Defense:{' '}
+            <b>
+              {Math.floor(pokemon.pokemonData.currentStats.stats.statsDEF * (pokemon.shadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))}
+            </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
             HP: <b>{Math.floor(pokemon.pokemonData.currentStats.stats.statsSTA)}</b>
@@ -1161,7 +1167,8 @@ const Battle = () => {
               {Math.round(
                 pokemon.pokemonData.currentStats.stats.statsATK *
                   pokemon.pokemonData.currentStats.stats.statsDEF *
-                  pokemon.pokemonData.currentStats.stats.statsSTA
+                  pokemon.pokemonData.currentStats.stats.statsSTA *
+                  (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) * SHADOW_DEF_BONUS(dataStore.options) : 1)
               )}
             </b>
             <br />
