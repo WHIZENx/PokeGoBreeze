@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-
+import ReactDOM from 'react-dom';
 import pokemonData from '../../../data/pokemon.json';
 
 import SelectPoke from './Select';
@@ -52,9 +52,6 @@ const Battle = () => {
     league: params.cp ? parseInt(params.cp) : 500,
   });
   const { showTap, timelineType, duration, league }: any = options;
-
-  const [leftFit, setLeftFit] = useState(0);
-  const [leftNormal, setLeftNormal] = useState(0);
 
   const timelineFit: any = useRef();
   const timelineNormal: any = useRef();
@@ -667,16 +664,6 @@ const Battle = () => {
     }, 1);
   };
 
-  useEffect(() => {
-    if (timelineType && arrBound.current.length === 0 && pokemonCurr.timeline.length > 0) {
-      setTimeout(() => {
-        for (let i = 0; i < pokemonCurr.timeline.length; i++) {
-          arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
-        }
-      }, 100);
-    }
-  }, [timelineType, pokemonCurr.timeline.length]);
-
   const clearData = useCallback(() => {
     setPokemonObj({
       pokemonData: null,
@@ -816,18 +803,35 @@ const Battle = () => {
   const [playState, setPlayState] = useState(false);
   const scrollWidth = useRef(0);
   const xFit = useRef(0);
-  const xNormal = useRef(0);
+  const xNormal: any = useRef(null);
   const arrBound: any = useRef([]);
   const arrStore: any = useRef([]);
-  const onPlayLineMove = (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }) => {
+
+  const getTranslation = (elem: any) => {
+    return elem ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
+  };
+
+  const onPlayLineMove = (e: any) => {
     stopTimeLine();
-    const clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
+    const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, e.clientX - rect.left);
-    xNormal.current = x + clientX;
-    setLeftNormal(x);
-    const range = pokemonCurr.timeline.length;
-    overlappingNormal(range, arrBound.current);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
+    if (elem && x <= timelineNormal.current.clientWidth - 2) {
+      elem.style.transform = 'translate(' + x + 'px, -50%)';
+      // if (Math.min(x, timelineNormalContainer.current.clientWidth / 2) >= timelineNormalContainer.current.clientWidth / 2) {
+      //   elem.style.transform = 'translate(' + x + 'px, -50%)';
+      //   timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
+      //   timelineNormalContainer.current.scrollTo(x - timelineNormalContainer.current.clientWidth / 2, window.scrollY);
+      // } else {
+      //   elem.style.transform = 'translate(' + x + 'px, -50%)';
+      // }
+    }
+    if (arrBound.current.length === 0) {
+      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+        arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+      }
+    }
+    overlappingPos(arrBound.current, x + xNormal.current);
   };
 
   const onPlayLineFitMove = (e: any) => {
@@ -838,10 +842,9 @@ const Battle = () => {
     if (elem && x <= timelineFit.current.clientWidth) {
       elem.style.transform = 'translate(' + x + 'px, -50%)';
     }
-    // setLeftFit(xFit.current);
-    if (arrStore.current.length === 0) {
-      const range = pokemonCurr.timeline.length;
-      for (let i = 0; i < range; i++) {
+    if (xFit.current !== e.currentTarget.clientWidth || arrStore.current.length === 0) {
+      xFit.current = e.currentTarget.clientWidth;
+      for (let i = 0; i < pokemonCurr.timeline.length; i++) {
         arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
       }
     }
@@ -850,24 +853,30 @@ const Battle = () => {
 
   const playingTimeLine = () => {
     setPlayState(true);
-    let clientX: number;
     const range = pokemonCurr.timeline.length;
     const elem = document.getElementById('play-line');
     let xCurrent = 0;
     if (elem) {
-      xCurrent = elem.style.transform
-        ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) === timelineFit.current.clientWidth
-          ? 0
-          : parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''))
-        : 0;
-    }
-    if (timelineType) {
-      clientX = timelineNormalContainer.current.getBoundingClientRect().left + 1;
-      timelineNormalContainer.current.scrollTo(Math.max(0, xNormal.current - clientX - timelineNormalContainer.current.clientWidth / 2), 0);
-    } else {
-      if (arrStore.current.length === 0) {
-        for (let i = 0; i < range; i++) {
-          arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+      if (timelineType) {
+        xCurrent = elem.style.transform ? (getTranslation(elem) >= timelineNormal.current.clientWidth - 2 ? 0 : getTranslation(elem)) : 0;
+        timelineNormalContainer.current.scrollTo(Math.max(0, xCurrent - timelineNormalContainer.current.clientWidth / 2), window.scrollY);
+        if (!xNormal.current) {
+          const element: any = ReactDOM.findDOMNode(timelineNormalContainer.current);
+          const rect = element.getBoundingClientRect();
+          xNormal.current = rect.left;
+        }
+        if (arrBound.current.length === 0) {
+          for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+            arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+          }
+        }
+      } else {
+        xCurrent = elem.style.transform ? (getTranslation(elem) >= timelineFit.current.clientWidth - 1 ? 0 : getTranslation(elem)) : 0;
+        if (xFit.current !== timelineFit.current.clientWidth || arrStore.current.length === 0) {
+          xFit.current = timelineFit.current.clientWidth;
+          for (let i = 0; i < range; i++) {
+            arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+          }
         }
       }
     }
@@ -876,17 +885,26 @@ const Battle = () => {
     }
     timelinePlay.current = requestAnimationFrame(function animate(timestamp: number) {
       if (timelineType) {
-        xNormal.current += 1;
-        setLeftNormal(xNormal.current - clientX);
-        if (xNormal.current - clientX >= timelineNormalContainer.current.clientWidth / 2) {
-          timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
-          timelineNormalContainer.current.scrollTo(scrollWidth.current + 1, 0);
-        }
-        if (!timelinePlay.current || xNormal.current - clientX > timelineNormal.current.clientWidth) {
+        const durationFractor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
+        const width = Math.min(
+          timelineNormal.current.clientWidth - 2,
+          xCurrent + durationFractor * (timelineNormal.current.clientWidth - 2)
+        );
+        if (width >= timelineNormal.current.clientWidth - 2) {
+          if (elem) {
+            elem.style.transform = 'translate(' + (timelineNormal.current.clientWidth - 2) + 'px, -50%)';
+          }
           return stopTimeLine();
         }
-        overlappingNormal(range, arrBound.current);
-        if (timelinePlay.current && xNormal.current - clientX <= timelineNormal.current.clientWidth) {
+        if (elem) {
+          elem.style.transform = 'translate(' + width + 'px, -50%)';
+          overlappingPos(arrBound.current, width + xNormal.current);
+        }
+        if (Math.min(width, timelineNormalContainer.current.clientWidth / 2) === timelineNormalContainer.current.clientWidth / 2) {
+          timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
+          timelineNormalContainer.current.scrollTo(width - timelineNormalContainer.current.clientWidth / 2, window.scrollY);
+        }
+        if (width < timelineNormal.current.clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
@@ -899,8 +917,10 @@ const Battle = () => {
         if (width < timelineFit.current.clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
         } else {
-          stopTimeLine();
-          return;
+          if (elem) {
+            elem.style.transform = 'translate(' + timelineFit.current.clientWidth + 'px, -50%)';
+          }
+          return stopTimeLine();
         }
       }
     });
@@ -916,19 +936,12 @@ const Battle = () => {
 
   const resetTimeLine = () => {
     stopTimeLine();
+    const elem = document.getElementById('play-line');
     if (timelineType && timelineNormalContainer.current) {
-      if (timelineNormalContainer.current) {
-        xNormal.current = timelineNormalContainer.current.getBoundingClientRect().left + 1;
-        timelineNormalContainer.current.scrollTo(0, 0);
-      }
-      setLeftNormal(0);
-    } else {
-      // xFit.current = 0;
-      // setLeftFit(xFit.current);
-      const elem = document.getElementById('play-line');
-      if (elem) {
-        elem.style.transform = 'translate(0px, -50%)';
-      }
+      timelineNormalContainer.current.scrollTo(0, window.scrollY);
+    }
+    if (elem) {
+      elem.style.transform = 'translate(0px, -50%)';
     }
     setPlayTimeline({
       pokemonCurr: {
@@ -939,30 +952,9 @@ const Battle = () => {
     });
   };
 
-  const overlappingNormal = (range: number, arr: any[]) => {
-    const index = arr.filter((dom: { left: number }) => dom.left <= xNormal.current).length;
-    if (index >= 0 && index < range) {
-      updateTimeine(index);
-    }
-  };
-
   const overlappingPos = (arr: any[], pos = 0) => {
-    let index = arr.filter((dom: { left: number }) => dom.left <= pos).length;
-    if (index === arr.length) {
-      index -= 1;
-    }
+    const index = arr.filter((dom: { left: number }) => dom.left <= pos).length;
     if (index >= 0 && index < arr.length) {
-      updateTimeine(index);
-    }
-  };
-
-  const overlapping = (range: number, arr: any[]) => {
-    const rect1 = playLine.current.getBoundingClientRect();
-    let index = arr.filter((dom: { left: number }) => dom.left <= rect1.right).length;
-    if (index === range) {
-      index -= 1;
-    }
-    if (index >= 0 && index < range) {
       updateTimeine(index);
     }
   };
@@ -971,8 +963,8 @@ const Battle = () => {
     const pokeCurrData = pokemonCurr.timeline[index];
     const pokeObjData = pokemonObj.timeline[index];
     setPlayTimeline({
-      pokemonCurr: { hp: pokeCurrData.hp, energy: pokeCurrData.energy },
-      pokemonObj: { hp: pokeObjData.hp, energy: pokeObjData.energy },
+      pokemonCurr: { hp: pokeCurrData?.hp ?? 0, energy: pokeCurrData?.energy ?? 0 },
+      pokemonObj: { hp: pokeObjData?.hp ?? 0, energy: pokeObjData?.energy ?? 0 },
     });
   };
 
@@ -980,30 +972,42 @@ const Battle = () => {
     scrollWidth.current = e.currentTarget.scrollLeft;
   };
 
-  const timelineNormalX = useRef(0);
-  const onChangeTimeline = (type: number) => {
+  const onChangeTimeline = (type: number, prevWidth: number) => {
     stopTimeLine();
-    let width: number, clientX;
-    if (type) {
-      width = timelineFit.current.clientWidth;
-    } else {
-      width = timelineNormal.current.clientWidth;
+    let elem = document.getElementById('play-line');
+    let xCurrent = 0,
+      transform;
+    if (elem) {
+      xCurrent = parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''));
     }
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
       if (type) {
-        clientX = timelineNormalContainer.current.getBoundingClientRect().left;
-        timelineNormalX.current = clientX;
-        xNormal.current = (xFit.current * timelineNormal.current.clientWidth) / 100 + clientX;
-        setLeftNormal(xNormal.current - clientX);
+        if (arrBound.current.length === 0) {
+          for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+            arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+          }
+        }
+        transform = (xCurrent / prevWidth) * timelineNormal.current.clientWidth - 2;
+        elem = document.getElementById('play-line');
+        if (elem) {
+          elem.style.transform = 'translate(' + Math.max(0, transform) + 'px, -50%)';
+        }
         timelineNormalContainer.current.scrollTo(
-          Math.max(0, xNormal.current - clientX - timelineNormalContainer.current.clientWidth / 2),
-          0
+          Math.min(transform, transform - timelineNormalContainer.current.clientWidth / 2),
+          window.scrollY
         );
       } else {
-        clientX = timelineNormalX.current;
-        xFit.current = ((xNormal.current - clientX) / width) * 100;
-        // setLeftFit(xFit.current);
+        if (arrStore.current.length === 0) {
+          for (let i = 0; i < pokemonCurr.timeline.length; i++) {
+            arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
+          }
+        }
+        transform = (xCurrent / prevWidth) * timelineFit.current.clientWidth;
+        elem = document.getElementById('play-line');
+        if (elem) {
+          elem.style.transform = 'translate(' + transform + 'px, -50%)';
+        }
       }
     }, 100);
   };
@@ -1458,7 +1462,6 @@ const Battle = () => {
                       timelineNormal,
                       playLine,
                       onPlayLineMove,
-                      leftNormal,
                       showTap
                     )}
                   </Fragment>
@@ -1475,7 +1478,12 @@ const Battle = () => {
                     aria-labelledby="row-timeline-group-label"
                     name="row-timeline-group"
                     value={timelineType}
-                    onChange={(e) => onChangeTimeline(parseInt(e.target.value))}
+                    onChange={(e) =>
+                      onChangeTimeline(
+                        parseInt(e.target.value),
+                        timelineType ? timelineNormal.current.clientWidth : timelineFit.current.clientWidth
+                      )
+                    }
                   >
                     <FormControlLabel value={0} control={<Radio />} label={<span>Fit Timeline</span>} />
                     <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />

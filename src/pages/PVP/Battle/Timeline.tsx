@@ -4,7 +4,6 @@ import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
-import PlayLine from './PlayLine';
 
 export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false) => {
   const renderMoveBadgeBorder = (move: { type: string; name: string }, border: boolean, shadow = false) => {
@@ -167,7 +166,6 @@ export const TimeLine = (
     (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }): void;
     bind?: any;
   },
-  left: number,
   showTap: any,
   hide = false
 ) => {
@@ -260,10 +258,16 @@ export const TimeLine = (
       {!hide && (
         <div className="w-100 battle-bar d-flex justify-content-center">
           <div id="battle-bar-scroll" className="battle-bar-container" ref={elem} onScroll={scroll.bind(this)}>
-            <div className="position-relative" ref={timeline} onMouseMove={move.bind(this)} onMouseOver={move.bind(this)}>
+            <div
+              className="position-relative"
+              ref={timeline}
+              onMouseMove={move.bind(this)}
+              onMouseOver={move.bind(this)}
+              onTouchMove={move.bind(this)}
+            >
               {renderTimeline(pokemonCurr, pokemonObj, true)}
               {renderTimeline(pokemonObj, pokemonCurr)}
-              <div id="play-line" ref={eRef} className="play-line" style={{ left }} />
+              <div id="play-line" ref={eRef} className="play-line" />
             </div>
           </div>
         </div>
