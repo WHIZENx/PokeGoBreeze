@@ -441,3 +441,9 @@
 .tl-dead {
   text-shadow: 1px 1px 1px 1px yellow;
 }
+
+.battle-logo {
+  position: absolute;
+  left: 0;
+  transform: scaleX(-1);
+}

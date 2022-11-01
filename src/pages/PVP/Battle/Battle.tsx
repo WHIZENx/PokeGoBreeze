@@ -829,6 +829,11 @@ const Battle = () => {
         arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
       }
     }
+    if (!xNormal.current) {
+      const element: any = ReactDOM.findDOMNode(timelineNormalContainer.current);
+      const rect = element.getBoundingClientRect();
+      xNormal.current = rect.left;
+    }
     overlappingPos(arrBound.current, x + xNormal.current);
   };
 
@@ -1535,9 +1540,13 @@ const Battle = () => {
         </div>
         <div className="col-lg-3">{renderPokemonInfo('pokemonObj', pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
       </div>
-      {(pokemonCurr.timeline.length === 0 || pokemonObj.timeline.length === 0) && (
+      {pokemonCurr.pokemonData && pokemonObj.pokemonData && (pokemonCurr.timeline.length === 0 || pokemonObj.timeline.length === 0) && (
         <div className="text-center element-top">
           <button className="btn btn-primary" onClick={() => battleAnimation()}>
+            <span className="position-relative">
+              <img height={36} alt="atk-left" src={atk_logo} />
+              <img className="battle-logo" height={36} alt="atk-right" src={atk_logo} />
+            </span>{' '}
             Battle Simulator
           </button>
         </div>
