@@ -385,11 +385,10 @@ const CalculatePoint = () => {
                   {move && (
                     <div style={{ width: 300, margin: 'auto' }}>
                       <p>
-                        - Move Ability Type: <b>{capitalize(move.type_move.toLowerCase())}</b>
+                        - Move Ability Type: <b>{capitalize(move.type_move)}</b>
                       </p>
                       <p>
-                        - Move Type:{' '}
-                        <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type.toLowerCase())}</span>
+                        - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
                       </p>
                       {findStabType(
                         form.form.types.map((item: { type: { name: any } }) => item.type.name),
@@ -501,11 +500,10 @@ const CalculatePoint = () => {
                   {moveDef && (
                     <div style={{ width: 300, margin: 'auto' }}>
                       <p>
-                        - Move Ability Type: <b>{capitalize(moveDef.type_move.toLowerCase())}</b>
+                        - Move Ability Type: <b>{capitalize(moveDef.type_move)}</b>
                       </p>
                       <p>
-                        - Move Type:{' '}
-                        <span className={'type-icon-small ' + moveDef.type.toLowerCase()}>{capitalize(moveDef.type.toLowerCase())}</span>
+                        - Move Type: <span className={'type-icon-small ' + moveDef.type.toLowerCase()}>{capitalize(moveDef.type)}</span>
                       </p>
                       {findStabType(
                         formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
@@ -663,11 +661,10 @@ const CalculatePoint = () => {
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
                         <p>
-                          - Move Ability Type: <b>{capitalize(fMove.type_move.toLowerCase())}</b>
+                          - Move Ability Type: <b>{capitalize(fMove.type_move)}</b>
                         </p>
                         <p>
-                          - Move Type:{' '}
-                          <span className={'type-icon-small ' + fMove.type.toLowerCase()}>{capitalize(fMove.type.toLowerCase())}</span>
+                          - Move Type: <span className={'type-icon-small ' + fMove.type.toLowerCase()}>{capitalize(fMove.type)}</span>
                         </p>
                         {findStabType(
                           formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
@@ -699,11 +696,10 @@ const CalculatePoint = () => {
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
                         <p>
-                          - Move Ability Type: <b>{capitalize(cMove.type_move.toLowerCase())}</b>
+                          - Move Ability Type: <b>{capitalize(cMove.type_move)}</b>
                         </p>
                         <p>
-                          - Move Type:{' '}
-                          <span className={'type-icon-small ' + cMove.type.toLowerCase()}>{capitalize(cMove.type.toLowerCase())}</span>
+                          - Move Type: <span className={'type-icon-small ' + cMove.type.toLowerCase()}>{capitalize(cMove.type)}</span>
                         </p>
                         {findStabType(
                           formDef.form.types.map((item: { type: { name: any } }) => item.type.name),

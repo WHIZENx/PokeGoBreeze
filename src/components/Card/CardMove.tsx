@@ -6,7 +6,7 @@ import { capitalize, splitAndCapitalize } from '../../util/Utils';
 const CardMove = (props: { value: { name: string; elite: any; shadow: any; purified: any } }) => {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
   const data = props.value ? combat.find((item: any) => item.name === props.value.name) : false;
-  const type = data ? capitalize(data.type.toLowerCase()) : '';
+  const type = data ? capitalize(data.type) : '';
 
   return (
     <Fragment>

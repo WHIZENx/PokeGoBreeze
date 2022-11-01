@@ -21,7 +21,7 @@ import { Badge, Checkbox, FormControlLabel, Switch } from '@mui/material';
 
 import './RaidBattle.css';
 import APIService from '../../../services/API.service';
-import Type from '../../../components/Sprites/Type/Type';
+import TypeInfo from '../../../components/Sprites/Type/Type';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import PokemonRaid from '../../../components/Raid/PokemonRaid';
@@ -914,7 +914,7 @@ const RaidBattle = () => {
                     #{id} {form ? splitAndCapitalize(form.form.name, '-', ' ') : name.toLowerCase()} Tier {tier}
                   </b>
                 </h3>
-                <Type arr={form.form.types.map((type: { type: { name: any } }) => type.type.name)} />
+                <TypeInfo arr={form.form.types.map((type: { type: { name: any } }) => type.type.name)} />
               </div>
               <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
                 <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite} />

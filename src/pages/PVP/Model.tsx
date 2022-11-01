@@ -4,7 +4,7 @@ import TypeEffectiveSelect from '../../components/Effective/TypeEffectiveSelect'
 import Stats from '../../components/Info/Stats/Stats';
 import Hexagon from '../../components/Sprites/Hexagon/Hexagon';
 import IVbar from '../../components/Sprites/IVBar/IVBar';
-import Type from '../../components/Sprites/Type/Type';
+import TypeInfo from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 import { calculateCP, calStatsProd } from '../../util/Calculate';
 import { computeBgType, computeCandyBgColor, computeCandyColor, findAssetForm } from '../../util/Compute';
@@ -71,7 +71,7 @@ export const Keys = (
             <b className="text-white text-shadow">
               #{id} {splitAndCapitalize(name, '-', ' ')}
             </b>
-            <Type shadow={true} hideText={true} height={20} arr={pokemon.types} />
+            <TypeInfo shadow={true} hideText={true} height={20} arr={pokemon.types} />
           </div>
         </div>
         <div style={{ marginRight: 15 }}>
@@ -336,7 +336,7 @@ export const MoveSet = (
 
     return (
       <Link
-        to={`/moves/${move.id}`}
+        to={`/move/${move.id}`}
         target="_blank"
         className={
           move.type.toLowerCase() + ' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'

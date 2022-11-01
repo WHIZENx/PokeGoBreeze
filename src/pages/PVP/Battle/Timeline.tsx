@@ -19,7 +19,7 @@ export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false
             <img
               className={'pokemon-sprite-small sprite-type-select' + (!shadow ? '' : ' filter-shadow')}
               alt="img-type-pokemon"
-              src={APIService.getTypeHqSprite(capitalize(move.type.toLowerCase()))}
+              src={APIService.getTypeHqSprite(capitalize(move.type))}
             />
           </div>
           <span className={`${!shadow ? 'text-black' : 'filter-shadow'}`} style={{ fontSize: 14 }}>

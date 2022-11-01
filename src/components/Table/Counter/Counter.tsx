@@ -117,14 +117,9 @@ const Counter = ({ def, form, changeForm }: any) => {
                         </Link>
                       </td>
                       <td className="text-origin text-center">
-                        <Link to={'../moves/' + value.fmove.id} target="_blank" className="d-grid">
+                        <Link to={'../move/' + value.fmove.id} target="_blank" className="d-grid">
                           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                            <img
-                              width={28}
-                              height={28}
-                              alt="img-pokemon"
-                              src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))}
-                            />
+                            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
                           </div>
                           <span style={{ marginRight: 5, fontSize: '0.9rem' }}>
                             {splitAndCapitalize(value.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
@@ -139,14 +134,9 @@ const Counter = ({ def, form, changeForm }: any) => {
                         </Link>
                       </td>
                       <td className="text-origin text-center">
-                        <Link to={'../moves/' + value.cmove.id} target="_blank" className="d-grid">
+                        <Link to={'../move/' + value.cmove.id} target="_blank" className="d-grid">
                           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                            <img
-                              width={28}
-                              height={28}
-                              alt="img-pokemon"
-                              src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))}
-                            />
+                            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
                           </div>
                           <span style={{ marginRight: 5, fontSize: '0.9rem' }}>
                             {splitAndCapitalize(value.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}

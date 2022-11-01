@@ -29,8 +29,11 @@ const NavbarComponent = () => {
             <Link className="dropdown-item" to="/search-pokemon">
               Pokémon
             </Link>
-            <Link className="dropdown-item" to="/search-move">
+            <Link className="dropdown-item" to="/search-moves">
               Moves
+            </Link>
+            <Link className="dropdown-item" to="/search-types">
+              Types
             </Link>
           </NavDropdown>
           <NavDropdown title="Effective">
@@ -61,7 +64,7 @@ const NavbarComponent = () => {
               Calculate Stats
             </Link>
             <Link className="dropdown-item" to="/calculate-point">
-              Calculate Bulkpoint
+              Calculate Break&Bulk Point
             </Link>
             <NavDropdown.Divider />
             <NavDropdown.Header>Battle Simulator</NavDropdown.Header>

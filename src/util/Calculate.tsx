@@ -643,8 +643,8 @@ export const calculateAvgDPS = (
   const CE = Math.abs(cmove.pve_energy);
   const FDur = fmove.durationMs / 1000;
   const CDur = cmove.durationMs / 1000;
-  const FTYPE = capitalize(fmove.type.toLowerCase());
-  const CTYPE = capitalize(cmove.type.toLowerCase());
+  const FTYPE = capitalize(fmove.type);
+  const CTYPE = capitalize(cmove.type);
   const CDWS = cmove.damageWindowStartMs / 1000;
 
   const FMulti = (typePoke.includes(FTYPE) ? StabMultiply : 1) * fmove.accuracyChance;
@@ -789,8 +789,8 @@ export const calculateBattleDPSDefender = (
   const CEDef = Math.abs(Defender.cmove.pve_energy);
   const FDurDef = Defender.fmove.durationMs / 1000;
   const CDurDef = Defender.cmove.durationMs / 1000;
-  const FTYPEDef = capitalize(Defender.fmove.type.toLowerCase());
-  const CTYPEDef = capitalize(Defender.cmove.type.toLowerCase());
+  const FTYPEDef = capitalize(Defender.fmove.type);
+  const CTYPEDef = capitalize(Defender.cmove.type);
 
   const FMultiDef = (Defender.types.includes(FTYPEDef) ? StabMultiply : 1) * Defender.fmove.accuracyChance;
   const CMultiDef = (Defender.types.includes(CTYPEDef) ? StabMultiply : 1) * Defender.cmove.accuracyChance;
@@ -937,7 +937,7 @@ export const calculateBattleDPS = (
     const moveSec = Attacker.cmove2;
     const CPowSec = moveSec.pve_power;
     const CESec = Math.abs(moveSec.pve_energy);
-    const CTYPESec = capitalize(moveSec.type.toLowerCase());
+    const CTYPESec = capitalize(moveSec.type);
     const CDurSec = moveSec.durationMs / 1000;
     const CDWSSec = moveSec.damageWindowStartMs / 1000;
 

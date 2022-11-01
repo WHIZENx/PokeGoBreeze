@@ -28,6 +28,12 @@ img.sprite-type {
   object-fit: contain;
 }
 
+img.sprite-type-large {
+  width: 100%;
+  height: 128px;
+  object-fit: contain;
+}
+
 img.pokemon-sprite-accordion {
   width: 100%;
   height: 50px;

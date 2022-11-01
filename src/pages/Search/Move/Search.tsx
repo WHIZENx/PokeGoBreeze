@@ -27,9 +27,7 @@ const columns: any = [
   },
   {
     name: 'Type',
-    selector: (row: { type: string }) => (
-      <div className={'type-icon-small ' + row.type.toLowerCase()}>{capitalize(row.type.toLowerCase())}</div>
-    ),
+    selector: (row: { type: string }) => <div className={'type-icon-small ' + row.type.toLowerCase()}>{capitalize(row.type)}</div>,
     sortable: true,
     sortFunction: moveSort,
   },
@@ -37,7 +35,7 @@ const columns: any = [
     name: 'Name',
     selector: (row: { track: number; name: string; type: string }) => (
       <Link
-        to={'/moves/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type.toLowerCase() : '')}
+        to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type.toLowerCase() : '')}
         target="_blank"
       >
         {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
@@ -87,7 +85,7 @@ const Search = () => {
           (move: { name: string; track: { toString: () => string | string[] }; type: string }) =>
             (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(fMoveName.toLowerCase()) ||
               move.track.toString().includes(fMoveName)) &&
-            (fMoveType === '' || fMoveType === capitalize(move.type.toLowerCase()))
+            (fMoveType === '' || fMoveType === capitalize(move.type))
         )
     );
     setResultCMove(
@@ -97,7 +95,7 @@ const Search = () => {
           (move: { name: string; track: { toString: () => string | string[] }; type: string }) =>
             (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(cMoveName.toLowerCase()) ||
               move.track.toString().includes(cMoveName)) &&
-            (cMoveType === '' || cMoveType === capitalize(move.type.toLowerCase()))
+            (cMoveType === '' || cMoveType === capitalize(move.type))
         )
     );
   }, [fMoveName, fMoveType, cMoveName, cMoveType, combat]);

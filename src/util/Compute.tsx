@@ -90,13 +90,17 @@ export const computeCandyColor = (candyData: Candy[], id: number) => {
   )}, ${data?.primaryColor.a})`;
 };
 
-export const computeBgType = (types: any[], shadow = false, purified = false, opacity = 1, styleSheet?: any) => {
+export const computeBgType = (types: string[] | string, shadow = false, purified = false, opacity = 1, styleSheet?: any) => {
   const colorsPalette: any[] = [];
-  types.forEach((type: string) => {
-    type = type.toLowerCase();
-    const color = getStyleRuleValue('background-color', `.${type}`, styleSheet);
-    colorsPalette.push(color.split(')')[0] + `, ${opacity ?? 1})`);
-  });
+  if (typeof types === 'string') {
+    const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
+    return color.split(')')[0] + `, ${opacity ?? 1})`;
+  } else {
+    types.forEach((type: string) => {
+      const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
+      colorsPalette.push(color.split(')')[0] + `, ${opacity ?? 1})`);
+    });
+  }
   if (shadow) {
     return `linear-gradient(to bottom right, ${colorsPalette[0]}, rgb(202, 156, 236), ${colorsPalette[1] ?? colorsPalette[0]})`;
   }
@@ -111,6 +115,9 @@ export const findAssetForm = (pokemonAssets: any[], id: number, name: string) =>
     name = name.replace('-A', '-Armor');
   }
   const pokemon = pokemonAssets.find((item: { id: any }) => item.id === id);
+  if (!pokemon) {
+    return null;
+  }
   const standard = pokemon.image.filter((item: { form: string | string[] }) => item.form.includes('STANDARD'));
   name = convertName(name);
   if (pokemon.name === name || standard.length > 0) {

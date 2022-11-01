@@ -1,5 +1,5 @@
 import React from 'react';
-import Type from '../Sprites/Type/Type';
+import TypeInfo from '../Sprites/Type/Type';
 
 const WeatherEffective = (props: { weatherEffective: any }) => {
   if (!props.weatherEffective) {
@@ -11,7 +11,7 @@ const WeatherEffective = (props: { weatherEffective: any }) => {
       <h5 className="element-top">
         <li>Types Pokémon for Boosts</li>
       </h5>
-      <Type arr={props.weatherEffective} style={{ marginLeft: 15 }} />
+      <TypeInfo arr={props.weatherEffective} style={{ marginLeft: 15 }} />
     </div>
   );
 };

@@ -22,6 +22,7 @@ import {
   POKE_BALL_INC_CHANCE,
   RAZZ_BERRY_INC_CHANCE,
   SILVER_INC_CHANCE,
+  SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/Constants';
 import { convertName, LevelSlider, splitAndCapitalize } from '../../../util/Utils';
@@ -64,9 +65,10 @@ const CatchChance = () => {
     curveBall: false,
     razzBerry: false,
     goldenRazzBerry: false,
+    silverPinaps: false,
     shadow: false,
   });
-  const { advance, curveBall, razzBerry, goldenRazzBerry } = options;
+  const { advance, curveBall, razzBerry, goldenRazzBerry, silverPinaps } = options;
 
   const pokeballType = [
     { name: 'Poke Ball', threshold: POKE_BALL_INC_CHANCE },
@@ -147,7 +149,8 @@ const CatchChance = () => {
           medalChance *
           (curveBall ? CURVE_INC_CHANCE : 1) *
           (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-          (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1);
+          (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
+          (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
         const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
         result[ball.name.toLowerCase().replace(' ball', '')][type.name.toLowerCase().replace(' throw', '')] = Math.min(prob * 100, 100);
       });
@@ -332,7 +335,14 @@ const CatchChance = () => {
                   control={
                     <Checkbox
                       checked={razzBerry}
-                      onChange={(event, check) => setOptions({ ...options, razzBerry: check, goldenRazzBerry: check ? false : check })}
+                      onChange={(event, check) =>
+                        setOptions({
+                          ...options,
+                          razzBerry: check,
+                          silverPinaps: check ? false : check,
+                          goldenRazzBerry: check ? false : check,
+                        })
+                      }
                     />
                   }
                   label={
@@ -345,12 +355,39 @@ const CatchChance = () => {
                   control={
                     <Checkbox
                       checked={goldenRazzBerry}
-                      onChange={(event, check) => setOptions({ ...options, goldenRazzBerry: check, razzBerry: check ? false : check })}
+                      onChange={(event, check) =>
+                        setOptions({
+                          ...options,
+                          goldenRazzBerry: check,
+                          silverPinaps: check ? false : check,
+                          razzBerry: check ? false : check,
+                        })
+                      }
                     />
                   }
                   label={
                     <span>
                       <img height={32} src={APIService.getItemSprite('Item_0706')} /> Golden Razz Berry
+                    </span>
+                  }
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={silverPinaps}
+                      onChange={(event, check) =>
+                        setOptions({
+                          ...options,
+                          silverPinaps: check,
+                          goldenRazzBerry: check ? false : check,
+                          razzBerry: check ? false : check,
+                        })
+                      }
+                    />
+                  }
+                  label={
+                    <span>
+                      <img height={32} src={APIService.getItemSprite('Item_0707')} /> Silver Pinaps
                     </span>
                   }
                 />

@@ -33,7 +33,7 @@ const CardMoveSmall = (props: {
                 alt="type-logo"
                 style={{ marginRight: 10 }}
                 src={APIService.getTypeSprite(
-                  props.value ? capitalize(combat.find((item: any) => item.name === props.value.name).type.toLowerCase()) : ''
+                  props.value ? capitalize(combat.find((item: any) => item.name === props.value.name).type) : ''
                 )}
               />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>

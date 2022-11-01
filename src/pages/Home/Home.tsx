@@ -1,6 +1,6 @@
 import { Table, TableContainer, TableHead, TableRow, TableBody, TableCell, tableCellClasses, styled } from '@mui/material';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import Type from '../../components/Sprites/Type/Type';
+import TypeInfo from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 
 import { splitAndCapitalize } from '../../util/Utils';
@@ -204,7 +204,7 @@ const Home = () => {
                 className={'btn-select-type w-100 border-types' + (selectTypes.includes(item) ? ' select-type' : '')}
                 style={{ padding: 10 }}
               >
-                <Type block={true} arr={[item]} />
+                <TypeInfo block={true} arr={[item]} />
               </button>
             </div>
           ))}
@@ -299,7 +299,7 @@ const Home = () => {
                           <div style={{ width: '100%', height: '100%', backgroundColor: row.color }} />
                         </StyledTableCell>
                         <StyledTableCell align="center" component="td">
-                          <Type hideText={true} block={true} height={40} arr={row.types} />
+                          <TypeInfo hideText={true} block={true} height={40} arr={row.types} />
                         </StyledTableCell>
                         <StyledTableCell align="center" component="td">
                           {row.minCP}

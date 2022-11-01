@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
-import Type from '../Sprites/Type/Type';
+import TypeInfo from '../Sprites/Type/Type';
 
 const TypeEffective = (props: {
   typeEffective: {
@@ -39,8 +39,8 @@ const TypeEffective = (props: {
       </h6>
       {props.typeEffective.very_weak?.length !== 0 || props.typeEffective.weak?.length !== 0 ? (
         <Fragment>
-          <Type text={'2.56x damage from'} arr={props.typeEffective.very_weak} style={{ marginLeft: 15 }} />
-          <Type text={'1.6x damage from'} arr={props.typeEffective.weak} style={{ marginLeft: 15 }} />
+          <TypeInfo text={'2.56x damage from'} arr={props.typeEffective.very_weak} style={{ marginLeft: 15 }} />
+          <TypeInfo text={'1.6x damage from'} arr={props.typeEffective.weak} style={{ marginLeft: 15 }} />
         </Fragment>
       ) : (
         noneSprit()
@@ -54,9 +54,9 @@ const TypeEffective = (props: {
       props.typeEffective.very_resist?.length !== 0 ||
       props.typeEffective.resist?.length !== 0 ? (
         <Fragment>
-          <Type text={'0.244x damage from'} arr={props.typeEffective.super_resist} style={{ marginLeft: 15 }} />
-          <Type text={'0.391x damage from'} arr={props.typeEffective.very_resist} style={{ marginLeft: 15 }} />
-          <Type text={'0.625x damage from'} arr={props.typeEffective.resist} style={{ marginLeft: 15 }} />
+          <TypeInfo text={'0.244x damage from'} arr={props.typeEffective.super_resist} style={{ marginLeft: 15 }} />
+          <TypeInfo text={'0.391x damage from'} arr={props.typeEffective.very_resist} style={{ marginLeft: 15 }} />
+          <TypeInfo text={'0.625x damage from'} arr={props.typeEffective.resist} style={{ marginLeft: 15 }} />
         </Fragment>
       ) : (
         noneSprit()
@@ -66,7 +66,7 @@ const TypeEffective = (props: {
           <b>Neutral</b>
         </span>
       </h6>
-      <Type text={'1x damage from'} arr={props.typeEffective.neutral} style={{ marginLeft: 15 }} />
+      <TypeInfo text={'1x damage from'} arr={props.typeEffective.neutral} style={{ marginLeft: 15 }} />
     </div>
   );
 };

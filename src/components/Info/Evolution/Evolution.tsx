@@ -496,7 +496,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
                             {data.quest.condition.desc === 'THROW_TYPE' && (
                               <Fragment>
                                 <CallMadeIcon fontSize="small" />
-                                <span>{`${capitalize(data.quest.condition.throwType.toLowerCase())} x${data.quest.goal}`}</span>
+                                <span>{`${capitalize(data.quest.condition.throwType)} x${data.quest.goal}`}</span>
                               </Fragment>
                             )}
                             {data.quest.condition.desc === 'POKEMON_TYPE' && (

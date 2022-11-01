@@ -23,7 +23,7 @@ const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any }) =>
                     <img
                       className="pokemon-sprite-small sprite-type-select filter-shadow"
                       alt="img-type-pokemon"
-                      src={APIService.getTypeHqSprite(capitalize(value.toLowerCase()))}
+                      src={APIService.getTypeHqSprite(capitalize(value))}
                     />
                   </div>
                   <span className="filter-shadow">{capitalize(value)}</span>

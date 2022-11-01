@@ -70,6 +70,7 @@ export const POKE_BALL_INC_CHANCE = 1.0;
 export const GREAT_BALL_INC_CHANCE = 1.5;
 export const ULTRA_BALL_INC_CHANCE = 2.0;
 export const RAZZ_BERRY_INC_CHANCE = 1.5;
+export const SILVER_PINAPS_INC_CHANCE = 1.8;
 export const GOLD_RAZZ_BERRY_INC_CHANCE = 2.5;
 
 export const NORMAL_THROW_INC_CHANCE = [1.0, 1.0];

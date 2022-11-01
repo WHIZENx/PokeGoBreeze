@@ -1,6 +1,6 @@
-import { capitalize } from '@mui/material';
 import APIService from '../../services/API.service';
 import { priorityBadge } from '../../util/Compute';
+import { capitalize } from '../../util/Utils';
 
 const SelectBadge = ({ type, priority, setPriority }: any) => {
   const Badge = (text: string, type: string, priorityNumber: number) => {
@@ -17,7 +17,7 @@ const SelectBadge = ({ type, priority, setPriority }: any) => {
           </span>
           {priorityNumber > 0 && (
             <span className="position-badge" style={{ width: 20 }}>
-              <img alt="badge-type" className="badge-type-sprit" src={APIService.getTypeHqSprite(capitalize(type.toLowerCase()))} />
+              <img alt="badge-type" className="badge-type-sprit" src={APIService.getTypeHqSprite(capitalize(type))} />
             </span>
           )}
         </div>
@@ -30,7 +30,7 @@ const SelectBadge = ({ type, priority, setPriority }: any) => {
     <div className="w-100 element-top">
       <div className="d-flex justify-content-center align-items-center">
         <div className={'type-icon-small ' + type.toLowerCase()} style={{ width: 'max-content' }}>
-          {capitalize(type.toLowerCase())} Badge
+          {capitalize(type)} Badge
         </div>
       </div>
       <div className="d-flex flex-wrap justify-content-center align-items-center element-top" style={{ gap: 10 }}>

@@ -8,7 +8,7 @@ import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 
 import './Damage.css';
-import Type from '../../../components/Sprites/Type/Type';
+import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Box } from '@mui/system';
 import DamageTable from './DamageTable';
 
@@ -267,11 +267,11 @@ const Damage = () => {
                 <div className="row text-center" style={{ width: 520 }}>
                   <div className="col">
                     <h5 className="text-success">- Current Pokémon Type -</h5>
-                    {form && <Type arr={form.form.types.map((ele: { type: { name: any } }) => ele.type.name)} />}
+                    {form && <TypeInfo arr={form.form.types.map((ele: { type: { name: any } }) => ele.type.name)} />}
                   </div>
                   <div className="col">
                     <h5 className="text-danger">- Object Pokémon Type -</h5>
-                    {formObj && <Type arr={formObj.form.types.map((ele: { type: { name: any } }) => ele.type.name)} />}
+                    {formObj && <TypeInfo arr={formObj.form.types.map((ele: { type: { name: any } }) => ele.type.name)} />}
                   </div>
                 </div>
               </div>
@@ -287,11 +287,10 @@ const Damage = () => {
                 {move && (
                   <div style={{ width: 300, margin: 'auto' }}>
                     <p>
-                      - Move Ability Type: <b>{capitalize(move.type_move.toLowerCase())}</b>
+                      - Move Ability Type: <b>{capitalize(move.type_move)}</b>
                     </p>
                     <p>
-                      - Move Type:{' '}
-                      <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type.toLowerCase())}</span>
+                      - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
                     </p>
                     {findStabType(
                       form.form.types.map((item: { type: { name: any } }) => item.type.name),

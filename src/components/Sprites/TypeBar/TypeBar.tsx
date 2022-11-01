@@ -11,7 +11,7 @@ const TypeBar = (props: { type: string }) => {
           style={{ padding: 5, backgroundColor: 'black' }}
           className="sprite-type"
           alt="img-type-pokemon"
-          src={APIService.getTypeHqSprite(capitalize(props.type.toLowerCase()))}
+          src={APIService.getTypeHqSprite(capitalize(props.type))}
         />
       </span>
       <h3>{splitAndCapitalize(props.type.toLowerCase(), '_', ' ')}</h3>

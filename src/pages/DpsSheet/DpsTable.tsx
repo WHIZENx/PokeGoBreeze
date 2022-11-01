@@ -18,7 +18,7 @@ import DataTable from 'react-data-table-component';
 import APIService from '../../services/API.service';
 
 import loadingImg from '../../assets/loading.png';
-import Type from '../../components/Sprites/Type/Type';
+import TypeInfo from '../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
@@ -92,7 +92,7 @@ const columns: any = [
     selector: (row: { fmove: { id: string; name: string; type: string }; elite: { fmove: any } }) => (
       <Link
         className="d-flex align-items-center"
-        to={'/moves/' + row.fmove?.id}
+        to={'/move/' + row.fmove?.id}
         target="_blank"
         title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}
       >
@@ -122,7 +122,7 @@ const columns: any = [
     selector: (row: { cmove: { id: string; name: string; type: string }; elite: { cmove: any }; mShadow: any; purified: any }) => (
       <Link
         className="d-flex align-items-center"
-        to={'/moves/' + row.cmove?.id}
+        to={'/move/' + row.cmove?.id}
         target="_blank"
         title={`${splitAndCapitalize(row.cmove?.name, '_', ' ')}`}
       >
@@ -545,7 +545,7 @@ const DpsTable = () => {
                 className={'btn-select-type w-100 border-types' + (selectTypes.includes(item) ? ' select-type' : '')}
                 style={{ padding: 10 }}
               >
-                <Type block={true} arr={[item]} />
+                <TypeInfo block={true} arr={[item]} />
               </button>
             </div>
           ))}

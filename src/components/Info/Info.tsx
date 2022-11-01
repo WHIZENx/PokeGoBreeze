@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import TypeEffective from '../Effective/TypeEffective';
 import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
-import Type from '../Sprites/Type/Type';
+import TypeInfo from '../Sprites/Type/Type';
 
 import { useSelector, RootStateOrAny } from 'react-redux';
 
@@ -62,7 +62,7 @@ const Info = (props: { data: { types: any }; currForm: { form: { id: any; types:
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <Type
+      <TypeInfo
         arr={props.currForm ? props.currForm.form.types.map((ele: { type: { name: any } }) => ele.type.name) : []}
         style={{ marginLeft: 15 }}
       />

@@ -6,7 +6,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { capitalize, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { Link, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import Type from '../../../components/Sprites/Type/Type';
+import TypeInfo from '../../../components/Sprites/Type/Type';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
 import { computeBgType, findAssetForm } from '../../../util/Compute';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -267,7 +267,7 @@ const PokemonPVP = () => {
                               #{rankingPoke.id} {splitAndCapitalize(rankingPoke.name, '-', ' ')}
                             </b>
                           </h3>
-                          <Type shadow={true} block={true} color={'white'} arr={rankingPoke.pokemon.types} />
+                          <TypeInfo shadow={true} block={true} color={'white'} arr={rankingPoke.pokemon.types} />
                         </div>
                         <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
                           Recommend Moveset in PVP

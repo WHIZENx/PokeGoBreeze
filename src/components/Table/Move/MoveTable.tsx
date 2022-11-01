@@ -32,6 +32,9 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
   });
 
   const filterMoveType = (combat: any) => {
+    if (!combat) {
+      return;
+    }
     return setMoveOrigin({
       fastMoves: combat.quickMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
       chargedMoves: combat.cinematicMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
@@ -67,6 +70,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
 
     const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form.name));
     if (result === undefined) {
+      filterMoveType(combatPoke[0]);
       setMove(
         rankMove(
           data.options,
@@ -81,6 +85,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
         )
       );
     } else {
+      filterMoveType(result);
       setMove(
         rankMove(
           data.options,
@@ -107,9 +112,9 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     return (
       <tr>
         <td className="text-origin">
-          <Link to={'../moves/' + value.fmove.id} target="_blank" className="d-block">
+          <Link to={'../move/' + value.fmove.id} target="_blank" className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type.toLowerCase()))} />
+              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
             <span style={{ width: 'max-content' }}>
@@ -122,9 +127,9 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
           </Link>
         </td>
         <td className="text-origin">
-          <Link to={'../moves/' + value.cmove.id} target="_blank" className="d-block">
+          <Link to={'../move/' + value.cmove.id} target="_blank" className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type.toLowerCase()))} />
+              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
             <span style={{ width: 'max-content' }}>
@@ -157,9 +162,9 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
         {data.map((value: any, index: React.Key) => (
           <tr key={index}>
             <td className="text-origin">
-              <Link to={'../moves/' + value.id} target="_blank" className="d-block">
+              <Link to={'../move/' + value.id} target="_blank" className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type.toLowerCase()))} />
+                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type))} />
                 </div>
                 <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
                 <span style={{ width: 'max-content' }}>

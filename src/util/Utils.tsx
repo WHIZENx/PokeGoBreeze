@@ -109,8 +109,7 @@ export const capitalize = (str: string | undefined) => {
   if (!str) {
     return '';
   }
-  str = str.toLowerCase();
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
 export const splitAndCapitalize = (str: string | undefined, splitBy: string, joinBy: string) => {
@@ -124,6 +123,9 @@ export const splitAndCapitalize = (str: string | undefined, splitBy: string, joi
 };
 
 export const reversedCapitalize = (str: string, splitBy: string, joinBy: string) => {
+  if (!str) {
+    return '';
+  }
   return str.replaceAll(joinBy, splitBy).toLowerCase();
 };
 

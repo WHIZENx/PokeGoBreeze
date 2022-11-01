@@ -1,6 +1,6 @@
 import pokemonData from '../../../data/pokemon.json';
 
-import Type from '../../../components/Sprites/Type/Type';
+import TypeInfo from '../../../components/Sprites/Type/Type';
 
 import '../PVP.css';
 import React, { useState, useEffect, Fragment, useRef } from 'react';
@@ -228,7 +228,7 @@ const RankingPVP = () => {
                         #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
                       </b>
                     </h3>
-                    <Type shadow={true} block={true} color={'white'} arr={data.pokemon.types} />
+                    <TypeInfo shadow={true} block={true} color={'white'} arr={data.pokemon.types} />
                   </div>
                   <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
                     Recommend Moveset in PVP

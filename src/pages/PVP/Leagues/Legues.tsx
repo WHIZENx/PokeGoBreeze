@@ -1,4 +1,4 @@
-import Type from '../../../components/Sprites/Type/Type';
+import TypeInfo from '../../../components/Sprites/Type/Type';
 
 import { Accordion, Form, useAccordionButton } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
@@ -399,7 +399,7 @@ const Leagues = () => {
               textTitle = splitAndCapitalize(value.title.toLowerCase(), '_', ' ');
             }
             if (value.id.includes('SAFARI_ZONE')) {
-              textTitle += ` ${value.id.split('_')[3]} ${capitalize(value.id.split('_')[4].toLowerCase())}`;
+              textTitle += ` ${value.id.split('_')[3]} ${capitalize(value.id.split('_')[4])}`;
             }
             return search === '' || textTitle.toLowerCase().includes(search.toLowerCase());
           })
@@ -431,9 +431,7 @@ const Leagues = () => {
                       {(value.id.includes('SEEKER') && ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(value.title)
                         ? splitAndCapitalize(value.id.replace('VS_', '').toLowerCase(), '_', ' ')
                         : splitAndCapitalize(value.title.toLowerCase(), '_', ' ')) +
-                        (value.id.includes('SAFARI_ZONE')
-                          ? ` ${value.id.split('_')[3]} ${capitalize(value.id.split('_')[4].toLowerCase())}`
-                          : '')}{' '}
+                        (value.id.includes('SAFARI_ZONE') ? ` ${value.id.split('_')[3]} ${capitalize(value.id.split('_')[4])}` : '')}{' '}
                       {dataStore.leagues.allowLeagues.includes(value.id) && (
                         <span className="d-inline-block caption text-success">(Opened)</span>
                       )}
@@ -498,7 +496,7 @@ const Leagues = () => {
                       {value.conditions.unique_type && (
                         <li style={{ fontWeight: 500 }} className="unique-type">
                           <h6 className="title-leagues">Unique Type</h6>
-                          <Type arr={value.conditions.unique_type} style={{ marginLeft: 15 }} />
+                          <TypeInfo arr={value.conditions.unique_type} style={{ marginLeft: 15 }} />
                         </li>
                       )}
                       {value.conditions.whiteList.length !== 0 && (

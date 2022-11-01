@@ -15,7 +15,7 @@ import { computeBgType, findAssetForm } from '../../../util/Compute';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { Accordion } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
-import Type from '../../../components/Sprites/Type/Type';
+import TypeInfo from '../../../components/Sprites/Type/Type';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -357,7 +357,14 @@ const TeamPVP = () => {
                         <div>
                           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
                             <b className="text-white text-shadow">{splitAndCapitalize(value.name, '-', ' ')}</b>
-                            <Type hideText={true} block={true} shadow={true} height={20} color={'white'} arr={value.pokemonData.types} />
+                            <TypeInfo
+                              hideText={true}
+                              block={true}
+                              shadow={true}
+                              height={20}
+                              color={'white'}
+                              arr={value.pokemonData.types}
+                            />
                           </div>
                           <div className="d-flex" style={{ columnGap: 10 }}>
                             <TypeBadge
@@ -558,7 +565,7 @@ const TeamPVP = () => {
                                     <div>
                                       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
                                         <b className="text-white text-shadow">{splitAndCapitalize(value.name, '-', ' ')}</b>
-                                        <Type
+                                        <TypeInfo
                                           hideText={true}
                                           block={true}
                                           shadow={true}

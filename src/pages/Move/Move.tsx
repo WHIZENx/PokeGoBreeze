@@ -195,14 +195,14 @@ const Move = (props: { id?: any }) => {
                     <td>Type</td>
                     <td colSpan={2}>
                       <div style={{ width: 'fit-content' }} className={'type-icon-small ' + move.type.toLowerCase()}>
-                        {capitalize(move.type.toLowerCase())}
+                        {capitalize(move.type)}
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td>Move Type</td>
                     <td colSpan={2}>
-                      <b>{capitalize(move.type_move.toLowerCase())} Move</b>
+                      <b>{capitalize(move.type_move)} Move</b>
                     </td>
                   </tr>
                   <tr>

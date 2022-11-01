@@ -4,7 +4,7 @@ import { capitalize } from '../../../util/Utils';
 
 import './Type.css';
 
-const Type = (props: {
+const TypeInfo = (props: {
   arr: any;
   block?: any;
   shadow?: any;
@@ -46,7 +46,7 @@ const Type = (props: {
                   src={APIService.getTypeSprite(value)}
                 />
                 <span className={'caption' + (props.shadow ? ' text-shadow' : '')} style={{ color: props.color ?? 'black' }}>
-                  {capitalize(value.toLowerCase())}
+                  {capitalize(value)}
                 </span>
               </div>
             )}
@@ -57,4 +57,4 @@ const Type = (props: {
   );
 };
 
-export default Type;
+export default TypeInfo;

@@ -5,7 +5,7 @@ import FormTools from './FormTools';
 
 import loading from '../../../assets/loading.png';
 import { splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
-import Type from '../../Sprites/Type/Type';
+import TypeInfo from '../../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 
 const Tools = (props: {
@@ -188,7 +188,7 @@ const Tools = (props: {
       </div>
       <div className="element-top" style={{ height: 64 }}>
         {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length && (
-          <Type arr={currForm.form.types.map((type: { type: { name: any } }) => type.type.name)} />
+          <TypeInfo arr={currForm.form.types.map((type: { type: { name: any } }) => type.type.name)} />
         )}
       </div>
       <h4>

@@ -1,8 +1,7 @@
 import React from 'react';
-import { capitalize } from '@mui/material';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 
 import './TypeBadge.css';
 import { RootStateOrAny, useSelector } from 'react-redux';
@@ -32,7 +31,7 @@ const TypeBadge = (props: {
       </span>
       <Link
         target="_blank"
-        to={'/moves/' + move.id}
+        to={'/move/' + move.id}
         className="d-flex align-items-center position-relative"
         style={{ width: 'fit-content' }}
       >
@@ -64,7 +63,7 @@ const TypeBadge = (props: {
               style={{ padding: 5, backgroundColor: 'black' }}
               className="sprite-type"
               alt="img-type-pokemon"
-              src={APIService.getTypeHqSprite(capitalize(move.type.toLowerCase()))}
+              src={APIService.getTypeHqSprite(capitalize(move.type))}
             />
           </div>
         </span>

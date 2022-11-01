@@ -12,7 +12,7 @@ import './App.css';
 import NavbarComponent from './components/Navbar';
 // import FooterComponent from './components/Footer'
 
-import Home from './pages/Home/Home';
+import Home from './pages/Home/Home-v2';
 import SearchPokemon from './pages/Search/Pokemon/Search';
 import SearchMove from './pages/Search/Move/Search';
 import TypeEffect from './pages/TypeEffect/TypeEffect';
@@ -40,6 +40,7 @@ import Spinner from './components/Spinner/Spinner';
 import { loadStats } from './store/actions/stats.action';
 import CatchChance from './pages/Tools/CatchChance/CatchChane';
 import { useLocalStorage } from 'usehooks-ts';
+import SearchTypes from './pages/Search/Types/Types';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -198,9 +199,10 @@ const App = () => {
             <Route path="/type-effective" element={<TypeEffect />} />
             <Route path="/weather-boosts" element={<Weather />} />
             <Route path="/search-pokemon" element={<SearchPokemon />} />
-            <Route path="/search-move" element={<SearchMove />} />
+            <Route path="/search-moves" element={<SearchMove />} />
+            <Route path="/search-types" element={<SearchTypes />} />
             <Route path="/pokemon/:id" element={<Pokemon />} />
-            <Route path="/moves/:id" element={<Move />} />
+            <Route path="/move/:id" element={<Move />} />
             <Route path="/find-cp-iv" element={<FindTable />} />
             <Route path="/calculate-stats" element={<CalculateStats />} />
             <Route path="/search-battle-stats" element={<SearchBattle />} />
