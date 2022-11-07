@@ -57,10 +57,10 @@ export const raidEgg = (tier: number, mega: any, ultra?: boolean) => {
     return APIService.getRaidSprite('raid_egg_0_icon');
   } else if (tier === 3) {
     return APIService.getRaidSprite('raid_egg_1_icon');
+  } else if (tier === 4 && mega) {
+    return APIService.getRaidSprite('raid_egg_3_icon');
   } else if (tier === 4) {
     return APIService.getRaidSprite('raid_egg_5_icon');
-  } else if (tier === 5 && mega) {
-    return APIService.getRaidSprite('raid_egg_3_icon');
   } else if (tier === 5) {
     return APIService.getRaidSprite('raid_egg_2_icon');
   } else if (tier === 6) {

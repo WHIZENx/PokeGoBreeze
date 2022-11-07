@@ -26,16 +26,17 @@ const Raid = ({
 }: any) => {
   const details = useSelector((state: RootStateOrAny) => state.store.data.details);
   const [tier, setTier]: any = useState(1);
+  const [pokemonClass, setPokemonClass]: any = useState(null);
 
   useEffect(() => {
+    setPokemonClass(Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass);
+  }, [id]);
+
+  useEffect(() => {
+    const pokemonClass = Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass;
     if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) {
       setTier(5);
-    } else if (
-      parseInt(tier) === 5 &&
-      currForm &&
-      currForm.form.form_name.includes('mega') &&
-      Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass
-    ) {
+    } else if (parseInt(tier) === 5 && currForm && currForm.form.form_name.includes('mega') && pokemonClass) {
       setTier(6);
     }
     if (setTierBoss) {
@@ -67,21 +68,21 @@ const Raid = ({
           <optgroup label="Normal Tiers">
             <option value={1}>Tier 1</option>
             <option value={3}>Tier 3</option>
-            {currForm && !currForm.form.form_name.includes('mega') && <option value={5}>Tier 5</option>}
+            {((currForm && !currForm.form.form_name.includes('mega')) || !pokemonClass) && <option value={5}>Tier 5</option>}
           </optgroup>
           <optgroup label="Legacy Tiers">
             <option value={2}>Tier 2</option>
-            <option value={4}>Tier 4</option>
+            {((currForm && !currForm.form.form_name.includes('mega')) || pokemonClass) && <option value={4}>Tier 4</option>}
           </optgroup>
           {currForm && currForm.form.form_name.includes('mega') && (
             <Fragment>
-              {Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass ? (
-                <optgroup label="Legendary Mega Tiers">
+              {pokemonClass ? (
+                <optgroup label="Legendary Mega Tier 6">
                   <option value={6}>Tier Mega</option>
                 </optgroup>
               ) : (
-                <optgroup label="Mega Tiers">
-                  <option value={5}>Tier Mega</option>
+                <optgroup label="Mega Tier 4">
+                  <option value={4}>Tier Mega</option>
                 </optgroup>
               )}
             </Fragment>
@@ -112,7 +113,7 @@ const Raid = ({
             alt="img-raid-egg"
             src={raidEgg(
               parseInt(tier),
-              currForm && currForm.form.form_name.includes('mega'),
+              currForm && currForm.form.form_name.includes('mega') && !pokemonClass,
               details.find((pokemon: { id: any }) => pokemon.id === id)?.pokemonClass === 'ULTRA_BEAST'
             )}
           />

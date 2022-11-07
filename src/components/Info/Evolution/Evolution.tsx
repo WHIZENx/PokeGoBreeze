@@ -320,7 +320,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
           baby: false,
           form: 'normal',
           gmax: true,
-          sprite: form.name.replace('-gmax', '').replace('-single-strike', ''),
+          sprite: convertModelSpritName(form.name.replace('-gmax', '')),
         },
       ],
       [
@@ -330,7 +330,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
           baby: false,
           form: 'gmax',
           gmax: true,
-          sprite: form.name.replace('-gmax', '-gigantamax').replace('-single-strike', ''),
+          sprite: convertModelSpritName(form.name.replace('-gmax', '-gigantamax').replace('-low-key', '')),
         },
       ],
     ]);
@@ -383,7 +383,11 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
         className="pokemon-sprite"
         id="img-pokemon"
         alt="img-pokemon"
-        src={APIService.getPokemonAsset('pokemon-animation', 'all', value.sprite, 'gif')}
+        src={
+          value.id >= 894
+            ? APIService.getPokeSprite(value.id)
+            : APIService.getPokemonAsset('pokemon-animation', 'all', value.sprite.replace('-disguised', ''), 'gif')
+        }
         onError={(e: any) => {
           e.onerror = null;
           APIService.getFetchUrl(e.target.currentSrc)

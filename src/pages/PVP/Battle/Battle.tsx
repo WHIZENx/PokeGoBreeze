@@ -901,7 +901,7 @@ const Battle = () => {
         }
         if (elem) {
           elem.style.transform = 'translate(' + width + 'px, -50%)';
-          overlappingPos(arrBound.current, width + xNormal.current);
+          overlappingPos(arrBound.current, width + xNormal.current, true);
         }
         if (Math.min(width, timelineNormalContainer.current.clientWidth / 2) === timelineNormalContainer.current.clientWidth / 2) {
           timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
@@ -915,7 +915,7 @@ const Battle = () => {
         const width = Math.min(timelineFit.current.clientWidth, xCurrent + durationFractor * timelineFit.current.clientWidth);
         if (elem) {
           elem.style.transform = 'translate(' + width + 'px, -50%)';
-          overlappingPos(arrStore.current, elem.getBoundingClientRect().left);
+          overlappingPos(arrStore.current, elem.getBoundingClientRect().left, true);
         }
         if (width < timelineFit.current.clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
@@ -955,16 +955,30 @@ const Battle = () => {
     });
   };
 
-  const overlappingPos = (arr: any[], pos = 0) => {
+  const overlappingPos = (arr: any[], pos = 0, sound = false) => {
     const index = arr.filter((dom: { left: number }) => dom.left <= pos).length;
     if (index >= 0 && index < arr.length) {
-      updateTimeine(index);
+      updateTimeine(index, sound);
     }
   };
 
-  const updateTimeine = (index: string | number) => {
+  const updateTimeine = (index: string | number, sound = false) => {
     const pokeCurrData = pokemonCurr.timeline[index];
     const pokeObjData = pokemonObj.timeline[index];
+    // if (sound) {
+    //   if (pokemonCurr.audio.fMove.paused && pokeCurrData.type === 'F') {
+    //     pokemonCurr.audio.fMove.currentTime = 0;
+    //     pokemonCurr.audio.fMove.play();
+    //   } else if (!pokemonCurr.audio.fMove.paused && pokeCurrData.type === 'F') {
+    //     pokemonCurr.audio.fMove.pause();
+    //   }
+    //   if (pokemonObj.audio.fMove.paused && pokeObjData.type === 'F') {
+    //     pokemonObj.audio.fMove.currentTime = 0;
+    //     pokemonObj.audio.fMove.play();
+    //   } else if (!pokemonObj.audio.fMove.paused && pokeObjData.type === 'F') {
+    //     pokemonObj.audio.fMove.pause();
+    //   }
+    // }
     setPlayTimeline({
       pokemonCurr: { hp: pokeCurrData?.hp ?? 0, energy: pokeCurrData?.energy ?? 0 },
       pokemonObj: { hp: pokeObjData?.hp ?? 0, energy: pokeObjData?.energy ?? 0 },

@@ -139,8 +139,29 @@ export const convertModelSpritName = (text: string) => {
     .replaceAll('_', '-')
     .replaceAll('%', '')
     .replace('mime-jr', 'mime_jr')
-    .replace('-female', '_f')
-    .replace('-male', '_m');
+    .replace('-female', (text.toLowerCase().includes('meowstic') || text.toLowerCase().includes('indeedee') ? '-' : '_') + 'f')
+    .replace(
+      '-male',
+      (text.toLowerCase().includes('meowstic') ? '-' : text.toLowerCase().includes('indeedee') ? '' : '_') +
+        text.toLowerCase().includes('indeedee')
+        ? ''
+        : 'm'
+    )
+    .replace('-altered', '')
+    .replace('-land', '')
+    .replace('-standard', '')
+    .replace('-ordinary', '')
+    .replace('-aria', '')
+    .replace('-average', '')
+    .replace('-baile', '')
+    .replace('-midday', '')
+    .replace('-solo', '')
+    .replace('-disguised', '')
+    .replace('-amped', '')
+    .replace('eiscue-ice', 'eiscue')
+    .replace('-hangry', '-hangry-mode')
+    .replace('-white-striped', '')
+    .replace('-single-strike', '');
 };
 
 export const convertName = (text: string | undefined) => {

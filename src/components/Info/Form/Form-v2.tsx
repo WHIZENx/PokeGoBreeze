@@ -267,7 +267,21 @@ const Form = ({
                               });
                           }}
                           alt="img-icon-form"
-                          src={APIService.getPokeIconSprite(value.form.name)}
+                          src={
+                            value.form.name.includes('-totem') ||
+                            value.form.name.includes('-hisui') ||
+                            value.form.name.includes('power-construct') ||
+                            value.form.name.includes('own-tempo') ||
+                            value.form.name.includes('-meteor') ||
+                            value.form.name === 'dialga-origin' ||
+                            value.form.name === 'palkia-origin' ||
+                            value.form.name === 'basculin-white-striped' ||
+                            value.form.name === 'greninja-battle-bond' ||
+                            value.form.name === 'urshifu-rapid-strike' ||
+                            (pokeID && pokeID >= 899)
+                              ? APIService.getPokeIconSprite('unknown-pokemon')
+                              : APIService.getPokeIconSprite(value.form.name)
+                          }
                         />
                       </div>
                     </div>
@@ -320,7 +334,7 @@ const Form = ({
       <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} pokemonStats={stats} stats={dataPoke} />
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>
-        <div className="col-md-5" style={{ padding: 0 }}>
+        <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
           <Info data={dataPoke} currForm={currForm} />
           <h5 className="element-top">
             <li>Raid</li>

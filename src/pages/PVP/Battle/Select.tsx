@@ -77,27 +77,44 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       fMove: fmove,
       cMovePri,
       cMoveSec,
+      audio: {
+        fMove: new Audio(APIService.getSoundMove(fmove.sound)),
+        cMovePri: new Audio(APIService.getSoundMove(cMovePri.sound)),
+        cMoveSec: new Audio(APIService.getSoundMove(cMoveSec.sound)),
+      },
     });
   };
 
   const selectFMove = (value: any) => {
     clearData();
     setFMove(value);
-    setPokemonBattle({ ...pokemonBattle, fMove: value });
+    setPokemonBattle({
+      ...pokemonBattle,
+      fMove: value,
+      audio: { ...pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value.sound)) },
+    });
     setShowFMove(false);
   };
 
   const selectCMovePri = (value: any) => {
     clearData();
     setCMovePri(value);
-    setPokemonBattle({ ...pokemonBattle, cMovePri: value });
+    setPokemonBattle({
+      ...pokemonBattle,
+      cMovePri: value,
+      audio: { ...pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value.sound)) },
+    });
     setShowCMovePri(false);
   };
 
   const selectCMoveSec = (value: any) => {
     clearData();
     setCMoveSec(value);
-    setPokemonBattle({ ...pokemonBattle, cMoveSec: value });
+    setPokemonBattle({
+      ...pokemonBattle,
+      cMoveSec: value,
+      audio: { ...pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value.sound)) },
+    });
     setShowCMoveSec(false);
   };
 

@@ -10,7 +10,6 @@ const POGO_ASSET_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_as
 const POGO_SOUND_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Sounds/';
 const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
-const POKE_ICON_SPRITES_API_URL = 'https://raw.githubusercontent.com/waydelyle/pokemon-assets/master/assets/img/pokemon/';
 const POKE_ICON_SPRITES_TYPE_API_URL = 'https://raw.githubusercontent.com/apavlinovic/pokemon-go-imagery/master/Sprite/';
 const POKE_SPRITES_FULL_API_URL = 'https://assets.pokemon.com/assets/cms2/img/pokedex/detail/';
 
@@ -139,16 +138,40 @@ class APIService {
     return `${POKE_SPRITES_FULL_API_URL}${id}.png`;
   }
 
-  getPokeIconSprite(name: string, fix = false) {
-    if (!fix) {
+  getPokeIconSprite(name: string, noFix = false) {
+    if (!noFix) {
       if (name.includes('necrozma-dawn')) {
         name += '-wings';
       } else if (name.includes('necrozma-dusk')) {
         name += '-mane';
       }
-      name = name.replace('-incarnate', '');
+      name = name
+        .replace('-incarnate', '')
+        .replace('-normal', '')
+        .replace('-plant', '')
+        .replace('-altered', '')
+        .replace('-land', '')
+        .replace('-red-striped', '')
+        .replace('-standard', '')
+        .replace('-ordinary', '')
+        .replace('-aria', '')
+        .replace('meowstic-male', 'meowstic')
+        .replace('meowstic-female', 'meowstic-f')
+        .replace('aegislash-shield', 'aegislash')
+        .replace('-average', '')
+        .replace('-50', '')
+        .replace('-baile', '')
+        .replace('-midday', '')
+        .replace('-solo', '')
+        .replace('-disguised', '')
+        .replace('-amped', '')
+        .replace('eiscue-ice', 'eiscue')
+        .replace('indeedee-male', 'indeedee')
+        .replace('indeedee-female', 'indeedee-f')
+        .replace('-full-belly', '')
+        .replace('-single-strike', '');
     }
-    return `${POKE_ICON_SPRITES_API_URL}${name}.png`;
+    return `${POKE_ASSETS_URL}/icon/${name}.png`;
   }
 
   getPokeGifSprite(name: string) {
