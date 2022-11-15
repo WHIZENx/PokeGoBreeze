@@ -22,6 +22,14 @@
   height: 650px;
 }
 
+.highlight-select-pokemon {
+  background-color: #aaaaaa !important;
+}
+
+.current-select-pokemon {
+  background-color: lightgray;
+}
+
 .search-container {
   margin-bottom: 15px;
 }
