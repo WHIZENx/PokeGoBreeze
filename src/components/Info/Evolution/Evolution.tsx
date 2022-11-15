@@ -150,7 +150,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
       baby: pokemon.isBaby,
       form: pokemon.forme ?? '',
       gmax: false,
-      sprite: pokemon.name.toLowerCase().replace('%', ''),
+      sprite: convertModelSpritName(pokemon.name),
     };
   };
 
@@ -384,9 +384,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) =>
         id="img-pokemon"
         alt="img-pokemon"
         src={
-          value.id >= 894
-            ? APIService.getPokeSprite(value.id)
-            : APIService.getPokemonAsset('pokemon-animation', 'all', value.sprite.replace('-disguised', ''), 'gif')
+          value.id >= 894 ? APIService.getPokeSprite(value.id) : APIService.getPokemonAsset('pokemon-animation', 'all', value.sprite, 'gif')
         }
         onError={(e: any) => {
           e.onerror = null;

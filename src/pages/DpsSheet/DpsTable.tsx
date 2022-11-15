@@ -206,8 +206,8 @@ const DpsTable = () => {
     return data;
   };
 
-  const [dpsTable, setDpsTable]: any = useState(initData(10));
-  const [dataFilter, setDataFilter]: any = useState(initData(10));
+  const [dpsTable, setDpsTable]: any = useState([]);
+  const [dataFilter, setDataFilter]: any = useState([]);
   const [searchTerm, setSearchTerm]: any = useState('');
 
   const [dataTargetPokemon, setDataTargetPokemon]: any = useState(null);

@@ -33,7 +33,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
 
   const filterMoveType = (combat: any) => {
     if (!combat) {
-      return;
+      return setMoveOrigin(null);
     }
     return setMoveOrigin({
       fastMoves: combat.quickMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),

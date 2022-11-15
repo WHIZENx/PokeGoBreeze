@@ -114,7 +114,7 @@ const StatsTable = () => {
       <h1 id="main" className="text-center">
         Stats Battle Table
       </h1>
-      <div className="text-center" style={{ marginTop: 15, marginBottom: 15 }}>
+      <div className="d-flex justify-content-center text-center" style={{ marginTop: 15, marginBottom: 15, gap: 10 }}>
         <button
           className={'btn btn-form' + (battleLeague === 500 ? ' form-selected' : '')}
           style={{ height: 200 }}

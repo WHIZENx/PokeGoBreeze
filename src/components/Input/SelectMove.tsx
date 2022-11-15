@@ -29,6 +29,9 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
       );
       const simpleMove: any[] = [];
       if (resultFirst.length === 1 || result == null) {
+        if (resultFirst.length === 0) {
+          return setResultMove([]);
+        }
         if (type === 'FAST') {
           resultFirst[0].quickMoves.forEach((value: any) => {
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
@@ -110,27 +113,32 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
         }
         style={{ padding: 0, borderRadius: 0 }}
       >
-        <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-          <CardMoveSmall
-            value={move === '' ? null : move}
-            show={pokemon ? true : false}
-            disable={disable}
-            select={resultMove && resultMove.length > 1}
-          />
-          {showMove && resultMove && (
-            <div className="result-move-select">
-              <div>
-                {resultMove
-                  .filter((value: { name: any }) => value.name !== move.name)
-                  .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
-                    <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
-                      <CardMoveSmall value={value} />
-                    </div>
-                  ))}
+        {resultMove && resultMove.length === 0 && (
+          <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves Unavailable</span>
+        )}
+        {resultMove && resultMove.length > 0 && (
+          <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
+            <CardMoveSmall
+              value={move === '' ? null : move}
+              show={pokemon ? true : false}
+              disable={disable}
+              select={resultMove && resultMove.length > 1}
+            />
+            {showMove && resultMove && (
+              <div className="result-move-select">
+                <div>
+                  {resultMove
+                    .filter((value: { name: any }) => value.name !== move.name)
+                    .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
+                      <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
+                        <CardMoveSmall value={value} />
+                      </div>
+                    ))}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     );
   };

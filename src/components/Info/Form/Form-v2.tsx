@@ -273,6 +273,8 @@ const Form = ({
                             value.form.name.includes('power-construct') ||
                             value.form.name.includes('own-tempo') ||
                             value.form.name.includes('-meteor') ||
+                            value.form.name === 'mewtwo-armor' ||
+                            value.form.name === 'arceus-unknown' ||
                             value.form.name === 'dialga-origin' ||
                             value.form.name === 'palkia-origin' ||
                             value.form.name === 'basculin-white-striped' ||

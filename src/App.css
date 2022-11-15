@@ -195,7 +195,6 @@ ul {
 
 .disable-card-move {
   color: gray;
-  filter: grayscale(1);
 }
 
 .cursor-pointer {

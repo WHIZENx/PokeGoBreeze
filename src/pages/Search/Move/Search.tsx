@@ -6,6 +6,7 @@ import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 
 import './Search.css';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
@@ -62,9 +63,9 @@ const Search = () => {
   const types = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
 
   const [filters, setFilters] = useState({
-    fMoveType: '',
+    fMoveType: 'all',
     fMoveName: '',
-    cMoveType: '',
+    cMoveType: 'all',
     cMoveName: '',
   });
 
@@ -85,7 +86,7 @@ const Search = () => {
           (move: { name: string; track: { toString: () => string | string[] }; type: string }) =>
             (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(fMoveName.toLowerCase()) ||
               move.track.toString().includes(fMoveName)) &&
-            (fMoveType === '' || fMoveType === capitalize(move.type))
+            (fMoveType === 'all' || fMoveType === capitalize(move.type))
         )
     );
     setResultCMove(
@@ -95,7 +96,7 @@ const Search = () => {
           (move: { name: string; track: { toString: () => string | string[] }; type: string }) =>
             (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(cMoveName.toLowerCase()) ||
               move.track.toString().includes(cMoveName)) &&
-            (cMoveType === '' || cMoveType === capitalize(move.type))
+            (cMoveType === 'all' || cMoveType === capitalize(move.type))
         )
     );
   }, [fMoveName, fMoveType, cMoveName, cMoveType, combat]);
@@ -111,29 +112,36 @@ const Search = () => {
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={3}>
                   <div className="row" style={{ margin: 0 }}>
-                    <div className="col-4 d-flex justify-content-center align-items-center">Fast moves</div>
-                    <div className="col-4">
-                      <Form.Select
-                        style={{ borderRadius: 0 }}
-                        className="form-control"
-                        value={fMoveType}
-                        onChange={(e) => setFilters({ ...filters, fMoveType: e.target.value })}
-                      >
-                        <option value="">All</option>
-                        {Object.keys(types).map((value, index) => (
-                          <option key={index} value={value}>
-                            {value}
-                          </option>
-                        ))}
-                      </Form.Select>
+                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+                      Fast Moves List
                     </div>
-                    <div className="col-4">
-                      <input
+                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+                      <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
+                        <InputLabel>Type</InputLabel>
+                        <Select
+                          value={fMoveType}
+                          label="Type"
+                          onChange={(e: SelectChangeEvent) => setFilters({ ...filters, fMoveType: e.target.value })}
+                        >
+                          <MenuItem value="all" defaultChecked={true}>
+                            All
+                          </MenuItem>
+                          {Object.keys(types).map((value, index) => (
+                            <MenuItem key={index} value={capitalize(value)}>
+                              {capitalize(value)}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+                      <TextField
                         type="text"
-                        className="form-control input-search"
+                        variant="outlined"
                         placeholder="Enter Name or ID"
-                        value={fMoveName}
-                        onInput={(e: any) => setFilters({ ...filters, fMoveName: e.target.value })}
+                        value={cMoveName}
+                        onChange={(e: any) => setFilters({ ...filters, fMoveName: e.target.value })}
+                        size="small"
                       />
                     </div>
                   </div>
@@ -160,29 +168,34 @@ const Search = () => {
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={3}>
                   <div className="row" style={{ margin: 0 }}>
-                    <div className="col-4 d-flex justify-content-center align-items-center">Charged moves</div>
-                    <div className="col-4">
-                      <Form.Select
-                        style={{ borderRadius: 0 }}
-                        className="form-control"
-                        value={cMoveType}
-                        onChange={(e) => setFilters({ ...filters, cMoveType: e.target.value })}
-                      >
-                        <option value="">All</option>
-                        {Object.keys(types).map((value, index) => (
-                          <option key={index} value={value}>
-                            {value}
-                          </option>
-                        ))}
-                      </Form.Select>
+                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+                      Charged Moves List
                     </div>
-                    <div className="col-4">
-                      <input
+                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+                      <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
+                        <InputLabel>Type</InputLabel>
+                        <Select
+                          value={cMoveType}
+                          label="Type"
+                          onChange={(e: SelectChangeEvent) => setFilters({ ...filters, cMoveType: e.target.value })}
+                        >
+                          <MenuItem value="all">All</MenuItem>
+                          {Object.keys(types).map((value, index) => (
+                            <MenuItem key={index} value={capitalize(value)}>
+                              {capitalize(value)}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+                      <TextField
                         type="text"
-                        className="form-control input-search"
+                        variant="outlined"
                         placeholder="Enter Name or ID"
                         value={cMoveName}
-                        onInput={(e: any) => setFilters({ ...filters, cMoveName: e.target.value })}
+                        onChange={(e: any) => setFilters({ ...filters, cMoveName: e.target.value })}
+                        size="small"
                       />
                     </div>
                   </div>

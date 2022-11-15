@@ -463,7 +463,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                             <h5 className="d-flex">Version</h5>
                           </td>
                           <td colSpan={2}>
-                            <h5 className="d-flex">{version && version.replace('Go', 'GO')}</h5>
+                            <h5 className="d-flex">{version && version.replace(' Go', ' GO')}</h5>
                           </td>
                         </tr>
                         <tr>
