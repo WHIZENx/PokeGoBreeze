@@ -1,6 +1,6 @@
 {
   "name": "pokego-breeze",
-  "version": "2.4.0a",
+  "version": "2.5.0a",
   "main": "index.tsx",
   "license": "MIT",
   "description": "Web Application for Pokemon GO Tools&Information",
@@ -85,7 +85,7 @@
     "postcss-loader": "^7.0.1",
     "prettier": "^2.7.1",
     "process": "^0.11.10",
-    "react-hot-loader": "^4.13.0",
+    "react-hot-loader": "^4.13.1",
     "style-loader": "^3.3.1",
     "stylelint": "^14.13.0",
     "stylelint-config-standard": "^28.0.0",

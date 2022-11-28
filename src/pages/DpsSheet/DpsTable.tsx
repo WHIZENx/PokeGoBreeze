@@ -187,25 +187,6 @@ const DpsTable = () => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const types = Object.keys(data.typeEff);
 
-  const initData = (count: number) => {
-    const data: any = [];
-    const initObj = {
-      pokemon: null,
-      fmove: null,
-      cmove: null,
-      elite: null,
-      dps: null,
-      tdo: null,
-      multiDpsTdo: null,
-      cp: null,
-    };
-
-    for (let i = 0; i < count; i++) {
-      data.push(initObj);
-    }
-    return data;
-  };
-
   const [dpsTable, setDpsTable]: any = useState([]);
   const [dataFilter, setDataFilter]: any = useState([]);
   const [searchTerm, setSearchTerm]: any = useState('');
@@ -215,6 +196,7 @@ const DpsTable = () => {
   const [cmoveTargetPokemon, setCmoveTargetPokemon]: any = useState(null);
 
   const [filters, setFilters] = useState({
+    match: false,
     showEliteMove: true,
     showShadow: true,
     showMega: true,
@@ -232,6 +214,7 @@ const DpsTable = () => {
   });
 
   const {
+    match,
     showEliteMove,
     showShadow,
     enableShadow,
@@ -258,7 +241,6 @@ const DpsTable = () => {
   });
   const { WEATHER_BOOSTS, TRAINER_FRIEND, TRAINER_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
 
-  const [finished, setFinished]: any = useState(false);
   const [showSpinner, setShowSpinner]: any = useState(true);
   const [selectTypes, setSelectTypes]: any = useState([]);
 
@@ -401,7 +383,6 @@ const DpsTable = () => {
         addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true);
       }
     });
-    setFinished(true);
     setTimeout(() => {
       setShowSpinner(false);
     }, 700);
@@ -419,21 +400,7 @@ const DpsTable = () => {
     );
   };
 
-  useEffect(() => {
-    document.title = 'DPS&TDO Table';
-    setTimeout(() => {
-      setDpsTable(calculateDPSTable());
-    }, 1);
-  }, []);
-
-  useEffect(() => {
-    setShowSpinner(true);
-    setTimeout(() => {
-      setDpsTable(calculateDPSTable());
-    }, 300);
-  }, [dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
-
-  useEffect(() => {
+  const searchFilter = () => {
     let result = dpsTable.filter(
       (item: {
         fmove?: { type: string };
@@ -452,8 +419,11 @@ const DpsTable = () => {
           (selectTypes.includes(item.fmove?.type.toUpperCase()) && selectTypes.includes(item.cmove?.type.toUpperCase()));
         const boolFilterPoke =
           searchTerm === '' ||
-          splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.pokemon?.num.toString().includes(searchTerm);
+          (match
+            ? splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() ||
+              item.pokemon?.num.toString() === searchTerm
+            : splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
+              item.pokemon?.num.toString().includes(searchTerm));
 
         const boolShowShadow = !showShadow && item.shadow;
         const boolShowElite = !showEliteMove && (item.elite?.fmove || item.elite?.cmove);
@@ -497,11 +467,40 @@ const DpsTable = () => {
     if (enableBest) {
       result = filterBestOptions(result, bestOf);
     }
-    setDataFilter(result);
+    return result;
+  };
+
+  useEffect(() => {
+    document.title = 'DPS&TDO Table';
+  }, []);
+
+  useEffect(() => {
+    setShowSpinner(true);
+    setTimeout(() => {
+      setDpsTable(calculateDPSTable());
+    }, 300);
+  }, [dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
+
+  useEffect(() => {
+    setShowSpinner(true);
+    const timeOutId = setTimeout(() => {
+      setDataFilter(searchFilter());
+      setShowSpinner(false);
+    }, 500);
+    return () => clearTimeout(timeOutId);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    setShowSpinner(true);
+    const timeOutId = setTimeout(() => {
+      setDataFilter(searchFilter());
+      setShowSpinner(false);
+    }, 100);
+    return () => clearTimeout(timeOutId);
   }, [
     dpsTable,
+    match,
     selectTypes,
-    searchTerm,
     showShadow,
     showEliteMove,
     showMega,
@@ -518,10 +517,6 @@ const DpsTable = () => {
       return setSelectTypes([...selectTypes].filter((item) => item !== value));
     }
     return setSelectTypes((oldArr: any[]) => [...oldArr, value]);
-  };
-
-  const clearData = () => {
-    setFinished(false);
   };
 
   const onCalculateTable = useCallback((e: { preventDefault: () => void }) => {
@@ -552,15 +547,25 @@ const DpsTable = () => {
         </div>
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xxl" style={{ padding: 0 }}>
-            <div className="input-group border-input">
-              <span className="input-group-text">Search name or ID</span>
-              <input
-                type="text"
-                className="form-control input-search"
-                placeholder="Enter Name or ID"
-                value={searchTerm}
-                onInput={(e: any) => setSearchTerm(e.target.value)}
-              />
+            <div className="border-input">
+              <div className="row w-100" style={{ margin: 0 }}>
+                <div className="d-flex col-md-9" style={{ padding: 0 }}>
+                  <span className="input-group-text">Search name or ID</span>
+                  <input
+                    type="text"
+                    className="form-control input-search"
+                    placeholder="Enter Name or ID"
+                    value={searchTerm}
+                    onInput={(e: any) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="d-flex col-md-3">
+                  <FormControlLabel
+                    control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
+                    label="Match Pokémon"
+                  />
+                </div>
+              </div>
             </div>
             <div className="input-group">
               <span className="input-group-text">Filter show</span>
@@ -630,7 +635,6 @@ const DpsTable = () => {
                   <div className="input-group">
                     <span className="input-group-text">Target Pokémon</span>
                     <SelectPokemon
-                      clearData={clearData}
                       selected={true}
                       setCurrentPokemon={setDataTargetPokemon}
                       setFMovePokemon={setFmoveTargetPokemon}
@@ -644,7 +648,6 @@ const DpsTable = () => {
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
                       inputType={'small'}
-                      clearData={clearData}
                       pokemon={dataTargetPokemon}
                       move={fmoveTargetPokemon}
                       setMovePokemon={setFmoveTargetPokemon}
@@ -658,7 +661,6 @@ const DpsTable = () => {
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
                       inputType={'small'}
-                      clearData={clearData}
                       pokemon={dataTargetPokemon}
                       move={cmoveTargetPokemon}
                       setMovePokemon={setCmoveTargetPokemon}

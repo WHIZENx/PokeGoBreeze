@@ -229,9 +229,25 @@ const Tools = (props: {
                             });
                         }}
                         alt="img-icon-form"
-                        src={APIService.getPokeIconSprite(value.form.name)}
+                        src={
+                          value.form.name.includes('-totem') ||
+                          value.form.name.includes('-hisui') ||
+                          value.form.name.includes('power-construct') ||
+                          value.form.name.includes('own-tempo') ||
+                          value.form.name.includes('-meteor') ||
+                          value.form.name === 'mewtwo-armor' ||
+                          value.form.name === 'arceus-unknown' ||
+                          value.form.name === 'dialga-origin' ||
+                          value.form.name === 'palkia-origin' ||
+                          value.form.name === 'basculin-white-striped' ||
+                          value.form.name === 'greninja-battle-bond' ||
+                          value.form.name === 'urshifu-rapid-strike' ||
+                          (pokeID && pokeID >= 899)
+                            ? APIService.getPokeIconSprite('unknown-pokemon')
+                            : APIService.getPokeIconSprite(value.form.name)
+                        }
                       />
-                      <div>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</div>
+                      <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
                       {value.form.id === pokeID && (
                         <b>
                           <small>(Default)</small>

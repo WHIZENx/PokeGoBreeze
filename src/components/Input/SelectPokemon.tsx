@@ -14,7 +14,7 @@ const SelectPokemon = (props: {
   selected: any;
   setFMovePokemon: (arg0: null) => void;
   setCMovePokemon: (arg0: null) => void;
-  clearData: () => void;
+  clearData?: () => void;
   disable?: boolean;
 }) => {
   const [startIndex, setStartIndex] = useState(0);
