@@ -54,6 +54,7 @@ export const loadStore = (
     formSpecial: string | any[],
     assetsPokemon: any,
     movesDate: number,
+    movesTree: any,
     pokemonCombat: any,
     details: any,
     league: any,
@@ -64,42 +65,68 @@ export const loadStore = (
         axios.getFetchUrl('https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/gamemaster/moves.json', {
           cancelToken: source.token,
         }),
-        axios.getFetchUrl(`https://api.github.com/repos/pvpoke/pvpoke/git/trees/${process.env.REACT_APP_HASH_REPO_PVPOKE}?recursive=1`, {
+        axios.getFetchUrl(movesTree.url, {
           headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
           cancelToken: source.token,
         }),
       ])
-        .then(([moves, pvp]) => {
-          const pvpRank: any = pvpConvertPath(pvp.data, 'rankings/');
-          const pvpTrain: any = pvpConvertPath(pvp.data, 'training/analysis/');
+        .then(([moves, pvpRoot]) => {
+          const pvpRootPath: any = pvpRoot.data.tree.find((item: { path: string }) => item.path === 'src');
 
-          const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(pvpFindFirstPath(pvp.data.tree, 'training/analysis/'));
-          setStateTimestamp(
-            JSON.stringify({
-              gamemaster: timestamp,
-              battle: movesDate,
+          axios
+            .getFetchUrl(pvpRootPath.url, {
+              headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+              cancelToken: source.token,
             })
-          );
-          setStateMoves(JSON.stringify(moves.data));
-          setStatePVP(JSON.stringify(pvpData));
+            .then((pvpFolder: { data: { tree: any[]; sha: any } }) => {
+              const pvpFolderPath: any = pvpFolder.data.tree.find((item: { path: string }) => item.path === 'data');
+              axios
+                .getFetchUrl(pvpFolderPath.url + '?recursive=1', {
+                  headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+                  cancelToken: source.token,
+                })
+                .then((pvp: { data: { tree: any; sha?: any } }) => {
+                  const pvpRank: any = pvpConvertPath(pvp.data, 'rankings/');
+                  const pvpTrain: any = pvpConvertPath(pvp.data, 'training/analysis/');
 
-          dispatchStore(
-            cpm,
-            typeEff,
-            weatherBoost,
-            gmData,
-            pokemon,
-            candyData,
-            formSpecial,
-            assetsPokemon,
-            moves.data,
-            pokemonCombat,
-            details,
-            pvpRank,
-            pvpTrain,
-            league,
-            timestamp
-          );
+                  const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(
+                    pvpFindFirstPath(pvp.data.tree, 'training/analysis/')
+                  );
+                  setStateTimestamp(
+                    JSON.stringify({
+                      gamemaster: timestamp,
+                      battle: movesDate,
+                    })
+                  );
+                  setStateMoves(JSON.stringify(moves.data));
+                  setStatePVP(
+                    JSON.stringify({
+                      rootSha: movesTree.sha,
+                      folderSha: pvpFolder.data.sha,
+                      sha: pvp.data.sha,
+                      data: pvpData,
+                    })
+                  );
+
+                  dispatchStore(
+                    cpm,
+                    typeEff,
+                    weatherBoost,
+                    gmData,
+                    pokemon,
+                    candyData,
+                    formSpecial,
+                    assetsPokemon,
+                    moves.data,
+                    pokemonCombat,
+                    details,
+                    pvpRank,
+                    pvpTrain,
+                    league,
+                    timestamp
+                  );
+                });
+            });
         })
         .catch((e) => {
           source.cancel();
@@ -111,8 +138,8 @@ export const loadStore = (
           );
         });
     } else {
-      const pvpRank: any = pvpFindPath(JSON.parse(statePVP), 'rankings/');
-      const pvpTrain: any = pvpFindPath(JSON.parse(statePVP), 'training/analysis/');
+      const pvpRank: any = pvpFindPath(JSON.parse(statePVP).data, 'rankings/');
+      const pvpTrain: any = pvpFindPath(JSON.parse(statePVP).data, 'training/analysis/');
 
       dispatchStore(
         cpm,
@@ -198,29 +225,20 @@ export const loadStore = (
           axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Candy Color Data/PokemonCandyColorData.json', {
             cancelToken: source.token,
           }),
-          axios.getFetchUrl(
-            `https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/${process.env.REACT_APP_HASH_REPO_IMG}?recursive=1`,
-            {
-              headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
-              cancelToken: source.token,
-            }
-          ),
-          axios.getFetchUrl(
-            `https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/${process.env.REACT_APP_HASH_REPO_SOUND}?recursive=1`,
-            {
-              headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
-              cancelToken: source.token,
-            }
-          ),
+          axios.getFetchUrl(`https://api.github.com/repos/PokeMiners/pogo_assets/commits?path=Images/Pokemon&page=1&per_page=1`, {
+            headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+            cancelToken: source.token,
+          }),
+          axios.getFetchUrl(`https://api.github.com/repos/PokeMiners/pogo_assets/commits?path=Sounds/Pokemon%20Cries&page=1&per_page=1`, {
+            headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+            cancelToken: source.token,
+          }),
         ])
-          .then(([candy, image, sounds]) => {
-            const assetImgFiles = optionPokeImg(image.data);
-            const assetSoundFiles = optionPokeSound(sounds.data);
+          .then(([candy, imageRoot, soundsRoot]) => {
             const pokemon = optionPokemon(gm.data);
             const pokemonFamily = optionPokemonFamily(pokemon);
             const pokemonFamilyGroup = optionPokemonFamilyGroup(gm.data);
             const candyData = optionPokemonCandy(candy.data.CandyColors, pokemonFamilyGroup, pokemon, pokemonFamily);
-
             setStateTimestamp(
               JSON.stringify({
                 ...JSON.parse(stateTimestamp),
@@ -228,34 +246,121 @@ export const loadStore = (
               })
             );
             setStateCandy(JSON.stringify(candyData));
-            setStateImage(JSON.stringify(assetImgFiles));
-            setStateSound(JSON.stringify(assetSoundFiles));
 
             const formSpecial = optionformSpecial(gm.data);
-
             const league = optionLeagues(gm.data, pokemon);
-            const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
             const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
-            const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
 
             const typeEff = optionPokemonTypes(gm.data);
             const weatherBoost = optionPokemonWeather(gm.data);
 
-            selectorDispatch(
-              cpm,
-              typeEff,
-              weatherBoost,
-              gm.data,
-              pokemon,
-              candyData,
-              formSpecial,
-              assetsPokemon,
-              new Date(movesTimestamp.data[0].commit.committer.date).getTime(),
-              pokemonCombat,
-              details,
-              league,
-              parseInt(timestamp.data)
-            );
+            if (
+              (!stateImage && !stateSound) ||
+              (stateImage && stateSound && JSON.parse(stateImage).date !== new Date(imageRoot.data[0].commit.committer.date).getTime()) ||
+              JSON.parse(stateSound).date !== new Date(soundsRoot.data[0].commit.committer.date).getTime()
+            ) {
+              Promise.all([
+                axios.getFetchUrl(imageRoot.data[0].commit.tree.url, {
+                  headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+                  cancelToken: source.token,
+                }),
+                axios.getFetchUrl(soundsRoot.data[0].commit.tree.url, {
+                  headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+                  cancelToken: source.token,
+                }),
+              ]).then(([imageFolder, soundsFolder]) => {
+                const imageFolderPath: any = imageFolder.data.tree.find((item: { path: string }) => item.path === 'Images');
+                const soundsFolderPath: any = soundsFolder.data.tree.find((item: { path: string }) => item.path === 'Sounds');
+
+                Promise.all([
+                  axios.getFetchUrl(imageFolderPath.url, {
+                    headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+                    cancelToken: source.token,
+                  }),
+                  axios.getFetchUrl(soundsFolderPath.url, {
+                    headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+                    cancelToken: source.token,
+                  }),
+                ]).then(([image, sounds]) => {
+                  const imagePath: any = image.data.tree.find((item: { path: string }) => item.path === 'Pokemon');
+                  const soundsPath: any = sounds.data.tree.find((item: { path: string }) => item.path === 'Pokemon Cries');
+
+                  Promise.all([
+                    axios.getFetchUrl(imagePath.url + '?recursive=1', {
+                      headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+                      cancelToken: source.token,
+                    }),
+                    axios.getFetchUrl(soundsPath.url + '?recursive=1', {
+                      headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+                      cancelToken: source.token,
+                    }),
+                  ]).then(([imageData, soundsData]) => {
+                    const assetImgFiles = optionPokeImg(imageData.data);
+                    const assetSoundFiles = optionPokeSound(soundsData.data);
+                    setStateImage(
+                      JSON.stringify({
+                        rootSha: imageRoot.data[0].sha,
+                        date: new Date(imageRoot.data[0].commit.committer.date).getTime(),
+                        folderSha: imageFolder.data.sha,
+                        sha: imageData.data.sha,
+                        data: assetImgFiles,
+                      })
+                    );
+                    setStateSound(
+                      JSON.stringify({
+                        rootSha: soundsRoot.data[0].sha,
+                        date: new Date(soundsRoot.data[0].commit.committer.date).getTime(),
+                        folderSha: soundsFolder.data.sha,
+                        sha: imageData.data.sha,
+                        data: assetSoundFiles,
+                      })
+                    );
+                    const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
+                    const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
+
+                    selectorDispatch(
+                      cpm,
+                      typeEff,
+                      weatherBoost,
+                      gm.data,
+                      pokemon,
+                      candyData,
+                      formSpecial,
+                      assetsPokemon,
+                      new Date(movesTimestamp.data[0].commit.committer.date).getTime(),
+                      movesTimestamp.data[0].commit.tree,
+                      pokemonCombat,
+                      details,
+                      league,
+                      parseInt(timestamp.data)
+                    );
+                  });
+                });
+              });
+            } else {
+              const assetImgFiles = JSON.parse(stateImage).data;
+              const assetSoundFiles = JSON.parse(stateSound).data;
+
+              const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
+              const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
+
+              selectorDispatch(
+                cpm,
+                typeEff,
+                weatherBoost,
+                gm.data,
+                pokemon,
+                candyData,
+                formSpecial,
+                assetsPokemon,
+                new Date(movesTimestamp.data[0].commit.committer.date).getTime(),
+                movesTimestamp.data[0].commit.tree,
+                pokemonCombat,
+                details,
+                league,
+                parseInt(timestamp.data)
+              );
+            }
           })
           .catch((e) => {
             source.cancel();
@@ -273,7 +378,7 @@ export const loadStore = (
         const formSpecial = optionformSpecial(gm.data);
 
         const league = optionLeagues(gm.data, pokemon);
-        const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage), JSON.parse(stateSound));
+        const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage).data, JSON.parse(stateSound).data);
         const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
         const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
 
@@ -290,6 +395,7 @@ export const loadStore = (
           formSpecial,
           assetsPokemon,
           new Date(movesTimestamp.data[0].commit.committer.date).getTime(),
+          movesTimestamp.data[0].commit.tree,
           pokemonCombat,
           details,
           league,
