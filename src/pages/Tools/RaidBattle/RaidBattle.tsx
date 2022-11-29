@@ -945,7 +945,7 @@ const RaidBattle = () => {
                 if (!used.onlyReleasedGO) {
                   return true;
                 }
-                obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
+                obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, '-', ' ');
                 const result = data.details.find(
                   (item: { name: string; id: any }) =>
                     item.id === obj.pokemon.num &&
@@ -961,7 +961,7 @@ const RaidBattle = () => {
                   return true;
                 }
 
-                return splitAndCapitalize(obj.pokemon.name, ' ', ' ').includes(' Mega');
+                return obj.pokemon.name.includes('-mega');
               })
               .filter((obj: { shadow: boolean }) => {
                 if (!used.onlyShadow) {
@@ -992,7 +992,7 @@ const RaidBattle = () => {
                   </div>
                   <span className="d-flex justify-content-center w-100">
                     <b>
-                      #{value.pokemon.num} {splitAndCapitalize(value.pokemon.name, ' ', ' ')}
+                      #{value.pokemon.num} {splitAndCapitalize(value.pokemon.name, '-', ' ')}
                     </b>
                   </span>
                   <span className="d-block element-top">
