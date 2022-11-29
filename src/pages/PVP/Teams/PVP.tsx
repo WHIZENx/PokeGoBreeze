@@ -356,7 +356,7 @@ const TeamPVP = () => {
                       <div className="ranking-group w-100" style={{ columnGap: 15 }}>
                         <div>
                           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-                            <b className="text-white text-shadow">{splitAndCapitalize(value.name, '-', ' ')}</b>
+                            <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
                             <TypeInfo
                               hideText={true}
                               block={true}
@@ -492,7 +492,7 @@ const TeamPVP = () => {
                                         />
                                       </div>
                                     </div>
-                                    <b className="text-black">{splitAndCapitalize(value.name, '-', ' ')}</b>
+                                    <b className="text-black">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
                                   </div>
                                 )
                               )}
@@ -564,7 +564,11 @@ const TeamPVP = () => {
                                   <div className="ranking-group">
                                     <div>
                                       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-                                        <b className="text-white text-shadow">{splitAndCapitalize(value.name, '-', ' ')}</b>
+                                        <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(
+                                          value.name,
+                                          '-',
+                                          ' '
+                                        )}`}</b>
                                         <TypeInfo
                                           hideText={true}
                                           block={true}

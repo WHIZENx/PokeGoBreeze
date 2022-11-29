@@ -211,11 +211,11 @@ const Calculate = () => {
             >
               <FormControlLabel value="" control={<Radio />} label={<span>None</span>} />
               <FormControlLabel
-                value="lucky"
+                value="buddy"
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-shiny" src={APIService.getPokeLucky()} /> Lucky
+                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> Buddy
                   </span>
                 }
               />
@@ -259,7 +259,7 @@ const Calculate = () => {
                 valueLabelDisplay="off"
                 step={0.5}
                 min={1}
-                max={typePoke === 'lucky' ? 51 : 50}
+                max={typePoke === 'buddy' ? 51 : 50}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={pokeStats ? false : true}
                 onChange={(pokeStats ? onHandleLevel : null) as any}
@@ -312,8 +312,8 @@ const Calculate = () => {
                                     {statData.type === 'purified' && (
                                       <span className="purified-text"> (-{statData.result_between_stadust_diff})</span>
                                     )}
-                                    {statData.type === 'lucky' && (
-                                      <span className="lucky-text"> (-{statData.result_between_stadust_diff})</span>
+                                    {statData.type === 'buddy' && (
+                                      <span className="buddy-text"> (-{statData.result_between_stadust_diff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -353,8 +353,8 @@ const Calculate = () => {
                                     {statData.type === 'purified' && (
                                       <span className="purified-text"> (-{statData.result_between_candy_diff})</span>
                                     )}
-                                    {statData.type === 'lucky' && (
-                                      <span className="lucky-text"> (-{statData.result_between_candy_diff})</span>
+                                    {statData.type === 'buddy' && (
+                                      <span className="buddy-text"> (-{statData.result_between_candy_diff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -407,8 +407,8 @@ const Calculate = () => {
                                     {statData.type === 'purified' && (
                                       <span className="purified-text"> (-{statData.result_between_xl_candy_diff})</span>
                                     )}
-                                    {statData.type === 'lucky' && (
-                                      <span className="lucky-text"> (-{statData.result_between_xl_candy_diff})</span>
+                                    {statData.type === 'buddy' && (
+                                      <span className="buddy-text"> (-{statData.result_between_xl_candy_diff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -567,7 +567,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataLittleLeague && dataLittleLeague.elidge ? (
-                              <span className={statData.type !== 'lucky' ? statData.type + '-text' : ''}>
+                              <span className={statData.type !== 'buddy' ? statData.type + '-text' : ''}>
                                 {dataLittleLeague.rangeValue.result_between_candy}
                               </span>
                             ) : (
@@ -603,7 +603,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataLittleLeague && dataLittleLeague.elidge ? (
-                              <span className={statData.type !== 'lucky' ? statData.type + '-text' : ''}>
+                              <span className={statData.type !== 'buddy' ? statData.type + '-text' : ''}>
                                 {dataLittleLeague.rangeValue.result_between_xl_candy}
                               </span>
                             ) : (
@@ -708,7 +708,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataGreatLeague && dataGreatLeague.elidge ? (
-                              <span className={statData.type !== 'lucky' ? statData.type + '-text' : ''}>
+                              <span className={statData.type !== 'buddy' ? statData.type + '-text' : ''}>
                                 {dataGreatLeague.rangeValue.result_between_candy}
                               </span>
                             ) : (
@@ -744,7 +744,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataGreatLeague && dataGreatLeague.elidge ? (
-                              <span className={statData.type !== 'lucky' ? statData.type + '-text' : ''}>
+                              <span className={statData.type !== 'buddy' ? statData.type + '-text' : ''}>
                                 {dataGreatLeague.rangeValue.result_between_xl_candy}
                               </span>
                             ) : (
@@ -849,7 +849,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataUltraLeague && dataUltraLeague.elidge ? (
-                              <span className={statData.type !== 'lucky' ? statData.type + '-text' : ''}>
+                              <span className={statData.type !== 'buddy' ? statData.type + '-text' : ''}>
                                 {dataUltraLeague.rangeValue.result_between_candy}
                               </span>
                             ) : (
@@ -885,7 +885,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataUltraLeague && dataUltraLeague.elidge ? (
-                              <span className={statData.type !== 'lucky' ? statData.type + '-text' : ''}>
+                              <span className={statData.type !== 'buddy' ? statData.type + '-text' : ''}>
                                 {dataUltraLeague.rangeValue.result_between_xl_candy}
                               </span>
                             ) : (
@@ -987,7 +987,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataMasterLeague ? (
-                              <span className={statData.type !== 'lucky' ? statData.type + '-text' : ''}>
+                              <span className={statData.type !== 'buddy' ? statData.type + '-text' : ''}>
                                 {dataMasterLeague.rangeValue.result_between_candy}
                               </span>
                             ) : (
@@ -1023,7 +1023,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataMasterLeague ? (
-                              <span className={statData.type !== 'lucky' ? statData.type + '-text' : ''}>
+                              <span className={statData.type !== 'buddy' ? statData.type + '-text' : ''}>
                                 {dataMasterLeague.rangeValue.result_between_xl_candy}
                               </span>
                             ) : (

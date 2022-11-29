@@ -80,8 +80,8 @@ const DamageTable = (props: {
               <td>
                 {props.result.objPoke ? (
                   <Fragment>
-                    {props.result.type === 'lucky' && (
-                      <img height={20} style={{ marginRight: 8 }} alt="img-lucky" src={APIService.getPokeLucky()} />
+                    {props.result.type === 'buddy' && (
+                      <img height={20} style={{ marginRight: 8 }} alt="img-buddy" src={APIService.getPokeBuddy()} />
                     )}
                     {props.result.type === 'shadow' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
@@ -99,8 +99,8 @@ const DamageTable = (props: {
               <td>
                 {props.result.objPoke ? (
                   <Fragment>
-                    {props.result.typeObj === 'lucky' && (
-                      <img height={20} style={{ marginRight: 8 }} alt="img-lucky" src={APIService.getPokeLucky()} />
+                    {props.result.typeObj === 'buddy' && (
+                      <img height={20} style={{ marginRight: 8 }} alt="img-buddy" src={APIService.getPokeBuddy()} />
                     )}
                     {props.result.typeObj === 'shadow' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />

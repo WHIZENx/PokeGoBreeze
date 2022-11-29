@@ -205,7 +205,7 @@ const RankingPVP = () => {
               </span>
             </div>
             <div className="ranking-group w-100">
-              <b>{splitAndCapitalize(data.name, '-', ' ')}</b>
+              <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
               <div style={{ marginRight: 15 }}>
                 <span className="ranking-score score-ic">{data.score}</span>
               </div>

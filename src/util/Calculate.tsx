@@ -421,7 +421,7 @@ export const calculateBattleLeague = (
   type: string
 ) => {
   let level = MAX_LEVEL;
-  if (type !== 'lucky') {
+  if (type !== 'buddy') {
     level -= 1;
   }
   if (maxCp && currCP > maxCp) {

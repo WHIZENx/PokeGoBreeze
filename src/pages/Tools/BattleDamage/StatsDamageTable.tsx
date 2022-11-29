@@ -62,11 +62,11 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
           >
             <FormControlLabel value="" control={<Radio />} label={<span>None</span>} />
             <FormControlLabel
-              value="lucky"
+              value="buddy"
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-lucky" src={APIService.getPokeLucky()} /> Lucky
+                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> Buddy
                 </span>
               }
             />
@@ -94,7 +94,7 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
               valueLabelDisplay="off"
               step={0.5}
               min={1}
-              max={currStatType === 'lucky' ? 51 : 50}
+              max={currStatType === 'buddy' ? 51 : 50}
               onChange={onHandleLevel}
             />
           </Box>

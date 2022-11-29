@@ -3,7 +3,7 @@
   "version": "2.5.0a",
   "main": "index.tsx",
   "license": "MIT",
-  "description": "Web Application for Pokemon GO Tools&Information",
+  "description": "Web Application for Pokémon GO Tools&Information",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.8.2",

@@ -8,7 +8,7 @@ import pokemonData from '../../../data/pokemon.json';
 
 import { convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
-import { RAID_BOSS_TIER } from '../../../util/Constants';
+import { MAX_LEVEL, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/Constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -35,7 +35,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useSnackbar } from 'notistack';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Form } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
@@ -73,6 +73,37 @@ const RaidBattle = () => {
     enableTimeAllow: true,
   });
 
+  const [filters, setFilters] = useState({
+    used: {
+      level: 40,
+      iv: {
+        atk: 15,
+        def: 15,
+        sta: 15,
+      },
+      onlyShadow: false,
+      onlyMega: false,
+      onlyReleasedGO: true,
+      sortBy: 0,
+      sorted: 0,
+    },
+    selected: {
+      level: 40,
+      iv: {
+        atk: 15,
+        def: 15,
+        sta: 15,
+      },
+      onlyShadow: false,
+      onlyMega: false,
+      onlyReleasedGO: true,
+      sortBy: 0,
+      sorted: 0,
+    },
+  });
+
+  const { used, selected } = filters;
+
   const { weatherBoss, weatherCounter, released, enableTimeAllow } = options;
 
   const [timeAllow, setTimeAllow] = useState(0);
@@ -81,9 +112,8 @@ const RaidBattle = () => {
   const [resultRaid, setResultRaid]: any = useState(null);
   const [result, setResult]: any = useState([]);
 
-  const [releasedGO, setReleaseGO] = useState(true);
-
   const [show, setShow] = useState(false);
+  const [showOption, setShowOption] = useState(false);
 
   const handleClose = () => {
     setTrainerBattle(update(trainerBattle, { [trainerBattleId]: { pokemons: { $set: tempPokemonBattle } } }));
@@ -100,6 +130,39 @@ const RaidBattle = () => {
     setTrainerBattleId(id);
     setPokemonBattle(pokemons);
     setTempPokemonBattle(Array.from(pokemons));
+  };
+
+  const handleShowOption = () => {
+    setShowOption(true);
+  };
+
+  const handleSaveOption = () => {
+    const changeResult =
+      selected.level !== used.level ||
+      selected.iv.atk !== used.iv.atk ||
+      selected.iv.def !== used.iv.def ||
+      selected.iv.sta !== used.iv.sta;
+    setFilters({
+      ...filters,
+      used: selected,
+    });
+    setShowOption(false);
+
+    if (changeResult) {
+      handleCalculate();
+    }
+    const sordIndex = ['dpsAtk', 'tdoAtk', 'ttkAtk', 'ttkDef'];
+    setResult(
+      result.sort((a: any, b: any) =>
+        filters.selected.sorted
+          ? a[sordIndex[filters.selected.sortBy]] - b[sordIndex[filters.selected.sortBy]]
+          : b[sordIndex[filters.selected.sortBy]] - a[sordIndex[filters.selected.sortBy]]
+      )
+    );
+  };
+
+  const handleCloseOption = () => {
+    setShowOption(false);
   };
 
   const initDataPoke: any = {
@@ -253,9 +316,9 @@ const RaidBattle = () => {
       if (fmove && cmove) {
         const stats = calculateStatsByTag(value.baseStats, value.slug);
         const statsAttackerTemp = {
-          atk: calculateStatsBattle(stats.atk, 15, 40),
-          def: calculateStatsBattle(stats.def, 15, 40),
-          hp: calculateStatsBattle(stats.sta, 15, 40),
+          atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
+          def: calculateStatsBattle(stats.def, used.iv.def, used.level),
+          hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
           fmove,
           cmove,
           types: value.types,
@@ -334,7 +397,7 @@ const RaidBattle = () => {
     });
   };
 
-  const calculateTopBatlle = (pokemonTarget: boolean) => {
+  const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: any[] | ((prevState: any[]) => any[]) = [];
     Object.values(pokemonData).forEach((pokemon) => {
       if (pokemon.forme !== 'Gmax') {
@@ -374,22 +437,22 @@ const RaidBattle = () => {
         return result;
       }, {});
       dataList = Object.values(group)
-        .map((pokemon: any) => pokemon.reduce((p: { tdoAtk: number }, c: { tdoAtk: number }) => (p.tdoAtk > c.tdoAtk ? p : c)))
-        .sort((a, b) => b.tdoAtk - a.tdoAtk);
+        .map((pokemon: any) => pokemon.reduce((p: { dpsAtk: number }, c: { dpsAtk: number }) => (p.dpsAtk > c.dpsAtk ? p : c)))
+        .sort((a, b) => b.dpsAtk - a.dpsAtk);
       setResult(dataList);
       dispatch(hideSpinner());
     }
   };
 
   const calculateBossBattle = () => {
-    calculateTopBatlle(true);
-    calculateTopBatlle(false);
+    calculateTopBattle(true);
+    calculateTopBattle(false);
   };
 
-  const calculateDPSBatlle = (
+  const calculateDPSBattle = (
     pokemon: {
       fmoveTargetPokemon: { name: string };
-      cmoveTargetPokemon: { name: any };
+      cmoveTargetPokemon: { name: string };
       dataTargetPokemon: {
         baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
         forme: string | null;
@@ -406,9 +469,9 @@ const RaidBattle = () => {
     if (fmove && cmove) {
       const stats = calculateStatsByTag(pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
       const statsAttacker = {
-        atk: calculateStatsBattle(stats.atk, 15, 40),
-        def: calculateStatsBattle(stats.def, 15, 40),
-        hp: calculateStatsBattle(stats.sta, 15, 40),
+        atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
+        def: calculateStatsBattle(stats.def, used.iv.def, used.level),
+        hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
         fmove,
         cmove,
         types: pokemon.dataTargetPokemon.types,
@@ -459,7 +522,7 @@ const RaidBattle = () => {
     }
   };
 
-  const calculateTrainerBatlle = (trainerBattle: any[]) => {
+  const calculateTrainerBattle = (trainerBattle: any[]) => {
     const trainer = trainerBattle.map((trainer: { pokemons: any }) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter(
       (pokemons: { filter: (arg0: (pokemon: any) => boolean) => { (): any; new (): any; length: number } }) =>
@@ -507,7 +570,7 @@ const RaidBattle = () => {
       };
       group.forEach((pokemon: any) => {
         if (pokemon.dataTargetPokemon) {
-          const stat = calculateDPSBatlle(pokemon, dataList.summary.bossHp, timer);
+          const stat = calculateDPSBattle(pokemon, dataList.summary.bossHp, timer);
           dataList.pokemon.push({ ...stat, trainerId: pokemon.trainerId });
 
           if (enableTimeAllow) {
@@ -625,6 +688,131 @@ const RaidBattle = () => {
     );
   };
 
+  const modalFormFilters = () => {
+    return (
+      <form>
+        <label className="form-label">Pokémon level</label>
+        <div className="input-group mb-3">
+          <span className="input-group-text">Level</span>
+          <Form.Select
+            value={filters.selected.level}
+            className="form-control"
+            onChange={(e: any) => setFilters({ ...filters, selected: { ...selected, level: parseInt(e.target.value) } })}
+          >
+            {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+              <option key={index} value={value}>
+                {value}
+              </option>
+            ))}
+          </Form.Select>
+        </div>
+        <label className="form-label">Pokémon IV</label>
+        <div className="input-group mb-3">
+          <span className="input-group-text">ATK</span>
+          <input
+            value={filters.selected.iv.atk}
+            type="number"
+            min={0}
+            max={15}
+            required={true}
+            className="form-control"
+            placeholder="IV ATK"
+            onInput={(e: any) =>
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: parseInt(e.target.value) } } })
+            }
+          />
+          <span className="input-group-text">DEF</span>
+          <input
+            value={filters.selected.iv.def}
+            type="number"
+            min={0}
+            max={15}
+            required={true}
+            className="form-control"
+            placeholder="IV DEF"
+            onInput={(e: any) =>
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: parseInt(e.target.value) } } })
+            }
+          />
+          <span className="input-group-text">STA</span>
+          <input
+            value={filters.selected.iv.sta}
+            type="number"
+            min={0}
+            max={15}
+            required={true}
+            className="form-control"
+            placeholder="IV STA"
+            onInput={(e: any) =>
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: parseInt(e.target.value) } } })
+            }
+          />
+        </div>
+        <div className="input-group mb-3 border-input">
+          <span className="input-group-text">Search filter only by</span>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={filters.selected.onlyShadow}
+                onChange={(event, check) =>
+                  setFilters({ ...filters, selected: { ...selected, onlyShadow: check, onlyMega: check ? false : selected.onlyMega } })
+                }
+              />
+            }
+            label="Shadow"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={filters.selected.onlyMega}
+                onChange={(event, check) =>
+                  setFilters({ ...filters, selected: { ...selected, onlyMega: check, onlyShadow: check ? false : selected.onlyShadow } })
+                }
+              />
+            }
+            label="Mega"
+          />
+        </div>
+        <div className="input-group mb-3">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={filters.selected.onlyReleasedGO}
+                onChange={(event, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
+              />
+            }
+            label="Released in GO"
+          />
+        </div>
+        <label className="form-label">Sorting</label>
+        <div className="input-group mb-3">
+          <span className="input-group-text">Sort By</span>
+          <Form.Select
+            style={{ width: '40%' }}
+            value={filters.selected.sortBy}
+            className="form-control"
+            onChange={(e: any) => setFilters({ ...filters, selected: { ...selected, sortBy: parseInt(e.target.value) } })}
+          >
+            <option value={0}>Damage Per Second</option>
+            <option value={1}>Total Damage Output</option>
+            <option value={2}>Time To Kill</option>
+            <option value={3}>Tankiness</option>
+          </Form.Select>
+          <span className="input-group-text">Priority</span>
+          <Form.Select
+            style={{ width: '15%' }}
+            value={filters.selected.sorted}
+            className="form-control"
+            onChange={(e: any) => setFilters({ ...filters, selected: { ...selected, sorted: parseInt(e.target.value) } })}
+          >
+            <option value={0}>Best</option>
+            <option value={1}>Worst</option>
+          </Form.Select>
+        </div>
+      </form>
+    );
+  };
+
   return (
     <Fragment>
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
@@ -731,21 +919,33 @@ const RaidBattle = () => {
       {result.length > 0 && (
         <div className="container" style={{ paddingBottom: 15 }}>
           <div className="d-flex flex-wrap align-items-center justify-content-between">
-            <h4>Top Counters (Level: 40 - 15/15/15)</h4>
             <div>
-              <FormControlLabel
-                control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
-                label="Released in GO"
-              />
+              <h4>
+                {`${used.sorted ? 'Worst' : 'Best'} 10 Counters Level: `}
+                {<span>{`${used.level} - ${used.iv.atk}/${used.iv.def}/${used.iv.sta}`}</span>}
+              </h4>
+              <p className="text-primary">
+                <b>
+                  {`Sort By: ${
+                    used.sortBy === 0 ? 'Damage Per Seconds (DPS)' : used.sortBy === 1 ? 'Total Damage Output (TDO)' : 'Tankiness'
+                  }`}{' '}
+                  <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${used.onlyMega ? '*Only Mega' : ''}`}</span>
+                </b>
+              </p>
+            </div>
+            <div>
+              <button className="btn btn-primary" onClick={handleShowOption}>
+                Search options
+              </button>
             </div>
           </div>
           <div className="top-raid-group">
             {result
               .filter((obj: { pokemon: { num: any; name: string } }) => {
-                if (!releasedGO) {
+                if (!used.onlyReleasedGO) {
                   return true;
                 }
-                obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, '-', ' ');
+                obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
                 const result = data.details.find(
                   (item: { name: string; id: any }) =>
                     item.id === obj.pokemon.num &&
@@ -755,6 +955,20 @@ const RaidBattle = () => {
                         : convertName(obj.pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
                 );
                 return result ? result.releasedGO : false;
+              })
+              .filter((obj: { pokemon: { name: string } }) => {
+                if (!used.onlyMega) {
+                  return true;
+                }
+
+                return splitAndCapitalize(obj.pokemon.name, ' ', ' ').includes(' Mega');
+              })
+              .filter((obj: { shadow: boolean }) => {
+                if (!used.onlyShadow) {
+                  return true;
+                }
+
+                return obj.shadow;
               })
               .slice(0, 10)
               .map((value: any, index: React.Key) => (
@@ -778,7 +992,7 @@ const RaidBattle = () => {
                   </div>
                   <span className="d-flex justify-content-center w-100">
                     <b>
-                      #{value.pokemon.num} {splitAndCapitalize(value.pokemon.name, '-', ' ')}
+                      #{value.pokemon.num} {splitAndCapitalize(value.pokemon.name, ' ', ' ')}
                     </b>
                   </span>
                   <span className="d-block element-top">
@@ -812,6 +1026,10 @@ const RaidBattle = () => {
           </div>
           <div className="row" style={{ marginLeft: 0, marginRight: 0, marginBottom: 15 }}>
             <div className="col-lg-5 justify-content-center" style={{ marginBottom: 20 }}>
+              <h4>
+                {`Pokémon Battle Level: `}
+                {<span>{`${used.level} - ${used.iv.atk}/${used.iv.def}/${used.iv.sta}`}</span>}
+              </h4>
               {trainerBattle.map((trainer, index) => (
                 <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
                   <Badge
@@ -878,7 +1096,7 @@ const RaidBattle = () => {
                 </div>
               ))}
               <div className="text-center element-top">
-                <button className="btn btn-primary" onClick={() => calculateTrainerBatlle(trainerBattle)}>
+                <button className="btn btn-primary" onClick={() => calculateTrainerBattle(trainerBattle)}>
                   Raid Battle
                 </button>
               </div>
@@ -978,7 +1196,6 @@ const RaidBattle = () => {
               {resultRaid && (
                 <Fragment>
                   <hr />
-                  <h5 className="text-decoration-underline">Pokémon at (Level: 40 - 15/15/15)</h5>
                   <ul className="element-top" style={{ listStyleType: 'initial' }}>
                     {resultRaid.map(
                       (
@@ -1139,6 +1356,23 @@ const RaidBattle = () => {
             Close
           </Button>
           <Button variant="primary" onClick={handleSave}>
+            Save changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showOption} onHide={handleCloseOption} centered={true}>
+        <Modal.Header closeButton={true}>
+          <Modal.Title>Search Options</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalFormFilters()}</div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseOption}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleSaveOption}>
             Save changes
           </Button>
         </Modal.Footer>

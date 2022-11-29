@@ -208,6 +208,10 @@ class APIService {
     return `${POGO_ASSET_API_URL}Friends/ui_bg_lucky_pokemon.png`;
   }
 
+  getPokeBuddy() {
+    return `${POGO_ASSET_API_URL}Buddy/pokemonBuddyCrownSml.png`;
+  }
+
   getItemEvo(item: string) {
     return `${POGO_ASSET_API_URL}Items/Bag_${item}_Sprite.png`;
   }

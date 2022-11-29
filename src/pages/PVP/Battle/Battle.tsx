@@ -1156,6 +1156,9 @@ const Battle = () => {
                 />
               </div>
             </div>
+            <div className="w-100 d-flex justify-content-center">
+              <b>{`#${pokemon.pokemonData.id} ${splitAndCapitalize(pokemon.pokemonData.name, '-', ' ')}`}</b>
+            </div>
             <h6>
               <b>Stats</b>
             </h6>
@@ -1338,7 +1341,6 @@ const Battle = () => {
                 }
               />
             </div>
-            {renderInfoPokemon(type, pokemon, setPokemon)}
             {pokemon && (
               <div className="w-100 bg-ref-pokemon">
                 <div className="w-100 bg-type-moves">
@@ -1375,6 +1377,7 @@ const Battle = () => {
                 )}
               </div>
             )}
+            {renderInfoPokemon(type, pokemon, setPokemon)}
           </Fragment>
         )}
       </Fragment>

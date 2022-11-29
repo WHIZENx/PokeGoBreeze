@@ -56,6 +56,14 @@ const PVPHome = () => {
 
   return (
     <div className="container element-top element-bottom">
+      <p className="text-danger">
+        <b>
+          * Pokémon data source references from{' '}
+          <a href="https://pvpoke.com/" target={'_'}>
+            Pvpoke
+          </a>
+        </b>
+      </p>
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Rank Pokémon Leagues</h1>
         <Form.Select

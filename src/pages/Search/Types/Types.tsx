@@ -104,7 +104,7 @@ const SearchTypes = () => {
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('pokeball_sprite')} />{' '}
-              <b>{`Pokemon: ${result.pokemonList.length} (${Math.round((result.pokemonList.length * 100) / allData.pokemon)}%)`}</b>
+              <b>{`Pokémon: ${result.pokemonList.length} (${Math.round((result.pokemonList.length * 100) / allData.pokemon)}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
@@ -120,8 +120,8 @@ const SearchTypes = () => {
         </div>
         <div className="col-lg-8 element-top">
           <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
-            <Tab eventKey="pokemonLegacyList" title="Pokemon Legacy Type List" />
-            <Tab eventKey="pokemonMultiList" title="Pokemon Multi Types List" />
+            <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List" />
+            <Tab eventKey="pokemonMultiList" title="Pokémon Multi Types List" />
             <Tab eventKey="fastMovesList" title="Fast Move List" />
             <Tab eventKey="chargesMovesList" title="Charged Move List" />
           </Tabs>
