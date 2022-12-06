@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 import { capitalize, convertName, splitAndCapitalize } from '../../util/Utils';
 import { STAB_MULTIPLY } from '../../util/Constants';
@@ -82,10 +82,10 @@ const columns: any = [
 ];
 
 const Move = (props: { id?: any }) => {
+  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
 
   const [move, setMove]: any = useState(null);
   const [releasedGO, setReleaseGO] = useState(true);
@@ -456,7 +456,18 @@ const Move = (props: { id?: any }) => {
                         </span>
                         <FormControlLabel
                           control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
-                          label="Released in GO"
+                          label={
+                            <span className="d-flex align-items-center">
+                              Released in GO
+                              <img
+                                width={28}
+                                height={28}
+                                style={{ marginLeft: 5 }}
+                                alt="pokemon-go-icon"
+                                src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                              />
+                            </span>
+                          }
                         />
                       </div>
                     </td>

@@ -23,6 +23,7 @@ import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
 
 const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any; onSetIDPoke?: any }) => {
   const dispatch = useDispatch();
+  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
 
@@ -395,7 +396,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           height={50}
                           style={{ marginLeft: 10 }}
                           alt="pokemon-go-icon"
-                          src={APIService.getPokemonGoIcon('Standard')}
+                          src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
                         />
                       </h5>
                     </Alert>

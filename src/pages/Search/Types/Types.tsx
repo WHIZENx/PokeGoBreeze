@@ -1,16 +1,139 @@
 import { useRef, useState, useEffect } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize } from '../../../util/Utils';
+import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import pokemonData from '../../../data/pokemon.json';
 import './Types.css';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
 import { Tabs, Tab } from 'react-bootstrap';
+import DataTable from 'react-data-table-component';
+import { Link } from 'react-router-dom';
+import { calculateStatsByTag } from '../../../util/Calculate';
+import { FormControlLabel, Switch } from '@mui/material';
+
+const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
+  const a = rowA.name.toLowerCase();
+  const b = rowB.name.toLowerCase();
+  return a === b ? 0 : a > b ? 1 : -1;
+};
+
+const moveSort = (rowA: { name: string }, rowB: { name: string }) => {
+  const a = rowA.name.toLowerCase();
+  const b = rowB.name.toLowerCase();
+  return a === b ? 0 : a > b ? 1 : -1;
+};
+
+const columnPokemon: any = [
+  {
+    name: 'ID',
+    selector: (row: { num: any }) => row.num,
+    sortable: true,
+    width: '100px',
+  },
+  {
+    name: 'Pokémon Name',
+    selector: (row: { num: any; forme: string; name: string; sprite: string; baseSpecies: string }) => (
+      <Link
+        to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase()}` : ''}`}
+        target="_blank"
+        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
+      >
+        <img
+          height={48}
+          alt="img-pokemon"
+          style={{ marginRight: 10 }}
+          src={APIService.getPokeIconSprite(row.sprite, true)}
+          onError={(e: any) => {
+            e.onerror = null;
+            e.target.src = APIService.getPokeIconSprite(row.baseSpecies);
+          }}
+        />
+        {splitAndCapitalize(row.name, '-', ' ')}
+      </Link>
+    ),
+    sortable: true,
+    minWidth: '300px',
+    sortFunction: nameSort,
+  },
+  {
+    name: 'ATK',
+    selector: (row: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) =>
+      calculateStatsByTag(row.baseStats, row.slug).atk,
+    sortable: true,
+    width: '100px',
+  },
+  {
+    name: 'DEF',
+    selector: (row: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) =>
+      calculateStatsByTag(row.baseStats, row.slug).def,
+    sortable: true,
+    width: '100px',
+  },
+  {
+    name: 'STA',
+    selector: (row: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) =>
+      calculateStatsByTag(row.baseStats, row.slug).sta,
+    sortable: true,
+    width: '100px',
+  },
+];
+
+const columnMove: any = [
+  {
+    name: 'ID',
+    selector: (row: { id: any }) => row.id,
+    sortable: true,
+    width: '100px',
+  },
+  {
+    name: 'Move Name',
+    selector: (row: { id: string; name: string }) => (
+      <Link
+        className="d-flex align-items-center"
+        to={'/move/' + row.id}
+        target="_blank"
+        title={`${splitAndCapitalize(row.name, '_', ' ')}`}
+      >
+        {splitAndCapitalize(row.name, '_', ' ')}
+      </Link>
+    ),
+    sortable: true,
+    minWidth: '300px',
+    sortFunction: moveSort,
+  },
+  {
+    name: 'Power PVE',
+    selector: (row: { pve_power: any }) => row.pve_power,
+    sortable: true,
+    width: '120px',
+  },
+  {
+    name: 'Power PVP',
+    selector: (row: { pvp_power: any }) => row.pvp_power,
+    sortable: true,
+    width: '120px',
+  },
+  {
+    name: 'Energy PVE',
+    selector: (row: { pve_energy: any }) => `${row.pve_energy > 0 ? '+' : ''}${row.pve_energy}`,
+    sortable: true,
+    width: '120px',
+  },
+  {
+    name: 'Energy PVP',
+    selector: (row: { pvp_energy: any }) => `${row.pvp_energy > 0 ? '+' : ''}${row.pvp_energy}`,
+    sortable: true,
+    width: '120px',
+  },
+];
 
 const SearchTypes = () => {
+  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const typeList = useRef(Object.keys(data.typeEff));
+
+  const [releasedGO, setReleaseGO] = useState(true);
 
   const [currentType, setCurrentType]: any = useState(typeList.current[0]);
   const [result, setResult]: any = useState({
@@ -19,7 +142,10 @@ const SearchTypes = () => {
     chargedMove: [],
   });
   const allData = {
-    pokemon: Object.values(pokemonData).length - 1,
+    pokemon:
+      Object.values(pokemonData)
+        .filter((pokemon) => pokemon.num > 0)
+        .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
     fastMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'FAST').length,
     chargedMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'CHARGE').length,
   };
@@ -28,14 +154,20 @@ const SearchTypes = () => {
 
   useEffect(() => {
     document.title = `${capitalize(currentType)} - Type`;
+  }, [currentType]);
+
+  useEffect(() => {
     setResult({
-      pokemonList: Object.values(pokemonData).filter((pokemon: any) => pokemon.types.includes(capitalize(currentType))),
+      pokemonList: Object.values(pokemonData)
+        .filter((pokemon) => pokemon.num > 0)
+        .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
+        .filter((pokemon: any) => pokemon.types.includes(capitalize(currentType))),
       fastMove: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'FAST' && type.type === currentType),
       chargedMove: data.combat.filter(
         (type: { type_move: string; type: string }) => type.type_move === 'CHARGE' && type.type === currentType
       ),
     });
-  }, [currentType]);
+  }, [currentType, releasedGO]);
 
   const changeType = (value: string) => {
     setShowType(false);
@@ -75,8 +207,24 @@ const SearchTypes = () => {
           </div>
         </div>
       </div>
+      <FormControlLabel
+        control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
+        label={
+          <span className="d-flex align-items-center">
+            Released in GO
+            <img
+              width={28}
+              height={28}
+              style={{ marginLeft: 5, marginRight: 5 }}
+              alt="pokemon-go-icon"
+              src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+            />
+            <b>{`Filter from ${allData.pokemon} Pokémon`}</b>
+          </span>
+        }
+      />
       <div className="row">
-        <div className="col-lg-4 element-top">
+        <div className="col-xl-4 element-top">
           <div
             className={'d-flex flex-column align-items-center type-info-container ' + currentType.toLowerCase() + '-border'}
             style={{ background: computeBgType(currentType, false, false, 0.7) }}
@@ -105,25 +253,75 @@ const SearchTypes = () => {
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('pokeball_sprite')} />{' '}
               <b>{`Pokémon: ${result.pokemonList.length} (${Math.round((result.pokemonList.length * 100) / allData.pokemon)}%)`}</b>
+              <ul style={{ listStyleType: 'disc' }}>
+                <li>
+                  <b>{`Legacy Type: ${result.pokemonList.filter((pokemon: any) => pokemon.types.length === 1).length} (${Math.round(
+                    (result.pokemonList.filter((pokemon: any) => pokemon.types.length === 1).length * 100) / allData.pokemon
+                  )}%)`}</b>
+                </li>
+                <li>
+                  <b>{`Include Type: ${result.pokemonList.filter((pokemon: any) => pokemon.types.length > 1).length} (${Math.round(
+                    (result.pokemonList.filter((pokemon: any) => pokemon.types.length > 1).length * 100) / allData.pokemon
+                  )}%)`}</b>
+                </li>
+              </ul>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
-              <b>{`Fast Moves: ${result.fastMove.length} (${Math.round((result.fastMove.length * 100) / allData.fastMoves)}%)`}</b>
+              <b>{`Fast Moves: ${result.fastMove.length}/${allData.fastMoves} (${Math.round(
+                (result.fastMove.length * 100) / allData.fastMoves
+              )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charge Moves: ${result.chargedMove.length} (${Math.round(
+              <b>{`Charge Moves: ${result.chargedMove.length}/${allData.chargedMoves} (${Math.round(
                 (result.chargedMove.length * 100) / allData.chargedMoves
               )}%)`}</b>
             </span>
           </div>
         </div>
-        <div className="col-lg-8 element-top">
+        <div className="col-xl-8 element-top">
           <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
-            <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List" />
-            <Tab eventKey="pokemonMultiList" title="Pokémon Multi Types List" />
-            <Tab eventKey="fastMovesList" title="Fast Move List" />
-            <Tab eventKey="chargesMovesList" title="Charged Move List" />
+            <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
+              <DataTable
+                columns={columnPokemon}
+                data={result ? result.pokemonList.filter((pokemon: any) => pokemon.types.length === 1) : []}
+                pagination={true}
+                defaultSortFieldId={1}
+                highlightOnHover={true}
+                striped={true}
+              />
+            </Tab>
+            <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
+              <DataTable
+                columns={columnPokemon}
+                data={result ? result.pokemonList.filter((pokemon: any) => pokemon.types.length > 1) : []}
+                pagination={true}
+                defaultSortFieldId={1}
+                highlightOnHover={true}
+                striped={true}
+              />
+            </Tab>
+            <Tab eventKey="fastMovesList" title="Fast Move List">
+              <DataTable
+                columns={columnMove}
+                data={result ? result.fastMove : []}
+                pagination={true}
+                defaultSortFieldId={1}
+                highlightOnHover={true}
+                striped={true}
+              />
+            </Tab>
+            <Tab eventKey="chargesMovesList" title="Charged Move List">
+              <DataTable
+                columns={columnMove}
+                data={result ? result.chargedMove : []}
+                pagination={true}
+                defaultSortFieldId={1}
+                highlightOnHover={true}
+                striped={true}
+              />
+            </Tab>
           </Tabs>
         </div>
       </div>

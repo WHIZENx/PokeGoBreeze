@@ -10,6 +10,7 @@ import './Counter.css';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const Counter = ({ def, form, changeForm }: any) => {
+  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [counterList, setCounterList]: any = useState([]);
   const [open, setOpen] = useState(false);
@@ -52,7 +53,18 @@ const Counter = ({ def, form, changeForm }: any) => {
                 <span>Best Pokémon Counter</span>
                 <FormControlLabel
                   control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
-                  label="Released in GO"
+                  label={
+                    <span className="d-flex align-items-center">
+                      Released in GO
+                      <img
+                        width={28}
+                        height={28}
+                        style={{ marginLeft: 5 }}
+                        alt="pokemon-go-icon"
+                        src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                      />
+                    </span>
+                  }
                   disabled={!open}
                 />
               </div>

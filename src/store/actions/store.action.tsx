@@ -178,31 +178,57 @@ export const loadStore = (
     league: any,
     timestamp: any
   ) => {
-    return dispatch({
-      type: LOAD_STORE,
-      payload: {
-        data: {
-          cpm,
-          typeEff,
-          weatherBoost,
-          options: optionSettings(gmData),
-          pokemon,
-          candy: candyData,
-          evolution: optionEvolution(gmData, pokemon, formSpecial),
-          stickers: optionSticker(gmData, pokemon),
-          assets: assetsPokemon,
-          combat: optionCombat(gmData, movesData, typeEff),
-          pokemonCombat,
-          leagues: optionLeagues(gmData, pokemon),
-          details,
-          pvp: {
-            rankings: convertPVPRankings(pvpRank, league.data),
-            trains: convertPVPTrain(pvpTrain, league.data),
-          },
+    const payload = {
+      icon: null,
+      data: {
+        cpm,
+        typeEff,
+        weatherBoost,
+        options: optionSettings(gmData),
+        pokemon,
+        candy: candyData,
+        evolution: optionEvolution(gmData, pokemon, formSpecial),
+        stickers: optionSticker(gmData, pokemon),
+        assets: assetsPokemon,
+        combat: optionCombat(gmData, movesData, typeEff),
+        pokemonCombat,
+        leagues: optionLeagues(gmData, pokemon),
+        details,
+        pvp: {
+          rankings: convertPVPRankings(pvpRank, league.data),
+          trains: convertPVPTrain(pvpTrain, league.data),
         },
-        timestamp,
       },
-    });
+      timestamp,
+    };
+    try {
+      axios
+        .getFetchUrl(`https://api.github.com/repos/PokeMiners/pogo_assets/commits?path=Images/App%20Icons&page=1&per_page=1`, {
+          headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+          cancelToken: source.token,
+        })
+        .then((res: { data: { url: any }[] }) => {
+          axios
+            .getFetchUrl(res.data[0].url, {
+              headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+              cancelToken: source.token,
+            })
+            .then((file: { data: { files: { filename: string }[] } }) => {
+              return dispatch({
+                type: LOAD_STORE,
+                payload: {
+                  ...payload,
+                  icon: file.data.files[0].filename.replace('Images/App Icons/', '').replace('.png', ''),
+                },
+              });
+            });
+        });
+    } catch {
+      return dispatch({
+        type: LOAD_STORE,
+        payload,
+      });
+    }
   };
 
   dispatch(showSpinner());

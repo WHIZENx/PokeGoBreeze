@@ -862,7 +862,9 @@ const Battle = () => {
     if (elem) {
       if (timelineType) {
         xCurrent = elem.style.transform ? (getTranslation(elem) >= timelineNormal.current.clientWidth - 2 ? 0 : getTranslation(elem)) : 0;
-        timelineNormalContainer.current.scrollTo(Math.max(0, xCurrent - timelineNormalContainer.current.clientWidth / 2), window.scrollY);
+        timelineNormalContainer.current.scrollTo({
+          left: Math.max(0, xCurrent - timelineNormalContainer.current.clientWidth / 2),
+        });
         if (!xNormal.current) {
           const element: any = ReactDOM.findDOMNode(timelineNormalContainer.current);
           const rect = element.getBoundingClientRect();
@@ -904,8 +906,9 @@ const Battle = () => {
           overlappingPos(arrBound.current, width + xNormal.current, true);
         }
         if (Math.min(width, timelineNormalContainer.current.clientWidth / 2) === timelineNormalContainer.current.clientWidth / 2) {
-          timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
-          timelineNormalContainer.current.scrollTo(width - timelineNormalContainer.current.clientWidth / 2, window.scrollY);
+          timelineNormalContainer.current.scrollTo({
+            left: width - timelineNormalContainer.current.clientWidth / 2,
+          });
         }
         if (width < timelineNormal.current.clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
@@ -941,7 +944,9 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     if (timelineType && timelineNormalContainer.current) {
-      timelineNormalContainer.current.scrollTo(0, window.scrollY);
+      timelineNormalContainer.current.scrollTo({
+        left: 0,
+      });
     }
     if (elem) {
       elem.style.transform = 'translate(0px, -50%)';
@@ -1010,10 +1015,9 @@ const Battle = () => {
         if (elem) {
           elem.style.transform = 'translate(' + Math.max(0, transform) + 'px, -50%)';
         }
-        timelineNormalContainer.current.scrollTo(
-          Math.min(transform, transform - timelineNormalContainer.current.clientWidth / 2),
-          window.scrollY
-        );
+        timelineNormalContainer.current.scrollTo({
+          left: Math.min(transform, transform - timelineNormalContainer.current.clientWidth / 2),
+        });
       } else {
         if (arrStore.current.length === 0) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {

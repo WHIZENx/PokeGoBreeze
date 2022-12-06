@@ -9,6 +9,7 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const PokemonModel = (props: { id: any; name: string }) => {
+  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
 
   const [pokeAssets, setPokeAssets]: any = useState([]);
@@ -40,8 +41,8 @@ const PokemonModel = (props: { id: any; name: string }) => {
   return (
     <div className="element-top">
       <h4 className="title-evo">
-        <img width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon('Standard')} />{' '}
         <b>{'Assets of ' + splitAndCapitalize(props.name, '_', ' ') + ' in Pokémon Go'}</b>
+        <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon ?? 'Standard')} />
       </h4>
       <div>
         {pokeAssets.map((assets: { image: { gender: number; shiny: string; default: string }[]; form: string }, index: React.Key) => (
@@ -87,7 +88,11 @@ const PokemonModel = (props: { id: any; name: string }) => {
             <div className="desc">{splitAndCapitalize(assets.form.toLowerCase(), '_', ' ')}</div>
           </div>
         ))}
-        {pokeAssets.length === 0 && <div style={{ marginBottom: 15 }}>Assets in Pokémon Go unavailable.</div>}
+        {pokeAssets.length === 0 && (
+          <div className="text-danger" style={{ marginBottom: 15 }}>
+            &emsp;Assets in Pokémon Go unavailable
+          </div>
+        )}
       </div>
       <h4 className="title-evo">
         <b>{'Sound of ' + splitAndCapitalize(props.name, '_', ' ')}</b>
@@ -99,7 +104,7 @@ const PokemonModel = (props: { id: any; name: string }) => {
             </audio>
             <h6>Pokémon GO:</h6> */}
       {!sound.current || sound.current.sound.cry.length === 0 ? (
-        <div>Sound in Pokémon Go unavailable.</div>
+        <div className="text-danger">&emsp;Sound in Pokémon Go unavailable.</div>
       ) : (
         <ul style={{ margin: 0 }}>
           {sound.current.sound.cry.map((value: { form: string; path: string }, index: React.Key) => (

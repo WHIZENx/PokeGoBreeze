@@ -43,6 +43,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
+  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
 
   const [id, setId] = useState(1);
@@ -781,7 +782,18 @@ const RaidBattle = () => {
                 onChange={(event, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
               />
             }
-            label="Released in GO"
+            label={
+              <span className="d-flex align-items-center">
+                Released in GO
+                <img
+                  width={28}
+                  height={28}
+                  style={{ marginLeft: 5 }}
+                  alt="pokemon-go-icon"
+                  src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                />
+              </span>
+            }
           />
         </div>
         <label className="form-label">Sorting</label>
