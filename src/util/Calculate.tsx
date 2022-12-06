@@ -21,7 +21,7 @@ import {
   STAB_MULTIPLY,
   typeCostPowerUp,
 } from './Constants';
-import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm } from './Utils';
+import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm, mappingReleasedGO } from './Utils';
 
 const weatherMultiple = (globalOptions: any, weatherBoost: any, weather: string, type: string) => {
   return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: any) => item === type.toUpperCase().replaceAll(' ', '_'))
@@ -982,7 +982,7 @@ export const TimeToKill = (HP: number, dpsDef: number) => {
   return HP / dpsDef;
 };
 
-export const queryTopMove = (globalOptions: any, typeEff: any, weatherBoost: any, pokemonCombatList: any[], move: any) => {
+export const queryTopMove = (globalOptions: any, details: any, typeEff: any, weatherBoost: any, pokemonCombatList: any[], move: any) => {
   const dataPri: {
     num: number;
     forme: string | null;
@@ -993,7 +993,7 @@ export const queryTopMove = (globalOptions: any, typeEff: any, weatherBoost: any
     dps: number;
     tdo: number;
   }[] = [];
-  Object.values(pokemonData).forEach((value) => {
+  mappingReleasedGO(pokemonData, details).forEach((value) => {
     if (move.track === 281) {
       move.name = 'HIDDEN_POWER';
     }
@@ -1443,6 +1443,7 @@ const sortCounterDPS = (data: any[]) => {
 
 export const counterPokemon = (
   globalOptions: any,
+  details: any,
   typeEff: any,
   weatherBoost: any,
   def: any,
@@ -1463,7 +1464,7 @@ export const counterPokemon = (
       eliteQuickMoves: any[];
     }) => {
       if (value.quickMoves[0] !== 'STRUGGLE' && value.cinematicMoves[0] !== 'STRUGGLE' && !value.name.includes('_FEMALE')) {
-        const pokemon = Object.values(pokemonData).find((item) => {
+        const pokemon = mappingReleasedGO(pokemonData, details).find((item) => {
           const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()), true);
           return item.slug === name;
         });

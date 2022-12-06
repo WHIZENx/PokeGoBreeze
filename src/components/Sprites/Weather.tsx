@@ -1,18 +1,16 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import APIService from '../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../util/Utils';
+import { splitAndCapitalize } from '../../util/Utils';
 
 const Weather = (props: { arr: any[]; style: React.CSSProperties | undefined; text?: string }) => {
   if (!props.arr || props.arr.length === 0) {
     return (
-      <Fragment>
-        <div className="element-top d-flex" style={{ marginLeft: 15 }}>
-          <div className="text-center" key={0}>
-            <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />
-            <span className="caption text-black">None</span>
-          </div>
+      <div className="element-top d-flex" style={{ marginLeft: 15 }}>
+        <div className="text-center" key={0}>
+          <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />
+          <span className="caption text-black">None</span>
         </div>
-      </Fragment>
+      </div>
     );
   }
 

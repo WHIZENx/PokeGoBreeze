@@ -129,7 +129,7 @@ const Move = (props: { id?: any }) => {
       const id = params.id ? params.id.toLowerCase() : props.id;
       queryMoveData(id);
     } else {
-      setTopList(queryTopMove(data.options, data.typeEff, data.weatherBoost, data.pokemonCombat, move));
+      setTopList(queryTopMove(data.options, data.details, data.typeEff, data.weatherBoost, data.pokemonCombat, move));
     }
   }, [data, params.id, props.id, queryMoveData, move]);
 

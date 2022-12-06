@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertName, mappingReleasedGO, splitAndCapitalize } from '../../../util/Utils';
 import pokemonData from '../../../data/pokemon.json';
 import './Types.css';
 import CardType from '../../../components/Card/CardType';
@@ -132,6 +132,7 @@ const SearchTypes = () => {
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const typeList = useRef(Object.keys(data.typeEff));
+  const pokemonDataFilter: any = useRef(mappingReleasedGO(pokemonData, data.details));
 
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -142,10 +143,7 @@ const SearchTypes = () => {
     chargedMove: [],
   });
   const allData = {
-    pokemon:
-      Object.values(pokemonData)
-        .filter((pokemon) => pokemon.num > 0)
-        .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+    pokemon: pokemonDataFilter.current.filter((pokemon: { releasedGO: boolean }) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
     fastMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'FAST').length,
     chargedMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'CHARGE').length,
   };
@@ -158,9 +156,8 @@ const SearchTypes = () => {
 
   useEffect(() => {
     setResult({
-      pokemonList: Object.values(pokemonData)
-        .filter((pokemon) => pokemon.num > 0)
-        .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
+      pokemonList: pokemonDataFilter.current
+        .filter((pokemon: { releasedGO: boolean }) => (releasedGO ? pokemon.releasedGO : true))
         .filter((pokemon: any) => pokemon.types.includes(capitalize(currentType))),
       fastMove: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'FAST' && type.type === currentType),
       chargedMove: data.combat.filter(

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import pokemonData from '../../../data/pokemon.json';
 
-import { convertName, splitAndCapitalize } from '../../../util/Utils';
+import { checkReleasedGO, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { MAX_LEVEL, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/Constants';
 import {
@@ -958,14 +958,7 @@ const RaidBattle = () => {
                   return true;
                 }
                 obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
-                const result = data.details.find(
-                  (item: { name: string; id: any }) =>
-                    item.id === obj.pokemon.num &&
-                    item.name ===
-                      (item.id === 555 && !obj.pokemon.name.toLowerCase().includes('zen')
-                        ? obj.pokemon.name.toUpperCase().replaceAll(' ', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
-                        : convertName(obj.pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
-                );
+                const result = checkReleasedGO(obj.pokemon, data.details);
                 return result ? result.releasedGO : false;
               })
               .filter((obj: { pokemon: { name: string } }) => {
