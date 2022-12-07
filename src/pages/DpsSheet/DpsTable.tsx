@@ -124,7 +124,7 @@ const columns: any = [
         className="d-flex align-items-center"
         to={'/move/' + row.cmove?.id}
         target="_blank"
-        title={`${splitAndCapitalize(row.cmove?.name, '_', ' ')}`}
+        title={`${splitAndCapitalize(row.cmove?.name, '_', ' ').replaceAll(' Plus', '+')}`}
       >
         <img
           style={{ marginRight: 10 }}

@@ -57,6 +57,21 @@ const columnPokemon: any = [
     sortFunction: nameSort,
   },
   {
+    name: 'Type(s)',
+    selector: (row: { types: any[] }) =>
+      row.types.map((value: any, index: React.Key) => (
+        <img
+          key={index}
+          style={{ marginRight: 10 }}
+          width={25}
+          height={25}
+          alt="img-pokemon"
+          src={APIService.getTypeSprite(capitalize(value))}
+        />
+      )),
+    width: '150px',
+  },
+  {
     name: 'ATK',
     selector: (row: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) =>
       calculateStatsByTag(row.baseStats, row.slug).atk,
@@ -93,9 +108,9 @@ const columnMove: any = [
         className="d-flex align-items-center"
         to={'/move/' + row.id}
         target="_blank"
-        title={`${splitAndCapitalize(row.name, '_', ' ')}`}
+        title={`${splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}`}
       >
-        {splitAndCapitalize(row.name, '_', ' ')}
+        {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
       </Link>
     ),
     sortable: true,

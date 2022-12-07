@@ -166,7 +166,7 @@ export const optionPokemon = (data: any[]) => {
 export const optionformSpecial = (data: any[]) => {
   return data
     .filter(
-      (item: { templateId: string | string[]; data: { formSettings?: any } }) =>
+      (item: { templateId: string; data: { formSettings?: any } }) =>
         item.templateId.includes('POKEMON') &&
         item.templateId.includes('FORMS') &&
         Object.keys(item.data).includes('formSettings') &&
@@ -774,39 +774,54 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
   };
 
   return pokemon
-    .filter((item: { name: any }) => !formSpecial.includes(item.name))
-    .map(
-      (item: {
-        id: number;
-        name: string;
-        pokemonId: string;
-        quickMoves: { map: (arg0: (move: any) => any) => any[] };
-        cinematicMoves: any[];
-        eliteQuickMove: { map: (arg0: (move: any) => any) => any[] };
-        eliteCinematicMove: any[];
-        shadow: { shadowChargeMove: any; purifiedChargeMove: any };
-      }) => {
-        const result: CombatPokemon = combatPokemonModel();
-        result.id = item.id;
-        result.name = item.name;
-        result.baseSpecies = item.pokemonId;
-        if (result.id === 235) {
-          const moves = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
-            .smeargleMovesSettings;
-          result.quickMoves = moves.quickMoves.map((move: string) => move.replace('_FAST', ''));
-          result.cinematicMoves = moves.cinematicMoves;
-        } else {
-          result.quickMoves = item.quickMoves ? item.quickMoves.map((move: string) => move.replace('_FAST', '')) : [];
-          result.cinematicMoves = item.cinematicMoves;
-          result.eliteQuickMoves = item.eliteQuickMove ? item.eliteQuickMove.map((move: string) => move.replace('_FAST', '')) : [];
-          result.eliteCinematicMoves = item.eliteCinematicMove ?? [];
-          if (item.shadow) {
-            result.shadowMoves.push(item.shadow.shadowChargeMove);
-            result.purifiedMoves.push(item.shadow.purifiedChargeMove);
-          }
+    .filter((item: { name: any }) => !formSpecial.includes(item.name) || item.name.endsWith('_S'))
+    .reduce(
+      (
+        pokemonList: any[],
+        item: {
+          id: number;
+          name: string;
+          pokemonId: string;
+          quickMoves: { map: (arg0: (move: any) => any) => any[] };
+          cinematicMoves: any[];
+          eliteQuickMove: { map: (arg0: (move: any) => any) => any[] };
+          eliteCinematicMove: any[];
+          shadow: { shadowChargeMove: any; purifiedChargeMove: any };
         }
-        return result;
-      }
+      ) => {
+        if (item.name.endsWith('_S') && pokemonList.map((item) => item.name).includes(item.name.replace('_S', ''))) {
+          const pokemonPrev = pokemonList.find((poke) => poke.name === item.name.replace('_S', ''));
+          if (!pokemonPrev.purifiedMoves.includes(item.shadow.purifiedChargeMove)) {
+            pokemonPrev.purifiedMoves.push(item.shadow.purifiedChargeMove);
+          }
+          if (!pokemonPrev.shadowMoves.includes(item.shadow.shadowChargeMove)) {
+            pokemonPrev.shadowMoves.push(item.shadow.shadowChargeMove);
+          }
+        } else {
+          const result: CombatPokemon = combatPokemonModel();
+          result.id = item.id;
+          result.name = item.name;
+          result.baseSpecies = item.pokemonId;
+          if (result.id === 235) {
+            const moves = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
+              .smeargleMovesSettings;
+            result.quickMoves = moves.quickMoves.map((move: string) => move.replace('_FAST', ''));
+            result.cinematicMoves = moves.cinematicMoves;
+          } else {
+            result.quickMoves = item.quickMoves ? item.quickMoves.map((move: string) => move.replace('_FAST', '')) : [];
+            result.cinematicMoves = item.cinematicMoves;
+            result.eliteQuickMoves = item.eliteQuickMove ? item.eliteQuickMove.map((move: string) => move.replace('_FAST', '')) : [];
+            result.eliteCinematicMoves = item.eliteCinematicMove ?? [];
+            if (item.shadow) {
+              result.shadowMoves.push(item.shadow.shadowChargeMove);
+              result.purifiedMoves.push(item.shadow.purifiedChargeMove);
+            }
+          }
+          pokemonList.push(result);
+        }
+        return pokemonList;
+      },
+      []
     );
 };
 
