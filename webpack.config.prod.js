@@ -7,6 +7,7 @@ const manifest = require('./public/manifest.json');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TSLintPlugin = require('tslint-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -37,9 +38,17 @@ module.exports = {
       'process.env': JSON.stringify(process.env)
     }),
     new TSLintPlugin({
-      files: ['./src/**/*.ts']
+      files: ['./src/**/*.{ts,tsx}'],
+      failOnWarning: true
     }),
-    new ESLintPlugin(),
+    new ESLintPlugin({
+      files: ['./src/**/*.{ts,tsx}'],
+      failOnWarning: true
+    }),
+    new StylelintPlugin({
+      files: ['./src/**/*.css'],
+      failOnWarning: true
+    }),
     new WebpackFavicons({
       src: 'src/assets/pokedex.png',
       path: 'img',
