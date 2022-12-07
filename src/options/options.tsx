@@ -654,6 +654,7 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
         data: {
           combatMove: {
             uniqueId: string;
+            // eslint-disable-next-line no-unused-vars
             type: { replace: (arg0: string, arg1: string) => null };
             power: number;
             energyDelta: number;
@@ -782,8 +783,10 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
           id: number;
           name: string;
           pokemonId: string;
+          // eslint-disable-next-line no-unused-vars
           quickMoves: { map: (arg0: (move: any) => any) => any[] };
           cinematicMoves: any[];
+          // eslint-disable-next-line no-unused-vars
           eliteQuickMove: { map: (arg0: (move: any) => any) => any[] };
           eliteCinematicMove: any[];
           shadow: { shadowChargeMove: any; purifiedChargeMove: any };
@@ -827,6 +830,7 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
 
 export const optionLeagues = (
   data: {
+    // eslint-disable-next-line no-unused-vars
     find: (arg0: { (item: any): boolean; (item: any): boolean; (item: any): boolean }) => {
       (): any;
       new (): any;
@@ -839,6 +843,7 @@ export const optionLeagues = (
           allowedVsSeekerLeagueTemplateId: {
             (): any;
             new (): any;
+            // eslint-disable-next-line no-unused-vars
             map: { (arg0: (item: any) => any): any[]; new (): any };
           };
         };
@@ -846,11 +851,13 @@ export const optionLeagues = (
         combatRankingProtoSettings: { (): any; new (): any; rankLevel: any };
       };
     };
+    // eslint-disable-next-line no-unused-vars
     filter: (arg0: { (item: any): any; (item: any): any; (item: any): any }) => {
       (): any;
       new (): any;
       map: {
         (
+          // eslint-disable-next-line no-unused-vars
           arg0: (item: any) => {
             id: null;
             title: string;
@@ -862,6 +869,7 @@ export const optionLeagues = (
         ): any[];
         new (): any;
       };
+      // eslint-disable-next-line no-unused-vars
       forEach: { (arg0: { (item: any): void; (item: any): void }): void; new (): any };
     };
   },

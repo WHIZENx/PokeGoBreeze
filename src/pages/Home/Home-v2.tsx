@@ -1,21 +1,46 @@
-import React, { useMemo, useState, useRef, useEffect, Fragment } from 'react';
+import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
-
 import pokemonData from '../../data/pokemon.json';
+
 import './Home.css';
-import { calculateStatsByTag } from '../../util/Calculate';
-import APIService from '../../services/API.service';
-import { findAssetForm } from '../../util/Compute';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
+import { calculateStatsByTag } from '../../util/Calculate';
+import { mappingReleasedGO } from '../../util/Utils';
+import APIService from '../../services/API.service';
+import { findAssetForm } from '../../util/Compute';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const stats = useSelector((state: RootStateOrAny) => state.stats);
   const types = Object.keys(data.typeEff);
-  const pokeList: any = useMemo(() => {
-    return [];
-  }, []);
-  const [dataList, setDataList] = useState([]);
+  const dataList = useRef(
+    mappingReleasedGO(pokemonData, data.details)
+      .map((item) => {
+        const stats = calculateStatsByTag(item.baseStats, item.slug);
+        return {
+          id: item.num,
+          name: item.name,
+          forme: item.forme,
+          types: item.types,
+          color: item.color.toLowerCase(),
+          sprite: item.sprite.toLowerCase(),
+          baseSpecies: item.baseSpecies,
+          baseStats: item.baseStats,
+          goStats: {
+            atk: stats.atk,
+            def: stats.def,
+            sta: stats.sta,
+          },
+          releasedGO: item.releasedGO,
+          image: findAssetForm(data.assets, item.num, item.name)
+            ? APIService.getPokemonModel(findAssetForm(data.assets, item.num, item.name))
+            : APIService.getPokeFullSprite(item.num),
+        };
+      })
+      .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
+  );
   const dataListFilter: any = useRef(null);
   const [selectTypes, setSelectTypes]: any = useState([]);
   const [listOfPokemon, setListOfPokemon]: any = useState([]);
@@ -35,67 +60,19 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const fetchPokemon = async () => {
-      if (pokeList.length === 0) {
-        let result: any = Object.values(pokemonData);
-        result = result
-          .filter((item: { num: number }) => item.num > 0)
-          .map(
-            (item: {
-              baseStats: {
-                hp: number;
-                atk: number;
-                def: number;
-                spa: number;
-                spd: number;
-                spe: number;
-              };
-              forme: string | null;
-              slug: string;
-              num: any;
-              name: any;
-              types: any;
-              color: string;
-              sprite: string;
-              baseSpecies: any;
-            }) => {
-              const stats = calculateStatsByTag(item.baseStats, item.slug);
-              return {
-                id: item.num,
-                name: item.name,
-                forme: item.forme,
-                types: item.types,
-                color: item.color.toLowerCase(),
-                sprite: item.sprite.toLowerCase(),
-                image: findAssetForm(data.assets, item.num, item.name)
-                  ? APIService.getPokemonModel(findAssetForm(data.assets, item.num, item.name))
-                  : APIService.getPokeFullSprite(item.num),
-                baseSpecies: item.baseSpecies,
-                baseStats: item.baseStats,
-                atk: stats.atk,
-                def: stats.def,
-                sta: stats.sta,
-              };
-            }
-          )
-          .sort((a: { id: number }, b: { id: number }) => a.id - b.id);
-        result.shift();
-        pokeList.push(...result);
-        setDataList(result);
-      }
-    };
-    fetchPokemon();
-
-    const result = dataList.filter((item: any) => {
-      const boolFilterType =
-        item.types.map((item: any) => selectTypes.includes(item.toUpperCase())).filter((bool: boolean) => bool === true).length ===
-        selectTypes.length;
-      const boolFilterPoke =
-        searchTerm === '' || item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm);
-      return boolFilterType && boolFilterPoke;
-    });
-    dataListFilter.current = result;
-    setListOfPokemon(result.slice(0, 20));
+    const timeOutId = setTimeout(() => {
+      const result = dataList.current.filter((item: any) => {
+        const boolFilterType =
+          item.types.map((item: any) => selectTypes.includes(item.toUpperCase())).filter((bool: boolean) => bool === true).length ===
+          selectTypes.length;
+        const boolFilterPoke =
+          searchTerm === '' || item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm);
+        return boolFilterType && boolFilterPoke;
+      });
+      dataListFilter.current = result;
+      setListOfPokemon(result);
+    }, 100);
+    return () => clearTimeout(timeOutId);
   }, [searchTerm, selectTypes]);
 
   return (
@@ -130,11 +107,21 @@ const Home = () => {
         </div>
       </div>
       <div className="text-center">
-        <div className="d-flex flex-wrap">
+        <ul className="d-grid pokemon-content">
           {listOfPokemon.map((row: any, index: React.Key) => (
-            <CardPokemonInfo key={index} name={row.name} image={row.image} />
+            <Link key={index} className="pokemon-link" to={`/pokemon/${row.id}${row.forme ? `?form=${row.forme.toLowerCase()}` : ''}`}>
+              <CardPokemonInfo
+                name={row.name}
+                image={row.image}
+                id={row.id}
+                types={row.types}
+                pokemonStat={row.goStats}
+                stats={stats}
+                releasedGO={row.releasedGO}
+              />
+            </Link>
           ))}
-        </div>
+        </ul>
       </div>
     </Fragment>
   );

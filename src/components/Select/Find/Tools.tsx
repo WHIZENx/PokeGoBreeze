@@ -13,12 +13,14 @@ const Tools = (props: {
   tier?: any;
   id?: any;
   onClearStats?: any;
+  // eslint-disable-next-line no-unused-vars
   setTier?: (arg0: any) => void;
   onSetPrev?: () => void;
   count: number;
   onSetNext: () => void;
   name: string;
   hide?: any;
+  // eslint-disable-next-line no-unused-vars
   setRaid?: (arg0: boolean) => void;
   setForm?: any;
   stats: any;
@@ -43,12 +45,15 @@ const Tools = (props: {
   const fetchMap = useCallback(
     async (
       data: { varieties: any[]; name: any; id: any },
+      // eslint-disable-next-line no-unused-vars
       axios: { getFetchUrl: (arg0: any, arg1: { cancelToken: any }) => any },
       source: { token: any }
     ) => {
       setFormList([]);
       setPokeData([]);
+      // eslint-disable-next-line no-unused-vars
       const dataPokeList: any | ((prevState: any[]) => any[]) = [];
+      // eslint-disable-next-line no-unused-vars
       let dataFromList: any | ((prevState: any[]) => any[]) = [];
       await Promise.all(
         data.varieties.map(async (value: { pokemon: { url: any } }) => {
@@ -80,6 +85,7 @@ const Tools = (props: {
         .map(
           (item: {
             map: (
+              // eslint-disable-next-line no-unused-vars
               arg0: (item: { pokemon: { name: string | any[] } }) => {
                 form: { pokemon: { name: string | any[] } };
                 name: any;

@@ -31,7 +31,7 @@ const FillDmg: any = styled.div`
   animation-fill-mode: forwards;
 `;
 
-const ProgressBar = ({ text, height, hp, maxHp, dmg }: any) => {
+const HpBar = ({ text, height, hp, maxHp, dmg }: any) => {
   return (
     <div className="d-flex align-items-center w-100" style={{ columnGap: 5 }}>
       {text && (
@@ -52,4 +52,4 @@ const ProgressBar = ({ text, height, hp, maxHp, dmg }: any) => {
   );
 };
 
-export default ProgressBar;
+export default HpBar;

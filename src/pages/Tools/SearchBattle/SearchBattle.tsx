@@ -123,7 +123,7 @@ const FindBattle = () => {
 
   const searchStatsPoke = useCallback(
     (level: any) => {
-      const arr: ((prevState: any[]) => any[]) | any[][] = [];
+      const arr: (() => any[]) | any[][] = [];
       getEvoChain(id).forEach((item: any[]) => {
         const tempArr: { battleLeague: any; maxCP: any; form: any; id: number; name: string }[] = [];
         item.forEach((value: { form: string; id: number; name: string }) => {

@@ -7,11 +7,17 @@ import CardPokemonLarge from '../../Card/CardPokemonLarge';
 const SelectFind = (props: {
   data: any[];
   clearData: () => void;
+  // eslint-disable-next-line no-unused-vars
   setStatATK: (arg0: number | null) => void;
+  // eslint-disable-next-line no-unused-vars
   setStatDEF: (arg0: number | null) => void;
+  // eslint-disable-next-line no-unused-vars
   setStatSTA: (arg0: number | null) => void;
+  // eslint-disable-next-line no-unused-vars
   setForm: (arg0: any) => void;
+  // eslint-disable-next-line no-unused-vars
   setName: (arg0: string) => void;
+  // eslint-disable-next-line no-unused-vars
   setId: (arg0: null) => void;
 }) => {
   const [startIndex, setStartIndex] = useState(0);

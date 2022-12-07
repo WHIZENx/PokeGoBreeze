@@ -23,8 +23,11 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
     (
       ctx: {
         beginPath: () => void;
+        // eslint-disable-next-line no-unused-vars
         moveTo: (arg0: any, arg1: any) => void;
+        // eslint-disable-next-line no-unused-vars
         lineTo: (arg0: any, arg1: any) => void;
+        // eslint-disable-next-line no-unused-vars
         setLineDash: (arg0: number[]) => void;
         fillStyle: string;
         fill: () => void;
@@ -62,8 +65,11 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
     (
       ctx: {
         beginPath: () => void;
+        // eslint-disable-next-line no-unused-vars
         moveTo: (arg0: any, arg1: any) => void;
+        // eslint-disable-next-line no-unused-vars
         lineTo: (arg0: any, arg1: any) => void;
+        // eslint-disable-next-line no-unused-vars
         setLineDash: (arg0: any[]) => void;
         lineWidth: number;
         fillStyle: string;

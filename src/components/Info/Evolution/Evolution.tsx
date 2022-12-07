@@ -39,7 +39,7 @@ const theme = createTheme({
   },
 } as any);
 
-const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, gen }: any) => {
+const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
   const candyData = useSelector((state: RootStateOrAny) => state.store.data.candy);
   const [arrEvoList, setArrEvoList]: any = useState([]);

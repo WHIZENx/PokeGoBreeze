@@ -27,7 +27,7 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
-import ProgressBar from '../../../components/Sprites/ProgressBar/Bar';
+import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
@@ -967,6 +967,7 @@ const Battle = () => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const updateTimeine = (index: string | number, sound = false) => {
     const pokeCurrData = pokemonCurr.timeline[index];
     const pokeObjData = pokemonObj.timeline[index];
@@ -1371,7 +1372,7 @@ const Battle = () => {
                 </div>
                 {pokemonCurr.timeline.length > 0 && pokemonObj.timeline.length > 0 && (
                   <Fragment>
-                    <ProgressBar
+                    <HpBar
                       text={'HP'}
                       height={15}
                       hp={Math.floor(playTimeline[type].hp)}

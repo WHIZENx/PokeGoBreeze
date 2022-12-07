@@ -95,6 +95,10 @@ class APIService {
     return `${POGO_ASSET_API_URL}Pokedex/${sex.toLowerCase()}_l.png`;
   }
 
+  getShinyIcon() {
+    return `${POGO_ASSET_API_URL}Pokedex/ic_shiny.png`;
+  }
+
   getTypeSprite(type: string) {
     if (type.toLowerCase() === 'unknown') {
       return this.getPokeSprite(0);

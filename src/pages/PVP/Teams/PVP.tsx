@@ -41,6 +41,7 @@ const TeamPVP = () => {
   const styleSheet: any = useRef(null);
 
   const mappingPokemonData = useCallback(
+    // eslint-disable-next-line no-unused-vars
     (data: { split: (arg0: string) => [any, any] }) => {
       const [speciesId, moveSet] = data.split(' ');
       const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));

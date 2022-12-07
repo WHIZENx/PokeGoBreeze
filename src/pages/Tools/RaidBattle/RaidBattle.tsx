@@ -399,7 +399,7 @@ const RaidBattle = () => {
   };
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
-    let dataList: any[] | ((prevState: any[]) => any[]) = [];
+    let dataList: any[] | (() => any[]) = [];
     Object.values(pokemonData).forEach((pokemon) => {
       if (pokemon.forme !== 'Gmax') {
         let combatPoke = data.pokemonCombat.filter(
@@ -526,6 +526,7 @@ const RaidBattle = () => {
   const calculateTrainerBattle = (trainerBattle: any[]) => {
     const trainer = trainerBattle.map((trainer: { pokemons: any }) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter(
+      // eslint-disable-next-line no-unused-vars
       (pokemons: { filter: (arg0: (pokemon: any) => boolean) => { (): any; new (): any; length: number } }) =>
         pokemons.filter((pokemon: { dataTargetPokemon: any }) => !pokemon.dataTargetPokemon).length > 0
     );

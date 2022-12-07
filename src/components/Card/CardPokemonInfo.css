@@ -1,3 +1,37 @@
 .pokemoninfo-container {
-  width: 116px;
+  padding: 8px;
+}
+
+.pokemoninfo-container.border-types {
+  border: 1px solid #c5c5c5;
+}
+
+.pokemoninfo-container .pokemon-sprite-large {
+  filter: drop-shadow(1px 1px 1px black);
+}
+
+.block-pokemon {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 60%));
+}
+
+.shiny-pokemon {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+.shiny-pokemon.active {
+  filter:
+    brightness(0)
+    saturate(100%)
+    invert(88%)
+    sepia(36%)
+    saturate(644%)
+    hue-rotate(6deg)
+    brightness(108%)
+    contrast(105%)
+    drop-shadow(1px 1px 1px rgb(0 0 0 / 60%));
 }

@@ -110,7 +110,7 @@ export const computeBgType = (types: string[] | string, shadow = false, purified
   return `linear-gradient(to bottom right, ${colorsPalette[0]}, ${colorsPalette[1] ?? colorsPalette[0]})`;
 };
 
-export const findAssetForm = (pokemonAssets: any[], id: number, name: string) => {
+export const queryAssetForm = (pokemonAssets: any[], id: number, name: string) => {
   if (name.split('-')[1] === 'A') {
     name = name.replace('-A', '-Armor');
   }
@@ -123,32 +123,48 @@ export const findAssetForm = (pokemonAssets: any[], id: number, name: string) =>
   if (pokemon.name === name || standard.length > 0) {
     const image = pokemon.image.find((item: { form: string }) => item.form === 'NORMAL');
     if (image) {
-      return image.default;
+      return image;
     }
     if (standard.length > 0) {
       if (name.includes('GALARIAN')) {
         if (name.includes('ZEN')) {
-          return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN_ZEN')).default;
+          return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN_ZEN'));
         }
-        return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN')).default;
+        return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN'));
       } else if (name.includes('ZEN')) {
         return pokemon.image.find((item: { form: string | string[] }) => !item.form.includes('GALARIAN') && item.form.includes('ZEN'))
           .default;
       } else {
-        return pokemon.image.find((item: { form: string }) => item.form === 'STANDARD').default;
+        return pokemon.image.find((item: { form: string }) => item.form === 'STANDARD');
       }
     }
     try {
-      return pokemon.image[0].default;
+      return pokemon.image[0];
     } catch {
       return null;
     }
   }
   try {
-    return pokemon.image.find((item: { form: any }) => name.replaceAll(pokemon.name + '_', '') === item.form).default;
+    return pokemon.image.find((item: { form: any }) => name.replaceAll(pokemon.name + '_', '') === item.form);
   } catch {
     return null;
   }
+};
+
+export const findAssetForm = (pokemonAssets: any[], id: number, name: string) => {
+  const form = queryAssetForm(pokemonAssets, id, name);
+  if (form) {
+    return form.default;
+  }
+  return null;
+};
+
+export const findAssetFormShiny = (pokemonAssets: any[], id: number, name: string) => {
+  const form = queryAssetForm(pokemonAssets, id, name);
+  if (form) {
+    return form.shiny;
+  }
+  return null;
 };
 
 export const findStabType = (types: any[], findType: string) => {

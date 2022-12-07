@@ -1,5 +1,5 @@
 import { Table, TableContainer, TableHead, TableRow, TableBody, TableCell, tableCellClasses, styled } from '@mui/material';
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 
@@ -61,11 +61,49 @@ const Home = () => {
   const types = Object.keys(typesData);
 
   const tableScrollID = useRef(1);
-
-  const pokeList: any = useMemo(() => {
-    return [];
-  }, []);
-  const [dataList, setDataList] = useState([]);
+  const dataList = useRef(
+    Object.values(pokemonData)
+      .filter((pokemon: any) => pokemon.num > 0)
+      .map(
+        (item: {
+          baseStats: {
+            hp: number;
+            atk: number;
+            def: number;
+            spa: number;
+            spd: number;
+            spe: number;
+          };
+          forme: string | null;
+          slug: string;
+          num: any;
+          name: any;
+          types: any;
+          color: string;
+          sprite: string;
+          baseSpecies: any;
+        }) => {
+          const stats = calculateStatsByTag(item.baseStats, item.slug);
+          return {
+            id: item.num,
+            name: item.name,
+            forme: item.forme,
+            types: item.types,
+            color: item.color.toLowerCase(),
+            sprite: item.sprite.toLowerCase(),
+            baseSpecies: item.baseSpecies,
+            baseStats: item.baseStats,
+            atk: stats.atk,
+            def: stats.def,
+            sta: stats.sta,
+            minCP: calculateCP(stats.atk, stats.def, stats.sta, 1),
+            maxCP_40: calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 40),
+            maxCP_50: calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 50),
+          };
+        }
+      )
+      .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
+  );
   const dataListFilter: any = useRef(null);
   const [listOfPokemon, setListOfPokemon]: any = useState([]);
 
@@ -79,58 +117,8 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const fetchPokemon = async () => {
-      if (pokeList.length === 0) {
-        let result: any = Object.values(pokemonData);
-        result = result
-          .map(
-            (item: {
-              baseStats: {
-                hp: number;
-                atk: number;
-                def: number;
-                spa: number;
-                spd: number;
-                spe: number;
-              };
-              forme: string | null;
-              slug: string;
-              num: any;
-              name: any;
-              types: any;
-              color: string;
-              sprite: string;
-              baseSpecies: any;
-            }) => {
-              const stats = calculateStatsByTag(item.baseStats, item.slug);
-              return {
-                id: item.num,
-                name: item.name,
-                forme: item.forme,
-                types: item.types,
-                color: item.color.toLowerCase(),
-                sprite: item.sprite.toLowerCase(),
-                baseSpecies: item.baseSpecies,
-                baseStats: item.baseStats,
-                atk: stats.atk,
-                def: stats.def,
-                sta: stats.sta,
-                minCP: calculateCP(stats.atk, stats.def, stats.sta, 1),
-                maxCP_40: calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 40),
-                maxCP_50: calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 50),
-              };
-            }
-          )
-          .sort((a: { id: number }, b: { id: number }) => a.id - b.id);
-        result.shift();
-        pokeList.push(...result);
-        setDataList(result);
-      }
-    };
-    fetchPokemon();
-
     tableScrollID.current = 1;
-    const result = dataList.filter((item: any) => {
+    const result = dataList.current.filter((item: any) => {
       const boolFilterType =
         item.types.map((item: any) => selectTypes.includes(item.toUpperCase())).filter((bool: boolean) => bool === true).length ===
         selectTypes.length;
@@ -156,7 +144,7 @@ const Home = () => {
     };
     window.addEventListener('scroll', onScroll as any);
     return () => window.removeEventListener('scroll', onScroll as any);
-  }, [searchTerm, searchMaxCP, selectTypes, pokeList, dataList]);
+  }, [searchTerm, searchMaxCP, selectTypes]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -266,7 +254,7 @@ const Home = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {pokeList.length > 0 ? (
+            {dataList.current.length > 0 ? (
               <Fragment>
                 {listOfPokemon.length === 0 ? (
                   <StyledTableRow>

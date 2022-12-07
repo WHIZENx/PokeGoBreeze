@@ -26,14 +26,18 @@ export const pvpFindPath = (data: any[], path: string) => {
 
 export const convertPVPRankings = (
   data: {
+    // eslint-disable-next-line no-unused-vars
     map: (arg0: (league: any) => any) => Iterable<any> | null | undefined;
+    // eslint-disable-next-line no-unused-vars
     filter: (arg0: (item: any) => any) => {
       (): any;
       new (): any;
       map: {
+        // eslint-disable-next-line no-unused-vars
         (arg0: (item: any) => number): {
           (): any;
           new (): any;
+          // eslint-disable-next-line no-unused-vars
           sort: { (arg0: (a: any, b: any) => number): number; new (): any };
         };
         new (): any;
@@ -62,6 +66,7 @@ export const convertPVPRankings = (
     }
     result.cp = data
       .filter(
+        // eslint-disable-next-line no-unused-vars
         (item: { startsWith: (arg0: any) => any; includes: (arg0: string) => any }) =>
           item.startsWith(league) && item.includes(`${league}/overall/`)
       )
@@ -74,14 +79,18 @@ export const convertPVPRankings = (
 
 export const convertPVPTrain = (
   data: {
+    // eslint-disable-next-line no-unused-vars
     map: (arg0: (league: any) => any) => Iterable<any> | null | undefined;
+    // eslint-disable-next-line no-unused-vars
     filter: (arg0: (item: any) => any) => {
       (): any;
       new (): any;
       map: {
+        // eslint-disable-next-line no-unused-vars
         (arg0: (item: any) => number): {
           (): any;
           new (): any;
+          // eslint-disable-next-line no-unused-vars
           sort: { (arg0: (a: any, b: any) => number): number; new (): any };
         };
         new (): any;
@@ -109,6 +118,7 @@ export const convertPVPTrain = (
     }
     result.cp = data
       .filter(
+        // eslint-disable-next-line no-unused-vars
         (item: { startsWith: (arg0: any) => any; includes: (arg0: string) => any }) =>
           item.startsWith(league) && item.includes(`${league}/`)
       )

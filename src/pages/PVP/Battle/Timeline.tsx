@@ -159,10 +159,12 @@ export const TimeLine = (
   pokemonCurr: any,
   pokemonObj: any,
   elem: React.LegacyRef<HTMLDivElement> | undefined,
+  // eslint-disable-next-line no-unused-vars
   scroll: { (e: { currentTarget: { scrollLeft: number } }): void; bind?: any },
   timeline: React.LegacyRef<HTMLDivElement> | undefined,
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: {
+    // eslint-disable-next-line no-unused-vars
     (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }): void;
     bind?: any;
   },
@@ -282,6 +284,7 @@ export const TimeLineFit = (
   timeline: React.LegacyRef<HTMLDivElement> | undefined,
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: {
+    // eslint-disable-next-line no-unused-vars
     (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }): void;
     bind?: any;
   },

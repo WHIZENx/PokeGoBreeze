@@ -10,9 +10,12 @@ import APIService from '../../services/API.service';
 
 const SelectPokemon = (props: {
   pokemon?: any;
+  // eslint-disable-next-line no-unused-vars
   setCurrentPokemon: (arg0: null) => void;
   selected: any;
+  // eslint-disable-next-line no-unused-vars
   setFMovePokemon: (arg0: null) => void;
+  // eslint-disable-next-line no-unused-vars
   setCMovePokemon: (arg0: null) => void;
   clearData?: () => void;
   disable?: boolean;

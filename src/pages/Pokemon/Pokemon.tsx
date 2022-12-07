@@ -59,6 +59,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
   const fetchMap = useCallback(
     async (
       data: { varieties: any[]; name: string; id: number; generation: { url: string } },
+      // eslint-disable-next-line no-unused-vars
       axios: { getFetchUrl: (arg0: any, arg1: { cancelToken: any }) => any },
       source: { token: any }
     ) => {

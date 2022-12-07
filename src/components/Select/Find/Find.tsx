@@ -7,11 +7,16 @@ import pokeListName from '../../../data/pokemon_names.json';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const Find = (props: {
+  // eslint-disable-next-line no-unused-vars
   setId?: (arg0: number) => void;
+  // eslint-disable-next-line no-unused-vars
   setName?: (arg0: any) => void;
   clearStats?: any;
+  // eslint-disable-next-line no-unused-vars
   setStatATK?: (arg0: any) => void;
+  // eslint-disable-next-line no-unused-vars
   setStatDEF?: (arg0: any) => void;
+  // eslint-disable-next-line no-unused-vars
   setStatSTA?: (arg0: any) => void;
   hide?: any;
   raid?: any;

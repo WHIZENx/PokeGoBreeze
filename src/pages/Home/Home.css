@@ -37,3 +37,13 @@
 .input-search {
   border-radius: 0;
 }
+
+ul.pokemon-content {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  padding: 0;
+  background-color: #ececec;
+}
+
+a.pokemon-link:hover .pokemoninfo-container {
+  box-shadow: inset 0 0 8px 1px rgb(0 0 0 / 80%);
+}

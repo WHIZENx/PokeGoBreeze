@@ -3,6 +3,7 @@ import CardType from '../Card/CardType';
 import { splitAndCapitalize } from '../../util/Utils';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
+// eslint-disable-next-line no-unused-vars
 const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0: any) => void; text: string; selectDefault: any }) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
 

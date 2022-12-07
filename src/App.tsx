@@ -12,7 +12,7 @@ import './App.css';
 import NavbarComponent from './components/Navbar';
 // import FooterComponent from './components/Footer'
 
-import Home from './pages/Home/Home';
+import Home from './pages/Home/Home-v2';
 import SearchPokemon from './pages/Search/Pokemon/Search';
 import SearchMove from './pages/Search/Move/Search';
 import TypeEffect from './pages/TypeEffect/TypeEffect';
