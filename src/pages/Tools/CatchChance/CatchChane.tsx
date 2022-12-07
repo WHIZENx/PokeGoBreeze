@@ -1,5 +1,5 @@
 import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Select/Find/Find';
@@ -35,7 +35,6 @@ const CatchChance = () => {
   const CIRCLR_DISTANCE = 200;
 
   const [id, setId] = useState(1);
-  const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: any = useState(null);
 
   const [statATK, setStatATK] = useState(0);
@@ -307,7 +306,6 @@ const CatchChance = () => {
               setStatDEF={setStatDEF}
               setStatSTA={setStatSTA}
               setForm={onSetForm}
-              setName={setName}
               setId={setId}
             />
           </div>
@@ -588,8 +586,8 @@ const CatchChance = () => {
                     </td>
                     <td className="w-75">
                       Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging between 1 - 2 times.
-                      We've taken the averages of the circles, where the nice throw gives you a 1.15 times multiplier, the great throw gives
-                      you a 1.5 times multiplier and excellent throw gives you a 1.85 times multiplier.
+                      We&apos;ve taken the averages of the circles, where the nice throw gives you a 1.15 times multiplier, the great throw
+                      gives you a 1.5 times multiplier and excellent throw gives you a 1.85 times multiplier.
                     </td>
                   </tr>
                 </tbody>

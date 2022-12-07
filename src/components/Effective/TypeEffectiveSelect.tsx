@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../util/Utils';
+import { capitalize } from '../../util/Utils';
 
 import './TypeEffectiveSelect.css';
 

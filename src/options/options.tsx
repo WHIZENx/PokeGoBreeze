@@ -371,7 +371,7 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
                   dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_')[2];
                 }
                 // tslint:disable-next-line: no-empty
-              } catch {}
+              } catch {} // eslint-disable-line no-empty
               dataEvo.quest.goal = template.data.evolutionQuestTemplate.goals[0].target;
               dataEvo.quest.type = template.data.evolutionQuestTemplate.questType.replace('QUEST_', '');
             } else if (item.evolutionBranch && item.evolutionBranch.length > 1 && Object.keys(dataEvo.quest).length === 0) {

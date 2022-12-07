@@ -38,6 +38,7 @@ module.exports = {
     new TSLintPlugin({
       files: ['./src/**/*.ts']
     }),
+    new ESLintPlugin(),
     new WebpackFavicons({
       src: 'src/assets/pokedex.png',
       path: 'img',

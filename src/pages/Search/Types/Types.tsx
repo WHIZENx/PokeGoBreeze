@@ -1,8 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
-import pokemonData from '../../../data/pokemon.json';
 import './Types.css';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';

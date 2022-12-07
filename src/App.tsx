@@ -1,10 +1,10 @@
-import React, { Fragment, useEffect } from 'react';
-import packageInfo from '../package.json';
+import React, { useEffect } from 'react';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import packageInfo from '../package.json';
 import { loadStore } from './store/actions/store.action';
 import { hideSpinner } from './store/actions/spinner.action';
 import APIService from './services/API.service';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import importedComponent from 'react-imported-component';
 
 import './App.css';
@@ -134,7 +134,7 @@ import SearchTypes from './pages/Search/Types/Types';
 //     () => import(/* webpackChunkName:'Battle' */ './pages/PVP/Battle/Battle')
 // );
 
-const App = () => {
+function App() {
   const dispatch = useDispatch();
   const data = useSelector((state: RootStateOrAny) => state.store);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
@@ -190,7 +190,7 @@ const App = () => {
   }, [dispatch, data.data, stats]);
 
   return (
-    <Fragment>
+    <>
       <BrowserRouter>
         <NavbarComponent />
         {data.data && stats && (
@@ -226,8 +226,8 @@ const App = () => {
         {/* <FooterComponent /> */}
       </BrowserRouter>
       <Spinner />
-    </Fragment>
+    </>
   );
-};
+}
 
 export default App;

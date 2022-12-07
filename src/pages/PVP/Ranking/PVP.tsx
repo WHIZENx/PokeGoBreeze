@@ -17,8 +17,6 @@ import update from 'immutability-helper';
 import { Link, useParams } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 
-import Error from '../../Error/Error';
-
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -41,8 +39,6 @@ const RankingPVP = () => {
 
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: RootStateOrAny) => state.stats);
-
-  const [found, setFound] = useState(true);
 
   const LeaveToggle = ({ eventKey }: any) => {
     const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
@@ -330,103 +326,97 @@ const RankingPVP = () => {
 
   return (
     <Fragment>
-      {!found ? (
-        <Error />
-      ) : (
-        <Fragment>
-          {rankingData && storeStats && (
-            <div className="container pvp-container element-bottom">
-              {renderLeague()}
-              <hr />
-              <div className="element-top ranking-link-group">
-                <Button
-                  className={params.type.toLowerCase() === 'overall' ? ' active' : ''}
-                  href={`pvp/rankings/${params.serie}/${params.cp}/overall`}
+      {rankingData && storeStats && (
+        <div className="container pvp-container element-bottom">
+          {renderLeague()}
+          <hr />
+          <div className="element-top ranking-link-group">
+            <Button
+              className={params.type.toLowerCase() === 'overall' ? ' active' : ''}
+              href={`pvp/rankings/${params.serie}/${params.cp}/overall`}
+            >
+              Overall
+            </Button>
+            <Button
+              className={params.type.toLowerCase() === 'leads' ? ' active' : ''}
+              href={`pvp/rankings/${params.serie}/${params.cp}/leads`}
+            >
+              Leads
+            </Button>
+            <Button
+              className={params.type.toLowerCase() === 'closers' ? ' active' : ''}
+              href={`pvp/rankings/${params.serie}/${params.cp}/closers`}
+            >
+              Closers
+            </Button>
+            <Button
+              className={params.type.toLowerCase() === 'switches' ? ' active' : ''}
+              href={`pvp/rankings/${params.serie}/${params.cp}/switches`}
+            >
+              Switches
+            </Button>
+            <Button
+              className={params.type.toLowerCase() === 'chargers' ? ' active' : ''}
+              href={`pvp/rankings/${params.serie}/${params.cp}/chargers`}
+            >
+              Chargers
+            </Button>
+            <Button
+              className={params.type.toLowerCase() === 'attackers' ? ' active' : ''}
+              href={`pvp/rankings/${params.serie}/${params.cp}/attackers`}
+            >
+              Attackers
+            </Button>
+            <Button
+              className={params.type.toLowerCase() === 'consistency' ? ' active' : ''}
+              href={`pvp/rankings/${params.serie}/${params.cp}/consistency`}
+            >
+              Consistency
+            </Button>
+          </div>
+          <div className="input-group border-input">
+            <input
+              type="text"
+              className="form-control input-search"
+              placeholder="Enter Name or ID"
+              value={search}
+              onInput={(e: any) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="ranking-container">
+            <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
+              <div />
+              <div className="d-flex" style={{ marginRight: 15 }}>
+                <div
+                  className="text-center"
+                  style={{ width: 'max-content' }}
+                  onClick={() => {
+                    setSorted(!sorted);
+                  }}
                 >
-                  Overall
-                </Button>
-                <Button
-                  className={params.type.toLowerCase() === 'leads' ? ' active' : ''}
-                  href={`pvp/rankings/${params.serie}/${params.cp}/leads`}
-                >
-                  Leads
-                </Button>
-                <Button
-                  className={params.type.toLowerCase() === 'closers' ? ' active' : ''}
-                  href={`pvp/rankings/${params.serie}/${params.cp}/closers`}
-                >
-                  Closers
-                </Button>
-                <Button
-                  className={params.type.toLowerCase() === 'switches' ? ' active' : ''}
-                  href={`pvp/rankings/${params.serie}/${params.cp}/switches`}
-                >
-                  Switches
-                </Button>
-                <Button
-                  className={params.type.toLowerCase() === 'chargers' ? ' active' : ''}
-                  href={`pvp/rankings/${params.serie}/${params.cp}/chargers`}
-                >
-                  Chargers
-                </Button>
-                <Button
-                  className={params.type.toLowerCase() === 'attackers' ? ' active' : ''}
-                  href={`pvp/rankings/${params.serie}/${params.cp}/attackers`}
-                >
-                  Attackers
-                </Button>
-                <Button
-                  className={params.type.toLowerCase() === 'consistency' ? ' active' : ''}
-                  href={`pvp/rankings/${params.serie}/${params.cp}/consistency`}
-                >
-                  Consistency
-                </Button>
-              </div>
-              <div className="input-group border-input">
-                <input
-                  type="text"
-                  className="form-control input-search"
-                  placeholder="Enter Name or ID"
-                  value={search}
-                  onInput={(e: any) => setSearch(e.target.value)}
-                />
-              </div>
-              <div className="ranking-container">
-                <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
-                  <div />
-                  <div className="d-flex" style={{ marginRight: 15 }}>
-                    <div
-                      className="text-center"
-                      style={{ width: 'max-content' }}
-                      onClick={() => {
-                        setSorted(!sorted);
-                      }}
-                    >
-                      <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
-                        Score
-                        {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
-                      </span>
-                    </div>
-                  </div>
+                  <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
+                    Score
+                    {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                  </span>
                 </div>
-                <Accordion alwaysOpen={true}>
-                  {rankingData
-                    .filter((pokemon: { speciesId: string; speciesName: string }) =>
-                      splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), '-', ' ')
-                        .toLowerCase()
-                        .includes(search.toLowerCase())
-                    )
-                    .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
-                      sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]
-                    )
-                    .map((value: any, index: string) => (
-                      <Fragment key={index}>{renderItem(value, index)}</Fragment>
-                    ))}
-                </Accordion>
               </div>
             </div>
-          )}
-        </Fragment>
+            <Accordion alwaysOpen={true}>
+              {rankingData
+                .filter((pokemon: { speciesId: string; speciesName: string }) =>
+                  splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), '-', ' ')
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+                )
+                .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
+                  sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]
+                )
+                .map((value: any, index: string) => (
+                  <Fragment key={index}>{renderItem(value, index)}</Fragment>
+                ))}
+            </Accordion>
+          </div>
+        </div>
       )}
     </Fragment>
   );

@@ -2,10 +2,8 @@ import React, { useMemo, useState, useRef, useEffect, Fragment } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 import pokemonData from '../../data/pokemon.json';
-import loading from '../../assets/loading.png';
 import './Home.css';
-import { Link } from 'react-router-dom';
-import { calculateStatsByTag, calculateCP } from '../../util/Calculate';
+import { calculateStatsByTag } from '../../util/Calculate';
 import APIService from '../../services/API.service';
 import { findAssetForm } from '../../util/Compute';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';

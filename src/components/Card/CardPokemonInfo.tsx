@@ -1,3 +1,4 @@
+import React from 'react';
 import { splitAndCapitalize } from '../../util/Utils';
 import './CardPokemonInfo.css';
 

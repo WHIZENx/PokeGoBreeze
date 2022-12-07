@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
@@ -10,8 +8,10 @@ import { applyMiddleware, createStore } from 'redux';
 
 import { SnackbarProvider } from 'notistack';
 
-import rootReducer from './store/reducers';
 import { composeWithDevTools } from '@redux-devtools/extension';
+import reportWebVitals from './reportWebVitals';
+import App from './App';
+import rootReducer from './store/reducers';
 
 if (module.hot) {
   module.hot.accept();
