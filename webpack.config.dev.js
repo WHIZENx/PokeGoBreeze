@@ -6,6 +6,7 @@ const manifest = require('./public/manifest.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TSLintPlugin = require('tslint-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
