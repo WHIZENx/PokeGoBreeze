@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../services/API.service';
 
 import './Pokemon.css';
@@ -7,7 +7,7 @@ import { convertName, splitAndCapitalize } from '../../util/Utils';
 import { computeCandyBgColor, computeCandyColor } from '../../util/Compute';
 import { regionList } from '../../util/Constants';
 
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import Form from '../../components/Info/Form/Form-v2';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
@@ -26,8 +26,10 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
 
   const params = useParams();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const maxPokemon = Object.keys(pokeListName).length;
 
@@ -213,6 +215,25 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
     const id = params.id ? params.id.toLowerCase() : props.id;
     queryPokemon(id, axios, source);
   }, [dispatch, params.id, props.id, queryPokemon, reForm]);
+
+  useEffect(() => {
+    const keyDownHandler = (event: any) => {
+      if (!spinner.loading) {
+        const id = parseInt(params.id ? params.id.toLowerCase() : props.id);
+        if (id - 1 > 0 && event.keyCode === 37) {
+          event.preventDefault();
+          params.id ? navigate(`/pokemon/${id - 1}`) : props.onDecId();
+        } else if (id + 1 <= 905 && event.keyCode === 39) {
+          event.preventDefault();
+          params.id ? navigate(`/pokemon/${id + 1}`) : props.onIncId();
+        }
+      }
+    };
+    document.addEventListener('keyup', keyDownHandler, false);
+    return () => {
+      document.removeEventListener('keyup', keyDownHandler, false);
+    };
+  }, [params.id, props.id, spinner.loading]);
 
   const getNumGen = (url: string) => {
     return 'Gen ' + url.split('/')[6];
@@ -611,6 +632,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                   species={data}
                   onSetIDPoke={props.onSetIDPoke}
                   paramForm={searchParams.get('form') && searchParams.get('form')?.toLowerCase()}
+                  pokemonList={dataStore.released}
                 />
                 <PokemonModel id={data.id} name={data.name} />
               </div>

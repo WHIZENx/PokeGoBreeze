@@ -9,7 +9,7 @@ import { counterPokemon } from '../../../util/Calculate';
 import './Counter.css';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
-const Counter = ({ def, form, changeForm }: any) => {
+const Counter = ({ def, form, changeForm, pokemonList }: any) => {
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [counterList, setCounterList]: any = useState([]);
@@ -36,7 +36,7 @@ const Counter = ({ def, form, changeForm }: any) => {
 
   const loadMetaData = () => {
     setCounterList(
-      counterPokemon(data.options, data.details, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
+      counterPokemon(data.options, pokemonList, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
     );
     setOpen(true);
   };

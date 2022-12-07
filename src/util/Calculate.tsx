@@ -21,7 +21,7 @@ import {
   STAB_MULTIPLY,
   typeCostPowerUp,
 } from './Constants';
-import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm, mappingReleasedGO } from './Utils';
+import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm } from './Utils';
 
 const weatherMultiple = (globalOptions: any, weatherBoost: any, weather: string, type: string) => {
   return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: any) => item === type.toUpperCase().replaceAll(' ', '_'))
@@ -982,7 +982,14 @@ export const TimeToKill = (HP: number, dpsDef: number) => {
   return HP / dpsDef;
 };
 
-export const queryTopMove = (globalOptions: any, details: any, typeEff: any, weatherBoost: any, pokemonCombatList: any[], move: any) => {
+export const queryTopMove = (
+  globalOptions: any,
+  pokemonList: any,
+  typeEff: any,
+  weatherBoost: any,
+  pokemonCombatList: any[],
+  move: any
+) => {
   const dataPri: {
     num: number;
     forme: string | null;
@@ -993,71 +1000,83 @@ export const queryTopMove = (globalOptions: any, details: any, typeEff: any, wea
     dps: number;
     tdo: number;
   }[] = [];
-  mappingReleasedGO(pokemonData, details).forEach((value) => {
-    if (move.track === 281) {
-      move.name = 'HIDDEN_POWER';
-    }
-    let combatPoke: any = pokemonCombatList.filter(
-      (item: { id: number; baseSpecies: any }) =>
-        item.id === value.num && item.baseSpecies === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
-    );
-    const result = combatPoke.find((item: { name: any }) => item.name === convertName(value.name));
-    if (result === undefined) {
-      combatPoke = combatPoke[0];
-    } else {
-      combatPoke = result;
-    }
-    if (combatPoke !== undefined) {
-      let pokemonList;
-      if (move.type_move === 'FAST') {
-        pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
-        if (!pokemonList) {
-          pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
+  pokemonList.forEach(
+    (value: {
+      num: number;
+      baseSpecies: string | null;
+      name: string;
+      baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
+      slug: string | null;
+      types: string | string[];
+      forme: any;
+      sprite: any;
+      releasedGO: any;
+    }) => {
+      if (move.track === 281) {
+        move.name = 'HIDDEN_POWER';
+      }
+      let combatPoke: any = pokemonCombatList.filter(
+        (item: { id: number; baseSpecies: any }) =>
+          item.id === value.num && item.baseSpecies === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
+      );
+      const result = combatPoke.find((item: { name: any }) => item.name === convertName(value.name));
+      if (result === undefined) {
+        combatPoke = combatPoke[0];
+      } else {
+        combatPoke = result;
+      }
+      if (combatPoke !== undefined) {
+        let pokemonList;
+        if (move.type_move === 'FAST') {
+          pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
+          if (!pokemonList) {
+            pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
+          }
+        } else if (move.type_move === 'CHARGE') {
+          pokemonList = combatPoke.cinematicMoves.includes(move.name);
+          if (!pokemonList) {
+            pokemonList = combatPoke.shadowMoves.includes(move.name);
+          }
+          if (!pokemonList) {
+            pokemonList = combatPoke.purifiedMoves.includes(move.name);
+          }
+          if (!pokemonList) {
+            pokemonList = combatPoke.eliteCinematicMoves.includes(move.name);
+          }
         }
-      } else if (move.type_move === 'CHARGE') {
-        pokemonList = combatPoke.cinematicMoves.includes(move.name);
-        if (!pokemonList) {
-          pokemonList = combatPoke.shadowMoves.includes(move.name);
-        }
-        if (!pokemonList) {
-          pokemonList = combatPoke.purifiedMoves.includes(move.name);
-        }
-        if (!pokemonList) {
-          pokemonList = combatPoke.eliteCinematicMoves.includes(move.name);
+        if (pokemonList) {
+          const stats = calculateStatsByTag(value.baseStats, value.slug);
+          const dps = calculateAvgDPS(
+            globalOptions,
+            typeEff,
+            weatherBoost,
+            move,
+            move,
+            calculateStatsBattle(stats.atk, MAX_IV, 40),
+            calculateStatsBattle(stats.def, MAX_IV, 40),
+            calculateStatsBattle(stats.sta, MAX_IV, 40),
+            value.types
+          );
+          const tdo = calculateTDO(
+            globalOptions,
+            calculateStatsBattle(stats.def, MAX_IV, 40),
+            calculateStatsBattle(stats.sta, MAX_IV, 40),
+            dps
+          );
+          dataPri.push({
+            num: value.num,
+            forme: value.forme,
+            name: splitAndCapitalize(value.name, '-', ' '),
+            baseSpecies: value.baseSpecies,
+            sprite: value.sprite,
+            releasedGO: value.releasedGO,
+            dps,
+            tdo,
+          });
         }
       }
-      if (pokemonList) {
-        const stats = calculateStatsByTag(value.baseStats, value.slug);
-        const dps = calculateAvgDPS(
-          globalOptions,
-          typeEff,
-          weatherBoost,
-          move,
-          move,
-          calculateStatsBattle(stats.atk, MAX_IV, 40),
-          calculateStatsBattle(stats.def, MAX_IV, 40),
-          calculateStatsBattle(stats.sta, MAX_IV, 40),
-          value.types
-        );
-        const tdo = calculateTDO(
-          globalOptions,
-          calculateStatsBattle(stats.def, MAX_IV, 40),
-          calculateStatsBattle(stats.sta, MAX_IV, 40),
-          dps
-        );
-        dataPri.push({
-          num: value.num,
-          forme: value.forme,
-          name: splitAndCapitalize(value.name, '-', ' '),
-          baseSpecies: value.baseSpecies,
-          sprite: value.sprite,
-          releasedGO: value.releasedGO,
-          dps,
-          tdo,
-        });
-      }
     }
-  });
+  );
   return dataPri;
 };
 
@@ -1443,7 +1462,7 @@ const sortCounterDPS = (data: any[]) => {
 
 export const counterPokemon = (
   globalOptions: any,
-  details: any,
+  pokemonList: any,
   typeEff: any,
   weatherBoost: any,
   def: any,
@@ -1464,7 +1483,7 @@ export const counterPokemon = (
       eliteQuickMoves: any[];
     }) => {
       if (value.quickMoves[0] !== 'STRUGGLE' && value.cinematicMoves[0] !== 'STRUGGLE' && !value.name.includes('_FEMALE')) {
-        const pokemon = mappingReleasedGO(pokemonData, details).find((item) => {
+        const pokemon = pokemonList.find((item: { slug: string }) => {
           const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()), true);
           return item.slug === name;
         });

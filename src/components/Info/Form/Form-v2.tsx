@@ -36,6 +36,7 @@ const Form = ({
   species,
   onSetIDPoke,
   paramForm,
+  pokemonList,
 }: any) => {
   const dispatch = useDispatch();
 
@@ -360,6 +361,7 @@ const Form = ({
             changeForm={changeForm}
             def={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             form={currForm && currForm.form}
+            pokemonList={pokemonList}
           />
         </div>
       </div>

@@ -4,10 +4,8 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import pokeListName from '../../../data/pokemon_names.json';
-import { useSelector, RootStateOrAny } from 'react-redux';
 
 const Search = () => {
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
@@ -50,24 +48,6 @@ const Search = () => {
   useEffect(() => {
     setSelectId(id);
   }, [id]);
-
-  useEffect(() => {
-    const keyDownHandler = (event: any) => {
-      if (!spinner.loading) {
-        if (id - 1 > 0 && event.keyCode === 37) {
-          event.preventDefault();
-          decId();
-        } else if (id + 1 <= 905 && event.keyCode === 39) {
-          event.preventDefault();
-          incId();
-        }
-      }
-    };
-    document.addEventListener('keyup', keyDownHandler, false);
-    return () => {
-      document.removeEventListener('keyup', keyDownHandler, false);
-    };
-  }, [id, spinner.loading]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
