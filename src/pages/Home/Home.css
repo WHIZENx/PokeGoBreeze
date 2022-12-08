@@ -44,6 +44,6 @@ ul.pokemon-content {
   background-color: #ececec;
 }
 
-a.pokemon-link:hover .pokemoninfo-container {
+a.pokemon-link:hover {
   box-shadow: inset 0 0 8px 1px rgb(0 0 0 / 80%);
 }

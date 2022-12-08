@@ -1,76 +1,130 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../util/Compute';
 import { splitAndCapitalize } from '../../util/Utils';
 import ProgressBar from '../Sprites/ProgressBar/ProgressBar';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.css';
 
-import BlockIcon from '@mui/icons-material/Block';
+import APIService from '../../services/API.service';
+import { Link } from 'react-router-dom';
 
 const CardPokemonInfo = (props: {
-  image: string;
+  image: any;
   id: number;
   name: string;
+  forme: string;
   types: string[];
   pokemonStat: any;
   stats: any;
+  icon: string;
   releasedGO: boolean;
 }) => {
+  const [isShiny, setIsShiny] = useState(false);
+
+  const imageRef: any = useRef(null);
+  const shinyRef: any = useRef(null);
+
+  const onTouchEnd = () => {
+    if (isShiny) {
+      shinyRef.current?.classList.remove('active');
+    } else {
+      shinyRef.current?.classList.add('active');
+    }
+    setIsShiny(!isShiny);
+  };
+
+  const onHoverShiny = () => {
+    shinyRef.current?.classList.add('active');
+    setIsShiny(true);
+  };
+
+  const onLeaveShiny = () => {
+    shinyRef.current?.classList.remove('active');
+    setIsShiny(false);
+  };
+
   return (
     <li
-      className="position-relative pokemoninfo-container border-types h-100"
+      className="position-relative pokemon-container border-types h-100"
       style={{ backgroundImage: computeBgType(props.types, false, false, 0.3) }}
     >
-      {!props.releasedGO && <BlockIcon className="block-pokemon" color="error" />}
-      {/* <img className="shiny-pokemon" height={32} src={APIService.getShinyIcon()} /> */}
-      <div className="d-flex justify-content-center" style={{ padding: 8 }}>
-        <span style={{ width: 96 }}>
-          <img className="pokemon-sprite-large" alt="pokemon-img" src={props.image} />
-        </span>
-      </div>
-      <TypeInfo arr={props.types} hideText={true} height={24} />
-      <b>
-        <span style={{ fontSize: 14 }} className="text-info text-center caption text-black">{`#${props.id} ${splitAndCapitalize(
-          props.name,
-          '-',
-          ' '
-        )}`}</span>
-      </b>
-      <div className="element-top">
-        <div className="d-flex align-items-center w-100">
-          <span className="caption text-black">ATK</span>
-          <ProgressBar
-            style={{ marginLeft: 3 }}
-            height={10}
-            value={props.pokemonStat.atk}
-            maxValue={props.stats.attack.max_stats}
-            bgColor={'#ececec'}
-            color={'var(--bs-danger)'}
+      {!props.releasedGO && (
+        <div className="no-released-pokemon">
+          <img
+            width={24}
+            height={24}
+            title={'Coming Soon'}
+            alt="pokemon-go-icon"
+            src={APIService.getPokemonGoIcon(props.icon ?? 'Standard')}
           />
         </div>
-        <div className="d-flex align-items-center w-100">
-          <span className="caption text-black">DEF</span>
-          <ProgressBar
-            style={{ marginLeft: 3, marginTop: 5 }}
-            height={10}
-            value={props.pokemonStat.def}
-            maxValue={props.stats.defense.max_stats}
-            bgColor={'#ececec'}
-            color={'var(--bs-success)'}
-          />
+      )}
+      {props.image.shiny && (
+        <img
+          onTouchEnd={onTouchEnd}
+          onMouseOver={onHoverShiny}
+          onMouseLeave={onLeaveShiny}
+          ref={shinyRef}
+          className="shiny-pokemon"
+          height={32}
+          src={APIService.getShinyIcon()}
+        />
+      )}
+      <Link className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${props.forme ? `?form=${props.forme.toLowerCase()}` : ''}`}>
+        <div className="d-flex justify-content-center" style={{ padding: 8 }}>
+          <span style={{ width: 96 }}>
+            <img
+              ref={imageRef}
+              className="pokemon-sprite-large"
+              alt="pokemon-img"
+              src={props.image.shiny && isShiny ? props.image.shiny : props.image.default}
+            />
+          </span>
         </div>
-        <div className="d-flex align-items-center w-100">
-          <span className="caption text-black">STA</span>
-          <ProgressBar
-            style={{ marginLeft: 3, marginTop: 5 }}
-            height={10}
-            value={props.pokemonStat.sta}
-            maxValue={props.stats.stamina.max_stats}
-            bgColor={'#ececec'}
-            color={'var(--bs-info)'}
-          />
+        <TypeInfo arr={props.types} hideText={true} height={24} />
+        <b>
+          <span style={{ fontSize: 14 }} className="text-info text-center caption text-black">{`#${props.id} ${splitAndCapitalize(
+            props.name,
+            '-',
+            ' '
+          )}`}</span>
+        </b>
+        <div className="element-top">
+          <div className="d-flex align-items-center w-100">
+            <span className="caption text-black">ATK</span>
+            <ProgressBar
+              style={{ marginLeft: 3 }}
+              height={10}
+              value={props.pokemonStat.atk}
+              maxValue={props.stats.attack.max_stats}
+              bgColor={'#ececec'}
+              color={'var(--bs-danger)'}
+            />
+          </div>
+          <div className="d-flex align-items-center w-100">
+            <span className="caption text-black">DEF</span>
+            <ProgressBar
+              style={{ marginLeft: 3, marginTop: 5 }}
+              height={10}
+              value={props.pokemonStat.def}
+              maxValue={props.stats.defense.max_stats}
+              bgColor={'#ececec'}
+              color={'var(--bs-success)'}
+            />
+          </div>
+          <div className="d-flex align-items-center w-100">
+            <span className="caption text-black">STA</span>
+            <ProgressBar
+              style={{ marginLeft: 3, marginTop: 5 }}
+              height={10}
+              value={props.pokemonStat.sta}
+              maxValue={props.stats.stamina.max_stats}
+              bgColor={'#ececec'}
+              color={'var(--bs-info)'}
+            />
+          </div>
         </div>
-      </div>
+      </Link>
     </li>
   );
 };

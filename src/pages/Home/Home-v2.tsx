@@ -8,10 +8,9 @@ import TypeInfo from '../../components/Sprites/Type/Type';
 import { calculateStatsByTag } from '../../util/Calculate';
 import { mappingReleasedGO } from '../../util/Utils';
 import APIService from '../../services/API.service';
-import { findAssetForm } from '../../util/Compute';
-import { Link } from 'react-router-dom';
-
+import { queryAssetForm } from '../../util/Compute';
 const Home = () => {
+  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
   const types = Object.keys(data.typeEff);
@@ -19,6 +18,7 @@ const Home = () => {
     mappingReleasedGO(pokemonData, data.details)
       .map((item) => {
         const stats = calculateStatsByTag(item.baseStats, item.slug);
+        const assetForm = queryAssetForm(data.assets, item.num, item.name);
         return {
           id: item.num,
           name: item.name,
@@ -34,9 +34,11 @@ const Home = () => {
             sta: stats.sta,
           },
           releasedGO: item.releasedGO,
-          image: findAssetForm(data.assets, item.num, item.name)
-            ? APIService.getPokemonModel(findAssetForm(data.assets, item.num, item.name))
-            : APIService.getPokeFullSprite(item.num),
+          image: {
+            default:
+              assetForm && assetForm.default ? APIService.getPokemonModel(assetForm.default) : APIService.getPokeFullSprite(item.num),
+            shiny: assetForm && assetForm.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
+          },
         };
       })
       .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
@@ -109,17 +111,18 @@ const Home = () => {
       <div className="text-center">
         <ul className="d-grid pokemon-content">
           {listOfPokemon.map((row: any, index: React.Key) => (
-            <Link key={index} className="pokemon-link" to={`/pokemon/${row.id}${row.forme ? `?form=${row.forme.toLowerCase()}` : ''}`}>
-              <CardPokemonInfo
-                name={row.name}
-                image={row.image}
-                id={row.id}
-                types={row.types}
-                pokemonStat={row.goStats}
-                stats={stats}
-                releasedGO={row.releasedGO}
-              />
-            </Link>
+            <CardPokemonInfo
+              key={index}
+              name={row.name}
+              forme={row.forme}
+              image={row.image}
+              id={row.id}
+              types={row.types}
+              pokemonStat={row.goStats}
+              stats={stats}
+              icon={icon}
+              releasedGO={row.releasedGO}
+            />
           ))}
         </ul>
       </div>

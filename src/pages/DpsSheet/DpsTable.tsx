@@ -184,6 +184,7 @@ const columns: any = [
 ];
 
 const DpsTable = () => {
+  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const types = Object.keys(data.typeEff);
 
@@ -623,7 +624,18 @@ const DpsTable = () => {
                   <div className="input-group">
                     <FormControlLabel
                       control={<Switch checked={releasedGO} onChange={(event, check) => setFilters({ ...filters, releasedGO: check })} />}
-                      label="Released in GO"
+                      label={
+                        <span className="d-flex align-items-center">
+                          Released in GO
+                          <img
+                            width={28}
+                            height={28}
+                            style={{ marginLeft: 5 }}
+                            alt="pokemon-go-icon"
+                            src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                          />
+                        </span>
+                      }
                     />
                   </div>
                 </Box>

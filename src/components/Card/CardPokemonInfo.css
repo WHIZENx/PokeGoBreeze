@@ -1,24 +1,25 @@
-.pokemoninfo-container {
-  padding: 8px;
-}
-
-.pokemoninfo-container.border-types {
+.pokemon-container.border-types {
   border: 1px solid #c5c5c5;
 }
 
-.pokemoninfo-container .pokemon-sprite-large {
+.pokemon-link {
+  padding: 8px;
+}
+
+.pokemon-link .pokemon-sprite-large {
   filter: drop-shadow(1px 1px 1px black);
 }
 
-.block-pokemon {
+.no-released-pokemon {
   position: absolute;
   left: 5px;
   top: 5px;
-  filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 60%));
+  filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 60%)) grayscale(100%);
 }
 
 .shiny-pokemon {
   position: absolute;
+  cursor: pointer;
   right: 5px;
   top: 5px;
 }
