@@ -20,7 +20,7 @@ const Fill: any = styled.div`
 const ProgressBar = ({ height, value, maxValue, bgColor, color, style }: any) => {
   return (
     <Bar style={style} height={height} bgColor={bgColor}>
-      <Fill height={height} value={value} maxValue={maxValue} color={color} />
+      <Fill height={height} value={Math.max(1, value)} maxValue={maxValue} color={color} />
     </Bar>
   );
 };

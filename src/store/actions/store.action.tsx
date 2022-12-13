@@ -216,12 +216,15 @@ export const loadStore = (
               headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
               cancelToken: source.token,
             })
-            .then((file: { data: { files: { filename: string }[] } }) => {
+            .then((file: { data: { files: { filename: string }[] | any[] } }) => {
               return dispatch({
                 type: LOAD_STORE,
                 payload: {
                   ...payload,
-                  icon: file.data.files[0].filename.replace('Images/App Icons/', '').replace('.png', ''),
+                  icon: file.data.files
+                    ?.find((item: { filename: string }) => item.filename.includes('Images/App Icons/'))
+                    .filename.replace('Images/App Icons/', '')
+                    .replace('.png', ''),
                 },
               });
             });
