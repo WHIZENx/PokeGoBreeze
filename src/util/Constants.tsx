@@ -102,6 +102,17 @@ export const SHADOW_DEF_BONUS = (options: any) => {
   return getOption(options, ['combat_options', 'shadow_bonus', 'def']);
 };
 
+export const genList: any = {
+  1: [1, 151],
+  2: [152, 251],
+  3: [252, 386],
+  4: [387, 493],
+  5: [494, 649],
+  6: [650, 721],
+  7: [722, 809],
+  8: [810, 905],
+};
+
 export const regionList: any = {
   1: 'Kanto',
   2: 'Johto',

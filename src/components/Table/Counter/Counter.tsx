@@ -59,6 +59,7 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                     <span className="d-flex align-items-center">
                       Released in GO
                       <img
+                        className={releasedGO && open ? '' : 'filter-gray'}
                         width={28}
                         height={28}
                         style={{ marginLeft: 5 }}

@@ -177,6 +177,23 @@ ul {
   color: red;
 }
 
+.filter-gray {
+  filter: grayscale(100%);
+}
+
+.filter-shiny {
+  filter:
+    brightness(0)
+    saturate(100%)
+    invert(88%)
+    sepia(36%)
+    saturate(644%)
+    hue-rotate(6deg)
+    brightness(108%)
+    contrast(105%)
+    drop-shadow(1px 1px 1px rgb(0 0 0 / 60%));
+}
+
 .filter-shadow {
   filter: drop-shadow(1px 1px 1px black);
 }

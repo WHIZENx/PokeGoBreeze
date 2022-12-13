@@ -1,14 +1,28 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import pokemonData from '../../data/pokemon.json';
+import loadingImg from '../../assets/loading.png';
 
 import './Home.css';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { calculateStatsByTag } from '../../util/Calculate';
-import { mappingReleasedGO } from '../../util/Utils';
+import { mappingReleasedGO, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
+import { genList, regionList } from '../../util/Constants';
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+  Switch,
+} from '@mui/material';
 const Home = () => {
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
@@ -43,18 +57,40 @@ const Home = () => {
       })
       .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
   );
-  const dataListFilter: any = useRef(null);
   const [selectTypes, setSelectTypes]: any = useState([]);
   const [listOfPokemon, setListOfPokemon]: any = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const [filters, setFilters] = useState({
+    match: false,
+    releasedGO: false,
+    allShiny: false,
+    gen: Object.values(genList).map((value, index) => index),
+    region: Object.values(regionList).map((value, index) => index),
+    mega: false,
+    gmax: false,
+  });
+
+  const { match, releasedGO, allShiny, gen, region, mega, gmax } = filters;
 
   const addTypeArr = (value: string) => {
-    if (selectTypes.includes(value)) {
-      return setSelectTypes([...selectTypes].filter((item) => item !== value));
+    let types = selectTypes;
+    if (types.includes(value)) {
+      return setSelectTypes([...types].filter((item) => item !== value));
     } else {
-      setSelectTypes([...selectTypes].slice(0, 1));
+      types = types.slice(0, 1);
     }
-    return setSelectTypes((oldArr: any) => [...oldArr, value]);
+    return setSelectTypes([...types, value]);
+  };
+
+  const checkGeneration = (id: number) => {
+    return gen.some((gen) => {
+      if (id >= genList[gen + 1][0] && id <= genList[gen + 1][1]) {
+        return true;
+      }
+      return false;
+    });
   };
 
   useEffect(() => {
@@ -62,20 +98,55 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      const result = dataList.current.filter((item: any) => {
-        const boolFilterType =
-          item.types.map((item: any) => selectTypes.includes(item.toUpperCase())).filter((bool: boolean) => bool === true).length ===
-          selectTypes.length;
-        const boolFilterPoke =
-          searchTerm === '' || item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm);
-        return boolFilterType && boolFilterPoke;
-      });
-      dataListFilter.current = result;
-      setListOfPokemon(result);
-    }, 100);
-    return () => clearTimeout(timeOutId);
-  }, [searchTerm, selectTypes]);
+    if (dataList.current) {
+      setLoading(true);
+      const timeOutId = setTimeout(
+        () => {
+          const result = dataList.current.filter((item: any) => {
+            const boolFilterType =
+              selectTypes.length === 0 ||
+              (item.types.every((item: any) => selectTypes.includes(item.toUpperCase())) && item.types.length === selectTypes.length);
+            const boolFilterPoke =
+              searchTerm === '' ||
+              (match
+                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id.toString() === searchTerm
+                : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  item.id.toString().includes(searchTerm));
+            const boolReleasedGO = releasedGO ? item.releasedGO : true;
+            const boolMega = mega ? item.forme === 'Mega' : true;
+            const boolGmax = gmax ? item.forme === 'Gmax' : true;
+
+            const findGen = checkGeneration(item.id);
+            return boolFilterType && boolFilterPoke && boolReleasedGO && boolMega && boolGmax && findGen;
+          });
+          setListOfPokemon(result);
+          setLoading(false);
+        },
+        document.title === 'Home' ? 100 : 1000
+      );
+      return () => clearTimeout(timeOutId);
+    }
+  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, gen]);
+
+  const handleChangeGen = (event: SelectChangeEvent<any>) => {
+    const {
+      target: { value },
+    } = event;
+    setFilters({
+      ...filters,
+      gen: (value as any).sort((a: number, b: number) => a - b),
+    });
+  };
+
+  const handleChangeRegion = (event: SelectChangeEvent<any>) => {
+    const {
+      target: { value },
+    } = event;
+    setFilters({
+      ...filters,
+      region: (value as any).sort((a: number, b: number) => a - b),
+    });
+  };
 
   return (
     <Fragment>
@@ -95,26 +166,145 @@ const Home = () => {
             </div>
           ))}
         </div>
-        <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col border-input" style={{ padding: 0 }}>
-            <div className="head-types">Search Name or ID</div>
-            <input
-              type="text"
-              className="w-100 form-control input-search"
-              placeholder="Enter Name or ID"
-              value={searchTerm}
-              onInput={(e: any) => setSearchTerm(e.target.value)}
-            />
+        <div className="w-100">
+          <div className="border-input">
+            <div className="head-types">Options</div>
+            <div className="row" style={{ margin: 0 }}>
+              <div className="col-xl-4" style={{ padding: 0 }}>
+                <div className="d-flex">
+                  <span className="input-group-text">Search name or ID</span>
+                  <input
+                    type="text"
+                    className="form-control input-search"
+                    placeholder="Enter Name or ID"
+                    value={searchTerm}
+                    onInput={(e: any) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="d-flex" style={{ paddingLeft: 8, paddingRight: 8 }}>
+                  <FormControlLabel
+                    control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
+                    label="Match Pokémon"
+                  />
+                  <FormControlLabel
+                    control={<Switch checked={releasedGO} onChange={(event, check) => setFilters({ ...filters, releasedGO: check })} />}
+                    label={
+                      <span className="d-flex align-items-center">
+                        Released in GO
+                        <img
+                          className={releasedGO ? '' : 'filter-gray'}
+                          width={28}
+                          height={28}
+                          style={{ marginLeft: 5 }}
+                          alt="pokemon-go-icon"
+                          src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                        />
+                      </span>
+                    }
+                  />
+                </div>
+                <div className="d-flex" style={{ paddingLeft: 8, paddingRight: 8 }}>
+                  <FormControlLabel
+                    control={<Switch checked={allShiny} onChange={(event, check) => setFilters({ ...filters, allShiny: check })} />}
+                    label={
+                      <span className="d-flex align-items-center">
+                        Show All Pokemon Shiny (Possible only)
+                        <img
+                          className={allShiny ? 'filter-shiny' : 'filter-gray'}
+                          width={28}
+                          height={28}
+                          style={{ marginLeft: 5 }}
+                          alt="pokemon-go-icon"
+                          src={APIService.getShinyIcon()}
+                        />
+                      </span>
+                    }
+                  />
+                </div>
+              </div>
+              <div className="col-xl-8 border-input" style={{ padding: 8, gap: 10 }}>
+                <div className="d-flex">
+                  <FormControl sx={{ m: 1, width: '50%' }} size="small">
+                    <InputLabel>Generation</InputLabel>
+                    <Select
+                      multiple={true}
+                      value={gen}
+                      onChange={handleChangeGen}
+                      input={<OutlinedInput label="Generation" />}
+                      renderValue={(selected: any) => 'Gen ' + selected.map((item: number) => (item + 1).toString()).join(', Gen ')}
+                    >
+                      {Object.values(genList).map((value: any, index) => (
+                        <MenuItem key={index} value={index}>
+                          <Checkbox checked={gen.includes(index)} />
+                          <ListItemText primary={`Generation ${index + 1}`} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl sx={{ m: 1, width: '50%' }} size="small">
+                    <InputLabel>Region</InputLabel>
+                    <Select
+                      multiple={true}
+                      value={region}
+                      onChange={handleChangeRegion}
+                      input={<OutlinedInput label="Region" />}
+                      renderValue={(selected: any) => selected.map((item: number) => regionList[item + 1]).join(', ')}
+                      disabled={true}
+                    >
+                      {Object.values(regionList).map((value: any, index) => (
+                        <MenuItem key={index} value={index}>
+                          <Checkbox checked={region.includes(index)} />
+                          <ListItemText primary={value} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+                <div className="input-group border-input">
+                  <span className="input-group-text">Filter only by</span>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={mega}
+                        onChange={(event, check) => setFilters({ ...filters, mega: check, gmax: check ? false : filters.gmax })}
+                      />
+                    }
+                    label="Mega"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={gmax}
+                        onChange={(event, check) => setFilters({ ...filters, gmax: check, mega: check ? false : filters.mega })}
+                      />
+                    }
+                    label="Gmax"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <div className="position-fixed loading-spin-table text-center" style={{ display: !loading ? 'none' : 'block' }}>
+        <img className="loading" width={64} height={64} alt="img-pokemon" src={loadingImg} />
+        <span className="caption text-black" style={{ fontSize: 18 }}>
+          <b>
+            Loading<span id="p1">.</span>
+            <span id="p2">.</span>
+            <span id="p3">.</span>
+          </b>
+        </span>
+      </div>
       <div className="text-center">
+        <div className="loading-group-spin-table" style={{ display: !loading ? 'none' : 'block' }} />
         <ul className="d-grid pokemon-content">
           {listOfPokemon.map((row: any, index: React.Key) => (
             <CardPokemonInfo
               key={index}
               name={row.name}
               forme={row.forme}
+              defaultImg={allShiny}
               image={row.image}
               id={row.id}
               types={row.types}

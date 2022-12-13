@@ -13,6 +13,7 @@ const CardPokemonInfo = (props: {
   id: number;
   name: string;
   forme: string;
+  defaultImg: boolean;
   types: string[];
   pokemonStat: any;
   stats: any;
@@ -25,6 +26,10 @@ const CardPokemonInfo = (props: {
   const shinyRef: any = useRef(null);
 
   const onTouchEnd = () => {
+    if (props.defaultImg) {
+      return;
+    }
+
     if (isShiny) {
       shinyRef.current?.classList.remove('active');
     } else {
@@ -34,11 +39,19 @@ const CardPokemonInfo = (props: {
   };
 
   const onHoverShiny = () => {
+    if (props.defaultImg) {
+      return;
+    }
+
     shinyRef.current?.classList.add('active');
     setIsShiny(true);
   };
 
   const onLeaveShiny = () => {
+    if (props.defaultImg) {
+      return;
+    }
+
     shinyRef.current?.classList.remove('active');
     setIsShiny(false);
   };
@@ -65,7 +78,7 @@ const CardPokemonInfo = (props: {
           onMouseOver={onHoverShiny}
           onMouseLeave={onLeaveShiny}
           ref={shinyRef}
-          className="shiny-pokemon"
+          className={'shiny-pokemon' + (props.defaultImg ? ' active' : '')}
           height={32}
           src={APIService.getShinyIcon()}
         />
@@ -77,7 +90,7 @@ const CardPokemonInfo = (props: {
               ref={imageRef}
               className="pokemon-sprite-large"
               alt="pokemon-img"
-              src={props.image.shiny && isShiny ? props.image.shiny : props.image.default}
+              src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default}
             />
           </span>
         </div>

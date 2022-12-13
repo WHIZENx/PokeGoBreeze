@@ -460,6 +460,7 @@ const Move = (props: { id?: any }) => {
                             <span className="d-flex align-items-center">
                               Released in GO
                               <img
+                                className={releasedGO ? '' : 'filter-gray'}
                                 width={28}
                                 height={28}
                                 style={{ marginLeft: 5 }}
