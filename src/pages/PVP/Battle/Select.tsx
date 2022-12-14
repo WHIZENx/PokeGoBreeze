@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { splitAndCapitalize } from '../../../util/Utils';
+import { convertName, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
@@ -11,6 +11,7 @@ import { Checkbox } from '@mui/material';
 
 const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
+  const pokemonCombat = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -65,12 +66,30 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
     const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
 
+    let combatPoke = pokemonCombat.filter(
+      (item: { id: any; baseSpecies: string }) =>
+        item.id === value.pokemon.num &&
+        item.baseSpecies === (value.pokemon.baseSpecies ? convertName(value.pokemon.baseSpecies) : convertName(value.pokemon.name))
+    );
+
+    const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.pokemon.name));
+    if (!result) {
+      if (combatPoke) {
+        combatPoke = combatPoke[0];
+      } else {
+        combatPoke = combatPoke.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon.name));
+      }
+    } else {
+      combatPoke = result;
+    }
+
     setScore(value.score);
     setPokemonBattle({
       ...pokemonBattle,
       pokemonData: {
         ...value,
         allStats,
+        combatPoke,
         currentStats: allStats[allStats.length - 1],
         bestStats: allStats[allStats.length - 1],
       },

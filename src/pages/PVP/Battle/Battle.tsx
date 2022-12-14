@@ -816,13 +816,6 @@ const Battle = () => {
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
     if (elem && x <= timelineNormal.current.clientWidth - 2) {
       elem.style.transform = 'translate(' + x + 'px, -50%)';
-      // if (Math.min(x, timelineNormalContainer.current.clientWidth / 2) >= timelineNormalContainer.current.clientWidth / 2) {
-      //   elem.style.transform = 'translate(' + x + 'px, -50%)';
-      //   timelineNormalContainer.current.scrollIntoView({ behavior: 'smooth' });
-      //   timelineNormalContainer.current.scrollTo(x - timelineNormalContainer.current.clientWidth / 2, window.scrollY);
-      // } else {
-      //   elem.style.transform = 'translate(' + x + 'px, -50%)';
-      // }
     }
     if (arrBound.current.length === 0) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
@@ -1269,14 +1262,29 @@ const Battle = () => {
               </Button>
             </div>
             <hr />
-            <TypeBadge find={true} title="Fast Move" move={pokemon.fMove} />
+            <TypeBadge
+              find={true}
+              title="Fast Move"
+              move={pokemon.fMove}
+              elite={pokemon.pokemonData.combatPoke.eliteQuickMoves.includes(pokemon.fMove.name)}
+            />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
-              <TypeBadge find={true} title="Primary Charged Move" move={pokemon.cMovePri} />
+              <TypeBadge
+                find={true}
+                title="Primary Charged Move"
+                move={pokemon.cMovePri}
+                elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes(pokemon.cMovePri.name)}
+              />
               {findBuff(pokemon.cMovePri)}
             </div>
             {pokemon.cMoveSec && pokemon.cMoveSec !== '' && (
               <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
-                <TypeBadge find={true} title="Secondary Charged Move" move={pokemon.cMoveSec} />
+                <TypeBadge
+                  find={true}
+                  title="Secondary Charged Move"
+                  move={pokemon.cMoveSec}
+                  elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes(pokemon.cMoveSec.name)}
+                />
                 {findBuff(pokemon.cMoveSec)}
               </div>
             )}

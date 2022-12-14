@@ -59,9 +59,7 @@ const IconFill: any = styled.div`
 `;
 
 const CircleBar = ({ text, type, size, moveEnergy, energy, maxEnergy, disable }: any) => {
-  if (energy > maxEnergy) {
-    energy = maxEnergy;
-  }
+  energy = Math.min(energy, maxEnergy);
   const fillCount = Math.min(Math.ceil(maxEnergy / moveEnergy), 3);
 
   return (
