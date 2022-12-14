@@ -392,7 +392,7 @@ export const convertFormName = (id: number, form: string) => {
     return 'pau';
   } else if (form === 'dusk-mane') {
     return 'dusk';
-  } else if (form === 'dawn-mane') {
+  } else if (form === 'dawn-wings') {
     return 'dawn';
   } else if (id === 25 && ['origin', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'partner', 'world'].includes(form)) {
     return form + '-cap';
