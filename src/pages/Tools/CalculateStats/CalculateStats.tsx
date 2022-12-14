@@ -1,7 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from '../../../util/Utils';
-import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/Calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -16,10 +15,11 @@ import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
 import Find from '../../../components/Select/Find/Find';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import Candy from '../../../components/Sprites/Candy/Candy';
+import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 
 const Calculate = () => {
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
-  const candyData = useSelector((state: RootStateOrAny) => state.store.data.candy);
   const [id, setId] = useState(1);
   const [name, setName] = useState('Bulbasaur');
 
@@ -329,12 +329,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           {statData ? (
-                            <div
-                              className="d-inline-block bg-poke-candy"
-                              style={{ backgroundColor: computeCandyBgColor(candyData, id), marginRight: 8 }}
-                            >
-                              <div className="poke-candy" style={{ background: computeCandyColor(candyData, id), width: 20, height: 20 }} />
-                            </div>
+                            <Candy id={id} style={{ marginRight: 8 }} />
                           ) : (
                             <img style={{ marginRight: 8 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                           )}
@@ -370,20 +365,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           {statData ? (
-                            <div className="position-relative d-inline-block">
-                              <div
-                                className="bg-poke-xl-candy"
-                                style={{
-                                  background: computeCandyBgColor(candyData, id),
-                                  width: 30,
-                                  height: 30,
-                                }}
-                              />
-                              <div
-                                className="poke-xl-candy"
-                                style={{ background: computeCandyColor(candyData, id), width: 30, height: 30 }}
-                              />
-                            </div>
+                            <CandyXL id={id} />
                           ) : (
                             <img
                               style={{ marginRight: 10 }}
@@ -547,22 +529,7 @@ const Calculate = () => {
                             }}
                           >
                             {dataLittleLeague && dataLittleLeague.elidge ? (
-                              <div
-                                className="bg-poke-candy"
-                                style={{
-                                  backgroundColor: computeCandyBgColor(candyData, id),
-                                  marginRight: 10,
-                                }}
-                              >
-                                <div
-                                  className="poke-candy"
-                                  style={{
-                                    background: computeCandyColor(candyData, id),
-                                    width: 20,
-                                    height: 20,
-                                  }}
-                                />
-                              </div>
+                              <Candy id={id} style={{ marginRight: 10 }} />
                             ) : (
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
@@ -576,24 +543,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
                             {dataLittleLeague && dataLittleLeague.elidge ? (
-                              <div className="position-relative d-inline-block">
-                                <div
-                                  className="bg-poke-xl-candy"
-                                  style={{
-                                    background: computeCandyBgColor(candyData, id),
-                                    width: 30,
-                                    height: 30,
-                                  }}
-                                />
-                                <div
-                                  className="poke-xl-candy"
-                                  style={{
-                                    background: computeCandyColor(candyData, id),
-                                    width: 30,
-                                    height: 30,
-                                  }}
-                                />
-                              </div>
+                              <CandyXL id={id} />
                             ) : (
                               <img
                                 style={{ marginRight: 10 }}
@@ -688,22 +638,7 @@ const Calculate = () => {
                             }}
                           >
                             {dataGreatLeague && dataGreatLeague.elidge ? (
-                              <div
-                                className="bg-poke-candy"
-                                style={{
-                                  backgroundColor: computeCandyBgColor(candyData, id),
-                                  marginRight: 10,
-                                }}
-                              >
-                                <div
-                                  className="poke-candy"
-                                  style={{
-                                    background: computeCandyColor(candyData, id),
-                                    width: 20,
-                                    height: 20,
-                                  }}
-                                />
-                              </div>
+                              <Candy id={id} style={{ marginRight: 10 }} />
                             ) : (
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
@@ -717,24 +652,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
                             {dataGreatLeague && dataGreatLeague.elidge ? (
-                              <div className="position-relative d-inline-block">
-                                <div
-                                  className="bg-poke-xl-candy"
-                                  style={{
-                                    background: computeCandyBgColor(candyData, id),
-                                    width: 30,
-                                    height: 30,
-                                  }}
-                                />
-                                <div
-                                  className="poke-xl-candy"
-                                  style={{
-                                    background: computeCandyColor(candyData, id),
-                                    width: 30,
-                                    height: 30,
-                                  }}
-                                />
-                              </div>
+                              <CandyXL id={id} />
                             ) : (
                               <img
                                 style={{ marginRight: 10 }}
@@ -829,22 +747,7 @@ const Calculate = () => {
                             }}
                           >
                             {dataUltraLeague && dataUltraLeague.elidge ? (
-                              <div
-                                className="bg-poke-candy"
-                                style={{
-                                  backgroundColor: computeCandyBgColor(candyData, id),
-                                  marginRight: 10,
-                                }}
-                              >
-                                <div
-                                  className="poke-candy"
-                                  style={{
-                                    background: computeCandyColor(candyData, id),
-                                    width: 20,
-                                    height: 20,
-                                  }}
-                                />
-                              </div>
+                              <Candy id={id} style={{ marginRight: 10 }} />
                             ) : (
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
@@ -858,24 +761,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
                             {dataUltraLeague && dataUltraLeague.elidge ? (
-                              <div className="position-relative d-inline-block">
-                                <div
-                                  className="bg-poke-xl-candy"
-                                  style={{
-                                    background: computeCandyBgColor(candyData, id),
-                                    width: 30,
-                                    height: 30,
-                                  }}
-                                />
-                                <div
-                                  className="poke-xl-candy"
-                                  style={{
-                                    background: computeCandyColor(candyData, id),
-                                    width: 30,
-                                    height: 30,
-                                  }}
-                                />
-                              </div>
+                              <CandyXL id={id} />
                             ) : (
                               <img
                                 style={{ marginRight: 10 }}
@@ -967,22 +853,7 @@ const Calculate = () => {
                             }}
                           >
                             {dataMasterLeague ? (
-                              <div
-                                className="bg-poke-candy"
-                                style={{
-                                  backgroundColor: computeCandyBgColor(candyData, id),
-                                  marginRight: 10,
-                                }}
-                              >
-                                <div
-                                  className="poke-candy"
-                                  style={{
-                                    background: computeCandyColor(candyData, id),
-                                    width: 20,
-                                    height: 20,
-                                  }}
-                                />
-                              </div>
+                              <Candy id={id} style={{ marginRight: 10 }} />
                             ) : (
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
@@ -996,24 +867,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
                             {dataMasterLeague ? (
-                              <div className="position-relative d-inline-block">
-                                <div
-                                  className="bg-poke-xl-candy"
-                                  style={{
-                                    background: computeCandyBgColor(candyData, id),
-                                    width: 30,
-                                    height: 30,
-                                  }}
-                                />
-                                <div
-                                  className="poke-xl-candy"
-                                  style={{
-                                    background: computeCandyColor(candyData, id),
-                                    width: 30,
-                                    height: 30,
-                                  }}
-                                />
-                              </div>
+                              <CandyXL id={id} />
                             ) : (
                               <img
                                 style={{ marginRight: 10 }}

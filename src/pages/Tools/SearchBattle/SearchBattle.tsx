@@ -8,7 +8,6 @@ import './SearchBattle.css';
 import APIService from '../../../services/API.service';
 
 import { splitAndCapitalize } from '../../../util/Utils';
-import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
 import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -18,6 +17,8 @@ import { Link } from 'react-router-dom';
 import { marks, PokeGoSlider } from '../../../util/Utils';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
+import Candy from '../../../components/Sprites/Candy/Candy';
+import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -530,44 +531,12 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <div
-                                            className="d-inline-block bg-poke-candy"
-                                            style={{
-                                              backgroundColor: computeCandyBgColor(dataStore.candy, item.id),
-                                              marginRight: 5,
-                                            }}
-                                          >
-                                            <div
-                                              className="poke-candy"
-                                              style={{
-                                                background: computeCandyColor(dataStore.candy, item.id),
-                                                width: 20,
-                                                height: 20,
-                                              }}
-                                            />
-                                          </div>
+                                          <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center" style={{ marginRight: 5 }}>
                                             {item.battleLeague.little.result_between_candy + getCandyEvo(value, item.id, 0)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
                                           </span>
-                                          <div className="position-relative d-inline-block">
-                                            <div
-                                              className="bg-poke-xl-candy"
-                                              style={{
-                                                background: computeCandyBgColor(dataStore.candy, id),
-                                                width: 30,
-                                                height: 30,
-                                              }}
-                                            />
-                                            <div
-                                              className="poke-xl-candy"
-                                              style={{
-                                                background: computeCandyColor(dataStore.candy, id),
-                                                width: 30,
-                                                height: 30,
-                                              }}
-                                            />
-                                          </div>
+                                          <CandyXL id={id} />
                                           {item.battleLeague.little.result_between_xl_candy}
                                         </span>
                                       </li>
@@ -616,44 +585,12 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <div
-                                            className="d-inline-block bg-poke-candy"
-                                            style={{
-                                              backgroundColor: computeCandyBgColor(dataStore.candy, item.id),
-                                              marginRight: 5,
-                                            }}
-                                          >
-                                            <div
-                                              className="poke-candy"
-                                              style={{
-                                                background: computeCandyColor(dataStore.candy, item.id),
-                                                width: 20,
-                                                height: 20,
-                                              }}
-                                            />
-                                          </div>
+                                          <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
                                             {item.battleLeague.great.result_between_candy + getCandyEvo(value, item.id, 0)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
                                           </span>
-                                          <div className="position-relative d-inline-block">
-                                            <div
-                                              className="bg-poke-xl-candy"
-                                              style={{
-                                                background: computeCandyBgColor(dataStore.candy, id),
-                                                width: 30,
-                                                height: 30,
-                                              }}
-                                            />
-                                            <div
-                                              className="poke-xl-candy"
-                                              style={{
-                                                background: computeCandyColor(dataStore.candy, id),
-                                                width: 30,
-                                                height: 30,
-                                              }}
-                                            />
-                                          </div>
+                                          <CandyXL id={id} />
                                           {item.battleLeague.great.result_between_xl_candy}
                                         </span>
                                       </li>
@@ -702,44 +639,12 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <div
-                                            className="d-inline-block bg-poke-candy"
-                                            style={{
-                                              backgroundColor: computeCandyBgColor(dataStore.candy, item.id),
-                                              marginRight: 5,
-                                            }}
-                                          >
-                                            <div
-                                              className="poke-candy"
-                                              style={{
-                                                background: computeCandyColor(dataStore.candy, item.id),
-                                                width: 20,
-                                                height: 20,
-                                              }}
-                                            />
-                                          </div>
+                                          <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
                                             {item.battleLeague.ultra.result_between_candy + getCandyEvo(value, item.id, 0)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
                                           </span>
-                                          <div className="position-relative d-inline-block">
-                                            <div
-                                              className="bg-poke-xl-candy"
-                                              style={{
-                                                background: computeCandyBgColor(dataStore.candy, id),
-                                                width: 30,
-                                                height: 30,
-                                              }}
-                                            />
-                                            <div
-                                              className="poke-xl-candy"
-                                              style={{
-                                                background: computeCandyColor(dataStore.candy, id),
-                                                width: 30,
-                                                height: 30,
-                                              }}
-                                            />
-                                          </div>
+                                          <CandyXL id={id} />
                                           {item.battleLeague.ultra.result_between_xl_candy}
                                         </span>
                                       </li>
@@ -788,44 +693,12 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <div
-                                            className="d-inline-block bg-poke-candy"
-                                            style={{
-                                              backgroundColor: computeCandyBgColor(dataStore.candy, item.id),
-                                              marginRight: 5,
-                                            }}
-                                          >
-                                            <div
-                                              className="poke-candy"
-                                              style={{
-                                                background: computeCandyColor(dataStore.candy, item.id),
-                                                width: 20,
-                                                height: 20,
-                                              }}
-                                            />
-                                          </div>
+                                          <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
                                             {item.battleLeague.master.result_between_candy + getCandyEvo(value, item.id, 0)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
                                           </span>
-                                          <div className="position-relative d-inline-block">
-                                            <div
-                                              className="bg-poke-xl-candy"
-                                              style={{
-                                                background: computeCandyBgColor(dataStore.candy, id),
-                                                width: 30,
-                                                height: 30,
-                                              }}
-                                            />
-                                            <div
-                                              className="poke-xl-candy"
-                                              style={{
-                                                background: computeCandyColor(dataStore.candy, id),
-                                                width: 30,
-                                                height: 30,
-                                              }}
-                                            />
-                                          </div>
+                                          <CandyXL id={id} />
                                           {item.battleLeague.master.result_between_xl_candy}
                                         </span>
                                       </li>

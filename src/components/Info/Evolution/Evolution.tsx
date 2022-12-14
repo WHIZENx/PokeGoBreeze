@@ -23,11 +23,11 @@ import pokemonName from '../../../data/pokemon_names.json';
 import './Evolution.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { capitalize, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
-import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import Candy from '../../Sprites/Candy/Candy';
 
 const theme = createTheme({
   palette: {
@@ -41,7 +41,6 @@ const theme = createTheme({
 
 const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
-  const candyData = useSelector((state: RootStateOrAny) => state.store.data.candy);
   const [arrEvoList, setArrEvoList]: any = useState([]);
 
   const getEvoChain = useCallback(
@@ -418,16 +417,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
                   <div className="position-absolute" style={{ left: -40 }}>
                     {!value.gmax && (
                       <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
-                        <div className="bg-poke-candy" style={{ backgroundColor: computeCandyBgColor(candyData, value.id) }}>
-                          <div
-                            className="poke-candy"
-                            style={{
-                              background: computeCandyColor(candyData, value.id),
-                              width: 20,
-                              height: 20,
-                            }}
-                          />
-                        </div>
+                        <Candy id={value.id} />
                         <span style={{ marginLeft: 2 }}>{`x${data.candyCost}`}</span>
                       </span>
                     )}

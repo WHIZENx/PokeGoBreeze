@@ -1,22 +1,3 @@
-.bg-poke-candy {
-  border-radius: 50%;
-  width: fit-content;
-  height: fit-content;
-}
-
-.bg-poke-xl-candy {
-  position: absolute;
-  clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
-}
-
-.poke-candy {
-  mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Menu Icons/ic_candy.png") center/contain;
-}
-
-.poke-xl-candy {
-  mask: url("https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Today View/TodayView_Icon_CandyXL.png") center/contain;
-}
-
 .poke-container {
   margin-bottom: 15px;
   overflow: hidden;

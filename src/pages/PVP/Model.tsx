@@ -7,7 +7,7 @@ import IVbar from '../../components/Sprites/IVBar/IVBar';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 import { calculateCP, calStatsProd } from '../../util/Calculate';
-import { computeBgType, computeCandyBgColor, computeCandyColor, findAssetForm } from '../../util/Compute';
+import { computeBgType, findAssetForm } from '../../util/Compute';
 import { convertNameRankingToForm, convertNameRankingToOri, splitAndCapitalize } from '../../util/Utils';
 
 import CircleIcon from '@mui/icons-material/Circle';
@@ -27,6 +27,7 @@ import { Candy } from '../../options/models/candy';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
+import CandyXL from '../../components/Sprites/Candy/CandyXL';
 
 export const Keys = (
   assets: any[],
@@ -163,7 +164,7 @@ export const OverAllStats = (
     }
   };
 
-  const renderTopStats = (stats: any, id: number, candyData: Candy[]) => {
+  const renderTopStats = (stats: any, id: number) => {
     const maxCP = parseInt(cp);
     const currStats: any = calculateStatsTopRank(stats);
     return (
@@ -176,10 +177,7 @@ export const OverAllStats = (
           {(currStats.level > 40 || maxCP === 10000) && (
             <b>
               (
-              <div className="position-relative d-inline-block filter-shadow">
-                <div className="bg-poke-xl-candy" style={{ background: computeCandyBgColor(candyData, id), width: 30, height: 30 }} />
-                <div className="poke-xl-candy" style={{ background: computeCandyColor(candyData, id), width: 30, height: 30 }} />
-              </div>
+              <CandyXL id={id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
               XL Candy required)
             </b>
           )}
@@ -228,7 +226,7 @@ export const OverAllStats = (
           <h5>
             <b>Top Rank League</b>
           </h5>
-          {renderTopStats(data.stats, data.id, candyData)}
+          {renderTopStats(data.stats, data.id)}
         </div>
       </div>
     </div>

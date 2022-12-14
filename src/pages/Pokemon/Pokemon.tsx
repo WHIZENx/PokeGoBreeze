@@ -4,7 +4,6 @@ import APIService from '../../services/API.service';
 import './Pokemon.css';
 
 import { convertName, splitAndCapitalize } from '../../util/Utils';
-import { computeCandyBgColor, computeCandyColor } from '../../util/Compute';
 import { regionList } from '../../util/Constants';
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -20,6 +19,7 @@ import Error from '../Error/Error';
 import { Alert } from 'react-bootstrap';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
+import Candy from '../../components/Sprites/Candy/Candy';
 
 const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any; onSetIDPoke?: any }) => {
   const dispatch = useDispatch();
@@ -533,22 +533,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           </td>
                           <td style={{ padding: 0 }}>
                             <div className="d-flex align-items-center row-extra td-costs">
-                              <div
-                                className="d-inline-block bg-poke-candy"
-                                style={{
-                                  backgroundColor: computeCandyBgColor(dataStore.candy, data.id),
-                                  marginRight: 5,
-                                }}
-                              >
-                                <div
-                                  className="poke-candy"
-                                  style={{
-                                    background: computeCandyColor(dataStore.candy, data.id),
-                                    width: 20,
-                                    height: 20,
-                                  }}
-                                />
-                              </div>
+                              <Candy id={data.id} style={{ marginRight: 5 }} />
                               <span>
                                 {getCostModifier(data.id) && getCostModifier(data.id).thirdMove.candy
                                   ? `x${getCostModifier(data.id).thirdMove.candy}`
@@ -577,22 +562,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           </td>
                           <td style={{ padding: 0 }}>
                             <div className="d-flex align-items-center row-extra td-costs">
-                              <div
-                                className="d-inline-block bg-poke-candy"
-                                style={{
-                                  backgroundColor: computeCandyBgColor(dataStore.candy, data.id),
-                                  marginRight: 5,
-                                }}
-                              >
-                                <div
-                                  className="poke-candy"
-                                  style={{
-                                    background: computeCandyColor(dataStore.candy, data.id),
-                                    width: 20,
-                                    height: 20,
-                                  }}
-                                />
-                              </div>
+                              <Candy id={data.id} style={{ marginRight: 5 }} />
                               <span>
                                 {getCostModifier(data.id) && getCostModifier(data.id).purified.candy
                                   ? `x${getCostModifier(data.id).purified.candy}`
