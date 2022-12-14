@@ -183,7 +183,7 @@ export const optionformSpecial = (data: any[]) => {
       );
     })
     .map((item: { form: string }) => item.form)
-    .filter((form: string) => form !== 'MEWTWO_A');
+    .filter((form: string) => form !== 'MEWTWO_A' && form !== 'PIKACHU_ROCK_STAR' && form !== 'PIKACHU_POP_STAR');
 };
 
 export const optionPokemonFamily = (pokemon: any[]) => {
