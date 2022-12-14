@@ -51,6 +51,9 @@ const Home = () => {
           sprite: item.sprite.toLowerCase(),
           baseSpecies: item.baseSpecies,
           baseStats: item.baseStats,
+          gen: item.gen,
+          region: item.region,
+          version: versionList.indexOf(splitAndCapitalize(item.version, '-', ' ')),
           goStats: {
             atk: stats.atk,
             def: stats.def,
@@ -83,6 +86,11 @@ const Home = () => {
 
   const { match, releasedGO, allShiny, gen, version, mega, gmax } = filters;
 
+  const [btnSelected, setBtnSelected] = useState({
+    gen: true,
+    version: true,
+  });
+
   const addTypeArr = (value: string) => {
     let types = selectTypes;
     if (types.includes(value)) {
@@ -91,15 +99,6 @@ const Home = () => {
       types = types.slice(0, 1);
     }
     return setSelectTypes([...types, value]);
-  };
-
-  const checkGeneration = (id: number) => {
-    return gen.some((gen) => {
-      if (id >= genList[gen + 1][0] && id <= genList[gen + 1][1]) {
-        return true;
-      }
-      return false;
-    });
   };
 
   useEffect(() => {
@@ -125,8 +124,9 @@ const Home = () => {
             const boolMega = mega ? item.forme === 'Mega' : true;
             const boolGmax = gmax ? item.forme === 'Gmax' : true;
 
-            const findGen = checkGeneration(item.id);
-            return boolFilterType && boolFilterPoke && boolReleasedGO && boolMega && boolGmax && findGen;
+            const findGen = gen.includes(item.gen - 1);
+            const findVersion = version.includes(item.version);
+            return boolFilterType && boolFilterPoke && boolReleasedGO && boolMega && boolGmax && findGen && findVersion;
           });
           setListOfPokemon(result);
           setLoading(false);
@@ -135,7 +135,7 @@ const Home = () => {
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, gen]);
+  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, gen, version]);
 
   const handleChangeGen = (event: SelectChangeEvent<any>) => {
     const {
@@ -155,6 +155,50 @@ const Home = () => {
       ...filters,
       version: (value as any).sort((a: number, b: number) => a - b),
     });
+  };
+
+  const setFilterGen = () => {
+    if (btnSelected.gen) {
+      setFilters({
+        ...filters,
+        gen: [],
+      });
+      setBtnSelected({
+        ...btnSelected,
+        gen: false,
+      });
+    } else {
+      setFilters({
+        ...filters,
+        gen: versionList.map((value: any, index: any) => index),
+      });
+      setBtnSelected({
+        ...btnSelected,
+        gen: true,
+      });
+    }
+  };
+
+  const setFilterVersion = () => {
+    if (btnSelected.version) {
+      setFilters({
+        ...filters,
+        version: [],
+      });
+      setBtnSelected({
+        ...btnSelected,
+        version: false,
+      });
+    } else {
+      setFilters({
+        ...filters,
+        version: versionList.map((value: any, index: any) => index),
+      });
+      setBtnSelected({
+        ...btnSelected,
+        version: true,
+      });
+    }
   };
 
   return (
@@ -242,6 +286,15 @@ const Home = () => {
                       input={<OutlinedInput label="Generation" />}
                       renderValue={(selected: any) => 'Gen ' + selected.map((item: number) => (item + 1).toString()).join(', Gen ')}
                     >
+                      <MenuItem disableRipple={true} disableTouchRipple={true}>
+                        <ListItemText
+                          primary={
+                            <button onClick={setFilterGen} className={`btn ${btnSelected.gen ? 'btn-danger' : 'btn-success'}`}>{`${
+                              btnSelected.gen ? 'Deselect All' : 'Select All'
+                            }`}</button>
+                          }
+                        />
+                      </MenuItem>
                       {Object.values(genList).map((value: any, index) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={gen.includes(index)} />
@@ -260,6 +313,15 @@ const Home = () => {
                       renderValue={(selected: any) => selected.map((item: number) => versionList[item]).join(', ')}
                       MenuProps={VersionProps}
                     >
+                      <MenuItem disableRipple={true} disableTouchRipple={true}>
+                        <ListItemText
+                          primary={
+                            <button onClick={setFilterVersion} className={`btn ${btnSelected.version ? 'btn-danger' : 'btn-success'}`}>{`${
+                              btnSelected.version ? 'Deselect All' : 'Select All'
+                            }`}</button>
+                          }
+                        />
+                      </MenuItem>
                       {versionList.map((value: string, index: React.Key) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={version.includes(index)} />
