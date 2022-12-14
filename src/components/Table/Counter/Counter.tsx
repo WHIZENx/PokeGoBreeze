@@ -2,7 +2,7 @@ import { capitalize, FormControlLabel, Switch } from '@mui/material';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { convertName, splitAndCapitalize } from '../../../util/Utils';
+import { convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
@@ -104,7 +104,9 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                     <tr>
                       <td className="text-origin text-center">
                         <Link
-                          to={`/pokemon/${value.pokemon_id}${value.pokemon_forme ? `?form=${value.pokemon_forme.toLowerCase()}` : ''}`}
+                          to={`/pokemon/${value.pokemon_id}${
+                            value.pokemon_forme ? `?form=${convertFormName(value.pokemon_id, value.pokemon_forme.toLowerCase())}` : ''
+                          }`}
                           target="_blank"
                         >
                           <div className="d-flex justify-content-center">

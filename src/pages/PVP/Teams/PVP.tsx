@@ -52,7 +52,7 @@ const TeamPVP = () => {
       const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
 
       if (!styleSheet.current) {
-        styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`);
+        styleSheet.current = getStyleSheet(`.${pokemon.types[0].toLowerCase()}`);
       }
 
       let combatPoke = dataStore.pokemonCombat.filter(

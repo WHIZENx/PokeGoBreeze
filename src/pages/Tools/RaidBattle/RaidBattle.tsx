@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import pokemonData from '../../../data/pokemon.json';
 
-import { checkReleasedGO, convertName, splitAndCapitalize } from '../../../util/Utils';
+import { checkReleasedGO, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { MAX_LEVEL, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/Constants';
 import {
@@ -982,7 +982,9 @@ const RaidBattle = () => {
                 <div className="top-raid-pokemon" key={index}>
                   <div className="d-flex justify-content-center w-100">
                     <Link
-                      to={`/pokemon/${value.pokemon.num}${value.pokemon.forme ? `?form=${value.pokemon.forme.toLowerCase()}` : ''}`}
+                      to={`/pokemon/${value.pokemon.num}${
+                        value.pokemon.forme ? `?form=${convertFormName(value.pokemon.num, value.pokemon.forme.toLowerCase())}` : ''
+                      }`}
                       className="sprite-raid position-relative"
                     >
                       {value.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}

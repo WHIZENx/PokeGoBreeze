@@ -10,7 +10,7 @@ import { calculateStatsByTag } from '../../util/Calculate';
 import { mappingReleasedGO, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
-import { genList, regionList } from '../../util/Constants';
+import { genList, regionList, versionList } from '../../util/Constants';
 import {
   Checkbox,
   FormControl,
@@ -23,6 +23,15 @@ import {
   SelectChangeEvent,
   Switch,
 } from '@mui/material';
+
+const VersionProps = {
+  PaperProps: {
+    style: {
+      maxHeight: 220,
+    },
+  },
+};
+
 const Home = () => {
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
@@ -67,12 +76,12 @@ const Home = () => {
     releasedGO: false,
     allShiny: false,
     gen: Object.values(genList).map((value, index) => index),
-    region: Object.values(regionList).map((value, index) => index),
+    version: versionList.map((value: any, index: any) => index),
     mega: false,
     gmax: false,
   });
 
-  const { match, releasedGO, allShiny, gen, region, mega, gmax } = filters;
+  const { match, releasedGO, allShiny, gen, version, mega, gmax } = filters;
 
   const addTypeArr = (value: string) => {
     let types = selectTypes;
@@ -138,13 +147,13 @@ const Home = () => {
     });
   };
 
-  const handleChangeRegion = (event: SelectChangeEvent<any>) => {
+  const handleChangeVersion = (event: SelectChangeEvent<any>) => {
     const {
       target: { value },
     } = event;
     setFilters({
       ...filters,
-      region: (value as any).sort((a: number, b: number) => a - b),
+      version: (value as any).sort((a: number, b: number) => a - b),
     });
   };
 
@@ -181,7 +190,7 @@ const Home = () => {
                     onInput={(e: any) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <div className="d-flex" style={{ paddingLeft: 8, paddingRight: 8 }}>
+                <div className="d-flex flex-wrap" style={{ paddingLeft: 8, paddingRight: 8 }}>
                   <FormControlLabel
                     control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
                     label="Match Pokémon"
@@ -236,24 +245,24 @@ const Home = () => {
                       {Object.values(genList).map((value: any, index) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={gen.includes(index)} />
-                          <ListItemText primary={`Generation ${index + 1}`} />
+                          <ListItemText primary={`Generation ${index + 1} (Region ${regionList[index + 1]})`} />
                         </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
                   <FormControl sx={{ m: 1, width: '50%' }} size="small">
-                    <InputLabel>Region</InputLabel>
+                    <InputLabel>Version</InputLabel>
                     <Select
                       multiple={true}
-                      value={region}
-                      onChange={handleChangeRegion}
-                      input={<OutlinedInput label="Region" />}
-                      renderValue={(selected: any) => selected.map((item: number) => regionList[item + 1]).join(', ')}
-                      disabled={true}
+                      value={version}
+                      onChange={handleChangeVersion}
+                      input={<OutlinedInput label="Version" />}
+                      renderValue={(selected: any) => selected.map((item: number) => versionList[item]).join(', ')}
+                      MenuProps={VersionProps}
                     >
-                      {Object.values(regionList).map((value: any, index) => (
+                      {versionList.map((value: string, index: React.Key) => (
                         <MenuItem key={index} value={index}>
-                          <Checkbox checked={region.includes(index)} />
+                          <Checkbox checked={version.includes(index)} />
                           <ListItemText primary={value} />
                         </MenuItem>
                       ))}

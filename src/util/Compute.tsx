@@ -120,6 +120,7 @@ export const queryAssetForm = (pokemonAssets: any[], id: number, name: string) =
   }
   const standard = pokemon.image.filter((item: { form: string | string[] }) => item.form.includes('STANDARD'));
   name = convertName(name);
+
   if (pokemon.name === name || standard.length > 0) {
     const image = pokemon.image.find((item: { form: string }) => item.form === 'NORMAL');
     if (image) {

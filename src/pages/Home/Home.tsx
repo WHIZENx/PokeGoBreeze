@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 
-import { splitAndCapitalize } from '../../util/Utils';
+import { convertFormName, splitAndCapitalize } from '../../util/Utils';
 import { calculateCP, calculateStatsByTag } from '../../util/Calculate';
 
 import loading from '../../assets/loading.png';
@@ -269,7 +269,10 @@ const Home = () => {
                     {listOfPokemon.map((row: any, index: React.Key) => (
                       <StyledTableRow key={index}>
                         <StyledTableCell component="th" scope="row">
-                          <Link to={`/pokemon/${row.id}${row.forme ? `?form=${row.forme.toLowerCase()}` : ''}`} target="_blank">
+                          <Link
+                            to={`/pokemon/${row.id}${row.forme ? `?form=${convertFormName(row.id, row.forme.toLowerCase())}` : ''}`}
+                            target="_blank"
+                          >
                             #{row.id}{' '}
                             <img
                               height={60}

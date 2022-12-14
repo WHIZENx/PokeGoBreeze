@@ -124,6 +124,26 @@ export const regionList: any = {
   8: 'Galar',
 };
 
+export const versionList: any = [
+  'Black 2 White 2',
+  'Black White',
+  'Diamond Pearl',
+  'Emerald',
+  'Firered Leafgreen',
+  'Gold Silver',
+  'Heartgold Soulsilver',
+  'Legends Arceus',
+  'Lets Go Pikachu Lets Go Eevee',
+  'Omega Ruby Alpha Sapphire',
+  'Platinum',
+  'Red Blue',
+  'Ruby Sapphire',
+  'Sun Moon',
+  'Sword Shield',
+  'Ultra Sun Ultra Moon',
+  'X Y',
+];
+
 export const typeCostPowerUp = (type: string) => {
   if (type === 'shadow') {
     return {

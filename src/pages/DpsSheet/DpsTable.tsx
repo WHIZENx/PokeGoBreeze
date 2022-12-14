@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import pokemonData from '../../data/pokemon.json';
-import { LevelRating, convertName, splitAndCapitalize, capitalize } from '../../util/Utils';
+import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../util/Utils';
 import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
 import {
   calculateAvgDPS,
@@ -64,7 +64,9 @@ const columns: any = [
       purified: any;
     }) => (
       <Link
-        to={`/pokemon/${row.pokemon?.num}${row.pokemon?.forme ? `?form=${row.pokemon?.forme.toLowerCase()}` : ''}`}
+        to={`/pokemon/${row.pokemon?.num}${
+          row.pokemon?.forme ? `?form=${convertFormName(row.pokemon?.num, row.pokemon?.forme.toLowerCase())}` : ''
+        }`}
         target="_blank"
         title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
       >

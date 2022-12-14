@@ -92,7 +92,7 @@ const RankingPVP = () => {
           const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
 
           if (!styleSheet.current) {
-            styleSheet.current = getStyleSheet('background-color', `.${pokemon.types[0].toLowerCase()}`);
+            styleSheet.current = getStyleSheet(`.${pokemon.types[0].toLowerCase()}`);
           }
 
           let fmoveData = item.moveset[0],

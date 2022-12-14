@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.css';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize } from '../../../util/Utils';
+import { getTime, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
 import { rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -512,7 +512,11 @@ const Leagues = () => {
                                 item.id +
                                 (item.form === 'NORMAL'
                                   ? ''
-                                  : '?form=' + item.form.toLowerCase().replace('galarian', 'galar').replace('hisuian', 'hisui'))
+                                  : '?form=' +
+                                    convertFormName(
+                                      parseInt(item.id),
+                                      item.form.toLowerCase().replace('galarian', 'galar').replace('hisuian', 'hisui')
+                                    ))
                               }
                               title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                             >
@@ -546,7 +550,11 @@ const Leagues = () => {
                                 item.id +
                                 (item.form === 'NORMAL'
                                   ? ''
-                                  : '?form=' + item.form.toLowerCase().replace('galarian', 'galar').replace('hisuian', 'hisui'))
+                                  : '?form=' +
+                                    convertFormName(
+                                      parseInt(item.id),
+                                      item.form.toLowerCase().replace('galarian', 'galar').replace('hisuian', 'hisui')
+                                    ))
                               }
                               title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                             >

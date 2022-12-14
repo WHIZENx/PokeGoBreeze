@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../util/Compute';
-import { splitAndCapitalize } from '../../util/Utils';
+import { convertFormName, splitAndCapitalize } from '../../util/Utils';
 import ProgressBar from '../Sprites/ProgressBar/ProgressBar';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.css';
@@ -83,7 +83,10 @@ const CardPokemonInfo = (props: {
           src={APIService.getShinyIcon()}
         />
       )}
-      <Link className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${props.forme ? `?form=${props.forme.toLowerCase()}` : ''}`}>
+      <Link
+        className="d-block h-100 pokemon-link"
+        to={`/pokemon/${props.id}${props.forme ? `?form=${convertFormName(props.id, props.forme.toLowerCase())}` : ''}`}
+      >
         <div className="d-flex justify-content-center" style={{ padding: 8 }}>
           <span style={{ width: 96 }}>
             <img

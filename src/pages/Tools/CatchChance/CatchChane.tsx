@@ -95,13 +95,13 @@ const CatchChance = () => {
     if (!advance && data && medal) {
       calculateCatch();
     }
-  }, [advance, medal, level, curveBall, razzBerry, goldenRazzBerry]);
+  }, [advance, medal, level, curveBall, razzBerry, goldenRazzBerry, silverPinaps]);
 
   useEffect(() => {
     if (data && medal) {
       renderRingColor();
     }
-  }, [ballType, medal, level, razzBerry, goldenRazzBerry]);
+  }, [ballType, medal, level, razzBerry, goldenRazzBerry, silverPinaps]);
 
   useEffect(() => {
     if (advance) {
@@ -114,7 +114,7 @@ const CatchChance = () => {
     if (advance) {
       calculateAdvance();
     }
-  }, [advance, radius, medal, level, razzBerry, goldenRazzBerry, ballType, normalThrow]);
+  }, [advance, radius, medal, level, curveBall, razzBerry, goldenRazzBerry, silverPinaps, ballType, normalThrow]);
 
   useEffect(() => {
     setLoading(false);
@@ -272,7 +272,8 @@ const CatchChance = () => {
       medalChance *
       (curveBall && !disable ? CURVE_INC_CHANCE : 1) *
       (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-      (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1);
+      (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
+      (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
     const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
     const result = Math.min(prob * 100, 100);
     return result;

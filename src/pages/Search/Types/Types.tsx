@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormName, splitAndCapitalize } from '../../../util/Utils';
 import './Types.css';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
@@ -34,7 +34,7 @@ const columnPokemon: any = [
     name: 'Pokémon Name',
     selector: (row: { num: any; forme: string; name: string; sprite: string; baseSpecies: string }) => (
       <Link
-        to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase()}` : ''}`}
+        to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
         target="_blank"
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >

@@ -183,7 +183,9 @@ export const convertName = (text: string | undefined) => {
     .replace('GOURGEIST_AVERAGE', 'GOURGEIST')
     .replace('_ARMOR', '_A')
     .replace('_GALAR', '_GALARIAN')
-    .replace('_HISUI', '_HISUIAN');
+    .replace('_HISUI', '_HISUIAN')
+    .replace('_POM_POM', '_POMPOM')
+    .replace("_PA'U", '_PAU');
 };
 
 export const convertNameRanking = (text: string) => {
@@ -270,7 +272,7 @@ export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => 
   });
 };
 
-export const getStyleSheet = (style: string, selector: string) => {
+export const getStyleSheet = (selector: string) => {
   const sheets = document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
     const sheet = sheets[i];
@@ -375,4 +377,25 @@ export const mappingReleasedGO = (pokemonData: any, details: any[]) => {
         releasedGO: result ? result.releasedGO : false,
       };
     });
+};
+
+export const convertFormName = (id: number, form: string) => {
+  if (form === 'alola-totem') {
+    return 'totem-alola';
+  } else if (form === 'pokeball') {
+    return 'poke-ball';
+  } else if (form === 'f') {
+    return 'female';
+  } else if (form === '10%') {
+    return '10';
+  } else if (form === "pa'u") {
+    return 'pau';
+  } else if (form === 'dusk-mane') {
+    return 'dusk';
+  } else if (form === 'dawn-mane') {
+    return 'dawn';
+  } else if (id === 25 && ['origin', 'hoenn', 'sinnoh', 'unova', 'alola', 'partner', 'world']) {
+    return form + '-cap';
+  }
+  return form;
 };
