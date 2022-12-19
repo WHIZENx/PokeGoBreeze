@@ -261,7 +261,7 @@ const Home = () => {
                     control={<Switch checked={allShiny} onChange={(event, check) => setFilters({ ...filters, allShiny: check })} />}
                     label={
                       <span className="d-flex align-items-center">
-                        Show All Pokemon Shiny (Possible only)
+                        Show All Pokémon Shiny (Possible only)
                         <img
                           className={allShiny ? 'filter-shiny' : 'filter-gray'}
                           width={28}

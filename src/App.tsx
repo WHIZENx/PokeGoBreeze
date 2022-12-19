@@ -159,14 +159,12 @@ function App() {
     const source = cancelToken.source();
     loadStore(
       dispatch,
-      null,
       stateTimestamp,
       stateMove,
       stateCandy,
       stateImage,
       stateSound,
       statePVP,
-      null,
       setStateTimestamp,
       setStateMove,
       setStateCandy,

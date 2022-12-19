@@ -11,7 +11,6 @@ const Bar: any = styled.div`
 
 const Fill: any = styled.div`
   position: absolute;
-  width: ${(props: any) => (props.value * 100) / props.maxValue}%;
   height: ${(props: any) => props.height}px;
   background: ${(props: any) => props.color};
   border-radius: 3px;
@@ -20,7 +19,7 @@ const Fill: any = styled.div`
 const ProgressBar = ({ height, value, maxValue, bgColor, color, style }: any) => {
   return (
     <Bar style={style} height={height} bgColor={bgColor}>
-      <Fill height={height} value={Math.max(1, value)} maxValue={maxValue} color={color} />
+      <Fill style={{ width: (value * 100) / maxValue }} height={height} value={Math.max(1, value)} maxValue={maxValue} color={color} />
     </Bar>
   );
 };

@@ -204,7 +204,7 @@ export const optionPokemonFamilyGroup = (data: any[]) => {
     });
 };
 
-export const optionPokemonCandy = (candyData: any[], family: any[], pokemon: any[], pokemonFamily: any[]) => {
+export const optionPokemonCandy = (candyData: any[], pokemon: any[], pokemonFamily: any[]) => {
   const candyModel = () => {
     return {
       familyId: 0,

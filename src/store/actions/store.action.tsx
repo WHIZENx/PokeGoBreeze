@@ -16,7 +16,6 @@ import {
   optionDetailsPokemon,
   optionPokemonTypes,
   optionPokemonWeather,
-  optionPokemonFamilyGroup,
   optionPokemonCandy,
 } from '../../options/options';
 import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../options/pvp';
@@ -29,14 +28,12 @@ export const RESET_STORE = 'RESET_STORE';
 
 export const loadStore = (
   dispatch: any,
-  stateGM: any,
   stateTimestamp: any,
   stateMoves: any,
   stateCandy: any,
   stateImage: any,
   stateSound: any,
   statePVP: any,
-  setStateGM: any,
   setStateTimestamp: any,
   setStateMoves: any,
   setStateCandy: any,
@@ -269,8 +266,7 @@ export const loadStore = (
           .then(([candy, imageRoot, soundsRoot]) => {
             const pokemon = optionPokemon(gm.data);
             const pokemonFamily = optionPokemonFamily(pokemon);
-            const pokemonFamilyGroup = optionPokemonFamilyGroup(gm.data);
-            const candyData = optionPokemonCandy(candy.data.CandyColors, pokemonFamilyGroup, pokemon, pokemonFamily);
+            const candyData = optionPokemonCandy(candy.data.CandyColors, pokemon, pokemonFamily);
             setStateTimestamp(
               JSON.stringify({
                 ...JSON.parse(stateTimestamp),
