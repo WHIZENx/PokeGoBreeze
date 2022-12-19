@@ -9,7 +9,7 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { capitalize, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormNameImg, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
 import { regionList } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
@@ -28,6 +28,9 @@ const Form = ({
   setWH,
   formName,
   setFormName,
+  setForm,
+  setReleased,
+  checkReleased,
   id_default,
   pokeData,
   formList,
@@ -90,7 +93,7 @@ const Form = ({
     species: { url: '' },
     types: [],
   });
-  const [pokeID, setPokeID] = useState(null);
+  const [pokeID, setPokeID]: any = useState(null);
   const [statATK, setStatATK]: any = useState(null);
   const [statDEF, setStatDEF]: any = useState(null);
   const [statSTA, setStatSTA]: any = useState(null);
@@ -203,7 +206,10 @@ const Form = ({
     } else {
       setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
     }
-    setFormName(splitAndCapitalize(findForm.form.name, '-', ' '));
+    const nameInfo = splitAndCapitalize(findForm.form.name, '-', ' ');
+    setFormName(nameInfo);
+    setReleased(checkReleased(pokeID, nameInfo));
+    setForm(splitAndCapitalize(convertFormNameImg(pokeID, findForm.form.form_name), '-', '-'));
     if (findData && findForm) {
       const oriForm = findData;
       oriForm.types = findForm.form.types;

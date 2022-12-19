@@ -399,3 +399,54 @@ export const convertFormName = (id: number, form: string) => {
   }
   return form;
 };
+
+export const convertFormGif = (name: string) => {
+  if (name === 'nidoran') {
+    name = 'nidoran_m';
+  }
+  return name
+    ?.replace('mr', 'mr.')
+    .replace('-hisui', '')
+    .replace('slowking-galar', 'slowking')
+    .replace('articuno-galar', 'articuno')
+    .replace('zapdos-galar', 'zapdos')
+    .replace('moltres-galar', 'moltres');
+};
+
+export const convertFormNameImg = (id: number, form: string) => {
+  if (
+    id === 201 ||
+    id === 716 ||
+    id === 773 ||
+    id === 854 ||
+    id === 855 ||
+    form === 'totem' ||
+    form === 'spiky-eared' ||
+    form === 'meteor'
+  ) {
+    return '';
+  } else if (form?.includes('totem')) {
+    return form.replace('-totem', '');
+  } else if (id === 849 && form === 'gmax') {
+    return 'amped-gmax';
+  } else if (id === 892 && form === 'gmax') {
+    return 'single-strike-gmax';
+  } else if (form === 'armor') {
+    return '';
+  } else if (form === 'pokeball') {
+    return 'poke-ball';
+  } else if (form === 'f') {
+    return 'female';
+  } else if (form === '10%') {
+    return '10';
+  } else if (form === "pa'u") {
+    return 'pau';
+  } else if (form === 'dusk-mane') {
+    return 'dusk';
+  } else if (form === 'dawn-wings') {
+    return 'dawn';
+  } else if (id === 25 && ['original', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'partner', 'world'].includes(form)) {
+    return form + '-cap';
+  }
+  return form;
+};

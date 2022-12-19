@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 
 import './Pokemon.css';
 
-import { convertName, splitAndCapitalize } from '../../util/Utils';
+import { convertFormNameImg, convertName, splitAndCapitalize } from '../../util/Utils';
 import { regionList } from '../../util/Constants';
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -37,7 +37,6 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
   const [formList, setFormList]: any = useState([]);
 
   const [reForm, setReForm] = useState(false);
-  const [loadForm, setLoadForm] = useState(false);
 
   const [data, setData]: any = useState(null);
   const [pokeRatio, setPokeRatio]: any = useState(null);
@@ -46,6 +45,8 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
   const [region, setRegion] = useState(null);
   const [WH, setWH] = useState({ weight: 0, height: 0 });
   const [formName, setFormName]: any = useState(null);
+  const [form, setForm]: any = useState(null);
+  const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
 
   const [onChangeForm, setOnChangeForm] = useState(false);
@@ -63,7 +64,6 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
       axios: { getFetchUrl: (arg0: any, arg1: { cancelToken: any }) => any },
       source: { token: any }
     ) => {
-      setLoadForm(false);
       const dataPokeList: any[] = [];
       let dataFromList: any[] = [];
       await Promise.all(
@@ -125,8 +125,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
       setFormList(dataFromList);
       let defaultFrom,
         isDefaultForm: {
-          form_name: string;
-          form: { name: string; version_group: { name: string } };
+          form: { form_name: string; name: string; version_group: { name: string } };
           default_name: string;
           name: any;
         },
@@ -147,7 +146,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
         if (defaultFrom) {
           isDefaultForm = defaultFrom[0];
           if (
-            isDefaultForm.form_name !== form.toLowerCase() &&
+            isDefaultForm.form.form_name !== form.toLowerCase() &&
             isDefaultForm.form.name !== isDefaultForm.default_name + '-' + form.toLowerCase()
           ) {
             isDefaultForm = defaultFrom.find((value: { form: { form_name: string } }) => value.form.form_name === form.toLowerCase());
@@ -172,8 +171,10 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
         setRegion(regionList[parseInt(data.generation.url.split('/')[6])]);
       }
       const nameInfo = splitAndCapitalize(form ? isDefaultForm.form.name : data.name, '-', ' ');
-      setLoadForm(true);
+      const formInfo = form ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
       setFormName(nameInfo);
+      setReleased(checkReleased(data.id, nameInfo));
+      setForm(formInfo);
       if (params.id) {
         document.title = `#${data.id} - ${nameInfo}`;
       }
@@ -248,16 +249,16 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
     return dataStore.evolution.find((item: { id: any }) => item.id === id);
   };
 
-  const checkReleased = () => {
-    if (!formName || !loadForm) {
+  const checkReleased = (id: number, form: string) => {
+    if (!form) {
       return false;
     }
+
     const pokemonForm =
       dataStore.details.find(
-        (item: { id: any; name: string }) =>
-          item.id === data.id && item.name === convertName(formName.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
+        (item: { id: any; name: string }) => item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
       )?.releasedGO ?? false;
-    return !pokemonForm;
+    return pokemonForm;
   };
 
   return (
@@ -278,7 +279,10 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                         style={{ padding: 0 }}
                       >
                         <Link
-                          onClick={() => setReForm(false)}
+                          onClick={() => {
+                            setReForm(false);
+                            setForm(null);
+                          }}
                           className="d-flex justify-content-start align-items-center"
                           to={'/pokemon/' + (data.id - 1)}
                           title={`#${data.id - 1} ${splitAndCapitalize((pokeListName as any)[data.id - 1].name, '-', ' ')}`}
@@ -311,7 +315,10 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                         style={{ float: 'right', padding: 0 }}
                       >
                         <Link
-                          onClick={() => setReForm(false)}
+                          onClick={() => {
+                            setReForm(false);
+                            setForm(null);
+                          }}
                           className="d-flex justify-content-end align-items-center"
                           to={'/pokemon/' + (data.id + 1)}
                           title={`#${data.id + 1} ${splitAndCapitalize((pokeListName as any)[data.id + 1].name, '-', ' ')}`}
@@ -348,7 +355,10 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                       >
                         <div
                           className="d-flex justify-content-start align-items-center"
-                          onClick={() => props.onDecId()}
+                          onClick={() => {
+                            setForm(null);
+                            props.onDecId();
+                          }}
                           title={`#${data.id - 1} ${splitAndCapitalize((pokeListName as any)[data.id - 1].name, '-', ' ')}`}
                         >
                           <div style={{ cursor: 'pointer' }}>
@@ -380,7 +390,10 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                       >
                         <div
                           className="d-flex justify-content-end align-items-center"
-                          onClick={() => props.onIncId()}
+                          onClick={() => {
+                            setForm(null);
+                            props.onIncId();
+                          }}
                           title={`#${data.id + 1} ${splitAndCapitalize((pokeListName as any)[data.id + 1].name, '-', ' ')}`}
                         >
                           <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
@@ -409,7 +422,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
               </div>
               <div className={'element-bottom position-relative poke-container' + (props.isSearch ? '' : ' container')}>
                 <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-                  {checkReleased() && (
+                  {!released && (
                     <Alert variant="danger">
                       <h5 className="text-danger" style={{ margin: 0 }}>
                         * <b>{formName}</b> not released in Pokémon GO
@@ -428,7 +441,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                       className="pokemon-main-sprite"
                       style={{ verticalAlign: 'baseline' }}
                       alt="img-full-pokemon"
-                      src={APIService.getPokeFullSprite(data.id)}
+                      src={APIService.getPokeFullSprite(data.id, form)}
                     />
                   </div>
                   <div className="d-inline-block">
@@ -595,6 +608,9 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                   setWH={setWH}
                   formName={formName}
                   setFormName={setFormName}
+                  setForm={setForm}
+                  setReleased={setReleased}
+                  checkReleased={checkReleased}
                   id_default={data.id}
                   pokeData={pokeData}
                   formList={formList}

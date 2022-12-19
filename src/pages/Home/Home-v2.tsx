@@ -7,7 +7,7 @@ import './Home.css';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { calculateStatsByTag } from '../../util/Calculate';
-import { mappingReleasedGO, splitAndCapitalize } from '../../util/Utils';
+import { convertFormNameImg, mappingReleasedGO, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
 import { genList, regionList, versionList } from '../../util/Constants';
@@ -62,7 +62,12 @@ const Home = () => {
           releasedGO: item.releasedGO,
           image: {
             default:
-              assetForm && assetForm.default ? APIService.getPokemonModel(assetForm.default) : APIService.getPokeFullSprite(item.num),
+              assetForm && assetForm.default
+                ? APIService.getPokemonModel(assetForm.default)
+                : APIService.getPokeFullSprite(
+                    item.num,
+                    splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase()), '-', '-')
+                  ),
             shiny: assetForm && assetForm.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
           },
         };

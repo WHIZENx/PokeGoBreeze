@@ -22,7 +22,7 @@ import pokemonName from '../../../data/pokemon_names.json';
 
 import './Evolution.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { capitalize, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormGif, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
@@ -383,7 +383,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
         id="img-pokemon"
         alt="img-pokemon"
         src={
-          value.id >= 894 ? APIService.getPokeSprite(value.id) : APIService.getPokemonAsset('pokemon-animation', 'all', value.sprite, 'gif')
+          value.id >= 894
+            ? APIService.getPokeSprite(value.id)
+            : APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')
         }
         onError={(e: any) => {
           e.onerror = null;

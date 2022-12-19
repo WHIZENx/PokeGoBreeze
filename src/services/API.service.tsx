@@ -11,7 +11,7 @@ const POGO_SOUND_API_URL = 'https://raw.githubusercontent.com/PokeMiners/pogo_as
 const POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
 const POKE_ICON_SPRITES_TYPE_API_URL = 'https://raw.githubusercontent.com/apavlinovic/pokemon-go-imagery/master/Sprite/';
-const POKE_SPRITES_FULL_API_URL = 'https://assets.pokemon.com/assets/cms2/img/pokedex/detail/';
+const POKE_SPRITES_FULL_API_URL = 'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/';
 
 const POKE_GIF_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Pokemon/';
 const POKE_TRAINER_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Trainers/';
@@ -137,9 +137,9 @@ class APIService {
     return `${POKE_SPRITES_API_URL}${id}.png`;
   }
 
-  getPokeFullSprite(id: any) {
+  getPokeFullSprite(id: any, form?: string) {
     id = id.toString().padStart(3, '0');
-    return `${POKE_SPRITES_FULL_API_URL}${id}.png`;
+    return `${POKE_SPRITES_FULL_API_URL}${id}${form ? `-${form}` : ''}.png`;
   }
 
   getPokeIconSprite(name: string, noFix = false) {
@@ -162,6 +162,7 @@ class APIService {
         .replace('meowstic-male', 'meowstic')
         .replace('meowstic-female', 'meowstic-f')
         .replace('aegislash-shield', 'aegislash')
+        .replace('unown-a', 'unown')
         .replace('-average', '')
         .replace('-50', '')
         .replace('-baile', '')
