@@ -2,6 +2,8 @@ name: Firebase hosting
 on:
   push:
     branches: [main]
+env:
+  REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -24,5 +26,3 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           path: build
-        env:
-          REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
