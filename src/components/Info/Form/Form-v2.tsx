@@ -126,6 +126,46 @@ const Form = ({
     [filterFormName]
   );
 
+  const findFormData = (name: string) => {
+    const findData = pokeData.find((item: { name: any }) => name === item.name);
+    const findForm = formList
+      .map((item: any[]) => item.find((item: { form: { name: any } }) => item.form.name === name))
+      .find((item: any) => item);
+    setCurrForm(findForm);
+    const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));
+    if (findForm.form.form_name !== '' && region) {
+      setRegion(region);
+    } else {
+      setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+    }
+    const nameInfo = splitAndCapitalize(findForm.form.name, '-', ' ');
+    setFormName(nameInfo);
+    setReleased(checkReleased(pokeID, nameInfo));
+    setForm(splitAndCapitalize(convertFormNameImg(pokeID, findForm.form.form_name), '-', '-'));
+    if (findData && findForm) {
+      const oriForm = findData;
+      oriForm.types = findForm.form.types;
+      setDataPoke(oriForm);
+      setWH((prevWH: any) => ({ ...prevWH, weight: oriForm.weight, height: oriForm.height }));
+    } else if (findForm) {
+      const oriForm = pokeData[0];
+      oriForm.types = findForm.form.types;
+      setDataPoke(oriForm);
+      setWH((prevWH: any) => ({ ...prevWH, weight: oriForm.weight, height: oriForm.height }));
+    } else if (findData) {
+      setDataPoke(findData);
+      setWH((prevWH: any) => ({ ...prevWH, weight: findData.weight, height: findData.height }));
+    } else {
+      setDataPoke(pokeData[0]);
+      setWH((prevWH: any) => ({
+        ...prevWH,
+        weight: pokeData[0].weight,
+        height: pokeData[0].height,
+      }));
+    }
+    setVersion(findForm.form.version_group.name);
+  };
+
   useEffect(() => {
     if (!region && formName) {
       let findForm = formList
@@ -181,57 +221,32 @@ const Form = ({
       const currentForm = findForm() ?? findFirst();
       setCurrForm(currentForm);
       setPokeID(findFirst() ? findFirst().form.id : id_default);
-      const data = pokeData.find((item: { id: any }) => item.id === id_default);
-      setDataPoke(data);
+      if (!dataPoke || dataPoke?.types.length === 0 || pokeID !== parseInt(dataPoke.species.url.split('/')[6])) {
+        let data;
+        if (paramForm) {
+          data = pokeData.find(
+            (item: { name: string; species: { name: string } }) =>
+              paramForm?.toLowerCase() === item.name.replace(`${item.species.name}-`, '')
+          );
+        }
+        if (!data) {
+          data = pokeData.find((item: { id: any }) => item.id === id_default);
+        }
+        setDataPoke(data);
+      }
     }
   }, [currForm, findForm, findFirst, setPokeID, id_default, formList.length, onChangeForm, pokeData]);
 
-  const changeForm = (name: any, form: string) => {
-    if (setOnChangeForm) {
-      setOnChangeForm(true);
-    }
+  const changeForm = (name: string, form: string) => {
     if (params.id) {
       searchParams.set('form', form);
       setSearchParams(searchParams);
       onSetReForm(true);
     }
-    const findData = pokeData.find((item: { name: any }) => name === item.name);
-    const findForm = formList
-      .map((item: any[]) => item.find((item: { form: { name: any } }) => item.form.name === name))
-      .find((item: any) => item);
-    setCurrForm(findForm);
-    const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));
-    if (findForm.form.form_name !== '' && region) {
-      setRegion(region);
-    } else {
-      setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+    if (setOnChangeForm) {
+      setOnChangeForm(true);
     }
-    const nameInfo = splitAndCapitalize(findForm.form.name, '-', ' ');
-    setFormName(nameInfo);
-    setReleased(checkReleased(pokeID, nameInfo));
-    setForm(splitAndCapitalize(convertFormNameImg(pokeID, findForm.form.form_name), '-', '-'));
-    if (findData && findForm) {
-      const oriForm = findData;
-      oriForm.types = findForm.form.types;
-      setDataPoke(oriForm);
-      setWH((prevWH: any) => ({ ...prevWH, weight: oriForm.weight, height: oriForm.height }));
-    } else if (findForm) {
-      const oriForm = pokeData[0];
-      oriForm.types = findForm.form.types;
-      setDataPoke(oriForm);
-      setWH((prevWH: any) => ({ ...prevWH, weight: oriForm.weight, height: oriForm.height }));
-    } else if (findData) {
-      setDataPoke(findData);
-      setWH((prevWH: any) => ({ ...prevWH, weight: findData.weight, height: findData.height }));
-    } else {
-      setDataPoke(pokeData[0]);
-      setWH((prevWH: any) => ({
-        ...prevWH,
-        weight: pokeData[0].weight,
-        height: pokeData[0].height,
-      }));
-    }
-    setVersion(findForm.form.version_group.name);
+    findFormData(name);
   };
 
   return (
