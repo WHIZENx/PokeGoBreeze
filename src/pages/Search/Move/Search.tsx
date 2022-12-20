@@ -138,7 +138,7 @@ const Search = () => {
                         type="text"
                         variant="outlined"
                         placeholder="Enter Name or ID"
-                        value={cMoveName}
+                        value={fMoveName}
                         onChange={(e: any) => setFilters({ ...filters, fMoveName: e.target.value })}
                         size="small"
                       />

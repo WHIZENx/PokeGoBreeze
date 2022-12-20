@@ -32,9 +32,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
+import { Link } from 'react-router-dom';
 
 const Battle = () => {
   const dispatch = useDispatch();
@@ -1154,7 +1156,10 @@ const Battle = () => {
                 />
               </div>
             </div>
-            <div className="w-100 d-flex justify-content-center">
+            <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
+              <Link to={`/pvp/${params.cp}/overall/${pokemon.pokemonData.speciesId.replaceAll('_', '-')}`} target="_blank">
+                <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+              </Link>
               <b>{`#${pokemon.pokemonData.id} ${splitAndCapitalize(pokemon.pokemonData.name, '-', ' ')}`}</b>
             </div>
             <h6>

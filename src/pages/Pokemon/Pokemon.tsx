@@ -294,6 +294,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           </div>
                           <div style={{ width: 60, cursor: 'pointer' }}>
                             <img
+                              style={{ padding: '5px 5px 5px 0' }}
                               className="pokemon-navigate-sprite"
                               alt="img-full-pokemon"
                               src={APIService.getPokeFullSprite(data.id - 1)}
@@ -331,6 +332,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           </div>
                           <div style={{ width: 60, cursor: 'pointer' }}>
                             <img
+                              style={{ padding: '5px 0 5px 5px' }}
                               className="pokemon-navigate-sprite"
                               alt="img-full-pokemon"
                               src={APIService.getPokeFullSprite(data.id + 1)}
@@ -368,6 +370,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           </div>
                           <div style={{ width: 60, cursor: 'pointer' }}>
                             <img
+                              style={{ padding: '5px 5px 5px 0' }}
                               className="pokemon-navigate-sprite"
                               alt="img-full-pokemon"
                               src={APIService.getPokeFullSprite(data.id - 1)}
@@ -404,6 +407,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                           </div>
                           <div style={{ width: 60, cursor: 'pointer' }}>
                             <img
+                              style={{ padding: '5px 0 5px 5px' }}
                               className="pokemon-navigate-sprite"
                               alt="img-full-pokemon"
                               src={APIService.getPokeFullSprite(data.id + 1)}

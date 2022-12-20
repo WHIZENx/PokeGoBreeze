@@ -157,9 +157,10 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
     return name.replace('_FEMALE', '_F').replace('_MALE', '_M').replaceAll('_', '-').replaceAll('MR', 'MR.');
   };
 
-  const modelEvoChain = (pokemon: { id: number; name: string; form: string }) => {
+  const modelEvoChain = (pokemon: { id: number; name: string; form: string; prev?: string }) => {
     pokemon.name = pokemon.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI');
     return {
+      prev: pokemon.prev,
       name: pokemon.form !== '' ? pokeSetName(pokemon.name.replace(`_${pokemon.form}`, '')) : pokeSetName(pokemon.name),
       id: pokemon.id,
       baby: false,
@@ -261,13 +262,15 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
     if (!pokemon) {
       evoList.push(modelEvoChain(poke));
     } else {
-      evoList = pokemon.evo_list.map((evo: { evo_to_name: string; evo_to_id: number; evo_to_form: string }) =>
-        modelEvoChain({
-          id: evo.evo_to_id,
-          name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
-          form: evo.evo_to_form,
-        })
-      );
+      evoList = pokemon.evo_list
+        .map((evo: { evo_to_name: string; evo_to_id: number; evo_to_form: string }) =>
+          modelEvoChain({
+            id: evo.evo_to_id,
+            name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
+            form: evo.evo_to_form,
+          })
+        )
+        .filter((pokemon: { id: any }) => pokemon.id === poke.id);
     }
     return result.push(evoList);
   };
@@ -281,9 +284,15 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
         id: evo.evo_to_id,
         name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
         form: evo.evo_to_form,
+        prev: poke.name,
       })
     );
-    result.push(evoList);
+    if (result.length === 3) {
+      result[2].push(...evoList);
+    } else {
+      result.push(evoList);
+    }
+
     poke.evo_list.forEach((evo: { evo_to_id: number; evo_to_name: string; evo_to_form: string }) => {
       const pokemon: any = evoData.find(
         (pokemon: { id: number; form: string }) => pokemon.id === evo.evo_to_id && pokemon.form === evo.evo_to_form
@@ -401,13 +410,22 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
     );
   };
 
-  const renderImageEvo = (value: any, chain: string | any[], evo: any, index: string | number, evoCount: number) => {
+  const renderImageEvo = (value: any, chain: any[], evo: any, index: string | number, evoCount: number) => {
     const form = value.form ?? forme.form_name;
     let offsetY = 35;
     offsetY += value.baby ? 20 : 0;
     offsetY += arrEvoList.length === 1 ? 20 : 0;
 
-    const startAnchor: any = index > 0 ? { position: 'bottom', offset: { y: offsetY } } : { position: 'right', offset: { x: -8 } };
+    const startAnchor: any =
+      index > 0
+        ? {
+            position: 'bottom',
+            offset: {
+              x: arrEvoList[Math.max(0, evo - 1)].length > 1 ? 40 : 0,
+              y: arrEvoList[Math.max(0, evo - 1)].length > 1 ? offsetY + 82.33 : offsetY,
+            },
+          }
+        : { position: 'right', offset: { x: -8 } };
     const data = getQuestEvo(parseInt(value.id), form.toUpperCase());
     return (
       <Fragment>
@@ -543,7 +561,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
               path="grid"
               startAnchor={startAnchor}
               endAnchor={{ position: 'left', offset: { x: 8 } }}
-              start={`evo-${evo - 1}-${chain.length > 1 ? 0 : index}`}
+              start={`evo-${Math.max(0, evo - 1)}-${chain.length > 1 ? 0 : index}`}
               end={`evo-${evo}-${chain.length > 1 ? index : 0}`}
             />
           )}
