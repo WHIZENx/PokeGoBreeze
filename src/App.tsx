@@ -24,7 +24,7 @@ import Damage from './pages/Tools/BattleDamage/Damage';
 import DpsTable from './pages/DpsSheet/DpsTable';
 import Move from './pages/Move/Move';
 import Error from './pages/Error/Error';
-import Leagues from './pages/PVP/Leagues/Legues';
+import Leagues from './pages/PVP/Leagues/Leagues';
 import SearchBattle from './pages/Tools/SearchBattle/SearchBattle';
 import StatsTable from './pages/Tools/StatsTable/Stats';
 import Sticker from './pages/Sticker/Sticker';

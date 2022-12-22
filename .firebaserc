@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "pokego-breeze"
+  },
+  "targets": {
+    "pokego-breeze": {
+      "hosting": {
+        "dev": [
+          "pokego-breeze-develop"
+        ],
+        "prod": [
+          "pokego-breeze"
+        ]
+      }
+    }
   }
 }
