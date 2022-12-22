@@ -425,8 +425,10 @@ export const convertFormNameImg = (id: number, form: string) => {
     form === 'meteor'
   ) {
     return '';
-  } else if (form?.includes('totem')) {
+  } else if (form?.includes('-totem')) {
     return form.replace('-totem', '');
+  } else if (form?.includes('totem-')) {
+    return form.replace('totem-', '');
   } else if (id === 849 && form === 'gmax') {
     return 'amped-gmax';
   } else if (id === 892 && form === 'gmax') {

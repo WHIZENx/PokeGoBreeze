@@ -1076,16 +1076,18 @@ const RaidBattle = () => {
                   </div>
                   <span className="d-flex ic-group">
                     <span
-                      className="ic-copy bg-primary text-white"
+                      className={'ic-copy text-white ' + (trainer.pokemons[0].dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
                       title="Copy"
                       style={{ marginRight: 5 }}
                       onClick={() => {
-                        setCountTrainer(countTrainer + 1);
-                        setTrainerBattle(
-                          update(trainerBattle, {
-                            $push: [{ ...trainerBattle[index], trainerId: countTrainer + 1 }],
-                          })
-                        );
+                        if (trainer.pokemons[0].dataTargetPokemon) {
+                          setCountTrainer(countTrainer + 1);
+                          setTrainerBattle(
+                            update(trainerBattle, {
+                              $push: [{ ...trainerBattle[index], trainerId: countTrainer + 1 }],
+                            })
+                          );
+                        }
                       }}
                     >
                       <ContentCopyIcon sx={{ fontSize: 14 }} />
