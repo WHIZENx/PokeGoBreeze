@@ -45,7 +45,16 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
         <Badge color="primary" overlap="circular" badgeContent={id + 1} /> <b style={{ marginLeft: 15 }}>Pokémon Battle</b>
         {controls && (
           <div className="d-flex ic-group-small">
-            <span className="ic-copy-small bg-primary text-white" title="Copy" onClick={() => onCopyPokemon(id)} style={{ marginRight: 5 }}>
+            <span
+              className={'ic-copy-small text-white ' + (dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
+              title="Copy"
+              onClick={() => {
+                if (dataTargetPokemon) {
+                  onCopyPokemon(id);
+                }
+              }}
+              style={{ marginRight: 5 }}
+            >
               <ContentCopyIcon sx={{ fontSize: 16 }} />
             </span>
             <span

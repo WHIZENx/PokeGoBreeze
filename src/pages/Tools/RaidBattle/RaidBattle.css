@@ -110,6 +110,10 @@ img.pokemon-sprite-battle {
   color: lightgray !important;
 }
 
+.click-none.link-danger:hover {
+  color: lightgray !important;
+}
+
 .flag-pokemon {
   margin-top: 5px;
   padding: 5px 10px;
@@ -173,7 +177,12 @@ img.pokemon-sprite-battle {
   cursor: pointer;
 }
 
-.ic-copy:hover,
-.ic-copy-small {
+.ic-copy:not(.click-none):hover,
+.ic-copy-small:not(.click-none):hover {
   background-color: #076dbb !important;
+}
+
+.ic-remove:not(.click-none):hover,
+.ic-remove-small:not(.click-none):hover {
+  background-color: #bb0707 !important;
 }
