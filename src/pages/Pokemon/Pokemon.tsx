@@ -188,6 +188,9 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
       if (!params.id || (params.id && data && parseInt(id) !== data.id)) {
         dispatch(showSpinner());
       }
+      if (data?.id !== parseInt(id)) {
+        setForm(null);
+      }
       axios
         .getPokeSpicies(id, {
           cancelToken: source.token,
