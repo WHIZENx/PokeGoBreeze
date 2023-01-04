@@ -111,8 +111,8 @@ const CardPokemonInfo = (props: {
             <ProgressBar
               style={{ marginLeft: 3 }}
               height={10}
-              value={props.pokemonStat.atk - props.stats.attack.min_stats}
-              maxValue={props.stats.attack.max_stats - props.stats.attack.min_stats}
+              value={props.pokemonStat.atk}
+              maxValue={props.stats.attack.max_stats}
               bgColor={'#ececec'}
               color={'var(--bs-danger)'}
             />
@@ -122,8 +122,8 @@ const CardPokemonInfo = (props: {
             <ProgressBar
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
-              value={props.pokemonStat.def - props.stats.defense.min_stats}
-              maxValue={props.stats.defense.max_stats - props.stats.defense.min_stats}
+              value={props.pokemonStat.def}
+              maxValue={props.stats.defense.max_stats}
               bgColor={'#ececec'}
               color={'var(--bs-success)'}
             />
@@ -133,8 +133,8 @@ const CardPokemonInfo = (props: {
             <ProgressBar
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
-              value={props.pokemonStat.sta - props.stats.stamina.min_stats}
-              maxValue={props.stats.stamina.max_stats - props.stats.stamina.min_stats}
+              value={props.pokemonStat.sta}
+              maxValue={props.stats.stamina.max_stats}
               bgColor={'#ececec'}
               color={'var(--bs-info)'}
             />

@@ -452,3 +452,62 @@ export const convertFormNameImg = (id: number, form: string) => {
   }
   return form;
 };
+
+export const checkRankAllAvailable = (
+  pokemonStats: {
+    [x: string]: { max_rank: number; ranking: any[] };
+  },
+  stats: {
+    atk: number;
+    def: number;
+    sta: number;
+  }
+) => {
+  const data = {
+    attackRank: null,
+    defenseRank: null,
+    staminaRank: null,
+  };
+  const checkRankAtk = pokemonStats.attack.ranking.find((item: { [x: string]: any }) => item.attack === stats.atk);
+  const checkRankDef = pokemonStats.defense.ranking.find((item: { [x: string]: any }) => item.defense === stats.def);
+  const checkRankSta = pokemonStats.stamina.ranking.find((item: { [x: string]: any }) => item.stamina === stats.sta);
+  if (checkRankAtk) {
+    data.attackRank = checkRankAtk.rank;
+  }
+  if (checkRankDef) {
+    data.defenseRank = checkRankDef.rank;
+  }
+  if (checkRankSta) {
+    data.staminaRank = checkRankSta.rank;
+  }
+  return data;
+};
+
+export const filterRank = (
+  pokemonStats: {
+    [x: string]: { max_rank: number; ranking: any[] };
+  },
+  type: string,
+  stats: number
+) => {
+  const checkRank = pokemonStats[type].ranking.find((item: { [x: string]: any }) => item[type] === stats);
+  if (checkRank) {
+    return ((pokemonStats[type].max_rank - checkRank.rank + 1) * 100) / pokemonStats[type].max_rank;
+  }
+  let avgRank = pokemonStats[type].max_rank - pokemonStats[type].ranking.find((item: { [x: string]: number }) => item[type] > stats).rank;
+  if (avgRank < 1) {
+    avgRank = 1;
+  }
+  const ratioRank = (avgRank * 100) / pokemonStats[type].max_rank;
+  return Math.min(ratioRank, 100);
+};
+
+export const calRank = (
+  pokemonStats: {
+    [x: string]: { max_rank: number; ranking: any[] };
+  },
+  type: string,
+  rank: number
+) => {
+  return ((pokemonStats[type].max_rank - rank + 1) * 100) / pokemonStats[type].max_rank;
+};
