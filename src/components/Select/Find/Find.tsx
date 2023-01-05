@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 import Tools from './Tools';
 
@@ -34,41 +34,27 @@ const Find = (props: {
   const eachCounter = 10;
   const cardHeight = 65;
 
-  const initialize = useRef(false);
-  const [dataPri, setDataPri]: any = useState(null);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
 
   const [id, setId] = useState(1);
 
-  const [pokemonList, setPokemonList] = useState([]);
-  const pokeList: any = useMemo(() => {
-    return [];
-  }, []);
+  const pokemonList = useRef(
+    Object.values(pokeListName)
+      .filter((item: any) => item.id > 0)
+      .map((item: any) => {
+        return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
+      })
+  );
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter] = useState([]);
+  const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
 
   useEffect(() => {
-    if (!initialize.current) {
-      setDataPri(pokemonData);
-      initialize.current = true;
-    }
-    if (pokeList.length === 0) {
-      pokeList.push(
-        ...Object.values(pokeListName)
-          .filter((item: any) => item.id > 0)
-          .map((item: any) => {
-            return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
-          })
-      );
-      setPokemonList(pokeList);
-    }
-
-    const results = pokemonList.filter(
+    const results = pokemonList.current.filter(
       (item: any) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
     );
     setPokemonListFilter(results);
-  }, [pokeList, pokemonList, searchTerm]);
+  }, [searchTerm]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -84,7 +70,7 @@ const Find = (props: {
       props.setId(value.id);
     }
     if (props.setName) {
-      props.setName((pokeList as any).find((item: any) => item.id === value.id)?.name);
+      props.setName(pokemonList.current.find((item: any) => item.id === value.id)?.name);
     }
     if (props.clearStats) {
       props.clearStats();
@@ -108,7 +94,7 @@ const Find = (props: {
         props.setId(id - 1);
       }
       if (props.setName) {
-        props.setName((pokeList as any).find((item: any) => item.id === id - 1)?.name);
+        props.setName(pokemonList.current.find((item: any) => item.id === id - 1)?.name);
       }
       if (props.clearStats) {
         props.clearStats();
@@ -126,7 +112,7 @@ const Find = (props: {
         props.setId(id + 1);
       }
       if (props.setName) {
-        props.setName((pokeList as any).find((item: any) => item.id === id + 1)?.name);
+        props.setName(pokemonList.current.find((item: any) => item.id === id + 1)?.name);
       }
       if (props.clearStats) {
         props.clearStats();
@@ -159,7 +145,7 @@ const Find = (props: {
         </div>
         <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
           <Fragment>
-            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value: any, index) => (
+            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value: any, index: React.Key) => (
               <div
                 className={'container card-pokemon ' + (value.id === id ? 'selected' : '')}
                 key={index}
@@ -196,7 +182,7 @@ const Find = (props: {
     return (
       <div className="col d-flex justify-content-center text-center">
         <div>
-          {pokeList.length > 0 && dataPri && (
+          {pokemonList.current?.length > 0 && (
             <Fragment>
               <Tools
                 hide={props.hide}
@@ -205,10 +191,10 @@ const Find = (props: {
                 tier={props.tier}
                 setTier={props.setTier}
                 setForm={props.setForm}
-                count={pokeList.length}
+                count={pokemonList.current.length}
                 id={id}
-                name={pokeList.find((item: any) => item.id === id).name}
-                data={dataPri}
+                name={pokemonList.current.find((item: any) => item.id === id)?.name}
+                data={pokemonData}
                 stats={stats}
                 onHandleSetStats={handleSetStats}
                 onClearStats={props.clearStats}

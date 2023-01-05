@@ -22,7 +22,7 @@ import BrokenImageIcon from '@mui/icons-material/BrokenImage';
 import SpokeIcon from '@mui/icons-material/Spoke';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import PersonIcon from '@mui/icons-material/Person';
-import { Candy } from '../../options/models/candy';
+import { Candy } from '../../core/models/candy';
 
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';

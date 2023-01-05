@@ -1,5 +1,5 @@
 import pokemonData from './../../data/pokemon.json';
-import { calculateCPM } from '../../options/cpm';
+import { calculateCPM } from '../../core/cpm';
 import {
   optionEvolution,
   optionSticker,
@@ -17,8 +17,8 @@ import {
   optionPokemonTypes,
   optionPokemonWeather,
   optionPokemonCandy,
-} from '../../options/options';
-import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../options/pvp';
+} from '../../core/options';
+import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
 import { BASE_CPM, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
 import { mappingReleasedGO } from '../../util/Utils';
 import { showSpinner } from './spinner.action';

@@ -1,4 +1,4 @@
-import { getOption } from '../options/options';
+import { getOption } from '../core/options';
 import APIService from '../services/API.service';
 
 export const BASE_CPM: any = {
