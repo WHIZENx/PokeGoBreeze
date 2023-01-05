@@ -59,6 +59,7 @@ const Home = () => {
             def: stats.def,
             sta: stats.sta,
           },
+          class: item?.pokemonClass,
           releasedGO: item.releasedGO,
           image: {
             default:
@@ -89,9 +90,12 @@ const Home = () => {
     version: versionList.map((value: any, index: any) => index),
     mega: false,
     gmax: false,
+    legendary: false,
+    mythic: false,
+    ultrabeast: false,
   });
 
-  const { match, releasedGO, allShiny, gen, version, mega, gmax } = filters;
+  const { match, releasedGO, allShiny, gen, version, mega, gmax, legendary, mythic, ultrabeast } = filters;
 
   const [btnSelected, setBtnSelected] = useState({
     gen: true,
@@ -132,10 +136,24 @@ const Home = () => {
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
             const boolMega = mega ? item.forme === 'Mega' : true;
             const boolGmax = gmax ? item.forme === 'Gmax' : true;
+            const boolLegend = legendary ? item.class === 'LEGENDARY' : true;
+            const boolMythic = mythic ? item.class === 'MYTHIC' : true;
+            const boolUltra = ultrabeast ? item.class === 'ULTRA_BEAST' : true;
 
             const findGen = gen.includes(item.gen - 1);
             const findVersion = version.includes(item.version);
-            return boolFilterType && boolFilterPoke && boolReleasedGO && boolMega && boolGmax && findGen && findVersion;
+            return (
+              boolFilterType &&
+              boolFilterPoke &&
+              boolReleasedGO &&
+              boolMega &&
+              boolGmax &&
+              boolLegend &&
+              boolMythic &&
+              boolUltra &&
+              findGen &&
+              findVersion
+            );
           });
           scrollID.current = 0;
           setResult(result);
@@ -146,7 +164,7 @@ const Home = () => {
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, gen, version]);
+  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, legendary, mythic, ultrabeast, gen, version]);
 
   useEffect(() => {
     const onScroll = (e: { target: { documentElement: { scrollTop: any; offsetHeight: any } } }) => {
@@ -374,6 +392,18 @@ const Home = () => {
                       />
                     }
                     label="Gmax"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={legendary} onChange={(event, check) => setFilters({ ...filters, legendary: check })} />}
+                    label="Legendary"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={mythic} onChange={(event, check) => setFilters({ ...filters, mythic: check })} />}
+                    label="Mythic"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={ultrabeast} onChange={(event, check) => setFilters({ ...filters, ultrabeast: check })} />}
+                    label="Ultra Beast"
                   />
                 </div>
               </div>
