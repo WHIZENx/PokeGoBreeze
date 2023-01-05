@@ -59,6 +59,7 @@ const Home = () => {
             def: stats.def,
             sta: stats.sta,
           },
+          class: item?.pokemonClass,
           releasedGO: item.releasedGO,
           image: {
             default:
@@ -76,8 +77,10 @@ const Home = () => {
   );
   const [selectTypes, setSelectTypes]: any = useState([]);
   const [listOfPokemon, setListOfPokemon]: any = useState([]);
+  const [result, setResult]: any = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
+  const scrollID = useRef(0);
 
   const [filters, setFilters] = useState({
     match: false,
@@ -87,14 +90,19 @@ const Home = () => {
     version: versionList.map((value: any, index: any) => index),
     mega: false,
     gmax: false,
+    legendary: false,
+    mythic: false,
+    ultrabeast: false,
   });
 
-  const { match, releasedGO, allShiny, gen, version, mega, gmax } = filters;
+  const { match, releasedGO, allShiny, gen, version, mega, gmax, legendary, mythic, ultrabeast } = filters;
 
   const [btnSelected, setBtnSelected] = useState({
     gen: true,
     version: true,
   });
+
+  const subItem: number = 100;
 
   const addTypeArr = (value: string) => {
     let types = selectTypes;
@@ -128,19 +136,48 @@ const Home = () => {
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
             const boolMega = mega ? item.forme === 'Mega' : true;
             const boolGmax = gmax ? item.forme === 'Gmax' : true;
+            const boolLegend = legendary ? item.class === 'LEGENDARY' : true;
+            const boolMythic = mythic ? item.class === 'MYTHIC' : true;
+            const boolUltra = ultrabeast ? item.class === 'ULTRA_BEAST' : true;
 
             const findGen = gen.includes(item.gen - 1);
             const findVersion = version.includes(item.version);
-            return boolFilterType && boolFilterPoke && boolReleasedGO && boolMega && boolGmax && findGen && findVersion;
+            return (
+              boolFilterType &&
+              boolFilterPoke &&
+              boolReleasedGO &&
+              boolMega &&
+              boolGmax &&
+              boolLegend &&
+              boolMythic &&
+              boolUltra &&
+              findGen &&
+              findVersion
+            );
           });
-          setListOfPokemon(result);
+          scrollID.current = 0;
+          setResult(result);
+          setListOfPokemon(result.slice(0, subItem));
           setLoading(false);
         },
-        document.title === 'Home' ? 100 : 1000
+        document.title === 'Home' ? 100 : listOfPokemon.length
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, gen, version]);
+  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, legendary, mythic, ultrabeast, gen, version]);
+
+  useEffect(() => {
+    const onScroll = (e: { target: { documentElement: { scrollTop: any; offsetHeight: any } } }) => {
+      const scrollTop = e.target.documentElement.scrollTop;
+      const fullHeight = e.target.documentElement.offsetHeight;
+      if (scrollTop * 1.5 >= fullHeight * (scrollID.current + 1)) {
+        scrollID.current += 1;
+        setListOfPokemon((oldArr: any) => [...oldArr, ...result.slice(scrollID.current * subItem, (scrollID.current + 1) * subItem)]);
+      }
+    };
+    window.addEventListener('scroll', onScroll as any);
+    return () => window.removeEventListener('scroll', onScroll as any);
+  }, [listOfPokemon]);
 
   const handleChangeGen = (event: SelectChangeEvent<any>) => {
     const {
@@ -283,12 +320,12 @@ const Home = () => {
               <div className="col-xl-8 border-input" style={{ padding: 8, gap: 10 }}>
                 <div className="d-flex">
                   <FormControl sx={{ m: 1, width: '50%' }} size="small">
-                    <InputLabel>Generation</InputLabel>
+                    <InputLabel>Generation(s)</InputLabel>
                     <Select
                       multiple={true}
                       value={gen}
                       onChange={handleChangeGen}
-                      input={<OutlinedInput label="Generation" />}
+                      input={<OutlinedInput label="Generation(s)" />}
                       renderValue={(selected: any) => 'Gen ' + selected.map((item: number) => (item + 1).toString()).join(', Gen ')}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
@@ -303,18 +340,18 @@ const Home = () => {
                       {Object.values(genList).map((value: any, index) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={gen.includes(index)} />
-                          <ListItemText primary={`Generation ${index + 1} (Region ${regionList[index + 1]})`} />
+                          <ListItemText primary={`Generation ${index + 1} (${regionList[index + 1]})`} />
                         </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
                   <FormControl sx={{ m: 1, width: '50%' }} size="small">
-                    <InputLabel>Version</InputLabel>
+                    <InputLabel>Version(s)</InputLabel>
                     <Select
                       multiple={true}
                       value={version}
                       onChange={handleChangeVersion}
-                      input={<OutlinedInput label="Version" />}
+                      input={<OutlinedInput label="Version(s)" />}
                       renderValue={(selected: any) => selected.map((item: number) => versionList[item]).join(', ')}
                       MenuProps={VersionProps}
                     >
@@ -355,6 +392,18 @@ const Home = () => {
                       />
                     }
                     label="Gmax"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={legendary} onChange={(event, check) => setFilters({ ...filters, legendary: check })} />}
+                    label="Legendary"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={mythic} onChange={(event, check) => setFilters({ ...filters, mythic: check })} />}
+                    label="Mythic"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={ultrabeast} onChange={(event, check) => setFilters({ ...filters, ultrabeast: check })} />}
+                    label="Ultra Beast"
                   />
                 </div>
               </div>
