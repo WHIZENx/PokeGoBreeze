@@ -182,7 +182,7 @@ export const optionformSpecial = (data: any[]) => {
           (item.form.includes('NORMAL') || (!item.form.includes('UNOWN') && item.form.split('_')[item.form.split('_').length - 1] === 'S')))
       );
     })
-    .map((item: { form: string }) => item.form)
+    .map((item: { form: string }) => item.form.replace('_NORMAL', ''))
     .filter((form: string) => form !== 'MEWTWO_A' && form !== 'PIKACHU_ROCK_STAR' && form !== 'PIKACHU_POP_STAR');
 };
 
@@ -803,7 +803,7 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
         } else {
           const result: CombatPokemon = combatPokemonModel();
           result.id = item.id;
-          result.name = item.name;
+          result.name = item.name.replace('_NORMAL', '');
           result.baseSpecies = item.pokemonId;
           if (result.id === 235) {
             const moves = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
@@ -1167,7 +1167,7 @@ export const optionDetailsPokemon = (data: any[], pokemon: any[], formSpecial: a
     .map((item) => {
       const result: Details = datailsPokemonModel();
       result.id = item.id;
-      result.name = item.name;
+      result.name = item.name.replace('_NORMAL', '');
       if (item.form) {
         result.form = item.form.replace(`${item.pokemonId}_`, '');
       } else {
