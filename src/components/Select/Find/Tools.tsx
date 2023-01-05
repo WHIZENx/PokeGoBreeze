@@ -4,9 +4,10 @@ import APIService from '../../../services/API.service';
 import FormTools from './FormTools';
 
 import loading from '../../../assets/loading.png';
-import { splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
+import { convertFormNameImg, splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
 import TypeInfo from '../../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
+import { getFormsGO } from '../../../core/forms';
 
 const Tools = (props: {
   raid?: any;
@@ -17,7 +18,7 @@ const Tools = (props: {
   setTier?: (arg0: any) => void;
   onSetPrev?: () => void;
   count: number;
-  onSetNext: () => void;
+  onSetNext?: () => void;
   name: string;
   hide?: any;
   // eslint-disable-next-line no-unused-vars
@@ -67,6 +68,13 @@ const Tools = (props: {
           dataFromList.push(pokeForm);
         })
       );
+      const goForm = getFormsGO(data.id).map(() => {
+        return {};
+      });
+      if (goForm.length > 0) {
+        dataPokeList.push(...goForm);
+        data.varieties.push(...goForm);
+      }
       setPokeData(dataPokeList);
       let modify = false;
       dataFromList = dataFromList.map((value: string | any[]) => {
@@ -103,6 +111,9 @@ const Tools = (props: {
           }
         )
         .sort((a: { form: { id: number } }[], b: { form: { id: number } }[]) => a[0].form.id - b[0].form.id);
+      if (data.id === 150) {
+        dataFromList.push(getFormsGO(data.id));
+      }
       setFormList(dataFromList);
       const formDefault = dataFromList.map((item: any[]) => {
         return item.find((item: { form: { is_default: any } }) => item.form.is_default);
@@ -165,7 +176,13 @@ const Tools = (props: {
     <Fragment>
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
         {props.id > 1 && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
+          <div
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              props.onSetPrev?.();
+              setCurrForm(null);
+            }}
+          >
             <div>
               <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id - 1)} />
             </div>
@@ -177,10 +194,25 @@ const Tools = (props: {
           </div>
         )}
       </div>
-      <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id)} />
+      <img
+        style={{ padding: 10 }}
+        height={200}
+        alt="img-full-pokemon"
+        src={
+          currForm
+            ? APIService.getPokeFullSprite(props.id, splitAndCapitalize(convertFormNameImg(props.id, currForm.form.form_name), '-', '-'))
+            : APIService.getPokeFullSprite(props.id)
+        }
+      />
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
         {props.id < props.count && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetNext()}>
+          <div
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              props.onSetNext?.();
+              setCurrForm(null);
+            }}
+          >
             <div>
               <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id + 1)} />
             </div>
@@ -245,6 +277,8 @@ const Tools = (props: {
                           value.form.name === 'arceus-unknown' ||
                           value.form.name === 'dialga-origin' ||
                           value.form.name === 'palkia-origin' ||
+                          value.form.name === 'mothim-sandy' ||
+                          value.form.name === 'mothim-trash' ||
                           value.form.name === 'basculin-white-striped' ||
                           value.form.name === 'greninja-battle-bond' ||
                           value.form.name === 'urshifu-rapid-strike' ||
@@ -259,6 +293,7 @@ const Tools = (props: {
                           <small>(Default)</small>
                         </b>
                       )}
+                      {!value.form.id && <small className="text-danger">* Only in GO</small>}
                     </button>
                   )
                 )}

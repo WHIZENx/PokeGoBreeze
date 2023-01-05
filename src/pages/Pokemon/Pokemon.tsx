@@ -20,6 +20,7 @@ import { Alert } from 'react-bootstrap';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
 import Candy from '../../components/Sprites/Candy/Candy';
+import { getFormsGO } from '../../core/forms';
 
 const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any; onSetIDPoke?: any }) => {
   const dispatch = useDispatch();
@@ -103,24 +104,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
         })
         .sort((a, b) => a[0].form.id - b[0].form.id);
       if (data.id === 150) {
-        dataFromList.push([
-          {
-            default_name: 'mewtwo',
-            name: 'mewtwo',
-            form: {
-              form_name: 'armor',
-              form_names: [],
-              form_order: 4,
-              id: null,
-              is_battle_only: true,
-              is_default: true,
-              is_mega: false,
-              name: 'mewtwo-armor',
-              version_group: { name: 'Pokémon-GO' },
-              types: [{ type: { name: 'psychic' } }],
-            },
-          },
-        ]);
+        dataFromList.push(getFormsGO(data.id));
       }
       setFormList(dataFromList);
       let defaultFrom,

@@ -89,7 +89,6 @@ const FormTools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStat
     currForm,
     dataPoke,
     id,
-    onSetStats,
     setForm,
     stats.attack.ranking,
     stats.defense.ranking,
