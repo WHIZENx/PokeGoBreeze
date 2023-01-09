@@ -163,7 +163,20 @@ export const optionPokemon = (data: any[]) => {
     });
 };
 
-export const optionformSpecial = (data: any[]) => {
+export const optionFormNone = (data: any[]) => {
+  return data
+    .filter(
+      (item: { templateId: string; data: { formSettings?: any } }) =>
+        item.templateId.includes('POKEMON') && item.templateId.includes('FORMS') && Object.keys(item.data).includes('formSettings')
+    )
+    .map((item: { data: { formSettings: { pokemon: string; forms: any } } }) => item.data.formSettings)
+    .filter((item: { pokemon: string; forms: any[] }) => {
+      return !item.forms?.find((form: { form: string }) => form.form === `${item.pokemon}_NORMAL`);
+    })
+    .map((item: { pokemon: string }) => item.pokemon);
+};
+
+export const optionFormSpecial = (data: any[]) => {
   return data
     .filter(
       (item: { templateId: string; data: { formSettings?: any } }) =>
@@ -182,7 +195,7 @@ export const optionformSpecial = (data: any[]) => {
           (item.form.includes('NORMAL') || (!item.form.includes('UNOWN') && item.form.split('_')[item.form.split('_').length - 1] === 'S')))
       );
     })
-    .map((item: { form: string }) => item.form.replace('_NORMAL', ''))
+    .map((item: { form: string }) => item.form)
     .filter((form: string) => form !== 'MEWTWO_A' && form !== 'PIKACHU_ROCK_STAR' && form !== 'PIKACHU_POP_STAR');
 };
 
@@ -759,7 +772,7 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
   });
 };
 
-export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: any[]) => {
+export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: string[], noneForm: string[]) => {
   const combatPokemonModel = () => {
     return {
       id: 0,
@@ -775,7 +788,10 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
   };
 
   return pokemon
-    .filter((item: { name: any }) => !formSpecial.includes(item.name) || item.name.endsWith('_S'))
+    .filter(
+      (item: { form: any; name: string }) =>
+        (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
+    )
     .reduce(
       (
         pokemonList: any[],
@@ -1134,7 +1150,14 @@ export const optionLeagues = (
   return result;
 };
 
-export const optionDetailsPokemon = (data: any[], pokemon: any[], formSpecial: any[], assets: any[], pokemonCombat: any[]) => {
+export const optionDetailsPokemon = (
+  data: any[],
+  pokemon: any[],
+  formSpecial: string[],
+  assets: any[],
+  pokemonCombat: any[],
+  noneForm: string[]
+) => {
   const datailsPokemonModel = () => {
     return {
       id: 0,
@@ -1163,7 +1186,10 @@ export const optionDetailsPokemon = (data: any[], pokemon: any[], formSpecial: a
       return result;
     }, {});
   let result = pokemon
-    .filter((item: { name: string }) => !formSpecial.includes(item.name))
+    .filter(
+      (item: { form: any; name: string }) =>
+        (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
+    )
     .map((item) => {
       const result: Details = datailsPokemonModel();
       result.id = item.id;

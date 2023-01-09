@@ -134,7 +134,7 @@ const Home = () => {
                 : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
                   item.id.toString().includes(searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = mega ? item.forme === 'Mega' : true;
+            const boolMega = mega ? item.forme?.includes('Mega') : true;
             const boolGmax = gmax ? item.forme === 'Gmax' : true;
             const boolLegend = legendary ? item.class === 'LEGENDARY' : true;
             const boolMythic = mythic ? item.class === 'MYTHIC' : true;
@@ -148,9 +148,7 @@ const Home = () => {
               boolReleasedGO &&
               boolMega &&
               boolGmax &&
-              boolLegend &&
-              boolMythic &&
-              boolUltra &&
+              (boolLegend || boolMythic || boolUltra) &&
               findGen &&
               findVersion
             );
@@ -303,7 +301,7 @@ const Home = () => {
                     control={<Switch checked={allShiny} onChange={(event, check) => setFilters({ ...filters, allShiny: check })} />}
                     label={
                       <span className="d-flex align-items-center">
-                        Show All Pokémon Shiny (Possible only)
+                        Show All Shiny Pokémon (Only Possible)
                         <img
                           className={allShiny ? 'filter-shiny' : 'filter-gray'}
                           width={28}
