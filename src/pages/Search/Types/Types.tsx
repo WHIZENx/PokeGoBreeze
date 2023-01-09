@@ -35,7 +35,6 @@ const columnPokemon: any = [
     selector: (row: { num: any; forme: string; name: string; sprite: string; baseSpecies: string }) => (
       <Link
         to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
-        target="_blank"
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
         <img
@@ -106,7 +105,6 @@ const columnMove: any = [
       <Link
         className="d-flex align-items-center"
         to={'/move/' + row.id}
-        target="_blank"
         title={`${splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}`}
       >
         {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}

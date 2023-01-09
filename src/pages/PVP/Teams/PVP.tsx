@@ -332,7 +332,7 @@ const TeamPVP = () => {
                     backgroundImage: computeBgType(value.pokemonData.types, value.shadow, value.purified, 1, styleSheet.current),
                   }}
                 >
-                  <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll('_', '-')}`} target="_blank">
+                  <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll('_', '-')}`}>
                     <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
                   </Link>
                   <div className="d-flex justify-content-center">
@@ -529,7 +529,7 @@ const TeamPVP = () => {
                                 backgroundImage: computeBgType(value.pokemonData.types, value.shadow, value.purified),
                               }}
                             >
-                              <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll('_', '-')}`} target="_blank">
+                              <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll('_', '-')}`}>
                                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
                               </Link>
                               <div className="d-flex justify-content-center">

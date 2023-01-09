@@ -67,7 +67,6 @@ const columns: any = [
         to={`/pokemon/${row.pokemon?.num}${
           row.pokemon?.forme ? `?form=${convertFormName(row.pokemon?.num, row.pokemon?.forme.toLowerCase())}` : ''
         }`}
-        target="_blank"
         title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
       >
         {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
@@ -92,12 +91,7 @@ const columns: any = [
   {
     name: 'Fast Move',
     selector: (row: { fmove: { id: string; name: string; type: string }; elite: { fmove: any } }) => (
-      <Link
-        className="d-flex align-items-center"
-        to={'/move/' + row.fmove?.id}
-        target="_blank"
-        title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}
-      >
+      <Link className="d-flex align-items-center" to={'/move/' + row.fmove?.id} title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
           width={25}
@@ -125,7 +119,6 @@ const columns: any = [
       <Link
         className="d-flex align-items-center"
         to={'/move/' + row.cmove?.id}
-        target="_blank"
         title={`${splitAndCapitalize(row.cmove?.name, '_', ' ').replaceAll(' Plus', '+')}`}
       >
         <img

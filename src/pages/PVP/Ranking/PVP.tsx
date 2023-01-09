@@ -186,7 +186,7 @@ const RankingPVP = () => {
           }}
         >
           <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
-            <Link to={`/pvp/${params.cp}/overall/${data.speciesId.replaceAll('_', '-')}`} target="_blank">
+            <Link to={`/pvp/${params.cp}/overall/${data.speciesId.replaceAll('_', '-')}`}>
               <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
             </Link>
             <div className="d-flex justify-content-center">

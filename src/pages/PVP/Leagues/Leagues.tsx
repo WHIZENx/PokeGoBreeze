@@ -504,7 +504,6 @@ const Leagues = () => {
                           <h6 className="title-leagues text-success">White List</h6>
                           {value.conditions.whiteList.map((item: { id: string; name: string; form: any }, index: React.Key) => (
                             <Link
-                              target="_blank"
                               className="img-link text-center"
                               key={index}
                               to={
@@ -542,7 +541,6 @@ const Leagues = () => {
                           <h6 className="title-leagues text-danger">Ban List</h6>
                           {value.conditions.banned.map((item: { id: string; name: string; form: any }, index: React.Key) => (
                             <Link
-                              target="_blank"
                               className="img-link text-center"
                               key={index}
                               to={
@@ -632,7 +630,6 @@ const Leagues = () => {
               .filter((item: { guaranteedLimited: any }) => !item.guaranteedLimited)
               .map((item: { id: string; name: string; form: any }, index: React.Key) => (
                 <Link
-                  target="_blank"
                   className="img-link text-center"
                   key={index}
                   to={'/pokemon/' + item.id}
@@ -659,7 +656,6 @@ const Leagues = () => {
                   .filter((item: { guaranteedLimited: any; rank: number }) => item.guaranteedLimited && item.rank === rank)
                   .map((item: { id: string; name: string; form: any }, index: React.Key) => (
                     <Link
-                      target="_blank"
                       className="img-link text-center"
                       key={index}
                       to={'/pokemon/' + item.id}

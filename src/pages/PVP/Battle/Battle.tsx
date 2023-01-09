@@ -1157,7 +1157,7 @@ const Battle = () => {
               </div>
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
-              <Link to={`/pvp/${params.cp}/overall/${pokemon.pokemonData.speciesId.replaceAll('_', '-')}`} target="_blank">
+              <Link to={`/pvp/${params.cp}/overall/${pokemon.pokemonData.speciesId.replaceAll('_', '-')}`}>
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
               </Link>
               <b>{`#${pokemon.pokemonData.id} ${splitAndCapitalize(pokemon.pokemonData.name, '-', ' ')}`}</b>

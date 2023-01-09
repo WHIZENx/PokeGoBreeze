@@ -51,7 +51,6 @@ export const Keys = (
     return (
       <Link
         to={`/pvp/${cp}/${type}/${data.opponent.replaceAll('_', '-')}`}
-        target="_blank"
         className="list-item-ranking"
         style={{ backgroundImage: computeBgType(pokemon.types, data.opponent.includes('_shadow')) }}
       >
@@ -335,7 +334,6 @@ export const MoveSet = (
     return (
       <Link
         to={`/move/${move.id}`}
-        target="_blank"
         className={
           move.type.toLowerCase() + ' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
         }

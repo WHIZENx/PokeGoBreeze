@@ -269,10 +269,7 @@ const Home = () => {
                     {listOfPokemon.map((row: any, index: React.Key) => (
                       <StyledTableRow key={index}>
                         <StyledTableCell component="th" scope="row">
-                          <Link
-                            to={`/pokemon/${row.id}${row.forme ? `?form=${convertFormName(row.id, row.forme.toLowerCase())}` : ''}`}
-                            target="_blank"
-                          >
+                          <Link to={`/pokemon/${row.id}${row.forme ? `?form=${convertFormName(row.id, row.forme.toLowerCase())}` : ''}`}>
                             #{row.id}{' '}
                             <img
                               height={60}

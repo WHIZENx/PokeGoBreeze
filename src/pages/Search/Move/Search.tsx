@@ -34,10 +34,7 @@ const columns: any = [
   {
     name: 'Name',
     selector: (row: { track: number; name: string; type: string }) => (
-      <Link
-        to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type.toLowerCase() : '')}
-        target="_blank"
-      >
+      <Link to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type.toLowerCase() : '')}>
         {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
       </Link>
     ),

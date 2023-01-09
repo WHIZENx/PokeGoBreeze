@@ -112,12 +112,12 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     return (
       <tr>
         <td className="text-origin">
-          <Link to={'../move/' + value.fmove.id} target="_blank" className="d-block">
+          <Link to={'../move/' + value.fmove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
-            <span style={{ width: 'max-content' }}>
+            <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.fmove.elite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>Elite</span>
@@ -127,12 +127,12 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
           </Link>
         </td>
         <td className="text-origin">
-          <Link to={'../move/' + value.cmove.id} target="_blank" className="d-block">
+          <Link to={'../move/' + value.cmove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
-            <span style={{ width: 'max-content' }}>
+            <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.cmove.elite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>Elite</span>
@@ -162,12 +162,12 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
         {data.map((value: any, index: React.Key) => (
           <tr key={index}>
             <td className="text-origin">
-              <Link to={'../move/' + value.id} target="_blank" className="d-block">
+              <Link to={'../move/' + value.id} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                   <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type))} />
                 </div>
                 <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
-                <span style={{ width: 'max-content' }}>
+                <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
                   {value.elite && (
                     <span className="type-icon-small ic elite-ic">
                       <span>Elite</span>
