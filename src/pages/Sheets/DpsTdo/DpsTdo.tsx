@@ -1,8 +1,8 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
-import pokemonData from '../../data/pokemon.json';
-import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../util/Utils';
-import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
+import pokemonData from '../../../data/pokemon.json';
+import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
+import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../../util/Constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -12,22 +12,22 @@ import {
   TimeToKill,
   calculateBattleDPSDefender,
   calculateStatsBattle,
-} from '../../util/Calculate';
+} from '../../../util/Calculate';
 
 import DataTable from 'react-data-table-component';
-import APIService from '../../services/API.service';
+import APIService from '../../../services/API.service';
 
-import loadingImg from '../../assets/loading.png';
-import TypeInfo from '../../components/Sprites/Type/Type';
+import loadingImg from '../../../assets/loading.png';
+import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
-import './DpsTable.css';
+import './DpsTdo.css';
 import { Link } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
-import SelectPokemon from '../../components/Input/SelectPokemon';
-import SelectMove from '../../components/Input/SelectMove';
+import SelectPokemon from '../../../components/Input/SelectPokemon';
+import SelectMove from '../../../components/Input/SelectMove';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
@@ -185,7 +185,7 @@ const columns: any = [
   },
 ];
 
-const DpsTable = () => {
+const DpsTdo = () => {
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const types = Object.keys(data.typeEff);
@@ -239,10 +239,10 @@ const DpsTable = () => {
     specific: null,
     WEATHER_BOOSTS: false,
     TRAINER_FRIEND: false,
-    TRAINER_FRIEND_LEVEL: 0,
+    POKEMON_FRIEND_LEVEL: 0,
     POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ,
   });
-  const { WEATHER_BOOSTS, TRAINER_FRIEND, TRAINER_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
+  const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
 
   const [showSpinner, setShowSpinner]: any = useState(true);
   const [selectTypes, setSelectTypes]: any = useState([]);
@@ -286,7 +286,7 @@ const DpsTable = () => {
           shadow,
           WEATHER_BOOSTS: options.WEATHER_BOOSTS,
           POKEMON_FRIEND: options.TRAINER_FRIEND,
-          POKEMON_FRIEND_LEVEL: options.TRAINER_FRIEND_LEVEL,
+          POKEMON_FRIEND_LEVEL: options.POKEMON_FRIEND_LEVEL,
         };
 
         let dps, tdo;
@@ -522,13 +522,13 @@ const DpsTable = () => {
     return setSelectTypes((oldArr: any[]) => [...oldArr, value]);
   };
 
-  const onCalculateTable = useCallback((e: { preventDefault: () => void }) => {
+  const onCalculateTable = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setShowSpinner(true);
     setTimeout(() => {
       setDpsTable(calculateDPSTable());
     }, 300);
-  }, []);
+  };
 
   return (
     <Fragment>
@@ -768,10 +768,10 @@ const DpsTable = () => {
                     min={0}
                     max={15}
                     required={true}
-                    onInput={(e: any) =>
+                    onChange={(e: any) =>
                       setFilters({
                         ...filters,
-                        IV_ATK: parseInt(e.target.value),
+                        IV_ATK: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                     name="IV_ATK"
@@ -786,10 +786,10 @@ const DpsTable = () => {
                     min={0}
                     max={15}
                     required={true}
-                    onInput={(e: any) =>
+                    onChange={(e: any) =>
                       setFilters({
                         ...filters,
-                        IV_DEF: parseInt(e.target.value),
+                        IV_DEF: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                     name="IV_DEF"
@@ -804,10 +804,10 @@ const DpsTable = () => {
                     min={0}
                     max={15}
                     required={true}
-                    onInput={(e: any) =>
+                    onChange={(e: any) =>
                       setFilters({
                         ...filters,
-                        IV_HP: parseInt(e.target.value),
+                        IV_HP: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                     name="IV_HP"
@@ -823,7 +823,7 @@ const DpsTable = () => {
                     onChange={(e: any) =>
                       setFilters({
                         ...filters,
-                        POKEMON_LEVEL: parseInt(e.target.value),
+                        POKEMON_LEVEL: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                   >
@@ -837,7 +837,7 @@ const DpsTable = () => {
                 <Box className="col-7 input-group" style={{ padding: 0 }}>
                   <span className="input-group-text">DEF Target</span>
                   <input
-                    value={POKEMON_DEF_OBJ}
+                    defaultValue={POKEMON_DEF_OBJ}
                     type="number"
                     className="form-control"
                     placeholder="Defense target"
@@ -847,7 +847,7 @@ const DpsTable = () => {
                     onInput={(e: any) =>
                       setOptions({
                         ...options,
-                        POKEMON_DEF_OBJ: parseInt(e.target.value),
+                        POKEMON_DEF_OBJ: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                     name="POKEMON_DEF_OBJ"
@@ -908,7 +908,7 @@ const DpsTable = () => {
                       defaultValue={0}
                       max={4}
                       size="large"
-                      value={TRAINER_FRIEND_LEVEL}
+                      value={POKEMON_FRIEND_LEVEL}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
@@ -949,4 +949,4 @@ const DpsTable = () => {
   );
 };
 
-export default DpsTable;
+export default DpsTdo;

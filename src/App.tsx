@@ -21,7 +21,7 @@ import Pokemon from './pages/Pokemon/Pokemon';
 import FindTable from './pages/Tools/FindTable/FindTable';
 import CalculateStats from './pages/Tools/CalculateStats/CalculateStats';
 import Damage from './pages/Tools/BattleDamage/Damage';
-import DpsTable from './pages/DpsSheet/DpsTable';
+import DpsTdo from './pages/Sheets/DpsTdo/DpsTdo';
 import Move from './pages/Move/Move';
 import Error from './pages/Error/Error';
 import Leagues from './pages/PVP/Leagues/Leagues';
@@ -41,6 +41,7 @@ import { loadStats } from './store/actions/stats.action';
 import CatchChance from './pages/Tools/CatchChance/CatchChane';
 import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
+import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -215,7 +216,8 @@ function App() {
             <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP />} />
             <Route path="/pvp/battle" element={<Battle />} />
             <Route path="/pvp/battle/:cp" element={<Battle />} />
-            <Route path="/dps-tdo-sheets" element={<DpsTable />} />
+            <Route path="/dps-tdo-sheets" element={<DpsTdo />} />
+            <Route path="/stats-ranking" element={<StatsRanking />} />
             <Route path="/battle-leagues" element={<Leagues />} />
             <Route path="/stickers" element={<Sticker />} />
             <Route path="*" element={<Error />} />
