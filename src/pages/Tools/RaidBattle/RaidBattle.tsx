@@ -464,6 +464,7 @@ const RaidBattle = () => {
     HpRemain: number,
     timer: number
   ) => {
+    console.log(pokemon)
     const fmove = data.combat.find((item: { name: any }) => item.name === pokemon.fmoveTargetPokemon.name);
     const cmove = data.combat.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
 
