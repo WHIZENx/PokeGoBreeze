@@ -56,7 +56,7 @@ Show all stats pokemon by filter battle leagues.
 Calculate damage by options with Pokemon vs another Pokemon.
 - Includes options and type pokemon to feelfree calculate damage.
 
-#### - [DPS&TDO Table](https://poke-go-breeze.vercel.app/dps-tdo-table)
+#### - [DPS&TDO Sheets](https://poke-go-breeze.vercel.app/dps-tdo-sheets)
 You can search pokemon by filter to show DPS, TDO.
 - Includes 905 pokemon.
 - Includes all types in Pokemon.

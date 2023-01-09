@@ -377,7 +377,7 @@ const DpsTable = () => {
 
       const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
       if (!result) {
-        combatPoke = combatPoke[0];
+        combatPoke = combatPoke.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies);
       } else {
         combatPoke = result;
       }
@@ -474,7 +474,7 @@ const DpsTable = () => {
   };
 
   useEffect(() => {
-    document.title = 'DPS&TDO Table';
+    document.title = 'DPS&TDO Sheets';
   }, []);
 
   useEffect(() => {

@@ -215,7 +215,7 @@ function App() {
             <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP />} />
             <Route path="/pvp/battle" element={<Battle />} />
             <Route path="/pvp/battle/:cp" element={<Battle />} />
-            <Route path="/dps-tdo-table" element={<DpsTable />} />
+            <Route path="/dps-tdo-sheets" element={<DpsTable />} />
             <Route path="/battle-leagues" element={<Leagues />} />
             <Route path="/stickers" element={<Sticker />} />
             <Route path="*" element={<Error />} />

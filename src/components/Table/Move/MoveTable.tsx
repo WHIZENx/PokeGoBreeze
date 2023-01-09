@@ -70,7 +70,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
 
     const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form.name));
     if (result === undefined) {
-      filterMoveType(combatPoke[0]);
+      filterMoveType(combatPoke.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies));
       setMove(
         rankMove(
           data.options,

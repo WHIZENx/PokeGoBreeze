@@ -75,8 +75,8 @@ const NavbarComponent = () => {
               Raid Battle
             </Link>
           </NavDropdown>
-          <Link className="nav-link" to="/dps-tdo-table">
-            DPS&TDO Table
+          <Link className="nav-link" to="/dps-tdo-sheets">
+            DPS&TDO Sheets
           </Link>
           <NavDropdown title="PVP">
             <Link className="dropdown-item" to="/pvp">
