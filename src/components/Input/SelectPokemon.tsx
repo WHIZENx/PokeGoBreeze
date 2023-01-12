@@ -51,10 +51,10 @@ const SelectPokemon = (props: {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(findMove(value.num, value.forme, 'FAST'));
+        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme, 'FAST') : null);
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(findMove(value.num, value.forme, 'CHARGE'));
+        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme, 'CHARGE') : null);
       }
       if (props.clearData) {
         props.clearData();

@@ -1,7 +1,9 @@
 import { StoreModel } from '../models/store.model';
 
 const inititaialize: StoreModel = {
+  icon: null,
   data: null,
+  pages: null,
   timestamp: null,
 };
 
