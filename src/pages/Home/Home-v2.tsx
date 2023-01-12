@@ -86,8 +86,8 @@ const Home = () => {
     match: false,
     releasedGO: false,
     allShiny: false,
-    gen: Object.values(genList).map((value, index) => index),
-    version: versionList.map((value: any, index: any) => index),
+    gen: Object.values(genList).map((_, index) => index),
+    version: versionList.map((_: any, index: any) => index),
     mega: false,
     gmax: false,
     legendary: false,
@@ -134,7 +134,7 @@ const Home = () => {
                 : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
                   item.id.toString().includes(searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = mega ? item.forme === 'Mega' : true;
+            const boolMega = mega ? item.forme?.includes('Mega') : true;
             const boolGmax = gmax ? item.forme === 'Gmax' : true;
             const boolLegend = legendary ? item.class === 'LEGENDARY' : true;
             const boolMythic = mythic ? item.class === 'MYTHIC' : true;
@@ -146,13 +146,13 @@ const Home = () => {
               boolFilterType &&
               boolFilterPoke &&
               boolReleasedGO &&
+              findGen &&
+              findVersion &&
               boolMega &&
               boolGmax &&
               boolLegend &&
               boolMythic &&
-              boolUltra &&
-              findGen &&
-              findVersion
+              boolUltra
             );
           });
           scrollID.current = 0;
@@ -303,7 +303,7 @@ const Home = () => {
                     control={<Switch checked={allShiny} onChange={(event, check) => setFilters({ ...filters, allShiny: check })} />}
                     label={
                       <span className="d-flex align-items-center">
-                        Show All Pokémon Shiny (Possible only)
+                        Show All Shiny Pokémon (Only Possible)
                         <img
                           className={allShiny ? 'filter-shiny' : 'filter-gray'}
                           width={28}
@@ -379,7 +379,7 @@ const Home = () => {
                     control={
                       <Checkbox
                         checked={mega}
-                        onChange={(event, check) => setFilters({ ...filters, mega: check, gmax: check ? false : filters.gmax })}
+                        onChange={(_, check) => setFilters({ ...filters, mega: check, gmax: check ? false : filters.gmax })}
                       />
                     }
                     label="Mega"
@@ -388,21 +388,57 @@ const Home = () => {
                     control={
                       <Checkbox
                         checked={gmax}
-                        onChange={(event, check) => setFilters({ ...filters, gmax: check, mega: check ? false : filters.mega })}
+                        onChange={(_, check) => setFilters({ ...filters, gmax: check, mega: check ? false : filters.mega })}
                       />
                     }
                     label="Gmax"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={legendary} onChange={(event, check) => setFilters({ ...filters, legendary: check })} />}
+                    control={
+                      <Checkbox
+                        checked={legendary}
+                        onChange={(_, check) =>
+                          setFilters({
+                            ...filters,
+                            legendary: check,
+                            mythic: check ? false : filters.mythic,
+                            ultrabeast: check ? false : filters.ultrabeast,
+                          })
+                        }
+                      />
+                    }
                     label="Legendary"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={mythic} onChange={(event, check) => setFilters({ ...filters, mythic: check })} />}
+                    control={
+                      <Checkbox
+                        checked={mythic}
+                        onChange={(_, check) =>
+                          setFilters({
+                            ...filters,
+                            mythic: check,
+                            legendary: check ? false : filters.legendary,
+                            ultrabeast: check ? false : filters.ultrabeast,
+                          })
+                        }
+                      />
+                    }
                     label="Mythic"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={ultrabeast} onChange={(event, check) => setFilters({ ...filters, ultrabeast: check })} />}
+                    control={
+                      <Checkbox
+                        checked={ultrabeast}
+                        onChange={(_, check) =>
+                          setFilters({
+                            ...filters,
+                            ultrabeast: check,
+                            legendary: check ? false : filters.legendary,
+                            mythic: check ? false : filters.mythic,
+                          })
+                        }
+                      />
+                    }
                     label="Ultra Beast"
                   />
                 </div>

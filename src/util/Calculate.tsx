@@ -759,7 +759,7 @@ export const calculateBattleDPSDefender = (
   weatherBoost: any,
   Attacker: {
     atk?: number;
-    def: any;
+    def: number;
     hp?: number;
     fmove?: any;
     cmove?: any;
@@ -770,7 +770,7 @@ export const calculateBattleDPSDefender = (
     POKEMON_FRIEND_LEVEL?: number;
   },
   Defender: {
-    atk: any;
+    atk: number;
     def?: number;
     hp?: number;
     fmove: any;

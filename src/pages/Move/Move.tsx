@@ -34,22 +34,8 @@ const columns: any = [
   },
   {
     name: 'Name',
-    selector: (row: {
-      num: any;
-      forme: string;
-      sprite: string;
-      baseSpecies: string;
-      name:
-        | string
-        | number
-        | boolean
-        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-        | React.ReactFragment
-        | React.ReactPortal
-        | null
-        | undefined;
-    }) => (
-      <Link to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`} target="_blank">
+    selector: (row: { num: any; forme: string; sprite: string; baseSpecies: string; name: string }) => (
+      <Link to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}>
         <img
           height={48}
           alt="img-pokemon"

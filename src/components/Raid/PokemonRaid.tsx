@@ -27,18 +27,6 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
     );
   }, [data, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon, id, setData]);
 
-  const setDataPokemon = (value: any) => {
-    setDataTargetPokemon(value);
-  };
-
-  const setFMovePokemon = (value: any) => {
-    setFmoveTargetPokemon(value);
-  };
-
-  const setCMovePokemon = (value: any) => {
-    setCmoveTargetPokemon(value);
-  };
-
   return (
     <div>
       <span className="input-group-text justify-content-center position-relative">
@@ -78,9 +66,9 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
         clearData={clearData}
         selected={true}
         pokemon={dataTargetPokemon}
-        setCurrentPokemon={setDataPokemon}
-        setFMovePokemon={setFMovePokemon}
-        setCMovePokemon={setCMovePokemon}
+        setCurrentPokemon={setDataTargetPokemon}
+        setFMovePokemon={setFmoveTargetPokemon}
+        setCMovePokemon={setCmoveTargetPokemon}
       />
       <span className="input-group-text justify-content-center">
         <b>Fast Move</b>
@@ -91,7 +79,7 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
         clearData={clearData}
         pokemon={dataTargetPokemon}
         move={fmoveTargetPokemon}
-        setMovePokemon={setFMovePokemon}
+        setMovePokemon={setFmoveTargetPokemon}
         moveType="FAST"
       />
       <span className="input-group-text justify-content-center">
@@ -103,7 +91,7 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
         clearData={clearData}
         pokemon={dataTargetPokemon}
         move={cmoveTargetPokemon}
-        setMovePokemon={setCMovePokemon}
+        setMovePokemon={setCmoveTargetPokemon}
         moveType="CHARGE"
       />
     </div>

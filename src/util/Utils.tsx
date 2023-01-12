@@ -416,19 +416,60 @@ export const convertFormGif = (name: string) => {
 export const convertFormNameImg = (id: number, form: string) => {
   if (
     id === 201 ||
+    id === 414 ||
+    id === 493 ||
+    id === 649 ||
+    id === 664 ||
+    id === 665 ||
+    id === 669 ||
+    id === 670 ||
+    id === 671 ||
     id === 716 ||
     id === 773 ||
+    (id === 774 && form !== 'red') ||
     id === 854 ||
     id === 855 ||
+    (id === 869 && form !== 'gmax') ||
     form === 'totem' ||
+    form === 'normal' ||
+    form === 'plant' ||
+    form === 'altered' ||
+    form === 'overcast' ||
+    form === 'land' ||
+    form === 'standard' ||
+    form === 'spring' ||
+    form === 'incarnate' ||
+    form === 'ordinary' ||
+    form === 'aria' ||
+    form === 'natural' ||
+    form === 'debutante' ||
+    form === 'matron' ||
+    form === 'dandy' ||
+    form === 'la-reine' ||
+    form === 'kabuki' ||
+    form === 'pharaoh' ||
+    form === 'male' ||
+    form === 'shield' ||
+    form === 'average' ||
+    form === '50' ||
+    form === 'confined' ||
+    form === 'baile' ||
+    form === 'midday' ||
+    form === 'solo' ||
+    form === 'disguised' ||
+    form === 'amped' ||
+    form === 'ice' ||
+    form === 'full-belly' ||
+    form === 'single-strike' ||
     form === 'spiky-eared' ||
+    form === 'battle-bond' ||
     form === 'meteor'
   ) {
     return '';
   } else if (form?.includes('-totem')) {
     return form.replace('-totem', '');
   } else if (form?.includes('totem-')) {
-    return form.replace('totem-', '');
+    return form.replace('totem-', '').replace('disguised', '');
   } else if (id === 849 && form === 'gmax') {
     return 'amped-gmax';
   } else if (id === 892 && form === 'gmax') {
@@ -491,15 +532,15 @@ export const filterRank = (
   stats: number
 ) => {
   const checkRank = pokemonStats[type].ranking.find((item: { [x: string]: any }) => item[type] === stats);
+
   if (checkRank) {
-    return ((pokemonStats[type].max_rank - checkRank.rank + 1) * 100) / pokemonStats[type].max_rank;
+    return pokemonStats[type].max_rank - checkRank.rank;
   }
   let avgRank = pokemonStats[type].max_rank - pokemonStats[type].ranking.find((item: { [x: string]: number }) => item[type] > stats).rank;
   if (avgRank < 1) {
     avgRank = 1;
   }
-  const ratioRank = (avgRank * 100) / pokemonStats[type].max_rank;
-  return Math.min(ratioRank, 100);
+  return Math.min(avgRank, pokemonStats[type].max_rank);
 };
 
 export const calRank = (

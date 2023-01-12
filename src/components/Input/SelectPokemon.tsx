@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import './Select.css';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
+import { useSelector, RootStateOrAny } from 'react-redux';
 
 const SelectPokemon = (props: {
   pokemon?: any;
@@ -20,6 +21,8 @@ const SelectPokemon = (props: {
   clearData?: () => void;
   disable?: boolean;
 }) => {
+  const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
+
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
@@ -48,10 +51,10 @@ const SelectPokemon = (props: {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(null);
+        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme, 'FAST') : null);
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(null);
+        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme, 'CHARGE') : null);
       }
       if (props.clearData) {
         props.clearData();
@@ -74,6 +77,61 @@ const SelectPokemon = (props: {
     if (props.clearData) {
       props.clearData();
     }
+  };
+
+  const findMove = (id: any, form: string, type: string) => {
+    const resultFirst = data.filter((item: { id: any }) => item.id === id);
+    form = form ? form.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() : '';
+    const result = resultFirst.find(
+      (item: { name: string; baseSpecies: string }) => item.name.replace(item.baseSpecies + '_', '') === form
+    );
+    const simpleMove: any[] = [];
+    if (resultFirst.length === 1 || result == null) {
+      if (type === 'FAST') {
+        resultFirst[0].quickMoves.forEach((value: any) => {
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+        });
+        resultFirst[0].eliteQuickMoves.forEach((value: any) => {
+          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+        });
+      } else {
+        resultFirst[0].cinematicMoves.forEach((value: any) => {
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+        });
+        resultFirst[0].eliteCinematicMoves.forEach((value: any) => {
+          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+        });
+        resultFirst[0].shadowMoves.forEach((value: any) => {
+          simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+        });
+        resultFirst[0].purifiedMoves.forEach((value: any) => {
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+        });
+      }
+      return simpleMove[0];
+    }
+    if (type === 'FAST') {
+      result.quickMoves.forEach((value: any) => {
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+      });
+      result.eliteQuickMoves.forEach((value: any) => {
+        simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+      });
+    } else {
+      result.cinematicMoves.forEach((value: any) => {
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+      });
+      result.eliteCinematicMoves.forEach((value: any) => {
+        simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+      });
+      result.shadowMoves.forEach((value: any) => {
+        simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+      });
+      result.purifiedMoves.forEach((value: any) => {
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+      });
+    }
+    return simpleMove[0];
   };
 
   useEffect(() => {

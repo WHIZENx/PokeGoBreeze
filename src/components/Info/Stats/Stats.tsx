@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
 
@@ -26,13 +26,11 @@ const Stats = (props: {
     rank: number;
   };
 }) => {
-  const isAvailable: any = useRef(
-    checkRankAllAvailable(props.pokemonStats, {
-      atk: props.stats || props.statATK ? (props.statATK ? props.statATK.rank : calBaseATK(props.stats?.stats, true)) : -1,
-      def: props.stats || props.statDEF ? (props.statDEF ? props.statDEF.rank : calBaseDEF(props.stats?.stats, true)) : -1,
-      sta: props.stats || props.statSTA ? (props.statSTA ? props.statSTA.rank : calBaseSTA(props.stats?.stats, true)) : -1,
-    })
-  );
+  const [isAvailable, setIsAvailable]: any = useState({
+    attackRank: null,
+    defenseRank: null,
+    staminaRank: null,
+  });
 
   const [currentStats, setCurrentStats] = useState({
     atk: 0,
@@ -41,24 +39,31 @@ const Stats = (props: {
   });
 
   useEffect(() => {
+    setIsAvailable(
+      checkRankAllAvailable(props.pokemonStats, {
+        atk: props.stats || props.statATK ? (props.statATK ? props.statATK.attack : calBaseATK(props.stats?.stats, true)) : 0,
+        def: props.stats || props.statDEF ? (props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats?.stats, true)) : 0,
+        sta: props.stats || props.statSTA ? (props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats?.stats, true)) : 0,
+      })
+    );
     setCurrentStats({
       atk:
         props.stats || props.statATK
           ? props.statATK
             ? (props.statATK.attack * 100) / props.pokemonStats.attack.max_stats
-            : calBaseATK(props.stats?.stats, true)
+            : (calBaseATK(props.stats?.stats, true) * 100) / props.pokemonStats.attack.max_stats
           : 0,
       def:
         props.stats || props.statDEF
           ? props.statDEF
             ? (props.statDEF.defense * 100) / props.pokemonStats.defense.max_stats
-            : calBaseDEF(props.stats?.stats, true)
+            : (calBaseDEF(props.stats?.stats, true) * 100) / props.pokemonStats.defense.max_stats
           : 0,
       sta:
         props.stats || props.statSTA
           ? props.statSTA
             ? (props.statSTA.stamina * 100) / props.pokemonStats.stamina.max_stats
-            : calBaseSTA(props.stats?.stats, true)
+            : (calBaseSTA(props.stats?.stats, true) * 100) / props.pokemonStats.stamina.max_stats
           : 0,
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA]);
@@ -83,7 +88,7 @@ const Stats = (props: {
         />
         <div className="box-text rank-text justify-content-end d-flex position-absolute">
           <span>
-            Rank: {props.statATK ? props.statATK.rank : isAvailable.current.attackRank ? isAvailable.current.attackRank : 'Unavailable'} /{' '}
+            Rank: {props.statATK ? props.statATK.rank : isAvailable.attackRank ? isAvailable.attackRank : 'Unavailable'} /{' '}
             {props.pokemonStats.attack.max_rank}
           </span>
         </div>
@@ -106,7 +111,7 @@ const Stats = (props: {
         />
         <div className="box-text rank-text justify-content-end d-flex position-absolute">
           <span>
-            Rank: {props.statDEF ? props.statDEF.rank : isAvailable.current.defenseRank ? isAvailable.current.defenseRank : 'Unavailable'} /{' '}
+            Rank: {props.statDEF ? props.statDEF.rank : isAvailable.defenseRank ? isAvailable.defenseRank : 'Unavailable'} /{' '}
             {props.pokemonStats.defense.max_rank}
           </span>
         </div>
@@ -129,7 +134,7 @@ const Stats = (props: {
         />
         <div className="box-text rank-text justify-content-end d-flex position-absolute">
           <span>
-            Rank: {props.statSTA ? props.statSTA.rank : isAvailable.current.staminaRank ? isAvailable.current.staminaRank : 'Unavailable'} /{' '}
+            Rank: {props.statSTA ? props.statSTA.rank : isAvailable.staminaRank ? isAvailable.staminaRank : 'Unavailable'} /{' '}
             {props.pokemonStats.stamina.max_rank}
           </span>
         </div>

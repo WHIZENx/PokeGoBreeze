@@ -94,13 +94,7 @@ const PVPHome = () => {
       </div>
       <div className="group-selected">
         {rank.cp.map((value: number, index: React.Key) => (
-          <Button
-            key={index}
-            className="btn btn-form"
-            style={{ height: 200 }}
-            target="_blank"
-            href={`/pvp/rankings/${rank.id}/${value}/overall`}
-          >
+          <Button key={index} className="btn btn-form" style={{ height: 200 }} href={`/pvp/rankings/${rank.id}/${value}/overall`}>
             <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
             <div>
               <b>{renderLeagueName(rank.name, value)}</b>
@@ -139,7 +133,7 @@ const PVPHome = () => {
       </div>
       <div className="group-selected">
         {team.cp.map((value: number, index: React.Key) => (
-          <Button key={index} className="btn btn-form" style={{ height: 200 }} target="_blank" href={`/pvp/teams/${team.id}/${value}`}>
+          <Button key={index} className="btn btn-form" style={{ height: 200 }} href={`/pvp/teams/${team.id}/${value}`}>
             <img alt="img-league" width={128} height={128} src={renderLeagueLogo(team.logo, value)} />
             <div>
               <b>{renderLeagueName(team.name, value)}</b>
@@ -153,7 +147,7 @@ const PVPHome = () => {
       </h1>
       <div className="group-selected">
         {leaguesTeamBattle.map((value, index) => (
-          <Button key={index} className="btn btn-form" style={{ height: 200 }} target="_blank" href={`/pvp/battle/${value.cp}`}>
+          <Button key={index} className="btn btn-form" style={{ height: 200 }} href={`/pvp/battle/${value.cp}`}>
             <img
               alt="img-league"
               width={128}

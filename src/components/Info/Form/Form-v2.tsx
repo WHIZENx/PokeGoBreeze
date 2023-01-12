@@ -299,6 +299,8 @@ const Form = ({
                             value.form.name === 'arceus-unknown' ||
                             value.form.name === 'dialga-origin' ||
                             value.form.name === 'palkia-origin' ||
+                            value.form.name === 'mothim-sandy' ||
+                            value.form.name === 'mothim-trash' ||
                             value.form.name === 'basculin-white-striped' ||
                             value.form.name === 'greninja-battle-bond' ||
                             value.form.name === 'urshifu-rapid-strike' ||

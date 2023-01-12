@@ -107,7 +107,6 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                           to={`/pokemon/${value.pokemon_id}${
                             value.pokemon_forme ? `?form=${convertFormName(value.pokemon_id, value.pokemon_forme.toLowerCase())}` : ''
                           }`}
-                          target="_blank"
                         >
                           <div className="d-flex justify-content-center">
                             <div className="position-relative group-pokemon-sprite filter-shadow-hover">
@@ -134,7 +133,7 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                         </Link>
                       </td>
                       <td className="text-origin text-center">
-                        <Link to={'../move/' + value.fmove.id} target="_blank" className="d-grid">
+                        <Link to={'../move/' + value.fmove.id} className="d-grid">
                           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
                           </div>
@@ -151,7 +150,7 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                         </Link>
                       </td>
                       <td className="text-origin text-center">
-                        <Link to={'../move/' + value.cmove.id} target="_blank" className="d-grid">
+                        <Link to={'../move/' + value.cmove.id} className="d-grid">
                           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
                           </div>
