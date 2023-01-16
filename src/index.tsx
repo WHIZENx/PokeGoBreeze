@@ -17,8 +17,8 @@ if (module.hot) {
 }
 
 const store = configureStore();
-type State = ReturnType<typeof store.getState>;
-const routerSelector: ReduxRouterSelector<State> = (state) => state.router;
+export type RouterState = ReturnType<typeof store.getState>;
+const routerSelector: ReduxRouterSelector<RouterState> = (state) => state.router;
 
 ReactDOM.render(
   <React.StrictMode>

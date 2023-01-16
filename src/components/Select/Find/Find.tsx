@@ -1,10 +1,11 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
-import Tools from './Tools';
+import Form from './Form';
 
 import pokemonData from '../../../data/pokemon.json';
 import pokeListName from '../../../data/pokemon_names.json';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import { RouterState } from '../../..';
 
 const Find = (props: {
   // eslint-disable-next-line no-unused-vars
@@ -35,6 +36,7 @@ const Find = (props: {
   const cardHeight = 65;
 
   const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const router = useSelector((state: RouterState) => state.router);
 
   const [id, setId] = useState(1);
 
@@ -184,7 +186,8 @@ const Find = (props: {
         <div>
           {pokemonList.current?.length > 0 && (
             <Fragment>
-              <Tools
+              <Form
+                router={router}
                 hide={props.hide}
                 raid={props.raid}
                 setRaid={props.setRaid}

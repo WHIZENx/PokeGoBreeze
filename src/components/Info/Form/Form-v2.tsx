@@ -17,8 +17,10 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import Raid from '../../Raid/Raid';
 import { useDispatch } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
+import { setSearchMainPage } from '../../../store/actions/searching.action';
 
 const Form = ({
+  router,
   onChangeForm,
   setOnChangeForm,
   onSetReForm,
@@ -235,7 +237,20 @@ const Form = ({
         setDataPoke(data);
       }
     }
-  }, [currForm, findForm, findFirst, setPokeID, id_default, formList.length, onChangeForm, pokeData]);
+  }, [currForm, findForm, findFirst, id_default, formList.length, onChangeForm, pokeData]);
+
+  useEffect(() => {
+    if (currForm && router.location.pathname === '/search-pokemon') {
+      dispatch(
+        setSearchMainPage({
+          id: pokeID,
+          name: currForm.default_name,
+          form: currForm.form.form_name,
+          timestamp: new Date(),
+        })
+      );
+    }
+  }, [currForm]);
 
   const changeForm = (name: string, form: string) => {
     if (params.id) {

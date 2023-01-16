@@ -21,8 +21,9 @@ import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { getFormsGO } from '../../core/forms';
+import { RouterState } from '../..';
 
-const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any; onSetIDPoke?: any }) => {
+const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: boolean; onSetIDPoke?: any }) => {
   const dispatch = useDispatch();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
@@ -32,6 +33,8 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const router = useSelector((state: RouterState) => state.router);
+
   const maxPokemon = Object.keys(pokeListName).length;
 
   const [pokeData, setPokeData]: any = useState([]);
@@ -590,6 +593,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: any
                   </div>
                 </div>
                 <Form
+                  router={router}
                   onChangeForm={onChangeForm}
                   setOnChangeForm={setOnChangeForm}
                   onSetReForm={setReForm}
