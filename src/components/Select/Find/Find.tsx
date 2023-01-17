@@ -37,8 +37,10 @@ const Find = (props: {
 
   const stats = useSelector((state: RootStateOrAny) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
-  const [id, setId] = useState(1);
+  const [id, setId] = useState(searching ? searching.id : 1);
+  const [form, setForm] = useState(null);
 
   const pokemonList = useRef(
     Object.values(pokeListName)
@@ -68,11 +70,13 @@ const Find = (props: {
 
   const getInfoPoke = (value: any) => {
     setId(value.id);
+    setForm(null);
     if (props.setId) {
       props.setId(value.id);
     }
     if (props.setName) {
-      props.setName(pokemonList.current.find((item: any) => item.id === value.id)?.name);
+      const findName = pokemonList.current.find((item: any) => item.id === value.id)?.name;
+      props.setName(findName);
     }
     if (props.clearStats) {
       props.clearStats();
@@ -188,12 +192,15 @@ const Find = (props: {
             <Fragment>
               <Form
                 router={router}
+                searching={searching}
                 hide={props.hide}
                 raid={props.raid}
                 setRaid={props.setRaid}
                 tier={props.tier}
                 setTier={props.setTier}
+                form={form}
                 setForm={props.setForm}
+                setFormOrigin={setForm}
                 count={pokemonList.current.length}
                 id={id}
                 name={pokemonList.current.find((item: any) => item.id === id)?.name}

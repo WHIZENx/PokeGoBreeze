@@ -21,9 +21,16 @@ import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { getFormsGO } from '../../core/forms';
-import { RouterState } from '../..';
 
-const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: boolean; onSetIDPoke?: any }) => {
+const Pokemon = (props: {
+  router?: any;
+  searching?: any;
+  id?: any;
+  onDecId?: any;
+  onIncId?: any;
+  isSearch?: boolean;
+  onSetIDPoke?: any;
+}) => {
   const dispatch = useDispatch();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
@@ -33,7 +40,6 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: boo
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const router = useSelector((state: RouterState) => state.router);
 
   const maxPokemon = Object.keys(pokeListName).length;
 
@@ -159,15 +165,15 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: boo
       }
       const nameInfo = splitAndCapitalize(form ? isDefaultForm.form.name : data.name, '-', ' ');
       const formInfo = form ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
-      setFormName(nameInfo);
+      setFormName(props.router.action === 'POP' && props.searching ? props.searching.fullName : nameInfo);
       setReleased(checkReleased(data.id, nameInfo));
-      setForm(formInfo);
+      setForm(props.router.action === 'POP' && props.searching ? props.searching.form : formInfo);
       if (params.id) {
         document.title = `#${data.id} - ${nameInfo}`;
       }
       setOnChangeForm(false);
     },
-    [searchParams, setSearchParams, params.id]
+    [searchParams, params.id]
   );
 
   const queryPokemon = useCallback(
@@ -179,7 +185,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: boo
         setForm(null);
       }
       axios
-        .getPokeSpicies(id, {
+        .getPokeSpices(id, {
           cancelToken: source.token,
         })
         .then((res: { data: any }) => {
@@ -435,7 +441,7 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: boo
                       className="pokemon-main-sprite"
                       style={{ verticalAlign: 'baseline' }}
                       alt="img-full-pokemon"
-                      src={APIService.getPokeFullSprite(data.id, form)}
+                      src={APIService.getPokeFullSprite(data.id, splitAndCapitalize(form, '-', '-'))}
                     />
                   </div>
                   <div className="d-inline-block">
@@ -593,7 +599,6 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: boo
                   </div>
                 </div>
                 <Form
-                  router={router}
                   onChangeForm={onChangeForm}
                   setOnChangeForm={setOnChangeForm}
                   onSetReForm={setReForm}
@@ -613,7 +618,11 @@ const Pokemon = (props: { id?: any; onDecId?: any; onIncId?: any; isSearch?: boo
                   stats={stats}
                   species={data}
                   onSetIDPoke={props.onSetIDPoke}
-                  paramForm={searchParams.get('form') && searchParams.get('form')?.toLowerCase()}
+                  paramForm={
+                    !searchParams.get('form') && props.searching
+                      ? props.searching.form
+                      : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
+                  }
                   pokemonList={dataStore.released}
                 />
                 <PokemonModel id={data.id} name={data.name} />

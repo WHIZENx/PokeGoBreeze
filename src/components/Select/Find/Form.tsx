@@ -13,6 +13,7 @@ import { setSearchToolPage } from '../../../store/actions/searching.action';
 
 const Form = (props: {
   router: any;
+  searching: any;
   raid?: any;
   tier?: any;
   id?: any;
@@ -26,7 +27,9 @@ const Form = (props: {
   hide?: any;
   // eslint-disable-next-line no-unused-vars
   setRaid?: (arg0: boolean) => void;
+  form?: any;
   setForm?: any;
+  setFormOrigin?: any;
   stats: any;
   onHandleSetStats?: any;
   data: any;
@@ -44,13 +47,13 @@ const Form = (props: {
 
   const [currForm, setCurrForm]: any = useState(null);
 
-  const [pokeID, setPokeID] = useState(null);
+  const [pokeID, setPokeID]: any = useState(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const fetchMap = useCallback(
     async (
-      data: { varieties: any[]; name: any; id: any },
+      data: { varieties: any[]; name: string; id: number },
       // eslint-disable-next-line no-unused-vars
       axios: { getFetchUrl: (arg0: any, arg1: { cancelToken: any }) => any },
       source: { token: any }
@@ -124,7 +127,11 @@ const Form = (props: {
         return item.find((item: { form: { is_default: any } }) => item.form.is_default);
       });
       const isDefault = formDefault.find((item: { form: { id: any } }) => item.form.id === data.id);
-      if (isDefault) {
+      if (props.searching) {
+        const form = formDefault.find((item: { form: { form_name: any } }) => item.form.form_name === props.searching.form);
+        setCurrForm(form ?? isDefault ?? formDefault[0]);
+        setPokeID(data.id);
+      } else if (isDefault) {
         setCurrForm(isDefault);
         setPokeID(isDefault.form.id);
       } else {
@@ -138,7 +145,7 @@ const Form = (props: {
   const queryPokemon = useCallback(
     (id: string, axios: any, source: { token: any; cancel: () => void }) => {
       axios
-        .getPokeSpicies(id, {
+        .getPokeSpices(id, {
           cancelToken: source.token,
         })
         .then((res: any) => {
@@ -161,15 +168,19 @@ const Form = (props: {
   }, [props.id, queryPokemon]);
 
   useEffect(() => {
-    if (currForm) {
+    if (currForm || (!props.searching && props.router.action === 'PUSH')) {
       dispatch(
         setSearchToolPage({
           id: props.id,
           name: currForm.default_name,
           form: currForm.form.form_name,
+          fullName: currForm.form.name,
           timestamp: new Date(),
         })
       );
+      if (props.setFormOrigin) {
+        props.setFormOrigin(currForm.form.form_name);
+      }
     }
   }, [currForm]);
 
@@ -217,8 +228,8 @@ const Form = (props: {
         height={200}
         alt="img-full-pokemon"
         src={
-          currForm
-            ? APIService.getPokeFullSprite(props.id, splitAndCapitalize(convertFormNameImg(props.id, currForm.form.form_name), '-', '-'))
+          props.form
+            ? APIService.getPokeFullSprite(props.id, splitAndCapitalize(convertFormNameImg(props.id, props.form), '-', '-'))
             : APIService.getPokeFullSprite(props.id)
         }
       />

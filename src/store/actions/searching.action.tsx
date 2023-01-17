@@ -11,9 +11,8 @@ export const setSearchMainPage = (payload: SearchingModel) => ({
   payload,
 });
 
-export const resetSearchMainPage = (payload: string) => ({
+export const resetSearchMainPage = () => ({
   type: RESET_POKEMON_MAIN_SEARCH,
-  payload,
 });
 
 export const setSearchToolPage = (payload: SearchingModel) => ({
@@ -21,7 +20,6 @@ export const setSearchToolPage = (payload: SearchingModel) => ({
   payload,
 });
 
-export const resetSearchToolPage = (payload: string) => ({
+export const resetSearchToolPage = () => ({
   type: RESET_POKEMON_TOOL_SEARCH,
-  payload,
 });

@@ -45,8 +45,9 @@ const RaidBattle = () => {
   const dispatch = useDispatch();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
-  const [id, setId] = useState(1);
+  const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('');
   const [form, setForm]: any = useState(null);
 

@@ -42,7 +42,7 @@ class APIService {
     return this.axios.get(this.getPokeAPI('pokemon', value), options);
   }
 
-  getPokeSpicies(value: number, options: any = null) {
+  getPokeSpices(value: number, options: any = null) {
     return this.axios.get(this.getPokeAPI('pokemon-species', value), options);
   }
 

@@ -31,10 +31,11 @@ import './CatchChance.css';
 
 const CatchChance = () => {
   const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemon);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
-  const CIRCLR_DISTANCE = 200;
+  const CIRCLE_DISTANCE = 200;
 
-  const [id, setId] = useState(1);
+  const [id, setId] = useState(searching ? searching.id : 1);
   const [form, setForm]: any = useState(null);
 
   const [statATK, setStatATK] = useState(0);
@@ -501,9 +502,9 @@ const CatchChance = () => {
                 <div className="col-md-6 d-flex flex-column justify-content-center align-items-center" style={{ padding: 0 }}>
                   <h5 className="text-center">{throwTitle.title}</h5>
                   <div className="d-flex justify-content-center position-relative">
-                    <Circle line={2} color={'lightgray'} size={CIRCLR_DISTANCE} />
+                    <Circle line={2} color={'lightgray'} size={CIRCLE_DISTANCE} />
                     <div className="position-absolute circle-ring">
-                      <Circle line={2} color={colorCircle} size={CIRCLR_DISTANCE - ((100 - radius) * CIRCLR_DISTANCE) / 100} />
+                      <Circle line={2} color={colorCircle} size={CIRCLE_DISTANCE - ((100 - radius) * CIRCLE_DISTANCE) / 100} />
                     </div>
                   </div>
                 </div>

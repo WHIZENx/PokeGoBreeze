@@ -20,7 +20,6 @@ import { hideSpinner } from '../../../store/actions/spinner.action';
 import { setSearchMainPage } from '../../../store/actions/searching.action';
 
 const Form = ({
-  router,
   onChangeForm,
   setOnChangeForm,
   onSetReForm,
@@ -240,12 +239,13 @@ const Form = ({
   }, [currForm, findForm, findFirst, id_default, formList.length, onChangeForm, pokeData]);
 
   useEffect(() => {
-    if (currForm && router.location.pathname === '/search-pokemon') {
+    if (currForm && !params.id) {
       dispatch(
         setSearchMainPage({
           id: pokeID,
           name: currForm.default_name,
           form: currForm.form.form_name,
+          fullName: currForm.form.name,
           timestamp: new Date(),
         })
       );
