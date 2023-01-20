@@ -14,7 +14,7 @@ import NavbarComponent from './components/Navbar';
 
 import Home from './pages/Home/Home-v2';
 import SearchPokemon from './pages/Search/Pokemon/Search';
-import SearchMove from './pages/Search/Move/Search';
+import SearchMove from './pages/Search/Moves/SearchMoves';
 import TypeEffect from './pages/TypeEffect/TypeEffect';
 import Weather from './pages/Weather/Weather';
 import Pokemon from './pages/Pokemon/Pokemon';

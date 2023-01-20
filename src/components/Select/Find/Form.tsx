@@ -172,14 +172,14 @@ const Form = (props: {
       dispatch(
         setSearchToolPage({
           id: props.id,
-          name: currForm.default_name,
-          form: currForm.form.form_name,
-          fullName: currForm.form.name,
+          name: currForm?.default_name,
+          form: currForm?.form.form_name,
+          fullName: currForm?.form.name,
           timestamp: new Date(),
         })
       );
       if (props.setFormOrigin) {
-        props.setFormOrigin(currForm.form.form_name);
+        props.setFormOrigin(currForm?.form.form_name);
       }
     }
   }, [currForm]);

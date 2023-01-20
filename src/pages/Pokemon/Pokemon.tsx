@@ -611,18 +611,14 @@ const Pokemon = (props: {
                   setForm={setForm}
                   setReleased={setReleased}
                   checkReleased={checkReleased}
-                  id_default={data.id}
+                  idDefault={data.id}
                   pokeData={pokeData}
                   formList={formList}
                   ratio={pokeRatio}
                   stats={stats}
                   species={data}
                   onSetIDPoke={props.onSetIDPoke}
-                  paramForm={
-                    !searchParams.get('form') && props.searching
-                      ? props.searching.form
-                      : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
-                  }
+                  paramForm={searchParams.get('form')?.toLowerCase()}
                   pokemonList={dataStore.released}
                 />
                 <PokemonModel id={data.id} name={data.name} />

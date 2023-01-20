@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 
-import './Search.css';
+import './SearchMoves.css';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 
