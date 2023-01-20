@@ -11,6 +11,7 @@ const Search = () => {
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: RootStateOrAny) => state.searching.mainSearching);
 
+  const [first, setFirst] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
@@ -56,6 +57,9 @@ const Search = () => {
   const getInfoPoke = (value: any) => {
     setShowResult(false);
     setId(value.id);
+    if (first) {
+      setFirst(false);
+    }
   };
 
   const setIDPoke = (id: number) => {
@@ -133,7 +137,17 @@ const Search = () => {
             ))}
           </Fragment>
         </div>
-        <Pokemon id={id} onSetIDPoke={setIDPoke} onIncId={incId} onDecId={decId} isSearch={true} router={router} searching={searching} />
+        <Pokemon
+          id={id}
+          onSetIDPoke={setIDPoke}
+          onIncId={incId}
+          onDecId={decId}
+          isSearch={true}
+          router={router}
+          searching={searching}
+          first={first}
+          setFirst={setFirst}
+        />
       </div>
     </Fragment>
   );

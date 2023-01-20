@@ -30,6 +30,8 @@ const Pokemon = (props: {
   onIncId?: any;
   isSearch?: boolean;
   onSetIDPoke?: any;
+  first?: boolean;
+  setFirst?: any;
 }) => {
   const dispatch = useDispatch();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
@@ -355,6 +357,9 @@ const Pokemon = (props: {
                           className="d-flex justify-content-start align-items-center"
                           onClick={() => {
                             setForm(null);
+                            if (props.first && props.setFirst) {
+                              props.setFirst(false);
+                            }
                             props.onDecId();
                           }}
                           title={`#${data.id - 1} ${splitAndCapitalize((pokeListName as any)[data.id - 1].name, '-', ' ')}`}
@@ -391,6 +396,9 @@ const Pokemon = (props: {
                           className="d-flex justify-content-end align-items-center"
                           onClick={() => {
                             setForm(null);
+                            if (props.first && props.setFirst) {
+                              props.setFirst(false);
+                            }
                             props.onIncId();
                           }}
                           title={`#${data.id + 1} ${splitAndCapitalize((pokeListName as any)[data.id + 1].name, '-', ' ')}`}
@@ -618,7 +626,13 @@ const Pokemon = (props: {
                   stats={stats}
                   species={data}
                   onSetIDPoke={props.onSetIDPoke}
-                  paramForm={searchParams.get('form')?.toLowerCase()}
+                  paramForm={
+                    !searchParams.get('form') && props.searching
+                      ? props.first && props.router.action === 'POP'
+                        ? props.searching.form
+                        : ''
+                      : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
+                  }
                   pokemonList={dataStore.released}
                 />
                 <PokemonModel id={data.id} name={data.name} />
