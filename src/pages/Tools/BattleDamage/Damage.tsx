@@ -245,6 +245,7 @@ const Damage = () => {
             setStatDEF={setStatDEFObj}
             setStatSTA={setStatSTAObj}
             setForm={onSetFormObj}
+            objective={true}
           />
           <StatsTable
             setStatLvDEF={setStatLvDEFObj}

@@ -34,6 +34,7 @@ const Form = (props: {
   onHandleSetStats?: any;
   data: any;
   setUrlEvo: any;
+  objective?: boolean;
 }) => {
   const dispatch = useDispatch();
 
@@ -128,7 +129,10 @@ const Form = (props: {
       });
       const isDefault = formDefault.find((item: { form: { id: any } }) => item.form.id === data.id);
       if (props.searching) {
-        const form = formDefault.find((item: { form: { form_name: any } }) => item.form.form_name === props.searching.form);
+        const form = formDefault.find(
+          (item: { form: { form_name: any } }) =>
+            item.form.form_name === (props.objective ? props.searching.obj.form : props.searching.form)
+        );
         setCurrForm(form ?? isDefault ?? formDefault[0]);
         setPokeID(data.id);
       } else if (isDefault) {
@@ -170,13 +174,25 @@ const Form = (props: {
   useEffect(() => {
     if (currForm || (!props.searching && props.router.action === 'PUSH')) {
       dispatch(
-        setSearchToolPage({
-          id: props.id,
-          name: currForm?.default_name,
-          form: currForm?.form.form_name,
-          fullName: currForm?.form.name,
-          timestamp: new Date(),
-        })
+        props.objective
+          ? setSearchToolPage({
+              ...props.searching,
+              obj: {
+                id: props.id,
+                name: currForm?.default_name,
+                form: currForm?.form.form_name,
+                fullName: currForm?.form.name,
+                timestamp: new Date(),
+              },
+            })
+          : setSearchToolPage({
+              ...props.searching,
+              id: props.id,
+              name: currForm?.default_name,
+              form: currForm?.form.form_name,
+              fullName: currForm?.form.name,
+              timestamp: new Date(),
+            })
       );
       if (props.setFormOrigin) {
         props.setFormOrigin(currForm?.form.form_name);

@@ -19,7 +19,7 @@ const Find = (props: {
   setStatDEF?: (arg0: any) => void;
   // eslint-disable-next-line no-unused-vars
   setStatSTA?: (arg0: any) => void;
-  hide?: any;
+  hide?: boolean;
   raid?: any;
   setRaid?: any;
   tier?: any;
@@ -28,7 +28,8 @@ const Find = (props: {
   urlEvo?: any;
   setUrlEvo?: any;
   title?: string;
-  swap?: any;
+  swap?: boolean;
+  objective?: boolean;
 }) => {
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -39,7 +40,7 @@ const Find = (props: {
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(searching ? (props.objective ? (searching.obj ? searching.obj.id : 1) : searching.id) : 1);
   const [form, setForm] = useState(null);
 
   const pokemonList = useRef(
@@ -211,6 +212,7 @@ const Find = (props: {
                 onSetPrev={decId}
                 onSetNext={incId}
                 setUrlEvo={props.setUrlEvo}
+                objective={props.objective}
               />
             </Fragment>
           )}
