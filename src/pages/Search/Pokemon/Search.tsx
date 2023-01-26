@@ -4,14 +4,20 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import pokeListName from '../../../data/pokemon_names.json';
+import { useSelector, RootStateOrAny } from 'react-redux';
+import { RouterState } from '../../..';
 
 const Search = () => {
+  const router = useSelector((state: RouterState) => state.router);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.mainSearching);
+
+  const [first, setFirst] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
 
-  const [id, setId]: any = useState(1);
-  const [selectId, setSelectId]: any = useState(1);
+  const [id, setId]: any = useState(router.action === 'POP' && searching ? searching.id : 1);
+  const [selectId, setSelectId]: any = useState(router.action === 'POP' && searching ? searching.id : 1);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
@@ -51,6 +57,9 @@ const Search = () => {
   const getInfoPoke = (value: any) => {
     setShowResult(false);
     setId(value.id);
+    if (first) {
+      setFirst(false);
+    }
   };
 
   const setIDPoke = (id: number) => {
@@ -128,7 +137,17 @@ const Search = () => {
             ))}
           </Fragment>
         </div>
-        <Pokemon id={id} onSetIDPoke={setIDPoke} onIncId={incId} onDecId={decId} isSearch={true} />
+        <Pokemon
+          id={id}
+          onSetIDPoke={setIDPoke}
+          onIncId={incId}
+          onDecId={decId}
+          isSearch={true}
+          router={router}
+          searching={searching}
+          first={first}
+          setFirst={setFirst}
+        />
       </div>
     </Fragment>
   );

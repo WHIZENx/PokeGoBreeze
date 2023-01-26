@@ -1,10 +1,11 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
-import Tools from './Tools';
+import Form from './Form';
 
 import pokemonData from '../../../data/pokemon.json';
 import pokeListName from '../../../data/pokemon_names.json';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import { RouterState } from '../../..';
 
 const Find = (props: {
   // eslint-disable-next-line no-unused-vars
@@ -18,7 +19,7 @@ const Find = (props: {
   setStatDEF?: (arg0: any) => void;
   // eslint-disable-next-line no-unused-vars
   setStatSTA?: (arg0: any) => void;
-  hide?: any;
+  hide?: boolean;
   raid?: any;
   setRaid?: any;
   tier?: any;
@@ -27,7 +28,8 @@ const Find = (props: {
   urlEvo?: any;
   setUrlEvo?: any;
   title?: string;
-  swap?: any;
+  swap?: boolean;
+  objective?: boolean;
 }) => {
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -35,8 +37,11 @@ const Find = (props: {
   const cardHeight = 65;
 
   const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const router = useSelector((state: RouterState) => state.router);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
-  const [id, setId] = useState(1);
+  const [id, setId] = useState(searching ? (props.objective ? (searching.obj ? searching.obj.id : 1) : searching.id) : 1);
+  const [form, setForm] = useState(null);
 
   const pokemonList = useRef(
     Object.values(pokeListName)
@@ -66,11 +71,13 @@ const Find = (props: {
 
   const getInfoPoke = (value: any) => {
     setId(value.id);
+    setForm(null);
     if (props.setId) {
       props.setId(value.id);
     }
     if (props.setName) {
-      props.setName(pokemonList.current.find((item: any) => item.id === value.id)?.name);
+      const findName = pokemonList.current.find((item: any) => item.id === value.id)?.name;
+      props.setName(findName);
     }
     if (props.clearStats) {
       props.clearStats();
@@ -184,13 +191,17 @@ const Find = (props: {
         <div>
           {pokemonList.current?.length > 0 && (
             <Fragment>
-              <Tools
+              <Form
+                router={router}
+                searching={searching}
                 hide={props.hide}
                 raid={props.raid}
                 setRaid={props.setRaid}
                 tier={props.tier}
                 setTier={props.setTier}
+                form={form}
                 setForm={props.setForm}
+                setFormOrigin={setForm}
                 count={pokemonList.current.length}
                 id={id}
                 name={pokemonList.current.find((item: any) => item.id === id)?.name}
@@ -201,6 +212,7 @@ const Find = (props: {
                 onSetPrev={decId}
                 onSetNext={incId}
                 setUrlEvo={props.setUrlEvo}
+                objective={props.objective}
               />
             </Fragment>
           )}

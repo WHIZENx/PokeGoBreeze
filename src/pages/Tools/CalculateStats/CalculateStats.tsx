@@ -20,7 +20,9 @@ import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 
 const Calculate = () => {
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
-  const [id, setId] = useState(1);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+
+  const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
 
   const [searchCP, setSearchCP]: any = useState('');

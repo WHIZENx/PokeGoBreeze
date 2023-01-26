@@ -23,8 +23,9 @@ import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 const FindBattle = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
-  const [id, setId] = useState(1);
+  const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: any = useState(null);
   const [maxCP, setMaxCP] = useState(0);
