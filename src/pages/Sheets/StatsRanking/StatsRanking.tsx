@@ -148,7 +148,7 @@ const StatsRanking = () => {
       .map((data, index) => {
         return {
           ...data,
-          rank: index + 1,
+          rank: id === 8 ? index + 1 : data[sortBy[0]].rank,
         };
       });
   };
