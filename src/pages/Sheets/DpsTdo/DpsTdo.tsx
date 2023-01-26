@@ -28,7 +28,9 @@ import { Link } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { setDPSSheetPage } from '../../../store/actions/options.action';
+import { RouterState } from '../../..';
 
 const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
   const a = rowA.pokemon.name.toLowerCase();
@@ -179,35 +181,56 @@ const columns: any = [
 ];
 
 const DpsTdo = () => {
+  const dispatch = useDispatch();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const optionStore = useSelector((state: RootStateOrAny) => state.options);
+  const router = useSelector((state: RouterState) => state.router);
+
   const types = Object.keys(data.typeEff);
 
   const [dpsTable, setDpsTable]: any = useState([]);
   const [dataFilter, setDataFilter]: any = useState([]);
-  const [searchTerm, setSearchTerm]: any = useState('');
+  const [searchTerm, setSearchTerm]: any = useState(optionStore?.dpsSheet?.searchTerm ?? '');
 
-  const [dataTargetPokemon, setDataTargetPokemon]: any = useState(null);
-  const [fmoveTargetPokemon, setFmoveTargetPokemon]: any = useState(null);
-  const [cmoveTargetPokemon, setCmoveTargetPokemon]: any = useState(null);
+  const [dataTargetPokemon, setDataTargetPokemon]: any = useState(optionStore?.dpsSheet?.dataTargetPokemon);
+  const [fmoveTargetPokemon, setFmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.fmoveTargetPokemon);
+  const [cmoveTargetPokemon, setCmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.cmoveTargetPokemon);
 
-  const [filters, setFilters] = useState({
-    match: false,
-    showEliteMove: true,
-    showShadow: true,
-    showMega: true,
-    enableShadow: false,
-    enableElite: false,
-    enableMega: false,
-    enableBest: false,
-    enableDelay: false,
-    releasedGO: true,
-    bestOf: 3,
-    IV_ATK: 15,
-    IV_DEF: 15,
-    IV_HP: 15,
-    POKEMON_LEVEL: 40,
-  });
+  const [defaultPage, setDefaultPage] = useState(
+    router.action === 'POP' && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
+  );
+  const [defaultRowPerPage, setDefaultRowPerPage] = useState(
+    router.action === 'POP' && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : 10
+  );
+  const [defaultSorted, setDefaultSorted] = useState(
+    router.action === 'POP' && optionStore?.dpsSheet?.defaultSorted
+      ? optionStore?.dpsSheet?.defaultSorted
+      : {
+          selectedColumn: 7,
+          sortDirection: 'desc',
+        }
+  );
+
+  const [filters, setFilters] = useState(
+    optionStore?.dpsSheet?.filters ?? {
+      match: false,
+      showEliteMove: true,
+      showShadow: true,
+      showMega: true,
+      enableShadow: false,
+      enableElite: false,
+      enableMega: false,
+      enableBest: false,
+      enableDelay: false,
+      releasedGO: true,
+      bestOf: 3,
+      IV_ATK: 15,
+      IV_DEF: 15,
+      IV_HP: 15,
+      POKEMON_LEVEL: 40,
+    }
+  );
 
   const {
     match,
@@ -238,7 +261,7 @@ const DpsTdo = () => {
   const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
 
   const [showSpinner, setShowSpinner]: any = useState(true);
-  const [selectTypes, setSelectTypes]: any = useState([]);
+  const [selectTypes, setSelectTypes]: any = useState(optionStore?.dpsSheet?.selectTypes ?? []);
 
   const addCPokeData = (
     dataList: {
@@ -508,6 +531,43 @@ const DpsTdo = () => {
     releasedGO,
   ]);
 
+  useEffect(() => {
+    dispatch(
+      setDPSSheetPage({
+        filters,
+        options,
+        selectTypes,
+        dataTargetPokemon,
+        fmoveTargetPokemon,
+        cmoveTargetPokemon,
+        searchTerm,
+        defaultPage,
+        defaultRowPerPage,
+        defaultSorted,
+      })
+    );
+  }, [
+    dataTargetPokemon,
+    fmoveTargetPokemon,
+    cmoveTargetPokemon,
+    searchTerm,
+    dpsTable,
+    match,
+    selectTypes,
+    showShadow,
+    showEliteMove,
+    showMega,
+    enableElite,
+    enableShadow,
+    enableMega,
+    enableBest,
+    bestOf,
+    releasedGO,
+    defaultPage,
+    defaultRowPerPage,
+    defaultSorted,
+  ]);
+
   const addTypeArr = (value: string) => {
     if (selectTypes.includes(value)) {
       return setSelectTypes([...selectTypes].filter((item) => item !== value));
@@ -643,6 +703,7 @@ const DpsTdo = () => {
                   <div className="input-group">
                     <span className="input-group-text">Target Pokémon</span>
                     <SelectPokemon
+                      pokemon={dataTargetPokemon}
                       selected={true}
                       setCurrentPokemon={setDataTargetPokemon}
                       setFMovePokemon={setFmoveTargetPokemon}
@@ -932,10 +993,25 @@ const DpsTdo = () => {
           data={dataFilter}
           noDataComponent={null}
           pagination={true}
-          defaultSortFieldId={7}
-          defaultSortAsc={false}
+          defaultSortFieldId={defaultSorted.selectedColumn}
+          defaultSortAsc={defaultSorted.selectedColumn === 'asc'}
           highlightOnHover={true}
           striped={true}
+          paginationDefaultPage={defaultPage}
+          paginationPerPage={defaultRowPerPage}
+          onChangePage={(page) => {
+            setDefaultPage(page);
+          }}
+          onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
+            setDefaultPage(currentPage);
+            setDefaultRowPerPage(currentRowsPerPage);
+          }}
+          onSort={(selectedColumn, sortDirection) => {
+            setDefaultSorted({
+              selectedColumn: selectedColumn.id as number,
+              sortDirection,
+            });
+          }}
         />
       </div>
     </Fragment>

@@ -167,9 +167,9 @@ const Pokemon = (props: {
       }
       const nameInfo = splitAndCapitalize(form ? isDefaultForm.form.name : data.name, '-', ' ');
       const formInfo = form ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
-      setFormName(props.router.action === 'POP' && props.searching ? props.searching.fullName : nameInfo);
+      setFormName(props.router?.action === 'POP' && props.searching ? props.searching.fullName : nameInfo);
       setReleased(checkReleased(data.id, nameInfo));
-      setForm(props.router.action === 'POP' && props.searching ? props.searching.form : formInfo);
+      setForm(props.router?.action === 'POP' && props.searching ? props.searching.form : formInfo);
       if (params.id) {
         document.title = `#${data.id} - ${nameInfo}`;
       }
@@ -628,7 +628,7 @@ const Pokemon = (props: {
                   onSetIDPoke={props.onSetIDPoke}
                   paramForm={
                     !searchParams.get('form') && props.searching
-                      ? props.first && props.router.action === 'POP'
+                      ? props.first && props.router?.action === 'POP'
                         ? props.searching.form
                         : ''
                       : searchParams.get('form') && searchParams.get('form')?.toLowerCase()

@@ -10,7 +10,7 @@ const initialize = {
   toolSearching: null,
 };
 
-const PageReducer = (state: any = initialize, action: any) => {
+const SearchingReducer = (state: any = initialize, action: any) => {
   switch (action.type) {
     case SET_POKEMON_MAIN_SEARCH:
       return {
@@ -37,4 +37,4 @@ const PageReducer = (state: any = initialize, action: any) => {
   }
 };
 
-export default PageReducer;
+export default SearchingReducer;

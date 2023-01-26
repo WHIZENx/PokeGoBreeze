@@ -131,7 +131,7 @@ const Form = (props: {
       if (props.searching) {
         const form = formDefault.find(
           (item: { form: { form_name: any } }) =>
-            item.form.form_name === (props.objective ? props.searching.obj.form : props.searching.form)
+            item.form.form_name === (props.objective ? (props.searching.obj ? props.searching.obj.form : '') : props.searching.form)
         );
         setCurrForm(form ?? isDefault ?? formDefault[0]);
         setPokeID(data.id);
