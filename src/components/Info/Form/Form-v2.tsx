@@ -99,6 +99,7 @@ const Form = ({
   const [statATK, setStatATK]: any = useState(null);
   const [statDEF, setStatDEF]: any = useState(null);
   const [statSTA, setStatSTA]: any = useState(null);
+  const [statProd, setStatProd]: any = useState(null);
 
   const filterFormName = useCallback((form: string, formStats: string) => {
     form = form === '' || form === 'standard' ? 'Normal' : form.includes('mega') ? form.toLowerCase() : capitalize(form);
@@ -203,6 +204,7 @@ const Form = ({
       setStatATK(filterFormList(currForm.form.form_name, stats.attack.ranking, idDefault, formList.length));
       setStatDEF(filterFormList(currForm.form.form_name, stats.defense.ranking, idDefault, formList.length));
       setStatSTA(filterFormList(currForm.form.form_name, stats.stamina.ranking, idDefault, formList.length));
+      setStatProd(filterFormList(currForm.form.form_name, stats.statProd.ranking, idDefault, formList.length));
       setPokeID(findDefaultForm() ? currForm.form.id : findFirst().form.id);
     }
   }, [
@@ -373,7 +375,7 @@ const Form = ({
           shiny_f={currForm && (currForm.form.sprites ? currForm.form.sprites.front_shiny_female : APIService.getPokeSprite(0))}
         />
       )}
-      <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} pokemonStats={stats} stats={dataPoke} />
+      <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} statProd={statProd} pokemonStats={stats} stats={dataPoke} />
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>

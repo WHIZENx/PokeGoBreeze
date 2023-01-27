@@ -268,6 +268,7 @@ export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => 
       name: value.slug,
       base_stats: value.baseStats,
       baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats.sta },
+      baseStatsProd: stats.atk * stats.def * stats.sta,
     };
   });
 };
@@ -502,16 +503,19 @@ export const checkRankAllAvailable = (
     atk: number;
     def: number;
     sta: number;
+    prod: number;
   }
 ) => {
   const data = {
     attackRank: null,
     defenseRank: null,
     staminaRank: null,
+    statProdRank: null,
   };
   const checkRankAtk = pokemonStats.attack.ranking.find((item: { [x: string]: any }) => item.attack === stats.atk);
   const checkRankDef = pokemonStats.defense.ranking.find((item: { [x: string]: any }) => item.defense === stats.def);
   const checkRankSta = pokemonStats.stamina.ranking.find((item: { [x: string]: any }) => item.stamina === stats.sta);
+  const checkRankProd = pokemonStats.statProd.ranking.find((item: { [x: string]: any }) => item.prod === stats.prod);
   if (checkRankAtk) {
     data.attackRank = checkRankAtk.rank;
   }
@@ -521,6 +525,10 @@ export const checkRankAllAvailable = (
   if (checkRankSta) {
     data.staminaRank = checkRankSta.rank;
   }
+  if (checkRankProd) {
+    data.statProdRank = checkRankProd.rank;
+  }
+
   return data;
 };
 

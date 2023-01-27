@@ -20,6 +20,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
   const [statATK, setStatATK]: any = useState(null);
   const [statDEF, setStatDEF]: any = useState(null);
   const [statSTA, setStatSTA]: any = useState(null);
+  const [statProd, setStatProd]: any = useState(null);
 
   const filterFormName = useCallback((form: string, formStats: string) => {
     form = form === '' ? 'Normal' : form.includes('mega') ? form.toLowerCase() : capitalize(form);
@@ -69,10 +70,12 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
       const formATK = filterFormList(stats.attack.ranking, id);
       const formDEF = filterFormList(stats.defense.ranking, id);
       const formSTA = filterFormList(stats.stamina.ranking, id);
+      const formProd = filterFormList(stats.statProd.ranking, id);
 
       setStatATK(raid && tier && !hide ? { attack: calculateRaidStat(formATK.attack, tier) } : formATK);
       setStatDEF(raid && tier && !hide ? { defense: calculateRaidStat(formDEF.defense, tier) } : formDEF);
       setStatSTA(raid && tier && !hide ? { stamina: RAID_BOSS_TIER[tier].sta } : formSTA);
+      setStatProd(raid && tier && !hide ? null : formProd);
       setCurrDataPoke(dataPoke.find((item: { id: any }) => item.id === id));
 
       if (formATK && formDEF && formSTA) {
@@ -178,7 +181,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
           </table>
         </div>
       ) : (
-        <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} pokemonStats={stats} stats={currDataPoke} />
+        <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} statProd={statProd} pokemonStats={stats} stats={currDataPoke} />
       )}
     </Fragment>
   );

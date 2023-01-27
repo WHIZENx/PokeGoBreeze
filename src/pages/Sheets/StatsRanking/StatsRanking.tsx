@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, convertName, capitalize, convertFormName } from '../../../util/Utils';
+import { splitAndCapitalize, convertName, capitalize } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import pokemonData from '../../../data/pokemon.json';
 import { useSelector, RootStateOrAny } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -24,10 +23,7 @@ const columnPokemon: any = [
   {
     name: 'Pokémon Name',
     selector: (row: { num: any; forme: string; name: string; sprite: string; baseSpecies: string }) => (
-      <Link
-        to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
-        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
-      >
+      <>
         <img
           height={48}
           alt="img-pokemon"
@@ -39,7 +35,7 @@ const columnPokemon: any = [
           }}
         />
         {splitAndCapitalize(row.name, '-', ' ')}
-      </Link>
+      </>
     ),
     minWidth: '200px',
   },
@@ -53,6 +49,7 @@ const columnPokemon: any = [
           width={25}
           height={25}
           alt="img-pokemon"
+          title={capitalize(value)}
           src={APIService.getTypeSprite(capitalize(value))}
         />
       )),
@@ -60,25 +57,25 @@ const columnPokemon: any = [
   },
   {
     name: 'ATK',
-    selector: (row: { atk: { attack: any } }) => row.atk.attack,
+    selector: (row: { atk: { attack: number } }) => row.atk.attack,
     sortable: true,
     width: '100px',
   },
   {
     name: 'DEF',
-    selector: (row: { def: { defense: any } }) => row.def.defense,
+    selector: (row: { def: { defense: number } }) => row.def.defense,
     sortable: true,
     width: '100px',
   },
   {
     name: 'STA',
-    selector: (row: { sta: { stamina: any } }) => row.sta.stamina,
+    selector: (row: { sta: { stamina: number } }) => row.sta.stamina,
     sortable: true,
     width: '100px',
   },
   {
     name: 'Stat Prod',
-    selector: (row: { statProd: any }) => row.statProd,
+    selector: (row: { statProd: { prod: number } }) => row.statProd.prod,
     sortable: true,
     width: '150px',
   },
@@ -96,7 +93,7 @@ const StatsRanking = () => {
   const conditionalRowStyles = [
     {
       when: (row: { slug: string }) => row.slug === select?.slug,
-      style: { backgroundColor: '#e3f2fd' },
+      style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
 
@@ -105,30 +102,25 @@ const StatsRanking = () => {
   const mappingData = (pokemon: any[]) => {
     return pokemon.map(
       (data: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) => {
+        const statsTag = calculateStatsByTag(data.baseStats, data.slug);
         return {
           ...data,
           atk: {
-            attack: calculateStatsByTag(data.baseStats, data.slug).atk,
-            rank: stats.attack.ranking.find(
-              (stat: { attack: number }) => stat.attack === calculateStatsByTag(data.baseStats, data.slug).atk
-            ).rank,
+            attack: statsTag.atk,
+            rank: stats.attack.ranking.find((stat: { attack: number }) => stat.attack === statsTag.atk).rank,
           },
           def: {
-            defense: calculateStatsByTag(data.baseStats, data.slug).def,
-            rank: stats.defense.ranking.find(
-              (stat: { defense: number }) => stat.defense === calculateStatsByTag(data.baseStats, data.slug).def
-            ).rank,
+            defense: statsTag.def,
+            rank: stats.defense.ranking.find((stat: { defense: number }) => stat.defense === statsTag.def).rank,
           },
           sta: {
-            stamina: calculateStatsByTag(data.baseStats, data.slug).sta,
-            rank: stats.stamina.ranking.find(
-              (stat: { stamina: number }) => stat.stamina === calculateStatsByTag(data.baseStats, data.slug).sta
-            ).rank,
+            stamina: statsTag.sta,
+            rank: stats.stamina.ranking.find((stat: { stamina: number }) => stat.stamina === statsTag.sta).rank,
           },
-          statProd:
-            calculateStatsByTag(data.baseStats, data.slug).atk *
-            calculateStatsByTag(data.baseStats, data.slug).def *
-            calculateStatsByTag(data.baseStats, data.slug).sta,
+          statProd: {
+            prod: statsTag.atk * statsTag.def * statsTag.sta,
+            rank: stats.statProd.ranking.find((stat: { prod: number }) => stat.prod === statsTag.atk * statsTag.def * statsTag.sta).rank,
+          },
         };
       }
     );
@@ -142,13 +134,15 @@ const StatsRanking = () => {
       sortBy = ['def', 'defense'];
     } else if (id === 7) {
       sortBy = ['sta', 'stamina'];
+    } else {
+      sortBy = ['statProd', 'prod'];
     }
     return pokemon
-      .sort((a: any, b: any) => (id !== 8 ? b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]] : b.statProd - a.statProd))
-      .map((data, index) => {
+      .sort((a: any, b: any) => b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]])
+      .map((data) => {
         return {
           ...data,
-          rank: id === 8 ? index + 1 : data[sortBy[0]].rank,
+          rank: data[sortBy[0]].rank,
         };
       });
   };
@@ -274,7 +268,7 @@ const StatsRanking = () => {
           </table>
         </div>
       </div>
-      <Stats statATK={select.atk} statDEF={select.def} statSTA={select.sta} pokemonStats={stats} />
+      <Stats statATK={select.atk} statDEF={select.def} statSTA={select.sta} statProd={select.statProd} pokemonStats={stats} />
       <DataTable
         columns={columnPokemon}
         data={pokemonList}
