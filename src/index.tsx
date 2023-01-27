@@ -12,12 +12,13 @@ import App from './App';
 import { ReduxRouterSelector, ReduxRouter } from '@lagunovsky/redux-react-router';
 import configureStore, { history } from './store';
 
+export type RouterState = ReturnType<typeof store.getState>;
+
 if (module.hot) {
   module.hot.accept();
 }
 
 const store = configureStore();
-export type RouterState = ReturnType<typeof store.getState>;
 const routerSelector: ReduxRouterSelector<RouterState> = (state) => state.router;
 
 ReactDOM.render(

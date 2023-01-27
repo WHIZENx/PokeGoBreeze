@@ -20,6 +20,7 @@ import { hideSpinner } from '../../../store/actions/spinner.action';
 import { setSearchMainPage } from '../../../store/actions/searching.action';
 
 const Form = ({
+  pokemonRouter,
   onChangeForm,
   setOnChangeForm,
   onSetReForm,
@@ -419,6 +420,7 @@ const Form = ({
               forme={currForm && currForm.form}
               formDefault={currForm && pokeID === currForm.form.id}
               eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}
+              pokemonRouter={pokemonRouter}
             />
           </div>
           <div className="col-xl" style={{ padding: 0 }}>

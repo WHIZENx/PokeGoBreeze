@@ -21,9 +21,10 @@ import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { getFormsGO } from '../../core/forms';
+import { RouterState } from '../..';
 
 const Pokemon = (props: {
-  router?: any;
+  prevRouter?: any;
   searching?: any;
   id?: any;
   onDecId?: any;
@@ -34,6 +35,7 @@ const Pokemon = (props: {
   setFirst?: any;
 }) => {
   const dispatch = useDispatch();
+  const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
@@ -125,26 +127,26 @@ const Pokemon = (props: {
           name: any;
         },
         defaultData: { weight: any; height: any };
-      let form: any = searchParams.get('form');
+      let formParams: any = searchParams.get('form');
 
-      if (form) {
-        if (data.id === 555 && form === 'galar') {
-          form += '-standard';
+      if (formParams) {
+        if (data.id === 555 && formParams === 'galar') {
+          formParams += '-standard';
         }
         defaultFrom = dataFromList.find((value) =>
           value.find(
             (item: { form: { form_name: string; name: string }; default_name: string }) =>
-              item.form.form_name === form.toLowerCase() || item.form.name === item.default_name + '-' + form.toLowerCase()
+              item.form.form_name === formParams.toLowerCase() || item.form.name === item.default_name + '-' + formParams.toLowerCase()
           )
         );
 
         if (defaultFrom) {
           isDefaultForm = defaultFrom[0];
           if (
-            isDefaultForm.form.form_name !== form.toLowerCase() &&
-            isDefaultForm.form.name !== isDefaultForm.default_name + '-' + form.toLowerCase()
+            isDefaultForm.form.form_name !== formParams.toLowerCase() &&
+            isDefaultForm.form.name !== isDefaultForm.default_name + '-' + formParams.toLowerCase()
           ) {
-            isDefaultForm = defaultFrom.find((value: { form: { form_name: string } }) => value.form.form_name === form.toLowerCase());
+            isDefaultForm = defaultFrom.find((value: { form: { form_name: string } }) => value.form.form_name === formParams.toLowerCase());
           }
         } else {
           defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: any } }) => item.form.is_default));
@@ -152,6 +154,9 @@ const Pokemon = (props: {
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
+      } else if (router.action === 'POP' && props.searching) {
+        defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: any } }) => item.form.is_default));
+        isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching.form);
       } else {
         defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: any } }) => item.form.is_default));
         isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
@@ -165,11 +170,14 @@ const Pokemon = (props: {
       if (!params.id) {
         setRegion(regionList[parseInt(data.generation.url.split('/')[6])]);
       }
-      const nameInfo = splitAndCapitalize(form ? isDefaultForm.form.name : data.name, '-', ' ');
-      const formInfo = form ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
-      setFormName(props.router?.action === 'POP' && props.searching ? props.searching.fullName : nameInfo);
+      const nameInfo =
+        router.action === 'POP' && props.searching
+          ? props.searching.fullName
+          : splitAndCapitalize(formParams ? isDefaultForm.form.name : data.name, '-', ' ');
+      const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
+      setFormName(nameInfo);
       setReleased(checkReleased(data.id, nameInfo));
-      setForm(props.router?.action === 'POP' && props.searching ? props.searching.form : formInfo);
+      setForm(router.action === 'POP' && props.searching ? props.searching.form : formInfo);
       if (params.id) {
         document.title = `#${data.id} - ${nameInfo}`;
       }
@@ -356,11 +364,15 @@ const Pokemon = (props: {
                         <div
                           className="d-flex justify-content-start align-items-center"
                           onClick={() => {
+                            if (router?.action === 'POP') {
+                              setFormName(null);
+                              router.action = null as any;
+                            }
+                            props.onDecId();
                             setForm(null);
                             if (props.first && props.setFirst) {
                               props.setFirst(false);
                             }
-                            props.onDecId();
                           }}
                           title={`#${data.id - 1} ${splitAndCapitalize((pokeListName as any)[data.id - 1].name, '-', ' ')}`}
                         >
@@ -395,11 +407,15 @@ const Pokemon = (props: {
                         <div
                           className="d-flex justify-content-end align-items-center"
                           onClick={() => {
+                            if (router?.action === 'POP') {
+                              setFormName(null);
+                              router.action = null as any;
+                            }
+                            props.onIncId();
                             setForm(null);
                             if (props.first && props.setFirst) {
                               props.setFirst(false);
                             }
-                            props.onIncId();
                           }}
                           title={`#${data.id + 1} ${splitAndCapitalize((pokeListName as any)[data.id + 1].name, '-', ' ')}`}
                         >
@@ -430,10 +446,14 @@ const Pokemon = (props: {
               </div>
               <div className={'element-bottom position-relative poke-container' + (props.isSearch ? '' : ' container')}>
                 <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-                  {!released && (
+                  {!released && formName && (
                     <Alert variant="danger">
                       <h5 className="text-danger" style={{ margin: 0 }}>
-                        * <b>{formName}</b> not released in Pokémon GO
+                        *{' '}
+                        <b>
+                          {splitAndCapitalize(convertName(formName.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
+                        </b>{' '}
+                        not released in Pokémon GO
                         <img
                           width={50}
                           height={50}
@@ -607,6 +627,7 @@ const Pokemon = (props: {
                   </div>
                 </div>
                 <Form
+                  pokemonRouter={router}
                   onChangeForm={onChangeForm}
                   setOnChangeForm={setOnChangeForm}
                   onSetReForm={setReForm}
@@ -628,7 +649,7 @@ const Pokemon = (props: {
                   onSetIDPoke={props.onSetIDPoke}
                   paramForm={
                     !searchParams.get('form') && props.searching
-                      ? props.first && props.router?.action === 'POP'
+                      ? props.first && router?.action === 'POP'
                         ? props.searching.form
                         : ''
                       : searchParams.get('form') && searchParams.get('form')?.toLowerCase()

@@ -143,7 +143,7 @@ const Search = () => {
           onIncId={incId}
           onDecId={decId}
           isSearch={true}
-          router={router}
+          prevRouter={router}
           searching={searching}
           first={first}
           setFirst={setFirst}
