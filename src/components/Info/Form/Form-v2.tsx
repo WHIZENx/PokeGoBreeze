@@ -20,6 +20,7 @@ import { hideSpinner } from '../../../store/actions/spinner.action';
 import { setSearchMainPage } from '../../../store/actions/searching.action';
 
 const Form = ({
+  pokemonRouter,
   onChangeForm,
   setOnChangeForm,
   onSetReForm,
@@ -98,6 +99,7 @@ const Form = ({
   const [statATK, setStatATK]: any = useState(null);
   const [statDEF, setStatDEF]: any = useState(null);
   const [statSTA, setStatSTA]: any = useState(null);
+  const [statProd, setStatProd]: any = useState(null);
 
   const filterFormName = useCallback((form: string, formStats: string) => {
     form = form === '' || form === 'standard' ? 'Normal' : form.includes('mega') ? form.toLowerCase() : capitalize(form);
@@ -202,6 +204,7 @@ const Form = ({
       setStatATK(filterFormList(currForm.form.form_name, stats.attack.ranking, idDefault, formList.length));
       setStatDEF(filterFormList(currForm.form.form_name, stats.defense.ranking, idDefault, formList.length));
       setStatSTA(filterFormList(currForm.form.form_name, stats.stamina.ranking, idDefault, formList.length));
+      setStatProd(filterFormList(currForm.form.form_name, stats.statProd.ranking, idDefault, formList.length));
       setPokeID(findDefaultForm() ? currForm.form.id : findFirst().form.id);
     }
   }, [
@@ -372,7 +375,7 @@ const Form = ({
           shiny_f={currForm && (currForm.form.sprites ? currForm.form.sprites.front_shiny_female : APIService.getPokeSprite(0))}
         />
       )}
-      <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} pokemonStats={stats} stats={dataPoke} />
+      <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} statProd={statProd} pokemonStats={stats} stats={dataPoke} />
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
@@ -419,6 +422,7 @@ const Form = ({
               forme={currForm && currForm.form}
               formDefault={currForm && pokeID === currForm.form.id}
               eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}
+              pokemonRouter={pokemonRouter}
             />
           </div>
           <div className="col-xl" style={{ padding: 0 }}>

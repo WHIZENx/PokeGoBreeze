@@ -64,6 +64,7 @@ const columnPokemon: any = [
           width={25}
           height={25}
           alt="img-pokemon"
+          title={capitalize(value)}
           src={APIService.getTypeSprite(capitalize(value))}
         />
       )),

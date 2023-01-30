@@ -39,7 +39,7 @@ const theme = createTheme({
   },
 } as any);
 
-const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
+const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter }: any) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
   const [arrEvoList, setArrEvoList]: any = useState([]);
 
@@ -691,6 +691,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
                       <div
                         className="select-evo"
                         onClick={() => {
+                          if (pokemonRouter?.action === 'POP') {
+                            pokemonRouter.action = null as any;
+                          }
                           handlePokeID(value.id);
                         }}
                         title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}

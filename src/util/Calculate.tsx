@@ -4,7 +4,7 @@ import {
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,
   DEFAULT_ENEMY_ATK_DELAY,
-  DEFAULT_ENERYGY_PER_HP_LOST,
+  DEFAULT_ENERGY_PER_HP_LOST,
   DEFAULT_POKEMON_DEF_OBJ,
   DEFAULT_POKEMON_SHADOW,
   DEFAULT_TRAINER_FRIEND,
@@ -100,15 +100,15 @@ export const calBaseSTA = (stats: any, nerf: boolean) => {
   }
 };
 
-export const sortStatsPokemon = (states: any[]) => {
+export const sortStatsPokemon = (stats: any[]) => {
   const attackRanking = Array.from(
     new Set(
-      states
+      stats
         .sort(
           (a: { baseStatsPokeGo: { attack: number } }, b: { baseStatsPokeGo: { attack: number } }) =>
             a.baseStatsPokeGo.attack - b.baseStatsPokeGo.attack
         )
-        .map((item: { baseStatsPokeGo: { attack: any } }) => {
+        .map((item: { baseStatsPokeGo: { attack: number } }) => {
           return item.baseStatsPokeGo.attack;
         })
     )
@@ -116,7 +116,7 @@ export const sortStatsPokemon = (states: any[]) => {
 
   const minATK = Math.min(...attackRanking);
   const maxATK = Math.max(...attackRanking);
-  const attackStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { attack: any } }) => {
+  const attackStats = stats.map((item: { id: number; name: string; baseStatsPokeGo: { attack: number } }) => {
     return {
       id: item.id,
       form: item.name.split('-')[1] ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
@@ -127,12 +127,12 @@ export const sortStatsPokemon = (states: any[]) => {
 
   const defenseRanking = Array.from(
     new Set(
-      states
+      stats
         .sort(
           (a: { baseStatsPokeGo: { defense: number } }, b: { baseStatsPokeGo: { defense: number } }) =>
             a.baseStatsPokeGo.defense - b.baseStatsPokeGo.defense
         )
-        .map((item: { baseStatsPokeGo: { defense: any } }) => {
+        .map((item: { baseStatsPokeGo: { defense: number } }) => {
           return item.baseStatsPokeGo.defense;
         })
     )
@@ -140,7 +140,7 @@ export const sortStatsPokemon = (states: any[]) => {
 
   const minDEF = Math.min(...defenseRanking);
   const maxDEF = Math.max(...defenseRanking);
-  const defenseStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { defense: any } }) => {
+  const defenseStats = stats.map((item: { id: number; name: string; baseStatsPokeGo: { defense: number } }) => {
     return {
       id: item.id,
       form: item.name.split('-')[1] ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
@@ -151,12 +151,12 @@ export const sortStatsPokemon = (states: any[]) => {
 
   const staminaRanking = Array.from(
     new Set(
-      states
+      stats
         .sort(
           (a: { baseStatsPokeGo: { stamina: number } }, b: { baseStatsPokeGo: { stamina: number } }) =>
             a.baseStatsPokeGo.stamina - b.baseStatsPokeGo.stamina
         )
-        .map((item: { baseStatsPokeGo: { stamina: any } }) => {
+        .map((item: { baseStatsPokeGo: { stamina: number } }) => {
           return item.baseStatsPokeGo.stamina;
         })
     )
@@ -164,12 +164,33 @@ export const sortStatsPokemon = (states: any[]) => {
 
   const minSTA = Math.min(...staminaRanking);
   const maxSTA = Math.max(...staminaRanking);
-  const staminaStats = states.map((item: { id: any; name: string; baseStatsPokeGo: { stamina: any } }) => {
+  const staminaStats = stats.map((item: { id: number; name: string; baseStatsPokeGo: { stamina: number } }) => {
     return {
       id: item.id,
       form: item.name.split('-')[1] ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
       stamina: item.baseStatsPokeGo.stamina,
       rank: staminaRanking.length - staminaRanking.indexOf(item.baseStatsPokeGo.stamina),
+    };
+  });
+
+  const prodRanking = Array.from(
+    new Set(
+      stats
+        .sort((a: { baseStatsProd: number }, b: { baseStatsProd: number }) => a.baseStatsProd - b.baseStatsProd)
+        .map((item: { baseStatsProd: number }) => {
+          return item.baseStatsProd;
+        })
+    )
+  );
+
+  const minPROD = Math.min(...prodRanking);
+  const maxPROD = Math.max(...prodRanking);
+  const prodStats = stats.map((item: { id: number; name: string; baseStatsProd: number }) => {
+    return {
+      id: item.id,
+      form: item.name.split('-')[1] ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      prod: item.baseStatsProd,
+      rank: prodRanking.length - prodRanking.indexOf(item.baseStatsProd),
     };
   });
 
@@ -194,6 +215,13 @@ export const sortStatsPokemon = (states: any[]) => {
       max_rank: staminaRanking.length,
       min_stats: minSTA,
       max_stats: maxSTA,
+    },
+    statProd: {
+      ranking: prodStats,
+      min_rank: 1,
+      max_rank: prodRanking.length,
+      min_stats: minPROD,
+      max_stats: maxPROD,
     },
   };
 };
@@ -736,7 +764,7 @@ export const calculateAvgDPS = (
   if (FDPS > CDPS) {
     DPS = DPS0;
   } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERYGY_PER_HP_LOST - x / HP) * y);
+    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / HP) * y);
   }
   return Math.max(FDPS, DPS);
 };
@@ -928,7 +956,7 @@ export const calculateBattleDPS = (
   if (FDPS > CDPS) {
     DPS = DPS0;
   } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERYGY_PER_HP_LOST - x / Attacker.hp) * DPSDef);
+    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / Attacker.hp) * DPSDef);
   }
   DPS = Math.max(FDPS, DPS);
 
@@ -971,7 +999,7 @@ export const calculateBattleDPS = (
     if (FDPS > CDPSSec) {
       DPSSec = DPS0Sec;
     } else {
-      DPSSec = Math.max(0, DPS0Sec + ((CDPSSec - FDPS) / (CEPSSec + FEPS)) * (DEFAULT_ENERYGY_PER_HP_LOST - xSec / Attacker.hp) * DPSDef);
+      DPSSec = Math.max(0, DPS0Sec + ((CDPSSec - FDPS) / (CEPSSec + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - xSec / Attacker.hp) * DPSDef);
     }
     DPSSec = Math.max(FDPS, DPSSec);
   }

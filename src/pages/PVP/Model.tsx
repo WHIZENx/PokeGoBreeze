@@ -22,7 +22,6 @@ import BrokenImageIcon from '@mui/icons-material/BrokenImage';
 import SpokeIcon from '@mui/icons-material/Spoke';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import PersonIcon from '@mui/icons-material/Person';
-import { Candy } from '../../core/models/candy';
 
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';
@@ -120,7 +119,6 @@ export const Keys = (
 
 export const OverAllStats = (
   data: any,
-  candyData: Candy[],
   statsRanking: React.MutableRefObject<{
     attack: {
       ranking: { id: any; form: string; attack: any; rank: number }[];
@@ -138,6 +136,13 @@ export const OverAllStats = (
     };
     stamina: {
       ranking: { id: any; form: string; stamina: any; rank: number }[];
+      min_rank: number;
+      max_rank: number;
+      min_stats: number;
+      max_stats: number;
+    };
+    statProd: {
+      ranking: { id: any; form: string; prod: any; rank: number }[];
       min_rank: number;
       max_rank: number;
       min_stats: number;
@@ -219,7 +224,7 @@ export const OverAllStats = (
           <h5>
             <b>Overall Stats</b>
           </h5>
-          <Stats statATK={data.atk} statDEF={data.def} statSTA={data.sta} pokemonStats={statsRanking as any} />
+          <Stats statATK={data.atk} statDEF={data.def} statSTA={data.sta} statProd={data.prod} pokemonStats={statsRanking as any} />
         </div>
         <div>
           <h5>
