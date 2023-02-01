@@ -291,6 +291,7 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             evolution: string;
             form: string;
             candyCost: any;
+            obPurificationEvolutionCandyCost: any;
             genderRequirement: any;
             kmBuddyDistanceRequirement: any;
             mustBeBuddy: any;
@@ -319,6 +320,9 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             dataEvo.evo_to_name = name.replace('_NORMAL', '');
             if (evo.candyCost) {
               dataEvo.candyCost = evo.candyCost;
+            }
+            if (evo.obPurificationEvolutionCandyCost) {
+              dataEvo.purificationEvoCandyCost = evo.obPurificationEvolutionCandyCost;
             }
             dataEvo.quest = {};
             if (evo.genderRequirement) {

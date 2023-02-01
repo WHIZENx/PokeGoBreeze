@@ -68,7 +68,7 @@ const CatchChance = () => {
     silverPinaps: false,
     shadow: false,
   });
-  const { advance, curveBall, razzBerry, goldenRazzBerry, silverPinaps } = options;
+  const { advance, curveBall, razzBerry, goldenRazzBerry, silverPinaps, shadow } = options;
 
   const pokeballType = [
     { name: 'Poke Ball', threshold: POKE_BALL_INC_CHANCE },
@@ -96,7 +96,7 @@ const CatchChance = () => {
     if (!advance && data && medal) {
       calculateCatch();
     }
-  }, [advance, medal, level, curveBall, razzBerry, goldenRazzBerry, silverPinaps]);
+  }, [advance, medal, level, curveBall, razzBerry, goldenRazzBerry, silverPinaps, shadow]);
 
   useEffect(() => {
     if (data && medal) {
@@ -151,10 +151,15 @@ const CatchChance = () => {
           (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
           (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
           (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
-        const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
+        const prob = calculateCatchChance(
+          data?.obShadowFormBaseCaptureRate && options.shadow ? data?.obShadowFormBaseCaptureRate : data?.baseCaptureRate,
+          level,
+          multiplier
+        );
         result[ball.name.toLowerCase().replace(' ball', '')][type.name.toLowerCase().replace(' throw', '')] = Math.min(prob * 100, 100);
       });
     });
+
     setData({
       ...data,
       result,
@@ -414,6 +419,13 @@ const CatchChance = () => {
                 />
               </div>
               <div className="d-flex w-100 element-top justify-content-center" style={{ gap: 20 }}>
+                {data?.baseFleeRate && (
+                  <div className="w-25 text-center d-inline-block">
+                    <h1>FLEE</h1>
+                    <hr className="w-100" />
+                    <h5>{data?.baseFleeRate * 100}%</h5>
+                  </div>
+                )}
                 <div className="w-25 text-center d-inline-block">
                   <h1>CP</h1>
                   <hr className="w-100" />
@@ -425,8 +437,49 @@ const CatchChance = () => {
                   <h5>{level}</h5>
                 </div>
               </div>
+              <div className="d-flex w-100 element-top justify-content-center" style={{ gap: 20 }}>
+                {data?.baseFleeRate && (
+                  <div className="w-25 text-center d-inline-block">
+                    <h1>Attack</h1>
+                    <hr className="w-100" />
+                    <h5>
+                      {(data?.obShadowFormAttackProbability && shadow ? data?.obShadowFormAttackProbability : data?.attackProbability) *
+                        100}
+                      %
+                    </h5>
+                    <p>Time: {data?.attackTimerS / 10} sec</p>
+                  </div>
+                )}
+                <div className="w-25 text-center d-inline-block">
+                  <h1>Dodge</h1>
+                  <hr className="w-100" />
+                  <h5>
+                    {(data?.obShadowFormDodgeProbability && shadow ? data?.obShadowFormDodgeProbability : data?.dodgeProbability) * 100}%
+                  </h5>
+                  <p>Time: {data?.dodgeDurationS / 10} sec</p>
+                </div>
+              </div>
             </div>
           </div>
+          {data?.obShadowFormBaseCaptureRate && (
+            <div className="d-flex justify-content-center">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={shadow}
+                    onChange={(event, check) => {
+                      setOptions({ ...options, shadow: check });
+                    }}
+                  />
+                }
+                label={
+                  <span>
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> Shadow
+                  </span>
+                }
+              />
+            </div>
+          )}
           <div className="d-flex justify-content-center">
             <FormControlLabel
               control={
@@ -511,6 +564,7 @@ const CatchChance = () => {
               </div>
             </Fragment>
           )}
+          {shadow && <></>}
         </div>
       </div>
       <hr />
