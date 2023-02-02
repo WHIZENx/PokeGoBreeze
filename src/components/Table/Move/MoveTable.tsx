@@ -11,7 +11,7 @@ import { Tab, Tabs } from 'react-bootstrap';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any }) => {
+const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; id?: number }) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [move, setMove]: any = useState({ data: [] });
   const [moveOrigin, setMoveOrigin]: any = useState(null);
@@ -49,64 +49,49 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     const combatPoke = data.pokemonCombat.filter((item: { id: number; name: string }) =>
       props.form?.id
         ? item.id === parseInt(props.data.species.url.split('/')[6])
-        : item.name === props.form?.name.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
+        : item.name ===
+          (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
     );
-    if (combatPoke && combatPoke.length === 1) {
+    if (combatPoke?.length === 1) {
       filterMoveType(combatPoke[0]);
-      return setMove(
-        rankMove(
-          data.options,
-          data.typeEff,
-          data.weatherBoost,
-          data.combat,
-          combatPoke[0],
-          props.statATK,
-          props.statDEF,
-          props.statSTA,
-          props.data.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
-        )
+      return setMove(setRankMove(combatPoke[0]));
+    } else if (combatPoke?.length === 0) {
+      const combatPoke = data.pokemonCombat.filter(
+        (item: { id: number; name: string; baseSpecies: string }) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
       );
+      filterMoveType(combatPoke[0]);
+      return setMove(setRankMove(combatPoke[0]));
     }
 
-    const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form.name));
+    const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form?.name ?? props.form));
     if (result === undefined) {
       filterMoveType(combatPoke.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies));
-      setMove(
-        rankMove(
-          data.options,
-          data.typeEff,
-          data.weatherBoost,
-          data.combat,
-          combatPoke[0],
-          props.statATK,
-          props.statDEF,
-          props.statSTA,
-          props.data.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
-        )
-      );
+      setMove(setRankMove(combatPoke[0]));
     } else {
       filterMoveType(result);
-      setMove(
-        rankMove(
-          data.options,
-          data.typeEff,
-          data.weatherBoost,
-          data.combat,
-          result,
-          props.statATK,
-          props.statDEF,
-          props.statSTA,
-          props.form.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
-        )
-      );
+      setMove(setRankMove(result));
     }
-  }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
+  }, [data, props.data, props.statATK, props.statDEF, props.statSTA]);
+
+  const setRankMove = (result: any) => {
+    return rankMove(
+      data.options,
+      data.typeEff,
+      data.weatherBoost,
+      data.combat,
+      result,
+      props.statATK,
+      props.statDEF,
+      props.statSTA,
+      props.data.types.map((item: any) => capitalize(item?.type?.name ?? item))
+    );
+  };
 
   useEffect(() => {
-    if (props.data && props.data.types) {
+    if (props.form) {
       findMove();
     }
-  }, [findMove, props.data]);
+  }, [findMove, props.form]);
 
   const renderBestMovesetTable = (value: any, max: number, type: string) => {
     return (

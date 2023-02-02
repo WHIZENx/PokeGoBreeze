@@ -7,7 +7,7 @@ import { useSelector, RootStateOrAny } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
-import loadingImg from '../../../assets/loading.png';
+import TableMove from '../../../components/Table/Move/MoveTable';
 
 const columnPokemon: any = [
   {
@@ -98,6 +98,7 @@ const StatsRanking = () => {
   ];
 
   const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: any[]) => {
     return pokemon.map(
@@ -153,31 +154,26 @@ const StatsRanking = () => {
   );
 
   const [select, setSelect]: any = useState(pokemonList[0]);
-  const [showSpinner, setShowSpinner] = useState(true);
 
   useEffect(() => {
     document.title = `Stats Ranking`;
   }, []);
 
   useEffect(() => {
-    if (showSpinner) {
-      setShowSpinner(false);
-    }
-  }, [select, sortId]);
+    const timeOutId = setTimeout(() => {
+      setPokemonList(
+        pokemonList.filter(
+          (pokemon: { num: number; name: string }) =>
+            pokemon.num.toString().includes(search) ||
+            splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase())
+        )
+      );
+    }, 100);
+    return () => clearTimeout(timeOutId);
+  }, [search]);
 
   return (
     <div className="element-bottom position-relative poke-container container">
-      <div className="loading-group-spin-table" style={{ display: !showSpinner ? 'none' : 'block' }} />
-      <div className="loading-spin-table text-center" style={{ display: !showSpinner ? 'none' : 'block' }}>
-        <img className="loading" width={64} height={64} alt="img-pokemon" src={loadingImg} />
-        <span className="caption text-black" style={{ fontSize: 18 }}>
-          <b>
-            Loading<span id="p1">.</span>
-            <span id="p2">.</span>
-            <span id="p3">.</span>
-          </b>
-        </span>
-      </div>
       <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
         <div className="d-inline-block img-desc">
           <img
@@ -266,9 +262,27 @@ const StatsRanking = () => {
               </tr>
             </tbody>
           </table>
+          <TableMove
+            data={select}
+            id={select?.num}
+            form={select?.slug}
+            statATK={select?.atk.attack}
+            statDEF={select?.def.defense}
+            statSTA={select?.sta.stamina}
+          />
         </div>
       </div>
       <Stats statATK={select.atk} statDEF={select.def} statSTA={select.sta} statProd={select.statProd} pokemonStats={stats} />
+      <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
+        <span className="input-group-text">Find Pokemon</span>
+        <input
+          type="text"
+          className="form-control input-search"
+          placeholder="Enter Name or ID"
+          value={search}
+          onInput={(e: any) => setSearch(e.target.value)}
+        />
+      </div>
       <DataTable
         columns={columnPokemon}
         data={pokemonList}
@@ -278,13 +292,11 @@ const StatsRanking = () => {
         highlightOnHover={true}
         onRowClicked={(row: any) => {
           if (select.name !== row.name) {
-            setShowSpinner(true);
             setSelect(row);
           }
         }}
         onSort={(rows: any) => {
           if (sortId !== rows.id) {
-            setShowSpinner(true);
             setPokemonList(sortRanking(pokemonList, rows.id));
             setSortId(rows.id);
           }
