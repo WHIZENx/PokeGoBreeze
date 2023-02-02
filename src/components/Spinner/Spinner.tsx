@@ -36,6 +36,7 @@ const Spinner = () => {
                       Loading<span id="p1">.</span>
                       <span id="p2">.</span>
                       <span id="p3">.</span>
+                      {spinner.message && <p className="spinner-msg">{spinner.message}</p>}
                     </Fragment>
                   )}
                 </b>
