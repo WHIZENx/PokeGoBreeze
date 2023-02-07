@@ -9,6 +9,8 @@ import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
 
+import './StatsRanking.css';
+
 const columnPokemon: any = [
   {
     name: 'Ranking',
@@ -174,102 +176,111 @@ const StatsRanking = () => {
 
   return (
     <div className="element-bottom position-relative poke-container container">
-      <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-        <div className="d-inline-block img-desc">
-          <img
-            className="pokemon-main-sprite"
-            style={{ verticalAlign: 'baseline' }}
-            alt="img-full-pokemon"
-            src={APIService.getPokeFullSprite(select.num, splitAndCapitalize(select.forme, '-', '-'))}
-          />
+      <div className="w-100 d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
+        <div className="d-flex justify-content-center w-100">
+          <div className="d-inline-block img-desc">
+            <img
+              className="pokemon-main-sprite"
+              style={{ verticalAlign: 'baseline' }}
+              alt="img-full-pokemon"
+              src={APIService.getPokeFullSprite(select.num, splitAndCapitalize(select.forme, '-', '-'))}
+            />
+          </div>
         </div>
-        <div className="d-inline-block">
-          <table className="table-info table-desc">
-            <thead />
-            <tbody>
-              <tr>
-                <td>
-                  <h5 className="d-flex">ID</h5>
-                </td>
-                <td colSpan={2}>
-                  <h5 className="d-flex">
-                    <b>#{select.num}</b>
-                  </h5>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h5 className="d-flex">Name</h5>
-                </td>
-                <td colSpan={2}>
-                  <h5 className="d-flex">
-                    <b>{splitAndCapitalize(convertName(select.name.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}</b>
-                  </h5>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h5 className="d-flex">Generation</h5>
-                </td>
-                <td colSpan={2}>
-                  <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                    <b>{genRoman(select.gen)}</b> <span className="text-gen">{`Gen ${select.gen}`}</span>
-                  </h5>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h5 className="d-flex">Region</h5>
-                </td>
-                <td colSpan={2}>
-                  <h5 className="d-flex">{splitAndCapitalize(select.region, '-', ' ')}</h5>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h5 className="d-flex">Version</h5>
-                </td>
-                <td colSpan={2}>
-                  <h5 className="d-flex">{select.version && splitAndCapitalize(select.version.replace(' Go', ' GO'), '-', ' ')}</h5>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h5 className="d-flex">Body</h5>
-                </td>
-                <td colSpan={2} style={{ padding: 0 }}>
-                  <div className="d-flex align-items-center first-extra-col h-100" style={{ float: 'left', width: '50%' }}>
-                    <div>
-                      <div className="d-inline-block" style={{ marginRight: 5 }}>
-                        <h6>Weight:</h6>
-                      </div>
-                      <div className="d-inline-block">
-                        <h6>{select.weightkg} kg</h6>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="d-flex align-items-center h-100" style={{ float: 'left', width: '50%' }}>
-                    <div>
-                      <div className="d-inline-block" style={{ marginRight: 5 }}>
-                        <h6>Height:</h6>
-                      </div>
-                      <div className="d-inline-block">
-                        <h6>{select.heightm} m</h6>
+        <div className="row w-100 element-top" style={{ margin: 0 }}>
+          <div className="col-xl-5" style={{ padding: 0 }}>
+            <table className="table-info table-desc table-stats-ranking">
+              <thead />
+              <tbody>
+                <tr>
+                  <td>
+                    <h5 className="d-flex">ID</h5>
+                  </td>
+                  <td colSpan={2}>
+                    <h5 className="d-flex">
+                      <b>#{select.num}</b>
+                    </h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <h5 className="d-flex">Name</h5>
+                  </td>
+                  <td colSpan={2}>
+                    <h5 className="d-flex">
+                      <b>
+                        {splitAndCapitalize(convertName(select.name.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
+                      </b>
+                    </h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <h5 className="d-flex">Generation</h5>
+                  </td>
+                  <td colSpan={2}>
+                    <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
+                      <b>{genRoman(select.gen)}</b> <span className="text-gen">{`Gen ${select.gen}`}</span>
+                    </h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <h5 className="d-flex">Region</h5>
+                  </td>
+                  <td colSpan={2}>
+                    <h5 className="d-flex">{splitAndCapitalize(select.region, '-', ' ')}</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <h5 className="d-flex">Version</h5>
+                  </td>
+                  <td colSpan={2}>
+                    <h5 className="d-flex">{select.version && splitAndCapitalize(select.version.replace(' Go', ' GO'), '-', ' ')}</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <h5 className="d-flex">Body</h5>
+                  </td>
+                  <td colSpan={2} style={{ padding: 0 }}>
+                    <div className="d-flex align-items-center first-extra-col h-100" style={{ float: 'left', width: '50%' }}>
+                      <div>
+                        <div className="d-inline-block" style={{ marginRight: 5 }}>
+                          <h6>Weight:</h6>
+                        </div>
+                        <div className="d-inline-block">
+                          <h6>{select.weightkg} kg</h6>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <TableMove
-            data={select}
-            id={select?.num}
-            form={select?.slug}
-            statATK={select?.atk.attack}
-            statDEF={select?.def.defense}
-            statSTA={select?.sta.stamina}
-          />
+                    <div className="d-flex align-items-center h-100" style={{ float: 'left', width: '50%' }}>
+                      <div>
+                        <div className="d-inline-block" style={{ marginRight: 5 }}>
+                          <h6>Height:</h6>
+                        </div>
+                        <div className="d-inline-block">
+                          <h6>{select.heightm} m</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="col-xl-7" style={{ padding: 0 }}>
+            <TableMove
+              data={select}
+              id={select?.num}
+              form={select?.slug}
+              statATK={select?.atk.attack}
+              statDEF={select?.def.defense}
+              statSTA={select?.sta.stamina}
+              maxHeight={400}
+            />
+          </div>
         </div>
       </div>
       <Stats statATK={select.atk} statDEF={select.def} statSTA={select.sta} statProd={select.statProd} pokemonStats={stats} />

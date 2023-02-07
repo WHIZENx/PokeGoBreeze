@@ -11,7 +11,7 @@ import { Tab, Tabs } from 'react-bootstrap';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; id?: number }) => {
+const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; id?: number; maxHeight?: number | string }) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [move, setMove]: any = useState({ data: [] });
   const [moveOrigin, setMoveOrigin]: any = useState(null);
@@ -193,7 +193,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     <Tabs defaultActiveKey="movesList" className="lg-2">
       <Tab eventKey="movesList" title="Moves List">
         <div className="row w-100" style={{ margin: 0, border: '2px solid #b8d4da', background: '#f1ffff' }}>
-          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-movesets">
               <colgroup className="main-move" />
               <thead>
@@ -204,7 +204,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               <tbody>{moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}</tbody>
             </table>
           </div>
-          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
               <thead>
@@ -224,7 +224,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       </Tab>
       <Tab eventKey="bestEffList" title="Best Moves List">
         <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
               <colgroup className="main-move" />
@@ -276,7 +276,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               </tbody>
             </table>
           </div>
-          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
               <colgroup className="main-move" />
