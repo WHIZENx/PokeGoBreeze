@@ -155,7 +155,7 @@ module.exports = {
         use: ["ts-loader"],
       },
       {
-        test: /\.css$/i,
+        test: /\.s?css$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
