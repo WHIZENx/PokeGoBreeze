@@ -55,7 +55,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     if (combatPoke?.length === 1) {
       filterMoveType(combatPoke[0]);
       return setMove(setRankMove(combatPoke[0]));
-    } else if (combatPoke?.length === 0) {
+    } else if (combatPoke?.length === 0 && props.id) {
       const combatPoke = data.pokemonCombat.filter(
         (item: { id: number; name: string; baseSpecies: string }) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
       );
@@ -71,7 +71,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       filterMoveType(result);
       setMove(setRankMove(result));
     }
-  }, [data, props.data, props.statATK, props.statDEF, props.statSTA]);
+  }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
   const setRankMove = (result: any) => {
     return rankMove(
