@@ -44,7 +44,7 @@ module.exports = {
       files: ['./src/**/*.{ts,tsx}']
     }),
     new StylelintPlugin({
-      files: ['./src/**/*.css']
+      files: ['./src/**/*.scss']
     }),
     new WebpackFavicons({
       src: 'src/assets/pokedex.png',

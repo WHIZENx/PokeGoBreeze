@@ -46,7 +46,7 @@ module.exports = {
       failOnWarning: true
     }),
     new StylelintPlugin({
-      files: ['./src/**/*.css'],
+      files: ['./src/**/*.scss'],
       failOnWarning: true
     }),
     new WebpackFavicons({
