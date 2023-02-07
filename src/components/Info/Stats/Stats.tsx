@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
 
-import './Stats.css';
+import './Stats.scss';
 
 const Stats = (props: {
   pokemonStats: {

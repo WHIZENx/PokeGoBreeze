@@ -5,7 +5,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import APIService from '../../../services/API.service';
 
-import './Leagues.css';
+import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';

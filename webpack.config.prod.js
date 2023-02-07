@@ -179,6 +179,15 @@ module.exports = {
                   }
               }
             },
+            {
+              loader: 'sass-loader',
+              options: {
+                sassOptions: {
+                  indentWidth: 2,
+                },
+                sourceMap: true,
+              },
+            },
         ]
       },
       {

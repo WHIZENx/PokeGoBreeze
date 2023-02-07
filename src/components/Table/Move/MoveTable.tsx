@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { capitalize, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { rankMove } from '../../../util/Calculate';
 
-import './MoveTable.css';
+import './MoveTable.scss';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { RootStateOrAny, useSelector } from 'react-redux';

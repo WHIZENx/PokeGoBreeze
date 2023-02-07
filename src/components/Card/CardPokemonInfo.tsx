@@ -3,7 +3,7 @@ import { computeBgType } from '../../util/Compute';
 import { convertFormName, splitAndCapitalize } from '../../util/Utils';
 import ProgressBar from '../Sprites/ProgressBar/ProgressBar';
 import TypeInfo from '../Sprites/Type/Type';
-import './CardPokemonInfo.css';
+import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';

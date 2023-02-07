@@ -1,6 +1,6 @@
 import pokemonData from '../../../data/pokemon.json';
 
-import '../PVP.css';
+import '../PVP.scss';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 
 import { capitalize, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';

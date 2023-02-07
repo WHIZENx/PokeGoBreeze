@@ -7,7 +7,7 @@ import { hideSpinner } from './store/actions/spinner.action';
 import APIService from './services/API.service';
 // import importedComponent from 'react-imported-component';
 
-import './App.css';
+import './App.scss';
 
 import NavbarComponent from './components/Navbar';
 // import FooterComponent from './components/Footer'

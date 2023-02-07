@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import Affect from './Affect';
 import Effect from './Effect';
 
-import './Weather.css';
+import './Weather.scss';
 import { useSelector, RootStateOrAny } from 'react-redux';
 
 const Weather = () => {

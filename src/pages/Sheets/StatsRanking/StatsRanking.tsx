@@ -9,7 +9,7 @@ import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
 
-import './StatsRanking.css';
+import './StatsRanking.scss';
 
 const columnPokemon: any = [
   {

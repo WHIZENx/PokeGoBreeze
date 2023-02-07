@@ -2,7 +2,7 @@ import React from 'react';
 import APIService from '../../../services/API.service';
 import { capitalize } from '../../../util/Utils';
 
-import './Type.css';
+import './Type.scss';
 
 const TypeInfo = (props: {
   arr: any;

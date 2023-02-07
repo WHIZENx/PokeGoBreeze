@@ -23,7 +23,7 @@ import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
-import './DpsTdo.css';
+import './DpsTdo.scss';
 import { Link } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';

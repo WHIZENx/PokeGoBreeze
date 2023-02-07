@@ -7,7 +7,7 @@ import { convertFormName, splitAndCapitalize } from '../../util/Utils';
 import { calculateCP, calculateStatsByTag } from '../../util/Calculate';
 
 import loading from '../../assets/loading.png';
-import './Home.css';
+import './Home.scss';
 import { Link } from 'react-router-dom';
 
 import pokemonData from '../../data/pokemon.json';

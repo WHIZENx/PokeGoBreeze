@@ -3,7 +3,7 @@ import Find from '../../../components/Select/Find/Find';
 
 import { Tabs, Tab } from 'react-bootstrap';
 
-import './CalculatePoint.css';
+import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';

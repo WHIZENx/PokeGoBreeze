@@ -27,7 +27,7 @@ import {
 } from '../../../util/Constants';
 import { convertName, LevelSlider, splitAndCapitalize } from '../../../util/Utils';
 
-import './CatchChance.css';
+import './CatchChance.scss';
 
 const CatchChance = () => {
   const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemon);

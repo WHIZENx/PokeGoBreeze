@@ -3,7 +3,7 @@ import { RootStateOrAny, useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
 
-import './Mega.css';
+import './Mega.scss';
 
 const Mega = (props: { formList: any; id: number }) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);

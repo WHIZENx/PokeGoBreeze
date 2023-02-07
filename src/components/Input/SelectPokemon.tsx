@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import pokemonData from '../../data/pokemon.json';
 import React, { useEffect, useState } from 'react';
 
-import './Select.css';
+import './Select.scss';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { useSelector, RootStateOrAny } from 'react-redux';

@@ -6,7 +6,7 @@ import { convertFormName, convertName, splitAndCapitalize } from '../../../util/
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
-import './Counter.css';
+import './Counter.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const Counter = ({ def, form, changeForm, pokemonList }: any) => {

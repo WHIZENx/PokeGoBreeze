@@ -4,7 +4,7 @@ import Find from '../../../components/Select/Find/Find';
 import { Badge, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import './SearchBattle.css';
+import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
 import { convertFormName, splitAndCapitalize } from '../../../util/Utils';

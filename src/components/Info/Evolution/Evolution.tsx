@@ -20,7 +20,7 @@ import APIService from '../../../services/API.service';
 import pokemonData from '../../../data/pokemon.json';
 import pokemonName from '../../../data/pokemon_names.json';
 
-import './Evolution.css';
+import './Evolution.scss';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { capitalize, convertFormGif, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
 

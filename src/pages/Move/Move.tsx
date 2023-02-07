@@ -10,7 +10,7 @@ import { getBarCharge, queryTopMove } from '../../util/Calculate';
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
 import APIService from '../../services/API.service';
-import './Move.css';
+import './Move.scss';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';

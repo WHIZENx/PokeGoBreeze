@@ -7,7 +7,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import logo from '../assets/pokedex.png';
 import { getTime } from '../util/Utils';
 
-import './Navbar.css';
+import './Navbar.scss';
 
 const NavbarComponent = () => {
   const dataStore = useSelector((state: RootStateOrAny) => state.store);
