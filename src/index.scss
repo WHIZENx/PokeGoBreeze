@@ -1,6 +1,7 @@
+/* stylelint-disable */
 $ph-color: #e2eaf1 !default;
 $ph-border: none !default;
-$ph-border-radius: 0px !default;
+$ph-border-radius: 0 !default;
 
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "~/node_modules/placeholder-loading/src/scss/placeholder-loading";
