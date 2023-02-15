@@ -1,3 +1,4 @@
+import { PRIMAL_STATS } from '../core/forms';
 import data from '../data/cp_multiplier.json';
 import pokemonData from '../data/pokemon.json';
 import {
@@ -578,9 +579,10 @@ export const calculateStatsByTag = (
   tag: string | null
 ) => {
   const checkNerf = tag && tag.toLowerCase().includes('mega') ? false : true;
-  const atk = calBaseATK(baseStats, checkNerf);
-  const def = calBaseDEF(baseStats, checkNerf);
-  const sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+  const primal = tag && tag.toLowerCase().includes('primal');
+  const atk = primal ? PRIMAL_STATS.attack : calBaseATK(baseStats, checkNerf);
+  const def = primal ? PRIMAL_STATS.defense : calBaseDEF(baseStats, checkNerf);
+  const sta = primal ? PRIMAL_STATS.stamina : tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
   return {
     atk,
     def,

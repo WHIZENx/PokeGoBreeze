@@ -22,3 +22,10 @@ const GO_FORMS = [
 export const getFormsGO = (id: number) => {
   return GO_FORMS.filter((pokemon) => pokemon.default_id === id);
 };
+
+// Pokemon GO Stats Change
+export const PRIMAL_STATS = {
+  attack: 353,
+  defense: 268,
+  stamina: 218,
+};
