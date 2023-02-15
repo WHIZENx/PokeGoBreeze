@@ -13,6 +13,7 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [counterList, setCounterList]: any = useState([]);
+  const [frame, setFrame] = useState(false);
   const [open, setOpen] = useState(false);
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -35,10 +36,14 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
   };
 
   const loadMetaData = () => {
-    setCounterList(
-      counterPokemon(data.options, pokemonList, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
-    );
-    setOpen(true);
+    setFrame(true);
+    setTimeout(() => {
+      setCounterList(
+        counterPokemon(data.options, pokemonList, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
+      );
+      setFrame(false);
+      setOpen(true);
+    }, 100);
   };
 
   return (
@@ -180,6 +185,37 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                     </tr>
                   </Fragment>
                 ))}
+            </Fragment>
+          ) : frame ? (
+            <Fragment>
+              <tr className="counter-none" style={{ verticalAlign: 'top' }}>
+                <td className="text-origin text-center" colSpan={4}>
+                  <div className="ph-item">
+                    <div className="ph-col-12" style={{ padding: 10, margin: 0, gap: 10 }}>
+                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                      </div>
+                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                      </div>
+                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                      </div>
+                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                      </div>
+                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
             </Fragment>
           ) : (
             <Fragment>

@@ -1,3 +1,7 @@
+$ph-color: #e2eaf1 !default;
+$ph-border: none !default;
+$ph-border-radius: 0px !default;
+
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "~/node_modules/placeholder-loading/src/scss/placeholder-loading";
 
@@ -28,8 +32,6 @@ body {
 }
 
 .ph-item {
-  border: none;
-  border-radius: 0;
   padding: 0;
   margin: 0;
 }
