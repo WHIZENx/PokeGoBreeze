@@ -9,23 +9,30 @@ import { counterPokemon } from '../../../util/Calculate';
 import './Counter.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
-const Counter = ({ def, form, changeForm, pokemonList }: any) => {
+const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [counterList, setCounterList]: any = useState([]);
   const [frame, setFrame] = useState(false);
-  const [open, setOpen] = useState(false);
   const [releasedGO, setReleaseGO] = useState(true);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
+  const controller = new AbortController();
+  let timeOutId: NodeJS.Timeout;
 
   useEffect(() => {
-    if (changeForm) {
-      setOpen(false);
+    if ((currForm || currForm === undefined) && pokeID && form) {
+      loadMetaData();
+    } else if (counterList.length > 0) {
+      setCounterList([]);
     }
-  }, [changeForm]);
+    return () => {
+      clearTimeout(timeOutId);
+      controller.abort();
+    };
+  }, [pokeID, currForm]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -35,15 +42,32 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
     }
   };
 
+  const calculateCounter = () => {
+    return new Promise((resolve, reject) => {
+      timeOutId = setTimeout(() => {
+        resolve(
+          counterPokemon(data.options, pokemonList, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
+        );
+      }, 3000);
+      controller.signal.addEventListener('abort', () => {
+        reject();
+      });
+    });
+  };
+
   const loadMetaData = () => {
     setFrame(true);
-    setTimeout(() => {
-      setCounterList(
-        counterPokemon(data.options, pokemonList, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
-      );
-      setFrame(false);
-      setOpen(true);
-    }, 100);
+    // const result = await calculateCounter();
+    // if (result) {
+    //   setCounterList(result);
+    //   setFrame(false);
+    // }
+    calculateCounter()
+      .then((data) => {
+        setCounterList(data);
+        setFrame(false);
+      })
+      .catch(() => clearTimeout(timeOutId));
   };
 
   return (
@@ -64,7 +88,7 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                     <span className="d-flex align-items-center">
                       Released in GO
                       <img
-                        className={releasedGO && open ? '' : 'filter-gray'}
+                        className={releasedGO && !frame ? '' : 'filter-gray'}
                         width={28}
                         height={28}
                         style={{ marginLeft: 5 }}
@@ -86,7 +110,7 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
           </tr>
         </thead>
         <tbody>
-          {open ? (
+          {!frame ? (
             <Fragment>
               {counterList
                 .filter((pokemon: { pokemon_id: any; pokemon_name: string }) => {
@@ -186,47 +210,35 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                   </Fragment>
                 ))}
             </Fragment>
-          ) : frame ? (
-            <Fragment>
-              <tr className="counter-none" style={{ verticalAlign: 'top' }}>
-                <td className="text-origin text-center" colSpan={4}>
-                  <div className="ph-item">
-                    <div className="ph-col-12" style={{ padding: 10, margin: 0, gap: 10 }}>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
+          ) : (
+            <tr className="counter-none" style={{ verticalAlign: 'top' }}>
+              <td className="text-origin text-center" colSpan={4}>
+                <div className="ph-item">
+                  <div className="ph-col-12" style={{ padding: 10, margin: 0, gap: 10 }}>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                    </div>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                    </div>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                    </div>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                    </div>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
                     </div>
                   </div>
-                </td>
-              </tr>
-            </Fragment>
-          ) : (
-            <Fragment>
-              <tr className="counter-none">
-                <td className="text-origin text-center" colSpan={4}>
-                  <span onClick={() => loadMetaData()} className="link-url">
-                    Click to load all the best Pokémon counters.
-                  </span>
-                </td>
-              </tr>
-            </Fragment>
+                </div>
+              </td>
+            </tr>
           )}
         </tbody>
       </table>

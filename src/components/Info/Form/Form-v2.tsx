@@ -400,7 +400,8 @@ const Form = ({
             statSTA={statSTA ? statSTA.stamina : calBaseSTA(dataPoke ? dataPoke.stats : defaultStats, true)}
           />
           <Counter
-            changeForm={changeForm}
+            currForm={currForm}
+            pokeID={pokeID}
             def={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             form={currForm && currForm.form}
             pokemonList={pokemonList}

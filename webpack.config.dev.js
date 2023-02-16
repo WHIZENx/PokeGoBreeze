@@ -46,7 +46,9 @@ module.exports = {
       files: ['./src/**/*.{ts,tsx}']
     }),
     new ESLintPlugin({
-      files: ['./src/**/*.{ts,tsx}']
+      files: ['./src/**/*.{ts,tsx}'],
+      emitWarning: false,
+      failOnWarning: false
     }),
     new StylelintPlugin({
       files: ['./src/**/*.scss']
