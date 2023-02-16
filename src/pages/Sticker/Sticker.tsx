@@ -2,7 +2,7 @@ import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } fr
 
 import { splitAndCapitalize } from '../../util/Utils';
 
-import './Sticker.css';
+import './Sticker.scss';
 import APIService from '../../services/API.service';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 

@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { capitalize, convertFormName, splitAndCapitalize } from '../../../util/Utils';
-import './Types.css';
+import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
 import { Tabs, Tab } from 'react-bootstrap';

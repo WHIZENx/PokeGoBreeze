@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
-import './Hexagon.css';
+import './Hexagon.scss';
 
 const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: any; borderSize: any }) => {
   const canvasHex: any = useRef();

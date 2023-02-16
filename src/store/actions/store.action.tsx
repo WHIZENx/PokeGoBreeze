@@ -20,9 +20,9 @@ import {
   optionFormNone,
 } from '../../core/options';
 import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
-import { BASE_CPM, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
+import { BASE_CPM, MAX_LEVEL, MIN_LEVEL, SYNC_MSG } from '../../util/Constants';
 import { mappingReleasedGO } from '../../util/Utils';
-import { showSpinner } from './spinner.action';
+import { showSpinner, showSpinnerWithMsg } from './spinner.action';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const RESET_STORE = 'RESET_STORE';
@@ -235,7 +235,7 @@ export const loadStore = (
     }
   };
 
-  dispatch(showSpinner());
+  dispatch(showSpinnerWithMsg(SYNC_MSG));
   Promise.all([
     axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json', {
       cancelToken: source.token,

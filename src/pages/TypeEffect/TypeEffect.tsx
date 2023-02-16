@@ -5,7 +5,7 @@ import { useSelector, RootStateOrAny } from 'react-redux';
 import Attacker from './Attacker';
 import Defender from './Defender';
 
-import './TypeEffect.css';
+import './TypeEffect.scss';
 
 const TypeEffect = () => {
   const typeEffective = useSelector((state: RootStateOrAny) => state.store.data.typeEff);

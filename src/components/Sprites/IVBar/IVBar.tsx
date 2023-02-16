@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import './IVBar.css';
+import './IVBar.scss';
 
 const IVbar = (props: { iv: number; style: React.CSSProperties | undefined; title: string }) => {
   const ivWidthFirst = useRef(props.iv < 5 ? 20 * props.iv : 100);

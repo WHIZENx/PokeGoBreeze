@@ -3,7 +3,7 @@ import { RootStateOrAny, useSelector } from 'react-redux';
 import pokemonData from '../../data/pokemon.json';
 import loadingImg from '../../assets/loading.png';
 
-import './Home.css';
+import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { calculateStatsByTag } from '../../util/Calculate';

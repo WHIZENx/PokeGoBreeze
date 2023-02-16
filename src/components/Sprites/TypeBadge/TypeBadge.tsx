@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 
-import './TypeBadge.css';
+import './TypeBadge.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const TypeBadge = (props: {

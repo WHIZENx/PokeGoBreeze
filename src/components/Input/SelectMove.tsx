@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardMoveSmall from '../Card/CardMoveSmall';
 
-import './Select.css';
+import './Select.scss';
 import CardMove from '../Card/CardMove';
 import { RootStateOrAny, useSelector } from 'react-redux';
 

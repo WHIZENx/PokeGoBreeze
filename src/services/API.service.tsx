@@ -187,7 +187,7 @@ class APIService {
     if (name.includes('gengar')) {
       name += '_2';
     }
-    if (!name.includes('-mega')) {
+    if (!name.includes('-mega') && !name.includes('-primal')) {
       name = name.replace('-', '');
     }
     return `${POKE_GIF_SPRITES_API_URL}${name}.gif`;

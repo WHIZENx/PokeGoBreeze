@@ -2,7 +2,7 @@ import pokemonData from '../../../data/pokemon.json';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
-import '../PVP.css';
+import '../PVP.scss';
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 
 import { convertNameRankingToOri, splitAndCapitalize, convertName, capitalize, getStyleSheet } from '../../../util/Utils';

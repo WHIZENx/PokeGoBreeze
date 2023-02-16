@@ -8,7 +8,7 @@ import { useSnackbar } from 'notistack';
 
 import APIService from '../../../services/API.service';
 
-import './CalculateStats.css';
+import './CalculateStats.scss';
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';

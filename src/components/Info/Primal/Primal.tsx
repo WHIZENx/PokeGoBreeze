@@ -3,16 +3,16 @@ import { RootStateOrAny, useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
 
-import './Mega.scss';
+import '../Mega/Mega.scss';
 
-const Mega = (props: { formList: any; id: number }) => {
+const Primal = (props: { formList: any; id: number }) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
   const [arrEvoList, setArrEvoList] = useState([]);
 
   useEffect(() => {
     setArrEvoList(
       props.formList
-        .filter((item: { form: { form_name: string | string[] } }[]) => item[0].form.form_name.includes('mega'))
+        .filter((item: { form: { form_name: string | string[] } }[]) => item[0].form.form_name.includes('primal'))
         .map((item: { form: any }[]) => item[0].form)
     );
   }, [props.formList]);
@@ -37,7 +37,7 @@ const Mega = (props: { formList: any; id: number }) => {
   return (
     <Fragment>
       <h4 className="title-evo">
-        <b>Mega Evolution</b>
+        <b>Primal Evolution</b>
       </h4>
       <div className="mega-container scroll-evolution">
         <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
@@ -60,11 +60,11 @@ const Mega = (props: { formList: any; id: number }) => {
                 <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
               </div>
               <span className="caption">
-                First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
+                First primal evolution: <img alt="img-primal" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
                 <b>x{getQuestEvo(value.name).firstTempEvolution}</b>
               </span>
               <span className="caption">
-                Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
+                Primal evolution: <img alt="img-primal" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
                 <b>x{getQuestEvo(value.name).tempEvolution}</b>
               </span>
             </li>
@@ -75,4 +75,4 @@ const Mega = (props: { formList: any; id: number }) => {
   );
 };
 
-export default Mega;
+export default Primal;

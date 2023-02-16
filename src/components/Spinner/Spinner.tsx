@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import loading from '../../assets/loading.png';
-import './Spinner.css';
+import './Spinner.scss';
 
 const Spinner = () => {
   const spinner = useSelector((state: RootStateOrAny) => state.spinner);
@@ -36,6 +36,7 @@ const Spinner = () => {
                       Loading<span id="p1">.</span>
                       <span id="p2">.</span>
                       <span id="p3">.</span>
+                      {spinner.message && <p className="spinner-msg">{spinner.message}</p>}
                     </Fragment>
                   )}
                 </b>

@@ -4,7 +4,7 @@ import Info from '../Info';
 import TableMove from '../../Table/Move/MoveTable';
 import Stats from '../Stats/Stats';
 
-import './Form.css';
+import './Form.scss';
 import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
@@ -18,6 +18,7 @@ import Raid from '../../Raid/Raid';
 import { useDispatch } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { setSearchMainPage } from '../../../store/actions/searching.action';
+import Primal from '../Primal/Primal';
 
 const Form = ({
   pokemonRouter,
@@ -427,6 +428,28 @@ const Form = ({
           </div>
           <div className="col-xl" style={{ padding: 0 }}>
             <Mega formList={formList} id={idDefault} />
+          </div>
+        </div>
+      ) : formList
+          .filter((item: { form: { form_name: string | string[] } }[]) => item[0].form.form_name.includes('primal'))
+          .map((item: { form: any }[]) => item[0].form).length > 0 &&
+        currForm &&
+        !currForm.form.form_name.includes('gmax') ? (
+        <div className="row w-100" style={{ margin: 0 }}>
+          <div className="col-xl" style={{ padding: 0 }}>
+            <Evolution
+              gen={parseInt(species.generation.url.split('/')[6])}
+              onSetIDPoke={onSetIDPoke}
+              evolution_url={species.evolution_chain ? species.evolution_chain.url : []}
+              id={idDefault}
+              forme={currForm && currForm.form}
+              formDefault={currForm && pokeID === currForm.form.id}
+              eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}
+              pokemonRouter={pokemonRouter}
+            />
+          </div>
+          <div className="col-xl" style={{ padding: 0 }}>
+            <Primal formList={formList} id={idDefault} />
           </div>
         </div>
       ) : (

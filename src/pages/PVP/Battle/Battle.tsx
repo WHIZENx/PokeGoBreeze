@@ -1565,7 +1565,7 @@ const Battle = () => {
                       </Fragment>
                     )}
                   </button>
-                  <button className="btn btn-danger" onClick={() => resetTimeLine()}>
+                  <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeLine()}>
                     <RestartAltIcon /> Reset
                   </button>
                 </div>

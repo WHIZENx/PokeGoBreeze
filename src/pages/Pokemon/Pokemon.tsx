@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../services/API.service';
 
-import './Pokemon.css';
+import './Pokemon.scss';
 
 import { convertFormNameImg, convertName, splitAndCapitalize } from '../../util/Utils';
 import { regionList } from '../../util/Constants';

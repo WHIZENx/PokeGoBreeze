@@ -4,7 +4,7 @@ import Info from '../Info';
 import TableMove from '../../Table/Move/MoveTable';
 import Stats from '../Stats/Stats';
 
-import './Form.css';
+import './Form.scss';
 import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';

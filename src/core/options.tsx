@@ -266,7 +266,7 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
       id: 0,
       name: '',
       evo_list: [],
-      mega_evo: [],
+      temp_evo: [],
       purified: {},
       thirdMove: {},
       form: '',
@@ -291,6 +291,7 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             evolution: string;
             form: string;
             candyCost: any;
+            obPurificationEvolutionCandyCost: any;
             genderRequirement: any;
             kmBuddyDistanceRequirement: any;
             mustBeBuddy: any;
@@ -319,6 +320,9 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             dataEvo.evo_to_name = name.replace('_NORMAL', '');
             if (evo.candyCost) {
               dataEvo.candyCost = evo.candyCost;
+            }
+            if (evo.obPurificationEvolutionCandyCost) {
+              dataEvo.purificationEvoCandyCost = evo.obPurificationEvolutionCandyCost;
             }
             dataEvo.quest = {};
             if (evo.genderRequirement) {
@@ -395,13 +399,13 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
               }
             }
             if (evo.temporaryEvolution) {
-              const megaEvo: any = {};
-              megaEvo.megaEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1];
-              megaEvo.firstMegaEvolution = evo.temporaryEvolutionEnergyCost;
-              megaEvo.megaEvolution = evo.temporaryEvolutionEnergyCostSubsequent;
-              result.mega_evo.push(megaEvo);
+              const tempEvo: any = {};
+              tempEvo.tempEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1];
+              tempEvo.firstTempEvolution = evo.temporaryEvolutionEnergyCost;
+              tempEvo.tempEvolution = evo.temporaryEvolutionEnergyCostSubsequent;
+              result.temp_evo.push(tempEvo);
             }
-            if (result.mega_evo.length === 0) {
+            if (result.temp_evo.length === 0) {
               result.evo_list.push(dataEvo);
             }
           }
