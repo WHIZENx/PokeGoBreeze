@@ -36,7 +36,10 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(
-        { ...process.env, NODE_ENV: JSON.stringify('production'), DEBUG: true }
+        { REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
+          NODE_ENV: JSON.stringify('production'),
+          DEBUG: true
+        }
       )
     }),
     new TSLintPlugin({
