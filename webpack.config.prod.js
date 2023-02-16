@@ -35,7 +35,9 @@ module.exports = {
       process: 'process/browser',
     }),
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env)
+      'process.env': JSON.stringify(
+        { ...process.env, NODE_ENV: JSON.stringify('production'), DEBUG: true }
+      )
     }),
     new TSLintPlugin({
       files: ['./src/**/*.{ts,tsx}'],
