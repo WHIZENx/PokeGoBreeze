@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, convertName, capitalize } from '../../../util/Utils';
+import { splitAndCapitalize, convertName, capitalize, convertFormName } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import pokemonData from '../../../data/pokemon.json';
 import { useSelector, RootStateOrAny } from 'react-redux';
@@ -10,8 +10,23 @@ import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
 
 import './StatsRanking.scss';
+import { FormControlLabel, Checkbox } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Link } from 'react-router-dom';
 
 const columnPokemon: any = [
+  {
+    name: '',
+    selector: (row: { num: any; forme: string; name: string }) => (
+      <Link
+        to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
+        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
+      >
+        <VisibilityIcon className="view-pokemon" fontSize="small" sx={{ color: 'black' }} />
+      </Link>
+    ),
+    width: '55px',
+  },
   {
     name: 'Ranking',
     selector: (row: { rank: any }) => row.rank,
@@ -131,11 +146,11 @@ const StatsRanking = () => {
 
   const sortRanking = (pokemon: any[], id: number) => {
     let sortBy: string[] = [];
-    if (id === 5) {
+    if (id === 6) {
       sortBy = ['atk', 'attack'];
-    } else if (id === 6) {
-      sortBy = ['def', 'defense'];
     } else if (id === 7) {
+      sortBy = ['def', 'defense'];
+    } else if (id === 8) {
       sortBy = ['sta', 'stamina'];
     } else {
       sortBy = ['statProd', 'prod'];
@@ -150,12 +165,14 @@ const StatsRanking = () => {
       });
   };
 
-  const [sortId, setSortId] = useState(8);
-  const [pokemonList, setPokemonList]: any = useState(
-    sortRanking(mappingData(Object.values(pokemonData).filter((pokemon) => pokemon.num > 0)), sortId)
-  );
+  const [sortId, setSortId] = useState(9);
+  const pokemonList = useRef(sortRanking(mappingData(Object.values(pokemonData).filter((pokemon) => pokemon.num > 0)), sortId));
+  const [pokemonFilter, setPokemonFilter] = useState(pokemonList.current);
 
-  const [select, setSelect]: any = useState(pokemonList[0]);
+  const [select, setSelect]: any = useState(pokemonList.current[0]);
+
+  const [filters, setFilters] = useState({ match: false });
+  const { match } = filters;
 
   useEffect(() => {
     document.title = `Stats Ranking`;
@@ -163,16 +180,19 @@ const StatsRanking = () => {
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
-      setPokemonList(
-        pokemonList.filter(
+      setPokemonFilter(
+        pokemonList.current.filter(
           (pokemon: { num: number; name: string }) =>
-            pokemon.num.toString().includes(search) ||
-            splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase())
+            search === '' ||
+            (match
+              ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
+              : pokemon.num.toString().includes(search) ||
+                splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
         )
       );
     }, 100);
     return () => clearTimeout(timeOutId);
-  }, [search]);
+  }, [search, match]);
 
   return (
     <div className="element-bottom position-relative poke-container container">
@@ -284,21 +304,27 @@ const StatsRanking = () => {
         </div>
       </div>
       <Stats statATK={select.atk} statDEF={select.def} statSTA={select.sta} statProd={select.statProd} pokemonStats={stats} />
-      <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
-        <span className="input-group-text">Find Pokemon</span>
-        <input
-          type="text"
-          className="form-control input-search"
-          placeholder="Enter Name or ID"
-          value={search}
-          onInput={(e: any) => setSearch(e.target.value)}
+      <div className="d-flex" style={{ gap: 15 }}>
+        <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
+          <span className="input-group-text">Find Pokemon</span>
+          <input
+            type="text"
+            className="form-control input-search"
+            placeholder="Enter Name or ID"
+            value={search}
+            onInput={(e: any) => setSearch(e.target.value)}
+          />
+        </div>
+        <FormControlLabel
+          control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
+          label="Match Pokémon"
         />
       </div>
       <DataTable
         columns={columnPokemon}
-        data={pokemonList}
+        data={pokemonFilter}
         pagination={true}
-        defaultSortFieldId={8}
+        defaultSortFieldId={9}
         defaultSortAsc={false}
         highlightOnHover={true}
         onRowClicked={(row: any) => {
@@ -308,7 +334,7 @@ const StatsRanking = () => {
         }}
         onSort={(rows: any) => {
           if (sortId !== rows.id) {
-            setPokemonList(sortRanking(pokemonList, rows.id));
+            setPokemonFilter(sortRanking(pokemonList.current, rows.id));
             setSortId(rows.id);
           }
         }}

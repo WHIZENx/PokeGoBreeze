@@ -115,6 +115,9 @@ module.exports = {
   bail: false,
   target: 'web',
   devtool: 'inline-source-map',
+  performance: {
+    hints: false,
+  },
   devServer: {
     static: [
       { directory: path.resolve(__dirname, 'dist') },

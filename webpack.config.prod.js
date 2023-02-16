@@ -118,6 +118,9 @@ module.exports = {
   bail: true,
   target: 'web',
   devtool: false,
+  performance: {
+    hints: false,
+  },
   devServer: {
     static: [
       { directory: path.resolve(__dirname, 'dist') },

@@ -261,16 +261,18 @@ export const convertNameRankingToOri = (text: string, form: string, local: boole
 };
 
 export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => {
-  return Object.values(data).map((value: any) => {
-    const stats = calculateStatsByTag(value.baseStats, value.slug);
-    return {
-      id: value.num,
-      name: value.slug,
-      base_stats: value.baseStats,
-      baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats.sta },
-      baseStatsProd: stats.atk * stats.def * stats.sta,
-    };
-  });
+  return Object.values(data)
+    .filter((pokemon) => pokemon.num > 0)
+    .map((value: any) => {
+      const stats = calculateStatsByTag(value.baseStats, value.slug);
+      return {
+        id: value.num,
+        name: value.slug,
+        base_stats: value.baseStats,
+        baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats.sta },
+        baseStatsProd: stats.atk * stats.def * stats.sta,
+      };
+    });
 };
 
 export const getStyleSheet = (selector: string) => {
