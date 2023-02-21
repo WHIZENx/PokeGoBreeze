@@ -57,11 +57,6 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
 
   const loadMetaData = () => {
     setFrame(true);
-    // const result = await calculateCounter();
-    // if (result) {
-    //   setCounterList(result);
-    //   setFrame(false);
-    // }
     calculateCounter()
       .then((data) => {
         setCounterList(data);

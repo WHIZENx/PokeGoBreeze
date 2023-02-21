@@ -440,7 +440,7 @@ const FindBattle = () => {
               )}
             </div>
             {evoChain.map((value: any[], index: React.Key) => (
-              <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%' }}>
+              <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
                   {!value[0].form ? 'Normal' : splitAndCapitalize(value[0].form, '-', ' ')}
                   {' Form'}
