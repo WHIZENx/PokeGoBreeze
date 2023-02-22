@@ -11,6 +11,8 @@ html {
 }
 
 body {
+  height: 100%;
+  background: var(--bg-color);
   margin: 0;
   font-family:
     -apple-system,
@@ -26,10 +28,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: 0.1s;
 }
 
 #root {
   position: relative;
+  height: 100%;
 }
 
 .ph-item {

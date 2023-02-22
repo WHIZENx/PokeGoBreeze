@@ -3,6 +3,8 @@ import APIService from '../services/API.service';
 
 export const SYNC_MSG = 'Waiting to sync current data';
 
+export const TRANSITION_TIME = '0.3s';
+
 export const BASE_CPM: any = {
   1: 0.094,
   10: 0.4225,

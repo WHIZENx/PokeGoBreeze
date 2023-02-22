@@ -7,10 +7,10 @@ import { Provider } from 'react-redux';
 import { SnackbarProvider } from 'notistack';
 
 import reportWebVitals from './reportWebVitals';
-import App from './App';
 
 import { ReduxRouterSelector, ReduxRouter } from '@lagunovsky/redux-react-router';
 import configureStore, { history } from './store';
+import Main from './App';
 
 export type RouterState = ReturnType<typeof store.getState>;
 
@@ -32,7 +32,7 @@ ReactDOM.render(
         maxSnack={1}
       >
         <ReduxRouter history={history} routerSelector={routerSelector}>
-          <App />
+          <Main />
         </ReduxRouter>
       </SnackbarProvider>
     </Provider>

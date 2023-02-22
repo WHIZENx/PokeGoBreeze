@@ -134,7 +134,7 @@ ul {
   background-color: white;
 }
 
-.card-pokemon {
+.card-pokemon, .card-pokemon-dark {
   padding: 10px;
   border-top: 1px solid #dddddd;
   width: 100%;
@@ -142,7 +142,11 @@ ul {
 }
 
 .card-pokemon:hover {
-  background-color: lightgray;
+  background-color: lightgray !important;
+}
+
+.card-pokemon-dark:hover {
+  background-color: gray !important;
 }
 
 .element-top {
@@ -285,3 +289,17 @@ ul {
 .steel-bg { background: #6d8f9c; }
 .water-bg { background: #6890f0; }
 .black-bg { background: black; }
+
+// Theme styles
+.btn-dark {
+  background: gray;
+}
+
+.input-group-dark {
+  background-color: rgb(80, 80, 80);
+  color: white;
+}
+
+.input-search-dark::placeholder {
+  color: lightgray;
+}

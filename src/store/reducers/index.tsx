@@ -3,6 +3,7 @@ import store from './store.reducer';
 import searching from './searching.reducer';
 import options from './options.reducer';
 import stats from './stats.reducer';
+import theme from './theme.reducer';
 
 const rootReducer = {
   spinner,
@@ -10,6 +11,7 @@ const rootReducer = {
   searching,
   options,
   stats,
+  theme,
 };
 
 export default rootReducer;
