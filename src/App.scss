@@ -134,7 +134,8 @@ ul {
   background-color: white;
 }
 
-.card-pokemon, .card-pokemon-dark {
+.card-pokemon,
+.card-pokemon-dark {
   padding: 10px;
   border-top: 1px solid #dddddd;
   width: 100%;
@@ -296,7 +297,7 @@ ul {
 }
 
 .input-group-dark {
-  background-color: rgb(80, 80, 80);
+  background-color: #505050;
   color: white;
 }
 
