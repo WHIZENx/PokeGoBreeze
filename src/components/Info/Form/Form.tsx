@@ -4,7 +4,7 @@ import Info from '../Info';
 import TableMove from '../../Table/Move/MoveTable';
 import Stats from '../Stats/Stats';
 
-import './Form.css';
+import './Form.scss';
 import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
@@ -24,7 +24,7 @@ const Form = ({
   setRegion,
   setWH,
   setFormName,
-  id_default,
+  idDefault,
   pokeData,
   formList,
   ratio,
@@ -47,12 +47,12 @@ const Form = ({
       .map((item: any[]) => {
         return item.find((item: { form: { is_default: any } }) => item.form.is_default);
       })
-      .find((item: { id: any }) => item.id === id_default);
-  }, [formList, id_default]);
+      .find((item: { id: any }) => item.id === idDefault);
+  }, [formList, idDefault]);
 
   const findForm = () => {
     let form = paramForm;
-    if (id_default === 555 && form === 'galar') {
+    if (idDefault === 555 && form === 'galar') {
       form += '-standard';
     }
     return formList
@@ -64,12 +64,12 @@ const Form = ({
         return curFrom ?? form.find((item: { form: { is_default: any } }) => item.form.is_default);
       })
       .find((item: { form: { form_name: any; name: string }; default_name: string; id: any }) =>
-        form ? item.form.form_name === form || item.form.name === item.default_name + '-' + form : item.id === id_default
+        form ? item.form.form_name === form || item.form.name === item.default_name + '-' + form : item.id === idDefault
       );
   };
 
   const [currForm, setCurrForm] = useState(findForm());
-  const [dataPoke, setDataPoke] = useState(pokeData.find((item: { id: any }) => item.id === id_default));
+  const [dataPoke, setDataPoke] = useState(pokeData.find((item: { id: any }) => item.id === idDefault));
   const pokeID = useRef(null);
 
   const [statATK, setStatATK]: any = useState(null);
@@ -109,9 +109,9 @@ const Form = ({
       setCurrForm(findFirst());
       pokeID.current = findFirst().form.id;
     } else {
-      setStatATK(filterFormList(stats.attack.ranking, id_default));
-      setStatDEF(filterFormList(stats.defense.ranking, id_default));
-      setStatSTA(filterFormList(stats.stamina.ranking, id_default));
+      setStatATK(filterFormList(stats.attack.ranking, idDefault));
+      setStatDEF(filterFormList(stats.defense.ranking, idDefault));
+      setStatSTA(filterFormList(stats.stamina.ranking, idDefault));
       if (!pokeID.current) {
         pokeID.current = findDefaultForm() ? currForm.form.id : findFirst().form.id;
       }
@@ -126,7 +126,7 @@ const Form = ({
     dataPoke,
     findFirst,
     findDefaultForm,
-    id_default,
+    idDefault,
     onSetNext,
     onSetPrev,
     stats.attack.ranking,
@@ -269,7 +269,7 @@ const Form = ({
                 <Info data={dataPoke} currForm={currForm} />
                 <Raid
                   currForm={currForm}
-                  id={id_default}
+                  id={idDefault}
                   statATK={statATK ? statATK.attack : calBaseATK(dataPoke.stats, true)}
                   statDEF={statDEF ? statDEF.defense : calBaseDEF(dataPoke.stats, true)}
                 />
@@ -301,14 +301,14 @@ const Form = ({
                   onSetNext={onSetNext}
                   onSetIDPoke={onSetIDPoke}
                   evolution_url={species.evolution_chain.url}
-                  id={id_default}
+                  id={idDefault}
                   form={currForm.form}
                   formDefault={pokeID.current === currForm.form.id}
                   eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}
                 />
               </div>
               <div className="col-xl" style={{ padding: 0 }}>
-                <Mega formList={formList} id={id_default} />
+                <Mega formList={formList} id={idDefault} />
               </div>
             </div>
           ) : (
@@ -317,7 +317,7 @@ const Form = ({
               onSetNext={onSetNext}
               onSetIDPoke={onSetIDPoke}
               evolution_url={species.evolution_chain.url}
-              id={id_default}
+              id={idDefault}
               form={currForm.form}
               formDefault={pokeID.current === currForm.form.id}
               region={regionList[parseInt(species.generation.url.split('/')[6])]}

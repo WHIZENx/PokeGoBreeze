@@ -7,7 +7,7 @@ import { convertFormName, splitAndCapitalize } from '../../util/Utils';
 import { calculateCP, calculateStatsByTag } from '../../util/Calculate';
 
 import loading from '../../assets/loading.png';
-import './Home.css';
+import './Home.scss';
 import { Link } from 'react-router-dom';
 
 import pokemonData from '../../data/pokemon.json';
@@ -269,10 +269,7 @@ const Home = () => {
                     {listOfPokemon.map((row: any, index: React.Key) => (
                       <StyledTableRow key={index}>
                         <StyledTableCell component="th" scope="row">
-                          <Link
-                            to={`/pokemon/${row.id}${row.forme ? `?form=${convertFormName(row.id, row.forme.toLowerCase())}` : ''}`}
-                            target="_blank"
-                          >
+                          <Link to={`/pokemon/${row.id}${row.forme ? `?form=${convertFormName(row.id, row.forme.toLowerCase())}` : ''}`}>
                             #{row.id}{' '}
                             <img
                               height={60}

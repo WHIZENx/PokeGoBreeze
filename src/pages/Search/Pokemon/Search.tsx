@@ -1,49 +1,46 @@
-import React, { useState, useEffect, useMemo, Fragment } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 
 import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import pokeListName from '../../../data/pokemon_names.json';
+import { useSelector, RootStateOrAny } from 'react-redux';
+import { RouterState } from '../../..';
 
 const Search = () => {
+  const router = useSelector((state: RouterState) => state.router);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.mainSearching);
+
+  const [first, setFirst] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
 
-  const pokeList: any = useMemo(() => {
-    return [];
-  }, []);
-
-  const [id, setId]: any = useState(1);
-  const [selectId, setSelectId]: any = useState(1);
+  const [id, setId]: any = useState(router.action === 'POP' && searching ? searching.id : 1);
+  const [selectId, setSelectId]: any = useState(router.action === 'POP' && searching ? searching.id : 1);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
 
-  const [pokemonList, setPokemonList]: any = useState([]);
-  const [pokemonListFilter, setPokemonListFilter] = useState([]);
+  const pokemonList = useRef(
+    Object.values(pokeListName)
+      .filter((item: any) => item.id > 0)
+      .map((item: any) => {
+        return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
+      })
+  );
+  const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
 
   useEffect(() => {
     document.title = 'Pokémon - Search';
   }, []);
 
   useEffect(() => {
-    if (pokeList.length === 0) {
-      pokeList.push(
-        ...Object.values(pokeListName)
-          .filter((item) => item.id > 0)
-          .map((item) => {
-            return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
-          })
-      );
-      setPokemonList(pokeList);
-    }
-    const results = pokemonList.filter(
-      (item: { name: string; id: { toString: () => string | string[] } }) =>
-        item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+    const results = pokemonList.current.filter(
+      (item: any) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
     );
     setPokemonListFilter(results);
-  }, [searchTerm, pokemonList, pokeList]);
+  }, [searchTerm]);
 
   useEffect(() => {
     setSelectId(id);
@@ -60,6 +57,9 @@ const Search = () => {
   const getInfoPoke = (value: any) => {
     setShowResult(false);
     setId(value.id);
+    if (first) {
+      setFirst(false);
+    }
   };
 
   const setIDPoke = (id: number) => {
@@ -109,7 +109,7 @@ const Search = () => {
         </div>
         <div className="result" style={{ display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>
           <Fragment>
-            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value: any, index) => (
+            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value: any, index: React.Key) => (
               <div
                 className={
                   'container card-pokemon' +
@@ -137,7 +137,17 @@ const Search = () => {
             ))}
           </Fragment>
         </div>
-        <Pokemon id={id} onSetIDPoke={setIDPoke} onIncId={incId} onDecId={decId} isSearch={true} />
+        <Pokemon
+          id={id}
+          onSetIDPoke={setIDPoke}
+          onIncId={incId}
+          onDecId={decId}
+          isSearch={true}
+          prevRouter={router}
+          searching={searching}
+          first={first}
+          setFirst={setFirst}
+        />
       </div>
     </Fragment>
   );

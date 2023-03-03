@@ -1,5 +1,7 @@
-import { getOption } from '../options/options';
+import { getOption } from '../core/options';
 import APIService from '../services/API.service';
+
+export const SYNC_MSG = 'Waiting to sync current data';
 
 export const BASE_CPM: any = {
   1: 0.094,
@@ -56,7 +58,7 @@ export const DEFAULT_TRAINER_FRIEND = false;
 export const DEFAULT_WEATHER_BOOSTS = false;
 export const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
 
-export const DEFAULT_ENERYGY_PER_HP_LOST = 0.5;
+export const DEFAULT_ENERGY_PER_HP_LOST = 0.5;
 export const DEFAULT_DAMAGE_MULTIPLY = 0.5;
 export const DEFAULT_DAMAGE_CONST = 1;
 export const DEFAULT_ENEMY_ATK_DELAY = 2;
@@ -198,3 +200,26 @@ export const leaguesTeamBattle = [
     logo: APIService.getPokeLeague('master_league'),
   },
 ];
+
+export const genRoman = (gen: number) => {
+  switch (gen) {
+    case 1:
+      return 'I';
+    case 2:
+      return 'II';
+    case 3:
+      return 'III';
+    case 4:
+      return 'IV';
+    case 5:
+      return 'V';
+    case 6:
+      return 'VI';
+    case 7:
+      return 'VII';
+    case 8:
+      return 'VIII';
+    default:
+      return '';
+  }
+};

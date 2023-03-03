@@ -7,7 +7,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import logo from '../assets/pokedex.png';
 import { getTime } from '../util/Utils';
 
-import './Navbar.css';
+import './Navbar.scss';
 
 const NavbarComponent = () => {
   const dataStore = useSelector((state: RootStateOrAny) => state.store);
@@ -75,9 +75,14 @@ const NavbarComponent = () => {
               Raid Battle
             </Link>
           </NavDropdown>
-          <Link className="nav-link" to="/dps-tdo-table">
-            DPS&TDO Table
-          </Link>
+          <NavDropdown title="Stats Sheets">
+            <Link className="dropdown-item" to="/dps-tdo-sheets">
+              DPS&TDO Sheets
+            </Link>
+            <Link className="dropdown-item" to="/stats-ranking">
+              Stats Ranking
+            </Link>
+          </NavDropdown>
           <NavDropdown title="PVP">
             <Link className="dropdown-item" to="/pvp">
               Simulator

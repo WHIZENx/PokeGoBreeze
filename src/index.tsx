@@ -1,25 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import './index.scss';
 
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { applyMiddleware, createStore } from 'redux';
 
 import { SnackbarProvider } from 'notistack';
 
-import { composeWithDevTools } from '@redux-devtools/extension';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
-import rootReducer from './store/reducers';
+
+import { ReduxRouterSelector, ReduxRouter } from '@lagunovsky/redux-react-router';
+import configureStore, { history } from './store';
+
+export type RouterState = ReturnType<typeof store.getState>;
 
 if (module.hot) {
   module.hot.accept();
 }
 
-const devTools = process.env.NODE_ENV === 'production' ? applyMiddleware(thunk) : composeWithDevTools(applyMiddleware(thunk));
-
-const store = createStore(rootReducer, devTools);
+const store = configureStore();
+const routerSelector: ReduxRouterSelector<RouterState> = (state) => state.router;
 
 ReactDOM.render(
   <React.StrictMode>
@@ -31,7 +31,9 @@ ReactDOM.render(
         }}
         maxSnack={1}
       >
-        <App />
+        <ReduxRouter history={history} routerSelector={routerSelector}>
+          <App />
+        </ReduxRouter>
       </SnackbarProvider>
     </Provider>
   </React.StrictMode>,

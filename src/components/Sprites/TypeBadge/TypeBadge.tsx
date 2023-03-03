@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 
-import './TypeBadge.css';
+import './TypeBadge.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const TypeBadge = (props: {
@@ -29,12 +29,7 @@ const TypeBadge = (props: {
       <span className="caption text-type-border" style={{ color: props.color ?? 'gray' }}>
         {props.title}
       </span>
-      <Link
-        target="_blank"
-        to={'/move/' + move.id}
-        className="d-flex align-items-center position-relative"
-        style={{ width: 'fit-content' }}
-      >
+      <Link to={'/move/' + move.id} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
         <span className={move.type.toLowerCase() + ' type-border position-relative'}>
           {(props.elite || props.shadow || props.purified) && (
             <span className="type-badge-border">

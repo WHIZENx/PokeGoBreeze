@@ -19,7 +19,7 @@ import {
 
 import { Badge, Checkbox, FormControlLabel, Switch } from '@mui/material';
 
-import './RaidBattle.css';
+import './RaidBattle.scss';
 import APIService from '../../../services/API.service';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -45,8 +45,9 @@ const RaidBattle = () => {
   const dispatch = useDispatch();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
-  const [id, setId] = useState(1);
+  const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('');
   const [form, setForm]: any = useState(null);
 

@@ -3,7 +3,7 @@ import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../services/API.service';
 import { capitalize } from '../../util/Utils';
 
-import './TypeEffectiveSelect.css';
+import './TypeEffectiveSelect.scss';
 
 const TypeEffectiveSelect = (props: { block?: any; effect: any; types: any }) => {
   const typeEffective = useSelector((state: RootStateOrAny) => state.store.data.typeEff);

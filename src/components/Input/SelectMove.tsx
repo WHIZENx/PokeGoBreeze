@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardMoveSmall from '../Card/CardMoveSmall';
 
-import './Select.css';
+import './Select.scss';
 import CardMove from '../Card/CardMove';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
@@ -53,7 +53,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
             simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
           });
         }
-        if (setMovePokemon && !selected) {
+        if (setMovePokemon && !selected && !move) {
           setMovePokemon(simpleMove[0]);
         }
         return setResultMove(simpleMove);
@@ -79,13 +79,19 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
           simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
         });
       }
-      if (setMovePokemon && !selected) {
+      if (setMovePokemon && !selected && !move) {
         setMovePokemon(simpleMove[0]);
       }
       return setResultMove(simpleMove);
     },
     [setMovePokemon, data]
   );
+
+  useEffect(() => {
+    if (pokemon && move) {
+      findMove(pokemon.num, pokemon.forme, moveType);
+    }
+  }, []);
 
   useEffect(() => {
     if (result !== '' && move !== '') {

@@ -1,4 +1,4 @@
-import { Candy } from '../options/models/candy';
+import { Candy } from '../core/models/candy';
 import APIService from '../services/API.service';
 import { convertName, getStyleRuleValue } from './Utils';
 

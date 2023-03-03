@@ -3,7 +3,7 @@ import { RootStateOrAny, useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
 
-import './Mega.css';
+import './Mega.scss';
 
 const Mega = (props: { formList: any; id: number }) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
@@ -24,12 +24,12 @@ const Mega = (props: { formList: any; id: number }) => {
       .join('_');
     try {
       return evoData
-        .find((item: { mega_evo: any[] }) => item.mega_evo.find((value: { megaEvolutionName: any }) => value.megaEvolutionName === name))
-        .mega_evo.find((item: { megaEvolutionName: any }) => item.megaEvolutionName === name);
+        .find((item: { temp_evo: any[] }) => item.temp_evo.find((value: { tempEvolutionName: any }) => value.tempEvolutionName === name))
+        .temp_evo.find((item: { tempEvolutionName: any }) => item.tempEvolutionName === name);
     } catch (error) {
       return {
-        firstMegaEvolution: 'Unavailable',
-        megaEvolution: 'Unavailable',
+        firstTempEvolution: 'Unavailable',
+        tempEvolution: 'Unavailable',
       };
     }
   };
@@ -61,11 +61,11 @@ const Mega = (props: { formList: any; id: number }) => {
               </div>
               <span className="caption">
                 First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>x{getQuestEvo(value.name).firstMegaEvolution}</b>
+                <b>x{getQuestEvo(value.name).firstTempEvolution}</b>
               </span>
               <span className="caption">
                 Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>x{getQuestEvo(value.name).megaEvolution}</b>
+                <b>x{getQuestEvo(value.name).tempEvolution}</b>
               </span>
             </li>
           ))}

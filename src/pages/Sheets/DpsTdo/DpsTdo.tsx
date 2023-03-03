@@ -1,8 +1,8 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
-import pokemonData from '../../data/pokemon.json';
-import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../util/Utils';
-import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
+import pokemonData from '../../../data/pokemon.json';
+import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
+import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../../util/Constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -12,23 +12,25 @@ import {
   TimeToKill,
   calculateBattleDPSDefender,
   calculateStatsBattle,
-} from '../../util/Calculate';
+} from '../../../util/Calculate';
 
 import DataTable from 'react-data-table-component';
-import APIService from '../../services/API.service';
+import APIService from '../../../services/API.service';
 
-import loadingImg from '../../assets/loading.png';
-import TypeInfo from '../../components/Sprites/Type/Type';
+import loadingImg from '../../../assets/loading.png';
+import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
-import './DpsTable.css';
+import './DpsTdo.scss';
 import { Link } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
-import SelectPokemon from '../../components/Input/SelectPokemon';
-import SelectMove from '../../components/Input/SelectMove';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import SelectPokemon from '../../../components/Input/SelectPokemon';
+import SelectMove from '../../../components/Input/SelectMove';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { setDPSSheetPage } from '../../../store/actions/options.action';
+import { RouterState } from '../../..';
 
 const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
   const a = rowA.pokemon.name.toLowerCase();
@@ -67,7 +69,6 @@ const columns: any = [
         to={`/pokemon/${row.pokemon?.num}${
           row.pokemon?.forme ? `?form=${convertFormName(row.pokemon?.num, row.pokemon?.forme.toLowerCase())}` : ''
         }`}
-        target="_blank"
         title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
       >
         {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
@@ -92,12 +93,7 @@ const columns: any = [
   {
     name: 'Fast Move',
     selector: (row: { fmove: { id: string; name: string; type: string }; elite: { fmove: any } }) => (
-      <Link
-        className="d-flex align-items-center"
-        to={'/move/' + row.fmove?.id}
-        target="_blank"
-        title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}
-      >
+      <Link className="d-flex align-items-center" to={'/move/' + row.fmove?.id} title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
           width={25}
@@ -125,7 +121,6 @@ const columns: any = [
       <Link
         className="d-flex align-items-center"
         to={'/move/' + row.cmove?.id}
-        target="_blank"
         title={`${splitAndCapitalize(row.cmove?.name, '_', ' ').replaceAll(' Plus', '+')}`}
       >
         <img
@@ -185,36 +180,57 @@ const columns: any = [
   },
 ];
 
-const DpsTable = () => {
+const DpsTdo = () => {
+  const dispatch = useDispatch();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const optionStore = useSelector((state: RootStateOrAny) => state.options);
+  const router = useSelector((state: RouterState) => state.router);
+
   const types = Object.keys(data.typeEff);
 
   const [dpsTable, setDpsTable]: any = useState([]);
   const [dataFilter, setDataFilter]: any = useState([]);
-  const [searchTerm, setSearchTerm]: any = useState('');
+  const [searchTerm, setSearchTerm]: any = useState(optionStore?.dpsSheet?.searchTerm ?? '');
 
-  const [dataTargetPokemon, setDataTargetPokemon]: any = useState(null);
-  const [fmoveTargetPokemon, setFmoveTargetPokemon]: any = useState(null);
-  const [cmoveTargetPokemon, setCmoveTargetPokemon]: any = useState(null);
+  const [dataTargetPokemon, setDataTargetPokemon]: any = useState(optionStore?.dpsSheet?.dataTargetPokemon);
+  const [fmoveTargetPokemon, setFmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.fmoveTargetPokemon);
+  const [cmoveTargetPokemon, setCmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.cmoveTargetPokemon);
 
-  const [filters, setFilters] = useState({
-    match: false,
-    showEliteMove: true,
-    showShadow: true,
-    showMega: true,
-    enableShadow: false,
-    enableElite: false,
-    enableMega: false,
-    enableBest: false,
-    enableDelay: false,
-    releasedGO: true,
-    bestOf: 3,
-    IV_ATK: 15,
-    IV_DEF: 15,
-    IV_HP: 15,
-    POKEMON_LEVEL: 40,
-  });
+  const [defaultPage, setDefaultPage] = useState(
+    router.action === 'POP' && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
+  );
+  const [defaultRowPerPage, setDefaultRowPerPage] = useState(
+    router.action === 'POP' && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : 10
+  );
+  const [defaultSorted, setDefaultSorted] = useState(
+    router.action === 'POP' && optionStore?.dpsSheet?.defaultSorted
+      ? optionStore?.dpsSheet?.defaultSorted
+      : {
+          selectedColumn: 7,
+          sortDirection: 'desc',
+        }
+  );
+
+  const [filters, setFilters] = useState(
+    optionStore?.dpsSheet?.filters ?? {
+      match: false,
+      showEliteMove: true,
+      showShadow: true,
+      showMega: true,
+      enableShadow: false,
+      enableElite: false,
+      enableMega: false,
+      enableBest: false,
+      enableDelay: false,
+      releasedGO: true,
+      bestOf: 3,
+      IV_ATK: 15,
+      IV_DEF: 15,
+      IV_HP: 15,
+      POKEMON_LEVEL: 40,
+    }
+  );
 
   const {
     match,
@@ -239,13 +255,13 @@ const DpsTable = () => {
     specific: null,
     WEATHER_BOOSTS: false,
     TRAINER_FRIEND: false,
-    TRAINER_FRIEND_LEVEL: 0,
+    POKEMON_FRIEND_LEVEL: 0,
     POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ,
   });
-  const { WEATHER_BOOSTS, TRAINER_FRIEND, TRAINER_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
+  const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
 
   const [showSpinner, setShowSpinner]: any = useState(true);
-  const [selectTypes, setSelectTypes]: any = useState([]);
+  const [selectTypes, setSelectTypes]: any = useState(optionStore?.dpsSheet?.selectTypes ?? []);
 
   const addCPokeData = (
     dataList: {
@@ -286,7 +302,7 @@ const DpsTable = () => {
           shadow,
           WEATHER_BOOSTS: options.WEATHER_BOOSTS,
           POKEMON_FRIEND: options.TRAINER_FRIEND,
-          POKEMON_FRIEND_LEVEL: options.TRAINER_FRIEND_LEVEL,
+          POKEMON_FRIEND_LEVEL: options.POKEMON_FRIEND_LEVEL,
         };
 
         let dps, tdo;
@@ -377,7 +393,7 @@ const DpsTable = () => {
 
       const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
       if (!result) {
-        combatPoke = combatPoke[0];
+        combatPoke = combatPoke.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies);
       } else {
         combatPoke = result;
       }
@@ -474,7 +490,7 @@ const DpsTable = () => {
   };
 
   useEffect(() => {
-    document.title = 'DPS&TDO Table';
+    document.title = 'DPS&TDO Sheets';
   }, []);
 
   useEffect(() => {
@@ -515,6 +531,43 @@ const DpsTable = () => {
     releasedGO,
   ]);
 
+  useEffect(() => {
+    dispatch(
+      setDPSSheetPage({
+        filters,
+        options,
+        selectTypes,
+        dataTargetPokemon,
+        fmoveTargetPokemon,
+        cmoveTargetPokemon,
+        searchTerm,
+        defaultPage,
+        defaultRowPerPage,
+        defaultSorted,
+      })
+    );
+  }, [
+    dataTargetPokemon,
+    fmoveTargetPokemon,
+    cmoveTargetPokemon,
+    searchTerm,
+    dpsTable,
+    match,
+    selectTypes,
+    showShadow,
+    showEliteMove,
+    showMega,
+    enableElite,
+    enableShadow,
+    enableMega,
+    enableBest,
+    bestOf,
+    releasedGO,
+    defaultPage,
+    defaultRowPerPage,
+    defaultSorted,
+  ]);
+
   const addTypeArr = (value: string) => {
     if (selectTypes.includes(value)) {
       return setSelectTypes([...selectTypes].filter((item) => item !== value));
@@ -522,13 +575,13 @@ const DpsTable = () => {
     return setSelectTypes((oldArr: any[]) => [...oldArr, value]);
   };
 
-  const onCalculateTable = useCallback((e: { preventDefault: () => void }) => {
+  const onCalculateTable = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setShowSpinner(true);
     setTimeout(() => {
       setDpsTable(calculateDPSTable());
     }, 300);
-  }, []);
+  };
 
   return (
     <Fragment>
@@ -650,6 +703,7 @@ const DpsTable = () => {
                   <div className="input-group">
                     <span className="input-group-text">Target Pokémon</span>
                     <SelectPokemon
+                      pokemon={dataTargetPokemon}
                       selected={true}
                       setCurrentPokemon={setDataTargetPokemon}
                       setFMovePokemon={setFmoveTargetPokemon}
@@ -768,10 +822,10 @@ const DpsTable = () => {
                     min={0}
                     max={15}
                     required={true}
-                    onInput={(e: any) =>
+                    onChange={(e: any) =>
                       setFilters({
                         ...filters,
-                        IV_ATK: parseInt(e.target.value),
+                        IV_ATK: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                     name="IV_ATK"
@@ -786,10 +840,10 @@ const DpsTable = () => {
                     min={0}
                     max={15}
                     required={true}
-                    onInput={(e: any) =>
+                    onChange={(e: any) =>
                       setFilters({
                         ...filters,
-                        IV_DEF: parseInt(e.target.value),
+                        IV_DEF: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                     name="IV_DEF"
@@ -804,10 +858,10 @@ const DpsTable = () => {
                     min={0}
                     max={15}
                     required={true}
-                    onInput={(e: any) =>
+                    onChange={(e: any) =>
                       setFilters({
                         ...filters,
-                        IV_HP: parseInt(e.target.value),
+                        IV_HP: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                     name="IV_HP"
@@ -823,7 +877,7 @@ const DpsTable = () => {
                     onChange={(e: any) =>
                       setFilters({
                         ...filters,
-                        POKEMON_LEVEL: parseInt(e.target.value),
+                        POKEMON_LEVEL: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                   >
@@ -837,7 +891,7 @@ const DpsTable = () => {
                 <Box className="col-7 input-group" style={{ padding: 0 }}>
                   <span className="input-group-text">DEF Target</span>
                   <input
-                    value={POKEMON_DEF_OBJ}
+                    defaultValue={POKEMON_DEF_OBJ}
                     type="number"
                     className="form-control"
                     placeholder="Defense target"
@@ -847,7 +901,7 @@ const DpsTable = () => {
                     onInput={(e: any) =>
                       setOptions({
                         ...options,
-                        POKEMON_DEF_OBJ: parseInt(e.target.value),
+                        POKEMON_DEF_OBJ: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
                     name="POKEMON_DEF_OBJ"
@@ -908,7 +962,7 @@ const DpsTable = () => {
                       defaultValue={0}
                       max={4}
                       size="large"
-                      value={TRAINER_FRIEND_LEVEL}
+                      value={POKEMON_FRIEND_LEVEL}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
@@ -939,14 +993,29 @@ const DpsTable = () => {
           data={dataFilter}
           noDataComponent={null}
           pagination={true}
-          defaultSortFieldId={7}
-          defaultSortAsc={false}
+          defaultSortFieldId={defaultSorted.selectedColumn}
+          defaultSortAsc={defaultSorted.selectedColumn === 'asc'}
           highlightOnHover={true}
           striped={true}
+          paginationDefaultPage={defaultPage}
+          paginationPerPage={defaultRowPerPage}
+          onChangePage={(page) => {
+            setDefaultPage(page);
+          }}
+          onChangeRowsPerPage={(currentRowsPerPage, currentPage) => {
+            setDefaultPage(currentPage);
+            setDefaultRowPerPage(currentRowsPerPage);
+          }}
+          onSort={(selectedColumn, sortDirection) => {
+            setDefaultSorted({
+              selectedColumn: selectedColumn.id as number,
+              sortDirection,
+            });
+          }}
         />
       </div>
     </Fragment>
   );
 };
 
-export default DpsTable;
+export default DpsTdo;

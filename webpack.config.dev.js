@@ -35,7 +35,12 @@ module.exports = {
       process: 'process/browser',
     }),
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env)
+      'process.env': JSON.stringify(
+        { REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
+          NODE_ENV: JSON.stringify('development'),
+          DEBUG: true
+        }
+      )
     }),
     new TSLintPlugin({
       files: ['./src/**/*.{ts,tsx}']
@@ -44,7 +49,7 @@ module.exports = {
       files: ['./src/**/*.{ts,tsx}']
     }),
     new StylelintPlugin({
-      files: ['./src/**/*.css']
+      files: ['./src/**/*.scss']
     }),
     new WebpackFavicons({
       src: 'src/assets/pokedex.png',
@@ -152,7 +157,7 @@ module.exports = {
         use: ["ts-loader"],
       },
       {
-        test: /\.css$/i,
+        test: /\.s?css$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
@@ -176,6 +181,15 @@ module.exports = {
                   }
               }
             },
+            {
+              loader: 'sass-loader',
+              options: {
+                sassOptions: {
+                  indentWidth: 2,
+                  sourceMap: true,
+                },
+              },
+            }
         ]
       },
       {

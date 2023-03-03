@@ -1,4 +1,4 @@
-import { Badge } from '@mui/material';
+import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
@@ -20,7 +20,7 @@ import APIService from '../../../services/API.service';
 import pokemonData from '../../../data/pokemon.json';
 import pokemonName from '../../../data/pokemon_names.json';
 
-import './Evolution.css';
+import './Evolution.scss';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { capitalize, convertFormGif, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
 
@@ -39,9 +39,16 @@ const theme = createTheme({
   },
 } as any);
 
-const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
+const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter }: any) => {
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
   const [arrEvoList, setArrEvoList]: any = useState([]);
+  const optionsDefault = {
+    selectPurified: false,
+    purified: false,
+  };
+  const [options, setOptions] = useState(optionsDefault);
+
+  const { selectPurified, purified } = options;
 
   const getEvoChain = useCallback(
     (data: any) => {
@@ -157,7 +164,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
     return name.replace('_FEMALE', '_F').replace('_MALE', '_M').replaceAll('_', '-').replaceAll('MR', 'MR.');
   };
 
-  const modelEvoChain = (pokemon: { id: number; name: string; form: string; prev?: string }) => {
+  const modelEvoChain = (pokemon: { id: number; name: string; form: string; prev?: string; canPurified?: boolean }) => {
     pokemon.name = pokemon.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI');
     return {
       prev: pokemon.prev,
@@ -167,6 +174,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
       form: pokemon.form,
       gmax: false,
       sprite: convertModelSpritName(pokemon.name),
+      purified: pokemon.canPurified ?? false,
     };
   };
 
@@ -263,11 +271,12 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
       evoList.push(modelEvoChain(poke));
     } else {
       evoList = pokemon.evo_list
-        .map((evo: { evo_to_name: string; evo_to_id: number; evo_to_form: string }) =>
+        .map((evo: { purificationEvoCandyCost?: any; evo_to_name: string; evo_to_id: number; evo_to_form: string }) =>
           modelEvoChain({
             id: evo.evo_to_id,
             name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
             form: evo.evo_to_form,
+            canPurified: evo.purificationEvoCandyCost ? true : false,
           })
         )
         .filter((pokemon: { id: any }) => pokemon.id === poke.id);
@@ -279,13 +288,15 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
     if (!poke || (poke && poke.evo_list.length === 0)) {
       return;
     }
-    const evoList: any[] = poke.evo_list.map((evo: { evo_to_id: number; evo_to_name: string; evo_to_form: string }) =>
-      modelEvoChain({
-        id: evo.evo_to_id,
-        name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
-        form: evo.evo_to_form,
-        prev: poke.name,
-      })
+    const evoList: any[] = poke.evo_list.map(
+      (evo: { purificationEvoCandyCost?: any; evo_to_id: number; evo_to_name: string; evo_to_form: string }) =>
+        modelEvoChain({
+          id: evo.evo_to_id,
+          name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
+          form: evo.evo_to_form,
+          prev: poke.name,
+          canPurified: evo.purificationEvoCandyCost ? true : false,
+        })
     );
     if (result.length === 3) {
       result[2].push(...evoList);
@@ -354,10 +365,21 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
     }
   }, [forme, id]);
 
+  useEffect(() => {
+    if (arrEvoList.length > 0) {
+      checkCanPurified();
+    }
+  }, [arrEvoList]);
+
   const handlePokeID = (id: string) => {
     if (id !== id.toString()) {
       onSetIDPoke(parseInt(id));
     }
+  };
+
+  const checkCanPurified = () => {
+    const canPurified = arrEvoList.find((evoList: any[]) => evoList.find((evo: { purified: boolean }) => evo.purified)) ? true : false;
+    setOptions({ ...options, purified: canPurified });
   };
 
   const getQuestEvo = (prevId: number, form: any) => {
@@ -379,6 +401,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
       } catch (error) {
         return {
           candyCost: 0,
+          purificationEvoCandyCost: 0,
           quest: {},
         };
       }
@@ -387,26 +410,29 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
 
   const renderImgGif = (value: { sprite: string; id: number }) => {
     return (
-      <img
-        className="pokemon-sprite"
-        id="img-pokemon"
-        alt="img-pokemon"
-        src={
-          value.id >= 894
-            ? APIService.getPokeSprite(value.id)
-            : APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')
-        }
-        onError={(e: any) => {
-          e.onerror = null;
-          APIService.getFetchUrl(e.target.currentSrc)
-            .then(() => {
-              e.target.src = APIService.getPokeSprite(value.id);
-            })
-            .catch(() => {
-              e.target.src = APIService.getPokeFullSprite(value.id);
-            });
-        }}
-      />
+      <>
+        {purified && selectPurified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+        <img
+          className="pokemon-sprite"
+          id="img-pokemon"
+          alt="img-pokemon"
+          src={
+            value.id >= 894
+              ? APIService.getPokeSprite(value.id)
+              : APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')
+          }
+          onError={(e: any) => {
+            e.onerror = null;
+            APIService.getFetchUrl(e.target.currentSrc)
+              .then(() => {
+                e.target.src = APIService.getPokeSprite(value.id);
+              })
+              .catch(() => {
+                e.target.src = APIService.getPokeFullSprite(value.id);
+              });
+          }}
+        />
+      </>
     );
   };
 
@@ -436,10 +462,19 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
                 end: (
                   <div className="position-absolute" style={{ left: -40 }}>
                     {!value.gmax && (
-                      <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
-                        <Candy id={value.id} />
-                        <span style={{ marginLeft: 2 }}>{`x${data.candyCost}`}</span>
-                      </span>
+                      <div>
+                        <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
+                          <Candy id={value.id} />
+                          <span style={{ marginLeft: 2 }}>{`x${
+                            purified && selectPurified ? data.purificationEvoCandyCost : data.candyCost
+                          }`}</span>
+                        </span>
+                        {purified && selectPurified && (
+                          <span className="d-block text-end caption text-danger">{`-${
+                            data.candyCost - data.purificationEvoCandyCost
+                          }`}</span>
+                        )}
+                      </div>
                     )}
                     {Object.keys(data.quest).length > 0 && (
                       <Fragment>
@@ -674,6 +709,24 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
             <InfoOutlinedIcon color="primary" />
           </span>
         </OverlayTrigger>
+        <div className="d-flex" style={{ marginLeft: '1em' }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                disabled={!purified}
+                checked={selectPurified}
+                onChange={(event, check) => {
+                  setOptions({ ...options, selectPurified: check });
+                }}
+              />
+            }
+            label={
+              <span>
+                <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> Purified
+              </span>
+            }
+          />
+        </div>
       </h4>
       <div className="evo-container scroll-evolution">
         <ul
@@ -691,6 +744,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke }: any) => {
                       <div
                         className="select-evo"
                         onClick={() => {
+                          if (pokemonRouter?.action === 'POP') {
+                            pokemonRouter.action = null as any;
+                          }
                           handlePokeID(value.id);
                         }}
                         title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}

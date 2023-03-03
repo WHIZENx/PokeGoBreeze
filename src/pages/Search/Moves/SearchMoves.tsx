@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 
-import './Search.css';
+import './SearchMoves.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 
@@ -34,10 +34,7 @@ const columns: any = [
   {
     name: 'Name',
     selector: (row: { track: number; name: string; type: string }) => (
-      <Link
-        to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type.toLowerCase() : '')}
-        target="_blank"
-      >
+      <Link to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type.toLowerCase() : '')}>
         {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
       </Link>
     ),

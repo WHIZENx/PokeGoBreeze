@@ -27,18 +27,6 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
     );
   }, [data, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon, id, setData]);
 
-  const setDataPokemon = (value: any) => {
-    setDataTargetPokemon(value);
-  };
-
-  const setFMovePokemon = (value: any) => {
-    setFmoveTargetPokemon(value);
-  };
-
-  const setCMovePokemon = (value: any) => {
-    setCmoveTargetPokemon(value);
-  };
-
   return (
     <div>
       <span className="input-group-text justify-content-center position-relative">
@@ -78,34 +66,52 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
         clearData={clearData}
         selected={true}
         pokemon={dataTargetPokemon}
-        setCurrentPokemon={setDataPokemon}
-        setFMovePokemon={setFMovePokemon}
-        setCMovePokemon={setCMovePokemon}
+        setCurrentPokemon={setDataTargetPokemon}
+        setFMovePokemon={setFmoveTargetPokemon}
+        setCMovePokemon={setCmoveTargetPokemon}
       />
       <span className="input-group-text justify-content-center">
         <b>Fast Move</b>
       </span>
-      <SelectMove
-        selected={true}
-        inputType={'small'}
-        clearData={clearData}
-        pokemon={dataTargetPokemon}
-        move={fmoveTargetPokemon}
-        setMovePokemon={setFMovePokemon}
-        moveType="FAST"
-      />
+      {dataTargetPokemon ? (
+        <SelectMove
+          selected={true}
+          inputType={'small'}
+          clearData={clearData}
+          pokemon={dataTargetPokemon}
+          move={fmoveTargetPokemon}
+          setMovePokemon={setFmoveTargetPokemon}
+          moveType="FAST"
+        />
+      ) : (
+        <div
+          className="d-flex align-items-center w-100 card-select-disabled disable-card-move"
+          style={{ height: 36, padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+        >
+          <span style={{ paddingLeft: 8 }}>- Please select Pokémon -</span>
+        </div>
+      )}
       <span className="input-group-text justify-content-center">
         <b>Charged Move</b>
       </span>
-      <SelectMove
-        selected={true}
-        inputType={'small'}
-        clearData={clearData}
-        pokemon={dataTargetPokemon}
-        move={cmoveTargetPokemon}
-        setMovePokemon={setCMovePokemon}
-        moveType="CHARGE"
-      />
+      {dataTargetPokemon ? (
+        <SelectMove
+          selected={true}
+          inputType={'small'}
+          clearData={clearData}
+          pokemon={dataTargetPokemon}
+          move={cmoveTargetPokemon}
+          setMovePokemon={setCmoveTargetPokemon}
+          moveType="CHARGE"
+        />
+      ) : (
+        <div
+          className="d-flex align-items-center w-100 card-select-disabled disable-card-move"
+          style={{ height: 36, padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+        >
+          <span style={{ paddingLeft: 8 }}>- Please select Pokémon -</span>
+        </div>
+      )}
     </div>
   );
 };

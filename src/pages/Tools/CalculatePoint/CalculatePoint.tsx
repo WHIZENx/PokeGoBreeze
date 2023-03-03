@@ -3,7 +3,7 @@ import Find from '../../../components/Select/Find/Find';
 
 import { Tabs, Tab } from 'react-bootstrap';
 
-import './CalculatePoint.css';
+import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
@@ -20,8 +20,9 @@ import { RootStateOrAny, useSelector } from 'react-redux';
 const CalculatePoint = () => {
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
   const typeEff = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
+  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
-  const [id, setId] = useState(1);
+  const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: any = useState(null);
   const [move, setMove]: any = useState(null);

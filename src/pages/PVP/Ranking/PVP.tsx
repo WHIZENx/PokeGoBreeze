@@ -2,7 +2,7 @@ import pokemonData from '../../../data/pokemon.json';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
-import '../PVP.css';
+import '../PVP.scss';
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 
 import { convertNameRankingToOri, splitAndCapitalize, convertName, capitalize, getStyleSheet } from '../../../util/Utils';
@@ -151,6 +151,7 @@ const RankingPVP = () => {
             atk: statsRanking.attack.ranking.find((i: { attack: number }) => i.attack === stats.atk),
             def: statsRanking.defense.ranking.find((i: { defense: number }) => i.defense === stats.def),
             sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === stats.sta),
+            prod: statsRanking.statProd.ranking.find((i: { prod: number }) => i.prod === stats.atk * stats.def * stats.sta),
             fmove,
             cmovePri,
             cmoveSec,
@@ -186,7 +187,7 @@ const RankingPVP = () => {
           }}
         >
           <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
-            <Link to={`/pvp/${params.cp}/overall/${data.speciesId.replaceAll('_', '-')}`} target="_blank">
+            <Link to={`/pvp/${params.cp}/overall/${data.speciesId.replaceAll('_', '-')}`}>
               <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
             </Link>
             <div className="d-flex justify-content-center">
@@ -267,7 +268,7 @@ const RankingPVP = () => {
                 <div className="container">
                   <hr />
                 </div>
-                <div className="stats-container">{OverAllStats(data, dataStore.candy, statsRanking, params.cp)}</div>
+                <div className="stats-container">{OverAllStats(data, statsRanking, params.cp)}</div>
                 <div className="container">
                   <hr />
                   {TypeEffective(data.pokemon.types)}

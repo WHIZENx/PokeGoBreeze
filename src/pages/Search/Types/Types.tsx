@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { capitalize, convertFormName, splitAndCapitalize } from '../../../util/Utils';
-import './Types.css';
+import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
 import { Tabs, Tab } from 'react-bootstrap';
@@ -35,7 +35,6 @@ const columnPokemon: any = [
     selector: (row: { num: any; forme: string; name: string; sprite: string; baseSpecies: string }) => (
       <Link
         to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
-        target="_blank"
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
         <img
@@ -65,6 +64,7 @@ const columnPokemon: any = [
           width={25}
           height={25}
           alt="img-pokemon"
+          title={capitalize(value)}
           src={APIService.getTypeSprite(capitalize(value))}
         />
       )),
@@ -106,7 +106,6 @@ const columnMove: any = [
       <Link
         className="d-flex align-items-center"
         to={'/move/' + row.id}
-        target="_blank"
         title={`${splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}`}
       >
         {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}

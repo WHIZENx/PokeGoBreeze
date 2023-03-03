@@ -1,11 +1,11 @@
 import pokemonData from './../../data/pokemon.json';
-import { calculateCPM } from '../../options/cpm';
+import { calculateCPM } from '../../core/cpm';
 import {
   optionEvolution,
   optionSticker,
   optionPokemon,
   optionPokeImg,
-  optionformSpecial,
+  optionFormSpecial,
   optionPokemonFamily,
   optionAssets,
   optionPokeSound,
@@ -17,11 +17,12 @@ import {
   optionPokemonTypes,
   optionPokemonWeather,
   optionPokemonCandy,
-} from '../../options/options';
-import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../options/pvp';
-import { BASE_CPM, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
+  optionFormNone,
+} from '../../core/options';
+import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
+import { BASE_CPM, MAX_LEVEL, MIN_LEVEL, SYNC_MSG } from '../../util/Constants';
 import { mappingReleasedGO } from '../../util/Utils';
-import { showSpinner } from './spinner.action';
+import { showSpinner, showSpinnerWithMsg } from './spinner.action';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const RESET_STORE = 'RESET_STORE';
@@ -234,7 +235,7 @@ export const loadStore = (
     }
   };
 
-  dispatch(showSpinner());
+  dispatch(showSpinnerWithMsg(SYNC_MSG));
   Promise.all([
     axios.getFetchUrl('https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json', {
       cancelToken: source.token,
@@ -275,9 +276,10 @@ export const loadStore = (
             );
             setStateCandy(JSON.stringify(candyData));
 
-            const formSpecial = optionformSpecial(gm.data);
+            const noneForm = optionFormNone(gm.data);
+            const formSpecial = optionFormSpecial(gm.data);
             const league = optionLeagues(gm.data, pokemon);
-            const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
+            const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial, noneForm);
 
             const typeEff = optionPokemonTypes(gm.data);
             const weatherBoost = optionPokemonWeather(gm.data);
@@ -344,7 +346,7 @@ export const loadStore = (
                       })
                     );
                     const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
-                    const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
+                    const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
 
                     selectorDispatch(
                       cpm,
@@ -370,7 +372,7 @@ export const loadStore = (
               const assetSoundFiles = JSON.parse(stateSound).data;
 
               const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
-              const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
+              const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
 
               selectorDispatch(
                 cpm,
@@ -403,12 +405,13 @@ export const loadStore = (
         const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
         const pokemon = optionPokemon(gm.data);
         const pokemonFamily = optionPokemonFamily(pokemon);
-        const formSpecial = optionformSpecial(gm.data);
+        const noneForm = optionFormNone(gm.data);
+        const formSpecial = optionFormSpecial(gm.data);
 
         const league = optionLeagues(gm.data, pokemon);
         const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage).data, JSON.parse(stateSound).data);
-        const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial);
-        const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat);
+        const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial, noneForm);
+        const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
 
         const typeEff = optionPokemonTypes(gm.data);
         const weatherBoost = optionPokemonWeather(gm.data);

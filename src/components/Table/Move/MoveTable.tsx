@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { capitalize, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { rankMove } from '../../../util/Calculate';
 
-import './MoveTable.css';
+import './MoveTable.scss';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { RootStateOrAny, useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import { Tab, Tabs } from 'react-bootstrap';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any }) => {
+const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; id?: number; maxHeight?: number | string }) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [move, setMove]: any = useState({ data: [] });
   const [moveOrigin, setMoveOrigin]: any = useState(null);
@@ -49,75 +49,60 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     const combatPoke = data.pokemonCombat.filter((item: { id: number; name: string }) =>
       props.form?.id
         ? item.id === parseInt(props.data.species.url.split('/')[6])
-        : item.name === props.form?.name.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
+        : item.name ===
+          (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
     );
-    if (combatPoke && combatPoke.length === 1) {
+    if (combatPoke?.length === 1) {
       filterMoveType(combatPoke[0]);
-      return setMove(
-        rankMove(
-          data.options,
-          data.typeEff,
-          data.weatherBoost,
-          data.combat,
-          combatPoke[0],
-          props.statATK,
-          props.statDEF,
-          props.statSTA,
-          props.data.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
-        )
+      return setMove(setRankMove(combatPoke[0]));
+    } else if (combatPoke?.length === 0 && props.id) {
+      const combatPoke = data.pokemonCombat.filter(
+        (item: { id: number; name: string; baseSpecies: string }) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
       );
+      filterMoveType(combatPoke[0]);
+      return setMove(setRankMove(combatPoke[0]));
     }
 
-    const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form.name));
+    const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form?.name ?? props.form));
     if (result === undefined) {
-      filterMoveType(combatPoke[0]);
-      setMove(
-        rankMove(
-          data.options,
-          data.typeEff,
-          data.weatherBoost,
-          data.combat,
-          combatPoke[0],
-          props.statATK,
-          props.statDEF,
-          props.statSTA,
-          props.data.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
-        )
-      );
+      filterMoveType(combatPoke.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies));
+      setMove(setRankMove(combatPoke[0]));
     } else {
       filterMoveType(result);
-      setMove(
-        rankMove(
-          data.options,
-          data.typeEff,
-          data.weatherBoost,
-          data.combat,
-          result,
-          props.statATK,
-          props.statDEF,
-          props.statSTA,
-          props.form.types.map((item: { type: { name: string } }) => capitalize(item.type.name))
-        )
-      );
+      setMove(setRankMove(result));
     }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
+  const setRankMove = (result: any) => {
+    return rankMove(
+      data.options,
+      data.typeEff,
+      data.weatherBoost,
+      data.combat,
+      result,
+      props.statATK,
+      props.statDEF,
+      props.statSTA,
+      props.data.types.map((item: any) => capitalize(item?.type?.name ?? item))
+    );
+  };
+
   useEffect(() => {
-    if (props.data && props.data.types) {
+    if (props.form) {
       findMove();
     }
-  }, [findMove, props.data]);
+  }, [findMove, props.form]);
 
   const renderBestMovesetTable = (value: any, max: number, type: string) => {
     return (
       <tr>
         <td className="text-origin">
-          <Link to={'../move/' + value.fmove.id} target="_blank" className="d-block">
+          <Link to={'../move/' + value.fmove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
-            <span style={{ width: 'max-content' }}>
+            <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.fmove.elite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>Elite</span>
@@ -127,12 +112,12 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
           </Link>
         </td>
         <td className="text-origin">
-          <Link to={'../move/' + value.cmove.id} target="_blank" className="d-block">
+          <Link to={'../move/' + value.cmove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
-            <span style={{ width: 'max-content' }}>
+            <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.cmove.elite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>Elite</span>
@@ -162,12 +147,12 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
         {data.map((value: any, index: React.Key) => (
           <tr key={index}>
             <td className="text-origin">
-              <Link to={'../move/' + value.id} target="_blank" className="d-block">
+              <Link to={'../move/' + value.id} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                   <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type))} />
                 </div>
                 <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
-                <span style={{ width: 'max-content' }}>
+                <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
                   {value.elite && (
                     <span className="type-icon-small ic elite-ic">
                       <span>Elite</span>
@@ -208,7 +193,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     <Tabs defaultActiveKey="movesList" className="lg-2">
       <Tab eventKey="movesList" title="Moves List">
         <div className="row w-100" style={{ margin: 0, border: '2px solid #b8d4da', background: '#f1ffff' }}>
-          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-movesets">
               <colgroup className="main-move" />
               <thead>
@@ -219,7 +204,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               <tbody>{moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}</tbody>
             </table>
           </div>
-          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
               <thead>
@@ -239,7 +224,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       </Tab>
       <Tab eventKey="bestEffList" title="Best Moves List">
         <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
               <colgroup className="main-move" />
@@ -291,7 +276,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               </tbody>
             </table>
           </div>
-          <div className="col-xl table-moves-col" style={{ padding: 0 }}>
+          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
               <colgroup className="main-move" />

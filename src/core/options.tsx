@@ -163,7 +163,20 @@ export const optionPokemon = (data: any[]) => {
     });
 };
 
-export const optionformSpecial = (data: any[]) => {
+export const optionFormNone = (data: any[]) => {
+  return data
+    .filter(
+      (item: { templateId: string; data: { formSettings?: any } }) =>
+        item.templateId.includes('POKEMON') && item.templateId.includes('FORMS') && Object.keys(item.data).includes('formSettings')
+    )
+    .map((item: { data: { formSettings: { pokemon: string; forms: any } } }) => item.data.formSettings)
+    .filter((item: { pokemon: string; forms: any[] }) => {
+      return !item.forms?.find((form: { form: string }) => form.form === `${item.pokemon}_NORMAL`);
+    })
+    .map((item: { pokemon: string }) => item.pokemon);
+};
+
+export const optionFormSpecial = (data: any[]) => {
   return data
     .filter(
       (item: { templateId: string; data: { formSettings?: any } }) =>
@@ -253,7 +266,7 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
       id: 0,
       name: '',
       evo_list: [],
-      mega_evo: [],
+      temp_evo: [],
       purified: {},
       thirdMove: {},
       form: '',
@@ -278,6 +291,7 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             evolution: string;
             form: string;
             candyCost: any;
+            obPurificationEvolutionCandyCost: any;
             genderRequirement: any;
             kmBuddyDistanceRequirement: any;
             mustBeBuddy: any;
@@ -306,6 +320,9 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
             dataEvo.evo_to_name = name.replace('_NORMAL', '');
             if (evo.candyCost) {
               dataEvo.candyCost = evo.candyCost;
+            }
+            if (evo.obPurificationEvolutionCandyCost) {
+              dataEvo.purificationEvoCandyCost = evo.obPurificationEvolutionCandyCost;
             }
             dataEvo.quest = {};
             if (evo.genderRequirement) {
@@ -382,13 +399,13 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
               }
             }
             if (evo.temporaryEvolution) {
-              const megaEvo: any = {};
-              megaEvo.megaEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1];
-              megaEvo.firstMegaEvolution = evo.temporaryEvolutionEnergyCost;
-              megaEvo.megaEvolution = evo.temporaryEvolutionEnergyCostSubsequent;
-              result.mega_evo.push(megaEvo);
+              const tempEvo: any = {};
+              tempEvo.tempEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1];
+              tempEvo.firstTempEvolution = evo.temporaryEvolutionEnergyCost;
+              tempEvo.tempEvolution = evo.temporaryEvolutionEnergyCostSubsequent;
+              result.temp_evo.push(tempEvo);
             }
-            if (result.mega_evo.length === 0) {
+            if (result.temp_evo.length === 0) {
               result.evo_list.push(dataEvo);
             }
           }
@@ -759,7 +776,7 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
   });
 };
 
-export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: any[]) => {
+export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: string[], noneForm: string[]) => {
   const combatPokemonModel = () => {
     return {
       id: 0,
@@ -775,7 +792,10 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
   };
 
   return pokemon
-    .filter((item: { name: any }) => !formSpecial.includes(item.name) || item.name.endsWith('_S'))
+    .filter(
+      (item: { form: any; name: string }) =>
+        (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
+    )
     .reduce(
       (
         pokemonList: any[],
@@ -803,7 +823,7 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: an
         } else {
           const result: CombatPokemon = combatPokemonModel();
           result.id = item.id;
-          result.name = item.name;
+          result.name = item.name.replace('_NORMAL', '');
           result.baseSpecies = item.pokemonId;
           if (result.id === 235) {
             const moves = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
@@ -1134,7 +1154,14 @@ export const optionLeagues = (
   return result;
 };
 
-export const optionDetailsPokemon = (data: any[], pokemon: any[], formSpecial: any[], assets: any[], pokemonCombat: any[]) => {
+export const optionDetailsPokemon = (
+  data: any[],
+  pokemon: any[],
+  formSpecial: string[],
+  assets: any[],
+  pokemonCombat: any[],
+  noneForm: string[]
+) => {
   const datailsPokemonModel = () => {
     return {
       id: 0,
@@ -1163,11 +1190,14 @@ export const optionDetailsPokemon = (data: any[], pokemon: any[], formSpecial: a
       return result;
     }, {});
   let result = pokemon
-    .filter((item: { name: string }) => !formSpecial.includes(item.name))
+    .filter(
+      (item: { form: any; name: string }) =>
+        (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
+    )
     .map((item) => {
       const result: Details = datailsPokemonModel();
       result.id = item.id;
-      result.name = item.name;
+      result.name = item.name.replace('_NORMAL', '');
       if (item.form) {
         result.form = item.form.replace(`${item.pokemonId}_`, '');
       } else {

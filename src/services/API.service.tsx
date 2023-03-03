@@ -42,7 +42,7 @@ class APIService {
     return this.axios.get(this.getPokeAPI('pokemon', value), options);
   }
 
-  getPokeSpicies(value: number, options: any = null) {
+  getPokeSpices(value: number, options: any = null) {
     return this.axios.get(this.getPokeAPI('pokemon-species', value), options);
   }
 
@@ -187,7 +187,7 @@ class APIService {
     if (name.includes('gengar')) {
       name += '_2';
     }
-    if (!name.includes('-mega')) {
+    if (!name.includes('-mega') && !name.includes('-primal')) {
       name = name.replace('-', '');
     }
     return `${POKE_GIF_SPRITES_API_URL}${name}.gif`;

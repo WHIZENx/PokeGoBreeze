@@ -1,339 +1,188 @@
-import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
-import FormTools from './FormTools';
+import Stats from '../../Info/Stats/Stats';
+import { calculateRaidStat } from '../../../util/Calculate';
 
-import loading from '../../../assets/loading.png';
-import { splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
-import TypeInfo from '../../Sprites/Type/Type';
-import { FormControlLabel, Radio } from '@mui/material';
+import { Form } from 'react-bootstrap';
+import { RAID_BOSS_TIER } from '../../../util/Constants';
 
-const Tools = (props: {
-  raid?: any;
-  tier?: any;
-  id?: any;
-  onClearStats?: any;
-  // eslint-disable-next-line no-unused-vars
-  setTier?: (arg0: any) => void;
-  onSetPrev?: () => void;
-  count: number;
-  onSetNext: () => void;
-  name: string;
-  hide?: any;
-  // eslint-disable-next-line no-unused-vars
-  setRaid?: (arg0: boolean) => void;
-  setForm?: any;
-  stats: any;
-  onHandleSetStats?: any;
-  data: any;
-  setUrlEvo: any;
-}) => {
-  const [pokeData, setPokeData] = useState([]);
-  const [formList, setFormList] = useState([]);
+import atk_logo from '../../../assets/attack.png';
+import def_logo from '../../../assets/defense.png';
+import hp_logo from '../../../assets/hp.png';
+import sta_logo from '../../../assets/stamina.png';
 
-  const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
-  const [tier, setTier] = useState(props.tier ?? 1);
+import pokemonData from '../../../data/pokemon.json';
+import { capitalize } from '../../../util/Utils';
 
-  const [data, setData]: any = useState(null);
+const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide }: any) => {
+  const [currDataPoke, setCurrDataPoke]: any = useState(null);
+  const [currTier, setCurrTier] = useState(tier);
 
-  const [currForm, setCurrForm]: any = useState(null);
+  const [statATK, setStatATK]: any = useState(null);
+  const [statDEF, setStatDEF]: any = useState(null);
+  const [statSTA, setStatSTA]: any = useState(null);
+  const [statProd, setStatProd]: any = useState(null);
 
-  const [pokeID, setPokeID] = useState(null);
+  const filterFormName = useCallback((form: string, formStats: string) => {
+    form = form === '' ? 'Normal' : form.includes('mega') ? form.toLowerCase() : capitalize(form);
+    formStats = formStats.includes('Mega') ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
+    formStats = formStats === 'Hero' ? 'Normal' : formStats;
+    return form.toLowerCase().includes(formStats.toLowerCase());
+  }, []);
 
-  const { enqueueSnackbar } = useSnackbar();
-
-  const fetchMap = useCallback(
-    async (
-      data: { varieties: any[]; name: any; id: any },
-      // eslint-disable-next-line no-unused-vars
-      axios: { getFetchUrl: (arg0: any, arg1: { cancelToken: any }) => any },
-      source: { token: any }
-    ) => {
-      setFormList([]);
-      setPokeData([]);
-      // eslint-disable-next-line no-unused-vars
-      const dataPokeList: any | ((prevState: any[]) => any[]) = [];
-      // eslint-disable-next-line no-unused-vars
-      let dataFromList: any | ((prevState: any[]) => any[]) = [];
-      await Promise.all(
-        data.varieties.map(async (value: { pokemon: { url: any } }) => {
-          const pokeInfo = await axios.getFetchUrl(value.pokemon.url, {
-            cancelToken: source.token,
-          });
-          const pokeForm = await Promise.all(
-            pokeInfo.data.forms.map(async (item: { url: any }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
-          );
-          dataPokeList.push(pokeInfo.data);
-          dataFromList.push(pokeForm);
-        })
+  const filterFormList = useCallback(
+    (stats: any[], id: any) => {
+      const filterId = stats.filter((item: { id: any }) => item.id === id);
+      const filterForm = stats.find(
+        (item: { id: any; form: string }) => item.id === id && item.form !== 'a' && filterFormName(currForm.form.form_name, item.form)
       );
-      setPokeData(dataPokeList);
-      let modify = false;
-      dataFromList = dataFromList.map((value: string | any[]) => {
-        if (value.length === 0) {
-          modify = true;
-          return dataFromList.find((item: string | any[]) => item.length === dataFromList.length);
-        }
-        return value;
-      });
-      if (modify) {
-        dataFromList = dataFromList.map((value: { [x: string]: any }, index: string | number) => {
-          return [value[index]];
-        });
-      }
-      dataFromList = dataFromList
-        .map(
-          (item: {
-            map: (
-              // eslint-disable-next-line no-unused-vars
-              arg0: (item: { pokemon: { name: string | any[] } }) => {
-                form: { pokemon: { name: string | any[] } };
-                name: any;
-                default_name: any;
-              }
-            ) => { form: { id: number } | { id: number } }[];
-          }) => {
-            return item
-              .map((item: { pokemon: { name: string | any[] } }) => ({
-                form: item,
-                name: data.varieties.find((v: { pokemon: { name: any } }) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
-                default_name: data.name,
-              }))
-              .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
-          }
-        )
-        .sort((a: { form: { id: number } }[], b: { form: { id: number } }[]) => a[0].form.id - b[0].form.id);
-      setFormList(dataFromList);
-      const formDefault = dataFromList.map((item: any[]) => {
-        return item.find((item: { form: { is_default: any } }) => item.form.is_default);
-      });
-      const isDefault = formDefault.find((item: { form: { id: any } }) => item.form.id === data.id);
-      if (isDefault) {
-        setCurrForm(isDefault);
-        setPokeID(isDefault.form.id);
+      if (filterId.length === 1 && formList.length === 1 && !filterForm) {
+        return filterId[0];
+      } else if (filterId.length === formList.length && !filterForm) {
+        return stats.find((item: { id: any; form: string }) => item.id === id && item.form === 'Normal');
       } else {
-        setCurrForm(formDefault[0]);
-        setPokeID(formDefault[0].form.id);
+        return filterForm;
       }
     },
-    []
-  );
-
-  const queryPokemon = useCallback(
-    (id: string, axios: any, source: { token: any; cancel: () => void }) => {
-      axios
-        .getPokeSpicies(id, {
-          cancelToken: source.token,
-        })
-        .then((res: any) => {
-          fetchMap(res.data, axios, source);
-          setData(res.data);
-        })
-        .catch(() => {
-          enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
-          source.cancel();
-        });
-    },
-    [enqueueSnackbar, fetchMap]
+    [currForm, filterFormName, formList.length]
   );
 
   useEffect(() => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
-    queryPokemon(props.id, axios, source);
-  }, [props.id, queryPokemon]);
-
-  const changeForm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const findForm = formList
-      .map((item: any) => item.find((item: { form: { name: any } }) => item.form.name === e.currentTarget.value))
-      .find((item) => item);
-    setCurrForm(findForm);
-    if (props.onClearStats) {
-      props.onClearStats();
+    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) {
+      setCurrTier(5);
+      if (setTier) {
+        setTier(5);
+      }
+    } else if (
+      parseInt(tier) === 5 &&
+      currForm &&
+      currForm.form.form_name.includes('mega') &&
+      Object.values(pokemonData).find((item: any) => item.num === id)?.pokemonClass
+    ) {
+      setCurrTier(6);
+      if (setTier) {
+        setTier(6);
+      }
     }
-  };
+  }, [currForm, id, setTier, tier]);
 
-  const onSetTier = (tier: any) => {
-    if (props.setTier) {
-      props.setTier(tier);
+  useEffect(() => {
+    if (currForm && dataPoke) {
+      const formATK = filterFormList(stats.attack.ranking, id);
+      const formDEF = filterFormList(stats.defense.ranking, id);
+      const formSTA = filterFormList(stats.stamina.ranking, id);
+      const formProd = filterFormList(stats.statProd.ranking, id);
+
+      setStatATK(raid && tier && !hide ? { attack: calculateRaidStat(formATK.attack, tier) } : formATK);
+      setStatDEF(raid && tier && !hide ? { defense: calculateRaidStat(formDEF.defense, tier) } : formDEF);
+      setStatSTA(raid && tier && !hide ? { stamina: RAID_BOSS_TIER[tier].sta } : formSTA);
+      setStatProd(raid && tier && !hide ? null : formProd);
+      setCurrDataPoke(dataPoke.find((item: { id: any }) => item.id === id));
+
+      if (formATK && formDEF && formSTA) {
+        onSetStats('atk', raid && tier && !hide ? calculateRaidStat(formATK.attack, tier) : formATK.attack);
+        onSetStats('def', raid && tier && !hide ? calculateRaidStat(formDEF.defense, tier) : formDEF.defense);
+        onSetStats('sta', raid && tier && !hide ? RAID_BOSS_TIER[tier].sta : formSTA.stamina);
+        if (setForm) {
+          setForm(currForm);
+        }
+      }
     }
-    setTier(tier);
-  };
+  }, [
+    filterFormList,
+    currForm,
+    dataPoke,
+    id,
+    setForm,
+    stats.attack.ranking,
+    stats.defense.ranking,
+    stats.stamina.ranking,
+    raid,
+    tier,
+    hide,
+  ]);
 
   return (
     <Fragment>
-      <div className="d-inline-block" style={{ width: 60, height: 60 }}>
-        {props.id > 1 && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
-            <div>
-              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id - 1)} />
-            </div>
-            <span>
-              <b>
-                <span className="text-navigater">{'<'}</span> <span>#{props.id - 1}</span>
-              </b>
-            </span>
-          </div>
-        )}
-      </div>
-      <img height={200} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id)} />
-      <div className="d-inline-block" style={{ width: 60, height: 60 }}>
-        {props.id < props.count && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetNext()}>
-            <div>
-              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id + 1)} />
-            </div>
-            <span>
-              <b>
-                <span>#{props.id + 1}</span> <span className="text-navigater">{'>'}</span>
-              </b>
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="element-top" style={{ height: 64 }}>
-        {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length && (
-          <TypeInfo arr={currForm.form.types.map((type: { type: { name: any } }) => type.type.name)} />
-        )}
-      </div>
-      <h4>
-        <b>
-          #{props.id} {currForm ? splitAndCapitalize(currForm.form.name, '-', ' ') : props.name}
-        </b>
-      </h4>
-      <div className="scroll-card">
-        {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length ? (
-          <Fragment>
-            {formList.map((value: any, index) => (
-              <Fragment key={index}>
-                {value.map(
-                  (
-                    value: {
-                      form: { name: string; id: any; form_name: string };
-                      default_name: string;
-                    },
-                    index: React.Key
-                  ) => (
-                    <button
-                      value={value.form.name}
-                      key={index}
-                      className={'btn btn-form' + (value.form.id === currForm.form.id ? ' form-selected' : '')}
-                      onClick={(e) => changeForm(e)}
-                    >
-                      <img
-                        width={64}
-                        height={64}
-                        onError={(e: any) => {
-                          e.onerror = null;
-                          APIService.getFetchUrl(e.target.currentSrc)
-                            .then(() => {
-                              e.target.src = APIService.getPokeIconSprite(value.default_name);
-                            })
-                            .catch(() => {
-                              e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
-                            });
-                        }}
-                        alt="img-icon-form"
-                        src={
-                          value.form.name.includes('-totem') ||
-                          value.form.name.includes('-hisui') ||
-                          value.form.name.includes('power-construct') ||
-                          value.form.name.includes('own-tempo') ||
-                          value.form.name.includes('-meteor') ||
-                          value.form.name === 'mewtwo-armor' ||
-                          value.form.name === 'arceus-unknown' ||
-                          value.form.name === 'dialga-origin' ||
-                          value.form.name === 'palkia-origin' ||
-                          value.form.name === 'basculin-white-striped' ||
-                          value.form.name === 'greninja-battle-bond' ||
-                          value.form.name === 'urshifu-rapid-strike' ||
-                          (pokeID && pokeID >= 899)
-                            ? APIService.getPokeIconSprite('unknown-pokemon')
-                            : APIService.getPokeIconSprite(value.form.name)
-                        }
-                      />
-                      <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                      {value.form.id === pokeID && (
-                        <b>
-                          <small>(Default)</small>
-                        </b>
-                      )}
-                    </button>
-                  )
-                )}
-              </Fragment>
-            ))}
-          </Fragment>
-        ) : (
-          <div className="loading-group vertical-center">
-            <img className="loading" width={40} height={40} alt="img-pokemon" src={loading} />
-            <span className="caption text-black" style={{ fontSize: 18 }}>
-              <b>
-                Loading<span id="p1">.</span>
-                <span id="p2">.</span>
-                <span id="p3">.</span>
-              </b>
-            </span>
-          </div>
-        )}
-      </div>
-      {!props.hide && (
-        <div className="d-flex justify-content-center text-center">
-          <TypeRadioGroup
-            row={true}
-            aria-labelledby="row-types-group-label"
-            name="row-types-group"
-            value={typePoke}
+      {raid ? (
+        <div className="element-top" style={{ marginBottom: 15 }}>
+          <Form.Select
+            className="w-100"
             onChange={(e) => {
-              setTypePoke(e.target.value);
-              if (props.setRaid) {
-                props.setRaid(e.target.value === 'pokemon' ? false : true);
+              setCurrTier(e.target.value);
+              if (setTier) {
+                setTier(e.target.value);
               }
-              if (props.onClearStats) {
-                props.onClearStats(true);
+              if (onClearStats) {
+                onClearStats(true);
               }
             }}
+            value={currTier}
           >
-            <FormControlLabel
-              value="pokemon"
-              control={<Radio />}
-              label={
-                <span>
-                  <img height={32} alt="img-pokemon" src={APIService.getItemSprite('pokeball_sprite')} /> Pokémon Stats
-                </span>
-              }
-            />
-            <FormControlLabel
-              value="boss"
-              control={<Radio />}
-              label={
-                <span>
-                  <img className="img-type-icon" height={32} alt="img-boss" src={APIService.getRaidSprite('ic_raid_small')} /> Boss Stats
-                </span>
-              }
-            />
-          </TypeRadioGroup>
+            <optgroup label="Normal Tiers">
+              <option value={1}>Tier 1</option>
+              <option value={3}>Tier 3</option>
+              {currForm && !currForm.form.form_name.includes('mega') && <option value={5}>Tier 5</option>}
+            </optgroup>
+            <optgroup label="Legacy Tiers">
+              <option value={2}>Tier 2</option>
+              <option value={4}>Tier 4</option>
+            </optgroup>
+            {currForm && currForm.form.form_name.includes('mega') && (
+              <Fragment>
+                {Object.values(pokemonData).find((item: any) => item.num === id)?.pokemonClass ? (
+                  <optgroup label="Legendary Mega Tiers">
+                    <option value={6}>Tier Mega</option>
+                  </optgroup>
+                ) : (
+                  <optgroup label="Mega Tiers">
+                    <option value={5}>Tier Mega</option>
+                  </optgroup>
+                )}
+              </Fragment>
+            )}
+          </Form.Select>
+          <table className="table-info">
+            <thead />
+            <tbody>
+              <tr className="text-center">
+                <td className="table-sub-header" colSpan={2}>
+                  Stats
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
+                  ATK
+                </td>
+                <td className="text-center">{statATK ? statATK.attack : 0}</td>
+              </tr>
+              <tr>
+                <td>
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
+                  DEF
+                </td>
+                <td className="text-center">{statDEF ? statDEF.defense : 0}</td>
+              </tr>
+              <tr>
+                <td>
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={sta_logo} />
+                  STA
+                </td>
+                <td className="text-center">{statSTA ? Math.floor(statSTA.stamina / RAID_BOSS_TIER[tier].CPm) : 0}</td>
+              </tr>
+              <tr>
+                <td>
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
+                  HP
+                </td>
+                <td className="text-center">{RAID_BOSS_TIER[tier].sta}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      ) : (
+        <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} statProd={statProd} pokemonStats={stats} stats={currDataPoke} />
       )}
-      <div className="row">
-        <div className="col-sm-6" />
-        <div className="col-sm-6" />
-      </div>
-      <FormTools
-        hide={props.hide}
-        raid={typePoke === 'pokemon' ? false : true}
-        tier={tier}
-        setTier={onSetTier}
-        setForm={props.setForm}
-        id={props.id}
-        dataPoke={pokeData}
-        currForm={currForm}
-        formList={formList}
-        stats={props.stats}
-        onSetStats={props.onHandleSetStats}
-        onClearStats={props.onClearStats}
-      />
     </Fragment>
   );
 };

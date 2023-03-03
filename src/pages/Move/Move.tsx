@@ -10,7 +10,7 @@ import { getBarCharge, queryTopMove } from '../../util/Calculate';
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
 import APIService from '../../services/API.service';
-import './Move.css';
+import './Move.scss';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -34,22 +34,8 @@ const columns: any = [
   },
   {
     name: 'Name',
-    selector: (row: {
-      num: any;
-      forme: string;
-      sprite: string;
-      baseSpecies: string;
-      name:
-        | string
-        | number
-        | boolean
-        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-        | React.ReactFragment
-        | React.ReactPortal
-        | null
-        | undefined;
-    }) => (
-      <Link to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`} target="_blank">
+    selector: (row: { num: any; forme: string; sprite: string; baseSpecies: string; name: string }) => (
+      <Link to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}>
         <img
           height={48}
           alt="img-pokemon"
