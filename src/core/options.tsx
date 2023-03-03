@@ -1234,14 +1234,14 @@ export const optionDetailsPokemon = (
     });
 
   result = result.map((pokemon) => {
-    const formOrigin = pokemonForm[pokemon.id].find((form: { default: any }) => form.default);
+    const formOrigin = pokemonForm[pokemon.id]?.find((form: { default: any }) => form.default);
     if (pokemon.id === 422 || pokemon.id === 423) {
       formOrigin.form += '_SEA';
     }
-    if (pokemon.form === 'NORMAL' && !pokemon.releasedGO && pokemon.form !== formOrigin.form) {
-      const checkForm: boolean = result.find((poke) => poke.form === formOrigin.form)?.releasedGO ?? false;
+    if (pokemon.form === 'NORMAL' && !pokemon.releasedGO && pokemon.form !== formOrigin?.form) {
+      const checkForm: boolean = result.find((poke) => poke.form === formOrigin?.form)?.releasedGO ?? false;
       pokemon.releasedGO = checkForm;
-      if (pokemon.id === 201) {
+      if (pokemon.id === 201 || pokemon.id === 999 || pokemon.id === 1000) {
         pokemon.releasedGO = true;
       }
     }
