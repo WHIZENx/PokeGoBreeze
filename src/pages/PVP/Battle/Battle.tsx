@@ -718,6 +718,11 @@ const Battle = () => {
           .filter(
             (pokemon: { speciesId: string | string[] }) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs')
           )
+          .filter((item: { speciesId: string; speciesName: string }) => {
+            const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+            const pokemon: any = Object.values(pokemonData).find((pokemon: { slug: string }) => pokemon.slug === name);
+            return pokemon ? true : false;
+          })
           .map((item: { speciesId: string; speciesName: string }) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
             const pokemon: any = Object.values(pokemonData).find((pokemon: { slug: string }) => pokemon.slug === name);
