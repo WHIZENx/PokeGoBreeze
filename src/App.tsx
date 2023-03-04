@@ -192,8 +192,13 @@ function App() {
 
   useEffect(() => {
     setVersion(packageInfo.version);
-    dispatch(loadStats());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (data.data) {
+      dispatch(loadStats(data.data.pokemonData));
+    }
+  }, [dispatch, data.data]);
 
   useEffect(() => {
     if (data.data && stats) {

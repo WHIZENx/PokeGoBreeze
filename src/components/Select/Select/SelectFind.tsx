@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import pokemonData from '../../../data/pokemon.json';
+import { useSelector, RootStateOrAny } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { convertNameRanking, splitAndCapitalize } from '../../../util/Utils';
 import CardPokemonLarge from '../../Card/CardPokemonLarge';
@@ -20,6 +20,7 @@ const SelectFind = (props: {
   // eslint-disable-next-line no-unused-vars
   setId: (arg0: null) => void;
 }) => {
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
@@ -30,7 +31,7 @@ const SelectFind = (props: {
   const [search, setSearch] = useState('');
 
   const result = useRef(
-    Object.values(pokemonData).filter((pokemon) =>
+    Object.values(pokemonData).filter((pokemon: any) =>
       props.data ? props.data.map((item: { speciesId: any }) => item.speciesId).includes(convertNameRanking(pokemon.slug)) : true
     )
   );
@@ -46,7 +47,7 @@ const SelectFind = (props: {
   const changePokemon = (pokemon: any) => {
     setCurrentPokemon(pokemon);
     setShowPokemon(false);
-    const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+    const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
     if (props.clearData) {
       props.clearData();
     }
@@ -128,12 +129,12 @@ const SelectFind = (props: {
             <div>
               {result.current
                 .filter(
-                  (pokemon) =>
+                  (pokemon: any) =>
                     splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
                     pokemon.num.toString().includes(search)
                 )
                 .slice(0, firstInit + eachCounter * startIndex)
-                .map((pokemon, index) => (
+                .map((pokemon: any, index) => (
                   <div className="container card-pokemon" key={index} onMouseDown={() => changePokemon(pokemon)}>
                     <CardPokemonLarge id={pokemon.num} name={splitAndCapitalize(pokemon.name, '-', ' ')} value={pokemon} />
                   </div>

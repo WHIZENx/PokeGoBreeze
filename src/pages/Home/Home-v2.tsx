@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
-import pokemonData from '../../data/pokemon.json';
 import loadingImg from '../../assets/loading.png';
 
 import './Home.scss';
@@ -40,9 +39,9 @@ const Home = () => {
   const stats = useSelector((state: RootStateOrAny) => state.stats);
   const types = Object.keys(data.typeEff);
   const dataList = useRef(
-    mappingReleasedGO(pokemonData, data.details)
+    mappingReleasedGO(data.pokemonData, data.details)
       .map((item) => {
-        const stats = calculateStatsByTag(item.baseStats, item.slug);
+        const stats = calculateStatsByTag(item, item.baseStats, item.slug);
         const assetForm = queryAssetForm(data.assets, item.num, item.name);
         return {
           id: item.num,

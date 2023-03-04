@@ -264,7 +264,7 @@ export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => 
   return Object.values(data)
     .filter((pokemon) => pokemon.num > 0)
     .map((value: any) => {
-      const stats = calculateStatsByTag(value.baseStats, value.slug);
+      const stats = calculateStatsByTag(value, value.baseStats, value.slug);
       return {
         id: value.num,
         name: value.slug,
@@ -377,7 +377,7 @@ export const mappingReleasedGO = (pokemonData: any, details: any[]) => {
       const result = checkReleasedGO(item, details);
       return {
         ...item,
-        releasedGO: result ? result.releasedGO : false,
+        releasedGO: item.isForceReleasedGO ?? (result ? result.releasedGO : false),
       };
     });
 };

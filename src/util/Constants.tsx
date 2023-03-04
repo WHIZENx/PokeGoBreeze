@@ -118,6 +118,7 @@ export const genList: any = {
 };
 
 export const regionList: any = {
+  0: 'Unknown',
   1: 'Kanto',
   2: 'Johto',
   3: 'Hoenn',

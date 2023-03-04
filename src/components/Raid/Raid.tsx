@@ -9,7 +9,6 @@ import atk_logo from '../../assets/attack.png';
 import def_logo from '../../assets/defense.png';
 import sta_logo from '../../assets/stamina.png';
 
-import pokemonData from '../../data/pokemon.json';
 import { useSelector, RootStateOrAny } from 'react-redux';
 
 const Raid = ({
@@ -25,15 +24,16 @@ const Raid = ({
   setTimeAllow,
 }: any) => {
   const details = useSelector((state: RootStateOrAny) => state.store.data.details);
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
   const [tier, setTier]: any = useState(1);
   const [pokemonClass, setPokemonClass]: any = useState(null);
 
   useEffect(() => {
-    setPokemonClass(Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass);
+    setPokemonClass((Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass);
   }, [id]);
 
   useEffect(() => {
-    const pokemonClass = Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass;
+    const pokemonClass = (Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass;
     if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) {
       setTier(5);
     } else if (parseInt(tier) === 5 && currForm && currForm.form.form_name.includes('mega') && pokemonClass) {

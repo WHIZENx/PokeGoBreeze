@@ -6,7 +6,7 @@ import { Sticker } from './models/sticker';
 import { Details } from './models/details';
 
 import pokemonData from '../data/pokemon.json';
-import { convertName } from '../util/Utils';
+import { capitalize, convertName } from '../util/Utils';
 import { TypeSet } from './models/type';
 import { Candy } from './models/candy';
 
@@ -125,6 +125,57 @@ export const optionPokemonTypes = (data: any[]) => {
       });
     });
   return types;
+};
+
+export const optionPokemonData = (data: any[]) => {
+  const ids = Array.from(new Set(Object.values(pokemonData).map((pokemon) => pokemon.num)));
+  const result: any = pokemonData;
+  data.forEach((pokemon) => {
+    if (!ids.includes(pokemon.id)) {
+      const types = [];
+      if (pokemon.type) {
+        types.push(capitalize(pokemon.type.replace('POKEMON_TYPE_', '')));
+      }
+      if (pokemon.type2) {
+        types.push(capitalize(pokemon.type2.replace('POKEMON_TYPE_', '')));
+      }
+      result[pokemon.name.toLowerCase()] = {
+        num: pokemon.id,
+        name: capitalize(pokemon.name),
+        alias: pokemon.name.toLowerCase(),
+        slug: pokemon.name.toLowerCase(),
+        sprite: 'unknown-pokemon',
+        types,
+        genderRatio: {
+          M: 0.5,
+          F: 0.5,
+        },
+        baseStatsGO: true,
+        baseStats: {
+          atk: pokemon.stats.baseAttack,
+          def: pokemon.stats.baseDefense,
+          sta: pokemon.stats.baseStamina,
+        },
+        heightm: pokemon.pokedexHeightM,
+        weightkg: pokemon.pokedexWeightKg,
+        color: 'None',
+        evos: pokemon.evolutionIds ? pokemon.evolutionIds.map((name: string) => capitalize(name)) : [],
+        baseForme: null,
+        prevo: capitalize(pokemon.parentPokemonId),
+        isForceReleasedGO: true,
+        isTransferable: pokemon.isTransferable,
+        isDeployable: pokemon.isDeployable,
+        isTradable: pokemon.isTradable,
+        pokemonClass: null,
+        disableTransferToPokemonHome: false,
+        isBaby: false,
+        gen: 0,
+        region: 'Unknown',
+        version: 'pokémon-gO',
+      };
+    }
+  });
+  return result;
 };
 
 export const optionPokemonWeather = (data: any[]) => {
@@ -1156,6 +1207,7 @@ export const optionLeagues = (
 
 export const optionDetailsPokemon = (
   data: any[],
+  pokemonData: any[],
   pokemon: any[],
   formSpecial: string[],
   assets: any[],

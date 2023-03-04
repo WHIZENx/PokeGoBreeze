@@ -12,7 +12,6 @@ import Form from '../../components/Info/Form/Form-v2';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
-import pokemonData from '../../data/pokemon.json';
 import pokeListName from '../../data/pokemon_names.json';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
 import Error from '../Error/Error';
@@ -68,7 +67,7 @@ const Pokemon = (props: {
   const { enqueueSnackbar } = useSnackbar();
 
   const getRatioGender = useCallback((id: number) => {
-    return Object.values(pokemonData).find((item) => id === item.num)?.genderRatio;
+    return (Object.values(dataStore.pokemonData).find((item: any) => id === item.num) as any)?.genderRatio;
   }, []);
 
   const fetchMap = useCallback(

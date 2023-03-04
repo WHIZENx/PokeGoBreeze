@@ -83,7 +83,7 @@ const Home = () => {
           sprite: string;
           baseSpecies: any;
         }) => {
-          const stats = calculateStatsByTag(item.baseStats, item.slug);
+          const stats = calculateStatsByTag(item, item.baseStats, item.slug);
           return {
             id: item.num,
             name: item.name,

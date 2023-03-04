@@ -1,6 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import pokemonData from '../../../data/pokemon.json';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
@@ -720,11 +719,11 @@ const Battle = () => {
           )
           .map((item: { speciesId: string; speciesName: string }) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon: any = Object.values(pokemonData).find((pokemon: { slug: string }) => pokemon.slug === name);
+            const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
             const id = pokemon.num;
             const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
-            const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+            const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
             return {
               ...item,
@@ -1089,7 +1088,11 @@ const Battle = () => {
     );
 
     if (!stats) {
-      const statsBattle = calculateStatsByTag(pokemon.pokemonData.pokemon.baseStats, pokemon.pokemonData.pokemon.slug);
+      const statsBattle = calculateStatsByTag(
+        pokemon.pokemonData.pokemon,
+        pokemon.pokemonData.pokemon.baseStats,
+        pokemon.pokemonData.pokemon.slug
+      );
 
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);

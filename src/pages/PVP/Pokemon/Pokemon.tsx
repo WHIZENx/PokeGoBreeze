@@ -1,5 +1,3 @@
-import pokemonData from '../../../data/pokemon.json';
-
 import '../PVP.scss';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 
@@ -42,14 +40,14 @@ const PokemonPVP = () => {
         ).data.find((pokemon: { speciesId: any }) => pokemon.speciesId === paramName);
 
         const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-        const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.slug === name);
+        const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
         const id = pokemon.num;
         const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
         document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${
           cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
         } (${capitalize(params.type)})`;
 
-        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+        const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
         let fmoveData = data.moveset[0],
           cMoveDataPri = data.moveset[1],
@@ -308,7 +306,7 @@ const PokemonPVP = () => {
                       </div>
                     </div>
                     <hr />
-                    {Keys(dataStore.assets, Object.values(pokemonData), rankingPoke.data, params.cp, params.type)}
+                    {Keys(dataStore.assets, Object.values(dataStore.pokemonData), rankingPoke.data, params.cp, params.type)}
                   </div>
                   <div className="container">
                     <hr />

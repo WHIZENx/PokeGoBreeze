@@ -1,6 +1,5 @@
 import { PRIMAL_STATS } from '../core/forms';
 import data from '../data/cp_multiplier.json';
-import pokemonData from '../data/pokemon.json';
 import {
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,
@@ -575,9 +574,13 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
 };
 
 export const calculateStatsByTag = (
+  pokemon: any,
   baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number },
   tag: string | null
 ) => {
+  if (pokemon.baseStatsGO) {
+    return pokemon.baseStats;
+  }
   const checkNerf = tag && tag.toLowerCase().includes('mega') ? false : true;
   const primal = tag && tag.toLowerCase().includes('primal');
   const atk = primal ? PRIMAL_STATS.attack : calBaseATK(baseStats, checkNerf);
@@ -1075,7 +1078,7 @@ export const queryTopMove = (
           }
         }
         if (pokemonList) {
-          const stats = calculateStatsByTag(value.baseStats, value.slug);
+          const stats = calculateStatsByTag(value, value.baseStats, value.slug);
           const dps = calculateAvgDPS(
             globalOptions,
             typeEff,
@@ -1300,6 +1303,7 @@ export const rankMove = (
 
 export const queryStatesEvoChain = (
   globalOptions: any,
+  pokemonData: any,
   item: { form: string; id: number; name: string },
   level: any,
   atkIV: number,
@@ -1308,14 +1312,14 @@ export const queryStatesEvoChain = (
 ) => {
   let pokemon: any;
   if (item.form === '') {
-    pokemon = Object.values(pokemonData).find((value) => value.num === item.id && value.slug === item.name.toLowerCase());
+    pokemon = Object.values(pokemonData).find((value: any) => value.num === item.id && value.slug === item.name.toLowerCase());
   } else {
-    pokemon = Object.values(pokemonData).find((value) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
+    pokemon = Object.values(pokemonData).find((value: any) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
   }
   if (!pokemon) {
-    pokemon = Object.values(pokemonData).find((value) => value.num === item.id);
+    pokemon = Object.values(pokemonData).find((value: any) => value.num === item.id);
   }
-  const pokemonStats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+  const pokemonStats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
   const dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 500);
   const dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 1500);
   const dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 2500);
@@ -1520,7 +1524,7 @@ export const counterPokemon = (
         if (pokemon === undefined) {
           return;
         }
-        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+        const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
         value.quickMoves.forEach((vf: any) => {
           queryMoveCounter(
             globalOptions,

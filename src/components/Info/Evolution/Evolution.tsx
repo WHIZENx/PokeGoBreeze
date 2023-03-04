@@ -17,7 +17,6 @@ import Xarrow from 'react-xarrows';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
-import pokemonData from '../../../data/pokemon.json';
 import pokemonName from '../../../data/pokemon_names.json';
 
 import './Evolution.scss';
@@ -40,6 +39,7 @@ const theme = createTheme({
 } as any);
 
 const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter }: any) => {
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
   const [arrEvoList, setArrEvoList]: any = useState([]);
   const optionsDefault = {
@@ -182,7 +182,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     if (!name) {
       return;
     }
-    const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+    const pokemon: any = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
     arr.unshift([formatEvoChain(pokemon)]);
     return getPrevEvoChainJSON(pokemon?.prevo, arr);
   }, []);
@@ -190,7 +190,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
   const getCurrEvoChainJSON = useCallback((prev: { evos: any[] }, arr: any[][]) => {
     const evo: { name: any; id: any; baby: any; form: any; gmax: boolean; sprite: any }[] = [];
     prev.evos.forEach((name: string) => {
-      const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+      const pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
       evo.push(formatEvoChain(pokemon));
     });
     arr.push(evo);
@@ -202,12 +202,12 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     }
     arr.push(
       evos.map((name: string) => {
-        const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+        const pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
         return formatEvoChain(pokemon);
       })
     );
     evos.forEach((name: string) => {
-      const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+      const pokemon: any = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
       getNextEvoChainJSON(pokemon?.evos, arr);
     });
   }, []);
@@ -224,17 +224,17 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
         form += '-mane';
       }
       let pokemon: any = Object.values(pokemonData).find(
-        (pokemon) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
+        (pokemon: any) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
       );
       if (!pokemon) {
-        pokemon = Object.values(pokemonData).find((pokemon) => pokemon.num === id && pokemon.forme === null);
+        pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.num === id && pokemon.forme === null);
       }
 
       const prevEvo: any[] = [],
         curr: any = [],
         evo: any = [];
       getPrevEvoChainJSON(pokemon.prevo, prevEvo);
-      const prev = Object.values(pokemonData).find((p) => p.name === pokemon.prevo);
+      const prev: any = Object.values(pokemonData).find((p: any) => p.name === pokemon.prevo);
       if (prev) {
         getCurrEvoChainJSON(prev, curr);
       } else {

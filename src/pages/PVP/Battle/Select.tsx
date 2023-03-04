@@ -62,7 +62,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     cMoveSec = combat.find((item: { name: any }) => item.name === cMoveSec);
     setCMoveSec(cMoveSec);
 
-    const stats = calculateStatsByTag(value.pokemon.baseStats, value.pokemon.slug);
+    const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
     const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
     const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
 

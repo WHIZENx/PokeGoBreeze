@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize, convertName, capitalize, convertFormName } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
-import pokemonData from '../../../data/pokemon.json';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { genRoman } from '../../../util/Constants';
@@ -115,12 +114,13 @@ const StatsRanking = () => {
   ];
 
   const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
   const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: any[]) => {
     return pokemon.map(
       (data: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) => {
-        const statsTag = calculateStatsByTag(data.baseStats, data.slug);
+        const statsTag = calculateStatsByTag(data, data.baseStats, data.slug);
         return {
           ...data,
           atk: {
@@ -166,7 +166,7 @@ const StatsRanking = () => {
   };
 
   const [sortId, setSortId] = useState(9);
-  const pokemonList = useRef(sortRanking(mappingData(Object.values(pokemonData).filter((pokemon) => pokemon.num > 0)), sortId));
+  const pokemonList = useRef(sortRanking(mappingData(Object.values(pokemonData).filter((pokemon: any) => pokemon.num > 0)), sortId));
   const [pokemonFilter, setPokemonFilter] = useState(pokemonList.current);
 
   const [select, setSelect]: any = useState(pokemonList.current[0]);
@@ -240,7 +240,13 @@ const StatsRanking = () => {
                   </td>
                   <td colSpan={2}>
                     <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                      <b>{genRoman(select.gen)}</b> <span className="text-gen">{`Gen ${select.gen}`}</span>
+                      {select.gen === 0 ? (
+                        <b>Unknown</b>
+                      ) : (
+                        <>
+                          <b>{genRoman(select.gen)}</b> <span className="text-gen">{`Gen ${select.gen}`}</span>
+                        </>
+                      )}
                     </h5>
                   </td>
                 </tr>

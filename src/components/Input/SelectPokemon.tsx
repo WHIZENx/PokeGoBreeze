@@ -1,7 +1,6 @@
 import CardPokemon from '../Card/CardPokemon';
 import CloseIcon from '@mui/icons-material/Close';
 
-import pokemonData from '../../data/pokemon.json';
 import React, { useEffect, useState } from 'react';
 
 import './Select.scss';
@@ -22,6 +21,7 @@ const SelectPokemon = (props: {
   disable?: boolean;
 }) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -169,14 +169,14 @@ const SelectPokemon = (props: {
           <div>
             {Object.values(pokemonData)
               .filter(
-                (item) =>
+                (item: any) =>
                   item.num > 0 &&
                   item.num <= 905 &&
                   (splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
                     item.num.toString().includes(search))
               )
               .slice(0, firstInit + eachCounter * startIndex)
-              .map((value, index) => (
+              .map((value: any, index) => (
                 <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
                   <CardPokemon value={value} />
                 </div>

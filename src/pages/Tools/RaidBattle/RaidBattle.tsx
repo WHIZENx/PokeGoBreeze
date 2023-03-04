@@ -4,8 +4,6 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Select/Find/Find';
 import { Link } from 'react-router-dom';
 
-import pokemonData from '../../../data/pokemon.json';
-
 import { checkReleasedGO, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { MAX_LEVEL, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/Constants';
@@ -316,7 +314,7 @@ const RaidBattle = () => {
       const fmove = data.combat.find((item: { name: any }) => item.name === vf);
       const cmove = data.combat.find((item: { name: any }) => item.name === vc);
       if (fmove && cmove) {
-        const stats = calculateStatsByTag(value.baseStats, value.slug);
+        const stats = calculateStatsByTag(value, value.baseStats, value.slug);
         const statsAttackerTemp = {
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
@@ -401,7 +399,7 @@ const RaidBattle = () => {
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: any[] | (() => any[]) = [];
-    Object.values(pokemonData).forEach((pokemon) => {
+    Object.values(data.pokemonData).forEach((pokemon: any) => {
       if (pokemon.forme !== 'Gmax') {
         let combatPoke = data.pokemonCombat.filter(
           (item: { id: number; baseSpecies: string }) =>
@@ -469,7 +467,7 @@ const RaidBattle = () => {
     const cmove = data.combat.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
 
     if (fmove && cmove) {
-      const stats = calculateStatsByTag(pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
+      const stats = calculateStatsByTag(pokemon, pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
       const statsAttacker = {
         atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
         def: calculateStatsBattle(stats.def, used.iv.def, used.level),

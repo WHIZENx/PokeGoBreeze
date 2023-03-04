@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 import Form from './Form';
 
-import pokemonData from '../../../data/pokemon.json';
 import pokeListName from '../../../data/pokemon_names.json';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { RouterState } from '../../..';
@@ -39,6 +38,7 @@ const Find = (props: {
   const stats = useSelector((state: RootStateOrAny) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
 
   const [id, setId] = useState(searching ? (props.objective ? (searching.obj ? searching.obj.id : 1) : searching.id) : 1);
   const [form, setForm] = useState(null);

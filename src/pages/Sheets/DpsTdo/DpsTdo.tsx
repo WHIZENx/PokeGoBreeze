@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
-import pokemonData from '../../../data/pokemon.json';
 import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
 import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../../util/Constants';
 import {
@@ -291,7 +290,7 @@ const DpsTdo = () => {
       const cmove = data.combat.find((item: { name: any }) => item.name === vc);
 
       if (fmove && cmove) {
-        const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+        const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
         const statsAttacker = {
           atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
           def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
@@ -307,7 +306,7 @@ const DpsTdo = () => {
 
         let dps, tdo;
         if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
-          const statsDef = calculateStatsByTag(dataTargetPokemon.baseStats, dataTargetPokemon.slug);
+          const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
           const statsDefender = {
             atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
             def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
@@ -384,7 +383,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: any[] = [];
-    Object.values(pokemonData).forEach((pokemon) => {
+    Object.values(data.pokemonData).forEach((pokemon: any) => {
       let combatPoke = data.pokemonCombat.filter(
         (item: { id: number; baseSpecies: string }) =>
           item.id === pokemon.num &&
@@ -422,6 +421,7 @@ const DpsTdo = () => {
   const searchFilter = () => {
     let result = dpsTable.filter(
       (item: {
+        isForceReleasedGO: any;
         fmove?: { type: string };
         cmove?: { type: string };
         pokemon?: {
@@ -467,7 +467,7 @@ const DpsTdo = () => {
               );
             }
           });
-          boolReleaseGO = result ? result.releasedGO : false;
+          boolReleaseGO = item.isForceReleasedGO ?? (result ? result.releasedGO : false);
         }
         if (enableShadow || enableElite || enableMega) {
           return (

@@ -1,5 +1,3 @@
-import pokemonData from '../../../data/pokemon.json';
-
 import TypeInfo from '../../../components/Sprites/Type/Type';
 
 import '../PVP.scss';
@@ -85,11 +83,11 @@ const RankingPVP = () => {
         }
         file = file.map((item: { speciesId: string; speciesName: string; moveset: string[] }) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.slug === name);
+          const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
           const id = pokemon.num;
           const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
-          const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+          const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
           if (!styleSheet.current) {
             styleSheet.current = getStyleSheet(`.${pokemon.types[0].toLowerCase()}`);
@@ -263,7 +261,7 @@ const RankingPVP = () => {
                     )}
                   </div>
                   <hr />
-                  {Keys(dataStore.assets, Object.values(pokemonData), data, params.cp, params.type)}
+                  {Keys(dataStore.assets, Object.values(dataStore.pokemonData), data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />
