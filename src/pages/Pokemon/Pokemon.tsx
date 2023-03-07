@@ -21,6 +21,7 @@ import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { getFormsGO } from '../../core/forms';
 import { RouterState } from '../..';
+import { useTheme } from '@mui/material';
 
 const Pokemon = (props: {
   prevRouter?: any;
@@ -33,6 +34,7 @@ const Pokemon = (props: {
   first?: boolean;
   setFirst?: any;
 }) => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
@@ -443,7 +445,10 @@ const Pokemon = (props: {
                   </Fragment>
                 )}
               </div>
-              <div className={'element-bottom position-relative poke-container' + (props.isSearch ? '' : ' container')}>
+              <div
+                style={{ color: theme.palette.text.primary }}
+                className={'element-bottom position-relative poke-container' + (props.isSearch ? '' : ' container')}
+              >
                 <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
                   {!released && formName && (
                     <Alert variant="danger">

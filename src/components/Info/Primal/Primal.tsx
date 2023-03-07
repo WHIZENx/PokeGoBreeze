@@ -60,11 +60,27 @@ const Primal = (props: { formList: any; id: number }) => {
                 <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
               </div>
               <span className="caption">
-                First primal evolution: <img alt="img-primal" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
+                First primal evolution:{' '}
+                <img
+                  alt="img-primal"
+                  width={25}
+                  height={25}
+                  src={APIService.getIconMegaPrimalSprite(
+                    props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
+                  )}
+                />
                 <b>x{getQuestEvo(value.name).firstTempEvolution}</b>
               </span>
               <span className="caption">
-                Primal evolution: <img alt="img-primal" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
+                Primal evolution:{' '}
+                <img
+                  alt="img-primal"
+                  width={25}
+                  height={25}
+                  src={APIService.getIconMegaPrimalSprite(
+                    props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
+                  )}
+                />
                 <b>x{getQuestEvo(value.name).tempEvolution}</b>
               </span>
             </li>

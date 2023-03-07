@@ -34,9 +34,14 @@ const Raid = ({
 
   useEffect(() => {
     const pokemonClass = (Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass;
-    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) {
+    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega') && currForm.form.form_name !== 'primal') {
       setTier(5);
-    } else if (parseInt(tier) === 5 && currForm && currForm.form.form_name.includes('mega') && pokemonClass) {
+    } else if (
+      parseInt(tier) === 5 &&
+      currForm &&
+      (currForm.form.form_name.includes('mega') || currForm.form.form_name === 'primal') &&
+      pokemonClass
+    ) {
       setTier(6);
     }
     if (setTierBoss) {
@@ -74,11 +79,11 @@ const Raid = ({
             <option value={2}>Tier 2</option>
             {((currForm && !currForm.form.form_name.includes('mega')) || pokemonClass) && <option value={4}>Tier 4</option>}
           </optgroup>
-          {currForm && currForm.form.form_name.includes('mega') && (
+          {currForm && (currForm.form.form_name.includes('mega') || currForm.form.form_name === 'primal') && (
             <Fragment>
               {pokemonClass ? (
-                <optgroup label="Legendary Mega Tier 6">
-                  <option value={6}>Tier Mega</option>
+                <optgroup label={'Legendary ' + (currForm.form.form_name === 'primal' ? 'Primal' : 'Mega') + ' Tier 6'}>
+                  <option value={6}>{'Tier ' + (currForm.form.form_name === 'primal' ? 'Primal' : 'Mega')}</option>
                 </optgroup>
               ) : (
                 <optgroup label="Mega Tier 4">
@@ -114,6 +119,7 @@ const Raid = ({
             src={raidEgg(
               parseInt(tier),
               currForm && currForm.form.form_name.includes('mega') && !pokemonClass,
+              currForm && currForm.form.form_name === 'primal' && pokemonClass,
               details.find((pokemon: { id: any }) => pokemon.id === id)?.pokemonClass === 'ULTRA_BEAST'
             )}
           />

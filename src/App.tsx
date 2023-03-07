@@ -207,7 +207,7 @@ function App() {
   }, [dispatch, data.data, stats]);
 
   return (
-    <Box sx={{ height: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
+    <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
       <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
       {data.data && stats && (
         <Routes>

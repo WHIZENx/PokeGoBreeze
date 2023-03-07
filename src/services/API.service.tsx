@@ -83,6 +83,10 @@ class APIService {
     return `${POGO_ASSET_API_URL}Menu Icons/${icon}.png`;
   }
 
+  getIconMegaPrimalSprite(icon: string) {
+    return `${POGO_ASSET_API_URL}Megas and Primals/${icon}.png`;
+  }
+
   getItemSprite(item: string) {
     return `${POGO_ASSET_API_URL}Items/${item}.png`;
   }

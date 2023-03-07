@@ -246,10 +246,7 @@ const Home = () => {
 
   return (
     <Fragment>
-      <div
-        className="head-filter border-types text-center w-100"
-        style={{ backgroundColor: theme.palette.background.default, transition: TRANSITION_TIME }}
-      >
+      <div className="head-filter border-types text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
         <div className="row w-100" style={{ margin: 0 }}>
           {types.map((item, index) => (
