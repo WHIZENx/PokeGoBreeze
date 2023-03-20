@@ -41,7 +41,7 @@ const PokemonModel = (props: { id: any; name: string }) => {
   return (
     <div className="element-top">
       <h4 className="title-evo">
-        <b>{'Assets of ' + splitAndCapitalize(props.name, '_', ' ') + ' in Pokémon Go'}</b>
+        <b>{'Assets of ' + splitAndCapitalize(props.name, '-', ' ') + ' in Pokémon Go'}</b>
         <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon ?? 'Standard')} />
       </h4>
       <div>

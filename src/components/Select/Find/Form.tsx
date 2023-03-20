@@ -4,7 +4,7 @@ import APIService from '../../../services/API.service';
 import Tools from './Tools';
 
 import loading from '../../../assets/loading.png';
-import { convertFormNameImg, splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
+import { convertFormNameImg, getPokemonById, getPokemonByIndex, splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
 import TypeInfo from '../../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { getFormsGO } from '../../../core/forms';
@@ -21,7 +21,6 @@ const Form = (props: {
   // eslint-disable-next-line no-unused-vars
   setTier?: (arg0: any) => void;
   onSetPrev?: () => void;
-  count: number;
   onSetNext?: () => void;
   name: string;
   hide?: any;
@@ -35,6 +34,7 @@ const Form = (props: {
   data: any;
   setUrlEvo: any;
   objective?: boolean;
+  pokemonName: any;
 }) => {
   const dispatch = useDispatch();
 
@@ -45,6 +45,7 @@ const Form = (props: {
   const [tier, setTier] = useState(props.tier ?? 1);
 
   const [data, setData]: any = useState(null);
+  const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
 
   const [currForm, setCurrForm]: any = useState(null);
 
@@ -142,6 +143,12 @@ const Form = (props: {
         setCurrForm(formDefault[0]);
         setPokeID(formDefault[0].form.id);
       }
+      const currentId: any = getPokemonById(Object.values(props.pokemonName), data.id);
+      setDataStorePokemon({
+        prev: getPokemonByIndex(Object.values(props.pokemonName), currentId.index - 1),
+        current: currentId,
+        next: getPokemonByIndex(Object.values(props.pokemonName), currentId.index + 1),
+      });
     },
     []
   );
@@ -220,7 +227,7 @@ const Form = (props: {
   return (
     <Fragment>
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
-        {props.id > 1 && (
+        {dataStorePokemon?.prev && (
           <div
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -229,11 +236,11 @@ const Form = (props: {
             }}
           >
             <div>
-              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id - 1)} />
+              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)} />
             </div>
             <span>
               <b>
-                <span className="text-navigater">{'<'}</span> <span>#{props.id - 1}</span>
+                <span className="text-navigater">{'<'}</span> <span>#{dataStorePokemon?.prev?.id}</span>
               </b>
             </span>
           </div>
@@ -250,7 +257,7 @@ const Form = (props: {
         }
       />
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
-        {props.id < props.count && (
+        {dataStorePokemon?.next && (
           <div
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -259,11 +266,11 @@ const Form = (props: {
             }}
           >
             <div>
-              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(props.id + 1)} />
+              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)} />
             </div>
             <span>
               <b>
-                <span>#{props.id + 1}</span> <span className="text-navigater">{'>'}</span>
+                <span>#{dataStorePokemon?.next?.id}</span> <span className="text-navigater">{'>'}</span>
               </b>
             </span>
           </div>

@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const POKE_API_URL = 'https://pokeapi.co/api/v2/';
+const POKE_ASSETS = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 const POGO_API_URL = 'https://pogoapi.net/api/v1/';
 
 const POGO_PROD_ASSET_URL = 'https://storage.googleapis.com/prod-public-images/';
@@ -142,6 +143,9 @@ class APIService {
   }
 
   getPokeFullSprite(id: any, form?: string) {
+    if (id > 905) {
+      return `${POKE_ASSETS}${id}.png`;
+    }
     id = id.toString().padStart(3, '0');
     return `${POKE_SPRITES_FULL_API_URL}${id}${form ? `-${form}` : ''}.png`;
   }

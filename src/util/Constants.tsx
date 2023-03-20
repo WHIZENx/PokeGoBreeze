@@ -123,10 +123,12 @@ export const regionList: any = {
   2: 'Johto',
   3: 'Hoenn',
   4: 'Sinnoh',
-  5: 'Unova',
-  6: 'Kalos',
-  7: 'Alola',
-  8: 'Galar',
+  5: 'Hisui',
+  6: 'Unova',
+  7: 'Kalos',
+  8: 'Alola',
+  9: 'Galar',
+  10: 'Paldea',
 };
 
 export const versionList: any = [

@@ -79,9 +79,9 @@ export const computeCandyBgColor = (candyData: Candy[], id: number) => {
   if (!data) {
     data = candyData.find((item) => item.familyId === 0);
   }
-  return `rgb(${Math.round(255 * data?.secondaryColor.r)}, ${Math.round(255 * data?.secondaryColor.g)}, ${Math.round(
-    255 * data?.secondaryColor.b
-  )}, ${data?.secondaryColor.a})`;
+  return `rgb(${Math.round(255 * data?.secondaryColor.r) || 0}, ${Math.round(255 * data?.secondaryColor.g) || 0}, ${
+    Math.round(255 * data?.secondaryColor.b) || 0
+  }, ${data?.secondaryColor.a || 1})`;
 };
 
 export const computeCandyColor = (candyData: Candy[], id: number) => {
@@ -89,9 +89,9 @@ export const computeCandyColor = (candyData: Candy[], id: number) => {
   if (!data) {
     data = candyData.find((item: any) => item.familyId === 0);
   }
-  return `rgb(${Math.round(255 * data?.primaryColor.r)}, ${Math.round(255 * data?.primaryColor.g)}, ${Math.round(
-    255 * data?.primaryColor.b
-  )}, ${data?.primaryColor.a})`;
+  return `rgb(${Math.round(255 * data?.primaryColor.r) || 0}, ${Math.round(255 * data?.primaryColor.g) || 0}, ${
+    Math.round(255 * data?.primaryColor.b) || 0
+  }, ${data?.primaryColor.a || 1})`;
 };
 
 export const computeBgType = (types: string[] | string, shadow = false, purified = false, opacity = 1, styleSheet?: any) => {

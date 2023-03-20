@@ -3,13 +3,14 @@ import React, { useState, useEffect, useRef, Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
-import pokeListName from '../../../data/pokemon_names.json';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { RouterState } from '../../..';
+import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 
 const Search = () => {
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: RootStateOrAny) => state.searching.mainSearching);
+  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
 
   const [first, setFirst] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
@@ -23,7 +24,7 @@ const Search = () => {
   const [showResult, setShowResult] = useState(false);
 
   const pokemonList = useRef(
-    Object.values(pokeListName)
+    Object.values(pokemonName)
       .filter((item: any) => item.id > 0)
       .map((item: any) => {
         return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
@@ -67,21 +68,29 @@ const Search = () => {
   };
 
   const decId = () => {
-    setId(id - 1);
+    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
+    setId(getPokemonByIndex(Object.values(pokemonName), currentId.index - 1).id);
   };
 
   const incId = () => {
-    setId(id + 1);
+    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
+    setId(getPokemonByIndex(Object.values(pokemonName), currentId.index + 1).id);
   };
 
   const onChangeSelect = (event: any) => {
+    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
+    const result: any = {
+      prev: getPokemonByIndex(Object.values(pokemonName), currentId.index - 1),
+      current: currentId,
+      next: getPokemonByIndex(Object.values(pokemonName), currentId.index + 1),
+    };
     if (event.keyCode === 13) {
       setShowResult(false);
       setId(selectId);
-    } else if (selectId - 1 > 0 && event.keyCode === 38) {
-      setSelectId(selectId - 1);
-    } else if (selectId + 1 <= 905 && event.keyCode === 40) {
-      setSelectId(selectId + 1);
+    } else if (result.prev && event.keyCode === 38) {
+      setSelectId(result.prev.id);
+    } else if (result.next && event.keyCode === 40) {
+      setSelectId(result.next.id);
     }
   };
 

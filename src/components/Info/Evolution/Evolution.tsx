@@ -17,8 +17,6 @@ import Xarrow from 'react-xarrows';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
-import pokemonName from '../../../data/pokemon_names.json';
-
 import './Evolution.scss';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { capitalize, convertFormGif, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
@@ -40,6 +38,7 @@ const theme = createTheme({
 
 const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter }: any) => {
   const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
   const [arrEvoList, setArrEvoList]: any = useState([]);
   const optionsDefault = {
@@ -463,12 +462,15 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                   <div className="position-absolute" style={{ left: -40 }}>
                     {!value.gmax && (
                       <div>
-                        <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
-                          <Candy id={value.id} />
-                          <span style={{ marginLeft: 2 }}>{`x${
-                            purified && selectPurified ? data.purificationEvoCandyCost : data.candyCost
-                          }`}</span>
-                        </span>
+                        {data.candyCost ||
+                          (data.purificationEvoCandyCost && (
+                            <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
+                              <Candy id={value.id} />
+                              <span style={{ marginLeft: 2 }}>{`x${
+                                purified && selectPurified ? data.purificationEvoCandyCost : data.candyCost
+                              }`}</span>
+                            </span>
+                          ))}
                         {purified && selectPurified && (
                           <span className="d-block text-end caption text-danger">{`-${
                             data.candyCost - data.purificationEvoCandyCost

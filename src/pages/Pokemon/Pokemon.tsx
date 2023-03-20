@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 
 import './Pokemon.scss';
 
-import { convertFormNameImg, convertName, splitAndCapitalize } from '../../util/Utils';
+import { convertFormNameImg, convertName, getPokemonById, getPokemonByIndex, splitAndCapitalize } from '../../util/Utils';
 import { regionList } from '../../util/Constants';
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -12,7 +12,6 @@ import Form from '../../components/Info/Form/Form-v2';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
-import pokeListName from '../../data/pokemon_names.json';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
 import Error from '../Error/Error';
 import { Alert } from 'react-bootstrap';
@@ -46,14 +45,13 @@ const Pokemon = (props: {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const maxPokemon = Object.keys(pokeListName).length;
-
   const [pokeData, setPokeData]: any = useState([]);
   const [formList, setFormList]: any = useState([]);
 
   const [reForm, setReForm] = useState(false);
 
   const [data, setData]: any = useState(null);
+  const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
   const [pokeRatio, setPokeRatio]: any = useState(null);
 
   const [version, setVersion]: any = useState(null);
@@ -123,7 +121,7 @@ const Pokemon = (props: {
       setFormList(dataFromList);
       let defaultFrom,
         isDefaultForm: {
-          form: { form_name: string; name: string; version_group: { name: string } };
+          form: { form_name: string; name: string; version_group: { name: string }; is_default: boolean };
           default_name: string;
           name: any;
         },
@@ -150,16 +148,16 @@ const Pokemon = (props: {
             isDefaultForm = defaultFrom.find((value: { form: { form_name: string } }) => value.form.form_name === formParams.toLowerCase());
           }
         } else {
-          defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: any } }) => item.form.is_default));
+          defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
           isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
       } else if (router.action === 'POP' && props.searching) {
-        defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: any } }) => item.form.is_default));
+        defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
         isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching.form);
       } else {
-        defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: any } }) => item.form.is_default));
+        defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
         isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
       }
       defaultData = dataPokeList.find((value) => value.name === isDefaultForm.form.name);
@@ -177,18 +175,32 @@ const Pokemon = (props: {
           : splitAndCapitalize(formParams ? isDefaultForm.form.name : data.name, '-', ' ');
       const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
       setFormName(nameInfo);
-      setReleased(checkReleased(data.id, nameInfo));
+      setReleased(checkReleased(data.id, nameInfo, isDefaultForm.form.is_default));
       setForm(router.action === 'POP' && props.searching ? props.searching.form : formInfo);
       if (params.id) {
         document.title = `#${data.id} - ${nameInfo}`;
       }
       setOnChangeForm(false);
+      const currentId: any = getPokemonById(Object.values(dataStore.pokemonName), data.id);
+      setDataStorePokemon({
+        prev: getPokemonByIndex(Object.values(dataStore.pokemonName), currentId.index - 1),
+        current: currentId,
+        next: getPokemonByIndex(Object.values(dataStore.pokemonName), currentId.index + 1),
+      });
     },
     [searchParams, params.id]
   );
 
   const queryPokemon = useCallback(
-    (id: any, axios: any, source: { token: any; cancel: () => void }) => {
+    (
+      id: any,
+      axios: any,
+      source: {
+        // eslint-disable-next-line no-unused-vars
+        cancel: (arg0: string) => void;
+        token: any;
+      }
+    ) => {
       if (!params.id || (params.id && data && parseInt(id) !== data.id)) {
         dispatch(showSpinner());
       }
@@ -204,13 +216,13 @@ const Pokemon = (props: {
           fetchMap(res.data, axios, source);
           setData(res.data);
         })
-        .catch(() => {
+        .catch((e: { message: string }) => {
           enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
           if (params.id) {
             document.title = `#${params.id} - Not Found`;
           }
           setIsFound(false);
-          source.cancel();
+          source.cancel(e.message);
           dispatch(hideSpinner());
         });
     },
@@ -228,13 +240,21 @@ const Pokemon = (props: {
   useEffect(() => {
     const keyDownHandler = (event: any) => {
       if (!spinner.loading) {
-        const id = parseInt(params.id ? params.id.toLowerCase() : props.id);
-        if (id - 1 > 0 && event.keyCode === 37) {
+        const currentId: any = getPokemonById(
+          Object.values(dataStore.pokemonName),
+          parseInt(params.id ? params.id.toLowerCase() : props.id)
+        );
+        const result: any = {
+          prev: getPokemonByIndex(Object.values(dataStore.pokemonName), currentId.index - 1),
+          current: currentId,
+          next: getPokemonByIndex(Object.values(dataStore.pokemonName), currentId.index + 1),
+        };
+        if (result.prev && event.keyCode === 37) {
           event.preventDefault();
-          params.id ? navigate(`/pokemon/${id - 1}`) : props.onDecId();
-        } else if (id + 1 <= 905 && event.keyCode === 39) {
+          params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId();
+        } else if (result.next && event.keyCode === 39) {
           event.preventDefault();
-          params.id ? navigate(`/pokemon/${id + 1}`) : props.onIncId();
+          params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId();
         }
       }
     };
@@ -256,15 +276,21 @@ const Pokemon = (props: {
     return dataStore.evolution.find((item: { id: any }) => item.id === id);
   };
 
-  const checkReleased = (id: number, form: string) => {
+  const checkReleased = (id: number, form: string, isDefault = false) => {
     if (!form) {
       return false;
     }
 
-    const pokemonForm =
+    let pokemonForm =
       dataStore.details.find(
-        (item: { id: any; name: string }) => item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
+        (item: { id: number; name: string }) =>
+          item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
       )?.releasedGO ?? false;
+
+    if (isDefault && !pokemonForm) {
+      pokemonForm =
+        dataStore.details.find((item: { id: number; form: string }) => item.id === id && item.form === 'NORMAL')?.releasedGO ?? false;
+    }
     return pokemonForm;
   };
 
@@ -279,10 +305,10 @@ const Pokemon = (props: {
               <div className="w-100 row prev-next-block sticky-top">
                 {params.id ? (
                   <Fragment>
-                    {data.id > 1 && (
+                    {dataStorePokemon?.prev && (
                       <div
                         title="Previous Pokémon"
-                        className={`prev-block col${data.id < maxPokemon - 1 ? '-6' : ''}`}
+                        className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`}
                         style={{ padding: 0 }}
                       >
                         <Link
@@ -291,8 +317,8 @@ const Pokemon = (props: {
                             setForm(null);
                           }}
                           className="d-flex justify-content-start align-items-center"
-                          to={'/pokemon/' + (data.id - 1)}
-                          title={`#${data.id - 1} ${splitAndCapitalize((pokeListName as any)[data.id - 1].name, '-', ' ')}`}
+                          to={'/pokemon/' + dataStorePokemon?.prev?.id}
+                          title={`#${dataStorePokemon?.prev?.id} ${splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}`}
                         >
                           <div style={{ cursor: 'pointer' }}>
                             <b>
@@ -304,22 +330,22 @@ const Pokemon = (props: {
                               style={{ padding: '5px 5px 5px 0' }}
                               className="pokemon-navigate-sprite"
                               alt="img-full-pokemon"
-                              src={APIService.getPokeFullSprite(data.id - 1)}
+                              src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)}
                             />
                           </div>
                           <div className="w-100" style={{ cursor: 'pointer' }}>
                             <div style={{ textAlign: 'start' }}>
-                              <b>#{data.id - 1}</b>
+                              <b>#{dataStorePokemon?.prev?.id}</b>
                             </div>
-                            <div className="text-navigate">{splitAndCapitalize((pokeListName as any)[data.id - 1].name, '-', ' ')}</div>
+                            <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}</div>
                           </div>
                         </Link>
                       </div>
                     )}
-                    {data.id < maxPokemon && (pokeListName as any)[data.id + 1] && (
+                    {dataStorePokemon?.next && (
                       <div
                         title="Next Pokémon"
-                        className={`next-block col${data.id > 1 ? '-6' : ''}`}
+                        className={`next-block col${dataStorePokemon?.prev ? '-6' : ''}`}
                         style={{ float: 'right', padding: 0 }}
                       >
                         <Link
@@ -328,21 +354,21 @@ const Pokemon = (props: {
                             setForm(null);
                           }}
                           className="d-flex justify-content-end align-items-center"
-                          to={'/pokemon/' + (data.id + 1)}
-                          title={`#${data.id + 1} ${splitAndCapitalize((pokeListName as any)[data.id + 1].name, '-', ' ')}`}
+                          to={'/pokemon/' + dataStorePokemon?.next?.id}
+                          title={`#${dataStorePokemon?.next?.id} ${splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}`}
                         >
                           <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
                             <div style={{ textAlign: 'end' }}>
-                              <b>#{data.id + 1}</b>
+                              <b>#{dataStorePokemon?.next?.id}</b>
                             </div>
-                            <div className="text-navigate">{splitAndCapitalize((pokeListName as any)[data.id + 1].name, '-', ' ')}</div>
+                            <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}</div>
                           </div>
                           <div style={{ width: 60, cursor: 'pointer' }}>
                             <img
                               style={{ padding: '5px 0 5px 5px' }}
                               className="pokemon-navigate-sprite"
                               alt="img-full-pokemon"
-                              src={APIService.getPokeFullSprite(data.id + 1)}
+                              src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)}
                             />
                           </div>
                           <div style={{ cursor: 'pointer' }}>
@@ -356,10 +382,10 @@ const Pokemon = (props: {
                   </Fragment>
                 ) : (
                   <Fragment>
-                    {data.id > 1 && (
+                    {dataStorePokemon?.prev && (
                       <div
                         title="Previous Pokémon"
-                        className={`prev-block col${data.id < maxPokemon - 1 ? '-6' : ''}`}
+                        className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`}
                         style={{ padding: 0 }}
                       >
                         <div
@@ -375,7 +401,7 @@ const Pokemon = (props: {
                               props.setFirst(false);
                             }
                           }}
-                          title={`#${data.id - 1} ${splitAndCapitalize((pokeListName as any)[data.id - 1].name, '-', ' ')}`}
+                          title={`#${dataStorePokemon?.prev?.id} ${splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}`}
                         >
                           <div style={{ cursor: 'pointer' }}>
                             <b>
@@ -387,22 +413,22 @@ const Pokemon = (props: {
                               style={{ padding: '5px 5px 5px 0' }}
                               className="pokemon-navigate-sprite"
                               alt="img-full-pokemon"
-                              src={APIService.getPokeFullSprite(data.id - 1)}
+                              src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)}
                             />
                           </div>
                           <div className="w-100" style={{ cursor: 'pointer' }}>
                             <div style={{ textAlign: 'start' }}>
-                              <b>#{data.id - 1}</b>
+                              <b>#{dataStorePokemon?.prev?.id}</b>
                             </div>
-                            <div className="text-navigate">{splitAndCapitalize((pokeListName as any)[data.id - 1].name, '-', ' ')}</div>
+                            <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}</div>
                           </div>
                         </div>
                       </div>
                     )}
-                    {data.id < maxPokemon && (pokeListName as any)[data.id + 1] && (
+                    {dataStorePokemon?.next && (
                       <div
                         title="Next Pokémon"
-                        className={`next-block col${data.id > 1 ? '-6' : ''}`}
+                        className={`next-block col${dataStorePokemon?.prev ? '-6' : ''}`}
                         style={{ float: 'right', padding: 0 }}
                       >
                         <div
@@ -418,20 +444,20 @@ const Pokemon = (props: {
                               props.setFirst(false);
                             }
                           }}
-                          title={`#${data.id + 1} ${splitAndCapitalize((pokeListName as any)[data.id + 1].name, '-', ' ')}`}
+                          title={`#${dataStorePokemon?.next?.id} ${splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}`}
                         >
                           <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
                             <div style={{ textAlign: 'end' }}>
-                              <b>#{data.id + 1}</b>
+                              <b>#{dataStorePokemon?.next?.id}</b>
                             </div>
-                            <div className="text-navigate">{splitAndCapitalize((pokeListName as any)[data.id + 1].name, '-', ' ')}</div>
+                            <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}</div>
                           </div>
                           <div style={{ width: 60, cursor: 'pointer' }}>
                             <img
                               style={{ padding: '5px 0 5px 5px' }}
                               className="pokemon-navigate-sprite"
                               alt="img-full-pokemon"
-                              src={APIService.getPokeFullSprite(data.id + 1)}
+                              src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)}
                             />
                           </div>
                           <div style={{ cursor: 'pointer' }}>

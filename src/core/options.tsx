@@ -6,7 +6,7 @@ import { Sticker } from './models/sticker';
 import { Details } from './models/details';
 
 import pokemonData from '../data/pokemon.json';
-import { capitalize, convertName } from '../util/Utils';
+import { capitalize, convertName, splitAndCapitalize } from '../util/Utils';
 import { TypeSet } from './models/type';
 import { Candy } from './models/candy';
 
@@ -175,6 +175,31 @@ export const optionPokemonData = (data: any[]) => {
       };
     }
   });
+  return result;
+};
+
+export const optionPokemonName = (details: any[]) => {
+  const pokemonDataId: any = Array.from(new Set(Object.values(pokemonData).map((p: any) => p.num)));
+  const result: any = {};
+  pokemonDataId
+    .filter((id: number) => id > 0)
+    .forEach((id: number, index: number) => {
+      let pokemon = details.find((p) => p.id === id && p.form === 'NORMAL');
+      if (pokemon) {
+        result[pokemon.id.toString()] = {
+          index: index + 1,
+          id: pokemon.id,
+          name: splitAndCapitalize(pokemon.name, '_', ' '),
+        };
+      } else {
+        pokemon = Object.values(pokemonData).find((p: { num: number; forme: string | null }) => p.num === id && !p.forme);
+        result[pokemon.num.toString()] = {
+          index: index + 1,
+          id: pokemon.num,
+          name: splitAndCapitalize(pokemon.name, '_', ' '),
+        };
+      }
+    });
   return result;
 };
 
@@ -418,6 +443,8 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
                 item = 'Up-Grade';
               } else if (evo.evolutionItemRequirement === 'ITEM_GEN5_EVOLUTION_STONE') {
                 item = 'Unova_Stone';
+              } else if (evo.evolutionItemRequirement === 'ITEM_OTHER_EVOLUTION_STONE_A') {
+                item = 'Other_Stone_A';
               }
               dataEvo.quest.evolutionItemRequirement = item;
             }

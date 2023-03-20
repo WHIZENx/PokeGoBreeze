@@ -354,24 +354,28 @@ export const findMoveTeam = (move: any, moveSet: any) => {
   return null;
 };
 
+export const convertReleasedGO = (item: any, pokemon: any) => {
+  if (item.name.toLowerCase().includes('_mega')) {
+    return pokemon.id === item.num && pokemon.name === item.name.toUpperCase().replaceAll('-', '_');
+  } else {
+    return (
+      pokemon.id === item.num &&
+      pokemon.name ===
+        (pokemon.id === 555 && !item.name.toLowerCase().includes('zen')
+          ? item.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+          : convertName(item.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
+    );
+  }
+};
+
 export const checkReleasedGO = (item: any, details: any[]) => {
   return details.find((pokemon: { name: string; id: any }) => {
-    if (item.name.toLowerCase().includes('_mega')) {
-      return pokemon.id === item.num && pokemon.name === item.name.toUpperCase().replaceAll('-', '_');
-    } else {
-      return (
-        pokemon.id === item.num &&
-        pokemon.name ===
-          (pokemon.id === 555 && !item.name.toLowerCase().includes('zen')
-            ? item.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
-            : convertName(item.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
-      );
-    }
+    convertReleasedGO(item, pokemon);
   });
 };
 
 export const mappingReleasedGO = (pokemonData: any, details: any[]) => {
-  return Object.values(pokemonData)
+  const result = Object.values(pokemonData)
     .filter((pokemon: any) => pokemon.num > 0)
     .map((item: any) => {
       const result = checkReleasedGO(item, details);
@@ -380,6 +384,17 @@ export const mappingReleasedGO = (pokemonData: any, details: any[]) => {
         releasedGO: item.isForceReleasedGO ?? (result ? result.releasedGO : false),
       };
     });
+  const idList = Array.from(new Set(result.map((p) => p.num)));
+  details.forEach((pokemon) => {
+    if (!idList.includes(pokemon.id)) {
+      result.push({
+        num: pokemon.id,
+        name: splitAndCapitalize(pokemon.name, '_', ' '),
+        releasedGO: result ? pokemon.releasedGO : false,
+      });
+    }
+  });
+  return result;
 };
 
 export const convertFormName = (id: number, form: string) => {
@@ -561,4 +576,12 @@ export const calRank = (
   rank: number
 ) => {
   return ((pokemonStats[type].max_rank - rank + 1) * 100) / pokemonStats[type].max_rank;
+};
+
+export const getPokemonById = (pokemonName: any, id: number) => {
+  return pokemonName.find((pokemon: any) => pokemon.id === id);
+};
+
+export const getPokemonByIndex = (pokemonName: any, index: number) => {
+  return pokemonName.find((pokemon: any) => pokemon.index === index);
 };

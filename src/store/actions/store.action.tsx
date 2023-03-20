@@ -18,6 +18,7 @@ import {
   optionPokemonCandy,
   optionFormNone,
   optionPokemonData,
+  optionPokemonName,
 } from '../../core/options';
 import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
 import { BASE_CPM, MAX_LEVEL, MIN_LEVEL, SYNC_MSG } from '../../util/Constants';
@@ -191,6 +192,7 @@ export const loadStore = (
         options: optionSettings(gmData),
         pokemonData,
         pokemon,
+        pokemonName: optionPokemonName(details),
         candy: candyData,
         evolution: optionEvolution(gmData, pokemon, formSpecial),
         stickers: optionSticker(gmData, pokemon),

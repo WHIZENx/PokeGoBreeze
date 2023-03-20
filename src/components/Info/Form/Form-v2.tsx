@@ -73,7 +73,10 @@ const Form = ({
           (item: { form: { form_name: any; name: string }; default_name: string }) =>
             item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm
         );
-        curFrom = curFrom ?? form.find((item: { form: { is_default: any } }) => item.form.is_default);
+        curFrom =
+          curFrom ??
+          form.find((item: { form: { is_default: any } }) => item.form.is_default) ??
+          form.find((item: { form: { is_default: any } }) => !item.form.is_default);
         if (paramForm && curFrom.form.form_name !== paramForm.toLowerCase()) {
           const changeForm = form.find((item: { form: { form_name: any } }) => item.form.form_name === paramForm.toLowerCase());
           if (changeForm) {
@@ -144,7 +147,7 @@ const Form = ({
     }
     const nameInfo = splitAndCapitalize(findForm.form.name, '-', ' ');
     setFormName(nameInfo);
-    setReleased(checkReleased(pokeID, nameInfo));
+    setReleased(checkReleased(pokeID, nameInfo, findForm.form.is_default));
     setForm(splitAndCapitalize(convertFormNameImg(pokeID, findForm.form.form_name), '-', '-'));
     if (findData && findForm) {
       const oriForm = findData;

@@ -884,10 +884,10 @@ const Battle = () => {
     }
     timelinePlay.current = requestAnimationFrame(function animate(timestamp: number) {
       if (timelineType) {
-        const durationFractor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
+        const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
         const width = Math.min(
           timelineNormal.current.clientWidth - 2,
-          xCurrent + durationFractor * (timelineNormal.current.clientWidth - 2)
+          xCurrent + durationFactor * (timelineNormal.current.clientWidth - 2)
         );
         if (width >= timelineNormal.current.clientWidth - 2) {
           if (elem) {
@@ -908,8 +908,8 @@ const Battle = () => {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
-        const durationFractor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
-        const width = Math.min(timelineFit.current.clientWidth, xCurrent + durationFractor * timelineFit.current.clientWidth);
+        const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
+        const width = Math.min(timelineFit.current.clientWidth, xCurrent + durationFactor * timelineFit.current.clientWidth);
         if (elem) {
           elem.style.transform = 'translate(' + width + 'px, -50%)';
           overlappingPos(arrStore.current, elem.getBoundingClientRect().left, true);
@@ -957,12 +957,12 @@ const Battle = () => {
   const overlappingPos = (arr: any[], pos = 0, sound = false) => {
     const index = arr.filter((dom: { left: number }) => dom.left <= pos).length;
     if (index >= 0 && index < arr.length) {
-      updateTimeine(index, sound);
+      updateTimeline(index, sound);
     }
   };
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const updateTimeine = (index: string | number, sound = false) => {
+  const updateTimeline = (index: string | number, sound = false) => {
     const pokeCurrData = pokemonCurr.timeline[index];
     const pokeObjData = pokemonObj.timeline[index];
     // if (sound) {
@@ -1254,18 +1254,18 @@ const Battle = () => {
                 />
               </div>
               <div className="w-100 element-top">
-                <Button type="submit" className="w-100" color="primry">
+                <Button type="submit" className="w-100" color="primary">
                   Calculate Stats
                 </Button>
               </div>
             </form>
             <div className="w-100 element-top">
-              <Button className="w-100" color="primry" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
+              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
                 Set Random Stats
               </Button>
             </div>
             <div className="w-100 element-top">
-              <Button className="w-100" color="primry" onClick={() => onSetStats(type, pokemon, setPokemon, false)}>
+              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, false)}>
                 Set Best Stats
               </Button>
             </div>
