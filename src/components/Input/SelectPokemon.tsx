@@ -171,7 +171,6 @@ const SelectPokemon = (props: {
               .filter(
                 (item: any) =>
                   item.num > 0 &&
-                  item.num <= 905 &&
                   (splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
                     item.num.toString().includes(search))
               )

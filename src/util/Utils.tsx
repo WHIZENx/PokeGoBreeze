@@ -375,7 +375,7 @@ export const checkReleasedGO = (item: any, details: any[]) => {
 };
 
 export const mappingReleasedGO = (pokemonData: any, details: any[]) => {
-  const result = Object.values(pokemonData)
+  return Object.values(pokemonData)
     .filter((pokemon: any) => pokemon.num > 0)
     .map((item: any) => {
       const result = checkReleasedGO(item, details);
@@ -384,17 +384,6 @@ export const mappingReleasedGO = (pokemonData: any, details: any[]) => {
         releasedGO: item.isForceReleasedGO ?? (result ? result.releasedGO : false),
       };
     });
-  const idList = Array.from(new Set(result.map((p) => p.num)));
-  details.forEach((pokemon) => {
-    if (!idList.includes(pokemon.id)) {
-      result.push({
-        num: pokemon.id,
-        name: splitAndCapitalize(pokemon.name, '_', ' '),
-        releasedGO: result ? pokemon.releasedGO : false,
-      });
-    }
-  });
-  return result;
 };
 
 export const convertFormName = (id: number, form: string) => {

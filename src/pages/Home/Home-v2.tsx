@@ -141,8 +141,8 @@ const Home = () => {
             const boolMythic = mythic ? item.class === 'MYTHIC' : true;
             const boolUltra = ultrabeast ? item.class === 'ULTRA_BEAST' : true;
 
-            const findGen = gen.includes(item.gen - 1);
-            const findVersion = version.includes(item.version);
+            const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
+            const findVersion = item.version === -1 ? true : version.includes(item.version);
             return (
               boolFilterType &&
               boolFilterPoke &&
