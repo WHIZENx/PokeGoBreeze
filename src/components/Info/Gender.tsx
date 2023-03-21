@@ -1,7 +1,9 @@
+import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 
 const Gender = (props: { sex: string; ratio?: { M: any; F: any }; default_m?: any; default_f?: any; shiny_m?: any; shiny_f?: any }) => {
+  const theme = useTheme();
   const calculateRatio = (sex: string, ratio: { M: any; F: any }) => {
     const maleRatio = ratio.M;
     const femaleRatio = ratio.F;
@@ -34,7 +36,9 @@ const Gender = (props: { sex: string; ratio?: { M: any; F: any }; default_m?: an
                 : props.default_f ?? props.default_m ?? APIService.getPokeSprite(0)
             }
           />
-          <span className="caption">Default</span>
+          <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+            Default
+          </span>
         </div>
         <div className="img-form-gender-group">
           <img
@@ -47,7 +51,9 @@ const Gender = (props: { sex: string; ratio?: { M: any; F: any }; default_m?: an
                 : props.shiny_f ?? props.shiny_m ?? APIService.getPokeSprite(0)
             }
           />
-          <span className="caption">Shiny</span>
+          <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+            Shiny
+          </span>
         </div>
       </div>
     </div>

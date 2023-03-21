@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
@@ -30,6 +31,7 @@ const Stats = (props: {
     rank: number;
   };
 }) => {
+  const theme = useTheme();
   const [isAvailable, setIsAvailable]: any = useState({
     attackRank: null,
     defenseRank: null,
@@ -88,7 +90,7 @@ const Stats = (props: {
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd]);
 
   return (
-    <div className="element-top">
+    <div className="element-top" style={{ color: (theme.palette as any).constant.text }}>
       <div className="progress position-relative">
         <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
           <span>

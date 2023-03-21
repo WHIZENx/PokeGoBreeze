@@ -1,4 +1,4 @@
-import { capitalize, FormControlLabel, Switch } from '@mui/material';
+import { capitalize, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
@@ -10,6 +10,7 @@ import './Counter.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
 const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
+  const theme = useTheme();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [counterList, setCounterList]: any = useState([]);
@@ -78,7 +79,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
               <div className="input-group align-items-center justify-content-center">
                 <span>Best Pokémon Counter</span>
                 <FormControlLabel
-                  control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
+                  control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
                   label={
                     <span className="d-flex align-items-center">
                       Released in GO
@@ -126,7 +127,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                 .map((value: any, index: React.Key) => (
                   <Fragment key={index}>
                     <tr>
-                      <td className="text-origin text-center">
+                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
                         <Link
                           to={`/pokemon/${value.pokemon_id}${
                             value.pokemon_forme ? `?form=${convertFormName(value.pokemon_id, value.pokemon_forme.toLowerCase())}` : ''
@@ -156,7 +157,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                           </span>
                         </Link>
                       </td>
-                      <td className="text-origin text-center">
+                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
                         <Link to={'../move/' + value.fmove.id} className="d-grid">
                           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
@@ -173,7 +174,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                           </span>
                         </Link>
                       </td>
-                      <td className="text-origin text-center">
+                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
                         <Link to={'../move/' + value.cmove.id} className="d-grid">
                           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
@@ -200,16 +201,25 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                           </span>
                         </Link>
                       </td>
-                      <td className="text-center">{value.ratio.toFixed(2)}</td>
+                      <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+                        {value.ratio.toFixed(2)}
+                      </td>
                     </tr>
                   </Fragment>
                 ))}
             </Fragment>
           ) : (
             <tr className="counter-none" style={{ verticalAlign: 'top' }}>
-              <td className="text-origin text-center" colSpan={4}>
+              <td
+                className="text-origin text-center"
+                colSpan={4}
+                style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}
+              >
                 <div className="ph-item">
-                  <div className="ph-col-12" style={{ padding: 10, margin: 0, gap: 10 }}>
+                  <div
+                    className="ph-col-12"
+                    style={{ padding: 10, margin: 0, gap: 10, backgroundColor: (theme.palette.background as any).tablePrimary }}
+                  >
                     <div className="ph-row d-flex" style={{ gap: '5%' }}>
                       <div className="ph-picture" style={{ width: '25%', height: 100 }} />
                       <div className="ph-picture" style={{ width: '70%', height: 100 }} />

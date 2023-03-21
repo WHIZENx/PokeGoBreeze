@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
 import './Evolution.scss';
+import { useTheme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { capitalize, convertFormGif, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
 
@@ -26,7 +27,7 @@ import PopoverConfig from '../../Popover/PopoverConfig';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 
-const theme = createTheme({
+const customTheme = createTheme({
   palette: {
     secondary: {
       main: '#a6efff80',
@@ -37,6 +38,7 @@ const theme = createTheme({
 } as any);
 
 const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter }: any) => {
+  const theme = useTheme();
   const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
   const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
@@ -462,15 +464,17 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                   <div className="position-absolute" style={{ left: -40 }}>
                     {!value.gmax && (
                       <div>
-                        {data.candyCost ||
-                          (data.purificationEvoCandyCost && (
-                            <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
-                              <Candy id={value.id} />
-                              <span style={{ marginLeft: 2 }}>{`x${
-                                purified && selectPurified ? data.purificationEvoCandyCost : data.candyCost
-                              }`}</span>
-                            </span>
-                          ))}
+                        {(data.candyCost || data.purificationEvoCandyCost) && (
+                          <span
+                            className="d-flex align-items-center caption"
+                            style={{ color: (theme.palette as any).customText.caption, width: 'max-content' }}
+                          >
+                            <Candy id={value.id} />
+                            <span style={{ marginLeft: 2 }}>{`x${
+                              purified && selectPurified ? data.purificationEvoCandyCost : data.candyCost
+                            }`}</span>
+                          </span>
+                        )}
                         {purified && selectPurified && (
                           <span className="d-block text-end caption text-danger">{`-${
                             data.candyCost - data.purificationEvoCandyCost
@@ -607,7 +611,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
               {chain.length > 1 || (chain.length === 1 && form.form_name !== '') ? (
                 <Fragment>
                   {form !== '' && !form.includes('mega') ? (
-                    <ThemeProvider theme={theme}>
+                    <ThemeProvider theme={customTheme}>
                       <Badge
                         color="secondary"
                         overlap="circular"
@@ -637,7 +641,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           ) : (
             <Fragment>{renderImgGif(value)}</Fragment>
           )}
-          <div id="id-pokemon" style={{ color: 'black' }}>
+          <div id="id-pokemon" style={{ color: theme.palette.text.primary }}>
             <b>#{value.id}</b>
           </div>
           <div>
@@ -646,7 +650,13 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
         </span>
         {value.baby && <span className="caption text-danger">(Baby)</span>}
         {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
-        <p>{value.id === id && <span className="caption">Current</span>}</p>
+        <p>
+          {value.id === id && (
+            <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+              Current
+            </span>
+          )}
+        </p>
       </Fragment>
     );
   };

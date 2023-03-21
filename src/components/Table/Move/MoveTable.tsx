@@ -10,8 +10,10 @@ import { Tab, Tabs } from 'react-bootstrap';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useTheme } from '@mui/material';
 
 const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; id?: number; maxHeight?: number | string }) => {
+  const theme = useTheme();
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [move, setMove]: any = useState({ data: [] });
   const [moveOrigin, setMoveOrigin]: any = useState(null);
@@ -96,7 +98,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
   const renderBestMovesetTable = (value: any, max: number, type: string) => {
     return (
       <tr>
-        <td className="text-origin">
+        <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
           <Link to={'../move/' + value.fmove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
@@ -111,7 +113,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
             </span>
           </Link>
         </td>
-        <td className="text-origin">
+        <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
           <Link to={'../move/' + value.cmove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
@@ -136,7 +138,9 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
             </span>
           </Link>
         </td>
-        <td className="text-center">{Math.round((value.eDPS[type] * 100) / max)}</td>
+        <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+          {Math.round((value.eDPS[type] * 100) / max)}
+        </td>
       </tr>
     );
   };
@@ -146,7 +150,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       <Fragment>
         {data.map((value: any, index: React.Key) => (
           <tr key={index}>
-            <td className="text-origin">
+            <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
               <Link to={'../move/' + value.id} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                   <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type))} />

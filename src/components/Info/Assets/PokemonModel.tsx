@@ -7,8 +7,10 @@ import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import { useTheme } from '@mui/material';
 
 const PokemonModel = (props: { id: any; name: string }) => {
+  const theme = useTheme();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
 
@@ -70,7 +72,9 @@ const PokemonModel = (props: { id: any; name: string }) => {
                         <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.default)} />
                       </div>
                     </div>
-                    <span className="caption">Default</span>
+                    <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+                      Default
+                    </span>
                   </div>
                   {value.shiny && (
                     <div className="model text-center">
@@ -79,13 +83,15 @@ const PokemonModel = (props: { id: any; name: string }) => {
                           <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.shiny)} />
                         </div>
                       </div>
-                      <span className="caption">Shiny</span>
+                      <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+                        Shiny
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
             ))}
-            <div className="desc">{splitAndCapitalize(assets.form.toLowerCase(), '_', ' ')}</div>
+            <div className="desc text-black">{splitAndCapitalize(assets.form.toLowerCase(), '_', ' ')}</div>
           </div>
         ))}
         {pokeAssets.length === 0 && (

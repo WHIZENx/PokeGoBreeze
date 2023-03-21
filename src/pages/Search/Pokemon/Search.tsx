@@ -6,8 +6,10 @@ import Pokemon from '../../Pokemon/Pokemon';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { RouterState } from '../../..';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
+import { useTheme } from '@mui/material';
 
 const Search = () => {
+  const theme = useTheme();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: RootStateOrAny) => state.searching.mainSearching);
   const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
@@ -97,17 +99,17 @@ const Search = () => {
   return (
     <Fragment>
       <div className="container element-top">
-        <h1 id="main" className="text-center">
+        <h1 id="main" className="text-center" style={{ color: theme.palette.text.primary }}>
           Pokémon Info Search
         </h1>
         <div className="input-group mb-12 element-top">
           <div className="input-group-prepend">
-            <span className="input-group-text">Search</span>
+            <span className={'input-group-text ' + (theme.palette.mode === 'dark' ? 'input-group-dark' : '')}>Search</span>
           </div>
           <input
             type="text"
-            className="form-control"
-            style={{ zIndex: 1 }}
+            className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+            style={{ backgroundColor: (theme.palette.background as any).input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
             value={searchTerm}
             onInput={(e: any) => setSearchTerm(e.target.value)}

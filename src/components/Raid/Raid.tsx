@@ -10,6 +10,7 @@ import def_logo from '../../assets/defense.png';
 import sta_logo from '../../assets/stamina.png';
 
 import { useSelector, RootStateOrAny } from 'react-redux';
+import { useTheme } from '@mui/material';
 
 const Raid = ({
   clearData,
@@ -23,6 +24,7 @@ const Raid = ({
   setStatBossHP,
   setTimeAllow,
 }: any) => {
+  const theme = useTheme();
   const details = useSelector((state: RootStateOrAny) => state.store.data.details);
   const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
   const [tier, setTier]: any = useState(1);
@@ -138,21 +140,27 @@ const Raid = ({
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
                   ATK
                 </td>
-                <td className="text-center">{calculateRaidStat(statATK, tier)}</td>
+                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                  {calculateRaidStat(statATK, tier)}
+                </td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
                   DEF
                 </td>
-                <td className="text-center">{calculateRaidStat(statDEF, tier)}</td>
+                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                  {calculateRaidStat(statDEF, tier)}
+                </td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={sta_logo} />
                   STA
                 </td>
-                <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm)}</td>
+                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                  {Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm)}
+                </td>
               </tr>
             </tbody>
           </table>
