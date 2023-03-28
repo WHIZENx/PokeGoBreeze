@@ -11,30 +11,38 @@ export const getDesignThemes = (mode: PaletteMode) => ({
       ? {
           // palette values for light mode
           constant,
-          invert: {
-            text: '#000000',
+          text: {
+            primary: '#000000',
           },
           background: {
             btnType: '#ffffff',
             tablePrimary: '#ffffff',
+            tableDivided: '#0000001f',
+            tableStrip: '#fafafa',
+            tableHover: '#eeeeee',
           },
           customText: {
+            text: '#000000',
             caption: '#808080',
           },
         }
       : {
           // palette values for dark mode
           constant,
-          invert: {
-            text: '#ffffff',
+          text: {
+            primary: '#ffffff',
           },
           background: {
             default: '#222222',
             btnType: '#555555',
             input: '#666666',
-            tablePrimary: '#d6d6d6',
+            tablePrimary: '#222222',
+            tableDivided: '#ffffff1f',
+            tableStrip: '#050505',
+            tableHover: '#111111',
           },
           customText: {
+            text: '#ffffff',
             caption: '#ebebeb',
           },
         }),

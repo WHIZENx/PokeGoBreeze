@@ -129,7 +129,7 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
           </Navbar.Text>
         )}
         <IconButton
-          className={stateTheme}
+          className={stateTheme + '-mode'}
           onClick={onChangeTheme}
           style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
           color="inherit"

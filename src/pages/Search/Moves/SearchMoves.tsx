@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
 
 import './SearchMoves.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, useTheme } from '@mui/material';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
@@ -55,6 +55,7 @@ const columns: any = [
 ];
 
 const Search = () => {
+  const theme = useTheme();
   const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
   const types = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
 
@@ -113,8 +114,9 @@ const Search = () => {
                     </div>
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
-                        <InputLabel>Type</InputLabel>
+                        <InputLabel className="text-black">Type</InputLabel>
                         <Select
+                          className="text-black"
                           value={fMoveType}
                           label="Type"
                           onChange={(e: SelectChangeEvent) => setFilters({ ...filters, fMoveType: e.target.value })}
@@ -151,6 +153,7 @@ const Search = () => {
                     defaultSortFieldId={3}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="70vh"
+                    customStyles={getCustomThemeDataTable(theme)}
                   />
                 </td>
               </tr>
@@ -169,8 +172,9 @@ const Search = () => {
                     </div>
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
-                        <InputLabel>Type</InputLabel>
+                        <InputLabel className="text-black">Type</InputLabel>
                         <Select
+                          className="text-black"
                           value={cMoveType}
                           label="Type"
                           onChange={(e: SelectChangeEvent) => setFilters({ ...filters, cMoveType: e.target.value })}
@@ -205,6 +209,7 @@ const Search = () => {
                     defaultSortFieldId={3}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="70vh"
+                    customStyles={getCustomThemeDataTable(theme)}
                   />
                 </td>
               </tr>

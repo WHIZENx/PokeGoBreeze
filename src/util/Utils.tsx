@@ -1,4 +1,4 @@
-import { RadioGroup, Rating, Slider, styled } from '@mui/material';
+import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
 import { MAX_IV } from './Constants';
@@ -573,4 +573,39 @@ export const getPokemonById = (pokemonName: any, id: number) => {
 
 export const getPokemonByIndex = (pokemonName: any, index: number) => {
   return pokemonName.find((pokemon: any) => pokemon.index === index);
+};
+
+export const getCustomThemeDataTable = (theme: Theme) => {
+  return {
+    rows: {
+      style: {
+        color: theme.palette.text.primary,
+        backgroundColor: (theme.palette.background as any).tablePrimary,
+        '&:not(:last-of-type)': {
+          borderBottomColor: (theme.palette.background as any).tableDivided,
+        },
+      },
+      stripedStyle: {
+        color: theme.palette.text.primary,
+        backgroundColor: (theme.palette.background as any).tableStrip,
+      },
+      highlightOnHoverStyle: {
+        color: theme.palette.text.primary,
+        backgroundColor: (theme.palette.background as any).tableHover,
+        borderBottomColor: (theme.palette.background as any).tableDivided,
+        outlineColor: (theme.palette.background as any).tablePrimary,
+      },
+    },
+    headCells: {
+      style: {
+        backgroundColor: (theme.palette.background as any).tablePrimary,
+        color: theme.palette.text.primary,
+      },
+    },
+    cells: {
+      style: {
+        color: theme.palette.text.primary,
+      },
+    },
+  };
 };

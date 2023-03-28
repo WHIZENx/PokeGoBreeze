@@ -134,7 +134,13 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                           }`}
                         >
                           <div className="d-flex justify-content-center">
-                            <div className="position-relative group-pokemon-sprite filter-shadow-hover">
+                            <div
+                              className={
+                                'position-relative group-pokemon-sprite ' + theme.palette.mode === 'light'
+                                  ? 'filter-shadow-hover'
+                                  : 'filter-light-shadow-hover'
+                              }
+                            >
                               {value.cmove.shadow && (
                                 <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                               )}
@@ -152,7 +158,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                               />
                             </div>
                           </div>
-                          <span className="caption text-black">
+                          <span className="caption" style={{ color: theme.palette.text.primary }}>
                             #{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, '-', ' ')}
                           </span>
                         </Link>

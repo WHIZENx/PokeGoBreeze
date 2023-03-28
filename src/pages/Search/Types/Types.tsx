@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, convertFormName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormName, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
@@ -9,7 +9,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/Calculate';
-import { FormControlLabel, Switch } from '@mui/material';
+import { FormControlLabel, Switch, useTheme } from '@mui/material';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -142,6 +142,7 @@ const columnMove: any = [
 ];
 
 const SearchTypes = () => {
+  const theme = useTheme();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const typeList = useRef(Object.keys(data.typeEff));
@@ -184,7 +185,7 @@ const SearchTypes = () => {
   };
 
   return (
-    <div className="container element-top">
+    <div className="container element-top" style={{ color: theme.palette.text.primary }}>
       <div className="d-flex justify-content-end">
         <div>
           <h6 className="text-center">
@@ -237,7 +238,7 @@ const SearchTypes = () => {
         <div className="col-xl-4 element-top">
           <div
             className={'d-flex flex-column align-items-center type-info-container ' + currentType.toLowerCase() + '-border'}
-            style={{ background: computeBgType(currentType, false, false, 0.7) }}
+            style={{ background: computeBgType(currentType, false, false, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img
@@ -300,6 +301,7 @@ const SearchTypes = () => {
                 defaultSortFieldId={1}
                 highlightOnHover={true}
                 striped={true}
+                customStyles={getCustomThemeDataTable(theme)}
               />
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
@@ -310,6 +312,7 @@ const SearchTypes = () => {
                 defaultSortFieldId={1}
                 highlightOnHover={true}
                 striped={true}
+                customStyles={getCustomThemeDataTable(theme)}
               />
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
@@ -320,6 +323,7 @@ const SearchTypes = () => {
                 defaultSortFieldId={1}
                 highlightOnHover={true}
                 striped={true}
+                customStyles={getCustomThemeDataTable(theme)}
               />
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
@@ -330,6 +334,7 @@ const SearchTypes = () => {
                 defaultSortFieldId={1}
                 highlightOnHover={true}
                 striped={true}
+                customStyles={getCustomThemeDataTable(theme)}
               />
             </Tab>
           </Tabs>

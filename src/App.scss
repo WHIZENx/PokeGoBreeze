@@ -206,6 +206,14 @@ ul {
   filter: drop-shadow(2px 2px 2px rgb(0 0 0 / 80%));
 }
 
+.filter-light-shadow {
+  filter: drop-shadow(1px 1px 1px white);
+}
+
+.filter-light-shadow-hover:hover {
+  filter: drop-shadow(2px 2px 2px rgb(255 255 255 / 80%));
+}
+
 .text-shadow {
   text-shadow: 1px 1px black;
 }
