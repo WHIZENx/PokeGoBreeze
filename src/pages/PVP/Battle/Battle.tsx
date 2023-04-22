@@ -719,7 +719,7 @@ const Battle = () => {
           )
           .map((item: { speciesId: string; speciesName: string }) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon: any = Object.values(dataStore.pokemonData as any[]).find((p: { slug: string }) => p.slug === name);
+            const pokemon: any = Object.values(dataStore?.pokemonData as any[])?.find((p: { slug: string }) => p.slug === name);
             const id = pokemon.num;
             const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
