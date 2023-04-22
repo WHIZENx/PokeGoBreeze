@@ -437,7 +437,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     );
   };
 
-  const renderImageEvo = (value: any, chain: any[], evo: any, index: string | number, evoCount: number) => {
+  const renderImageEvo = (value: any, chain: any[], evo: any, index: number, evoCount: number) => {
     const form = value.form ?? forme.form_name;
     let offsetY = 35;
     offsetY += value.baby ? 20 : 0;
@@ -750,7 +750,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           {arrEvoList.map((values: any[], evo: React.Key) => (
             <li key={evo} className="img-form-gender-group li-evo">
               <ul className="ul-evo d-flex flex-column">
-                {values.map((value: { id: string; name: string }, index: React.Key) => (
+                {values.map((value: { id: string; name: string }, index: number) => (
                   <li key={index} className="img-form-gender-group img-evo-group li-evo">
                     {onSetIDPoke ? (
                       <div

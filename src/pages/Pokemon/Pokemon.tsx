@@ -61,6 +61,7 @@ const Pokemon = (props: {
   const [form, setForm]: any = useState(null);
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
+  const [defaultForm, setDefaultForm]: any = useState(true);
 
   const [onChangeForm, setOnChangeForm] = useState(false);
 
@@ -177,6 +178,7 @@ const Pokemon = (props: {
       setFormName(nameInfo);
       setReleased(checkReleased(data.id, nameInfo, isDefaultForm.form.is_default));
       setForm(router.action === 'POP' && props.searching ? props.searching.form : formInfo);
+      setDefaultForm(isDefaultForm);
       if (params.id) {
         document.title = `#${data.id} - ${nameInfo}`;
       }
@@ -276,22 +278,35 @@ const Pokemon = (props: {
     return dataStore.evolution.find((item: { id: any }) => item.id === id);
   };
 
+  const getPokemonDetails = (id: number, form: string | null, isDefault = false) => {
+    let pokemonForm;
+
+    if (form) {
+      pokemonForm = dataStore.details.find(
+        (item: { id: number; name: string }) =>
+          item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
+      );
+
+      if (isDefault && !pokemonForm) {
+        pokemonForm = dataStore.details.find((item: { id: number; form: string }) => item.id === id && item.form === 'NORMAL');
+      }
+    }
+
+    if (!form && defaultForm) {
+      pokemonForm = dataStore.details.find(
+        (item: { id: number; form: string }) => item.id === id && item.form === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
+      );
+    }
+
+    return pokemonForm;
+  };
+
   const checkReleased = (id: number, form: string, isDefault = false) => {
     if (!form) {
       return false;
     }
 
-    let pokemonForm =
-      dataStore.details.find(
-        (item: { id: number; name: string }) =>
-          item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
-      )?.releasedGO ?? false;
-
-    if (isDefault && !pokemonForm) {
-      pokemonForm =
-        dataStore.details.find((item: { id: number; form: string }) => item.id === id && item.form === 'NORMAL')?.releasedGO ?? false;
-    }
-    return pokemonForm;
+    return getPokemonDetails(id, form, isDefault)?.releasedGO ?? false;
   };
 
   return (
@@ -685,6 +700,7 @@ const Pokemon = (props: {
                       : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
                   }
                   pokemonList={dataStore.released}
+                  pokemonDetail={getPokemonDetails(data.id, null)}
                 />
                 <PokemonModel id={data.id} name={data.name} />
               </div>

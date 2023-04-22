@@ -19,6 +19,7 @@ import { useDispatch } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { setSearchMainPage } from '../../../store/actions/searching.action';
 import Primal from '../Primal/Primal';
+import FromChange from '../FormChange/FormChange';
 
 const Form = ({
   pokemonRouter,
@@ -43,6 +44,7 @@ const Form = ({
   onSetIDPoke,
   paramForm,
   pokemonList,
+  pokemonDetail,
 }: any) => {
   const dispatch = useDispatch();
 
@@ -274,6 +276,9 @@ const Form = ({
   return (
     <Fragment>
       <div className="form-container">
+        <h4 className="info-title">
+          <b>Form varieties</b>
+        </h4>
         <div className="scroll-form">
           {formList.map((value: any[], index: React.Key | number) => (
             <Fragment key={index}>
@@ -467,6 +472,7 @@ const Form = ({
           region={regionList[parseInt(species.generation.url.split('/')[6])]}
         />
       )}
+      {pokemonDetail?.formChange && <FromChange details={pokemonDetail} defaultName={currForm && currForm.default_name} />}
     </Fragment>
   );
 };

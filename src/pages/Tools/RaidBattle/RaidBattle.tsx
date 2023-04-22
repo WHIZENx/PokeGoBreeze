@@ -4,7 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Select/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { checkReleasedGO, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
+import { checkPokemonGO, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { MAX_LEVEL, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/Constants';
 import {
@@ -959,7 +959,7 @@ const RaidBattle = () => {
                   return true;
                 }
                 obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
-                const result = checkReleasedGO(obj.pokemon, data.details);
+                const result = checkPokemonGO(obj.pokemon, data.details);
                 return result ? result.releasedGO : false;
               })
               .filter((obj: { pokemon: { name: string } }) => {

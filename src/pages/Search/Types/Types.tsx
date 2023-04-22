@@ -10,6 +10,7 @@ import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
+import { TypeMove } from '../../../enums/type-move.enum';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -157,8 +158,8 @@ const SearchTypes = () => {
   });
   const allData = {
     pokemon: data.released.filter((pokemon: { releasedGO: boolean }) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-    fastMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'FAST').length,
-    chargedMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'CHARGE').length,
+    fastMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === TypeMove.FAST).length,
+    chargedMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === TypeMove.CHARGE).length,
   };
 
   const [showType, setShowType] = useState(false);
@@ -172,9 +173,11 @@ const SearchTypes = () => {
       pokemonList: data.released
         .filter((pokemon: { releasedGO: boolean }) => (releasedGO ? pokemon.releasedGO : true))
         .filter((pokemon: any) => pokemon.types.includes(capitalize(currentType))),
-      fastMove: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === 'FAST' && type.type === currentType),
+      fastMove: data.combat.filter(
+        (type: { type_move: string; type: string }) => type.type_move === TypeMove.FAST && type.type === currentType
+      ),
       chargedMove: data.combat.filter(
-        (type: { type_move: string; type: string }) => type.type_move === 'CHARGE' && type.type === currentType
+        (type: { type_move: string; type: string }) => type.type_move === TypeMove.CHARGE && type.type === currentType
       ),
     });
   }, [currentType, releasedGO]);

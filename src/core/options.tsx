@@ -9,6 +9,7 @@ import pokemonData from '../data/pokemon.json';
 import { capitalize, convertName, splitAndCapitalize } from '../util/Utils';
 import { TypeSet } from './models/type';
 import { Candy } from './models/candy';
+import { TypeMove } from '../enums/type-move.enum';
 
 export const getOption = (options: any, args: string[]) => {
   args.forEach((arg: any) => {
@@ -761,10 +762,10 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
         const result: Combat = combatModel();
         result.name = item.data.combatMove.uniqueId;
         result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-        if (item.templateId.includes('FAST')) {
-          result.type_move = 'FAST';
+        if (item.templateId.includes(TypeMove.FAST)) {
+          result.type_move = TypeMove.FAST;
         } else {
-          result.type_move = 'CHARGE';
+          result.type_move = TypeMove.CHARGE;
         }
         result.pvp_power = item.data.combatMove.power ?? 0.0;
         result.pvp_energy = item.data.combatMove.energyDelta ?? 0;
@@ -1254,6 +1255,7 @@ export const optionDetailsPokemon = (
       pokemonClass: null,
       disableTransferToPokemonHome: null,
       isBaby: false,
+      formChange: null,
     };
   };
 
@@ -1299,6 +1301,7 @@ export const optionDetailsPokemon = (
       if (item.pokemonClass) {
         result.pokemonClass = item.pokemonClass.replace('POKEMON_CLASS_', '');
       }
+      result.formChange = item.formChange ?? null;
 
       const form = assets
         .find((asset: { id: number }) => asset.id === result.id)
@@ -1309,6 +1312,7 @@ export const optionDetailsPokemon = (
       if (combat.quickMoves[0] !== combat.cinematicMoves[0] && form && form.default) {
         result.releasedGO = form.default.includes('Addressable Assets/');
       }
+
       return result;
     });
 

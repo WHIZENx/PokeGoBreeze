@@ -13,7 +13,7 @@ export const rankName = (rank: number) => {
   if (rank === 21) {
     return 'Ace';
   } else if (rank === 22) {
-    return 'Veteren';
+    return 'Veteran';
   } else if (rank === 23) {
     return 'Expert';
   } else if (rank === 24) {

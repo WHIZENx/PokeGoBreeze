@@ -1,5 +1,6 @@
 import { PRIMAL_STATS } from '../core/forms';
 import data from '../data/cp_multiplier.json';
+import { TypeMove } from '../enums/type-move.enum';
 import {
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,
@@ -1060,12 +1061,12 @@ export const queryTopMove = (
       }
       if (combatPoke !== undefined) {
         let pokemonList;
-        if (move.type_move === 'FAST') {
+        if (move.type_move === TypeMove.FAST) {
           pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
           if (!pokemonList) {
             pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
           }
-        } else if (move.type_move === 'CHARGE') {
+        } else if (move.type_move === TypeMove.CHARGE) {
           pokemonList = combatPoke.cinematicMoves.includes(move.name);
           if (!pokemonList) {
             pokemonList = combatPoke.shadowMoves.includes(move.name);

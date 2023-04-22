@@ -6,6 +6,7 @@ import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../.
 import './SearchMoves.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, useTheme } from '@mui/material';
+import { TypeMove } from '../../../enums/type-move.enum';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
@@ -78,7 +79,7 @@ const Search = () => {
   useEffect(() => {
     setResultFMove(
       combat
-        .filter((item: { type_move: string }) => item.type_move === 'FAST')
+        .filter((item: { type_move: string }) => item.type_move === TypeMove.FAST)
         .filter(
           (move: { name: string; track: { toString: () => string | string[] }; type: string }) =>
             (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(fMoveName.toLowerCase()) ||
@@ -88,7 +89,7 @@ const Search = () => {
     );
     setResultCMove(
       combat
-        .filter((item: { type_move: string }) => item.type_move === 'CHARGE')
+        .filter((item: { type_move: string }) => item.type_move === TypeMove.CHARGE)
         .filter(
           (move: { name: string; track: { toString: () => string | string[] }; type: string }) =>
             (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(cMoveName.toLowerCase()) ||

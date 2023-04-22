@@ -182,7 +182,8 @@ class APIService {
         .replace('indeedee-male', 'indeedee')
         .replace('indeedee-female', 'indeedee-f')
         .replace('-full-belly', '')
-        .replace('-single-strike', '');
+        .replace('-single-strike', '')
+        .replace('-natural', '');
     }
     return `${POKE_ASSETS_URL}/icon/${name}.png`;
   }

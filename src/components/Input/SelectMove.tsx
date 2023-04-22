@@ -4,6 +4,7 @@ import CardMoveSmall from '../Card/CardMoveSmall';
 import './Select.scss';
 import CardMove from '../Card/CardMove';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import { TypeMove } from '../../enums/type-move.enum';
 
 const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, result, selected, disable }: any) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
@@ -32,7 +33,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
         if (resultFirst.length === 0) {
           return setResultMove([]);
         }
-        if (type === 'FAST') {
+        if (type === TypeMove.FAST) {
           resultFirst[0].quickMoves.forEach((value: any) => {
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
           });
@@ -58,7 +59,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
         }
         return setResultMove(simpleMove);
       }
-      if (type === 'FAST') {
+      if (type === TypeMove.FAST) {
         result.quickMoves.forEach((value: any) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });

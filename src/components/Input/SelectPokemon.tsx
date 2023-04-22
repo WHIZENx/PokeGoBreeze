@@ -7,6 +7,7 @@ import './Select.scss';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { useSelector, RootStateOrAny } from 'react-redux';
+import { TypeMove } from '../../enums/type-move.enum';
 
 const SelectPokemon = (props: {
   pokemon?: any;
@@ -51,10 +52,10 @@ const SelectPokemon = (props: {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme, 'FAST') : null);
+        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme, TypeMove.FAST) : null);
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme, 'CHARGE') : null);
+        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme, TypeMove.CHARGE) : null);
       }
       if (props.clearData) {
         props.clearData();
@@ -87,7 +88,7 @@ const SelectPokemon = (props: {
     );
     const simpleMove: any[] = [];
     if (resultFirst.length === 1 || result == null) {
-      if (type === 'FAST') {
+      if (type === TypeMove.FAST) {
         resultFirst[0].quickMoves.forEach((value: any) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
@@ -110,7 +111,7 @@ const SelectPokemon = (props: {
       }
       return simpleMove[0];
     }
-    if (type === 'FAST') {
+    if (type === TypeMove.FAST) {
       result.quickMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
       });
