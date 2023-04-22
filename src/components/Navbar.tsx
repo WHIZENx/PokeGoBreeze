@@ -128,7 +128,7 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
             </span>
           </Navbar.Text>
         )}
-        <IconButton
+        {/* <IconButton
           className={stateTheme + '-mode'}
           onClick={onChangeTheme}
           style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
@@ -139,7 +139,7 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
           ) : (
             <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
           )}
-        </IconButton>
+        </IconButton> */}
       </Navbar.Collapse>
     </Navbar>
   );
