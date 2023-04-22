@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import packageInfo from '../package.json';
@@ -43,7 +43,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 import { loadTheme } from './store/actions/theme.action';
-import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
 import { TRANSITION_TIME } from './util/Constants';
@@ -163,9 +163,6 @@ function App() {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
   const [, setVersion] = useLocalStorage('version', '');
 
-  const theme = useTheme();
-  const colorMode = useContext(ColorModeContext);
-
   useEffect(() => {
     const axios = APIService;
     const cancelToken = axios.getAxios().CancelToken;
@@ -208,7 +205,7 @@ function App() {
 
   return (
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
-      <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
+      <NavbarComponent />
       {data.data && stats && (
         <Routes>
           <Route path="/" element={<Home />} />

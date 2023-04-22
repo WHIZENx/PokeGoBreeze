@@ -1,41 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { RootStateOrAny, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useLocalStorage } from 'usehooks-ts';
 
 import logo from '../assets/pokedex.png';
 import { getTime } from '../util/Utils';
 
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-
 import './Navbar.scss';
-import { loadThemeData } from '../store/actions/theme.action';
 
-const NavbarComponent = ({ mode, toggleColorMode }: any) => {
-  const dispatch = useDispatch();
-
+const NavbarComponent = () => {
   const dataStore = useSelector((state: RootStateOrAny) => state.store);
-  const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
 
   const [version] = useLocalStorage('version', '');
-
-  const [isDelay, setIsDelay] = useState(false);
-
-  const onChangeTheme = () => {
-    if (!isDelay) {
-      setIsDelay(true);
-      setStateTheme(mode === 'light' ? 'dark' : 'light');
-      dispatch(loadThemeData(mode === 'light' ? 'dark' : 'light'));
-      setTimeout(() => {
-        setIsDelay(false);
-        toggleColorMode();
-      }, 500);
-    }
-  };
 
   return (
     <Navbar collapseOnSelect={true} bg="dark" expand="lg" variant="dark">
@@ -129,18 +106,6 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
             </span>
           </Navbar.Text>
         )}
-        {/* <IconButton
-          className={stateTheme + '-mode'}
-          onClick={onChangeTheme}
-          style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
-          color="inherit"
-        >
-          {mode === 'light' ? (
-            <LightModeIcon fontSize="large" style={{ color: 'white' }} />
-          ) : (
-            <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
-          )}
-        </IconButton> */}
       </Navbar.Collapse>
     </Navbar>
   );
