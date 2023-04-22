@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import packageInfo from '../package.json';
@@ -42,6 +42,11 @@ import CatchChance from './pages/Tools/CatchChance/CatchChance';
 import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
+import { loadTheme } from './store/actions/theme.action';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import { getDesignThemes } from './assets/themes/themes';
+import { TRANSITION_TIME } from './util/Constants';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -135,11 +140,15 @@ import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 //     () => import(/* webpackChunkName:'Battle' */ './pages/PVP/Battle/Battle')
 // );
 
+// tslint:disable-next-line: no-empty
+const ColorModeContext = createContext({ toggleColorMode: () => {} });
+
 function App() {
   const dispatch = useDispatch();
   const data = useSelector((state: RootStateOrAny) => state.store);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
 
+  const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
     'timestamp',
     JSON.stringify({
@@ -158,6 +167,7 @@ function App() {
     const axios = APIService;
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();
+    loadTheme(dispatch, stateTheme, setStateTheme);
     loadStore(
       dispatch,
       stateTimestamp,
@@ -179,8 +189,13 @@ function App() {
 
   useEffect(() => {
     setVersion(packageInfo.version);
-    dispatch(loadStats());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (data.data) {
+      dispatch(loadStats(data.data.pokemonData));
+    }
+  }, [dispatch, data.data]);
 
   useEffect(() => {
     if (data.data && stats) {
@@ -189,7 +204,7 @@ function App() {
   }, [dispatch, data.data, stats]);
 
   return (
-    <>
+    <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
       <NavbarComponent />
       {data.data && stats && (
         <Routes>
@@ -224,8 +239,29 @@ function App() {
       )}
       {/* <FooterComponent /> */}
       <Spinner />
-    </>
+    </Box>
   );
 }
 
-export default App;
+export default function Main() {
+  const [stateMode]: any = useLocalStorage('theme', 'light');
+  const [mode, setMode] = useState<'light' | 'dark'>(stateMode ?? 'light');
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+      },
+    }),
+    []
+  );
+
+  const theme = useMemo(() => createTheme(getDesignThemes(mode)), [mode]);
+
+  return (
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </ColorModeContext.Provider>
+  );
+}

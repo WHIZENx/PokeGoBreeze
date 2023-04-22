@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material';
 import React from 'react';
 import APIService from '../../../services/API.service';
 import { capitalize } from '../../../util/Utils';
@@ -17,6 +18,8 @@ const TypeInfo = (props: {
   if (!props.arr || props.arr.length === 0) {
     return <></>;
   }
+
+  const theme = useTheme();
 
   return (
     <div className={(props.block ? '' : 'element-top') + (props.shadow ? ' filter-shadow' : '')} style={props.style}>
@@ -45,7 +48,10 @@ const TypeInfo = (props: {
                   alt="img-pokemon"
                   src={APIService.getTypeSprite(value)}
                 />
-                <span className={'caption' + (props.shadow ? ' text-shadow' : '')} style={{ color: props.color ?? 'black' }}>
+                <span
+                  className={'caption' + (props.shadow ? ' text-shadow' + (theme.palette.mode === 'dark' ? '-white' : '') : '')}
+                  style={{ color: props.color ?? theme.palette.text.primary }}
+                >
                   {capitalize(value)}
                 </span>
               </div>

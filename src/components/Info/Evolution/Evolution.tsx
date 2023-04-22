@@ -17,10 +17,8 @@ import Xarrow from 'react-xarrows';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
-import pokemonData from '../../../data/pokemon.json';
-import pokemonName from '../../../data/pokemon_names.json';
-
 import './Evolution.scss';
+import { useTheme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { capitalize, convertFormGif, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
 
@@ -29,7 +27,7 @@ import PopoverConfig from '../../Popover/PopoverConfig';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 
-const theme = createTheme({
+const customTheme = createTheme({
   palette: {
     secondary: {
       main: '#a6efff80',
@@ -40,6 +38,9 @@ const theme = createTheme({
 } as any);
 
 const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter }: any) => {
+  const theme = useTheme();
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
   const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
   const [arrEvoList, setArrEvoList]: any = useState([]);
   const optionsDefault = {
@@ -182,7 +183,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     if (!name) {
       return;
     }
-    const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+    const pokemon: any = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
     arr.unshift([formatEvoChain(pokemon)]);
     return getPrevEvoChainJSON(pokemon?.prevo, arr);
   }, []);
@@ -190,7 +191,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
   const getCurrEvoChainJSON = useCallback((prev: { evos: any[] }, arr: any[][]) => {
     const evo: { name: any; id: any; baby: any; form: any; gmax: boolean; sprite: any }[] = [];
     prev.evos.forEach((name: string) => {
-      const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+      const pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
       evo.push(formatEvoChain(pokemon));
     });
     arr.push(evo);
@@ -202,12 +203,12 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     }
     arr.push(
       evos.map((name: string) => {
-        const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+        const pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
         return formatEvoChain(pokemon);
       })
     );
     evos.forEach((name: string) => {
-      const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+      const pokemon: any = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
       getNextEvoChainJSON(pokemon?.evos, arr);
     });
   }, []);
@@ -224,17 +225,17 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
         form += '-mane';
       }
       let pokemon: any = Object.values(pokemonData).find(
-        (pokemon) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
+        (pokemon: any) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
       );
       if (!pokemon) {
-        pokemon = Object.values(pokemonData).find((pokemon) => pokemon.num === id && pokemon.forme === null);
+        pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.num === id && pokemon.forme === null);
       }
 
       const prevEvo: any[] = [],
         curr: any = [],
         evo: any = [];
       getPrevEvoChainJSON(pokemon.prevo, prevEvo);
-      const prev = Object.values(pokemonData).find((p) => p.name === pokemon.prevo);
+      const prev: any = Object.values(pokemonData).find((p: any) => p.name === pokemon.prevo);
       if (prev) {
         getCurrEvoChainJSON(prev, curr);
       } else {
@@ -436,7 +437,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     );
   };
 
-  const renderImageEvo = (value: any, chain: any[], evo: any, index: string | number, evoCount: number) => {
+  const renderImageEvo = (value: any, chain: any[], evo: any, index: number, evoCount: number) => {
     const form = value.form ?? forme.form_name;
     let offsetY = 35;
     offsetY += value.baby ? 20 : 0;
@@ -463,12 +464,17 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                   <div className="position-absolute" style={{ left: -40 }}>
                     {!value.gmax && (
                       <div>
-                        <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
-                          <Candy id={value.id} />
-                          <span style={{ marginLeft: 2 }}>{`x${
-                            purified && selectPurified ? data.purificationEvoCandyCost : data.candyCost
-                          }`}</span>
-                        </span>
+                        {(data.candyCost || data.purificationEvoCandyCost) && (
+                          <span
+                            className="d-flex align-items-center caption"
+                            style={{ color: (theme.palette as any).customText.caption, width: 'max-content' }}
+                          >
+                            <Candy id={value.id} />
+                            <span style={{ marginLeft: 2 }}>{`x${
+                              purified && selectPurified ? data.purificationEvoCandyCost : data.candyCost
+                            }`}</span>
+                          </span>
+                        )}
                         {purified && selectPurified && (
                           <span className="d-block text-end caption text-danger">{`-${
                             data.candyCost - data.purificationEvoCandyCost
@@ -605,7 +611,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
               {chain.length > 1 || (chain.length === 1 && form.form_name !== '') ? (
                 <Fragment>
                   {form !== '' && !form.includes('mega') ? (
-                    <ThemeProvider theme={theme}>
+                    <ThemeProvider theme={customTheme}>
                       <Badge
                         color="secondary"
                         overlap="circular"
@@ -635,7 +641,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           ) : (
             <Fragment>{renderImgGif(value)}</Fragment>
           )}
-          <div id="id-pokemon" style={{ color: 'black' }}>
+          <div id="id-pokemon" style={{ color: theme.palette.text.primary }}>
             <b>#{value.id}</b>
           </div>
           <div>
@@ -644,7 +650,13 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
         </span>
         {value.baby && <span className="caption text-danger">(Baby)</span>}
         {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
-        <p>{value.id === id && <span className="caption">Current</span>}</p>
+        <p>
+          {value.id === id && (
+            <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+              Current
+            </span>
+          )}
+        </p>
       </Fragment>
     );
   };
@@ -738,7 +750,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           {arrEvoList.map((values: any[], evo: React.Key) => (
             <li key={evo} className="img-form-gender-group li-evo">
               <ul className="ul-evo d-flex flex-column">
-                {values.map((value: { id: string; name: string }, index: React.Key) => (
+                {values.map((value: { id: string; name: string }, index: number) => (
                   <li key={index} className="img-form-gender-group img-evo-group li-evo">
                     {onSetIDPoke ? (
                       <div

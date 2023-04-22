@@ -40,7 +40,7 @@ export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false
                 {value.type === 'B' ? (
                   <div style={{ height: 80 }} className={'d-flex align-items-center turn-battle' + (end ? ' justify-content-end' : '')}>
                     <div className="block-attack-container">
-                      <img className="block-spirit-timelime" alt="img-shield" src={APIService.getPokeOtherLeague('ShieldButton')} />
+                      <img className="block-spirit-timeline" alt="img-shield" src={APIService.getPokeOtherLeague('ShieldButton')} />
                     </div>
                     <span className="text-success">
                       x{value.block}

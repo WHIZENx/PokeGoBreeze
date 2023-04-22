@@ -2,7 +2,6 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import { Link, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
-import pokemonData from '../../../data/pokemon.json';
 import {
   convertName,
   convertNameRankingToForm,
@@ -45,11 +44,11 @@ const TeamPVP = () => {
     (data: { split: (arg0: string) => [any, any] }) => {
       const [speciesId, moveSet] = data.split(' ');
       const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-      const pokemon: any = Object.values(pokemonData).find((pokemon: { slug: string }) => pokemon.slug === name);
+      const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: { slug: string } | any) => pokemon.slug === name);
       const id = pokemon.num;
       const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
-      const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+      const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
       if (!styleSheet.current) {
         styleSheet.current = getStyleSheet(`.${pokemon.types[0].toLowerCase()}`);

@@ -1,13 +1,13 @@
 import CardPokemon from '../Card/CardPokemon';
 import CloseIcon from '@mui/icons-material/Close';
 
-import pokemonData from '../../data/pokemon.json';
 import React, { useEffect, useState } from 'react';
 
 import './Select.scss';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { useSelector, RootStateOrAny } from 'react-redux';
+import { TypeMove } from '../../enums/type-move.enum';
 
 const SelectPokemon = (props: {
   pokemon?: any;
@@ -22,6 +22,7 @@ const SelectPokemon = (props: {
   disable?: boolean;
 }) => {
   const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -51,10 +52,10 @@ const SelectPokemon = (props: {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme, 'FAST') : null);
+        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme, TypeMove.FAST) : null);
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme, 'CHARGE') : null);
+        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme, TypeMove.CHARGE) : null);
       }
       if (props.clearData) {
         props.clearData();
@@ -87,7 +88,7 @@ const SelectPokemon = (props: {
     );
     const simpleMove: any[] = [];
     if (resultFirst.length === 1 || result == null) {
-      if (type === 'FAST') {
+      if (type === TypeMove.FAST) {
         resultFirst[0].quickMoves.forEach((value: any) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
@@ -110,7 +111,7 @@ const SelectPokemon = (props: {
       }
       return simpleMove[0];
     }
-    if (type === 'FAST') {
+    if (type === TypeMove.FAST) {
       result.quickMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
       });
@@ -169,14 +170,13 @@ const SelectPokemon = (props: {
           <div>
             {Object.values(pokemonData)
               .filter(
-                (item) =>
+                (item: any) =>
                   item.num > 0 &&
-                  item.num <= 905 &&
                   (splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
                     item.num.toString().includes(search))
               )
               .slice(0, firstInit + eachCounter * startIndex)
-              .map((value, index) => (
+              .map((value: any, index) => (
                 <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
                   <CardPokemon value={value} />
                 </div>

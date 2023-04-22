@@ -11,6 +11,7 @@ import './Navbar.scss';
 
 const NavbarComponent = () => {
   const dataStore = useSelector((state: RootStateOrAny) => state.store);
+
   const [version] = useLocalStorage('version', '');
 
   return (

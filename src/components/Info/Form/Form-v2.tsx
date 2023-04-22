@@ -19,6 +19,7 @@ import { useDispatch } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { setSearchMainPage } from '../../../store/actions/searching.action';
 import Primal from '../Primal/Primal';
+import FromChange from '../FormChange/FormChange';
 
 const Form = ({
   pokemonRouter,
@@ -43,6 +44,7 @@ const Form = ({
   onSetIDPoke,
   paramForm,
   pokemonList,
+  pokemonDetail,
 }: any) => {
   const dispatch = useDispatch();
 
@@ -73,7 +75,10 @@ const Form = ({
           (item: { form: { form_name: any; name: string }; default_name: string }) =>
             item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm
         );
-        curFrom = curFrom ?? form.find((item: { form: { is_default: any } }) => item.form.is_default);
+        curFrom =
+          curFrom ??
+          form.find((item: { form: { is_default: any } }) => item.form.is_default) ??
+          form.find((item: { form: { is_default: any } }) => !item.form.is_default);
         if (paramForm && curFrom.form.form_name !== paramForm.toLowerCase()) {
           const changeForm = form.find((item: { form: { form_name: any } }) => item.form.form_name === paramForm.toLowerCase());
           if (changeForm) {
@@ -144,7 +149,7 @@ const Form = ({
     }
     const nameInfo = splitAndCapitalize(findForm.form.name, '-', ' ');
     setFormName(nameInfo);
-    setReleased(checkReleased(pokeID, nameInfo));
+    setReleased(checkReleased(pokeID, nameInfo, findForm.form.is_default));
     setForm(splitAndCapitalize(convertFormNameImg(pokeID, findForm.form.form_name), '-', '-'));
     if (findData && findForm) {
       const oriForm = findData;
@@ -271,6 +276,9 @@ const Form = ({
   return (
     <Fragment>
       <div className="form-container">
+        <h4 className="info-title">
+          <b>Form varieties</b>
+        </h4>
         <div className="scroll-form">
           {formList.map((value: any[], index: React.Key | number) => (
             <Fragment key={index}>
@@ -400,7 +408,8 @@ const Form = ({
             statSTA={statSTA ? statSTA.stamina : calBaseSTA(dataPoke ? dataPoke.stats : defaultStats, true)}
           />
           <Counter
-            changeForm={changeForm}
+            currForm={currForm}
+            pokeID={pokeID}
             def={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             form={currForm && currForm.form}
             pokemonList={pokemonList}
@@ -463,6 +472,7 @@ const Form = ({
           region={regionList[parseInt(species.generation.url.split('/')[6])]}
         />
       )}
+      {pokemonDetail?.formChange && <FromChange details={pokemonDetail} defaultName={currForm && currForm.default_name} />}
     </Fragment>
   );
 };

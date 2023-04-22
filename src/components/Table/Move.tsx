@@ -2,6 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
 import { splitAndCapitalize } from '../../util/Utils';
 import { RootStateOrAny, useSelector } from 'react-redux';
+import { TypeMove } from '../../enums/type-move.enum';
 
 // eslint-disable-next-line no-unused-vars
 const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0: any) => void; text: string; selectDefault: any }) => {
@@ -29,7 +30,7 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
         if (resultFirst.length === 0) {
           return setResultMove('');
         }
-        if (props.type !== 'CHARGE') {
+        if (props.type !== TypeMove.CHARGE) {
           resultFirst[0].quickMoves.forEach((value: any) => {
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
           });
@@ -38,7 +39,7 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
           });
           setCountFM(simpleMove.length);
         }
-        if (props.type === 'FAST') {
+        if (props.type === TypeMove.FAST) {
           return setResultMove(simpleMove);
         }
         resultFirst[0].cinematicMoves.forEach((value: any) => {
@@ -55,7 +56,7 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
         });
         return setResultMove(simpleMove);
       }
-      if (props.type !== 'CHARGE') {
+      if (props.type !== TypeMove.CHARGE) {
         result.quickMoves.forEach((value: any) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
@@ -64,7 +65,7 @@ const Move = (props: { type?: any; id: any; form: any; move: any; setMove: (arg0
         });
         setCountFM(simpleMove.length);
       }
-      if (props.type === 'FAST') {
+      if (props.type === TypeMove.FAST) {
         return setResultMove(simpleMove);
       }
       result.cinematicMoves.forEach((value: any) => {

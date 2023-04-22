@@ -1,4 +1,3 @@
-import pokemonData from './../../data/pokemon.json';
 import { calculateCPM } from '../../core/cpm';
 import {
   optionEvolution,
@@ -18,6 +17,8 @@ import {
   optionPokemonWeather,
   optionPokemonCandy,
   optionFormNone,
+  optionPokemonData,
+  optionPokemonName,
 } from '../../core/options';
 import { convertPVPRankings, convertPVPTrain, pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
 import { BASE_CPM, MAX_LEVEL, MIN_LEVEL, SYNC_MSG } from '../../util/Constants';
@@ -49,6 +50,7 @@ export const loadStore = (
     typeEff: any,
     weatherBoost: any,
     gmData: any,
+    pokemonData: any,
     pokemon: any[],
     candyData: any[],
     formSpecial: string | any[],
@@ -113,6 +115,7 @@ export const loadStore = (
                     typeEff,
                     weatherBoost,
                     gmData,
+                    pokemonData,
                     pokemon,
                     candyData,
                     formSpecial,
@@ -146,6 +149,7 @@ export const loadStore = (
         typeEff,
         weatherBoost,
         gmData,
+        pokemonData,
         pokemon,
         candyData,
         formSpecial,
@@ -166,6 +170,7 @@ export const loadStore = (
     typeEff: any,
     weatherBoost: any,
     gmData: any,
+    pokemonData: any,
     pokemon: any[],
     candyData: any[],
     formSpecial: string | any[],
@@ -185,7 +190,9 @@ export const loadStore = (
         typeEff,
         weatherBoost,
         options: optionSettings(gmData),
+        pokemonData,
         pokemon,
+        pokemonName: optionPokemonName(details),
         candy: candyData,
         evolution: optionEvolution(gmData, pokemon, formSpecial),
         stickers: optionSticker(gmData, pokemon),
@@ -266,6 +273,7 @@ export const loadStore = (
         ])
           .then(([candy, imageRoot, soundsRoot]) => {
             const pokemon = optionPokemon(gm.data);
+            const pokemonData = optionPokemonData(pokemon);
             const pokemonFamily = optionPokemonFamily(pokemon);
             const candyData = optionPokemonCandy(candy.data.CandyColors, pokemon, pokemonFamily);
             setStateTimestamp(
@@ -346,13 +354,22 @@ export const loadStore = (
                       })
                     );
                     const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
-                    const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
+                    const details = optionDetailsPokemon(
+                      gm.data,
+                      pokemonData,
+                      pokemon,
+                      formSpecial,
+                      assetsPokemon,
+                      pokemonCombat,
+                      noneForm
+                    );
 
                     selectorDispatch(
                       cpm,
                       typeEff,
                       weatherBoost,
                       gm.data,
+                      pokemonData,
                       pokemon,
                       candyData,
                       formSpecial,
@@ -368,17 +385,19 @@ export const loadStore = (
                 });
               });
             } else {
+              const pokemonData = optionPokemonData(pokemon);
               const assetImgFiles = JSON.parse(stateImage).data;
               const assetSoundFiles = JSON.parse(stateSound).data;
 
               const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
-              const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
+              const details = optionDetailsPokemon(gm.data, pokemonData, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
 
               selectorDispatch(
                 cpm,
                 typeEff,
                 weatherBoost,
                 gm.data,
+                pokemonData,
                 pokemon,
                 candyData,
                 formSpecial,
@@ -404,6 +423,7 @@ export const loadStore = (
       } else {
         const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
         const pokemon = optionPokemon(gm.data);
+        const pokemonData = optionPokemonData(pokemon);
         const pokemonFamily = optionPokemonFamily(pokemon);
         const noneForm = optionFormNone(gm.data);
         const formSpecial = optionFormSpecial(gm.data);
@@ -411,7 +431,7 @@ export const loadStore = (
         const league = optionLeagues(gm.data, pokemon);
         const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage).data, JSON.parse(stateSound).data);
         const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial, noneForm);
-        const details = optionDetailsPokemon(gm.data, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
+        const details = optionDetailsPokemon(gm.data, pokemonData, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
 
         const typeEff = optionPokemonTypes(gm.data);
         const weatherBoost = optionPokemonWeather(gm.data);
@@ -421,6 +441,7 @@ export const loadStore = (
           typeEff,
           weatherBoost,
           gm.data,
+          pokemonData,
           pokemon,
           JSON.parse(stateCandy),
           formSpecial,

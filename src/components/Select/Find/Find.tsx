@@ -2,10 +2,9 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 import Form from './Form';
 
-import pokemonData from '../../../data/pokemon.json';
-import pokeListName from '../../../data/pokemon_names.json';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { RouterState } from '../../..';
+import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 
 const Find = (props: {
   // eslint-disable-next-line no-unused-vars
@@ -39,12 +38,14 @@ const Find = (props: {
   const stats = useSelector((state: RootStateOrAny) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
 
   const [id, setId] = useState(searching ? (props.objective ? (searching.obj ? searching.obj.id : 1) : searching.id) : 1);
   const [form, setForm] = useState(null);
 
   const pokemonList = useRef(
-    Object.values(pokeListName)
+    Object.values(pokemonName)
       .filter((item: any) => item.id > 0)
       .map((item: any) => {
         return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
@@ -70,14 +71,14 @@ const Find = (props: {
   };
 
   const getInfoPoke = (value: any) => {
+    const currentId: any = getPokemonById(Object.values(pokemonName), value.id);
     setId(value.id);
     setForm(null);
     if (props.setId) {
       props.setId(value.id);
     }
     if (props.setName) {
-      const findName = pokemonList.current.find((item: any) => item.id === value.id)?.name;
-      props.setName(findName);
+      props.setName(currentId.name);
     }
     if (props.clearStats) {
       props.clearStats();
@@ -96,12 +97,14 @@ const Find = (props: {
 
   const decId = () => {
     setTimeout(() => {
-      setId(id - 1);
+      const currentId: any = getPokemonById(Object.values(pokemonName), id);
+      const prev = getPokemonByIndex(Object.values(pokemonName), currentId.index - 1);
+      setId(prev.id);
       if (props.setId) {
-        props.setId(id - 1);
+        props.setId(prev.id);
       }
       if (props.setName) {
-        props.setName(pokemonList.current.find((item: any) => item.id === id - 1)?.name);
+        props.setName(prev.name);
       }
       if (props.clearStats) {
         props.clearStats();
@@ -114,12 +117,14 @@ const Find = (props: {
 
   const incId = () => {
     setTimeout(() => {
-      setId(id + 1);
+      const currentId: any = getPokemonById(Object.values(pokemonName), id);
+      const next = getPokemonByIndex(Object.values(pokemonName), currentId.index + 1);
+      setId(next.id);
       if (props.setId) {
-        props.setId(id + 1);
+        props.setId(next.id);
       }
       if (props.setName) {
-        props.setName(pokemonList.current.find((item: any) => item.id === id + 1)?.name);
+        props.setName(next.name);
       }
       if (props.clearStats) {
         props.clearStats();
@@ -202,7 +207,6 @@ const Find = (props: {
                 form={form}
                 setForm={props.setForm}
                 setFormOrigin={setForm}
-                count={pokemonList.current.length}
                 id={id}
                 name={pokemonList.current.find((item: any) => item.id === id)?.name}
                 data={pokemonData}
@@ -213,6 +217,7 @@ const Find = (props: {
                 onSetNext={incId}
                 setUrlEvo={props.setUrlEvo}
                 objective={props.objective}
+                pokemonName={pokemonName}
               />
             </Fragment>
           )}

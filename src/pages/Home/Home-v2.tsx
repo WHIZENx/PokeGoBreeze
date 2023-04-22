@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
-import pokemonData from '../../data/pokemon.json';
 import loadingImg from '../../assets/loading.png';
 
 import './Home.scss';
@@ -10,7 +9,7 @@ import { calculateStatsByTag } from '../../util/Calculate';
 import { convertFormNameImg, mappingReleasedGO, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
-import { genList, regionList, versionList } from '../../util/Constants';
+import { genList, regionList, TRANSITION_TIME, versionList } from '../../util/Constants';
 import {
   Checkbox,
   FormControl,
@@ -22,6 +21,7 @@ import {
   Select,
   SelectChangeEvent,
   Switch,
+  useTheme,
 } from '@mui/material';
 
 const VersionProps = {
@@ -33,14 +33,15 @@ const VersionProps = {
 };
 
 const Home = () => {
+  const theme = useTheme();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
   const types = Object.keys(data.typeEff);
   const dataList = useRef(
-    mappingReleasedGO(pokemonData, data.details)
+    mappingReleasedGO(data.pokemonData, data.details)
       .map((item) => {
-        const stats = calculateStatsByTag(item.baseStats, item.slug);
+        const stats = calculateStatsByTag(item, item.baseStats, item.slug);
         const assetForm = queryAssetForm(data.assets, item.num, item.name);
         return {
           id: item.num,
@@ -140,8 +141,8 @@ const Home = () => {
             const boolMythic = mythic ? item.class === 'MYTHIC' : true;
             const boolUltra = ultrabeast ? item.class === 'ULTRA_BEAST' : true;
 
-            const findGen = gen.includes(item.gen - 1);
-            const findVersion = version.includes(item.version);
+            const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
+            const findVersion = item.version === -1 ? true : version.includes(item.version);
             return (
               boolFilterType &&
               boolFilterPoke &&
@@ -253,24 +254,29 @@ const Home = () => {
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
-                className={'btn-select-type w-100 border-types' + (selectTypes.includes(item) ? ' select-type' : '')}
-                style={{ padding: 10 }}
+                className={
+                  'btn-select-type w-100 border-types btn-' +
+                  theme.palette.mode +
+                  (selectTypes.includes(item) ? ' select-type' + (theme.palette.mode === 'dark' ? '-dark' : '') : '')
+                }
+                style={{ padding: 10, transition: TRANSITION_TIME }}
               >
                 <TypeInfo block={true} arr={[item]} />
               </button>
             </div>
           ))}
         </div>
-        <div className="w-100">
+        <div className="w-100" style={{ color: theme.palette.text.primary }}>
           <div className="border-input">
             <div className="head-types">Options</div>
             <div className="row" style={{ margin: 0 }}>
               <div className="col-xl-4" style={{ padding: 0 }}>
                 <div className="d-flex">
-                  <span className="input-group-text">Search name or ID</span>
+                  <span className={'input-group-text ' + (theme.palette.mode === 'dark' ? 'input-group-dark' : '')}>Search name or ID</span>
                   <input
                     type="text"
-                    className="form-control input-search"
+                    style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
+                    className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
                     placeholder="Enter Name or ID"
                     value={searchTerm}
                     onInput={(e: any) => setSearchTerm(e.target.value)}
@@ -374,7 +380,7 @@ const Home = () => {
                   </FormControl>
                 </div>
                 <div className="input-group border-input">
-                  <span className="input-group-text">Filter only by</span>
+                  <span className={'input-group-text ' + (theme.palette.mode === 'dark' ? 'input-group-dark' : '')}>Filter only by</span>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -457,7 +463,7 @@ const Home = () => {
           </b>
         </span>
       </div>
-      <div className="text-center">
+      <div className="text-center bg-white">
         <div className="loading-group-spin-table" style={{ display: !loading ? 'none' : 'block' }} />
         <ul className="d-grid pokemon-content">
           {listOfPokemon.map((row: any, index: React.Key) => (

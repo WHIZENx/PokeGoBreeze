@@ -13,7 +13,7 @@ export const rankName = (rank: number) => {
   if (rank === 21) {
     return 'Ace';
   } else if (rank === 22) {
-    return 'Veteren';
+    return 'Veteran';
   } else if (rank === 23) {
     return 'Expert';
   } else if (rank === 24) {
@@ -49,21 +49,25 @@ export const rankIconCenterName = (rank: number) => {
   }
 };
 
-export const raidEgg = (tier: number, mega: any, ultra?: boolean) => {
-  if (tier === 5 && ultra) {
-    return APIService.getRaidSprite('raid_ultra_icon');
-  }
+export const raidEgg = (tier: number, mega: any, primal: any, ultra?: boolean) => {
   if (tier === 1) {
     return APIService.getRaidSprite('raid_egg_0_icon');
   } else if (tier === 3) {
     return APIService.getRaidSprite('raid_egg_1_icon');
-  } else if (tier === 4 && mega) {
-    return APIService.getRaidSprite('raid_egg_3_icon');
   } else if (tier === 4) {
+    if (mega) {
+      return APIService.getRaidSprite('raid_egg_3_icon');
+    }
     return APIService.getRaidSprite('raid_egg_5_icon');
   } else if (tier === 5) {
+    if (ultra) {
+      return APIService.getRaidSprite('raid_ultra_icon');
+    }
     return APIService.getRaidSprite('raid_egg_2_icon');
   } else if (tier === 6) {
+    if (primal) {
+      return APIService.getRaidSprite('raid_egg_primal_icon');
+    }
     return APIService.getRaidSprite('raid_egg_4_icon');
   } else {
     return APIService.getRaidSprite('ic_raid_small');
@@ -75,9 +79,9 @@ export const computeCandyBgColor = (candyData: Candy[], id: number) => {
   if (!data) {
     data = candyData.find((item) => item.familyId === 0);
   }
-  return `rgb(${Math.round(255 * data?.secondaryColor.r)}, ${Math.round(255 * data?.secondaryColor.g)}, ${Math.round(
-    255 * data?.secondaryColor.b
-  )}, ${data?.secondaryColor.a})`;
+  return `rgb(${Math.round(255 * data?.secondaryColor.r) || 0}, ${Math.round(255 * data?.secondaryColor.g) || 0}, ${
+    Math.round(255 * data?.secondaryColor.b) || 0
+  }, ${data?.secondaryColor.a || 1})`;
 };
 
 export const computeCandyColor = (candyData: Candy[], id: number) => {
@@ -85,9 +89,9 @@ export const computeCandyColor = (candyData: Candy[], id: number) => {
   if (!data) {
     data = candyData.find((item: any) => item.familyId === 0);
   }
-  return `rgb(${Math.round(255 * data?.primaryColor.r)}, ${Math.round(255 * data?.primaryColor.g)}, ${Math.round(
-    255 * data?.primaryColor.b
-  )}, ${data?.primaryColor.a})`;
+  return `rgb(${Math.round(255 * data?.primaryColor.r) || 0}, ${Math.round(255 * data?.primaryColor.g) || 0}, ${
+    Math.round(255 * data?.primaryColor.b) || 0
+  }, ${data?.primaryColor.a || 1})`;
 };
 
 export const computeBgType = (types: string[] | string, shadow = false, purified = false, opacity = 1, styleSheet?: any) => {

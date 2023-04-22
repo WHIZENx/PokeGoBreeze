@@ -129,7 +129,7 @@ const FindBattle = () => {
       getEvoChain(id).forEach((item: any[]) => {
         const tempArr: { battleLeague: any; maxCP: any; form: any; id: number; name: string }[] = [];
         item.forEach((value: { form: string; id: number; name: string }) => {
-          const data = queryStatesEvoChain(dataStore.options, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(dataStore.options, dataStore.pokemonData, value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
             setMaxCP(data.maxCP);
           }
@@ -440,7 +440,7 @@ const FindBattle = () => {
               )}
             </div>
             {evoChain.map((value: any[], index: React.Key) => (
-              <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%' }}>
+              <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
                   {!value[0].form ? 'Normal' : splitAndCapitalize(value[0].form, '-', ' ')}
                   {' Form'}

@@ -2,8 +2,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize } from '../../util/Utils';
+import { useTheme } from '@mui/material';
 
 const Attacker = (prop: { types: any }) => {
+  const theme = useTheme();
   const [types, setTypes]: any = useState(null);
 
   const [currentType, setCurrentType] = useState('BUG');
@@ -63,7 +65,12 @@ const Attacker = (prop: { types: any }) => {
             <div className="result-type">
               <ul>
                 {types.map((value: any, index: React.Key) => (
-                  <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
+                  <li
+                    className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+                    style={{ backgroundColor: theme.palette.background.default }}
+                    key={index}
+                    onMouseDown={() => changeType(value)}
+                  >
                     <CardType value={capitalize(value)} />
                   </li>
                 ))}

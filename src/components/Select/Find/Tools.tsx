@@ -10,10 +10,11 @@ import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
 import sta_logo from '../../../assets/stamina.png';
 
-import pokemonData from '../../../data/pokemon.json';
 import { capitalize } from '../../../util/Utils';
+import { useSelector, RootStateOrAny } from 'react-redux';
 
 const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide }: any) => {
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
   const [currDataPoke, setCurrDataPoke]: any = useState(null);
   const [currTier, setCurrTier] = useState(tier);
 
@@ -56,7 +57,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
       parseInt(tier) === 5 &&
       currForm &&
       currForm.form.form_name.includes('mega') &&
-      Object.values(pokemonData).find((item: any) => item.num === id)?.pokemonClass
+      (Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass
     ) {
       setCurrTier(6);
       if (setTier) {
@@ -129,7 +130,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
             </optgroup>
             {currForm && currForm.form.form_name.includes('mega') && (
               <Fragment>
-                {Object.values(pokemonData).find((item: any) => item.num === id)?.pokemonClass ? (
+                {(Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">
                     <option value={6}>Tier Mega</option>
                   </optgroup>

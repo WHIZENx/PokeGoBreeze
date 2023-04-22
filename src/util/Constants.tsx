@@ -3,6 +3,8 @@ import APIService from '../services/API.service';
 
 export const SYNC_MSG = 'Waiting to sync current data';
 
+export const TRANSITION_TIME = '0.3s';
+
 export const BASE_CPM: any = {
   1: 0.094,
   10: 0.4225,
@@ -116,14 +118,17 @@ export const genList: any = {
 };
 
 export const regionList: any = {
+  0: 'Unknown',
   1: 'Kanto',
   2: 'Johto',
   3: 'Hoenn',
   4: 'Sinnoh',
-  5: 'Unova',
-  6: 'Kalos',
-  7: 'Alola',
-  8: 'Galar',
+  5: 'Hisui',
+  6: 'Unova',
+  7: 'Kalos',
+  8: 'Alola',
+  9: 'Galar',
+  10: 'Paldea',
 };
 
 export const versionList: any = [

@@ -46,7 +46,9 @@ module.exports = {
       files: ['./src/**/*.{ts,tsx}']
     }),
     new ESLintPlugin({
-      files: ['./src/**/*.{ts,tsx}']
+      files: ['./src/**/*.{ts,tsx}'],
+      emitWarning: false,
+      failOnWarning: false
     }),
     new StylelintPlugin({
       files: ['./src/**/*.scss']
@@ -115,6 +117,9 @@ module.exports = {
   bail: false,
   target: 'web',
   devtool: 'inline-source-map',
+  performance: {
+    hints: false,
+  },
   devServer: {
     static: [
       { directory: path.resolve(__dirname, 'dist') },

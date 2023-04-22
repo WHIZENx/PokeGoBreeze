@@ -9,8 +9,8 @@ import atk_logo from '../../assets/attack.png';
 import def_logo from '../../assets/defense.png';
 import sta_logo from '../../assets/stamina.png';
 
-import pokemonData from '../../data/pokemon.json';
 import { useSelector, RootStateOrAny } from 'react-redux';
+import { useTheme } from '@mui/material';
 
 const Raid = ({
   clearData,
@@ -24,19 +24,26 @@ const Raid = ({
   setStatBossHP,
   setTimeAllow,
 }: any) => {
+  const theme = useTheme();
   const details = useSelector((state: RootStateOrAny) => state.store.data.details);
+  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
   const [tier, setTier]: any = useState(1);
   const [pokemonClass, setPokemonClass]: any = useState(null);
 
   useEffect(() => {
-    setPokemonClass(Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass);
+    setPokemonClass((Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass);
   }, [id]);
 
   useEffect(() => {
-    const pokemonClass = Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass;
-    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) {
+    const pokemonClass = (Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass;
+    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega') && currForm.form.form_name !== 'primal') {
       setTier(5);
-    } else if (parseInt(tier) === 5 && currForm && currForm.form.form_name.includes('mega') && pokemonClass) {
+    } else if (
+      parseInt(tier) === 5 &&
+      currForm &&
+      (currForm.form.form_name.includes('mega') || currForm.form.form_name === 'primal') &&
+      pokemonClass
+    ) {
       setTier(6);
     }
     if (setTierBoss) {
@@ -74,11 +81,11 @@ const Raid = ({
             <option value={2}>Tier 2</option>
             {((currForm && !currForm.form.form_name.includes('mega')) || pokemonClass) && <option value={4}>Tier 4</option>}
           </optgroup>
-          {currForm && currForm.form.form_name.includes('mega') && (
+          {currForm && (currForm.form.form_name.includes('mega') || currForm.form.form_name === 'primal') && (
             <Fragment>
               {pokemonClass ? (
-                <optgroup label="Legendary Mega Tier 6">
-                  <option value={6}>Tier Mega</option>
+                <optgroup label={'Legendary ' + (currForm.form.form_name === 'primal' ? 'Primal' : 'Mega') + ' Tier 6'}>
+                  <option value={6}>{'Tier ' + (currForm.form.form_name === 'primal' ? 'Primal' : 'Mega')}</option>
                 </optgroup>
               ) : (
                 <optgroup label="Mega Tier 4">
@@ -114,6 +121,7 @@ const Raid = ({
             src={raidEgg(
               parseInt(tier),
               currForm && currForm.form.form_name.includes('mega') && !pokemonClass,
+              currForm && currForm.form.form_name === 'primal' && pokemonClass,
               details.find((pokemon: { id: any }) => pokemon.id === id)?.pokemonClass === 'ULTRA_BEAST'
             )}
           />
@@ -132,21 +140,27 @@ const Raid = ({
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
                   ATK
                 </td>
-                <td className="text-center">{calculateRaidStat(statATK, tier)}</td>
+                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                  {calculateRaidStat(statATK, tier)}
+                </td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
                   DEF
                 </td>
-                <td className="text-center">{calculateRaidStat(statDEF, tier)}</td>
+                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                  {calculateRaidStat(statDEF, tier)}
+                </td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={sta_logo} />
                   STA
                 </td>
-                <td className="text-center">{Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm)}</td>
+                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                  {Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm)}
+                </td>
               </tr>
             </tbody>
           </table>

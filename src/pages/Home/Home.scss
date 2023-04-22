@@ -30,11 +30,17 @@
   background-color: gray !important;
 }
 
+.select-type-dark,
+.select-type-dark:hover {
+  background-color: #bbbbbb !important;
+}
+
 .select-type span.caption {
   color: white !important;
 }
 
-.input-search {
+.input-search,
+.input-search-dark {
   border-radius: 0;
 }
 

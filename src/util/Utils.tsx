@@ -1,4 +1,4 @@
-import { RadioGroup, Rating, Slider, styled } from '@mui/material';
+import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
 import { MAX_IV } from './Constants';
@@ -261,16 +261,18 @@ export const convertNameRankingToOri = (text: string, form: string, local: boole
 };
 
 export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => {
-  return Object.values(data).map((value: any) => {
-    const stats = calculateStatsByTag(value.baseStats, value.slug);
-    return {
-      id: value.num,
-      name: value.slug,
-      base_stats: value.baseStats,
-      baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats.sta },
-      baseStatsProd: stats.atk * stats.def * stats.sta,
-    };
-  });
+  return Object.values(data)
+    .filter((pokemon) => pokemon.num > 0)
+    .map((value: any) => {
+      const stats = calculateStatsByTag(value, value.baseStats, value.slug);
+      return {
+        id: value.num,
+        name: value.slug,
+        base_stats: value.baseStats,
+        baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats.sta },
+        baseStatsProd: stats.atk * stats.def * stats.sta,
+      };
+    });
 };
 
 export const getStyleSheet = (selector: string) => {
@@ -352,19 +354,23 @@ export const findMoveTeam = (move: any, moveSet: any) => {
   return null;
 };
 
-export const checkReleasedGO = (item: any, details: any[]) => {
+export const convertPokemonGO = (item: any, pokemon: any) => {
+  if (item.name.toLowerCase().includes('_mega')) {
+    return pokemon.id === item.num && pokemon.name === item.name.toUpperCase().replaceAll('-', '_');
+  } else {
+    return (
+      pokemon.id === item.num &&
+      pokemon.name ===
+        (pokemon.id === 555 && !item.name.toLowerCase().includes('zen')
+          ? item.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+          : convertName(item.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
+    );
+  }
+};
+
+export const checkPokemonGO = (item: any, details: any[]) => {
   return details.find((pokemon: { name: string; id: any }) => {
-    if (item.name.toLowerCase().includes('_mega')) {
-      return pokemon.id === item.num && pokemon.name === item.name.toUpperCase().replaceAll('-', '_');
-    } else {
-      return (
-        pokemon.id === item.num &&
-        pokemon.name ===
-          (pokemon.id === 555 && !item.name.toLowerCase().includes('zen')
-            ? item.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
-            : convertName(item.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
-      );
-    }
+    convertPokemonGO(item, pokemon);
   });
 };
 
@@ -372,10 +378,10 @@ export const mappingReleasedGO = (pokemonData: any, details: any[]) => {
   return Object.values(pokemonData)
     .filter((pokemon: any) => pokemon.num > 0)
     .map((item: any) => {
-      const result = checkReleasedGO(item, details);
+      const result = checkPokemonGO(item, details);
       return {
         ...item,
-        releasedGO: result ? result.releasedGO : false,
+        releasedGO: item.isForceReleasedGO ?? (result ? result.releasedGO : false),
       };
     });
 };
@@ -559,4 +565,47 @@ export const calRank = (
   rank: number
 ) => {
   return ((pokemonStats[type].max_rank - rank + 1) * 100) / pokemonStats[type].max_rank;
+};
+
+export const getPokemonById = (pokemonName: any, id: number) => {
+  return pokemonName.find((pokemon: any) => pokemon.id === id);
+};
+
+export const getPokemonByIndex = (pokemonName: any, index: number) => {
+  return pokemonName.find((pokemon: any) => pokemon.index === index);
+};
+
+export const getCustomThemeDataTable = (theme: Theme) => {
+  return {
+    rows: {
+      style: {
+        color: theme.palette.text.primary,
+        backgroundColor: (theme.palette.background as any).tablePrimary,
+        '&:not(:last-of-type)': {
+          borderBottomColor: (theme.palette.background as any).tableDivided,
+        },
+      },
+      stripedStyle: {
+        color: theme.palette.text.primary,
+        backgroundColor: (theme.palette.background as any).tableStrip,
+      },
+      highlightOnHoverStyle: {
+        color: theme.palette.text.primary,
+        backgroundColor: (theme.palette.background as any).tableHover,
+        borderBottomColor: (theme.palette.background as any).tableDivided,
+        outlineColor: (theme.palette.background as any).tablePrimary,
+      },
+    },
+    headCells: {
+      style: {
+        backgroundColor: (theme.palette.background as any).tablePrimary,
+        color: theme.palette.text.primary,
+      },
+    },
+    cells: {
+      style: {
+        color: theme.palette.text.primary,
+      },
+    },
+  };
 };

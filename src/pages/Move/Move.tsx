@@ -18,6 +18,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
+import { TypeMove } from '../../enums/type-move.enum';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -230,7 +231,7 @@ const Move = (props: { id?: any }) => {
                       {move.pve_energy}
                     </td>
                   </tr>
-                  {move.type_move === 'CHARGE' && (
+                  {move.type_move === TypeMove.CHARGE && (
                     <tr>
                       <td>PVE Bar Charged</td>
                       <td colSpan={2} style={{ border: 'none' }}>
@@ -272,7 +273,7 @@ const Move = (props: { id?: any }) => {
                       {move.pvp_energy}
                     </td>
                   </tr>
-                  {move.type_move === 'CHARGE' && (
+                  {move.type_move === TypeMove.CHARGE && (
                     <tr>
                       <td>PVP Bar Charged</td>
                       <td colSpan={2} style={{ border: 'none' }}>
@@ -412,7 +413,7 @@ const Move = (props: { id?: any }) => {
                     </td>
                     <td>{((move.pve_power * Math.pow(STAB_MULTIPLY(data.options), 3)) / (move.durationMs / 1000)).toFixed(2)}</td>
                   </tr>
-                  {move.type_move === 'FAST' && (
+                  {move.type_move === TypeMove.FAST && (
                     <tr>
                       <td>EPS</td>
                       <td>{(move.pve_energy / (move.durationMs / 1000)).toFixed(2)}</td>

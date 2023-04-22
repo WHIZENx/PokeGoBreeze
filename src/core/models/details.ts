@@ -16,4 +16,5 @@ export interface Details {
   pokemonClass: any;
   disableTransferToPokemonHome: any;
   isBaby: boolean;
+  formChange?: object | null;
 }

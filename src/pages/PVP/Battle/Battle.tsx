@@ -1,6 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import pokemonData from '../../../data/pokemon.json';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
@@ -714,34 +713,31 @@ const Battle = () => {
             : 'Master League'
         }`;
 
-        file = file
-          .filter(
-            (pokemon: { speciesId: string | string[] }) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs')
-          )
-          .filter((item: { speciesId: string; speciesName: string }) => {
-            const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon: any = Object.values(pokemonData).find((pokemon: { slug: string }) => pokemon.slug === name);
-            return pokemon ? true : false;
-          })
-          .map((item: { speciesId: string; speciesName: string }) => {
-            const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon: any = Object.values(pokemonData).find((pokemon: { slug: string }) => pokemon.slug === name);
-            const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+        if (dataStore) {
+          file = file
+            .filter(
+              (pokemon: { speciesId: string | string[] }) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs')
+            )
+            .map((item: { speciesId: string; speciesName: string }) => {
+              const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+              const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: { slug: string } | any) => pokemon.slug === name);
+              const id = pokemon.num;
+              const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
-            const stats = calculateStatsByTag(pokemon.baseStats, pokemon.slug);
+              const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
-            return {
-              ...item,
-              name,
-              pokemon,
-              id,
-              form,
-              stats,
-            };
-          });
-        setData(file);
-        dispatch(hideSpinner());
+              return {
+                ...item,
+                name,
+                pokemon,
+                id,
+                form,
+                stats,
+              };
+            });
+          setData(file);
+          dispatch(hideSpinner());
+        }
       } catch (e: any) {
         source.cancel();
         dispatch(
@@ -890,10 +886,10 @@ const Battle = () => {
     }
     timelinePlay.current = requestAnimationFrame(function animate(timestamp: number) {
       if (timelineType) {
-        const durationFractor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
+        const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
         const width = Math.min(
           timelineNormal.current.clientWidth - 2,
-          xCurrent + durationFractor * (timelineNormal.current.clientWidth - 2)
+          xCurrent + durationFactor * (timelineNormal.current.clientWidth - 2)
         );
         if (width >= timelineNormal.current.clientWidth - 2) {
           if (elem) {
@@ -914,8 +910,8 @@ const Battle = () => {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
-        const durationFractor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
-        const width = Math.min(timelineFit.current.clientWidth, xCurrent + durationFractor * timelineFit.current.clientWidth);
+        const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
+        const width = Math.min(timelineFit.current.clientWidth, xCurrent + durationFactor * timelineFit.current.clientWidth);
         if (elem) {
           elem.style.transform = 'translate(' + width + 'px, -50%)';
           overlappingPos(arrStore.current, elem.getBoundingClientRect().left, true);
@@ -963,12 +959,12 @@ const Battle = () => {
   const overlappingPos = (arr: any[], pos = 0, sound = false) => {
     const index = arr.filter((dom: { left: number }) => dom.left <= pos).length;
     if (index >= 0 && index < arr.length) {
-      updateTimeine(index, sound);
+      updateTimeline(index, sound);
     }
   };
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const updateTimeine = (index: string | number, sound = false) => {
+  const updateTimeline = (index: string | number, sound = false) => {
     const pokeCurrData = pokemonCurr.timeline[index];
     const pokeObjData = pokemonObj.timeline[index];
     // if (sound) {
@@ -1094,7 +1090,11 @@ const Battle = () => {
     );
 
     if (!stats) {
-      const statsBattle = calculateStatsByTag(pokemon.pokemonData.pokemon.baseStats, pokemon.pokemonData.pokemon.slug);
+      const statsBattle = calculateStatsByTag(
+        pokemon.pokemonData.pokemon,
+        pokemon.pokemonData.pokemon.baseStats,
+        pokemon.pokemonData.pokemon.slug
+      );
 
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
@@ -1256,18 +1256,18 @@ const Battle = () => {
                 />
               </div>
               <div className="w-100 element-top">
-                <Button type="submit" className="w-100" color="primry">
+                <Button type="submit" className="w-100" color="primary">
                   Calculate Stats
                 </Button>
               </div>
             </form>
             <div className="w-100 element-top">
-              <Button className="w-100" color="primry" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
+              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
                 Set Random Stats
               </Button>
             </div>
             <div className="w-100 element-top">
-              <Button className="w-100" color="primry" onClick={() => onSetStats(type, pokemon, setPokemon, false)}>
+              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, false)}>
                 Set Best Stats
               </Button>
             </div>

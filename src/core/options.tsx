@@ -6,9 +6,10 @@ import { Sticker } from './models/sticker';
 import { Details } from './models/details';
 
 import pokemonData from '../data/pokemon.json';
-import { convertName } from '../util/Utils';
+import { capitalize, convertName, splitAndCapitalize } from '../util/Utils';
 import { TypeSet } from './models/type';
 import { Candy } from './models/candy';
+import { TypeMove } from '../enums/type-move.enum';
 
 export const getOption = (options: any, args: string[]) => {
   args.forEach((arg: any) => {
@@ -125,6 +126,82 @@ export const optionPokemonTypes = (data: any[]) => {
       });
     });
   return types;
+};
+
+export const optionPokemonData = (data: any[]) => {
+  const ids = Array.from(new Set(Object.values(pokemonData).map((pokemon) => pokemon.num)));
+  const result: any = pokemonData;
+  data.forEach((pokemon) => {
+    if (!ids.includes(pokemon.id)) {
+      const types = [];
+      if (pokemon.type) {
+        types.push(capitalize(pokemon.type.replace('POKEMON_TYPE_', '')));
+      }
+      if (pokemon.type2) {
+        types.push(capitalize(pokemon.type2.replace('POKEMON_TYPE_', '')));
+      }
+      result[pokemon.name.toLowerCase()] = {
+        num: pokemon.id,
+        name: capitalize(pokemon.name),
+        alias: pokemon.name.toLowerCase(),
+        slug: pokemon.name.toLowerCase(),
+        sprite: 'unknown-pokemon',
+        types,
+        genderRatio: {
+          M: 0.5,
+          F: 0.5,
+        },
+        baseStatsGO: true,
+        baseStats: {
+          atk: pokemon.stats.baseAttack,
+          def: pokemon.stats.baseDefense,
+          sta: pokemon.stats.baseStamina,
+        },
+        heightm: pokemon.pokedexHeightM,
+        weightkg: pokemon.pokedexWeightKg,
+        color: 'None',
+        evos: pokemon.evolutionIds ? pokemon.evolutionIds.map((name: string) => capitalize(name)) : [],
+        baseForme: null,
+        prevo: capitalize(pokemon.parentPokemonId),
+        isForceReleasedGO: true,
+        isTransferable: pokemon.isTransferable,
+        isDeployable: pokemon.isDeployable,
+        isTradable: pokemon.isTradable,
+        pokemonClass: null,
+        disableTransferToPokemonHome: false,
+        isBaby: false,
+        gen: 0,
+        region: 'Unknown',
+        version: 'pokémon-gO',
+      };
+    }
+  });
+  return result;
+};
+
+export const optionPokemonName = (details: any[]) => {
+  const pokemonDataId: any = Array.from(new Set(Object.values(pokemonData).map((p: any) => p.num)));
+  const result: any = {};
+  pokemonDataId
+    .filter((id: number) => id > 0)
+    .forEach((id: number, index: number) => {
+      let pokemon = details.find((p) => p.id === id && p.form === 'NORMAL');
+      if (pokemon) {
+        result[pokemon.id.toString()] = {
+          index: index + 1,
+          id: pokemon.id,
+          name: splitAndCapitalize(pokemon.name, '_', ' '),
+        };
+      } else {
+        pokemon = Object.values(pokemonData).find((p: { num: number; forme: string | null }) => p.num === id && !p.forme);
+        result[pokemon.num.toString()] = {
+          index: index + 1,
+          id: pokemon.num,
+          name: splitAndCapitalize(pokemon.name, '_', ' '),
+        };
+      }
+    });
+  return result;
 };
 
 export const optionPokemonWeather = (data: any[]) => {
@@ -367,6 +444,8 @@ export const optionEvolution = (data: any[], pokemon: any[], formSpecial: string
                 item = 'Up-Grade';
               } else if (evo.evolutionItemRequirement === 'ITEM_GEN5_EVOLUTION_STONE') {
                 item = 'Unova_Stone';
+              } else if (evo.evolutionItemRequirement === 'ITEM_OTHER_EVOLUTION_STONE_A') {
+                item = 'Other_Stone_A';
               }
               dataEvo.quest.evolutionItemRequirement = item;
             }
@@ -683,10 +762,10 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
         const result: Combat = combatModel();
         result.name = item.data.combatMove.uniqueId;
         result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-        if (item.templateId.includes('FAST')) {
-          result.type_move = 'FAST';
+        if (item.templateId.includes(TypeMove.FAST)) {
+          result.type_move = TypeMove.FAST;
         } else {
-          result.type_move = 'CHARGE';
+          result.type_move = TypeMove.CHARGE;
         }
         result.pvp_power = item.data.combatMove.power ?? 0.0;
         result.pvp_energy = item.data.combatMove.energyDelta ?? 0;
@@ -1156,13 +1235,14 @@ export const optionLeagues = (
 
 export const optionDetailsPokemon = (
   data: any[],
+  pokemonData: any[],
   pokemon: any[],
   formSpecial: string[],
   assets: any[],
   pokemonCombat: any[],
   noneForm: string[]
 ) => {
-  const datailsPokemonModel = () => {
+  const detailsPokemonModel = () => {
     return {
       id: 0,
       name: '',
@@ -1175,6 +1255,7 @@ export const optionDetailsPokemon = (
       pokemonClass: null,
       disableTransferToPokemonHome: null,
       isBaby: false,
+      formChange: null,
     };
   };
 
@@ -1195,7 +1276,7 @@ export const optionDetailsPokemon = (
         (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
     )
     .map((item) => {
-      const result: Details = datailsPokemonModel();
+      const result: Details = detailsPokemonModel();
       result.id = item.id;
       result.name = item.name.replace('_NORMAL', '');
       if (item.form) {
@@ -1220,6 +1301,7 @@ export const optionDetailsPokemon = (
       if (item.pokemonClass) {
         result.pokemonClass = item.pokemonClass.replace('POKEMON_CLASS_', '');
       }
+      result.formChange = item.formChange ?? null;
 
       const form = assets
         .find((asset: { id: number }) => asset.id === result.id)
@@ -1230,6 +1312,7 @@ export const optionDetailsPokemon = (
       if (combat.quickMoves[0] !== combat.cinematicMoves[0] && form && form.default) {
         result.releasedGO = form.default.includes('Addressable Assets/');
       }
+
       return result;
     });
 
@@ -1254,7 +1337,7 @@ export const optionDetailsPokemon = (
       if (item.tempEvoOverrides) {
         item.tempEvoOverrides.forEach((evos: { tempEvoId: string }) => {
           if (evos.tempEvoId) {
-            const detail: Details = datailsPokemonModel();
+            const detail: Details = detailsPokemonModel();
             detail.id = item.id;
             detail.form = evos.tempEvoId.replace('TEMP_EVOLUTION_', '');
             const gender = spawn.find((item) => item.id === detail.id && item.name === detail.name);

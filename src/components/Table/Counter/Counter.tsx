@@ -1,4 +1,4 @@
-import { capitalize, FormControlLabel, Switch } from '@mui/material';
+import { capitalize, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
@@ -9,23 +9,31 @@ import { counterPokemon } from '../../../util/Calculate';
 import './Counter.scss';
 import { RootStateOrAny, useSelector } from 'react-redux';
 
-const Counter = ({ def, form, changeForm, pokemonList }: any) => {
+const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
+  const theme = useTheme();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const [counterList, setCounterList]: any = useState([]);
   const [frame, setFrame] = useState(false);
-  const [open, setOpen] = useState(false);
   const [releasedGO, setReleaseGO] = useState(true);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
+  const controller = new AbortController();
+  let timeOutId: NodeJS.Timeout;
 
   useEffect(() => {
-    if (changeForm) {
-      setOpen(false);
+    if ((currForm || currForm === undefined) && pokeID && form) {
+      loadMetaData();
+    } else if (counterList.length > 0) {
+      setCounterList([]);
     }
-  }, [changeForm]);
+    return () => {
+      clearTimeout(timeOutId);
+      controller.abort();
+    };
+  }, [pokeID, currForm]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -35,15 +43,27 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
     }
   };
 
+  const calculateCounter = () => {
+    return new Promise((resolve, reject) => {
+      timeOutId = setTimeout(() => {
+        resolve(
+          counterPokemon(data.options, pokemonList, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
+        );
+      }, 3000);
+      controller.signal.addEventListener('abort', () => {
+        reject();
+      });
+    });
+  };
+
   const loadMetaData = () => {
     setFrame(true);
-    setTimeout(() => {
-      setCounterList(
-        counterPokemon(data.options, pokemonList, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
-      );
-      setFrame(false);
-      setOpen(true);
-    }, 100);
+    calculateCounter()
+      .then((data) => {
+        setCounterList(data);
+        setFrame(false);
+      })
+      .catch(() => clearTimeout(timeOutId));
   };
 
   return (
@@ -59,12 +79,12 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
               <div className="input-group align-items-center justify-content-center">
                 <span>Best Pokémon Counter</span>
                 <FormControlLabel
-                  control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
+                  control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
                   label={
                     <span className="d-flex align-items-center">
                       Released in GO
                       <img
-                        className={releasedGO && open ? '' : 'filter-gray'}
+                        className={releasedGO && !frame ? '' : 'filter-gray'}
                         width={28}
                         height={28}
                         style={{ marginLeft: 5 }}
@@ -86,7 +106,7 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
           </tr>
         </thead>
         <tbody>
-          {open ? (
+          {!frame ? (
             <Fragment>
               {counterList
                 .filter((pokemon: { pokemon_id: any; pokemon_name: string }) => {
@@ -107,14 +127,20 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                 .map((value: any, index: React.Key) => (
                   <Fragment key={index}>
                     <tr>
-                      <td className="text-origin text-center">
+                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
                         <Link
                           to={`/pokemon/${value.pokemon_id}${
                             value.pokemon_forme ? `?form=${convertFormName(value.pokemon_id, value.pokemon_forme.toLowerCase())}` : ''
                           }`}
                         >
                           <div className="d-flex justify-content-center">
-                            <div className="position-relative group-pokemon-sprite filter-shadow-hover">
+                            <div
+                              className={
+                                'position-relative group-pokemon-sprite ' + theme.palette.mode === 'light'
+                                  ? 'filter-shadow-hover'
+                                  : 'filter-light-shadow-hover'
+                              }
+                            >
                               {value.cmove.shadow && (
                                 <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                               )}
@@ -132,12 +158,12 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                               />
                             </div>
                           </div>
-                          <span className="caption text-black">
+                          <span className="caption" style={{ color: theme.palette.text.primary }}>
                             #{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, '-', ' ')}
                           </span>
                         </Link>
                       </td>
-                      <td className="text-origin text-center">
+                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
                         <Link to={'../move/' + value.fmove.id} className="d-grid">
                           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
@@ -154,7 +180,7 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                           </span>
                         </Link>
                       </td>
-                      <td className="text-origin text-center">
+                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
                         <Link to={'../move/' + value.cmove.id} className="d-grid">
                           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
@@ -181,52 +207,49 @@ const Counter = ({ def, form, changeForm, pokemonList }: any) => {
                           </span>
                         </Link>
                       </td>
-                      <td className="text-center">{value.ratio.toFixed(2)}</td>
+                      <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+                        {value.ratio.toFixed(2)}
+                      </td>
                     </tr>
                   </Fragment>
                 ))}
             </Fragment>
-          ) : frame ? (
-            <Fragment>
-              <tr className="counter-none" style={{ verticalAlign: 'top' }}>
-                <td className="text-origin text-center" colSpan={4}>
-                  <div className="ph-item">
-                    <div className="ph-col-12" style={{ padding: 10, margin: 0, gap: 10 }}>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
-                      <div className="ph-row d-flex" style={{ gap: '5%' }}>
-                        <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                        <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-                      </div>
+          ) : (
+            <tr className="counter-none" style={{ verticalAlign: 'top' }}>
+              <td
+                className="text-origin text-center"
+                colSpan={4}
+                style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}
+              >
+                <div className="ph-item">
+                  <div
+                    className="ph-col-12"
+                    style={{ padding: 10, margin: 0, gap: 10, backgroundColor: (theme.palette.background as any).tablePrimary }}
+                  >
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                    </div>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                    </div>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                    </div>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+                    </div>
+                    <div className="ph-row d-flex" style={{ gap: '5%' }}>
+                      <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                      <div className="ph-picture" style={{ width: '70%', height: 100 }} />
                     </div>
                   </div>
-                </td>
-              </tr>
-            </Fragment>
-          ) : (
-            <Fragment>
-              <tr className="counter-none">
-                <td className="text-origin text-center" colSpan={4}>
-                  <span onClick={() => loadMetaData()} className="link-url">
-                    Click to load all the best Pokémon counters.
-                  </span>
-                </td>
-              </tr>
-            </Fragment>
+                </div>
+              </td>
+            </tr>
           )}
         </tbody>
       </table>
