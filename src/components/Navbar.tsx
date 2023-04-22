@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
@@ -11,7 +13,6 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 import './Navbar.scss';
-import { IconButton } from '@mui/material';
 import { loadThemeData } from '../store/actions/theme.action';
 
 const NavbarComponent = ({ mode, toggleColorMode }: any) => {
