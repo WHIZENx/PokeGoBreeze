@@ -11,6 +11,8 @@ import { TypeSet } from './models/type';
 import { Candy } from './models/candy';
 import { TypeMove } from '../enums/type-move.enum';
 
+import encounter from '../data/pokemon_encounter.json';
+
 export const getOption = (options: any, args: string[]) => {
   args.forEach((arg: any) => {
     options = options[arg];
@@ -230,14 +232,31 @@ export const optionPokemonSpawn = (data: any[]) => {
 export const optionPokemon = (data: any[]) => {
   return data
     .filter((item: any) => item.templateId.includes('POKEMON') && Object.keys(item.data).includes('pokemonSettings'))
-    .map((item: { data: { pokemonSettings: { form: any; pokemonId: any } }; templateId: string }) => {
-      const name = item.data.pokemonSettings.form ?? item.data.pokemonSettings.pokemonId;
-      return {
-        ...item.data.pokemonSettings,
-        id: parseInt(item.templateId.split('_')[0].replace('V', '')),
-        name,
-      };
-    });
+    .map(
+      (item: {
+        data: {
+          pokemonSettings: {
+            encounter: any;
+            form: any;
+            pokemonId: any;
+          };
+        };
+        templateId: string;
+      }) => {
+        const name = item.data.pokemonSettings.form ?? item.data.pokemonSettings.pokemonId;
+        const pokemonEncounter = (encounter as any).find((pokemon: { name: string }) => pokemon.name === name);
+        return {
+          ...item.data.pokemonSettings,
+          id: parseInt(item.templateId.split('_')[0].replace('V', '')),
+          name,
+          encounter: {
+            ...item.data.pokemonSettings.encounter,
+            baseCaptureRate: pokemonEncounter.baseCaptureRate,
+            baseFleeRate: pokemonEncounter.baseFleeRate,
+          },
+        };
+      }
+    );
 };
 
 export const optionFormNone = (data: any[]) => {

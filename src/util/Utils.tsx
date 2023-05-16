@@ -354,7 +354,7 @@ export const findMoveTeam = (move: any, moveSet: any) => {
   return null;
 };
 
-export const convertPokemonGO = (item: any, pokemon: any) => {
+const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: string; id: number }) => {
   if (item.name.toLowerCase().includes('_mega')) {
     return pokemon.id === item.num && pokemon.name === item.name.toUpperCase().replaceAll('-', '_');
   } else {
@@ -368,16 +368,16 @@ export const convertPokemonGO = (item: any, pokemon: any) => {
   }
 };
 
-export const checkPokemonGO = (item: any, details: any[]) => {
-  return details.find((pokemon: { name: string; id: any }) => {
-    convertPokemonGO(item, pokemon);
+export const checkPokemonGO = (item: { num: number; name: string }, details: any[]) => {
+  return details.find((pokemon: { name: string; id: number }) => {
+    return convertPokemonGO(item, pokemon) ? true : false;
   });
 };
 
-export const mappingReleasedGO = (pokemonData: any, details: any[]) => {
+export const mappingReleasedGO = (pokemonData: any[], details: any[]) => {
   return Object.values(pokemonData)
-    .filter((pokemon: any) => pokemon.num > 0)
-    .map((item: any) => {
+    .filter((pokemon) => pokemon.num > 0)
+    .map((item) => {
       const result = checkPokemonGO(item, details);
       return {
         ...item,
