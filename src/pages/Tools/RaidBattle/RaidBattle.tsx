@@ -41,6 +41,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
@@ -620,6 +621,9 @@ const RaidBattle = () => {
 
   useEffect(() => {
     document.title = 'Raid Battle - Tools';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   useEffect(() => {

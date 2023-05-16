@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import loadingImg from '../../assets/loading.png';
 
 import './Home.scss';
@@ -23,6 +23,7 @@ import {
   Switch,
   useTheme,
 } from '@mui/material';
+import { hideSpinner } from '../../store/actions/spinner.action';
 
 const VersionProps = {
   PaperProps: {
@@ -33,10 +34,12 @@ const VersionProps = {
 };
 
 const Home = () => {
+  const dispatch = useDispatch();
   const theme = useTheme();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const types = Object.keys(data.typeEff);
   const dataList = useRef(
     mappingReleasedGO(data.pokemonData, data.details)
@@ -117,6 +120,9 @@ const Home = () => {
 
   useEffect(() => {
     document.title = 'Home';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   useEffect(() => {

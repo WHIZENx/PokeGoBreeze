@@ -8,6 +8,8 @@ import { calStatsProd } from '../../../util/Calculate';
 import APIService from '../../../services/API.service';
 
 import Find from '../../../components/Select/Find/Find';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { hideSpinner } from '../../../store/actions/spinner.action';
 
 export const columnsStats: any = [
   {
@@ -53,6 +55,8 @@ export const columnsStats: any = [
 ];
 
 const StatsTable = () => {
+  const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const [name, setName] = useState('Bulbasaur');
 
   const [searchCP, setSearchCP] = useState('');
@@ -72,6 +76,9 @@ const StatsTable = () => {
 
   useEffect(() => {
     document.title = 'Stats Battle League - Tool';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   useEffect(() => {

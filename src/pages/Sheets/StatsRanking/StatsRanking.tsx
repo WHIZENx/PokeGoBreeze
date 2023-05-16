@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize, convertName, capitalize, convertFormName } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -12,6 +12,7 @@ import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
+import { hideSpinner } from '../../../store/actions/spinner.action';
 
 const columnPokemon: any = [
   {
@@ -106,6 +107,8 @@ const customStyles = {
 };
 
 const StatsRanking = () => {
+  const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const conditionalRowStyles = [
     {
       when: (row: { slug: string }) => row.slug === select?.slug,
@@ -176,6 +179,9 @@ const StatsRanking = () => {
 
   useEffect(() => {
     document.title = `Stats Ranking`;
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   useEffect(() => {

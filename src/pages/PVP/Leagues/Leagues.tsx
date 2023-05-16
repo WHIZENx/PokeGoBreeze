@@ -10,13 +10,16 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
 import { rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
+import { hideSpinner } from '../../../store/actions/spinner.action';
 
 const Leagues = () => {
+  const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
 
   const [leagueFilter, setLeagueFilter] = useState(dataStore.leagues.data);
@@ -52,6 +55,9 @@ const Leagues = () => {
 
   useEffect(() => {
     document.title = 'Battle Leagues List';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   useEffect(() => {

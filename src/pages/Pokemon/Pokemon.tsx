@@ -21,6 +21,7 @@ import Candy from '../../components/Sprites/Candy/Candy';
 import { getFormsGO } from '../../core/forms';
 import { RouterState } from '../..';
 import { useTheme } from '@mui/material';
+import { Action } from 'history';
 
 const Pokemon = (props: {
   prevRouter?: any;
@@ -154,7 +155,7 @@ const Pokemon = (props: {
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
-      } else if (router.action === 'POP' && props.searching) {
+      } else if (router.action === Action.Pop && props.searching) {
         defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
         isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching.form);
       } else {
@@ -171,13 +172,13 @@ const Pokemon = (props: {
         setRegion(regionList[parseInt(data.generation.url.split('/')[6])]);
       }
       const nameInfo =
-        router.action === 'POP' && props.searching
+        router.action === Action.Pop && props.searching
           ? props.searching.fullName
           : splitAndCapitalize(formParams ? isDefaultForm.form.name : data.name, '-', ' ');
       const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
       setFormName(nameInfo);
       setReleased(checkReleased(data.id, nameInfo, isDefaultForm.form.is_default));
-      setForm(router.action === 'POP' && props.searching ? props.searching.form : formInfo);
+      setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
       setDefaultForm(isDefaultForm);
       if (params.id) {
         document.title = `#${data.id} - ${nameInfo}`;

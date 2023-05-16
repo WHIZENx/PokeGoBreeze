@@ -14,11 +14,14 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
 import Find from '../../../components/Select/Find/Find';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
+import { hideSpinner } from '../../../store/actions/spinner.action';
 
 const Calculate = () => {
+  const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
   const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
@@ -98,6 +101,9 @@ const Calculate = () => {
 
   useEffect(() => {
     document.title = 'Calculate CP&IV - Tool';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   const onCalculateStatsPoke = useCallback(

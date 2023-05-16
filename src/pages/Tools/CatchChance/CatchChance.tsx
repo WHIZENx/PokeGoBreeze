@@ -1,6 +1,6 @@
 import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { Fragment, useEffect, useState } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Select/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
@@ -28,8 +28,11 @@ import {
 import { convertName, LevelSlider, splitAndCapitalize } from '../../../util/Utils';
 
 import './CatchChance.scss';
+import { hideSpinner } from '../../../store/actions/spinner.action';
 
 const CatchChance = () => {
+  const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemon);
   const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
 
@@ -84,6 +87,9 @@ const CatchChance = () => {
 
   useEffect(() => {
     document.title = 'Calculate Catch Chance - Tool';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   useEffect(() => {

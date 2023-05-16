@@ -228,3 +228,5 @@ export const genRoman = (gen: number) => {
       return '';
   }
 };
+
+export const scoreType = ['Overall', 'Leads', 'Closers', 'Switches', 'Chargers', 'Attackers', 'Consistency'];

@@ -24,6 +24,7 @@ const FindBattle = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
   const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
@@ -227,6 +228,9 @@ const FindBattle = () => {
 
   useEffect(() => {
     document.title = 'Search Battle Leagues Stats - Tool';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   const getImageList = (id: any) => {

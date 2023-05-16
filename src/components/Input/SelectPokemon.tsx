@@ -7,7 +7,7 @@ import './Select.scss';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { useSelector, RootStateOrAny } from 'react-redux';
-import { TypeMove } from '../../enums/type-move.enum';
+import { TypeMove } from '../../enums/move.enum';
 
 const SelectPokemon = (props: {
   pokemon?: any;

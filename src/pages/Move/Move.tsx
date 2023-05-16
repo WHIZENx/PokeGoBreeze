@@ -16,9 +16,10 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { TypeMove } from '../../enums/type-move.enum';
+import { TypeMove } from '../../enums/move.enum';
+import { hideSpinner } from '../../store/actions/spinner.action';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -69,8 +70,10 @@ const columns: any = [
 ];
 
 const Move = (props: { id?: any }) => {
+  const dispatch = useDispatch();
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -110,6 +113,12 @@ const Move = (props: { id?: any }) => {
     },
     [enqueueSnackbar, params.id, data.combat]
   );
+
+  useEffect(() => {
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
+  }, []);
 
   useEffect(() => {
     if (move === null) {

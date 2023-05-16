@@ -9,7 +9,7 @@ import pokemonData from '../data/pokemon.json';
 import { capitalize, convertName, splitAndCapitalize } from '../util/Utils';
 import { TypeSet } from './models/type';
 import { Candy } from './models/candy';
-import { TypeMove } from '../enums/type-move.enum';
+import { TypeMove } from '../enums/move.enum';
 
 export const getOption = (options: any, args: string[]) => {
   args.forEach((arg: any) => {
@@ -696,7 +696,7 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
   });
 };
 
-export const optionCombat = (data: any[], movesData: any[], types: any) => {
+export const optionCombat = (data: any[], types: any) => {
   const combatModel = () => {
     return {
       name: '',
@@ -842,17 +842,18 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
     }
   });
 
-  return result.map((move) => {
-    const movePVP = movesData.find(
-      (data) =>
-        data.moveId ===
-        (move.name === 'HIDDEN_POWER'
-          ? 'HIDDEN_POWER_BUG'
-          : move.name.replace('_BLASTOISE', '').replaceAll('_PLUS', '').replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE'))
-    );
-    move.archetype = movePVP?.archetype;
-    return move;
-  });
+  return result;
+  // return result.map((move) => {
+  //   const movePVP = movesData.find(
+  //     (data) =>
+  //       data.moveId ===
+  //       (move.name === 'HIDDEN_POWER'
+  //         ? 'HIDDEN_POWER_BUG'
+  //         : move.name.replace('_BLASTOISE', '').replaceAll('_PLUS', '').replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE'))
+  //   );
+  //   move.archetype = movePVP?.archetype;
+  //   return move;
+  // });
 };
 
 export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: string[], noneForm: string[]) => {

@@ -9,9 +9,12 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Form, OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { hideSpinner } from '../../store/actions/spinner.action';
 
 const Sticker = () => {
+  const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState([]);
@@ -34,6 +37,9 @@ const Sticker = () => {
 
   useEffect(() => {
     document.title = 'Stickers List';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   useEffect(() => {

@@ -10,6 +10,8 @@ import '../../../components/Select/Find/Form.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Select/Find/Find';
+import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
+import { hideSpinner } from '../../../store/actions/spinner.action';
 
 const columnsIV: any = [
   {
@@ -90,6 +92,8 @@ const conditionalRowStyles = [
 ];
 
 const FindTable = () => {
+  const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const [name, setName] = useState('Bulbasaur');
 
   const [searchCP, setSearchCP]: any = useState('');
@@ -134,6 +138,9 @@ const FindTable = () => {
 
   useEffect(() => {
     document.title = 'Find CP&IV - Tool';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   const findStatsCP = useCallback(() => {

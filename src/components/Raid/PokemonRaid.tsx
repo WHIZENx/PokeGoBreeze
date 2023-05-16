@@ -7,6 +7,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import update from 'immutability-helper';
+import { TypeMove } from '../../enums/move.enum';
 
 const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRemovePokemon, clearData }: any) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(pokemon.dataTargetPokemon);
@@ -81,7 +82,7 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
           pokemon={dataTargetPokemon}
           move={fmoveTargetPokemon}
           setMovePokemon={setFmoveTargetPokemon}
-          moveType="FAST"
+          moveType={TypeMove.FAST}
         />
       ) : (
         <div
@@ -102,7 +103,7 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
           pokemon={dataTargetPokemon}
           move={cmoveTargetPokemon}
           setMovePokemon={setCmoveTargetPokemon}
-          moveType="CHARGE"
+          moveType={TypeMove.CHARGE}
         />
       ) : (
         <div

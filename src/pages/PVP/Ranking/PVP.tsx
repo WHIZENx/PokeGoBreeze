@@ -12,7 +12,7 @@ import { computeBgType, findAssetForm } from '../../../util/Compute';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -22,10 +22,26 @@ import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
+import { loadPVP } from '../../../store/actions/store.action';
+import { useLocalStorage } from 'usehooks-ts';
+import { scoreType } from '../../../util/Constants';
+import { RouterState } from '../../..';
+import { Action } from 'history';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
+  const pvp = useSelector((state: RootStateOrAny) => state.store.data.pvp);
+  const router = useSelector((state: RouterState) => state.router);
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
+    'timestamp',
+    JSON.stringify({
+      gamemaster: null,
+      pvp: null,
+    })
+  );
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
   const params: any = useParams();
 
   const [rankingData, setRankingData]: any = useState(null);
@@ -51,16 +67,18 @@ const RankingPVP = () => {
   };
 
   useEffect(() => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
+    if (!pvp) {
+      loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
+    }
+  }, [pvp]);
+
+  useEffect(() => {
     const fetchPokemon = async () => {
-      dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
         let file = (
-          await axios.getFetchUrl(axios.getRankingFile(params.serie, cp, params.type), {
-            cancelToken: source.token,
+          await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type), {
+            cancelToken: APIService.getAxios().CancelToken.source().token,
           })
         ).data;
         if (params.serie === 'all') {
@@ -162,7 +180,7 @@ const RankingPVP = () => {
         setStoreStats(file.map(() => false));
         dispatch(hideSpinner());
       } catch (e: any) {
-        source.cancel();
+        APIService.getAxios().CancelToken.source().cancel();
         dispatch(
           showSpinner({
             error: true,
@@ -171,8 +189,16 @@ const RankingPVP = () => {
         );
       }
     };
-    fetchPokemon();
-  }, [dispatch, params.serie, params.cp, params.type, dataStore]);
+    if (router.action === Action.Push) {
+      dispatch(showSpinner());
+      router.action = null as any;
+      setTimeout(() => fetchPokemon(), 100);
+    } else if (!rankingData && pvp) {
+      fetchPokemon();
+    } else {
+      dispatch(showSpinner());
+    }
+  }, [dispatch, params.serie, params.cp, params.type, rankingData, pvp, router.action]);
 
   const renderItem = (data: any, key: string) => {
     return (
@@ -283,7 +309,7 @@ const RankingPVP = () => {
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
-    const league = dataStore.pvp.rankings.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
+    const league = pvp?.rankings.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (
@@ -330,48 +356,15 @@ const RankingPVP = () => {
           {renderLeague()}
           <hr />
           <div className="element-top ranking-link-group">
-            <Button
-              className={params.type.toLowerCase() === 'overall' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/overall`}
-            >
-              Overall
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'leads' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/leads`}
-            >
-              Leads
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'closers' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/closers`}
-            >
-              Closers
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'switches' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/switches`}
-            >
-              Switches
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'chargers' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/chargers`}
-            >
-              Chargers
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'attackers' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/attackers`}
-            >
-              Attackers
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'consistency' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/consistency`}
-            >
-              Consistency
-            </Button>
+            {scoreType.map((type, index) => (
+              <Button
+                key={index}
+                className={params.type.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+                onClick={() => navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`)}
+              >
+                {type}
+              </Button>
+            ))}
           </div>
           <div className="input-group border-input">
             <input

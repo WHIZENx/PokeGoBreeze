@@ -15,9 +15,13 @@ import { useSnackbar } from 'notistack';
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import APIService from '../../../services/API.service';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { hideSpinner } from '../../../store/actions/spinner.action';
+import { TypeMove } from '../../../enums/move.enum';
 
 const CalculatePoint = () => {
+  const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
   const typeEff = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
   const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
@@ -61,6 +65,9 @@ const CalculatePoint = () => {
 
   useEffect(() => {
     document.title = 'Calculate Point Stats - Tools';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   const clearData = (reset: any) => {
@@ -657,7 +664,7 @@ const CalculatePoint = () => {
                       form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
                       setMove={setFMove}
                       move={fMove}
-                      type="FAST"
+                      type={TypeMove.FAST}
                     />
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -692,7 +699,7 @@ const CalculatePoint = () => {
                       form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
                       setMove={setCMove}
                       move={cMove}
-                      type="CHARGE"
+                      type={TypeMove.CHARGE}
                     />
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>

@@ -2,7 +2,7 @@ import '../PVP.scss';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 
 import { capitalize, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
@@ -13,11 +13,28 @@ import Error from '../../Error/Error';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
+import { loadPVP } from '../../../store/actions/store.action';
+import { useLocalStorage } from 'usehooks-ts';
+import { Button } from 'react-bootstrap';
+import { scoreType } from '../../../util/Constants';
+import { Action } from 'history';
+import { RouterState } from '../../..';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
+  const pvp = useSelector((state: RootStateOrAny) => state.store.data.pvp);
+  const router = useSelector((state: RouterState) => state.router);
   const params: any = useParams();
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
+    'timestamp',
+    JSON.stringify({
+      gamemaster: null,
+      pvp: null,
+    })
+  );
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
 
   const [rankingPoke, setRankingPoke]: any = useState(null);
   const storeStats = useRef(null);
@@ -25,17 +42,19 @@ const PokemonPVP = () => {
   const [found, setFound] = useState(true);
 
   useEffect(() => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
+    if (!pvp) {
+      loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
+    }
+  }, [pvp]);
+
+  useEffect(() => {
     const fetchPokemon = async () => {
-      dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
         const paramName = params.pokemon.replaceAll('-', '_').toLowerCase();
         const data = (
-          await axios.getFetchUrl(axios.getRankingFile(paramName.includes('_mega') ? 'mega' : 'all', cp, params.type), {
-            cancelToken: source.token,
+          await APIService.getFetchUrl(APIService.getRankingFile(paramName.includes('_mega') ? 'mega' : 'all', cp, params.type), {
+            cancelToken: APIService.getAxios().CancelToken.source().token,
           })
         ).data.find((pokemon: { speciesId: any }) => pokemon.speciesId === paramName);
 
@@ -130,17 +149,29 @@ const PokemonPVP = () => {
           purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec)),
         });
       } catch (e: any) {
-        source.cancel();
+        APIService.getAxios().CancelToken.source().cancel();
         setFound(false);
+        dispatch(
+          showSpinner({
+            error: true,
+            msg: e.message,
+          })
+        );
       }
       dispatch(hideSpinner());
     };
-    fetchPokemon();
-  }, [dispatch, params.cp, params.type, params.pokemon, dataStore]);
+    if (router.action === Action.Push) {
+      dispatch(showSpinner());
+      router.action = null as any;
+      setTimeout(() => fetchPokemon(), 100);
+    } else if (!rankingPoke && pvp) {
+      fetchPokemon();
+    }
+  }, [dispatch, params.cp, params.type, params.pokemon, rankingPoke, pvp, router.action]);
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
-    const league = dataStore.pvp.rankings.find((item: { id: string; cp: number[] }) => item.id === 'all' && item.cp.includes(cp));
+    const league = pvp.rankings.find((item: { id: string; cp: number[] }) => item.id === 'all' && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (
@@ -199,48 +230,15 @@ const PokemonPVP = () => {
                   {renderLeague()}
                   <hr />
                   <div className="ranking-link-group" style={{ paddingTop: 10 }}>
-                    <Link
-                      className={'btn btn-primary' + (params.type.toLowerCase() === 'overall' ? ' active' : '')}
-                      to={`/pvp/${params.cp}/overall/${params.pokemon}`}
-                    >
-                      Overall
-                    </Link>
-                    <Link
-                      className={'btn btn-primary' + (params.type.toLowerCase() === 'leads' ? ' active' : '')}
-                      to={`/pvp/${params.cp}/leads/${params.pokemon}`}
-                    >
-                      Leads
-                    </Link>
-                    <Link
-                      className={'btn btn-primary' + (params.type.toLowerCase() === 'closers' ? ' active' : '')}
-                      to={`/pvp/${params.cp}/closers/${params.pokemon}`}
-                    >
-                      Closers
-                    </Link>
-                    <Link
-                      className={'btn btn-primary' + (params.type.toLowerCase() === 'switches' ? ' active' : '')}
-                      to={`/pvp/${params.cp}/switches/${params.pokemon}`}
-                    >
-                      Switches
-                    </Link>
-                    <Link
-                      className={'btn btn-primary' + (params.type.toLowerCase() === 'chargers' ? ' active' : '')}
-                      to={`/pvp/${params.cp}/chargers/${params.pokemon}`}
-                    >
-                      Chargers
-                    </Link>
-                    <Link
-                      className={'btn btn-primary' + (params.type.toLowerCase() === 'attackers' ? ' active' : '')}
-                      to={`/pvp/${params.cp}/attackers/${params.pokemon}`}
-                    >
-                      Attackers
-                    </Link>
-                    <Link
-                      className={'btn btn-primary' + (params.type.toLowerCase() === 'consistency' ? ' active' : '')}
-                      to={`/pvp/${params.cp}/consistency/${params.pokemon}`}
-                    >
-                      Consistency
-                    </Link>
+                    {scoreType.map((type, index) => (
+                      <Button
+                        key={index}
+                        className={params.type.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+                        onClick={() => navigate(`/pvp/${params.cp}/${type.toLowerCase()}/${params.pokemon}`)}
+                      >
+                        {type}
+                      </Button>
+                    ))}
                   </div>
                   <div className="w-100 ranking-info element-top">
                     <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>

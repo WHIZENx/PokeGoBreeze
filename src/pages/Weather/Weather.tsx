@@ -4,14 +4,20 @@ import Affect from './Affect';
 import Effect from './Effect';
 
 import './Weather.scss';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
+import { hideSpinner } from '../../store/actions/spinner.action';
 
 const Weather = () => {
+  const dispatch = useDispatch();
   const typeEffective = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
   const weatherBoosts = useSelector((state: RootStateOrAny) => state.store.data.weatherBoost);
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
 
   useEffect(() => {
     document.title = 'Weather Boosts';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   return (

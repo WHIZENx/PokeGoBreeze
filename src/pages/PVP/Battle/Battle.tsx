@@ -713,31 +713,29 @@ const Battle = () => {
             : 'Master League'
         }`;
 
-        if (dataStore) {
-          file = file
-            .filter(
-              (pokemon: { speciesId: string | string[] }) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs')
-            )
-            .map((item: { speciesId: string; speciesName: string }) => {
-              const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-              const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
-              const id = pokemon.num;
-              const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+        file = file
+          .filter(
+            (pokemon: { speciesId: string | string[] }) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs')
+          )
+          .map((item: { speciesId: string; speciesName: string }) => {
+            const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+            const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
+            const id = pokemon.num;
+            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
 
-              const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+            const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
-              return {
-                ...item,
-                name,
-                pokemon,
-                id,
-                form,
-                stats,
-              };
-            });
-          setData(file);
-          dispatch(hideSpinner());
-        }
+            return {
+              ...item,
+              name,
+              pokemon,
+              id,
+              form,
+              stats,
+            };
+          });
+        setData(file);
+        dispatch(hideSpinner());
       } catch (e: any) {
         source.cancel();
         dispatch(
@@ -749,7 +747,7 @@ const Battle = () => {
       }
     };
     fetchPokemon();
-  }, [dispatch, league, clearData, dataStore]);
+  }, [dispatch, league, clearData]);
 
   const clearDataPokemonCurr = (removeCMoveSec: any) => {
     setPokemonObj({ ...pokemonObj, timeline: [] });

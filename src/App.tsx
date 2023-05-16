@@ -2,9 +2,8 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import packageInfo from '../package.json';
-import { loadStore } from './store/actions/store.action';
-import { hideSpinner } from './store/actions/spinner.action';
-import APIService from './services/API.service';
+import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/actions/store.action';
+import { showSpinnerWithMsg } from './store/actions/spinner.action';
 // import importedComponent from 'react-imported-component';
 
 import './App.scss';
@@ -37,7 +36,6 @@ import TeamPVP from './pages/PVP/Teams/PVP';
 import Battle from './pages/PVP/Battle/Battle';
 
 import Spinner from './components/Spinner/Spinner';
-import { loadStats } from './store/actions/stats.action';
 import CatchChance from './pages/Tools/CatchChance/CatchChance';
 import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
@@ -46,7 +44,8 @@ import { loadTheme } from './store/actions/theme.action';
 import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
-import { TRANSITION_TIME } from './util/Constants';
+import { SYNC_MSG, TRANSITION_TIME } from './util/Constants';
+import { DataModel } from './store/models/store.model';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -97,7 +96,7 @@ import { TRANSITION_TIME } from './util/Constants';
 // );
 
 // const AsyncLeagues = importedComponent(
-//     () => import(/* webpackChunkName:'Leagues' */ './pages/Leagues/Legues')
+//     () => import(/* webpackChunkName:'Leagues' */ './pages/Leagues/Leagues')
 // );
 
 // const AsyncSearchBattle = importedComponent(
@@ -145,7 +144,7 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
   const dispatch = useDispatch();
-  const data = useSelector((state: RootStateOrAny) => state.store);
+  const data: DataModel | null = useSelector((state: RootStateOrAny) => state.store.data);
   const stats = useSelector((state: RootStateOrAny) => state.stats);
 
   const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
@@ -153,90 +152,180 @@ function App() {
     'timestamp',
     JSON.stringify({
       gamemaster: null,
-      battle: null,
+      pvp: null,
+      images: null,
+      sounds: null,
     })
   );
-  const [stateMove, setStateMove] = useLocalStorage('moves', null);
   const [stateCandy, setStateCandy] = useLocalStorage('candy', null);
   const [stateImage, setStateImage] = useLocalStorage('assets', null);
   const [stateSound, setStateSound] = useLocalStorage('sounds', null);
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
   const [, setVersion] = useLocalStorage('version', '');
 
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
 
   useEffect(() => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
+    dispatch(showSpinnerWithMsg(SYNC_MSG));
     loadTheme(dispatch, stateTheme, setStateTheme);
-    loadStore(
+    loadCPM(dispatch);
+    loadPokeGOLogo(dispatch);
+    loadTimestamp(
       dispatch,
       stateTimestamp,
-      stateMove,
-      stateCandy,
-      stateImage,
-      stateSound,
-      statePVP,
       setStateTimestamp,
-      setStateMove,
-      setStateCandy,
       setStateImage,
       setStateSound,
-      setStatePVP,
-      axios,
-      source
+      setStateCandy,
+      stateImage,
+      stateSound,
+      stateCandy
     );
+    // loadStore(
+    //   dispatch,
+    //   stateTimestamp,
+    //   stateMove,
+    //   stateCandy,
+    //   stateImage,
+    //   stateSound,
+    //   statePVP,
+    //   setStateTimestamp,
+    //   setStateMove,
+    //   setStateCandy,
+    //   setStateImage,
+    //   setStateSound,
+    //   setStatePVP
+    // );
   }, [dispatch]);
 
   useEffect(() => {
     setVersion(packageInfo.version);
   }, [dispatch]);
 
-  useEffect(() => {
-    if (data.data) {
-      dispatch(loadStats(data.data.pokemonData));
-    }
-  }, [dispatch, data.data]);
+  // useEffect(() => {
+  //   if (data?.assets && data.candy && data.combat && data.cpm && data.details && data.evolution && data.leagues && data && stats) {
+  //     dispatch(hideSpinner());
+  //     setIsLoadDataSuccess(true);
+  //   }
+  // }, [dispatch, data, stats]);
 
-  useEffect(() => {
-    if (data.data && stats) {
-      dispatch(hideSpinner());
-    }
-  }, [dispatch, data.data, stats]);
+  const renderPage = (page: JSX.Element, condition: boolean = false) => {
+    return condition ? page : <></>;
+  };
 
   return (
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
       <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
-      {data.data && stats && (
+      {data && stats && (
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/type-effective" element={<TypeEffect />} />
-          <Route path="/weather-boosts" element={<Weather />} />
-          <Route path="/search-pokemon" element={<SearchPokemon />} />
-          <Route path="/search-moves" element={<SearchMove />} />
-          <Route path="/search-types" element={<SearchTypes />} />
-          <Route path="/pokemon/:id" element={<Pokemon />} />
-          <Route path="/move/:id" element={<Move />} />
-          <Route path="/find-cp-iv" element={<FindTable />} />
-          <Route path="/calculate-stats" element={<CalculateStats />} />
-          <Route path="/search-battle-stats" element={<SearchBattle />} />
-          <Route path="/stats-table" element={<StatsTable />} />
-          <Route path="/damage-calculate" element={<Damage />} />
-          <Route path="/raid-battle" element={<RaidBattle />} />
-          <Route path="/calculate-point" element={<CalculatePoint />} />
-          <Route path="/calculate-catch-chance" element={<CatchChance />} />
-          <Route path="/pvp" element={<PVPHome />} />
-          <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP />} />
-          <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP />} />
-          <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP />} />
-          <Route path="/pvp/battle" element={<Battle />} />
-          <Route path="/pvp/battle/:cp" element={<Battle />} />
-          <Route path="/dps-tdo-sheets" element={<DpsTdo />} />
-          <Route path="/stats-ranking" element={<StatsRanking />} />
-          <Route path="/battle-leagues" element={<Leagues />} />
-          <Route path="/stickers" element={<Sticker />} />
+          <Route path="/" element={renderPage(<Home />, data.typeEff && data.pokemonData && data.details && data.assets ? true : false)} />
+          <Route path="/type-effective" element={renderPage(<TypeEffect />, data.typeEff ? true : false)} />
+          <Route path="/weather-boosts" element={renderPage(<Weather />, data.typeEff && data.weatherBoost ? true : false)} />
+          <Route
+            path="/search-pokemon"
+            element={renderPage(
+              <SearchPokemon />,
+              data.pokemonName && data.pokemonData && data.evolution && data.details && data.released && data.candy && data.assets
+                ? true
+                : false
+            )}
+          />
+          <Route path="/search-moves" element={renderPage(<SearchMove />, data.combat && data.typeEff ? true : false)} />
+          <Route path="/search-types" element={renderPage(<SearchTypes />, data.released && data.combat && data.typeEff ? true : false)} />
+          <Route
+            path="/pokemon/:id"
+            element={renderPage(
+              <Pokemon />,
+              data.pokemonName && data.pokemonData && data.evolution && data.details && data.released && data.candy && data.assets
+                ? true
+                : false
+            )}
+          />
+          <Route
+            path="/move/:id"
+            element={renderPage(
+              <Move />,
+              data.weatherBoost && data.combat && data.options && data.released && data.typeEff && data.pokemonCombat ? true : false
+            )}
+          />
+          <Route path="/find-cp-iv" element={renderPage(<FindTable />, data.pokemonName && data.pokemonData ? true : false)} />
+          <Route
+            path="/calculate-stats"
+            element={renderPage(<CalculateStats />, data.pokemonName && data.pokemonData && data.options ? true : false)}
+          />
+          <Route
+            path="/search-battle-stats"
+            element={renderPage(
+              <SearchBattle />,
+              data.pokemonName && data.pokemonData && data.evolution && data.options && data.assets ? true : false
+            )}
+          />
+          <Route path="/stats-table" element={renderPage(<StatsTable />, data.pokemonName && data.pokemonData ? true : false)} />
+          <Route
+            path="/damage-calculate"
+            element={renderPage(<Damage />, data.pokemonName && data.pokemonData && data.options && data.typeEff ? true : false)}
+          />
+          <Route
+            path="/raid-battle"
+            element={renderPage(
+              <RaidBattle />,
+              data.pokemonName &&
+                data.pokemonData &&
+                data.pokemonCombat &&
+                data.combat &&
+                data.options &&
+                data.typeEff &&
+                data.weatherBoost &&
+                data.details &&
+                data.assets
+                ? true
+                : false
+            )}
+          />
+          <Route
+            path="/calculate-point"
+            element={renderPage(<CalculatePoint />, data.pokemonName && data.pokemonData && data.options && data.typeEff ? true : false)}
+          />
+          <Route
+            path="/calculate-catch-chance"
+            element={renderPage(<CatchChance />, data.pokemonName && data.pokemonData && data.pokemon ? true : false)}
+          />
+          <Route path="/pvp" element={renderPage(<PVPHome />, data.leagues ? true : false)} />
+          <Route
+            path="/pvp/rankings/:serie/:cp/:type"
+            element={renderPage(<RankingPVP />, data.pokemonData && data.assets && data.combat && data.pokemonCombat ? true : false)}
+          />
+          <Route
+            path="/pvp/:cp/:type/:pokemon"
+            element={renderPage(<PokemonPVP />, data.pokemonData && data.assets && data.combat && data.pokemonCombat ? true : false)}
+          />
+          <Route
+            path="/pvp/teams/:serie/:cp"
+            element={renderPage(<TeamPVP />, data.pokemonData && data.assets && data.combat && data.pokemonCombat ? true : false)}
+          />
+          <Route
+            path="/pvp/battle"
+            element={renderPage(<Battle />, data.options && data.typeEff && data.pokemonData && data.assets && data.combat ? true : false)}
+          />
+          <Route
+            path="/pvp/battle/:cp"
+            element={renderPage(<Battle />, data.options && data.typeEff && data.pokemonData && data.assets && data.combat ? true : false)}
+          />
+          <Route
+            path="/dps-tdo-sheets"
+            element={renderPage(
+              <DpsTdo />,
+              data.pokemonData && data.typeEff && data.weatherBoost && data.combat && data.pokemonCombat && data.options && data.details
+                ? true
+                : false
+            )}
+          />
+          <Route
+            path="/stats-ranking"
+            element={renderPage(<StatsRanking />, data.pokemonData && data.combat && data.pokemonCombat ? true : false)}
+          />
+          <Route path="/battle-leagues" element={renderPage(<Leagues />, data.leagues && data.assets ? true : false)} />
+          <Route path="/stickers" element={renderPage(<Sticker />, data.stickers ? true : false)} />
           <Route path="*" element={<Error />} />
         </Routes>
       )}

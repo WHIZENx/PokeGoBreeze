@@ -7,6 +7,7 @@ import { useSelector, RootStateOrAny } from 'react-redux';
 import { RouterState } from '../../..';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 import { useTheme } from '@mui/material';
+import { Action } from 'history';
 
 const Search = () => {
   const theme = useTheme();
@@ -19,8 +20,8 @@ const Search = () => {
   const firstInit = 20;
   const eachCounter = 10;
 
-  const [id, setId]: any = useState(router.action === 'POP' && searching ? searching.id : 1);
-  const [selectId, setSelectId]: any = useState(router.action === 'POP' && searching ? searching.id : 1);
+  const [id, setId]: any = useState(router.action === Action.Pop && searching ? searching.id : 1);
+  const [selectId, setSelectId]: any = useState(router.action === Action.Pop && searching ? searching.id : 1);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);

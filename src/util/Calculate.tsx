@@ -1,6 +1,6 @@
 import { PRIMAL_STATS } from '../core/forms';
 import data from '../data/cp_multiplier.json';
-import { TypeMove } from '../enums/type-move.enum';
+import { TypeMove } from '../enums/move.enum';
 import {
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,

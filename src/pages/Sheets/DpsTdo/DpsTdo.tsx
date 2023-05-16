@@ -30,6 +30,9 @@ import SelectMove from '../../../components/Input/SelectMove';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { setDPSSheetPage } from '../../../store/actions/options.action';
 import { RouterState } from '../../..';
+import { hideSpinner } from '../../../store/actions/spinner.action';
+import { Action } from 'history';
+import { TypeMove } from '../../../enums/move.enum';
 
 const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
   const a = rowA.pokemon.name.toLowerCase();
@@ -181,6 +184,7 @@ const columns: any = [
 
 const DpsTdo = () => {
   const dispatch = useDispatch();
+  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
   const icon = useSelector((state: RootStateOrAny) => state.store.icon);
   const data = useSelector((state: RootStateOrAny) => state.store.data);
   const optionStore = useSelector((state: RootStateOrAny) => state.options);
@@ -197,13 +201,13 @@ const DpsTdo = () => {
   const [cmoveTargetPokemon, setCmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.cmoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
-    router.action === 'POP' && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
-    router.action === 'POP' && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : 10
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : 10
   );
   const [defaultSorted, setDefaultSorted] = useState(
-    router.action === 'POP' && optionStore?.dpsSheet?.defaultSorted
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
       ? optionStore?.dpsSheet?.defaultSorted
       : {
           selectedColumn: 7,
@@ -491,6 +495,9 @@ const DpsTdo = () => {
 
   useEffect(() => {
     document.title = 'DPS&TDO Sheets';
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
   }, []);
 
   useEffect(() => {
@@ -720,7 +727,7 @@ const DpsTdo = () => {
                       pokemon={dataTargetPokemon}
                       move={fmoveTargetPokemon}
                       setMovePokemon={setFmoveTargetPokemon}
-                      moveType="FAST"
+                      moveType={TypeMove.FAST}
                       disable={showSpinner}
                     />
                   </div>
@@ -733,7 +740,7 @@ const DpsTdo = () => {
                       pokemon={dataTargetPokemon}
                       move={cmoveTargetPokemon}
                       setMovePokemon={setCmoveTargetPokemon}
-                      moveType="CHARGE"
+                      moveType={TypeMove.CHARGE}
                       disable={showSpinner}
                     />
                   </div>

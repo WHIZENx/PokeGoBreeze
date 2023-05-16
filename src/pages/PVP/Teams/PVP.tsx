@@ -22,10 +22,21 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
+import { loadPVP } from '../../../store/actions/store.action';
+import { useLocalStorage } from 'usehooks-ts';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
+  const pvp = useSelector((state: RootStateOrAny) => state.store.data.pvp);
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
+    'timestamp',
+    JSON.stringify({
+      gamemaster: null,
+      pvp: null,
+    })
+  );
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
   const params: any = useParams();
 
   const [rankingData, setRankingData]: any = useState(null);
@@ -114,6 +125,12 @@ const TeamPVP = () => {
   );
 
   useEffect(() => {
+    if (!pvp) {
+      loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
+    }
+  }, [pvp]);
+
+  useEffect(() => {
     const axios = APIService;
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();
@@ -196,19 +213,21 @@ const TeamPVP = () => {
         );
       }
     };
-    fetchPokemon();
+    if (!rankingData && pvp) {
+      fetchPokemon();
+    } else {
+      dispatch(showSpinner());
+    }
 
     return () => {
       source.cancel();
-      if (dataStore.spinner) {
-        dispatch(hideSpinner());
-      }
+      dispatch(hideSpinner());
     };
-  }, [dispatch, params.cp, params.serie, dataStore.spinner, mappingPokemonData]);
+  }, [dispatch, params.cp, params.serie, mappingPokemonData]);
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
-    const league = dataStore.pvp.trains.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
+    const league = pvp.trains.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (

@@ -10,6 +10,7 @@ import { FormControlLabel, Radio } from '@mui/material';
 import { getFormsGO } from '../../../core/forms';
 import { useDispatch } from 'react-redux';
 import { setSearchToolPage } from '../../../store/actions/searching.action';
+import { Action } from 'history';
 
 const Form = (props: {
   router: any;
@@ -179,7 +180,7 @@ const Form = (props: {
   }, [props.id, queryPokemon]);
 
   useEffect(() => {
-    if (currForm || (!props.searching && props.router.action === 'PUSH')) {
+    if (currForm || (!props.searching && props.router.action === Action.Push)) {
       dispatch(
         props.objective
           ? setSearchToolPage({
