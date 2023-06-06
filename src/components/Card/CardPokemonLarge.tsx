@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { findAssetForm } from '../../util/Compute';
+import { StoreState } from '../../store/models/state.model';
 
-const CardPokemonLarge = (props: { value: any; id: number; name: string; elite?: any; shadow?: any; purified?: any }) => {
-  const assets = useSelector((state: RootStateOrAny) => state.store.data.assets);
+const CardPokemonLarge = (props: { value: any; id: number; name: string; elite?: boolean; shadow?: boolean; purified?: boolean }) => {
+  const assets = useSelector((state: StoreState) => state.store?.data?.assets);
 
   return (
     <Fragment>
@@ -15,8 +16,8 @@ const CardPokemonLarge = (props: { value: any; id: number; name: string; elite?:
               className="pokemon-sprite-medium"
               alt="img-pokemon"
               src={
-                findAssetForm(assets, props.id, props.name)
-                  ? APIService.getPokemonModel(findAssetForm(assets, props.id, props.name))
+                findAssetForm(assets ?? [], props.id, props.name)
+                  ? APIService.getPokemonModel(findAssetForm(assets ?? [], props.id, props.name))
                   : APIService.getPokeFullSprite(props.id)
               }
             />

@@ -4,12 +4,12 @@ import TypeInfo from '../Sprites/Type/Type';
 
 const TypeEffective = (props: {
   typeEffective: {
-    very_weak?: any[];
-    weak?: any[];
-    super_resist?: any[];
-    very_resist?: any[];
-    resist?: any[];
-    neutral?: any[];
+    very_weak?: string[];
+    weak?: string[];
+    super_resist?: string[];
+    very_resist?: string[];
+    resist?: string[];
+    neutral?: string[];
   };
 }) => {
   if (!props.typeEffective) {

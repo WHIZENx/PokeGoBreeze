@@ -15,16 +15,17 @@ import { useSnackbar } from 'notistack';
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import APIService from '../../../services/API.service';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { TypeMove } from '../../../enums/move.enum';
+import { SearchingState, SpinnerState, StoreState } from '../../../store/models/state.model';
 
 const CalculatePoint = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
-  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
-  const typeEff = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
+  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff ?? {});
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');

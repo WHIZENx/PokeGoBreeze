@@ -10,8 +10,9 @@ import '../../../components/Select/Find/Form.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Select/Find/Find';
-import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
+import { SpinnerState } from '../../../store/models/state.model';
 
 const columnsIV: any = [
   {
@@ -93,7 +94,7 @@ const conditionalRowStyles = [
 
 const FindTable = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [name, setName] = useState('Bulbasaur');
 
   const [searchCP, setSearchCP]: any = useState('');

@@ -3,11 +3,12 @@ import TypeEffective from '../Effective/TypeEffective';
 import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
 import TypeInfo from '../Sprites/Type/Type';
 
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../store/models/state.model';
 
 const Info = (props: { data: { types: any }; currForm: { form: { id: any; types: any[] } } }) => {
-  const typeEffective = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
-  const weatherEffective = useSelector((state: RootStateOrAny) => state.store.data.weatherBoost);
+  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
+  const weatherEffective = useSelector((state: StoreState) => state.store.data?.weatherBoost ?? {});
 
   const getWeatherEffective = (types: any[]) => {
     const data: string[] = [];

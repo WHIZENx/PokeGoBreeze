@@ -4,7 +4,8 @@ import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 
 import './TypeBadge.scss';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../../store/models/state.model';
 
 const TypeBadge = (props: {
   move: any;
@@ -17,7 +18,7 @@ const TypeBadge = (props: {
   shadow?: any;
   purified?: any;
 }) => {
-  const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
+  const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
   let move = props.move;
   if (!props.find) {

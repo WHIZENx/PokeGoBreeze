@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import packageInfo from '../package.json';
 import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/actions/store.action';
@@ -45,7 +45,7 @@ import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
 import { SYNC_MSG, TRANSITION_TIME } from './util/Constants';
-import { DataModel } from './store/models/store.model';
+import { StatsState, StoreState } from './store/models/state.model';
 
 // const AsyncHome = importedComponent(
 //     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
@@ -144,8 +144,8 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
   const dispatch = useDispatch();
-  const data: DataModel | null = useSelector((state: RootStateOrAny) => state.store.data);
-  const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const data = useSelector((state: StoreState) => state.store.data);
+  const stats = useSelector((state: StatsState) => state.stats);
 
   const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
@@ -181,33 +181,11 @@ function App() {
       stateSound,
       stateCandy
     );
-    // loadStore(
-    //   dispatch,
-    //   stateTimestamp,
-    //   stateMove,
-    //   stateCandy,
-    //   stateImage,
-    //   stateSound,
-    //   statePVP,
-    //   setStateTimestamp,
-    //   setStateMove,
-    //   setStateCandy,
-    //   setStateImage,
-    //   setStateSound,
-    //   setStatePVP
-    // );
   }, [dispatch]);
 
   useEffect(() => {
     setVersion(packageInfo.version);
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   if (data?.assets && data.candy && data.combat && data.cpm && data.details && data.evolution && data.leagues && data && stats) {
-  //     dispatch(hideSpinner());
-  //     setIsLoadDataSuccess(true);
-  //   }
-  // }, [dispatch, data, stats]);
 
   const renderPage = (page: JSX.Element, condition: boolean = false) => {
     return condition ? page : <></>;

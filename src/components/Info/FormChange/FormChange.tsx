@@ -1,20 +1,21 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
 import { splitAndCapitalize } from '../../../util/Utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
+import { StoreState } from '../../../store/models/state.model';
 
 const FromChange = ({ details, defaultName }: any) => {
   const theme = useTheme();
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const data = useSelector((state: StoreState) => state.store.data);
 
   const [pokeAssets, setPokeAssets]: any = useState([]);
 
   const getImageList = useCallback(
     (id: any) => {
-      const model = data.assets.find((item: { id: any }) => item.id === id);
+      const model = data?.assets?.find((item: { id: any }) => item.id === id);
       return model
         ? Array.from(new Set(model.image.map((item: { form: any }) => item.form))).map((value) => {
             return {
@@ -24,7 +25,7 @@ const FromChange = ({ details, defaultName }: any) => {
           })
         : [];
     },
-    [data.assets]
+    [data?.assets]
   );
 
   useEffect(() => {

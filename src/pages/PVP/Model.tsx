@@ -27,6 +27,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import CandyXL from '../../components/Sprites/Candy/CandyXL';
+import { StatsModel } from '../../core/models/stats.model';
 
 export const Keys = (
   assets: any[],
@@ -117,40 +118,7 @@ export const Keys = (
   );
 };
 
-export const OverAllStats = (
-  data: any,
-  statsRanking: React.MutableRefObject<{
-    attack: {
-      ranking: { id: any; form: string; attack: any; rank: number }[];
-      min_rank: number;
-      max_rank: number;
-      min_stats: number;
-      max_stats: number;
-    };
-    defense: {
-      ranking: { id: any; form: string; defense: any; rank: number }[];
-      min_rank: number;
-      max_rank: number;
-      min_stats: number;
-      max_stats: number;
-    };
-    stamina: {
-      ranking: { id: any; form: string; stamina: any; rank: number }[];
-      min_rank: number;
-      max_rank: number;
-      min_stats: number;
-      max_stats: number;
-    };
-    statProd: {
-      ranking: { id: any; form: string; prod: any; rank: number }[];
-      min_rank: number;
-      max_rank: number;
-      min_stats: number;
-      max_stats: number;
-    };
-  }>,
-  cp: any
-) => {
+export const OverAllStats = (data: any, statsRanking: StatsModel, cp: any) => {
   const calculateStatsTopRank = (stats: { atk: number; def: number; sta: number }) => {
     const maxCP = parseInt(cp);
 
@@ -224,7 +192,7 @@ export const OverAllStats = (
           <h5>
             <b>Overall Stats</b>
           </h5>
-          <Stats statATK={data.atk} statDEF={data.def} statSTA={data.sta} statProd={data.prod} pokemonStats={statsRanking as any} />
+          <Stats statATK={data.atk} statDEF={data.def} statSTA={data.sta} statProd={data.prod} pokemonStats={statsRanking} />
         </div>
         <div>
           <h5>

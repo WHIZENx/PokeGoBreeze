@@ -9,17 +9,18 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Form, OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner } from '../../store/actions/spinner.action';
+import { SpinnerState, StoreState } from '../../store/models/state.model';
 
 const Sticker = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
-  const [pokemonStickerFilter, setPokemonStickerFilter] = useState([]);
+  const [pokemonStickerFilter, setPokemonStickerFilter]: any = useState([]);
 
-  const pokeStickerList = useSelector((state: RootStateOrAny) => state.store.data.stickers);
+  const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);
 
   const selectPokemon = useRef(
     pokeStickerList
@@ -45,7 +46,7 @@ const Sticker = () => {
   useEffect(() => {
     setPokemonStickerFilter(
       pokeStickerList
-        .filter((item: any) => {
+        ?.filter((item) => {
           if (!shopType) {
             return true;
           } else if (shopType === 2) {
@@ -53,7 +54,7 @@ const Sticker = () => {
           }
           return item.shop;
         })
-        .filter((item: any) => {
+        .filter((item) => {
           if (!id) {
             return true;
           } else if (id === -1) {

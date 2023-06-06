@@ -1,6 +1,6 @@
 import { HIDE_SPINNER, SHOW_SPINNER, SHOW_SPINNER_MSG } from '../actions/spinner.action';
 
-interface SpinnerModel {
+export interface SpinnerModel {
   loading: boolean;
   message: string | null;
   error: ErrorModel | null;

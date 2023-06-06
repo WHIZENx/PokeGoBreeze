@@ -1,15 +1,16 @@
-import { Asset } from './models/asset';
-import { Combat, CombatPokemon } from './models/combat';
-import { Evolution } from './models/evolution';
-import { League, LeagueData, LeagueReward, LeagueRewardPokemon } from './models/league';
-import { Sticker } from './models/sticker';
-import { Details } from './models/details';
+import { Asset } from './models/asset.model';
+import { Combat, CombatPokemon } from './models/combat.model';
+import { Evolution } from './models/evolution.model';
+import { League, LeagueData, LeagueReward, LeagueRewardPokemon } from './models/league.model';
+import { Sticker } from './models/sticker.model';
+import { Details } from './models/details.model';
 
 import pokemonData from '../data/pokemon.json';
 import { capitalize, convertName, splitAndCapitalize } from '../util/Utils';
-import { TypeSet } from './models/type';
-import { Candy } from './models/candy';
+import { TypeSet } from './models/type.model';
+import { Candy } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
+import { PokemonDataModel, PokemonModel } from './models/pokemon.model';
 
 export const getOption = (options: any, args: string[]) => {
   args.forEach((arg: any) => {
@@ -230,7 +231,7 @@ export const optionPokemonSpawn = (data: any[]) => {
 export const optionPokemon = (data: any[]) => {
   return data
     .filter((item: any) => item.templateId.includes('POKEMON') && Object.keys(item.data).includes('pokemonSettings'))
-    .map((item: { data: { pokemonSettings: { form: any; pokemonId: any } }; templateId: string }) => {
+    .map((item) => {
       const name = item.data.pokemonSettings.form ?? item.data.pokemonSettings.pokemonId;
       return {
         ...item.data.pokemonSettings,
@@ -843,17 +844,6 @@ export const optionCombat = (data: any[], types: any) => {
   });
 
   return result;
-  // return result.map((move) => {
-  //   const movePVP = movesData.find(
-  //     (data) =>
-  //       data.moveId ===
-  //       (move.name === 'HIDDEN_POWER'
-  //         ? 'HIDDEN_POWER_BUG'
-  //         : move.name.replace('_BLASTOISE', '').replaceAll('_PLUS', '').replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE'))
-  //   );
-  //   move.archetype = movePVP?.archetype;
-  //   return move;
-  // });
 };
 
 export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: string[], noneForm: string[]) => {
@@ -1029,7 +1019,7 @@ export const optionLeagues = (
 
   result.data = data
     .filter((item: { templateId: string }) => item.templateId.includes('COMBAT_LEAGUE_') && !item.templateId.includes('SETTINGS'))
-    .map((item: any) => {
+    .map((item) => {
       const result: League = leagueModel();
       result.id = item.templateId.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '');
       result.title = item.data.combatLeague.title.replace('combat_', '').replace('_title', '').toUpperCase();
@@ -1236,11 +1226,11 @@ export const optionLeagues = (
 
 export const optionDetailsPokemon = (
   data: any[],
-  pokemonData: any[],
-  pokemon: any[],
+  pokemonData: PokemonDataModel[] | { id: number; name: string; form: string; pokemonId: number }[],
+  pokemon: PokemonModel[],
   formSpecial: string[],
-  assets: any[],
-  pokemonCombat: any[],
+  assets: Asset[],
+  pokemonCombat: CombatPokemon[],
   noneForm: string[]
 ) => {
   const detailsPokemonModel = () => {
@@ -1273,7 +1263,7 @@ export const optionDetailsPokemon = (
     }, {});
   let result = pokemon
     .filter(
-      (item: { form: any; name: string }) =>
+      (item) =>
         (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
     )
     .map((item) => {
@@ -1305,12 +1295,12 @@ export const optionDetailsPokemon = (
       result.formChange = item.formChange ?? null;
 
       const form = assets
-        .find((asset: { id: number }) => asset.id === result.id)
-        .image.find((img: { form: string }) => img.form === result.form);
+        ?.find((asset: { id: number }) => asset.id === result.id)
+        ?.image.find((img: { form: string }) => img.form === result.form);
 
       const combat = pokemonCombat.find((pokemon: { id: number }) => pokemon.id === result.id);
 
-      if (combat.quickMoves[0] !== combat.cinematicMoves[0] && form && form.default) {
+      if (combat?.quickMoves[0] !== combat?.cinematicMoves[0] && form && form.default) {
         result.releasedGO = form.default.includes('Addressable Assets/');
       }
 

@@ -1,9 +1,9 @@
 export interface Sticker {
   id: string;
   maxCount: number;
-  stickerUrl: any;
-  pokemonId: any;
-  pokemonName: any;
+  stickerUrl: string | null;
+  pokemonId: number | null;
+  pokemonName: string | null;
   shop: boolean;
   pack: number[];
 }

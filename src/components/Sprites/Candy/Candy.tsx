@@ -1,9 +1,10 @@
 import React from 'react';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
 
 import bgCandy from '../../../assets/bg_Candy.png';
+import { StoreState } from '../../../store/models/state.model';
 
 const Background: any = styled.div`
   display: inline-block;
@@ -21,7 +22,7 @@ const Fill: any = styled.div`
 `;
 
 const Candy = ({ id, style, size }: any) => {
-  const candy = useSelector((state: RootStateOrAny) => state.store.data.candy);
+  const candy = useSelector((state: StoreState) => state.store.data?.candy);
   return (
     <Background style={style} id={id} candy={candy}>
       <Fill id={id} candy={candy} size={size} />

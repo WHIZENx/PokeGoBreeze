@@ -8,7 +8,8 @@ import hp_logo from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../../store/models/state.model';
 
 const eff: any = {
   0.244140625: {
@@ -62,7 +63,7 @@ const DamageTable = (props: {
     hp: number;
   };
 }) => {
-  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
+  const globalOptions = useSelector((state: StoreState) => state.store.data?.options);
 
   return (
     <div className="container">
@@ -185,7 +186,7 @@ const DamageTable = (props: {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize((Object.keys(globalOptions.throw_charge) as any)[props.result.battleState.clevel])
+                  ? capitalize((Object.keys(globalOptions?.throw_charge ?? {}) as any)[props.result.battleState.clevel])
                   : '-'}
               </td>
             </tr>

@@ -16,10 +16,11 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import { TypeMove } from '../../enums/move.enum';
 import { hideSpinner } from '../../store/actions/spinner.action';
+import { StoreState, SpinnerState } from '../../store/models/state.model';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -71,9 +72,9 @@ const columns: any = [
 
 const Move = (props: { id?: any }) => {
   const dispatch = useDispatch();
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -84,7 +85,7 @@ const Move = (props: { id?: any }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getWeatherEffective = (type: string) => {
-    const result = Object.entries(data.weatherBoost).find(([, value]: any) => {
+    const result = Object.entries(data?.weatherBoost ?? {})?.find(([, value]: any) => {
       return value.includes(type.toUpperCase());
     });
     return result && result[0];
@@ -94,12 +95,12 @@ const Move = (props: { id?: any }) => {
     (id: any) => {
       let move;
       if (params.id && parseInt(id) === 281) {
-        move = data.combat.find(
-          (item: { type: string; track: number }) =>
+        move = data?.combat?.find(
+          (item: { type: string | null; track: number }) =>
             item.track === parseInt(id) && item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
         );
       } else {
-        move = data.combat.find((item: { track: number }) => item.track === parseInt(id));
+        move = data?.combat?.find((item: { track: number }) => item.track === parseInt(id));
       }
       if (move) {
         setMove(move);
@@ -111,7 +112,7 @@ const Move = (props: { id?: any }) => {
         }
       }
     },
-    [enqueueSnackbar, params.id, data.combat]
+    [enqueueSnackbar, params.id, data?.combat]
   );
 
   useEffect(() => {
@@ -125,7 +126,7 @@ const Move = (props: { id?: any }) => {
       const id = params.id ? params.id.toLowerCase() : props.id;
       queryMoveData(id);
     } else {
-      setTopList(queryTopMove(data.options, data.released, data.typeEff, data.weatherBoost, data.pokemonCombat, move));
+      setTopList(queryTopMove(data?.options, data?.released, data?.typeEff, data?.weatherBoost, data?.pokemonCombat ?? [], move));
     }
   }, [data, params.id, props.id, queryMoveData, move]);
 
@@ -147,14 +148,15 @@ const Move = (props: { id?: any }) => {
                 searchParams.set('type', e.target.value.toLowerCase());
                 setSearchParams(searchParams);
                 setMove(
-                  data.combat.find(
-                    (item: { type: string; track: number }) => item.track === move.track && item.type === e.target.value.toUpperCase()
+                  data?.combat?.find(
+                    (item: { type: string | null; track: number }) =>
+                      item.track === move.track && item.type === e.target.value.toUpperCase()
                   )
                 );
               }}
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
-              {Object.keys(data.typeEff)
+              {Object.keys(data?.typeEff ?? {})
                 .filter((type) => type !== 'FAIRY')
                 .map((value: string, index: React.Key | number) => (
                   <option key={index} value={value}>
@@ -229,7 +231,7 @@ const Move = (props: { id?: any }) => {
                       <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                     </td>
                     <td colSpan={2}>
-                      {(move.pve_power * STAB_MULTIPLY(data.options)).toFixed(2)}{' '}
+                      {(move.pve_power * STAB_MULTIPLY(data?.options)).toFixed(2)}{' '}
                       <span className="text-success d-inline-block caption">+{(move.pve_power * 0.2).toFixed(2)}</span>
                     </td>
                   </tr>
@@ -271,7 +273,7 @@ const Move = (props: { id?: any }) => {
                       <span className="caption">(STAB / Shadow Bonus)</span>
                     </td>
                     <td colSpan={2}>
-                      {(move.pvp_power * STAB_MULTIPLY(data.options)).toFixed(2)}{' '}
+                      {(move.pvp_power * STAB_MULTIPLY(data?.options)).toFixed(2)}{' '}
                       <span className="text-success d-inline-block caption">+{(move.pvp_power * 0.2).toFixed(2)}</span>
                     </td>
                   </tr>
@@ -406,21 +408,21 @@ const Move = (props: { id?: any }) => {
                       DPS
                       <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                     </td>
-                    <td>{((move.pve_power * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000)).toFixed(2)}</td>
+                    <td>{((move.pve_power * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000)).toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td>
                       DPS
                       <span className="caption">(2 Effect Bonus)</span>
                     </td>
-                    <td>{((move.pve_power * Math.pow(STAB_MULTIPLY(data.options), 2)) / (move.durationMs / 1000)).toFixed(2)}</td>
+                    <td>{((move.pve_power * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move.durationMs / 1000)).toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td>
                       DPS
                       <span className="caption">(STAB+Weather+Shadow Bonus)</span>
                     </td>
-                    <td>{((move.pve_power * Math.pow(STAB_MULTIPLY(data.options), 3)) / (move.durationMs / 1000)).toFixed(2)}</td>
+                    <td>{((move.pve_power * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move.durationMs / 1000)).toFixed(2)}</td>
                   </tr>
                   {move.type_move === TypeMove.FAST && (
                     <tr>
@@ -442,7 +444,7 @@ const Move = (props: { id?: any }) => {
                       DPS
                       <span className="caption">(STAB / Shadow Bonus)</span>
                     </td>
-                    <td>{((move.pvp_power * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000)).toFixed(2)}</td>
+                    <td>{((move.pvp_power * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000)).toFixed(2)}</td>
                   </tr>
                   <tr className="text-center">
                     <td className="table-sub-header" colSpan={2}>
@@ -477,7 +479,7 @@ const Move = (props: { id?: any }) => {
                           if (!releasedGO) {
                             return true;
                           }
-                          const result = data.details.find(
+                          const result = data?.details?.find(
                             (item: { name: string; id: any }) =>
                               item.id === pokemon.num &&
                               item.name ===

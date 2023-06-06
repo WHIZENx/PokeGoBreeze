@@ -11,10 +11,11 @@ import hp_logo from '../../../assets/hp.png';
 import sta_logo from '../../../assets/stamina.png';
 
 import { capitalize } from '../../../util/Utils';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../../store/models/state.model';
 
 const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide }: any) => {
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
   const [currDataPoke, setCurrDataPoke]: any = useState(null);
   const [currTier, setCurrTier] = useState(tier);
 

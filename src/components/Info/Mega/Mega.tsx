@@ -1,13 +1,14 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
 
 import './Mega.scss';
+import { StoreState } from '../../../store/models/state.model';
 
 const Mega = (props: { formList: any; id: number }) => {
-  const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
-  const [arrEvoList, setArrEvoList] = useState([]);
+  const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
+  const [arrEvoList, setArrEvoList]: any = useState([]);
 
   useEffect(() => {
     setArrEvoList(
@@ -24,8 +25,8 @@ const Mega = (props: { formList: any; id: number }) => {
       .join('_');
     try {
       return evoData
-        .find((item: { temp_evo: any[] }) => item.temp_evo.find((value: { tempEvolutionName: any }) => value.tempEvolutionName === name))
-        .temp_evo.find((item: { tempEvolutionName: any }) => item.tempEvolutionName === name);
+        ?.find((item) => item.temp_evo.find((value) => value.tempEvolutionName === name))
+        ?.temp_evo.find((item) => item.tempEvolutionName === name);
     } catch (error) {
       return {
         firstTempEvolution: 'Unavailable',
@@ -41,7 +42,7 @@ const Mega = (props: { formList: any; id: number }) => {
       </h4>
       <div className="mega-container scroll-evolution">
         <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
-          {arrEvoList.map((value: any, evo) => (
+          {arrEvoList.map((value: { name: string; sprites: { front_default: any } }, evo: React.Key) => (
             <li key={evo} className="img-form-gender-group li-evo" style={{ width: 'fit-content', height: 'fit-content' }}>
               <img
                 id="img-pokemon"
@@ -61,11 +62,11 @@ const Mega = (props: { formList: any; id: number }) => {
               </div>
               <span className="caption">
                 First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>x{getQuestEvo(value.name).firstTempEvolution}</b>
+                <b>x{getQuestEvo(value.name)?.firstTempEvolution}</b>
               </span>
               <span className="caption">
                 Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>x{getQuestEvo(value.name).tempEvolution}</b>
+                <b>x{getQuestEvo(value.name)?.tempEvolution}</b>
               </span>
             </li>
           ))}

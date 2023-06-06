@@ -15,13 +15,13 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
 import Error from '../Error/Error';
 import { Alert } from 'react-bootstrap';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { getFormsGO } from '../../core/forms';
-import { RouterState } from '../..';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
+import { RouterState, SpinnerState, StatsState, StoreState } from '../../store/models/state.model';
 
 const Pokemon = (props: {
   prevRouter?: any;
@@ -37,10 +37,10 @@ const Pokemon = (props: {
   const theme = useTheme();
   const dispatch = useDispatch();
   const router = useSelector((state: RouterState) => state.router);
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
-  const stats = useSelector((state: RootStateOrAny) => state.stats);
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const stats = useSelector((state: StatsState) => state.stats);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -69,7 +69,7 @@ const Pokemon = (props: {
   const { enqueueSnackbar } = useSnackbar();
 
   const getRatioGender = useCallback((id: number) => {
-    return (Object.values(dataStore.pokemonData).find((item: any) => id === item.num) as any)?.genderRatio;
+    return (Object.values(dataStore?.pokemonData ?? []).find((item: any) => id === item.num) as any)?.genderRatio;
   }, []);
 
   const fetchMap = useCallback(
@@ -184,11 +184,11 @@ const Pokemon = (props: {
         document.title = `#${data.id} - ${nameInfo}`;
       }
       setOnChangeForm(false);
-      const currentId: any = getPokemonById(Object.values(dataStore.pokemonName), data.id);
+      const currentId: any = getPokemonById(Object.values(dataStore?.pokemonName ?? []), data.id);
       setDataStorePokemon({
-        prev: getPokemonByIndex(Object.values(dataStore.pokemonName), currentId.index - 1),
+        prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
         current: currentId,
-        next: getPokemonByIndex(Object.values(dataStore.pokemonName), currentId.index + 1),
+        next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
       });
     },
     [searchParams, params.id]
@@ -244,13 +244,13 @@ const Pokemon = (props: {
     const keyDownHandler = (event: any) => {
       if (!spinner.loading) {
         const currentId: any = getPokemonById(
-          Object.values(dataStore.pokemonName),
+          Object.values(dataStore?.pokemonName ?? []),
           parseInt(params.id ? params.id.toLowerCase() : props.id)
         );
         const result: any = {
-          prev: getPokemonByIndex(Object.values(dataStore.pokemonName), currentId.index - 1),
+          prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
           current: currentId,
-          next: getPokemonByIndex(Object.values(dataStore.pokemonName), currentId.index + 1),
+          next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
         };
         if (result.prev && event.keyCode === 37) {
           event.preventDefault();
@@ -275,26 +275,26 @@ const Pokemon = (props: {
     setVersion(splitAndCapitalize(version, '-', ' '));
   };
 
-  const getCostModifier = (id: any) => {
-    return dataStore.evolution.find((item: { id: any }) => item.id === id);
+  const getCostModifier = (id: number) => {
+    return dataStore?.evolution?.find((item: { id: number }) => item.id === id);
   };
 
   const getPokemonDetails = (id: number, form: string | null, isDefault = false) => {
     let pokemonForm;
 
     if (form) {
-      pokemonForm = dataStore.details.find(
+      pokemonForm = dataStore?.details?.find(
         (item: { id: number; name: string }) =>
           item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
       );
 
       if (isDefault && !pokemonForm) {
-        pokemonForm = dataStore.details.find((item: { id: number; form: string }) => item.id === id && item.form === 'NORMAL');
+        pokemonForm = dataStore?.details?.find((item: { id: number; form: string }) => item.id === id && item.form === 'NORMAL');
       }
     }
 
     if (!form && defaultForm) {
-      pokemonForm = dataStore.details.find(
+      pokemonForm = dataStore?.details?.find(
         (item: { id: number; form: string }) => item.id === id && item.form === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
       );
     }
@@ -622,8 +622,8 @@ const Pokemon = (props: {
                             <div className="d-flex align-items-center row-extra td-costs">
                               <Candy id={data.id} style={{ marginRight: 5 }} />
                               <span>
-                                {getCostModifier(data.id) && getCostModifier(data.id).thirdMove.candy
-                                  ? `x${getCostModifier(data.id).thirdMove.candy}`
+                                {getCostModifier(data.id) && getCostModifier(data.id)?.thirdMove.candy
+                                  ? `x${getCostModifier(data.id)?.thirdMove.candy}`
                                   : 'Unavailable'}
                               </span>
                             </div>
@@ -632,8 +632,8 @@ const Pokemon = (props: {
                                 <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                               </div>
                               <span>
-                                {getCostModifier(data.id) && getCostModifier(data.id).thirdMove.stardust
-                                  ? `x${getCostModifier(data.id).thirdMove.stardust}`
+                                {getCostModifier(data.id) && getCostModifier(data.id)?.thirdMove.stardust
+                                  ? `x${getCostModifier(data.id)?.thirdMove.stardust}`
                                   : 'Unavailable'}
                               </span>
                             </div>
@@ -651,8 +651,8 @@ const Pokemon = (props: {
                             <div className="d-flex align-items-center row-extra td-costs">
                               <Candy id={data.id} style={{ marginRight: 5 }} />
                               <span>
-                                {getCostModifier(data.id) && getCostModifier(data.id).purified.candy
-                                  ? `x${getCostModifier(data.id).purified.candy}`
+                                {getCostModifier(data.id) && getCostModifier(data.id)?.purified.candy
+                                  ? `x${getCostModifier(data.id)?.purified.candy}`
                                   : 'Unavailable'}
                               </span>
                             </div>
@@ -661,8 +661,8 @@ const Pokemon = (props: {
                                 <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                               </div>
                               <span>
-                                {getCostModifier(data.id) && getCostModifier(data.id).purified.stardust
-                                  ? `x${getCostModifier(data.id).purified.stardust}`
+                                {getCostModifier(data.id) && getCostModifier(data.id)?.purified.stardust
+                                  ? `x${getCostModifier(data.id)?.purified.stardust}`
                                   : 'Unavailable'}
                               </span>
                             </div>
@@ -700,7 +700,7 @@ const Pokemon = (props: {
                         : ''
                       : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
                   }
-                  pokemonList={dataStore.released}
+                  pokemonList={dataStore?.released}
                   pokemonDetail={getPokemonDetails(data.id, null)}
                 />
                 <PokemonModel id={data.id} name={data.name} />

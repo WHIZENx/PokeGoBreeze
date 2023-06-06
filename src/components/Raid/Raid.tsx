@@ -9,8 +9,9 @@ import atk_logo from '../../assets/attack.png';
 import def_logo from '../../assets/defense.png';
 import sta_logo from '../../assets/stamina.png';
 
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
+import { StoreState } from '../../store/models/state.model';
 
 const Raid = ({
   clearData,
@@ -25,8 +26,8 @@ const Raid = ({
   setTimeAllow,
 }: any) => {
   const theme = useTheme();
-  const details = useSelector((state: RootStateOrAny) => state.store.data.details);
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const details = useSelector((state: StoreState) => state.store.data?.details ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
   const [tier, setTier]: any = useState(1);
   const [pokemonClass, setPokemonClass]: any = useState(null);
 

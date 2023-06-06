@@ -1,3 +1,10 @@
+interface Buff {
+  type: string;
+  target: string;
+  power: number;
+  buffChance?: number;
+}
+
 export interface Combat {
   name: string;
   type: string | null;
@@ -5,7 +12,7 @@ export interface Combat {
   pvp_power: number;
   pvp_energy: number;
   sound: string | null;
-  buffs: any[];
+  buffs: Buff[];
   id: number;
   track: number;
   pve_power: number;

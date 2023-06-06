@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, LevelRating } from '../../../util/Utils';
+import { capitalize, getDataWithKey, LevelRating } from '../../../util/Utils';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 
@@ -19,8 +19,10 @@ import StatsTable from './StatsDamageTable';
 
 import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/Compute';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
+import { SearchingState, SpinnerState, StoreState } from '../../../store/models/state.model';
+import { TrainerFriendship } from '../../../core/models/options.model';
 
 const labels: any = {
   0: {
@@ -43,10 +45,10 @@ const labels: any = {
 
 const Damage = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
-  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
-  const typeEff = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
+  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff ?? {});
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
@@ -357,7 +359,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{globalOptions.trainer_friendship[battleState.flevel].atk_bonus.toFixed(2)}
+                      x{(getDataWithKey(globalOptions?.trainer_friendship, battleState.flevel) as TrainerFriendship).atk_bonus.toFixed(2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
@@ -374,7 +376,7 @@ const Damage = () => {
                           });
                         }}
                       >
-                        {Object.entries(globalOptions.throw_charge).map(([type, value]: any, index) => (
+                        {Object.entries(globalOptions?.throw_charge ?? {}).map(([type, value]: any, index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={`caption-small dropdown-caption ${labels[index].style}`}>x{value}</span>

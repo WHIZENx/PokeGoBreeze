@@ -11,20 +11,20 @@ import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import Error from '../../Error/Error';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
-import { loadPVP } from '../../../store/actions/store.action';
+import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
 import { scoreType } from '../../../util/Constants';
 import { Action } from 'history';
-import { RouterState } from '../../..';
+import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
-  const pvp = useSelector((state: RootStateOrAny) => state.store.data.pvp);
+  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const params: any = useParams();
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
@@ -38,7 +38,7 @@ const PokemonPVP = () => {
 
   const [rankingPoke, setRankingPoke]: any = useState(null);
   const storeStats = useRef(null);
-  const statsRanking = useSelector((state: RootStateOrAny) => state.stats);
+  const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
   useEffect(() => {
@@ -46,6 +46,12 @@ const PokemonPVP = () => {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
   }, [pvp]);
+
+  useEffect(() => {
+    if (dataStore?.combat?.every((combat) => !combat.archetype)) {
+      loadPVPMoves(dispatch);
+    }
+  }, [dataStore?.combat]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -59,9 +65,9 @@ const PokemonPVP = () => {
         ).data.find((pokemon: { speciesId: any }) => pokemon.speciesId === paramName);
 
         const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-        const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
+        const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon: any) => pokemon.slug === name);
         const id = pokemon.num;
-        const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+        const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
         document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${
           cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
         } (${capitalize(params.type)})`;
@@ -87,23 +93,23 @@ const PokemonPVP = () => {
           cMoveDataSec = 'TECHNO_BLAST_WATER';
         }
 
-        let fmove = dataStore.combat.find((item: { name: any }) => item.name === fmoveData);
-        const cmovePri = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataPri);
+        let fmove: any = dataStore?.combat?.find((item) => item.name === fmoveData);
+        const cmovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
         let cmoveSec;
         if (cMoveDataSec) {
-          cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataSec);
+          cmoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
         }
 
         if (data.moveset[0].includes('HIDDEN_POWER')) {
           fmove = { ...fmove, type: data.moveset[0].split('_')[2] };
         }
 
-        let combatPoke = dataStore.pokemonCombat.filter(
+        let combatPoke: any = dataStore?.pokemonCombat?.filter(
           (item: { id: number; baseSpecies: string }) =>
             item.id === pokemon.num &&
             item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
-        const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
+        const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
         if (!result) {
           combatPoke = combatPoke[0];
         } else {
@@ -171,7 +177,7 @@ const PokemonPVP = () => {
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
-    const league = pvp.rankings.find((item: { id: string; cp: number[] }) => item.id === 'all' && item.cp.includes(cp));
+    const league = pvp?.rankings.find((item: { id: string; cp: number[] }) => item.id === 'all' && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (
@@ -304,7 +310,7 @@ const PokemonPVP = () => {
                       </div>
                     </div>
                     <hr />
-                    {Keys(dataStore.assets, Object.values(dataStore.pokemonData), rankingPoke.data, params.cp, params.type)}
+                    {Keys(dataStore?.assets ?? [], Object.values(dataStore?.pokemonData ?? []), rankingPoke.data, params.cp, params.type)}
                   </div>
                   <div className="container">
                     <hr />
@@ -314,7 +320,7 @@ const PokemonPVP = () => {
                     <hr />
                     {TypeEffective(rankingPoke.pokemon.types)}
                   </div>
-                  <div className="container">{MoveSet(rankingPoke.data.moves, rankingPoke.combatPoke, dataStore.combat)}</div>
+                  <div className="container">{MoveSet(rankingPoke.data.moves, rankingPoke.combatPoke, dataStore?.combat ?? [])}</div>
                 </div>
               </div>
             </Fragment>

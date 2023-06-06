@@ -6,12 +6,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
+import { StoreState } from '../../../store/models/state.model';
 
 const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
-  const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
-  const pokemonCombat = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
+  const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
+  const pokemonCombat = useSelector((state: StoreState) => state.store?.data?.pokemonCombat ?? []);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -38,7 +39,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       fMove = 'HIDDEN_POWER';
     }
 
-    let fmove = combat.find((item: { name: any }) => item.name === fMove);
+    let fmove: any = combat.find((item: { name: any }) => item.name === fMove);
     if (value.moveset[0].includes('HIDDEN_POWER')) {
       fmove = { ...fmove, type: value.moveset[0].split('_')[2] };
     }
@@ -66,7 +67,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
     const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
 
-    let combatPoke = pokemonCombat.filter(
+    let combatPoke: any = pokemonCombat.filter(
       (item: { id: any; baseSpecies: string }) =>
         item.id === value.pokemon.num &&
         item.baseSpecies === (value.pokemon.baseSpecies ? convertName(value.pokemon.baseSpecies) : convertName(value.pokemon.name))
@@ -77,7 +78,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       if (combatPoke) {
         combatPoke = combatPoke[0];
       } else {
-        combatPoke = combatPoke.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon.name));
+        combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon.name));
       }
     } else {
       combatPoke = result;
@@ -224,7 +225,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                     if (move.includes('HIDDEN_POWER')) {
                       move = 'HIDDEN_POWER';
                     }
-                    let fmove = combat.find((item: { name: any }) => item.name === move);
+                    let fmove: any = combat.find((item: { name: any }) => item.name === move);
                     if (value.moveId.includes('HIDDEN_POWER')) {
                       fmove = { ...fmove, type: value.moveId.split('_')[2] };
                     }

@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
+import { StoreState } from '../../store/models/state.model';
 
-const CardMove = (props: { value: { name: string; elite: any; shadow: any; purified: any } }) => {
-  const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
-  const data = props.value ? combat.find((item: any) => item.name === props.value.name) : false;
+const CardMove = (props: { value: { name: string; elite: boolean; shadow: boolean; purified: boolean } }) => {
+  const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
+  const data = props.value ? combat.find((item) => item.name === props.value.name) : false;
   const type = data ? capitalize(data.type) : '';
 
   return (

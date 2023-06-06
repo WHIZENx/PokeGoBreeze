@@ -24,8 +24,9 @@ import { capitalize, convertFormGif, convertModelSpritName, splitAndCapitalize }
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
+import { StoreState } from '../../../store/models/state.model';
 
 const customTheme = createTheme({
   palette: {
@@ -39,9 +40,9 @@ const customTheme = createTheme({
 
 const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter }: any) => {
   const theme = useTheme();
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
-  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
-  const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
+  const pokemonName = useSelector((state: StoreState) => state.store.data?.pokemonName ?? []);
+  const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
   const [arrEvoList, setArrEvoList]: any = useState([]);
   const optionsDefault = {
     selectPurified: false,
@@ -53,10 +54,10 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
 
   const getEvoChain = useCallback(
     (data: any) => {
-      if (data.length === 0) {
+      if (data?.length === 0) {
         return false;
       }
-      const evoList = data.map((item: { species: { url: string } }) => {
+      const evoList = data?.map((item: { species: { url: string } }) => {
         return item && evoData.filter((e: { id: number }) => e.id === parseInt(item.species.url.split('/')[6]));
       })[0];
       const currForm = formDefault
@@ -83,7 +84,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
       } else if (evoList.length > 1) {
         const evoInJSON = evoList.find((item: { name: string | any[] }) => item.name.includes(currForm.toUpperCase()));
         if (evoInJSON) {
-          const evoInAPI = data.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
+          const evoInAPI = data?.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
           if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
             const tempData: any[] = [];
             if (evoInAPI.evolves_to.length > 0) {
@@ -100,8 +101,8 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                 tempData.push({
                   ...evoInAPI,
                   species: {
-                    name: pokemonToEvo.name.toLowerCase(),
-                    url: APIService.getPokeAPI('pokemon-species', pokemonToEvo.id),
+                    name: pokemonToEvo?.name.toLowerCase(),
+                    url: APIService.getPokeAPI('pokemon-species', pokemonToEvo?.id),
                   },
                 });
               });
@@ -115,11 +116,11 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           evoInJSON = evoList.find((item: { name: string | string[] }) => item.name.includes(''));
         }
         if (evoInJSON) {
-          const evoInAPI = data.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
+          const evoInAPI = data?.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
           if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
             const tempArr: any[] = [];
             evoInJSON.evo_list.forEach((value: { evo_to_form: string }) =>
-              data.forEach((item: { evolves_to: any[] }) => {
+              data?.forEach((item: { evolves_to: any[] }) => {
                 item.evolves_to.forEach((i: any) => {
                   if (['kubfu', 'rockruff'].includes(forme.name) || value.evo_to_form.toLowerCase().replaceAll('_', '-') === currForm) {
                     tempArr.push({
@@ -136,7 +137,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
       }
       setArrEvoList((oldArr: any) => [
         ...oldArr,
-        data.map((item: { species: { name: any; url: string }; is_baby: any; form: any }) => {
+        data?.map((item: { species: { name: any; url: string }; is_baby: any; form: any }) => {
           return {
             name: item.species.name,
             id: parseInt(item.species.url.split('/')[6]),
@@ -145,7 +146,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           };
         }),
       ]);
-      return data.map((item: { evolves_to: any }) => getEvoChain(item.evolves_to));
+      return data?.map((item: { evolves_to: any }) => getEvoChain(item.evolves_to));
     },
     [evoData, formDefault, forme, region, id]
   );
@@ -386,19 +387,13 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
   const getQuestEvo = (prevId: number, form: any) => {
     try {
       return evoData
-        .find((item: { evo_list: any[] }) =>
-          item.evo_list.find(
-            (value: { evo_to_form: string | any[]; evo_to_id: any }) => value.evo_to_form.includes(form) && value.evo_to_id === prevId
-          )
-        )
-        .evo_list.find(
-          (item: { evo_to_form: string | any[]; evo_to_id: any }) => item.evo_to_form.includes(form) && item.evo_to_id === prevId
-        );
+        ?.find((item) => item?.evo_list?.find((value) => value.evo_to_form.includes(form) && value.evo_to_id === prevId))
+        ?.evo_list.find((item) => item.evo_to_form.includes(form) && item.evo_to_id === prevId);
     } catch (error) {
       try {
         return evoData
-          .find((item: { evo_list: any[] }) => item.evo_list.find((value: { evo_to_id: any }) => value.evo_to_id === prevId))
-          .evo_list.find((item: { evo_to_id: any }) => item.evo_to_id === prevId);
+          ?.find((item) => item?.evo_list?.find((value) => value.evo_to_id === prevId))
+          ?.evo_list.find((item) => item.evo_to_id === prevId);
       } catch (error) {
         return {
           candyCost: 0,
@@ -464,32 +459,32 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                   <div className="position-absolute" style={{ left: -40 }}>
                     {!value.gmax && (
                       <div>
-                        {(data.candyCost || data.purificationEvoCandyCost) && (
+                        {(data?.candyCost || data?.purificationEvoCandyCost) && (
                           <span
                             className="d-flex align-items-center caption"
                             style={{ color: (theme.palette as any).customText.caption, width: 'max-content' }}
                           >
                             <Candy id={value.id} />
                             <span style={{ marginLeft: 2 }}>{`x${
-                              purified && selectPurified ? data.purificationEvoCandyCost : data.candyCost
+                              purified && selectPurified ? data?.purificationEvoCandyCost : data?.candyCost
                             }`}</span>
                           </span>
                         )}
                         {purified && selectPurified && (
                           <span className="d-block text-end caption text-danger">{`-${
-                            data.candyCost - data.purificationEvoCandyCost
+                            (data?.candyCost ?? 0) - (data?.purificationEvoCandyCost ?? 0)
                           }`}</span>
                         )}
                       </div>
                     )}
-                    {Object.keys(data.quest).length > 0 && (
+                    {Object.keys(data?.quest ?? {}).length > 0 && (
                       <Fragment>
-                        {data.quest.randomEvolution && (
+                        {data?.quest.randomEvolution && (
                           <span className="caption">
                             <QuestionMarkIcon fontSize="small" />
                           </span>
                         )}
-                        {data.quest.genderRequirement && (
+                        {data?.quest.genderRequirement && (
                           <span className="caption">
                             {form === 'male' ? (
                               <MaleIcon fontSize="small" />
@@ -499,7 +494,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                                   <FemaleIcon fontSize="small" />
                                 ) : (
                                   <Fragment>
-                                    {data.quest.genderRequirement === 'MALE' ? (
+                                    {data?.quest.genderRequirement === 'MALE' ? (
                                       <MaleIcon fontSize="small" />
                                     ) : (
                                       <FemaleIcon fontSize="small" />
@@ -510,9 +505,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                             )}
                           </span>
                         )}
-                        {data.quest.kmBuddyDistanceRequirement && (
+                        {data?.quest.kmBuddyDistanceRequirement && (
                           <span className="caption">
-                            {data.quest.mustBeBuddy ? (
+                            {data?.quest.mustBeBuddy ? (
                               <div className="d-flex align-items-end">
                                 <DirectionsWalkIcon fontSize="small" />
                                 <PetsIcon sx={{ fontSize: '1rem' }} />
@@ -520,41 +515,41 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                             ) : (
                               <DirectionsWalkIcon fontSize="small" />
                             )}{' '}
-                            {`${data.quest.kmBuddyDistanceRequirement}km`}
+                            {`${data?.quest.kmBuddyDistanceRequirement}km`}
                           </span>
                         )}
-                        {data.quest.onlyDaytime && (
+                        {data?.quest.onlyDaytime && (
                           <span className="caption">
                             <WbSunnyIcon fontSize="small" />
                           </span>
                         )}
-                        {data.quest.onlyNighttime && (
+                        {data?.quest.onlyNighttime && (
                           <span className="caption">
                             <DarkModeIcon fontSize="small" />
                           </span>
                         )}
-                        {data.quest.evolutionItemRequirement && (
-                          <img alt="img-item-required" height={20} src={APIService.getItemEvo(data.quest.evolutionItemRequirement)} />
+                        {data?.quest.evolutionItemRequirement && (
+                          <img alt="img-item-required" height={20} src={APIService.getItemEvo(data?.quest.evolutionItemRequirement)} />
                         )}
-                        {data.quest.lureItemRequirement && (
-                          <img alt="img-troy-required" height={20} src={APIService.getItemTroy(data.quest.lureItemRequirement)} />
+                        {data?.quest.lureItemRequirement && (
+                          <img alt="img-troy-required" height={20} src={APIService.getItemTroy(data?.quest.lureItemRequirement)} />
                         )}
-                        {data.quest.onlyUpsideDown && (
+                        {data?.quest.onlyUpsideDown && (
                           <span className="caption">
                             <SecurityUpdateIcon fontSize="small" />
                           </span>
                         )}
-                        {data.quest.condition && (
+                        {data?.quest.condition && (
                           <span className="caption">
-                            {data.quest.condition.desc === 'THROW_TYPE' && (
+                            {data?.quest.condition.desc === 'THROW_TYPE' && (
                               <Fragment>
                                 <CallMadeIcon fontSize="small" />
-                                <span>{`${capitalize(data.quest.condition.throwType)} x${data.quest.goal}`}</span>
+                                <span>{`${capitalize(data?.quest.condition.throwType)} x${data?.quest.goal}`}</span>
                               </Fragment>
                             )}
-                            {data.quest.condition.desc === 'POKEMON_TYPE' && (
+                            {data?.quest.condition.desc === 'POKEMON_TYPE' && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
-                                {data.quest.condition.pokemonType.map((value: string, index: React.Key) => (
+                                {data?.quest.condition.pokemonType.map((value: string, index: React.Key) => (
                                   <img
                                     key={index}
                                     alt="img-stardust"
@@ -566,30 +561,30 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                                     }}
                                   />
                                 ))}
-                                <span style={{ marginLeft: 2 }}>{`x${data.quest.goal}`}</span>
+                                <span style={{ marginLeft: 2 }}>{`x${data?.quest.goal}`}</span>
                               </div>
                             )}
-                            {data.quest.condition.desc === 'WIN_RAID_STATUS' && (
+                            {data?.quest.condition.desc === 'WIN_RAID_STATUS' && (
                               <Fragment>
                                 <SportsMartialArtsIcon fontSize="small" />
-                                <span>{`x${data.quest.goal}`}</span>
+                                <span>{`x${data?.quest.goal}`}</span>
                               </Fragment>
                             )}
                           </span>
                         )}
-                        {data.quest.type && data.quest.type === 'BUDDY_EARN_AFFECTION_POINTS' && (
+                        {data?.quest.type && data?.quest.type === 'BUDDY_EARN_AFFECTION_POINTS' && (
                           <span className="caption">
                             <Fragment>
                               <FavoriteIcon fontSize="small" sx={{ color: 'red' }} />
-                              <span>{`x${data.quest.goal}`}</span>
+                              <span>{`x${data?.quest.goal}`}</span>
                             </Fragment>
                           </span>
                         )}
-                        {data.quest.type && data.quest.type === 'BUDDY_FEED' && (
+                        {data?.quest.type && data?.quest.type === 'BUDDY_FEED' && (
                           <span className="caption">
                             <Fragment>
                               <RestaurantIcon fontSize="small" />
-                              <span>{`x${data.quest.goal}`}</span>
+                              <span>{`x${data?.quest.goal}`}</span>
                             </Fragment>
                           </span>
                         )}

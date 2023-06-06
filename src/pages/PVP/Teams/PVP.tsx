@@ -20,15 +20,18 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
+import { StatsState, StoreState } from '../../../store/models/state.model';
+import { Combat } from '../../../core/models/combat.model';
+import { TeamsPVP } from '../../../core/models/pvp.model';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
-  const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
-  const pvp = useSelector((state: RootStateOrAny) => state.store.data.pvp);
+  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
     'timestamp',
     JSON.stringify({
@@ -41,7 +44,7 @@ const TeamPVP = () => {
 
   const [rankingData, setRankingData]: any = useState(null);
   const [search, setSearch] = useState('');
-  const statsRanking = useSelector((state: RootStateOrAny) => state.stats);
+  const statsRanking = useSelector((state: StatsState) => state.stats);
   const [sortedBy, setSortedBy] = useState('teamScore');
   const [sorted, setSorted]: any = useState(1);
 
@@ -52,12 +55,12 @@ const TeamPVP = () => {
 
   const mappingPokemonData = useCallback(
     // eslint-disable-next-line no-unused-vars
-    (data: { split: (arg0: string) => [any, any] }) => {
+    (data: { split: (arg0: string) => [any, any] } | string) => {
       const [speciesId, moveSet] = data.split(' ');
       const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-      const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: { slug: string } | any) => pokemon.slug === name);
+      const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon: { slug: string } | any) => pokemon.slug === name);
       const id = pokemon.num;
-      const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+      const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
 
       const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -65,24 +68,24 @@ const TeamPVP = () => {
         styleSheet.current = getStyleSheet(`.${pokemon.types[0].toLowerCase()}`);
       }
 
-      let combatPoke = dataStore.pokemonCombat.filter(
+      let combatPoke: any = dataStore?.pokemonCombat?.filter(
         (item: { id: any; baseSpecies: string }) =>
           item.id === pokemon.num &&
           item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
       );
 
-      const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
+      const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
       if (!result) {
         if (combatPoke) {
           combatPoke = combatPoke[0];
         } else {
-          combatPoke = combatPoke.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(pokemon.name));
+          combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(pokemon.name));
         }
       } else {
         combatPoke = result;
       }
 
-      let fmove: any, cmovePri: { name: any }, cmoveSec: { name: any }, cmove;
+      let fmove: Combat | undefined, cmovePri: Combat | undefined, cmoveSec: Combat | undefined, cmove;
       if (moveSet.includes('+')) {
         [fmove, cmove] = moveSet.split('+');
         [cmovePri, cmoveSec] = cmove.split('/');
@@ -96,10 +99,10 @@ const TeamPVP = () => {
         combatPoke.shadowMoves,
         combatPoke.purifiedMoves
       );
-      fmove = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(fmove, fastMoveSet));
-      cmovePri = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(cmovePri, chargedMoveSet));
+      fmove = dataStore?.combat?.find((item) => item.name === findMoveTeam(fmove, fastMoveSet));
+      cmovePri = dataStore?.combat?.find((item) => item.name === findMoveTeam(cmovePri, chargedMoveSet));
       if (cmoveSec) {
-        cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === findMoveTeam(cmoveSec, chargedMoveSet));
+        cmoveSec = dataStore?.combat?.find((item) => item.name === findMoveTeam(cmoveSec, chargedMoveSet));
       }
 
       return {
@@ -138,7 +141,7 @@ const TeamPVP = () => {
       dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
-        const file = (
+        const file: TeamsPVP = (
           await axios.getFetchUrl(axios.getTeamFile('analysis', params.serie, cp), {
             cancelToken: source.token,
           })
@@ -162,10 +165,10 @@ const TeamPVP = () => {
                     ${splitAndCapitalize(params.serie, '-', ' ')}`;
         }
 
-        const performersTotalGames = file.performers.reduce((p: any, c: { games: any }) => p + c.games, 0);
-        const teamsTotalGames = file.teams.reduce((p: any, c: { games: any }) => p + c.games, 0);
+        const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);
+        const teamsTotalGames = file.teams.reduce((p, c) => p + c.games, 0);
 
-        file.performers = file.performers.map((item: { pokemon: any }) => {
+        file.performers = file.performers.map((item) => {
           return {
             ...item,
             ...mappingPokemonData(item.pokemon),
@@ -173,7 +176,7 @@ const TeamPVP = () => {
           };
         });
 
-        file.teams = file.teams.map((item: { team: string }) => {
+        file.teams = file.teams.map((item) => {
           const teams = item.team.split('|');
           const teamsData: {
             id: any;
@@ -227,7 +230,7 @@ const TeamPVP = () => {
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
-    const league = pvp.trains.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
+    const league = pvp?.trains?.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (

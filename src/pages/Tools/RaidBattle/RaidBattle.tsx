@@ -36,15 +36,16 @@ import { useSnackbar } from 'notistack';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 import update from 'immutability-helper';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
+import { SpinnerState, StoreState, SearchingState } from '../../../store/models/state.model';
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('');
@@ -212,11 +213,11 @@ const RaidBattle = () => {
 
   const findMove = useCallback(
     (id: any, form: string) => {
-      const resultFirst = data.pokemonCombat.filter((item: { id: any }) => item.id === id);
+      const resultFirst = data?.pokemonCombat?.filter((item: { id: any }) => item.id === id);
       form = form.replaceAll('-', '_').replaceAll('_standard', '').toUpperCase();
-      const result = resultFirst.find((item: { name: any }) => item.name === form);
+      const result = resultFirst?.find((item: { name: any }) => item.name === form);
       let simpleMove: any[] = [];
-      if (resultFirst.length === 1 || result == null) {
+      if (resultFirst && (resultFirst.length === 1 || result == null)) {
         if (resultFirst.length === 0) {
           setFMove('');
           setResultFMove('');
@@ -249,31 +250,31 @@ const RaidBattle = () => {
         return setResultCMove(simpleMove);
       }
       simpleMove = [];
-      result.quickMoves.forEach((value: any) => {
+      result?.quickMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
       });
-      result.eliteQuickMoves.forEach((value: any) => {
+      result?.eliteQuickMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
       });
       setFMove(simpleMove[0]);
       setResultFMove(simpleMove);
       simpleMove = [];
-      result.cinematicMoves.forEach((value: any) => {
+      result?.cinematicMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
       });
-      result.eliteCinematicMoves.forEach((value: any) => {
+      result?.eliteCinematicMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
       });
-      result.shadowMoves.forEach((value: any) => {
+      result?.shadowMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
       });
-      result.purifiedMoves.forEach((value: any) => {
+      result?.purifiedMoves.forEach((value: any) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
       });
       setCMove(simpleMove[0]);
       return setResultCMove(simpleMove);
     },
-    [data.pokemonCombat]
+    [data?.pokemonCombat]
   );
 
   const addCPokeData = (
@@ -312,8 +313,8 @@ const RaidBattle = () => {
     pokemonTarget: any
   ) => {
     movePoke.forEach((vc: any) => {
-      const fmove = data.combat.find((item: { name: any }) => item.name === vf);
-      const cmove = data.combat.find((item: { name: any }) => item.name === vc);
+      const fmove = data?.combat?.find((item: { name: any }) => item.name === vf);
+      const cmove = data?.combat?.find((item: { name: any }) => item.name === vc);
       if (fmove && cmove) {
         const stats = calculateStatsByTag(value, value.baseStats, value.slug);
         const statsAttackerTemp = {
@@ -330,16 +331,16 @@ const RaidBattle = () => {
           atk: statBossATK,
           def: statBossDEF,
           hp: statBossHP,
-          fmove: data.combat.find((item: { name: any }) => item.name === fMove.name),
-          cmove: data.combat.find((item: { name: any }) => item.name === cMove.name),
+          fmove: data?.combat?.find((item: { name: any }) => item.name === fMove.name),
+          cmove: data?.combat?.find((item: { name: any }) => item.name === cMove.name),
           types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
           WEATHER_BOOSTS: weatherBoss,
         };
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
         statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
 
-        const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-        const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+        const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
+        const dpsAtk = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
         const ttkAtk = TimeToKill(Math.floor(statsDefender.hp), dpsAtk); // Time to Attacker kill Defender
         const ttkDef = TimeToKill(Math.floor(statsAttacker.hp), dpsDef); // Time to Defender kill Attacker
@@ -362,8 +363,8 @@ const RaidBattle = () => {
           defendHpRemain: Math.floor(statsDefender.hp) - Math.min(timeAllow, ttkAtk) * dpsAtk,
           death: Math.floor(statsDefender.hp / tdoAtk),
           shadow,
-          purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
-          mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
+          purified: purified && specialMove && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
+          mShadow: shadow && specialMove && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
           elite: {
             fmove: felite,
             cmove: celite,
@@ -400,14 +401,14 @@ const RaidBattle = () => {
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: any[] | (() => any[]) = [];
-    Object.values(data.pokemonData).forEach((pokemon: any) => {
+    Object.values(data?.pokemonData ?? []).forEach((pokemon: any) => {
       if (pokemon.forme !== 'Gmax') {
-        let combatPoke = data.pokemonCombat.filter(
+        let combatPoke: any = data?.pokemonCombat?.filter(
           (item: { id: number; baseSpecies: string }) =>
             item.id === pokemon.num &&
             item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
-        const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
+        const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
         if (!result) {
           combatPoke = combatPoke[0];
         } else {
@@ -464,8 +465,8 @@ const RaidBattle = () => {
     HpRemain: number,
     timer: number
   ) => {
-    const fmove = data.combat.find((item: { name: any }) => item.name === pokemon.fmoveTargetPokemon.name);
-    const cmove = data.combat.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
+    const fmove = data?.combat?.find((item: { name: any }) => item.name === pokemon.fmoveTargetPokemon.name);
+    const cmove = data?.combat?.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
 
     if (fmove && cmove) {
       const stats = calculateStatsByTag(pokemon, pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
@@ -483,14 +484,14 @@ const RaidBattle = () => {
         atk: statBossATK,
         def: statBossDEF,
         hp: Math.floor(HpRemain),
-        fmove: data.combat.find((item: { name: any }) => item.name === fMove.name),
-        cmove: data.combat.find((item: { name: any }) => item.name === cMove.name),
+        fmove: data?.combat?.find((item: { name: any }) => item.name === fMove.name),
+        cmove: data?.combat?.find((item: { name: any }) => item.name === cMove.name),
         types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
         WEATHER_BOOSTS: weatherBoss,
       };
 
-      const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-      const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+      const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
+      const dpsAtk = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
       const ttkAtk = enableTimeAllow
         ? Math.min(timeAllow - timer, TimeToKill(Math.floor(statsDefender.hp), dpsAtk))
@@ -963,7 +964,7 @@ const RaidBattle = () => {
                   return true;
                 }
                 obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
-                const result = checkPokemonGO(obj.pokemon, data.details);
+                const result = checkPokemonGO(obj.pokemon, data?.details ?? []);
                 return result ? result.releasedGO : false;
               })
               .filter((obj: { pokemon: { name: string } }) => {
@@ -995,8 +996,8 @@ const RaidBattle = () => {
                         className="pokemon-sprite-raid"
                         alt="img-pokemon"
                         src={
-                          findAssetForm(data.assets, value.pokemon.num, value.pokemon.name)
-                            ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon.num, value.pokemon.name))
+                          findAssetForm(data?.assets ?? [], value.pokemon.num, value.pokemon.name)
+                            ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], value.pokemon.num, value.pokemon.name))
                             : APIService.getPokeFullSprite(value.pokemon.num)
                         }
                       />
@@ -1255,27 +1256,27 @@ const RaidBattle = () => {
                                     index: React.Key
                                   ) => (
                                     <tr key={index}>
-                                      <td>#{data.trainerId + 1}</td>
+                                      <td>#{data?.trainerId + 1}</td>
                                       <td>
                                         <div className="d-flex align-items-center table-pokemon">
                                           <img
                                             className="pokemon-sprite-battle"
                                             height={36}
                                             alt="img-pokemon"
-                                            src={APIService.getPokeIconSprite(data.pokemon.sprite, true)}
+                                            src={APIService.getPokeIconSprite(data?.pokemon.sprite, true)}
                                           />
-                                          <span className="caption">{splitAndCapitalize(data.pokemon.name, '-', ' ')}</span>
+                                          <span className="caption">{splitAndCapitalize(data?.pokemon.name, '-', ' ')}</span>
                                         </div>
                                       </td>
-                                      <td>{data.dpsAtk.toFixed(2)}</td>
-                                      <td>{Math.floor(data.tdoAtk) === 0 ? '-' : data.tdoAtk.toFixed(2)}</td>
-                                      <td>{Math.floor(data.atkHpRemain) === 0 ? data.ttkDef.toFixed(2) : '-'}</td>
+                                      <td>{data?.dpsAtk.toFixed(2)}</td>
+                                      <td>{Math.floor(data?.tdoAtk) === 0 ? '-' : data?.tdoAtk.toFixed(2)}</td>
+                                      <td>{Math.floor(data?.atkHpRemain) === 0 ? data?.ttkDef.toFixed(2) : '-'}</td>
                                       <td>
                                         <b>
-                                          <span className={Math.floor(data.atkHpRemain) === 0 ? 'text-danger' : 'text-success'}>
-                                            {Math.max(0, Math.floor(data.atkHpRemain))}
+                                          <span className={Math.floor(data?.atkHpRemain) === 0 ? 'text-danger' : 'text-success'}>
+                                            {Math.max(0, Math.floor(data?.atkHpRemain))}
                                           </span>{' '}
-                                          / {Math.floor(data.hp)}
+                                          / {Math.floor(data?.hp)}
                                         </b>
                                       </td>
                                     </tr>

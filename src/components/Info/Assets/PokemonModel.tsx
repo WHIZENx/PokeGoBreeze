@@ -6,13 +6,14 @@ import FemaleIcon from '@mui/icons-material/Female';
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
+import { StoreState } from '../../../store/models/state.model';
 
 const PokemonModel = (props: { id: any; name: string }) => {
   const theme = useTheme();
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
 
   const [pokeAssets, setPokeAssets]: any = useState([]);
   const gender: any = useRef(null);
@@ -20,9 +21,9 @@ const PokemonModel = (props: { id: any; name: string }) => {
 
   const getImageList = useCallback(
     (id: any) => {
-      const model = data.assets.find((item: { id: any }) => item.id === id);
-      sound.current = data.assets.find((item: { id: any }) => item.id === id);
-      const detail = data.details.find((item: { id: any }) => item.id === id);
+      const model = data?.assets?.find((item: { id: any }) => item.id === id);
+      sound.current = data?.assets?.find((item: { id: any }) => item.id === id);
+      const detail = data?.details?.find((item: { id: any }) => item.id === id);
       gender.current = detail ? detail.gender : null;
       return model
         ? Array.from(new Set(model.image.map((item: { form: any }) => item.form))).map((value) => {
@@ -33,7 +34,7 @@ const PokemonModel = (props: { id: any; name: string }) => {
           })
         : [];
     },
-    [data.assets]
+    [data?.assets]
   );
 
   useEffect(() => {

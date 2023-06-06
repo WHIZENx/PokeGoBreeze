@@ -16,6 +16,7 @@ import {
   LOAD_POKEMON_DATA,
   LOAD_POKEMON_NAME,
   LOAD_PVP,
+  LOAD_PVP_MOVES,
   LOAD_RELEASED_GO,
   LOAD_STICKER,
   LOAD_STORE,
@@ -184,10 +185,30 @@ const StoreReducer = (state: StoreModel = initialize, action: any) => {
           },
         },
       };
+    case LOAD_PVP_MOVES: {
+      const result = state.data?.combat?.map((move) => {
+        const movePVP = action.payload.find(
+          (data: { moveId: string }) =>
+            data.moveId ===
+            (move.name === 'HIDDEN_POWER'
+              ? 'HIDDEN_POWER_BUG'
+              : move.name.replace('_BLASTOISE', '').replaceAll('_PLUS', '').replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE'))
+        );
+        move.archetype = movePVP?.archetype;
+        return move;
+      });
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          combat: result,
+        },
+      };
+    }
     case RESET_STORE:
       return {
         ...state,
-        timestamp: new Date(),
+        timestamp: new Date().getTime(),
       };
     default:
       return state;

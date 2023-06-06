@@ -3,8 +3,9 @@ import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
+import { TypeEff } from '../../core/models/typeEff.model';
 
-const Defender = (prop: { types: any }) => {
+const Defender = (prop: { types: TypeEff | any }) => {
   const theme = useTheme();
   const [types, setTypes]: any = useState(null);
 

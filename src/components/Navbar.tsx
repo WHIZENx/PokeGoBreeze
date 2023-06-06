@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useLocalStorage } from 'usehooks-ts';
 
@@ -13,11 +13,12 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import './Navbar.scss';
 import { IconButton } from '@mui/material';
 import { loadThemeData } from '../store/actions/theme.action';
+import { StoreState } from '../store/models/state.model';
 
 const NavbarComponent = ({ mode, toggleColorMode }: any) => {
   const dispatch = useDispatch();
 
-  const dataStore = useSelector((state: RootStateOrAny) => state.store);
+  const dataStore = useSelector((state: StoreState) => state.store);
   const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
 
   const [version] = useLocalStorage('version', '');

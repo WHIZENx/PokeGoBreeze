@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize, convertName, capitalize, convertFormName } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
-import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -13,6 +13,7 @@ import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
 import { hideSpinner } from '../../../store/actions/spinner.action';
+import { SpinnerState, StatsState, StoreState } from '../../../store/models/state.model';
 
 const columnPokemon: any = [
   {
@@ -108,7 +109,7 @@ const customStyles = {
 
 const StatsRanking = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const conditionalRowStyles = [
     {
       when: (row: { slug: string }) => row.slug === select?.slug,
@@ -116,8 +117,8 @@ const StatsRanking = () => {
     },
   ];
 
-  const stats = useSelector((state: RootStateOrAny) => state.stats);
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const stats = useSelector((state: StatsState) => state.stats);
+  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemonData ?? []);
   const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: any[]) => {
@@ -128,19 +129,19 @@ const StatsRanking = () => {
           ...data,
           atk: {
             attack: statsTag.atk,
-            rank: stats.attack.ranking.find((stat: { attack: number }) => stat.attack === statsTag.atk).rank,
+            rank: stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank,
           },
           def: {
             defense: statsTag.def,
-            rank: stats.defense.ranking.find((stat: { defense: number }) => stat.defense === statsTag.def).rank,
+            rank: stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank,
           },
           sta: {
             stamina: statsTag.sta,
-            rank: stats.stamina.ranking.find((stat: { stamina: number }) => stat.stamina === statsTag.sta).rank,
+            rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank,
           },
           statProd: {
             prod: statsTag.atk * statsTag.def * statsTag.sta,
-            rank: stats.statProd.ranking.find((stat: { prod: number }) => stat.prod === statsTag.atk * statsTag.def * statsTag.sta).rank,
+            rank: stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * statsTag.sta)?.rank,
           },
         };
       }

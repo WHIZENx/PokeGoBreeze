@@ -6,8 +6,9 @@ import React, { useEffect, useState } from 'react';
 import './Select.scss';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
+import { StoreState } from '../../store/models/state.model';
 
 const SelectPokemon = (props: {
   pokemon?: any;
@@ -21,8 +22,8 @@ const SelectPokemon = (props: {
   clearData?: () => void;
   disable?: boolean;
 }) => {
-  const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const data = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;

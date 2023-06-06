@@ -2,9 +2,9 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 import Form from './Form';
 
-import { RootStateOrAny, useSelector } from 'react-redux';
-import { RouterState } from '../../..';
+import { useSelector } from 'react-redux';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
+import { RouterState, SearchingState, StatsState, StoreState } from '../../../store/models/state.model';
 
 const Find = (props: {
   // eslint-disable-next-line no-unused-vars
@@ -35,13 +35,15 @@ const Find = (props: {
   const eachCounter = 10;
   const cardHeight = 65;
 
-  const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const stats = useSelector((state: StatsState) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
-  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
+  const pokemonName = useSelector((state: StoreState) => state.store.data?.pokemonName ?? []);
 
-  const [id, setId] = useState(searching ? (props.objective ? (searching.obj ? searching.obj.id : 1) : searching.id) : 1);
+  const [id, setId] = useState(
+    searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
+  );
   const [form, setForm] = useState(null);
 
   const pokemonList = useRef(

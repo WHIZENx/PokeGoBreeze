@@ -1,6 +1,6 @@
 import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { Fragment, useEffect, useState } from 'react';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Select/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
@@ -29,12 +29,13 @@ import { convertName, LevelSlider, splitAndCapitalize } from '../../../util/Util
 
 import './CatchChance.scss';
 import { hideSpinner } from '../../../store/actions/spinner.action';
+import { SpinnerState, StoreState, SearchingState } from '../../../store/models/state.model';
 
 const CatchChance = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemon);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const CIRCLE_DISTANCE = 200;
 

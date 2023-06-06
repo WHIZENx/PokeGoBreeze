@@ -3,11 +3,12 @@ import CardMoveSmall from '../Card/CardMoveSmall';
 
 import './Select.scss';
 import CardMove from '../Card/CardMove';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
+import { StoreState } from '../../store/models/state.model';
 
 const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, result, selected, disable }: any) => {
-  const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
+  const data = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
   const [resultMove, setResultMove]: any = useState(null);
   const [showMove, setShowMove] = useState(false);
 

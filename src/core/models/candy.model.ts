@@ -7,7 +7,7 @@ interface Color {
 
 export interface Candy {
   familyId: number;
-  familyGroup: any[];
+  familyGroup: { id: number; name: string }[];
   primaryColor: Color;
   secondaryColor: Color;
   familyName: string | null;

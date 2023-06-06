@@ -4,17 +4,18 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../store/models/state.model';
 
 const CardMoveSmall = (props: {
-  value: { name: string; elite: any; shadow: any; purified: any };
+  value: { name: string; elite: boolean; shadow: boolean; purified: boolean };
   empty?: any;
   disable?: any;
   show?: any;
   select?: any;
   clearData?: any;
 }) => {
-  const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
+  const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
   return (
     <Fragment>
@@ -32,9 +33,7 @@ const CardMoveSmall = (props: {
                 height={18}
                 alt="type-logo"
                 style={{ marginRight: 10 }}
-                src={APIService.getTypeSprite(
-                  props.value ? capitalize(combat.find((item: any) => item.name === props.value.name).type) : ''
-                )}
+                src={APIService.getTypeSprite(props.value ? capitalize(combat.find((item) => item.name === props.value.name)?.type) : '')}
               />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
               <span className="d-flex">

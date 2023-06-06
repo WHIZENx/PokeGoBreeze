@@ -2,13 +2,24 @@ import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import './Error.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { SpinnerState } from '../../store/models/state.model';
+import { hideSpinner } from '../../store/actions/spinner.action';
 
 const Error = () => {
+  const dispatch = useDispatch();
   const thisLocation = useLocation();
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   useEffect(() => {
     document.title = 'Page Not Found';
   }, []);
+
+  useEffect(() => {
+    if (spinner.loading) {
+      dispatch(hideSpinner());
+    }
+  }, [spinner.loading]);
 
   return (
     <div className="d-block position-relative">

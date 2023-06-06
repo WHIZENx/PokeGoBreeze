@@ -7,12 +7,13 @@ import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
 import './Counter.scss';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../../store/models/state.model';
 
 const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
   const theme = useTheme();
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
   const [counterList, setCounterList]: any = useState([]);
   const [frame, setFrame] = useState(false);
   const [releasedGO, setReleaseGO] = useState(true);
@@ -47,7 +48,16 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
     return new Promise((resolve, reject) => {
       timeOutId = setTimeout(() => {
         resolve(
-          counterPokemon(data.options, pokemonList, data.typeEff, data.weatherBoost, def, form.types, data.combat, data.pokemonCombat)
+          counterPokemon(
+            data?.options,
+            pokemonList,
+            data?.typeEff,
+            data?.weatherBoost,
+            def,
+            form.types,
+            data?.combat,
+            data?.pokemonCombat ?? []
+          )
         );
       }, 3000);
       controller.signal.addEventListener('abort', () => {
@@ -113,7 +123,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                   if (!releasedGO) {
                     return true;
                   }
-                  const result = data.details.find(
+                  const result = data?.details?.find(
                     (item: { name: string; id: any }) =>
                       item.id === pokemon.pokemon_id &&
                       item.name ===
@@ -151,8 +161,8 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                                 className="pokemon-sprite-counter"
                                 alt="img-pokemon"
                                 src={
-                                  findAssetForm(data.assets, value.pokemon_id, value.pokemon_name)
-                                    ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon_id, value.pokemon_name))
+                                  findAssetForm(data?.assets ?? [], value.pokemon_id, value.pokemon_name)
+                                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], value.pokemon_id, value.pokemon_name))
                                     : APIService.getPokeFullSprite(value.pokemon_id)
                                 }
                               />

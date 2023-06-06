@@ -131,7 +131,7 @@ export const regionList: any = {
   10: 'Paldea',
 };
 
-export const versionList: any = [
+export const versionList: string[] = [
   'Black 2 White 2',
   'Black White',
   'Diamond Pearl',

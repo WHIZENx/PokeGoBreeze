@@ -28,7 +28,7 @@ import hp_logo from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useNavigate, useParams } from 'react-router-dom';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -36,16 +36,18 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
+import { StoreState } from '../../../store/models/state.model';
+import { RankingsPVP } from '../../../core/models/pvp.model';
 
 const Battle = () => {
   const dispatch = useDispatch();
-  const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
+  const dataStore = useSelector((state: StoreState) => state.store.data);
   const params = useParams();
   const navigate = useNavigate();
 
   const { enqueueSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
-  const [data, setData] = useState(null);
+  const [data, setData]: any = useState(null);
   const [options, setOptions] = useState({
     showTap: false,
     timelineType: 1,
@@ -156,10 +158,10 @@ const Battle = () => {
     return (
       (atkPoke *
         move.pvp_power *
-        (poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
-        (poke.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1) *
-        getTypeEffective(dataStore.typeEff, move.type, pokeObj.pokemon.types)) /
-      (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))
+        (poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore?.options) : 1) *
+        (poke.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
+        getTypeEffective(dataStore?.typeEff, move.type, pokeObj.pokemon.types)) /
+      (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))
     );
   };
 
@@ -698,7 +700,7 @@ const Battle = () => {
       try {
         dispatch(showSpinner());
         clearData();
-        let file = (
+        let file: RankingsPVP[] = (
           await axios.getFetchUrl(axios.getRankingFile('all', parseInt(league), 'overall'), {
             cancelToken: source.token,
           })
@@ -714,14 +716,12 @@ const Battle = () => {
         }`;
 
         file = file
-          .filter(
-            (pokemon: { speciesId: string | string[] }) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs')
-          )
-          .map((item: { speciesId: string; speciesName: string }) => {
+          .filter((pokemon) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs'))
+          .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
+            const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon: any) => pokemon.slug === name);
             const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+            const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -1178,13 +1178,13 @@ const Battle = () => {
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
             Attack:{' '}
             <b>
-              {Math.floor(pokemon.pokemonData.currentStats.stats.statsATK * (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1))}
+              {Math.floor(pokemon.pokemonData.currentStats.stats.statsATK * (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1))}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
             Defense:{' '}
             <b>
-              {Math.floor(pokemon.pokemonData.currentStats.stats.statsDEF * (pokemon.shadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))}
+              {Math.floor(pokemon.pokemonData.currentStats.stats.statsDEF * (pokemon.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
@@ -1196,7 +1196,7 @@ const Battle = () => {
                 pokemon.pokemonData.currentStats.stats.statsATK *
                   pokemon.pokemonData.currentStats.stats.statsDEF *
                   pokemon.pokemonData.currentStats.stats.statsSTA *
-                  (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) * SHADOW_DEF_BONUS(dataStore.options) : 1)
+                  (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) * SHADOW_DEF_BONUS(dataStore?.options) : 1)
               )}
             </b>
             <br />

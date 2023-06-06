@@ -1,4 +1,4 @@
-import { CPM } from './models/cpm';
+import { CPM } from './models/cpm.model';
 
 export const calculateCPM = (baseCPM: any, min: number, max: number) => {
   const CPMModel = () => {

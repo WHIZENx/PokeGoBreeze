@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { leaguesTeamBattle } from '../../util/Constants';
 import { loadPVP } from '../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { hideSpinner } from '../../store/actions/spinner.action';
 import { Link } from 'react-router-dom';
+import { SpinnerState, StoreState } from '../../store/models/state.model';
 
 const PVPHome = () => {
   const dispatch = useDispatch();
-  const pvp = useSelector((state: RootStateOrAny) => state.store.data.pvp);
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const pvp = useSelector((state: StoreState) => state.store?.data?.pvp);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
     'timestamp',
     JSON.stringify({
@@ -24,7 +25,7 @@ const PVPHome = () => {
   const [options, setOptions] = useState({
     rank: null,
     team: null,
-  });
+  }) as any;
 
   const { rank, team }: any = options;
 
@@ -45,7 +46,7 @@ const PVPHome = () => {
     if (!rank && !team && pvp) {
       setOptions({
         rank: pvp.rankings[0],
-        team: pvp.trains[0],
+        team: pvp.trains ? pvp.trains[0] : null,
       });
     }
   }, [rank, team, pvp]);

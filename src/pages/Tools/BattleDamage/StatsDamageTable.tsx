@@ -9,11 +9,12 @@ import APIService from '../../../services/API.service';
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { StoreState } from '../../../store/models/state.model';
 
 const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA }: any) => {
-  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? {});
 
   const [currStatLevel, setCurrStatLevel]: any = useState(1);
   const [currStatType, setCurrStatType]: any = useState(null);

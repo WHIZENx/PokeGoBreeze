@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { capitalize, convertFormName, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
 import './Types.scss';
@@ -12,6 +12,7 @@ import { calculateStatsByTag } from '../../../util/Calculate';
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/move.enum';
 import { hideSpinner } from '../../../store/actions/spinner.action';
+import { StoreState, SpinnerState } from '../../../store/models/state.model';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -146,10 +147,10 @@ const columnMove: any = [
 const SearchTypes = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
-  const typeList = useRef(Object.keys(data.typeEff));
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
+  const typeList = useRef(Object.keys(data?.typeEff ?? {}));
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -160,9 +161,9 @@ const SearchTypes = () => {
     chargedMove: [],
   });
   const allData = {
-    pokemon: data.released.filter((pokemon: { releasedGO: boolean }) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-    fastMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === TypeMove.FAST).length,
-    chargedMoves: data.combat.filter((type: { type_move: string; type: string }) => type.type_move === TypeMove.CHARGE).length,
+    pokemon: (data?.released?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length ?? 1) - 1,
+    fastMoves: data?.combat?.filter((type) => type.type_move === TypeMove.FAST)?.length,
+    chargedMoves: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE)?.length,
   };
 
   const [showType, setShowType] = useState(false);
@@ -176,15 +177,11 @@ const SearchTypes = () => {
 
   useEffect(() => {
     setResult({
-      pokemonList: data.released
-        .filter((pokemon: { releasedGO: boolean }) => (releasedGO ? pokemon.releasedGO : true))
-        .filter((pokemon: any) => pokemon.types.includes(capitalize(currentType))),
-      fastMove: data.combat.filter(
-        (type: { type_move: string; type: string }) => type.type_move === TypeMove.FAST && type.type === currentType
-      ),
-      chargedMove: data.combat.filter(
-        (type: { type_move: string; type: string }) => type.type_move === TypeMove.CHARGE && type.type === currentType
-      ),
+      pokemonList: data?.released
+        ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
+        .filter((pokemon) => pokemon.types.includes(capitalize(currentType))),
+      fastMove: data?.combat?.filter((type) => type.type_move === TypeMove.FAST && type.type === currentType),
+      chargedMove: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE && type.type === currentType),
     });
   }, [currentType, releasedGO]);
 
@@ -213,7 +210,7 @@ const SearchTypes = () => {
             {showType && (
               <div className="result-type">
                 <ul>
-                  {Object.keys(data.typeEff)
+                  {Object.keys(data?.typeEff ?? {})
                     .filter((value) => value !== currentType)
                     .map((value: any, index: React.Key) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
@@ -289,13 +286,13 @@ const SearchTypes = () => {
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
               <b>{`Fast Moves: ${result.fastMove.length}/${allData.fastMoves} (${Math.round(
-                (result.fastMove.length * 100) / allData.fastMoves
+                (result.fastMove.length * 100) / (allData.fastMoves ?? 0)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
               <b>{`Charge Moves: ${result.chargedMove.length}/${allData.chargedMoves} (${Math.round(
-                (result.chargedMove.length * 100) / allData.chargedMoves
+                (result.chargedMove.length * 100) / (allData.chargedMoves ?? 0)
               )}%)`}</b>
             </span>
           </div>

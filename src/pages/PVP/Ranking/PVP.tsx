@@ -20,19 +20,20 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
-import { loadPVP } from '../../../store/actions/store.action';
+import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { scoreType } from '../../../util/Constants';
-import { RouterState } from '../../..';
 import { Action } from 'history';
+import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
+import { RankingsPVP } from '../../../core/models/pvp.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
-  const pvp = useSelector((state: RootStateOrAny) => state.store.data.pvp);
+  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
     'timestamp',
@@ -52,7 +53,7 @@ const RankingPVP = () => {
   const styleSheet: any = useRef(null);
 
   const [search, setSearch] = useState('');
-  const statsRanking = useSelector((state: RootStateOrAny) => state.stats);
+  const statsRanking = useSelector((state: StatsState) => state.stats);
 
   const LeaveToggle = ({ eventKey }: any) => {
     const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
@@ -73,10 +74,16 @@ const RankingPVP = () => {
   }, [pvp]);
 
   useEffect(() => {
+    if (dataStore?.combat?.every((combat: { archetype: string | null }) => !combat.archetype)) {
+      loadPVPMoves(dispatch);
+    }
+  }, [dataStore?.combat]);
+
+  useEffect(() => {
     const fetchPokemon = async () => {
       try {
         const cp = parseInt(params.cp);
-        let file = (
+        let file: RankingsPVP[] = (
           await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type), {
             cancelToken: APIService.getAxios().CancelToken.source().token,
           })
@@ -99,11 +106,11 @@ const RankingPVP = () => {
           }
                     ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
         }
-        file = file.map((item: { speciesId: string; speciesName: string; moveset: string[] }) => {
+        file = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
+          const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon: any) => pokemon.slug === name);
           const id = pokemon.num;
-          const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+          const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
 
           const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -130,28 +137,28 @@ const RankingPVP = () => {
             cMoveDataSec = 'TECHNO_BLAST_WATER';
           }
 
-          let fmove = dataStore.combat.find((item: { name: any }) => item.name === fmoveData);
-          const cmovePri = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataPri);
+          let fmove: any = dataStore?.combat?.find((item: { name: string }) => item.name === fmoveData);
+          const cmovePri = dataStore?.combat?.find((item: { name: string }) => item.name === cMoveDataPri);
           let cmoveSec;
           if (cMoveDataSec) {
-            cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataSec);
+            cmoveSec = dataStore?.combat?.find((item: { name: string }) => item.name === cMoveDataSec);
           }
 
           if (item.moveset[0].includes('HIDDEN_POWER')) {
             fmove = { ...fmove, type: item.moveset[0].split('_')[2] };
           }
 
-          let combatPoke = dataStore.pokemonCombat.filter(
+          let combatPoke: any = dataStore?.pokemonCombat?.filter(
             (item: { id: number; baseSpecies: string }) =>
               item.id === pokemon.num &&
               item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
           );
-          const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
+          const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
           if (!result) {
             if (combatPoke) {
               combatPoke = combatPoke[0];
             } else {
-              combatPoke = combatPoke.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon.name));
+              combatPoke = combatPoke?.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon.name));
             }
           } else {
             combatPoke = result;
@@ -287,7 +294,7 @@ const RankingPVP = () => {
                     )}
                   </div>
                   <hr />
-                  {Keys(dataStore.assets, Object.values(dataStore.pokemonData), data, params.cp, params.type)}
+                  {Keys(dataStore?.assets ?? [], Object.values(dataStore?.pokemonData ?? []), data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />
@@ -297,7 +304,7 @@ const RankingPVP = () => {
                   <hr />
                   {TypeEffective(data.pokemon.types)}
                 </div>
-                <div className="container">{MoveSet(data.moves, data.combatPoke, dataStore.combat)}</div>
+                <div className="container">{MoveSet(data.moves, data.combatPoke, dataStore?.combat ?? [])}</div>
               </div>
               <LeaveToggle eventKey={key} />
             </Fragment>

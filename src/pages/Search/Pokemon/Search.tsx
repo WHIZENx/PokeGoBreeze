@@ -3,17 +3,17 @@ import React, { useState, useEffect, useRef, Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
-import { useSelector, RootStateOrAny } from 'react-redux';
-import { RouterState } from '../../..';
+import { useSelector } from 'react-redux';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
+import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
 
 const Search = () => {
   const theme = useTheme();
   const router = useSelector((state: RouterState) => state.router);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.mainSearching);
-  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
+  const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
+  const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemonName ?? []);
 
   const [first, setFirst] = useState(true);
   const [startIndex, setStartIndex] = useState(0);

@@ -11,8 +11,7 @@ import reportWebVitals from './reportWebVitals';
 import { ReduxRouterSelector, ReduxRouter } from '@lagunovsky/redux-react-router';
 import configureStore, { history } from './store';
 import Main from './App';
-
-export type RouterState = ReturnType<typeof store.getState>;
+import { RouterState } from './store/models/state.model';
 
 if (module.hot) {
   module.hot.accept();

@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { convertNameRanking, splitAndCapitalize } from '../../../util/Utils';
 import CardPokemonLarge from '../../Card/CardPokemonLarge';
+import { StoreState } from '../../../store/models/state.model';
 
 const SelectFind = (props: {
   data: any[];
@@ -20,7 +21,7 @@ const SelectFind = (props: {
   // eslint-disable-next-line no-unused-vars
   setId: (arg0: null) => void;
 }) => {
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;

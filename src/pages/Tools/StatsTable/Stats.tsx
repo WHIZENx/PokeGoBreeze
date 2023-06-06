@@ -8,8 +8,9 @@ import { calStatsProd } from '../../../util/Calculate';
 import APIService from '../../../services/API.service';
 
 import Find from '../../../components/Select/Find/Find';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
+import { SpinnerState } from '../../../store/models/state.model';
 
 export const columnsStats: any = [
   {
@@ -56,7 +57,7 @@ export const columnsStats: any = [
 
 const StatsTable = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [name, setName] = useState('Bulbasaur');
 
   const [searchCP, setSearchCP] = useState('');

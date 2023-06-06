@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import { capitalize } from '../../util/Utils';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { TypeEff } from '../../core/models/typeEff.model';
 
-const Effect = (prop: any) => {
+const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) => {
   const [types, setTypes]: any = useState([]);
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');

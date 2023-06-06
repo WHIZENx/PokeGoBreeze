@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import loadingImg from '../../assets/loading.png';
 
 import './Home.scss';
@@ -24,6 +24,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { hideSpinner } from '../../store/actions/spinner.action';
+import { StoreState, StatsState, SpinnerState } from '../../store/models/state.model';
 
 const VersionProps = {
   PaperProps: {
@@ -36,16 +37,16 @@ const VersionProps = {
 const Home = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
-  const stats = useSelector((state: RootStateOrAny) => state.stats);
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
-  const types = Object.keys(data.typeEff);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
+  const stats = useSelector((state: StatsState) => state.stats);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const types = Object.keys(data?.typeEff ?? []);
   const dataList = useRef(
-    mappingReleasedGO(data.pokemonData, data.details)
+    mappingReleasedGO(data?.pokemonData, data?.details)
       .map((item) => {
         const stats = calculateStatsByTag(item, item.baseStats, item.slug);
-        const assetForm = queryAssetForm(data.assets, item.num, item.name);
+        const assetForm = queryAssetForm(data?.assets ?? [], item.num, item.name);
         return {
           id: item.num,
           name: item.name,
@@ -71,7 +72,7 @@ const Home = () => {
                 ? APIService.getPokemonModel(assetForm.default)
                 : APIService.getPokeFullSprite(
                     item.num,
-                    splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase()), '-', '-')
+                    splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase() ?? ''), '-', '-')
                   ),
             shiny: assetForm && assetForm.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
           },
@@ -483,7 +484,7 @@ const Home = () => {
               types={row.types}
               pokemonStat={row.goStats}
               stats={stats}
-              icon={icon}
+              icon={icon ?? ''}
               releasedGO={row.releasedGO}
             />
           ))}

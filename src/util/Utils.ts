@@ -2,6 +2,9 @@ import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
 import { MAX_IV } from './Constants';
+import { PokemonDataModel } from '../core/models/pokemon.model';
+import { Details } from '../core/models/details.model';
+import { StatsModel } from '../core/models/stats.model';
 
 export const marks = [...Array(MAX_IV + 1).keys()].map((n) => {
   return { value: n, label: n.toString() };
@@ -105,14 +108,14 @@ export const HundoRate = styled(Rating)(() => ({
   },
 }));
 
-export const capitalize = (str: string | undefined) => {
+export const capitalize = (str: string | undefined | null) => {
   if (!str) {
     return '';
   }
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
-export const splitAndCapitalize = (str: string | undefined, splitBy: string, joinBy: string) => {
+export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string) => {
   if (!str) {
     return '';
   }
@@ -129,8 +132,10 @@ export const reversedCapitalize = (str: string, splitBy: string, joinBy: string)
   return str.replaceAll(joinBy, splitBy).toLowerCase();
 };
 
-export const getTime = (value: string, notFull = false) => {
-  return notFull ? Moment(new Date(parseInt(value))).format('D MMMM YYYY') : Moment(new Date(parseInt(value))).format('HH:mm D MMMM YYYY');
+export const getTime = (value: string | number, notFull = false) => {
+  return notFull
+    ? Moment(new Date(parseInt(value.toString()))).format('D MMMM YYYY')
+    : Moment(new Date(parseInt(value.toString()))).format('HH:mm D MMMM YYYY');
 };
 
 export const convertModelSpritName = (text: string) => {
@@ -368,17 +373,17 @@ const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: 
   }
 };
 
-export const checkPokemonGO = (item: { num: any; name: string }, details: any[]) => {
+export const checkPokemonGO = (item: { num: any; name: string }, details: Details[]) => {
   return details.find((pokemon: { name: string; id: number }) => {
     return convertPokemonGO(item, pokemon) ? true : false;
   });
 };
 
-export const mappingReleasedGO = (pokemonData: any[], details: any[]) => {
-  return Object.values(pokemonData)
+export const mappingReleasedGO = (pokemonData?: PokemonDataModel[], details?: Details[]) => {
+  return Object.values(pokemonData ?? [])
     .filter((pokemon) => pokemon.num > 0)
     .map((item) => {
-      const result = checkPokemonGO(item, details);
+      const result = checkPokemonGO(item, details ?? []);
       return {
         ...item,
         releasedGO: item.isForceReleasedGO ?? (result ? result.releasedGO : false),
@@ -502,9 +507,7 @@ export const convertFormNameImg = (id: number, form: string) => {
 };
 
 export const checkRankAllAvailable = (
-  pokemonStats: {
-    [x: string]: { max_rank: number; ranking: any[] };
-  },
+  pokemonStats: StatsModel,
   stats: {
     atk: number;
     def: number;
@@ -513,15 +516,15 @@ export const checkRankAllAvailable = (
   }
 ) => {
   const data = {
-    attackRank: null,
-    defenseRank: null,
-    staminaRank: null,
-    statProdRank: null,
+    attackRank: 0,
+    defenseRank: 0,
+    staminaRank: 0,
+    statProdRank: 0,
   };
-  const checkRankAtk = pokemonStats.attack.ranking.find((item: { [x: string]: any }) => item.attack === stats.atk);
-  const checkRankDef = pokemonStats.defense.ranking.find((item: { [x: string]: any }) => item.defense === stats.def);
-  const checkRankSta = pokemonStats.stamina.ranking.find((item: { [x: string]: any }) => item.stamina === stats.sta);
-  const checkRankProd = pokemonStats.statProd.ranking.find((item: { [x: string]: any }) => item.prod === stats.prod);
+  const checkRankAtk = pokemonStats.attack.ranking.find((item) => item.attack === stats.atk);
+  const checkRankDef = pokemonStats.defense.ranking.find((item) => item.defense === stats.def);
+  const checkRankSta = pokemonStats.stamina.ranking.find((item) => item.stamina === stats.sta);
+  const checkRankProd = pokemonStats.statProd.ranking.find((item) => item.prod === stats.prod);
   if (checkRankAtk) {
     data.attackRank = checkRankAtk.rank;
   }
@@ -608,4 +611,9 @@ export const getCustomThemeDataTable = (theme: Theme) => {
       },
     },
   };
+};
+
+export const getDataWithKey = (data: any, key: string | number) => {
+  const result = Object.entries(data ?? {}).find((k) => k[0] === key.toString());
+  return result ? result[1] : {};
 };

@@ -14,16 +14,17 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
 import Find from '../../../components/Select/Find/Find';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { hideSpinner } from '../../../store/actions/spinner.action';
+import { SpinnerState, StoreState, SearchingState } from '../../../store/models/state.model';
 
 const Calculate = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
-  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? {});
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');

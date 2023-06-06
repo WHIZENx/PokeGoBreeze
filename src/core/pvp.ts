@@ -1,5 +1,5 @@
 import { splitAndCapitalize } from '../util/Utils';
-import { LeaguePVP } from './models/league';
+import { LeaguePVP } from './models/league.model';
 
 const leagueModel = () => {
   return {

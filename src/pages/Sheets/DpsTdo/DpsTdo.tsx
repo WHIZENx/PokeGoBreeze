@@ -27,12 +27,12 @@ import { Link } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setDPSSheetPage } from '../../../store/actions/options.action';
-import { RouterState } from '../../..';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/move.enum';
+import { OptionsSheetState, RouterState, SpinnerState, StoreState } from '../../../store/models/state.model';
 
 const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
   const a = rowA.pokemon.name.toLowerCase();
@@ -184,13 +184,13 @@ const columns: any = [
 
 const DpsTdo = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
-  const optionStore = useSelector((state: RootStateOrAny) => state.options);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
+  const optionStore = useSelector((state: OptionsSheetState) => state.options);
   const router = useSelector((state: RouterState) => state.router);
 
-  const types = Object.keys(data.typeEff);
+  const types = Object.keys(data?.typeEff ?? {});
 
   const [dpsTable, setDpsTable]: any = useState([]);
   const [dataFilter, setDataFilter]: any = useState([]);
@@ -290,8 +290,8 @@ const DpsTdo = () => {
     specialMove: any = null
   ) => {
     movePoke.forEach((vc: any) => {
-      const fmove = data.combat.find((item: { name: any }) => item.name === vf);
-      const cmove = data.combat.find((item: { name: any }) => item.name === vc);
+      const fmove = data?.combat?.find((item) => item.name === vf);
+      const cmove = data?.combat?.find((item) => item.name === vc);
 
       if (fmove && cmove) {
         const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
@@ -315,19 +315,19 @@ const DpsTdo = () => {
             atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
             def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
             hp: calculateStatsBattle(statsDef.sta, IV_HP, POKEMON_LEVEL),
-            fmove: data.combat.find((item: { name: any }) => item.name === fmoveTargetPokemon.name),
-            cmove: data.combat.find((item: { name: any }) => item.name === cmoveTargetPokemon.name),
+            fmove: data?.combat?.find((item) => item.name === fmoveTargetPokemon.name),
+            cmove: data?.combat?.find((item) => item.name === cmoveTargetPokemon.name),
             types: dataTargetPokemon.types,
             WEATHER_BOOSTS: options.WEATHER_BOOSTS,
           };
-          const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-          dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+          const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
+          dps = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
           tdo = dps * TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
         } else {
           dps = calculateAvgDPS(
-            data.options,
-            data.typeEff,
-            data.weatherBoost,
+            data?.options,
+            data?.typeEff,
+            data?.weatherBoost,
             statsAttacker.fmove,
             statsAttacker.cmove,
             statsAttacker.atk,
@@ -337,7 +337,7 @@ const DpsTdo = () => {
             options,
             statsAttacker.shadow
           );
-          tdo = calculateTDO(data.options, statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
+          tdo = calculateTDO(data?.options, statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
         }
         dataList.push({
           pokemon,
@@ -387,16 +387,16 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: any[] = [];
-    Object.values(data.pokemonData).forEach((pokemon: any) => {
-      let combatPoke = data.pokemonCombat.filter(
+    Object.values(data?.pokemonData ?? []).forEach((pokemon: any) => {
+      let combatPoke: any = data?.pokemonCombat?.filter(
         (item: { id: number; baseSpecies: string }) =>
           item.id === pokemon.num &&
           item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
       );
 
-      const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
+      const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
       if (!result) {
-        combatPoke = combatPoke.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies);
+        combatPoke = combatPoke?.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies);
       } else {
         combatPoke = result;
       }
@@ -458,7 +458,7 @@ const DpsTdo = () => {
 
         let boolReleaseGO = true;
         if (releasedGO) {
-          const result = data.details.find((pokemon: { name: string; id: any }) => {
+          const result = data?.details?.find((pokemon: { name: string; id: any }) => {
             if (item.pokemon?.name.toLowerCase().includes('_mega')) {
               return pokemon.id === item.pokemon?.num && pokemon.name === item.pokemon?.name.toUpperCase().replaceAll('-', '_');
             } else {
@@ -928,7 +928,7 @@ const DpsTdo = () => {
                     }
                   >
                     <option value="false">Extream</option>
-                    {Object.keys(data.weatherBoost).map((value, index) => (
+                    {Object.keys(data?.weatherBoost ?? {}).map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
                       </option>
@@ -1001,7 +1001,7 @@ const DpsTdo = () => {
           noDataComponent={null}
           pagination={true}
           defaultSortFieldId={defaultSorted.selectedColumn}
-          defaultSortAsc={defaultSorted.selectedColumn === 'asc'}
+          defaultSortAsc={defaultSorted.sortDirection === 'asc'}
           highlightOnHover={true}
           striped={true}
           paginationDefaultPage={defaultPage}

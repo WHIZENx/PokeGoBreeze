@@ -1,4 +1,5 @@
-import { Candy } from '../core/models/candy';
+import { Asset } from '../core/models/asset.model';
+import { Candy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { convertName, getStyleRuleValue } from './Utils';
 
@@ -114,11 +115,11 @@ export const computeBgType = (types: string[] | string, shadow = false, purified
   return `linear-gradient(to bottom right, ${colorsPalette[0]}, ${colorsPalette[1] ?? colorsPalette[0]})`;
 };
 
-export const queryAssetForm = (pokemonAssets: any[], id: number, name: string) => {
+export const queryAssetForm = (pokemonAssets: Asset[], id: number, name: string) => {
   if (name.split('-')[1] === 'A') {
     name = name.replace('-A', '-Armor');
   }
-  const pokemon = pokemonAssets.find((item: { id: any }) => item.id === id);
+  const pokemon = pokemonAssets?.find((item: { id: any }) => item.id === id);
   if (!pokemon) {
     return null;
   }
@@ -137,8 +138,7 @@ export const queryAssetForm = (pokemonAssets: any[], id: number, name: string) =
         }
         return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN'));
       } else if (name.includes('ZEN')) {
-        return pokemon.image.find((item: { form: string | string[] }) => !item.form.includes('GALARIAN') && item.form.includes('ZEN'))
-          .default;
+        return pokemon.image.find((item: { form: string | string[] }) => !item.form.includes('GALARIAN') && item.form.includes('ZEN'));
       } else {
         return pokemon.image.find((item: { form: string }) => item.form === 'STANDARD');
       }
@@ -156,7 +156,7 @@ export const queryAssetForm = (pokemonAssets: any[], id: number, name: string) =
   }
 };
 
-export const findAssetForm = (pokemonAssets: any[], id: number, name: string) => {
+export const findAssetForm = (pokemonAssets: Asset[], id: number, name: string) => {
   const form = queryAssetForm(pokemonAssets, id, name);
   if (form) {
     return form.default;
@@ -164,7 +164,7 @@ export const findAssetForm = (pokemonAssets: any[], id: number, name: string) =>
   return null;
 };
 
-export const findAssetFormShiny = (pokemonAssets: any[], id: number, name: string) => {
+export const findAssetFormShiny = (pokemonAssets: Asset[], id: number, name: string) => {
   const form = queryAssetForm(pokemonAssets, id, name);
   if (form) {
     return form.shiny;

@@ -10,11 +10,11 @@ export interface Details {
   form: string;
   gender: Gender | null;
   releasedGO: boolean;
-  isTransferable: any;
-  isDeployable: any;
-  isTradable: any;
-  pokemonClass: any;
-  disableTransferToPokemonHome: any;
+  isTransferable: boolean | null;
+  isDeployable: boolean | null;
+  isTradable: boolean | null;
+  pokemonClass: string | null;
+  disableTransferToPokemonHome: boolean | null;
   isBaby: boolean;
   formChange?: object | null;
 }

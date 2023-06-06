@@ -11,7 +11,8 @@ import './Home.scss';
 import { Link } from 'react-router-dom';
 
 import pokemonData from '../../data/pokemon.json';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../store/models/state.model';
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,7 +58,7 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 const Home = () => {
-  const typesData = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
+  const typesData = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
   const types = Object.keys(typesData);
 
   const tableScrollID = useRef(1);

@@ -4,15 +4,10 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
 
 import './Stats.scss';
+import { StatsModel } from '../../../core/models/stats.model';
 
 const Stats = (props: {
-  pokemonStats: {
-    [x: string]: {
-      max_stats: number;
-      max_rank: number;
-      ranking: any[];
-    };
-  };
+  pokemonStats: StatsModel;
   stats?: { stats: any };
   statATK?: {
     attack: number;
