@@ -298,7 +298,7 @@ const DpsTdo = () => {
         const statsAttacker = {
           atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
           def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
-          hp: calculateStatsBattle(stats.sta, IV_HP, POKEMON_LEVEL),
+          hp: calculateStatsBattle(stats?.sta ?? 0, IV_HP, POKEMON_LEVEL),
           fmove,
           cmove,
           types: pokemon.types,
@@ -314,12 +314,17 @@ const DpsTdo = () => {
           const statsDefender = {
             atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
             def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
-            hp: calculateStatsBattle(statsDef.sta, IV_HP, POKEMON_LEVEL),
+            hp: calculateStatsBattle(statsDef?.sta ?? 0, IV_HP, POKEMON_LEVEL),
             fmove: data?.combat?.find((item) => item.name === fmoveTargetPokemon.name),
             cmove: data?.combat?.find((item) => item.name === cmoveTargetPokemon.name),
             types: dataTargetPokemon.types,
             WEATHER_BOOSTS: options.WEATHER_BOOSTS,
           };
+
+          if (!statsDefender) {
+            return;
+          }
+
           const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
           dps = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
           tdo = dps * TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
@@ -353,7 +358,7 @@ const DpsTdo = () => {
             fmove: felite,
             cmove: celite,
           },
-          cp: calculateCP(stats.atk + IV_ATK, stats.def + IV_DEF, stats.sta + IV_HP, POKEMON_LEVEL),
+          cp: calculateCP(stats.atk + IV_ATK, stats.def + IV_DEF, (stats?.sta ?? 0) + IV_HP, POKEMON_LEVEL),
         });
       }
     });

@@ -133,7 +133,7 @@ const FindBattle = () => {
       getEvoChain(id)?.forEach((item: any[]) => {
         const tempArr: { battleLeague: any; maxCP: any; form: any; id: number; name: string }[] = [];
         item.forEach((value: { form: string; id: number; name: string }) => {
-          const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemonData, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemonData ?? [], value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
             setMaxCP(data.maxCP);
           }
@@ -238,11 +238,9 @@ const FindBattle = () => {
 
   const getImageList = (id: any) => {
     const isForm = form.form.form_name === '' ? 'NORMAL' : form.form.form_name.replaceAll('-', '_').toUpperCase();
-    let img = dataStore?.assets
-      ?.find((item: { id: any }) => item.id === id)
-      ?.image.find((item: { form: string | any[] }) => item.form.includes(isForm));
+    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form.includes(isForm));
     if (!img) {
-      img = dataStore?.assets?.find((item: { id: any }) => item.id === id)?.image[0];
+      img = dataStore?.assets?.find((item) => item.id === id)?.image[0];
     }
     try {
       return img?.default;

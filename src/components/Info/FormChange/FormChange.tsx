@@ -15,7 +15,7 @@ const FromChange = ({ details, defaultName }: any) => {
 
   const getImageList = useCallback(
     (id: any) => {
-      const model = data?.assets?.find((item: { id: any }) => item.id === id);
+      const model = data?.assets?.find((item) => item.id === id);
       return model
         ? Array.from(new Set(model.image.map((item: { form: any }) => item.form))).map((value) => {
             return {

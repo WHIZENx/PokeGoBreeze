@@ -83,7 +83,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       data?.options,
       data?.typeEff,
       data?.weatherBoost,
-      data?.combat,
+      data?.combat ?? [],
       result,
       props.statATK,
       props.statDEF,

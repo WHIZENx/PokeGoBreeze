@@ -13,6 +13,7 @@ import { FormControlLabel, Switch, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/move.enum';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SpinnerState } from '../../../store/models/state.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -75,22 +76,19 @@ const columnPokemon: any = [
   },
   {
     name: 'ATK',
-    selector: (row: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) =>
-      calculateStatsByTag(row, row.baseStats, row.slug).atk,
+    selector: (row: PokemonDataModel | undefined) => calculateStatsByTag(row, row?.baseStats, row?.slug).atk,
     sortable: true,
     width: '100px',
   },
   {
     name: 'DEF',
-    selector: (row: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) =>
-      calculateStatsByTag(row, row.baseStats, row.slug).def,
+    selector: (row: PokemonDataModel | undefined) => calculateStatsByTag(row, row?.baseStats, row?.slug).def,
     sortable: true,
     width: '100px',
   },
   {
     name: 'STA',
-    selector: (row: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) =>
-      calculateStatsByTag(row, row.baseStats, row.slug).sta,
+    selector: (row: PokemonDataModel | undefined) => calculateStatsByTag(row, row?.baseStats, row?.slug).sta,
     sortable: true,
     width: '100px',
   },

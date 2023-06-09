@@ -48,7 +48,7 @@ export interface RankingsPVP {
   scores: number[];
   speciesId: string;
   speciesName: string;
-  stats: PokmeonRankingStats;
+  stats: PokemonRankingStats;
 }
 
 interface PokemonVersus {
@@ -61,9 +61,9 @@ interface PokemonRankingMove {
   uses: number | null;
 }
 
-interface PokmeonRankingStats {
-  product: number;
+interface PokemonRankingStats {
+  product?: number;
   atk: number;
   def: number;
-  hp: number;
+  hp?: number;
 }

@@ -23,7 +23,7 @@ import { SpinnerState, StoreState, SearchingState } from '../../../store/models/
 const Calculate = () => {
   const dispatch = useDispatch();
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? {});
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? undefined);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);

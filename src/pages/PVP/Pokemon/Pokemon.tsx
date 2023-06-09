@@ -121,15 +121,15 @@ const PokemonPVP = () => {
         let bestStats: any = storeStats.current;
         if (!bestStats) {
           if (maxCP === 10000) {
-            const cp = calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 50);
-            const buddyCP = calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 51);
+            const cp = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 50);
+            const buddyCP = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 51);
             bestStats = {
               '50': { cp },
               '51': { cp: buddyCP },
             };
           } else {
             const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-            const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
+            const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
             bestStats = allStats[allStats.length - 1];
           }
         }
@@ -143,8 +143,8 @@ const PokemonPVP = () => {
           stats,
           atk: statsRanking.attack.ranking.find((i: { attack: number }) => i.attack === stats.atk),
           def: statsRanking.defense.ranking.find((i: { defense: number }) => i.defense === stats.def),
-          sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === stats.sta),
-          prod: statsRanking.statProd.ranking.find((i: { prod: number }) => i.prod === stats.atk * stats.def * stats.sta),
+          sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === (stats?.sta ?? 0)),
+          prod: statsRanking.statProd.ranking.find((i: { prod: number }) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
           scores: data.scores,
           combatPoke,
           fmove,

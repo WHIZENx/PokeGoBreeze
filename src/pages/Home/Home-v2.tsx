@@ -62,7 +62,7 @@ const Home = () => {
           goStats: {
             atk: stats.atk,
             def: stats.def,
-            sta: stats.sta,
+            sta: stats?.sta ?? 0,
           },
           class: item?.pokemonClass,
           releasedGO: item.releasedGO,

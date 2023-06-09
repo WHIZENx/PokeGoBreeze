@@ -4,14 +4,14 @@ interface Sound {
 
 interface Image {
   gender: number;
-  pokemonId: number;
+  pokemonId?: number;
   form: string;
   default: string;
-  shiny: string;
+  shiny: string | null;
 }
 
 export interface Asset {
-  id: number;
+  id?: number;
   name: string;
   image: Image[];
   sound: Sound;

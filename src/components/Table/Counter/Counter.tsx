@@ -55,7 +55,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
             data?.weatherBoost,
             def,
             form.types,
-            data?.combat,
+            data?.combat ?? [],
             data?.pokemonCombat ?? []
           )
         );

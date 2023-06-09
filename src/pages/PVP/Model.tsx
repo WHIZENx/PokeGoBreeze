@@ -123,15 +123,15 @@ export const OverAllStats = (data: any, statsRanking: StatsModel, cp: any) => {
     const maxCP = parseInt(cp);
 
     if (maxCP === 10000) {
-      const cp = calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 50);
-      const buddyCP = calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 51);
+      const cp = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 50);
+      const buddyCP = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 51);
       return {
         '50': { cp },
         '51': { cp: buddyCP },
       };
     } else {
       const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-      const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, maxCP);
+      const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
       return allStats[allStats.length - 1];
     }
   };

@@ -25,8 +25,9 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -114,7 +115,7 @@ const TeamPVP = () => {
         stats,
         atk: statsRanking.attack.ranking.find((i: { attack: number }) => i.attack === stats.atk),
         def: statsRanking.defense.ranking.find((i: { defense: number }) => i.defense === stats.def),
-        sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === stats.sta),
+        sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === (stats?.sta ?? 0)),
         fmove,
         cmovePri,
         cmoveSec,
@@ -179,21 +180,23 @@ const TeamPVP = () => {
         file.teams = file.teams.map((item) => {
           const teams = item.team.split('|');
           const teamsData: {
-            id: any;
+            id: number;
             name: string;
-            speciesId: any;
-            pokemonData: any;
-            form: any;
-            stats: { atk: number; def: number; sta: number };
-            atk: { id: any; form: string; attack: any; rank: number } | undefined;
-            def: { id: any; form: string; defense: any; rank: number } | undefined;
-            sta: { id: any; form: string; stamina: any; rank: number } | undefined;
-            fmove: any;
-            cmovePri: any;
-            cmoveSec: any;
-            combatPoke: any;
-            shadow: any;
-            purified: any;
+            speciesId: number;
+            pokemonData: PokemonDataModel;
+            form: string | null;
+            stats:
+              | { hp: number; atk: number; def: number; sta?: number | undefined; spa: number; spd: number; spe: number }
+              | { atk: number; def: number; sta: number };
+            atk: { id: number; form: string; attack: number; rank: number } | undefined;
+            def: { id: number; form: string; defense: number; rank: number } | undefined;
+            sta: { id: number; form: string; stamina: number; rank: number } | undefined;
+            fmove: Combat | undefined;
+            cmovePri: Combat | undefined;
+            cmoveSec: Combat | undefined;
+            combatPoke: CombatPokemon;
+            shadow: boolean;
+            purified: boolean;
           }[] = [];
           teams.forEach((value: any) => {
             teamsData.push(mappingPokemonData(value));

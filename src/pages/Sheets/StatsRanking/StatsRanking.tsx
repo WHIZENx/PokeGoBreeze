@@ -14,6 +14,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { SpinnerState, StatsState, StoreState } from '../../../store/models/state.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const columnPokemon: any = [
   {
@@ -122,30 +123,28 @@ const StatsRanking = () => {
   const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: any[]) => {
-    return pokemon.map(
-      (data: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) => {
-        const statsTag = calculateStatsByTag(data, data.baseStats, data.slug);
-        return {
-          ...data,
-          atk: {
-            attack: statsTag.atk,
-            rank: stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank,
-          },
-          def: {
-            defense: statsTag.def,
-            rank: stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank,
-          },
-          sta: {
-            stamina: statsTag.sta,
-            rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank,
-          },
-          statProd: {
-            prod: statsTag.atk * statsTag.def * statsTag.sta,
-            rank: stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * statsTag.sta)?.rank,
-          },
-        };
-      }
-    );
+    return pokemon.map((data: PokemonDataModel | undefined) => {
+      const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
+      return {
+        ...data,
+        atk: {
+          attack: statsTag.atk,
+          rank: stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank,
+        },
+        def: {
+          defense: statsTag.def,
+          rank: stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank,
+        },
+        sta: {
+          stamina: statsTag.sta,
+          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank,
+        },
+        statProd: {
+          prod: statsTag.atk * statsTag.def * (statsTag?.sta ?? 0),
+          rank: stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * (statsTag?.sta ?? 0))?.rank,
+        },
+      };
+    });
   };
 
   const sortRanking = (pokemon: any[], id: number) => {

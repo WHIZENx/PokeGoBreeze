@@ -32,7 +32,7 @@ export interface LeagueReward {
 
 export interface LeagueRewardPokemon {
   guaranteedLimited: boolean;
-  id: number | null;
+  id?: number | null;
   name: string;
   form: string;
 }

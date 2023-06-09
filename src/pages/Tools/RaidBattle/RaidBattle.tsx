@@ -39,6 +39,8 @@ import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { SpinnerState, StoreState, SearchingState } from '../../../store/models/state.model';
+import { PokemonDataModel, PokemonMoveData } from '../../../core/models/pokemon.model';
+import { CombatPokemon } from '../../../core/models/combat.model';
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
@@ -278,52 +280,29 @@ const RaidBattle = () => {
   );
 
   const addCPokeData = (
-    dataList: {
-      pokemon: any;
-      fmove: any;
-      cmove: any;
-      dpsDef: number;
-      dpsAtk: number;
-      tdoAtk: number;
-      tdoDef: number;
-      multiDpsTdo: number;
-      ttkAtk: number;
-      ttkDef: number;
-      attackHpRemain: number;
-      defendHpRemain: number;
-      death: number;
-      shadow: any;
-      purified: any;
-      mShadow: any;
-      elite: { fmove: any; cmove: any };
-    }[],
-    movePoke: any[],
-    value: {
-      baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
-      forme: string | null;
-      slug: string;
-      types: any;
-    },
+    dataList: PokemonMoveData[],
+    movePoke: string[],
+    value: PokemonDataModel | undefined,
     vf: string,
     shadow: boolean,
     purified: boolean,
-    felite: any,
+    felite: boolean,
     celite: boolean,
-    specialMove: string | any[] | null,
+    specialMove: string | string[] | null,
     pokemonTarget: any
   ) => {
-    movePoke.forEach((vc: any) => {
-      const fmove = data?.combat?.find((item: { name: any }) => item.name === vf);
-      const cmove = data?.combat?.find((item: { name: any }) => item.name === vc);
+    movePoke.forEach((vc) => {
+      const fmove = data?.combat?.find((item: { name: string }) => item.name === vf);
+      const cmove = data?.combat?.find((item: { name: string }) => item.name === vc);
       if (fmove && cmove) {
-        const stats = calculateStatsByTag(value, value.baseStats, value.slug);
+        const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
         const statsAttackerTemp = {
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
+          hp: calculateStatsBattle(stats?.sta ?? 0, used.iv.sta, used.level),
           fmove,
           cmove,
-          types: value.types,
+          types: value?.types,
           shadow,
           WEATHER_BOOSTS: weatherCounter,
         };
@@ -338,6 +317,11 @@ const RaidBattle = () => {
         };
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
         statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
+
+        if (!statsAttacker || !statsDefender) {
+          enqueueSnackbar('Something went wrong!', { variant: 'error' });
+          return;
+        }
 
         const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
         const dpsAtk = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
@@ -376,13 +360,13 @@ const RaidBattle = () => {
 
   const addFPokeData = (
     dataList: any,
-    combat: { cinematicMoves: any; shadowMoves: any; purifiedMoves: any; eliteCinematicMoves: any },
-    movePoke: any[],
-    pokemon: any,
+    combat: CombatPokemon,
+    movePoke: string[],
+    pokemon: PokemonDataModel,
     felite: boolean,
     pokemonTarget: boolean
   ) => {
-    movePoke.forEach((vf: any) => {
+    movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
       if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
         if (combat.shadowMoves.length > 0) {
@@ -401,7 +385,7 @@ const RaidBattle = () => {
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: any[] | (() => any[]) = [];
-    Object.values(data?.pokemonData ?? []).forEach((pokemon: any) => {
+    Object.values(data?.pokemonData ?? []).forEach((pokemon) => {
       if (pokemon.forme !== 'Gmax') {
         let combatPoke: any = data?.pokemonCombat?.filter(
           (item: { id: number; baseSpecies: string }) =>
@@ -459,7 +443,7 @@ const RaidBattle = () => {
         baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
         forme: string | null;
         slug: string;
-        types: any;
+        types: string | string[];
       };
     },
     HpRemain: number,
@@ -469,11 +453,15 @@ const RaidBattle = () => {
     const cmove = data?.combat?.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
 
     if (fmove && cmove) {
-      const stats = calculateStatsByTag(pokemon, pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
+      const stats = calculateStatsByTag(
+        pokemon as unknown as PokemonDataModel,
+        pokemon.dataTargetPokemon.baseStats,
+        pokemon.dataTargetPokemon.slug
+      );
       const statsAttacker = {
         atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
         def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-        hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
+        hp: calculateStatsBattle(stats?.sta ?? 0, used.iv.sta, used.level),
         fmove,
         cmove,
         types: pokemon.dataTargetPokemon.types,
@@ -489,6 +477,11 @@ const RaidBattle = () => {
         types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
         WEATHER_BOOSTS: weatherBoss,
       };
+
+      if (!statsDefender) {
+        enqueueSnackbar('Something went wrong!', { variant: 'error' });
+        return;
+      }
 
       const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
       const dpsAtk = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);

@@ -65,7 +65,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
     const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
-    const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
+    const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, league);
 
     let combatPoke: any = pokemonCombat.filter(
       (item: { id: any; baseSpecies: string }) =>

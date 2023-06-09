@@ -1,3 +1,4 @@
+import { Options } from '../core/models/options.model';
 import { getOption } from '../core/options';
 import APIService from '../services/API.service';
 
@@ -88,13 +89,13 @@ export const MAX_LEVEL = 51;
 export const MIN_IV = 0;
 export const MAX_IV = 15;
 
-export const STAB_MULTIPLY = (options: any) => {
+export const STAB_MULTIPLY = (options: Options | undefined) => {
   return getOption(options, ['battle_options', 'stab']);
 };
-export const MULTIPLY_LEVEL_FRIENDSHIP = (options: any, level: number = DEFAULT_POKEMON_FRIEND_LEVEL) => {
+export const MULTIPLY_LEVEL_FRIENDSHIP = (options: Options | undefined, level = DEFAULT_POKEMON_FRIEND_LEVEL) => {
   return getOption(options, ['trainer_friendship', level.toString(), 'atk_bonus']);
 };
-export const MULTIPLY_THROW_CHARGE = (options: any, type: string) => {
+export const MULTIPLY_THROW_CHARGE = (options: Options | undefined, type: string) => {
   return getOption(options, ['throw_charge', type]);
 };
 

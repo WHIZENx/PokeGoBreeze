@@ -12,3 +12,9 @@ export interface Candy {
   secondaryColor: Color;
   familyName: string | null;
 }
+
+export interface CandyModel {
+  FamilyId: number;
+  PrimaryColor: Color;
+  SecondaryColor: Color;
+}

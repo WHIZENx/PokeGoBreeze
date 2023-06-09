@@ -205,7 +205,7 @@ export const convertNameRankingToForm = (text: string) => {
   return text + form;
 };
 
-export const convertNameRankingToOri = (text: string, form: string, local: boolean = false) => {
+export const convertNameRankingToOri = (text: string, form: string, local = false) => {
   const formOri = form;
   if (text.includes('pyroar') || text.includes('frillish') || text.includes('jellicent') || text.includes('urshifu')) {
     return text.split('_')[0];
@@ -265,7 +265,7 @@ export const convertNameRankingToOri = (text: string, form: string, local: boole
   return formOri.includes('(') && formOri.includes(')') && !invalidForm.includes(form) ? text.replaceAll(form.toLowerCase(), '') : text;
 };
 
-export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => {
+export const convertArrStats = (data: PokemonDataModel) => {
   return Object.values(data)
     .filter((pokemon) => pokemon.num > 0)
     .map((value: any) => {
@@ -274,8 +274,8 @@ export const convertArrStats = (data: { [s: string]: any } | ArrayLike<any>) => 
         id: value.num,
         name: value.slug,
         base_stats: value.baseStats,
-        baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats.sta },
-        baseStatsProd: stats.atk * stats.def * stats.sta,
+        baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats?.sta ?? 0 },
+        baseStatsProd: stats.atk * stats.def * (stats?.sta ?? 0),
       };
     });
 };
@@ -314,7 +314,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: any) 
   return null;
 };
 
-export const findMoveTeam = (move: any, moveSet: any) => {
+export const findMoveTeam = (move: any, moveSet: string[]) => {
   move = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
     if (value === 'FUTURESIGHT') {
@@ -373,7 +373,7 @@ const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: 
   }
 };
 
-export const checkPokemonGO = (item: { num: any; name: string }, details: Details[]) => {
+export const checkPokemonGO = (item: { num: number; name: string }, details: Details[]) => {
   return details.find((pokemon: { name: string; id: number }) => {
     return convertPokemonGO(item, pokemon) ? true : false;
   });
@@ -523,7 +523,7 @@ export const checkRankAllAvailable = (
   };
   const checkRankAtk = pokemonStats.attack.ranking.find((item) => item.attack === stats.atk);
   const checkRankDef = pokemonStats.defense.ranking.find((item) => item.defense === stats.def);
-  const checkRankSta = pokemonStats.stamina.ranking.find((item) => item.stamina === stats.sta);
+  const checkRankSta = pokemonStats.stamina.ranking.find((item) => item.stamina === (stats?.sta ?? 0));
   const checkRankProd = pokemonStats.statProd.ranking.find((item) => item.prod === stats.prod);
   if (checkRankAtk) {
     data.attackRank = checkRankAtk.rank;

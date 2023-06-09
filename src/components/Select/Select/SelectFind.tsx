@@ -59,7 +59,7 @@ const SelectFind = (props: {
       props.setStatDEF(stats.def);
     }
     if (props.setStatSTA) {
-      props.setStatSTA(stats.sta);
+      props.setStatSTA(stats?.sta ?? 0);
     }
     if (props.setForm) {
       props.setForm(pokemon);

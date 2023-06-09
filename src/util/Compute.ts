@@ -50,7 +50,7 @@ export const rankIconCenterName = (rank: number) => {
   }
 };
 
-export const raidEgg = (tier: number, mega: any, primal: any, ultra?: boolean) => {
+export const raidEgg = (tier: number, mega: boolean, primal: boolean, ultra?: boolean) => {
   if (tier === 1) {
     return APIService.getRaidSprite('raid_egg_0_icon');
   } else if (tier === 3) {
@@ -119,28 +119,28 @@ export const queryAssetForm = (pokemonAssets: Asset[], id: number, name: string)
   if (name.split('-')[1] === 'A') {
     name = name.replace('-A', '-Armor');
   }
-  const pokemon = pokemonAssets?.find((item: { id: any }) => item.id === id);
+  const pokemon = pokemonAssets?.find((item) => item.id === id);
   if (!pokemon) {
     return null;
   }
-  const standard = pokemon.image.filter((item: { form: string | string[] }) => item.form.includes('STANDARD'));
+  const standard = pokemon.image.filter((item) => item.form.includes('STANDARD'));
   name = convertName(name);
 
   if (pokemon.name === name || standard.length > 0) {
-    const image = pokemon.image.find((item: { form: string }) => item.form === 'NORMAL');
+    const image = pokemon.image.find((item) => item.form === 'NORMAL');
     if (image) {
       return image;
     }
     if (standard.length > 0) {
       if (name.includes('GALARIAN')) {
         if (name.includes('ZEN')) {
-          return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN_ZEN'));
+          return pokemon.image.find((item) => item.form.includes('GALARIAN_ZEN'));
         }
-        return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN'));
+        return pokemon.image.find((item) => item.form.includes('GALARIAN'));
       } else if (name.includes('ZEN')) {
-        return pokemon.image.find((item: { form: string | string[] }) => !item.form.includes('GALARIAN') && item.form.includes('ZEN'));
+        return pokemon.image.find((item) => !item.form.includes('GALARIAN') && item.form.includes('ZEN'));
       } else {
-        return pokemon.image.find((item: { form: string }) => item.form === 'STANDARD');
+        return pokemon.image.find((item) => item.form === 'STANDARD');
       }
     }
     try {
@@ -150,7 +150,7 @@ export const queryAssetForm = (pokemonAssets: Asset[], id: number, name: string)
     }
   }
   try {
-    return pokemon.image.find((item: { form: any }) => name.replaceAll(pokemon.name + '_', '') === item.form);
+    return pokemon.image.find((item) => name.replaceAll(pokemon.name + '_', '') === item.form);
   } catch {
     return null;
   }

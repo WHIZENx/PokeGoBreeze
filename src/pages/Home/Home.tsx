@@ -64,45 +64,26 @@ const Home = () => {
   const tableScrollID = useRef(1);
   const dataList = useRef(
     Object.values(pokemonData)
-      .filter((pokemon: any) => pokemon.num > 0)
-      .map(
-        (item: {
-          baseStats: {
-            hp: number;
-            atk: number;
-            def: number;
-            spa: number;
-            spd: number;
-            spe: number;
-          };
-          forme: string | null;
-          slug: string;
-          num: any;
-          name: any;
-          types: any;
-          color: string;
-          sprite: string;
-          baseSpecies: any;
-        }) => {
-          const stats = calculateStatsByTag(item, item.baseStats, item.slug);
-          return {
-            id: item.num,
-            name: item.name,
-            forme: item.forme,
-            types: item.types,
-            color: item.color.toLowerCase(),
-            sprite: item.sprite.toLowerCase(),
-            baseSpecies: item.baseSpecies,
-            baseStats: item.baseStats,
-            atk: stats.atk,
-            def: stats.def,
-            sta: stats.sta,
-            minCP: calculateCP(stats.atk, stats.def, stats.sta, 1),
-            maxCP_40: calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 40),
-            maxCP_50: calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 50),
-          };
-        }
-      )
+      .filter((pokemon) => pokemon.num > 0)
+      .map((item) => {
+        const stats = calculateStatsByTag(item, item.baseStats, item.slug);
+        return {
+          id: item.num,
+          name: item.name,
+          forme: item.forme,
+          types: item.types,
+          color: item.color.toLowerCase(),
+          sprite: item.sprite.toLowerCase(),
+          baseSpecies: item.baseSpecies,
+          baseStats: item.baseStats,
+          atk: stats.atk,
+          def: stats.def,
+          sta: stats?.sta ?? 0,
+          minCP: calculateCP(stats.atk, stats.def, stats?.sta ?? 0, 1),
+          maxCP_40: calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 40),
+          maxCP_50: calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 50),
+        };
+      })
       .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
   );
   const dataListFilter: any = useRef(null);

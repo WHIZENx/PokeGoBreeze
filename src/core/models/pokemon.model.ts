@@ -3,9 +3,23 @@ interface EvolutionBranch {
   candyCost: number;
   form: string;
   obPurificationEvolutionCandyCost: number;
+  genderRequirement: number;
+  kmBuddyDistanceRequirement: number;
+  mustBeBuddy: boolean;
+  onlyDaytime: boolean;
+  onlyNighttime: boolean;
+  lureItemRequirement: string;
+  evolutionItemRequirement: string;
+  onlyUpsideDown: boolean;
+  questDisplay: any;
+  temporaryEvolution: string;
+  temporaryEvolutionEnergyCost: number;
+  temporaryEvolutionEnergyCostSubsequent: number;
 }
 
 export interface PokemonModel {
+  eliteQuickMove?: string[];
+  eliteCinematicMove?: string[];
   form?: string | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: any;
@@ -97,6 +111,7 @@ export interface PokemonDataModel {
     hp: number;
     atk: number;
     def: number;
+    sta?: number;
     spa: number;
     spd: number;
     spe: number;
@@ -117,26 +132,47 @@ export interface PokemonDataModel {
   otherFormesSprites: string[];
   formeOrder: string[];
   prevo: string | null;
-  canGigantamax: boolean;
+  canGigantamax: boolean | null | string;
   baseSpecies: string | null;
   forme: string | null;
   changesFrom: string | null;
   cannotDynamax: boolean;
   releasedGO: boolean;
-  isTransferable: boolean;
-  isDeployable: boolean;
-  isTradable: boolean;
+  isTransferable?: boolean | null;
+  isDeployable: boolean | null;
+  isTradable: boolean | null;
   pokemonClass: string | null;
-  disableTransferToPokemonHome: boolean;
+  disableTransferToPokemonHome: boolean | null;
   isBaby: boolean;
   gen: number;
   region: string | null;
   version: string | null;
   isForceReleasedGO?: boolean;
+  baseStatsGO?: boolean;
 }
 
 export interface PokemonNameModel {
   index: number;
   id: number;
   name: string;
+}
+
+export interface PokemonMoveData {
+  pokemon: any;
+  fmove: any;
+  cmove: any;
+  dpsDef: number;
+  dpsAtk: number;
+  tdoAtk: number;
+  tdoDef: number;
+  multiDpsTdo: number;
+  ttkAtk: number;
+  ttkDef: number;
+  attackHpRemain: number;
+  defendHpRemain: number;
+  death: number;
+  shadow: any;
+  purified: any;
+  mShadow: any;
+  elite: { fmove: any; cmove: any };
 }

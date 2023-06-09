@@ -1096,7 +1096,7 @@ const Battle = () => {
 
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
-      const statsSTA = calculateStatsBattle(statsBattle.sta, sta, level);
+      const statsSTA = calculateStatsBattle(statsBattle?.sta ?? 0, sta, level);
       stats = {
         IV: { atk, def, sta },
         CP: cp,

@@ -21,9 +21,9 @@ const PokemonModel = (props: { id: any; name: string }) => {
 
   const getImageList = useCallback(
     (id: any) => {
-      const model = data?.assets?.find((item: { id: any }) => item.id === id);
-      sound.current = data?.assets?.find((item: { id: any }) => item.id === id);
-      const detail = data?.details?.find((item: { id: any }) => item.id === id);
+      const model = data?.assets?.find((item) => item.id === id);
+      sound.current = data?.assets?.find((item) => item.id === id);
+      const detail = data?.details?.find((item) => item.id === id);
       gender.current = detail ? detail.gender : null;
       return model
         ? Array.from(new Set(model.image.map((item: { form: any }) => item.form))).map((value) => {

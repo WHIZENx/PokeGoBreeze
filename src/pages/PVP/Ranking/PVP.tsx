@@ -108,7 +108,7 @@ const RankingPVP = () => {
         }
         file = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon: any) => pokemon.slug === name);
+          const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
           const id = pokemon.num;
           const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
 
@@ -173,8 +173,8 @@ const RankingPVP = () => {
             stats,
             atk: statsRanking.attack.ranking.find((i: { attack: number }) => i.attack === stats.atk),
             def: statsRanking.defense.ranking.find((i: { defense: number }) => i.defense === stats.def),
-            sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === stats.sta),
-            prod: statsRanking.statProd.ranking.find((i: { prod: number }) => i.prod === stats.atk * stats.def * stats.sta),
+            sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === (stats?.sta ?? 0)),
+            prod: statsRanking.statProd.ranking.find((i: { prod: number }) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
             fmove,
             cmovePri,
             cmoveSec,

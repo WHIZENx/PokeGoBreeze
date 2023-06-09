@@ -25,6 +25,8 @@ import APIService from '../../services/API.service';
 import { Dispatch } from 'redux';
 import { loadStats } from './stats.action';
 import { APIUrl } from '../../services/constants';
+import { PokemonDataModel, PokemonModel } from '../../core/models/pokemon.model';
+import { CombatPokemon } from '../../core/models/combat.model';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -150,7 +152,7 @@ export const loadGameMaster = (
 ) => {
   APIService.getFetchUrl(APIUrl.GAMEMASTER, {
     cancelToken: APIService.getAxios().CancelToken.source().token,
-  }).then((gm: { data: any }) => {
+  }).then((gm) => {
     const pokemon = optionPokemon(gm.data);
     const pokemonData = optionPokemonData(pokemon);
     const pokemonFamily = optionPokemonFamily(pokemon);
@@ -264,11 +266,11 @@ export const loadAssets = (
   dispatch: Dispatch,
   imageRoot: { data: { commit: { tree: { url: string } } }[] },
   data: any,
-  pokemon: any[],
-  pokemonFamily: any[],
-  pokemonData: any[],
+  pokemon: PokemonModel[],
+  pokemonFamily: string[],
+  pokemonData: PokemonDataModel[],
   formSpecial: string[],
-  pokemonCombat: any[],
+  pokemonCombat: CombatPokemon[],
   noneForm: string[],
   setStateImage: any
 ) => {

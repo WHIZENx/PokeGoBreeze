@@ -1,4 +1,9 @@
 import { PRIMAL_STATS } from '../core/forms';
+import { Combat, CombatPokemon } from '../core/models/combat.model';
+import { Options } from '../core/models/options.model';
+import { PokemonDataModel } from '../core/models/pokemon.model';
+import { TypeEff } from '../core/models/typeEff.model';
+import { WeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
 import { TypeMove } from '../enums/move.enum';
 import {
@@ -24,15 +29,15 @@ import {
 } from './Constants';
 import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm } from './Utils';
 
-const weatherMultiple = (globalOptions: any, weatherBoost: any, weather: string, type: string) => {
-  return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: any) => item === type.toUpperCase().replaceAll(' ', '_'))
+const weatherMultiple = (globalOptions: Options | undefined, weatherBoost: any, weather: string, type: string) => {
+  return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: string) => item === type.toUpperCase().replaceAll(' ', '_'))
     ? STAB_MULTIPLY(globalOptions)
     : 1;
 };
 
-export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj: any[]) => {
+export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj: any) => {
   let valueEffective = 1;
-  typesObj.forEach((type: { type: { name: string }; toUpperCase: () => any }) => {
+  typesObj.forEach((type: any) => {
     try {
       valueEffective *= typeEffective[typeMove.toUpperCase()][type.type.name.toUpperCase()];
     } catch {
@@ -58,7 +63,7 @@ export const calBaseATK = (stats: any, nerf: boolean) => {
   if (!nerf) {
     return baseATK;
   }
-  if (calculateCP(baseATK + 15, calBaseDEF(stats, false) + 15, calBaseSTA(stats, false) + 15, 40) >= 4000) {
+  if (calculateCP(baseATK + MAX_IV, calBaseDEF(stats, false) + MAX_IV, calBaseSTA(stats, false) + MAX_IV, 40) >= 4000) {
     return Math.round(scaleATK * speedMod * 0.91);
   } else {
     return baseATK;
@@ -80,7 +85,7 @@ export const calBaseDEF = (stats: any, nerf: boolean) => {
   if (!nerf) {
     return baseDEF;
   }
-  if (calculateCP(calBaseATK(stats, false) + 15, baseDEF + 15, calBaseSTA(stats, false) + 15, 40) >= 4000) {
+  if (calculateCP(calBaseATK(stats, false) + MAX_IV, baseDEF + MAX_IV, calBaseSTA(stats, false) + MAX_IV, 40) >= 4000) {
     return Math.round(scaleDEF * speedMod * 0.91);
   } else {
     return baseDEF;
@@ -94,7 +99,7 @@ export const calBaseSTA = (stats: any, nerf: boolean) => {
   if (!nerf) {
     return baseSTA;
   }
-  if (calculateCP(calBaseATK(stats, false) + 15, calBaseDEF(stats, false) + 15, baseSTA + 15, 40) >= 4000) {
+  if (calculateCP(calBaseATK(stats, false) + MAX_IV, calBaseDEF(stats, false) + MAX_IV, baseSTA + MAX_IV, 40) >= 4000) {
     return Math.round((hp * 1.75 + 50) * 0.91);
   } else {
     return baseSTA;
@@ -229,7 +234,10 @@ export const sortStatsPokemon = (stats: any[]) => {
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) => {
   return Math.floor(
-    Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * (data as any).find((item: any) => item.level === level).multiplier ** 2) / 10)
+    Math.max(
+      10,
+      (atk * def ** 0.5 * sta ** 0.5 * (data as any).find((item: { level: number }) => item.level === level).multiplier ** 2) / 10
+    )
   );
 };
 
@@ -263,8 +271,8 @@ export const calculateCatchChance = (baseCaptureRate: number, level: number, mul
   );
 };
 
-export const predictStat = (atk: number, def: number, sta: number, cp: any) => {
-  cp = parseInt(cp);
+export const predictStat = (atk: number, def: number, sta: number, cp: number | string) => {
+  cp = parseInt(cp.toString());
   const dataStat: any = {};
   let minLevel = 1;
   let maxLevel = 1;
@@ -296,7 +304,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: any) => {
               sta: k,
               level: l,
               percent: parseFloat((((i + j + k) * 100) / 45).toFixed(2)),
-              hp: Math.min(1, Math.floor((sta + k) * (data as any).find((item: any) => item.level === l).multiplier)),
+              hp: Math.min(1, Math.floor((sta + k) * (data as any).find((item: { level: number }) => item.level === l).multiplier)),
             });
           }
         }
@@ -307,10 +315,17 @@ export const predictStat = (atk: number, def: number, sta: number, cp: any) => {
   return dataStat;
 };
 
-export const predictCPList = (atk: number, def: number, sta: number, IVatk: any, IVdef: any, IVsta: any) => {
-  IVatk = parseInt(IVatk);
-  IVdef = parseInt(IVdef);
-  IVsta = parseInt(IVsta);
+export const predictCPList = (
+  atk: number,
+  def: number,
+  sta: number,
+  IVatk: number | string,
+  IVdef: number | string,
+  IVsta: number | string
+) => {
+  IVatk = parseInt(IVatk.toString());
+  IVdef = parseInt(IVdef.toString());
+  IVsta = parseInt(IVsta.toString());
 
   const dataStat: any = {};
   dataStat.IV = { atk: IVatk, def: IVdef, sta: IVsta };
@@ -320,15 +335,15 @@ export const predictCPList = (atk: number, def: number, sta: number, IVatk: any,
     predictArr.push({
       level: i,
       cp: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i),
-      hp: Math.min(1, Math.floor((sta + IVsta) * (data as any).find((item: any) => item.level === i).multiplier)),
+      hp: Math.min(1, Math.floor((sta + IVsta) * (data as any).find((item: { level: number }) => item.level === i).multiplier)),
     });
   }
   dataStat.result = predictArr;
   return dataStat;
 };
 
-export const calculateStats = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, cp: any) => {
-  cp = parseInt(cp);
+export const calculateStats = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, cp: number | string) => {
+  cp = parseInt(cp.toString());
 
   const dataStat: any = {};
   dataStat.IV = { atk: IVatk, def: IVdef, sta: IVsta };
@@ -344,10 +359,10 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
   return dataStat;
 };
 
-export const calculateStatsBattle = (base: number, iv: number, level: number, floor: any = false, addition: any = false) => {
-  let result: number = (base + iv) * (data as any).find((item: any) => item.level === level).multiplier;
+export const calculateStatsBattle = (base: number, iv: number, level: number, floor = false, addition = false) => {
+  let result: number = (base + iv) * (data as any).find((item: { level: number }) => item.level === level).multiplier;
   if (addition) {
-    result *= addition;
+    result *= +addition;
   }
   if (floor) {
     return Math.floor(result);
@@ -356,7 +371,7 @@ export const calculateStatsBattle = (base: number, iv: number, level: number, fl
 };
 
 export const calculateBetweenLevel = (
-  globalOptions: any,
+  globalOptions: Options | undefined,
   atk: number,
   def: number,
   sta: number,
@@ -365,7 +380,7 @@ export const calculateBetweenLevel = (
   IVsta: number,
   fromLV: number,
   toLV: number,
-  type: any = ''
+  type: string = ''
 ) => {
   // from_lv -= 0.5;
   toLV -= 0.5;
@@ -437,14 +452,14 @@ export const calculateBetweenLevel = (
 };
 
 export const calculateBattleLeague = (
-  globalOptions: any,
+  globalOptions: Options | undefined,
   atk: number,
   def: number,
   sta: number,
   IVatk: number,
   IVdef: number,
   IVsta: number,
-  fromLV: any,
+  fromLV: number,
   currCP: number,
   maxCp: number | null,
   type: string
@@ -504,16 +519,16 @@ export const findCPforLeague = (
   atk: number,
   def: number,
   sta: number,
-  IVatk: any,
-  IVdef: any,
-  IVsta: any,
-  level: any,
-  maxCPLeague: any
+  IVatk: number,
+  IVdef: number,
+  IVsta: number,
+  level: number,
+  maxCPLeague: number | null
 ) => {
   let cp = 10;
   let l = level;
   for (let i = level; i <= MAX_LEVEL; i += 0.5) {
-    if (calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i) > maxCPLeague && maxCPLeague !== null) {
+    if (maxCPLeague !== null && calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i) > maxCPLeague) {
       break;
     }
     cp = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i);
@@ -575,11 +590,11 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
 };
 
 export const calculateStatsByTag = (
-  pokemon: any,
-  baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number },
-  tag: string | null
+  pokemon: PokemonDataModel | undefined,
+  baseStats: { hp: number; atk: number; def: number; sta?: number; spa: number; spd: number; spe: number } | undefined,
+  tag: string | null | undefined
 ) => {
-  if (pokemon.baseStatsGO) {
+  if (pokemon?.baseStatsGO) {
     return pokemon.baseStats;
   }
   const checkNerf = tag && tag.toLowerCase().includes('mega') ? false : true;
@@ -595,22 +610,22 @@ export const calculateStatsByTag = (
 };
 
 export const calculateDamagePVE = (
-  globalOptions: any,
+  globalOptions: Options | undefined,
   atk: number,
   defObj: number,
   power: number,
   eff: {
-    stab: any;
-    wb: any;
-    dodge?: any;
-    mega?: any;
-    trainer?: any;
-    flevel?: any;
-    clevel?: any;
-    effective: any;
+    stab: boolean;
+    wb: boolean;
+    dodge?: boolean;
+    mega?: boolean;
+    trainer?: boolean;
+    flevel?: number;
+    clevel?: number;
+    effective: number;
   },
-  notPure?: boolean | undefined,
-  stab?: any
+  notPure?: boolean,
+  stab?: boolean
 ) => {
   const StabMultiply = STAB_MULTIPLY(globalOptions);
   let modifier;
@@ -654,17 +669,28 @@ export const getBarCharge = (isRaid: boolean, energy: number) => {
 };
 
 export const calculateAvgDPS = (
-  globalOptions: any,
-  typeEff: any,
-  weatherBoost: any,
-  fmove: any,
-  cmove: any,
+  globalOptions: Options | undefined,
+  typeEff: TypeEff | undefined,
+  weatherBoost: WeatherBoost | undefined,
+  fmove: Combat,
+  cmove: Combat,
   Atk: number,
   Def: number,
   HP: number,
   typePoke: string | string[],
-  options: any = null,
-  shadow: any = null
+  options: {
+    delay?: { ftime: number; ctime: number };
+    POKEMON_DEF_OBJ: number;
+    IV_ATK?: number;
+    IV_DEF?: number;
+    IV_HP?: number;
+    POKEMON_LEVEL?: number;
+    objTypes?: string | string[];
+    WEATHER_BOOSTS?: number;
+    TRAINER_FRIEND?: number;
+    specific?: { FDmgenemy: number; CDmgenemy: number };
+  } | null = null,
+  shadow = null
 ) => {
   const StabMultiply = STAB_MULTIPLY(globalOptions),
     ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
@@ -775,7 +801,7 @@ export const calculateAvgDPS = (
   return Math.max(FDPS, DPS);
 };
 
-export const calculateTDO = (globalOptions: any, Def: number, HP: number, dps: number, shadow: any = null) => {
+export const calculateTDO = (globalOptions: Options | undefined, Def: number, HP: number, dps: number, shadow = null) => {
   const ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
   let y;
@@ -788,18 +814,18 @@ export const calculateTDO = (globalOptions: any, Def: number, HP: number, dps: n
 };
 
 export const calculateBattleDPSDefender = (
-  globalOptions: any,
-  typeEff: any,
-  weatherBoost: any,
+  globalOptions: Options | undefined | undefined,
+  typeEff: TypeEff | undefined,
+  weatherBoost: WeatherBoost | undefined,
   Attacker: {
     atk?: number;
     def: number;
     hp?: number;
-    fmove?: any;
-    cmove?: any;
-    types: any;
-    shadow?: any;
-    WEATHER_BOOSTS?: boolean;
+    fmove?: Combat;
+    cmove?: Combat;
+    types: string | string[];
+    shadow?: boolean;
+    WEATHER_BOOSTS?: string | boolean;
     POKEMON_FRIEND?: boolean;
     POKEMON_FRIEND_LEVEL?: number;
   },
@@ -807,34 +833,34 @@ export const calculateBattleDPSDefender = (
     atk: number;
     def?: number;
     hp?: number;
-    fmove: any;
-    cmove: any;
-    types: any;
-    WEATHER_BOOSTS: any;
-    shadow?: any;
+    fmove: Combat | undefined;
+    cmove: Combat | undefined;
+    types: string | string[];
+    WEATHER_BOOSTS: string | boolean;
+    shadow?: boolean;
   }
 ) => {
   const StabMultiply = STAB_MULTIPLY(globalOptions),
     ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
     ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
-  const FPowDef = Defender.fmove.pve_power;
-  const CPowDef = Defender.cmove.pve_power;
-  const CEDef = Math.abs(Defender.cmove.pve_energy);
-  const FDurDef = Defender.fmove.durationMs / 1000;
-  const CDurDef = Defender.cmove.durationMs / 1000;
-  const FTYPEDef = capitalize(Defender.fmove.type);
-  const CTYPEDef = capitalize(Defender.cmove.type);
+  const FPowDef = Defender.fmove?.pve_power;
+  const CPowDef = Defender.cmove?.pve_power;
+  const CEDef = Math.abs(Defender.cmove?.pve_energy ?? 0);
+  const FDurDef = (Defender.fmove?.durationMs ?? 0) / 1000;
+  const CDurDef = (Defender.cmove?.durationMs ?? 0) / 1000;
+  const FTYPEDef = capitalize(Defender.fmove?.type);
+  const CTYPEDef = capitalize(Defender.cmove?.type);
 
-  const FMultiDef = (Defender.types.includes(FTYPEDef) ? StabMultiply : 1) * Defender.fmove.accuracyChance;
-  const CMultiDef = (Defender.types.includes(CTYPEDef) ? StabMultiply : 1) * Defender.cmove.accuracyChance;
+  const FMultiDef = (Defender.types.includes(FTYPEDef) ? StabMultiply : 1) * (Defender.fmove?.accuracyChance ?? 0);
+  const CMultiDef = (Defender.types.includes(CTYPEDef) ? StabMultiply : 1) * (Defender.cmove?.accuracyChance ?? 0);
 
   const lambdaMod = (CEDef / 100) * 3;
   const defDuration = lambdaMod * (FDurDef + DEFAULT_ENEMY_ATK_DELAY) + (CDurDef + DEFAULT_ENEMY_ATK_DELAY);
 
   const FDmgBaseDef =
     DEFAULT_DAMAGE_MULTIPLY *
-    FPowDef *
+    (FPowDef ?? 0) *
     FMultiDef *
     (Defender.shadow ? ShadowAtkBonus : 1) *
     (typeof Defender.WEATHER_BOOSTS === 'string'
@@ -844,7 +870,7 @@ export const calculateBattleDPSDefender = (
       : 1);
   const CDmgBaseDef =
     DEFAULT_DAMAGE_MULTIPLY *
-    CPowDef *
+    (CPowDef ?? 0) *
     CMultiDef *
     (Defender.shadow ? ShadowAtkBonus : 1) *
     (typeof Defender.WEATHER_BOOSTS === 'string'
@@ -869,32 +895,32 @@ export const calculateBattleDPSDefender = (
 };
 
 export const calculateBattleDPS = (
-  globalOptions: any,
-  typeEff: any,
-  weatherBoost: any,
+  globalOptions: Options | undefined,
+  typeEff: TypeEff | undefined,
+  weatherBoost: WeatherBoost | undefined,
   Attacker: {
-    atk: any;
+    atk: number;
     def?: number;
-    hp: any;
-    fmove: any;
-    cmove: any;
-    types: any;
-    shadow?: any;
-    WEATHER_BOOSTS: any;
-    POKEMON_FRIEND?: any;
-    POKEMON_FRIEND_LEVEL?: any;
-    isDoubleCharge?: any;
-    cmove2?: any;
+    hp: number;
+    fmove: Combat | undefined;
+    cmove: Combat | undefined;
+    types: string | string[];
+    shadow?: boolean;
+    WEATHER_BOOSTS?: string | boolean;
+    POKEMON_FRIEND?: boolean;
+    POKEMON_FRIEND_LEVEL?: number;
+    isDoubleCharge?: boolean;
+    cmove2?: Combat;
   },
   Defender: {
     atk?: number;
-    def: any;
+    def: number;
     hp?: number;
-    fmove?: any;
-    cmove?: any;
-    types: any;
-    WEATHER_BOOSTS?: boolean;
-    shadow?: any;
+    fmove?: Combat | undefined;
+    cmove?: Combat | undefined;
+    types: string | string[];
+    WEATHER_BOOSTS?: string | boolean;
+    shadow?: boolean;
   },
   DPSDef: number
 ) => {
@@ -902,22 +928,22 @@ export const calculateBattleDPS = (
     ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
     ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
-  const FPow = Attacker.fmove.pve_power;
-  const CPow = Attacker.cmove.pve_power;
-  const FE = Math.abs(Attacker.fmove.pve_energy);
-  const CE = Math.abs(Attacker.cmove.pve_energy);
-  const FDur = Attacker.fmove.durationMs / 1000;
-  const CDur = Attacker.cmove.durationMs / 1000;
-  const FTYPE = capitalize(Attacker.fmove.type.toLowerCase());
-  const CTYPE = capitalize(Attacker.cmove.type.toLowerCase());
-  const CDWS = Attacker.cmove.damageWindowStartMs / 1000;
+  const FPow = Attacker.fmove?.pve_power;
+  const CPow = Attacker.cmove?.pve_power;
+  const FE = Math.abs(Attacker.fmove?.pve_energy ?? 0);
+  const CE = Math.abs(Attacker.cmove?.pve_energy ?? 0);
+  const FDur = (Attacker.fmove?.durationMs ?? 0) / 1000;
+  const CDur = (Attacker.cmove?.durationMs ?? 0) / 1000;
+  const FTYPE = capitalize(Attacker.fmove?.type?.toLowerCase());
+  const CTYPE = capitalize(Attacker.cmove?.type?.toLowerCase());
+  const CDWS = (Attacker.cmove?.damageWindowStartMs ?? 0) / 1000;
 
-  const FMulti = (Attacker.types.includes(FTYPE) ? StabMultiply : 1) * Attacker.fmove.accuracyChance;
-  const CMulti = (Attacker.types.includes(CTYPE) ? StabMultiply : 1) * Attacker.cmove.accuracyChance;
+  const FMulti = (Attacker.types.includes(FTYPE) ? StabMultiply : 1) * (Attacker.fmove?.accuracyChance ?? 0);
+  const CMulti = (Attacker.types.includes(CTYPE) ? StabMultiply : 1) * (Attacker.cmove?.accuracyChance ?? 0);
 
   const FDmgBase =
     DEFAULT_DAMAGE_MULTIPLY *
-    FPow *
+    (FPow ?? 0) *
     FMulti *
     (Attacker.shadow ? ShadowAtkBonus : 1) *
     (typeof Attacker.WEATHER_BOOSTS === 'string'
@@ -928,7 +954,7 @@ export const calculateBattleDPS = (
     (Attacker.POKEMON_FRIEND ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, Attacker.POKEMON_FRIEND_LEVEL) : 1);
   const CDmgBase =
     DEFAULT_DAMAGE_MULTIPLY *
-    CPow *
+    (CPow ?? 0) *
     CMulti *
     (Attacker.shadow ? ShadowAtkBonus : 1) *
     (typeof Attacker.WEATHER_BOOSTS === 'string'
@@ -969,17 +995,17 @@ export const calculateBattleDPS = (
   let DPSSec = 0;
   if (Attacker.isDoubleCharge) {
     const moveSec = Attacker.cmove2;
-    const CPowSec = moveSec.pve_power;
-    const CESec = Math.abs(moveSec.pve_energy);
-    const CTYPESec = capitalize(moveSec.type);
-    const CDurSec = moveSec.durationMs / 1000;
-    const CDWSSec = moveSec.damageWindowStartMs / 1000;
+    const CPowSec = moveSec?.pve_power;
+    const CESec = Math.abs(moveSec?.pve_energy ?? 0);
+    const CTYPESec = capitalize(moveSec?.type);
+    const CDurSec = (moveSec?.durationMs ?? 0) / 1000;
+    const CDWSSec = (moveSec?.damageWindowStartMs ?? 0) / 1000;
 
-    const CMultiSec = (Attacker.types.includes(CTYPESec) ? StabMultiply : 1) * moveSec.accuracyChance;
+    const CMultiSec = (Attacker.types.includes(CTYPESec) ? StabMultiply : 1) * (moveSec?.accuracyChance ?? 0);
 
     const CDmgBaseSec =
       DEFAULT_DAMAGE_MULTIPLY *
-      CPowSec *
+      (CPowSec ?? 0) *
       CMultiSec *
       (Attacker.shadow ? ShadowAtkBonus : 1) *
       (typeof Attacker.WEATHER_BOOSTS === 'string'
@@ -1017,123 +1043,114 @@ export const TimeToKill = (HP: number, dpsDef: number) => {
 };
 
 export const queryTopMove = (
-  globalOptions: any,
-  pokemonList: any,
-  typeEff: any,
-  weatherBoost: any,
-  pokemonCombatList: any[],
-  move: any
+  globalOptions: Options | undefined,
+  pokemonList: PokemonDataModel[] | undefined,
+  typeEff: TypeEff | undefined,
+  weatherBoost: WeatherBoost | undefined,
+  pokemonCombatList: CombatPokemon[],
+  move: Combat
 ) => {
   const dataPri: {
     num: number;
     forme: string | null;
-    name: any;
+    name: string;
     baseSpecies: string | null;
     sprite: string;
     releasedGO: boolean;
     dps: number;
     tdo: number;
   }[] = [];
-  pokemonList.forEach(
-    (value: {
-      num: number;
-      baseSpecies: string | null;
-      name: string;
-      baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
-      slug: string | null;
-      types: string | string[];
-      forme: any;
-      sprite: any;
-      releasedGO: any;
-    }) => {
-      if (move.track === 281) {
-        move.name = 'HIDDEN_POWER';
-      }
-      let combatPoke: any = pokemonCombatList.filter(
-        (item: { id: number; baseSpecies: any }) =>
-          item.id === value.num && item.baseSpecies === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
-      );
-      const result = combatPoke.find((item: { name: any }) => item.name === convertName(value.name));
-      if (result === undefined) {
-        combatPoke = combatPoke[0];
-      } else {
-        combatPoke = result;
-      }
-      if (combatPoke !== undefined) {
-        let pokemonList;
-        if (move.type_move === TypeMove.FAST) {
-          pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
-          if (!pokemonList) {
-            pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
-          }
-        } else if (move.type_move === TypeMove.CHARGE) {
-          pokemonList = combatPoke.cinematicMoves.includes(move.name);
-          if (!pokemonList) {
-            pokemonList = combatPoke.shadowMoves.includes(move.name);
-          }
-          if (!pokemonList) {
-            pokemonList = combatPoke.purifiedMoves.includes(move.name);
-          }
-          if (!pokemonList) {
-            pokemonList = combatPoke.eliteCinematicMoves.includes(move.name);
-          }
+  pokemonList?.forEach((value: PokemonDataModel) => {
+    if (move.track === 281) {
+      move.name = 'HIDDEN_POWER';
+    }
+    let combatPoke: any = pokemonCombatList.filter(
+      (item) => item.id === value.num && item.baseSpecies === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
+    );
+    const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.name));
+    if (result === undefined) {
+      combatPoke = combatPoke[0];
+    } else {
+      combatPoke = result;
+    }
+    if (combatPoke !== undefined) {
+      let pokemonList;
+      if (move.type_move === TypeMove.FAST) {
+        pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
+        if (!pokemonList) {
+          pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
         }
-        if (pokemonList) {
-          const stats = calculateStatsByTag(value, value.baseStats, value.slug);
-          const dps = calculateAvgDPS(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            move,
-            move,
-            calculateStatsBattle(stats.atk, MAX_IV, 40),
-            calculateStatsBattle(stats.def, MAX_IV, 40),
-            calculateStatsBattle(stats.sta, MAX_IV, 40),
-            value.types
-          );
-          const tdo = calculateTDO(
-            globalOptions,
-            calculateStatsBattle(stats.def, MAX_IV, 40),
-            calculateStatsBattle(stats.sta, MAX_IV, 40),
-            dps
-          );
-          dataPri.push({
-            num: value.num,
-            forme: value.forme,
-            name: splitAndCapitalize(value.name, '-', ' '),
-            baseSpecies: value.baseSpecies,
-            sprite: value.sprite,
-            releasedGO: value.releasedGO,
-            dps,
-            tdo,
-          });
+      } else if (move.type_move === TypeMove.CHARGE) {
+        pokemonList = combatPoke.cinematicMoves.includes(move.name);
+        if (!pokemonList) {
+          pokemonList = combatPoke.shadowMoves.includes(move.name);
         }
+        if (!pokemonList) {
+          pokemonList = combatPoke.purifiedMoves.includes(move.name);
+        }
+        if (!pokemonList) {
+          pokemonList = combatPoke.eliteCinematicMoves.includes(move.name);
+        }
+      }
+      if (pokemonList) {
+        const stats = calculateStatsByTag(value, value.baseStats, value.slug);
+        const dps = calculateAvgDPS(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          move,
+          move,
+          calculateStatsBattle(stats.atk, MAX_IV, 40),
+          calculateStatsBattle(stats.def, MAX_IV, 40),
+          calculateStatsBattle(stats?.sta ?? 0, MAX_IV, 40),
+          value.types
+        );
+        const tdo = calculateTDO(
+          globalOptions,
+          calculateStatsBattle(stats.def, MAX_IV, 40),
+          calculateStatsBattle(stats?.sta ?? 0, MAX_IV, 40),
+          dps
+        );
+        dataPri.push({
+          num: value.num,
+          forme: value.forme,
+          name: splitAndCapitalize(value.name, '-', ' '),
+          baseSpecies: value.baseSpecies,
+          sprite: value.sprite,
+          releasedGO: value.releasedGO,
+          dps,
+          tdo,
+        });
       }
     }
-  );
+  });
   return dataPri;
 };
 
 const queryMove = (
-  globalOptions: any,
-  typeEff: any,
-  weatherBoost: any,
-  combat: any[],
+  globalOptions: Options | undefined,
+  typeEff: TypeEff | undefined,
+  weatherBoost: WeatherBoost | undefined,
+  combat: Combat[],
   dataList: any[],
   vf: string,
-  atk: any,
-  def: any,
-  sta: any,
-  type: any,
-  cmove: any[],
+  atk: number,
+  def: number,
+  sta: number,
+  type: string | string[],
+  cmove: string[],
   felite: boolean,
   celite: boolean,
   shadow: boolean,
-  purified: boolean | undefined
+  purified: boolean
 ) => {
-  cmove.forEach((vc: any) => {
-    const mf = combat.find((item: { name: any }) => item.name === vf);
-    const mc = combat.find((item: { name: any }) => item.name === vc);
+  cmove.forEach((vc: string) => {
+    const mf = combat.find((item: { name: string }) => item.name === vf);
+    const mc = combat.find((item: { name: string }) => item.name === vc);
+
+    if (!mf || !mc) {
+      return;
+    }
 
     mf.elite = felite;
     mc.elite = celite;
@@ -1181,28 +1198,21 @@ const queryMove = (
 };
 
 export const rankMove = (
-  globalOptions: any,
-  typeEff: any,
-  weatherBoost: any,
-  combat: any,
-  move: {
-    quickMoves: any[];
-    cinematicMoves: any;
-    eliteCinematicMoves: any;
-    shadowMoves: any;
-    purifiedMoves: any;
-    eliteQuickMoves: any[];
-  },
-  atk: any,
-  def: any,
-  sta: any,
-  type: any
+  globalOptions: Options | undefined,
+  typeEff: TypeEff | undefined,
+  weatherBoost: WeatherBoost | undefined,
+  combat: Combat[],
+  move: CombatPokemon,
+  atk: number,
+  def: number,
+  sta: number,
+  type: string | string[]
 ) => {
   if (!move) {
     return { data: [] };
   }
   const dataPri: any[] = [];
-  move.quickMoves.forEach((vf: any) => {
+  move.quickMoves.forEach((vf) => {
     queryMove(
       globalOptions,
       typeEff,
@@ -1256,7 +1266,7 @@ export const rankMove = (
       true
     );
   });
-  move.eliteQuickMoves.forEach((vf: any) => {
+  move.eliteQuickMoves.forEach((vf) => {
     queryMove(
       globalOptions,
       typeEff,
@@ -1303,30 +1313,30 @@ export const rankMove = (
 };
 
 export const queryStatesEvoChain = (
-  globalOptions: any,
-  pokemonData: any,
+  globalOptions: Options | undefined,
+  pokemonData: PokemonDataModel[],
   item: { form: string; id: number; name: string },
-  level: any,
+  level: number,
   atkIV: number,
   defIV: number,
   staIV: number
 ) => {
-  let pokemon: any;
+  let pokemon: PokemonDataModel | undefined;
   if (item.form === '') {
-    pokemon = Object.values(pokemonData).find((value: any) => value.num === item.id && value.slug === item.name.toLowerCase());
+    pokemon = Object.values(pokemonData).find((value) => value.num === item.id && value.slug === item.name.toLowerCase());
   } else {
-    pokemon = Object.values(pokemonData).find((value: any) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
+    pokemon = Object.values(pokemonData).find((value) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
   }
   if (!pokemon) {
-    pokemon = Object.values(pokemonData).find((value: any) => value.num === item.id);
+    pokemon = Object.values(pokemonData).find((value) => value.num === item.id);
   }
-  const pokemonStats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-  const dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 500);
-  const dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 1500);
-  const dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, 2500);
-  const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level, null);
+  const pokemonStats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+  const dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, 500);
+  const dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, 1500);
+  const dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, 2500);
+  const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, null);
 
-  const statsProd: any[] = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, null, null, true);
+  const statsProd: any[] = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, null, null, true);
   const ultraStatsProd = sortStatsProd(statsProd.filter((item: { CP: number }) => item.CP <= 2500));
   const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item: any) => item.CP <= 1500));
   const littleStatsProd = sortStatsProd(greatStatsProd.filter((item: any) => item.CP <= 500));
@@ -1373,7 +1383,7 @@ export const queryStatesEvoChain = (
         globalOptions,
         pokemonStats.atk,
         pokemonStats.def,
-        pokemonStats.sta,
+        pokemonStats.sta ?? 0,
         atkIV,
         defIV,
         staIV,
@@ -1389,7 +1399,7 @@ export const queryStatesEvoChain = (
         globalOptions,
         pokemonStats.atk,
         pokemonStats.def,
-        pokemonStats.sta,
+        pokemonStats.sta ?? 0,
         atkIV,
         defIV,
         staIV,
@@ -1405,7 +1415,7 @@ export const queryStatesEvoChain = (
         globalOptions,
         pokemonStats.atk,
         pokemonStats.def,
-        pokemonStats.sta,
+        pokemonStats.sta ?? 0,
         atkIV,
         defIV,
         staIV,
@@ -1421,7 +1431,7 @@ export const queryStatesEvoChain = (
         globalOptions,
         pokemonStats.atk,
         pokemonStats.def,
-        pokemonStats.sta,
+        pokemonStats.sta ?? 0,
         atkIV,
         defIV,
         staIV,
@@ -1430,29 +1440,31 @@ export const queryStatesEvoChain = (
       ),
     };
   }
-  return { ...item, battleLeague, maxCP: battleLeague.master.CP, form: pokemon.forme };
+  return { ...item, battleLeague, maxCP: battleLeague.master.CP, form: pokemon?.forme };
 };
 
 const queryMoveCounter = (
-  globalOptions: any,
-  typeEff: any,
-  weatherBoost: any,
+  globalOptions: Options | undefined,
+  typeEff: TypeEff | undefined,
+  weatherBoost: WeatherBoost | undefined,
   dataList: any[],
-  combat: any[],
-  pokemon: any,
-  stats: any,
+  combat: Combat[],
+  pokemon: PokemonDataModel,
+  stats:
+    | { hp: number; atk: number; def: number; sta?: number | undefined; spa: number; spd: number; spe: number }
+    | { atk: number; def: number; sta: number },
   def: number,
   types: string | string[],
-  vf: any,
-  cmove: any,
+  vf: string,
+  cmove: string[],
   felite: boolean,
   celite: boolean,
   shadow: boolean,
   purified: boolean
 ) => {
-  cmove.forEach((vc: any) => {
-    const mf = combat.find((item: { name: any }) => item.name === vf);
-    const mc = combat.find((item: { name: any }) => item.name === vc);
+  cmove.forEach((vc) => {
+    const mf = combat.find((item: { name: string }) => item.name === vf);
+    const mc = combat.find((item: { name: string }) => item.name === vc);
 
     if (mf && mc) {
       const options = {
@@ -1472,7 +1484,7 @@ const queryMoveCounter = (
         mc,
         calculateStatsBattle(stats.atk, options.IV_ATK, options.POKEMON_LEVEL, true),
         calculateStatsBattle(stats.def, options.IV_DEF, options.POKEMON_LEVEL, true),
-        calculateStatsBattle(stats.sta, options.IV_HP, options.POKEMON_LEVEL, true),
+        calculateStatsBattle(stats?.sta ?? 0, options.IV_HP, options.POKEMON_LEVEL, true),
         pokemon.types,
         options
       );
@@ -1492,182 +1504,171 @@ const queryMoveCounter = (
 
 const sortCounterDPS = (data: any[]) => {
   data = data.sort((a: { dps: number }, b: { dps: number }) => b.dps - a.dps);
-  return data.map((item: any) => ({ ...item, ratio: (item.dps * 100) / data[0].dps }));
+  return data.map((item) => ({ ...item, ratio: (item.dps * 100) / data[0].dps }));
 };
 
 export const counterPokemon = (
-  globalOptions: any,
-  pokemonList: any,
-  typeEff: any,
-  weatherBoost: any,
-  def: any,
-  types: any,
-  combat: any,
-  combatList: any[]
+  globalOptions: Options | undefined,
+  pokemonList: PokemonDataModel[],
+  typeEff: TypeEff | undefined,
+  weatherBoost: WeatherBoost | undefined,
+  def: number,
+  types: string | string[],
+  combat: Combat[],
+  combatList: CombatPokemon[]
 ) => {
   const dataList: any[] = [];
-  combatList.forEach(
-    (value: {
-      quickMoves: any[];
-      cinematicMoves: string[];
-      name: string;
-      id: any;
-      eliteCinematicMoves: any;
-      shadowMoves: any;
-      purifiedMoves: any;
-      eliteQuickMoves: any[];
-    }) => {
-      if (value.quickMoves[0] !== 'STRUGGLE' && value.cinematicMoves[0] !== 'STRUGGLE' && !value.name.includes('_FEMALE')) {
-        const pokemon = pokemonList.find((item: { slug: string }) => {
-          const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()), true);
-          return item.slug === name;
-        });
-        if (pokemon === undefined) {
-          return;
-        }
-        const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-        value.quickMoves.forEach((vf: any) => {
-          queryMoveCounter(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            dataList,
-            combat,
-            pokemon,
-            stats,
-            def,
-            types,
-            vf,
-            value.cinematicMoves,
-            false,
-            false,
-            false,
-            false
-          );
-          queryMoveCounter(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            dataList,
-            combat,
-            pokemon,
-            stats,
-            def,
-            types,
-            vf,
-            value.eliteCinematicMoves,
-            false,
-            true,
-            false,
-            false
-          );
-          queryMoveCounter(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            dataList,
-            combat,
-            pokemon,
-            stats,
-            def,
-            types,
-            vf,
-            value.shadowMoves,
-            false,
-            false,
-            true,
-            false
-          );
-          queryMoveCounter(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            dataList,
-            combat,
-            pokemon,
-            stats,
-            def,
-            types,
-            vf,
-            value.purifiedMoves,
-            false,
-            false,
-            false,
-            true
-          );
-        });
-        value.eliteQuickMoves.forEach((vf: any) => {
-          queryMoveCounter(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            dataList,
-            combat,
-            pokemon,
-            stats,
-            def,
-            types,
-            vf,
-            value.cinematicMoves,
-            true,
-            false,
-            false,
-            false
-          );
-          queryMoveCounter(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            dataList,
-            combat,
-            pokemon,
-            stats,
-            def,
-            types,
-            vf,
-            value.eliteCinematicMoves,
-            true,
-            true,
-            false,
-            false
-          );
-          queryMoveCounter(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            dataList,
-            combat,
-            pokemon,
-            stats,
-            def,
-            types,
-            vf,
-            value.shadowMoves,
-            true,
-            false,
-            true,
-            false
-          );
-          queryMoveCounter(
-            globalOptions,
-            typeEff,
-            weatherBoost,
-            dataList,
-            combat,
-            pokemon,
-            stats,
-            def,
-            types,
-            vf,
-            value.purifiedMoves,
-            true,
-            false,
-            false,
-            true
-          );
-        });
+  combatList.forEach((value) => {
+    if (value.quickMoves[0] !== 'STRUGGLE' && value.cinematicMoves[0] !== 'STRUGGLE' && !value.name.includes('_FEMALE')) {
+      const pokemon = pokemonList.find((item) => {
+        const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()), true);
+        return item.slug === name;
+      });
+      if (pokemon === undefined) {
+        return;
       }
+      const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+      value.quickMoves.forEach((vf) => {
+        queryMoveCounter(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          dataList,
+          combat,
+          pokemon,
+          stats,
+          def,
+          types,
+          vf,
+          value.cinematicMoves,
+          false,
+          false,
+          false,
+          false
+        );
+        queryMoveCounter(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          dataList,
+          combat,
+          pokemon,
+          stats,
+          def,
+          types,
+          vf,
+          value.eliteCinematicMoves,
+          false,
+          true,
+          false,
+          false
+        );
+        queryMoveCounter(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          dataList,
+          combat,
+          pokemon,
+          stats,
+          def,
+          types,
+          vf,
+          value.shadowMoves,
+          false,
+          false,
+          true,
+          false
+        );
+        queryMoveCounter(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          dataList,
+          combat,
+          pokemon,
+          stats,
+          def,
+          types,
+          vf,
+          value.purifiedMoves,
+          false,
+          false,
+          false,
+          true
+        );
+      });
+      value.eliteQuickMoves.forEach((vf) => {
+        queryMoveCounter(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          dataList,
+          combat,
+          pokemon,
+          stats,
+          def,
+          types,
+          vf,
+          value.cinematicMoves,
+          true,
+          false,
+          false,
+          false
+        );
+        queryMoveCounter(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          dataList,
+          combat,
+          pokemon,
+          stats,
+          def,
+          types,
+          vf,
+          value.eliteCinematicMoves,
+          true,
+          true,
+          false,
+          false
+        );
+        queryMoveCounter(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          dataList,
+          combat,
+          pokemon,
+          stats,
+          def,
+          types,
+          vf,
+          value.shadowMoves,
+          true,
+          false,
+          true,
+          false
+        );
+        queryMoveCounter(
+          globalOptions,
+          typeEff,
+          weatherBoost,
+          dataList,
+          combat,
+          pokemon,
+          stats,
+          def,
+          types,
+          vf,
+          value.purifiedMoves,
+          true,
+          false,
+          false,
+          true
+        );
+      });
     }
-  );
+  });
   return sortCounterDPS(dataList);
 };

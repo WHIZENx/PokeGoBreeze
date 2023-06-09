@@ -24,6 +24,9 @@ export interface Combat {
   criticalChance: number;
   staminaLossScalar: number;
   archetype: string | null;
+  elite?: boolean;
+  shadow?: boolean;
+  purified?: boolean;
 }
 
 export interface CombatPokemon {
