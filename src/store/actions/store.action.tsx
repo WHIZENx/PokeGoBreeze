@@ -58,7 +58,7 @@ const options = {
 
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
   try {
-    APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options).then((res: { data: { url: any }[] }) => {
+    APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options).then((res: { data: { url: string }[] }) => {
       APIService.getFetchUrl(res.data[0].url, options).then((file: { data: { files: { filename: string }[] | any[] } }) => {
         dispatch({
           type: LOAD_LOGO_POKEGO,

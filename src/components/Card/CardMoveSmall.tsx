@@ -10,8 +10,8 @@ import { StoreState } from '../../store/models/state.model';
 const CardMoveSmall = (props: {
   value: { name: string; elite: boolean; shadow: boolean; purified: boolean };
   empty?: any;
-  disable?: any;
-  show?: any;
+  disable?: boolean;
+  show?: boolean;
   select?: any;
   clearData?: any;
 }) => {

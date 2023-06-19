@@ -31,9 +31,12 @@ const Leagues = () => {
   );
   const [showData, setShowData]: any = useState(null);
 
-  const getAssetPokeGo = (id: any, form: any) => {
+  const getAssetPokeGo = (id: string, form: string) => {
     try {
-      const dataId = dataStore?.assets?.find((item) => item.id === id);
+      const dataId = dataStore?.assets?.find((item) => item.id?.toString() === id.toString());
+      if (dataId?.image.length === 0) {
+        return APIService.getPokeFullSprite(id);
+      }
       const data = dataId?.image.find((item) => item.form === form);
       return data ? APIService.getPokemonModel(data.default) : APIService.getPokemonModel(dataId ? dataId.image[0]?.default : null);
     } catch {
@@ -90,7 +93,7 @@ const Leagues = () => {
       Object.values(dataStore?.leagues?.season.rewards.pokemon).forEach((value: any) => {
         if (value.rank <= rank) {
           result.push(
-            ...value[track.toLowerCase()].map((item: { guaranteedLimited: any }) => {
+            ...value[track.toLowerCase()].map((item: { guaranteedLimited: boolean }) => {
               if (item.guaranteedLimited) {
                 return {
                   ...item,
@@ -308,9 +311,9 @@ const Leagues = () => {
                         <VisibilityIcon
                           className="view-pokemon"
                           sx={{ fontSize: '1rem', color: 'black' }}
-                          onClick={() =>
-                            handleShow(dataStore?.leagues?.season.rewards.rank[rank].premium[index].type, 'PREMIUM', value.step)
-                          }
+                          // onClick={() =>
+                          //   handleShow(dataStore?.leagues?.season.rewards.rank[rank].premium[index].type, 'PREMIUM', value.step)
+                          // }
                         />
                       </Fragment>
                     )}
@@ -465,9 +468,7 @@ const Leagues = () => {
                         <img
                           alt="img-league"
                           height={140}
-                          src={APIService.getAssetPokeGo(
-                            dataStore?.leagues?.data.find((item: { title: any }) => item.title === value.league).iconUrl
-                          )}
+                          src={APIService.getAssetPokeGo(dataStore?.leagues?.data.find((item) => item.title === value.league).iconUrl)}
                         />
                         <span className={'badge-league ' + value.league.toLowerCase().replaceAll('_', '-')}>
                           <div className="sub-badge">
@@ -520,7 +521,7 @@ const Leagues = () => {
                     {value.conditions.whiteList.length !== 0 && (
                       <li style={{ fontWeight: 500 }}>
                         <h6 className="title-leagues text-success">White List</h6>
-                        {value.conditions.whiteList.map((item: { id: string; name: string; form: any }, index: React.Key) => (
+                        {value.conditions.whiteList.map((item: { id: string; name: string; form: string }, index: React.Key) => (
                           <Link
                             className="img-link text-center"
                             key={index}

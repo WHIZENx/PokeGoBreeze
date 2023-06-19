@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 
 import './Hexagon.scss';
 
-const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: any; borderSize: any }) => {
+const Hexagon = (props: { defaultStats?: any; stats: any; size: number; animation: any; borderSize: number }) => {
   const canvasHex: any = useRef();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
@@ -15,7 +15,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
     return Point(x, y);
   }, []);
 
-  const Point = (x: any, y: any) => {
+  const Point = (x: number, y: number) => {
     return { x, y };
   };
 
@@ -118,7 +118,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
   };
 
   const drawHexagon = useCallback(
-    (stats: any) => {
+    (stats: { switching: number; charger: number; closer: number; cons: number; atk: number; lead: number }) => {
       const hexBorderSize: number = props.size ?? 0;
       const hexSize: number = hexBorderSize / 2;
 

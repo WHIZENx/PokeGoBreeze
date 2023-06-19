@@ -43,7 +43,7 @@ const Attacker = (prop: { types: TypeEff | any }) => {
     getTypeEffective();
   }, [currentType, getTypeEffective, prop.types]);
 
-  const changeType = (value: any) => {
+  const changeType = (value: string) => {
     setShowType(false);
     setCurrentType(value);
     getTypeEffective();
@@ -65,7 +65,7 @@ const Attacker = (prop: { types: TypeEff | any }) => {
           {showType && (
             <div className="result-type">
               <ul>
-                {types.map((value: any, index: React.Key) => (
+                {types.map((value: string, index: React.Key) => (
                   <li
                     className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
                     style={{ backgroundColor: theme.palette.background.default }}

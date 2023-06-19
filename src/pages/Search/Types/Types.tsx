@@ -30,13 +30,13 @@ const moveSort = (rowA: { name: string }, rowB: { name: string }) => {
 const columnPokemon: any = [
   {
     name: 'ID',
-    selector: (row: { num: any }) => row.num,
+    selector: (row: { num: number }) => row.num,
     sortable: true,
     width: '100px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: { num: any; forme: string; name: string; sprite: string; baseSpecies: string }) => (
+    selector: (row: { num: number; forme: string; name: string; sprite: string; baseSpecies: string }) => (
       <Link
         to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
@@ -60,8 +60,8 @@ const columnPokemon: any = [
   },
   {
     name: 'Type(s)',
-    selector: (row: { types: any[] }) =>
-      row.types.map((value: any, index: React.Key) => (
+    selector: (row: { types: string[] }) =>
+      row.types.map((value: string, index: React.Key) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -97,7 +97,7 @@ const columnPokemon: any = [
 const columnMove: any = [
   {
     name: 'ID',
-    selector: (row: { id: any }) => row.id,
+    selector: (row: { id: number }) => row.id,
     sortable: true,
     width: '100px',
   },
@@ -118,25 +118,25 @@ const columnMove: any = [
   },
   {
     name: 'Power PVE',
-    selector: (row: { pve_power: any }) => row.pve_power,
+    selector: (row: { pve_power: number }) => row.pve_power,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Power PVP',
-    selector: (row: { pvp_power: any }) => row.pvp_power,
+    selector: (row: { pvp_power: number }) => row.pvp_power,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVE',
-    selector: (row: { pve_energy: any }) => `${row.pve_energy > 0 ? '+' : ''}${row.pve_energy}`,
+    selector: (row: { pve_energy: number }) => `${row.pve_energy > 0 ? '+' : ''}${row.pve_energy}`,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVP',
-    selector: (row: { pvp_energy: any }) => `${row.pvp_energy > 0 ? '+' : ''}${row.pvp_energy}`,
+    selector: (row: { pvp_energy: number }) => `${row.pvp_energy > 0 ? '+' : ''}${row.pvp_energy}`,
     sortable: true,
     width: '120px',
   },
@@ -210,7 +210,7 @@ const SearchTypes = () => {
                 <ul>
                   {Object.keys(data?.typeEff ?? {})
                     .filter((value) => value !== currentType)
-                    .map((value: any, index: React.Key) => (
+                    .map((value, index: React.Key) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                         <CardType value={capitalize(value)} />
                       </li>
@@ -222,7 +222,7 @@ const SearchTypes = () => {
         </div>
       </div>
       <FormControlLabel
-        control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
+        control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
         label={
           <span className="d-flex align-items-center">
             Released in GO
@@ -270,13 +270,17 @@ const SearchTypes = () => {
               <b>{`Pokémon: ${result.pokemonList.length} (${Math.round((result.pokemonList.length * 100) / allData.pokemon)}%)`}</b>
               <ul style={{ listStyleType: 'disc' }}>
                 <li>
-                  <b>{`Legacy Type: ${result.pokemonList.filter((pokemon: any) => pokemon.types.length === 1).length} (${Math.round(
-                    (result.pokemonList.filter((pokemon: any) => pokemon.types.length === 1).length * 100) / allData.pokemon
+                  <b>{`Legacy Type: ${
+                    result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1).length
+                  } (${Math.round(
+                    (result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1).length * 100) / allData.pokemon
                   )}%)`}</b>
                 </li>
                 <li>
-                  <b>{`Include Type: ${result.pokemonList.filter((pokemon: any) => pokemon.types.length > 1).length} (${Math.round(
-                    (result.pokemonList.filter((pokemon: any) => pokemon.types.length > 1).length * 100) / allData.pokemon
+                  <b>{`Include Type: ${
+                    result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1).length
+                  } (${Math.round(
+                    (result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1).length * 100) / allData.pokemon
                   )}%)`}</b>
                 </li>
               </ul>
@@ -300,7 +304,7 @@ const SearchTypes = () => {
             <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
               <DataTable
                 columns={columnPokemon}
-                data={result ? result.pokemonList.filter((pokemon: any) => pokemon.types.length === 1) : []}
+                data={result ? result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1) : []}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}
@@ -311,7 +315,7 @@ const SearchTypes = () => {
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
               <DataTable
                 columns={columnPokemon}
-                data={result ? result.pokemonList.filter((pokemon: any) => pokemon.types.length > 1) : []}
+                data={result ? result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1) : []}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}

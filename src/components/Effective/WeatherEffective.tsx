@@ -1,7 +1,7 @@
 import React from 'react';
 import TypeInfo from '../Sprites/Type/Type';
 
-const WeatherEffective = (props: { weatherEffective: any }) => {
+const WeatherEffective = (props: { weatherEffective: string[] }) => {
   if (!props.weatherEffective) {
     return <></>;
   }

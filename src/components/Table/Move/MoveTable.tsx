@@ -12,6 +12,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
+import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 
 const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; id?: number; maxHeight?: number | string }) => {
   const theme = useTheme();
@@ -34,22 +35,22 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     },
   });
 
-  const filterMoveType = (combat: any) => {
+  const filterMoveType = (combat: CombatPokemon | undefined) => {
     if (!combat) {
       return setMoveOrigin(null);
     }
     return setMoveOrigin({
-      fastMoves: combat.quickMoves.map((move: any) => data?.combat?.find((item: { name: any }) => item.name === move)),
-      chargedMoves: combat.cinematicMoves.map((move: any) => data?.combat?.find((item: { name: any }) => item.name === move)),
-      eliteFastMoves: combat.eliteQuickMoves.map((move: any) => data?.combat?.find((item: { name: any }) => item.name === move)),
-      eliteChargedMoves: combat.eliteCinematicMoves.map((move: any) => data?.combat?.find((item: { name: any }) => item.name === move)),
-      purifiedMoves: combat.purifiedMoves.map((move: any) => data?.combat?.find((item: { name: any }) => item.name === move)),
-      shadowMoves: combat.shadowMoves.map((move: any) => data?.combat?.find((item: { name: any }) => item.name === move)),
+      fastMoves: combat.quickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      chargedMoves: combat.cinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      eliteFastMoves: combat.eliteQuickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      eliteChargedMoves: combat.eliteCinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      purifiedMoves: combat.purifiedMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      shadowMoves: combat.shadowMoves.map((move) => data?.combat?.find((item) => item.name === move)),
     });
   };
 
   const findMove = useCallback(() => {
-    const combatPoke = data?.pokemonCombat?.filter((item: { id: number; name: string }) =>
+    const combatPoke = data?.pokemonCombat?.filter((item) =>
       props.form?.id
         ? item.id === parseInt(props.data?.species.url.split('/')[6])
         : item.name ===
@@ -60,16 +61,14 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
         filterMoveType(combatPoke[0]);
         return setMove(setRankMove(combatPoke[0]));
       } else if (combatPoke.length === 0 && props.id) {
-        const combatPoke: any = data?.pokemonCombat?.filter(
-          (item: { id: number; name: string; baseSpecies: string }) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
-        );
+        const combatPoke: any = data?.pokemonCombat?.filter((item) => (item.id === props.id ?? 0) && item.baseSpecies === item.name);
         filterMoveType(combatPoke[0]);
         return setMove(setRankMove(combatPoke[0]));
       }
 
-      const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form?.name ?? props.form));
+      const result = combatPoke.find((item) => props.form && item.name === convertName(props.form?.name ?? props.form));
       if (result === undefined) {
-        filterMoveType(combatPoke.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies));
+        filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
         setMove(setRankMove(combatPoke[0]));
       } else {
         filterMoveType(result);
@@ -78,7 +77,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
-  const setRankMove = (result: any) => {
+  const setRankMove = (result: CombatPokemon) => {
     return rankMove(
       data?.options,
       data?.typeEff,
@@ -88,7 +87,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
       props.statATK,
       props.statDEF,
       props.statSTA,
-      props.data?.types.map((item: any) => capitalize(item?.type?.name ?? item))
+      props.data?.types.map((item: { type: { name: string } }) => capitalize(item?.type?.name ?? item))
     );
   };
 
@@ -148,10 +147,10 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     );
   };
 
-  const renderMoveSetTable = (data: any) => {
+  const renderMoveSetTable = (data: Combat[]) => {
     return (
       <Fragment>
-        {data?.map((value: any, index: React.Key) => (
+        {data?.map((value: Combat, index: React.Key) => (
           <tr key={index}>
             <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
               <Link to={'../move/' + value.id} className="d-block">
@@ -264,7 +263,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               </thead>
               <tbody>
                 {[...move.data]
-                  .sort((a: any, b: any) => {
+                  .sort((a, b) => {
                     const sortedBy = stateSorted.offensive.sortBy;
                     if (sortedBy === 'eff') {
                       return stateSorted.offensive.eff ? b.eDPS.offensive - a.eDPS.offensive : a.eDPS.offensive - b.eDPS.offensive;
@@ -277,7 +276,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                       return 0;
                     }
                   })
-                  .map((value: any, index: React.Key) => (
+                  .map((value, index: React.Key) => (
                     <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff, 'offensive')}</Fragment>
                   ))}
               </tbody>
@@ -316,7 +315,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               </thead>
               <tbody>
                 {[...move.data]
-                  .sort((a: any, b: any) => {
+                  .sort((a, b) => {
                     const sortedBy = stateSorted.defensive.sortBy;
                     if (sortedBy === 'eff') {
                       return stateSorted.defensive.eff ? b.eDPS.defensive - a.eDPS.defensive : a.eDPS.defensive - b.eDPS.defensive;
@@ -329,7 +328,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                       return 0;
                     }
                   })
-                  .map((value: any, index: React.Key) => (
+                  .map((value, index: React.Key) => (
                     <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef, 'defensive')}</Fragment>
                   ))}
               </tbody>

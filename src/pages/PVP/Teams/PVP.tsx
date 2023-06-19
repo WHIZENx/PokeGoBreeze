@@ -25,7 +25,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { Combat, CombatPokemon } from '../../../core/models/combat.model';
+import { Combat } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
@@ -55,32 +55,31 @@ const TeamPVP = () => {
   const styleSheet: any = useRef(null);
 
   const mappingPokemonData = useCallback(
-    // eslint-disable-next-line no-unused-vars
-    (data: { split: (arg0: string) => [any, any] } | string) => {
+    (data: any) => {
       const [speciesId, moveSet] = data.split(' ');
       const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-      const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon: { slug: string } | any) => pokemon.slug === name);
-      const id = pokemon.num;
-      const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
+      const pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+      const id = pokemon?.num;
+      const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
 
-      const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+      const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
       if (!styleSheet.current) {
-        styleSheet.current = getStyleSheet(`.${pokemon.types[0].toLowerCase()}`);
+        styleSheet.current = getStyleSheet(`.${pokemon?.types[0].toLowerCase()}`);
       }
 
       let combatPoke: any = dataStore?.pokemonCombat?.filter(
-        (item: { id: any; baseSpecies: string }) =>
-          item.id === pokemon.num &&
-          item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+        (item) =>
+          item.id === pokemon?.num &&
+          item.baseSpecies === (pokemon?.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
       );
 
-      const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
+      const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
       if (!result) {
         if (combatPoke) {
           combatPoke = combatPoke[0];
         } else {
-          combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(pokemon.name));
+          combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(pokemon?.name));
         }
       } else {
         combatPoke = result;
@@ -180,10 +179,10 @@ const TeamPVP = () => {
         file.teams = file.teams.map((item) => {
           const teams = item.team.split('|');
           const teamsData: {
-            id: number;
+            id: number | undefined;
             name: string;
-            speciesId: number;
-            pokemonData: PokemonDataModel;
+            speciesId: any;
+            pokemonData: PokemonDataModel | undefined;
             form: string | null;
             stats:
               | { hp: number; atk: number; def: number; sta?: number | undefined; spa: number; spd: number; spe: number }
@@ -194,9 +193,9 @@ const TeamPVP = () => {
             fmove: Combat | undefined;
             cmovePri: Combat | undefined;
             cmoveSec: Combat | undefined;
-            combatPoke: CombatPokemon;
-            shadow: boolean;
-            purified: boolean;
+            combatPoke: any;
+            shadow: any;
+            purified: any;
           }[] = [];
           teams.forEach((value: any) => {
             teamsData.push(mappingPokemonData(value));

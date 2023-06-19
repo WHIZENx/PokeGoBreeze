@@ -41,7 +41,7 @@ const Search = () => {
 
   useEffect(() => {
     const results = pokemonList.current.filter(
-      (item: any) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+      (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
     );
     setPokemonListFilter(results);
   }, [searchTerm]);
@@ -50,7 +50,7 @@ const Search = () => {
     setSelectId(id);
   }, [id]);
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
+  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
@@ -58,7 +58,7 @@ const Search = () => {
     }
   };
 
-  const getInfoPoke = (value: any) => {
+  const getInfoPoke = (value: { id: number }) => {
     setShowResult(false);
     setId(value.id);
     if (first) {
@@ -71,29 +71,35 @@ const Search = () => {
   };
 
   const decId = () => {
-    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
-    setId(getPokemonByIndex(Object.values(pokemonName), currentId.index - 1).id);
+    const currentId = getPokemonById(Object.values(pokemonName), selectId);
+    if (currentId) {
+      setId(getPokemonByIndex(Object.values(pokemonName), currentId.index - 1)?.id);
+    }
   };
 
   const incId = () => {
-    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
-    setId(getPokemonByIndex(Object.values(pokemonName), currentId.index + 1).id);
+    const currentId = getPokemonById(Object.values(pokemonName), selectId);
+    if (currentId) {
+      setId(getPokemonByIndex(Object.values(pokemonName), currentId.index + 1)?.id);
+    }
   };
 
   const onChangeSelect = (event: any) => {
-    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
-    const result: any = {
-      prev: getPokemonByIndex(Object.values(pokemonName), currentId.index - 1),
-      current: currentId,
-      next: getPokemonByIndex(Object.values(pokemonName), currentId.index + 1),
-    };
-    if (event.keyCode === 13) {
-      setShowResult(false);
-      setId(selectId);
-    } else if (result.prev && event.keyCode === 38) {
-      setSelectId(result.prev.id);
-    } else if (result.next && event.keyCode === 40) {
-      setSelectId(result.next.id);
+    const currentId = getPokemonById(Object.values(pokemonName), selectId);
+    if (currentId) {
+      const result = {
+        prev: getPokemonByIndex(Object.values(pokemonName), currentId.index - 1),
+        current: currentId,
+        next: getPokemonByIndex(Object.values(pokemonName), currentId.index + 1),
+      };
+      if (event.keyCode === 13) {
+        setShowResult(false);
+        setId(selectId);
+      } else if (result.prev && event.keyCode === 38) {
+        setSelectId(result.prev.id);
+      } else if (result.next && event.keyCode === 40) {
+        setSelectId(result.next.id);
+      }
     }
   };
 

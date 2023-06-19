@@ -25,7 +25,7 @@ const Sticker = () => {
   const selectPokemon = useRef(
     pokeStickerList
       .reduce((prev: any, curr: any) => {
-        if (curr.pokemonName && !prev.map((obj: any) => obj.name).includes(curr.pokemonName)) {
+        if (curr.pokemonName && !prev.map((obj: { name: string }) => obj.name).includes(curr.pokemonName)) {
           prev.push({
             id: curr.pokemonId,
             name: curr.pokemonName,
@@ -33,7 +33,7 @@ const Sticker = () => {
         }
         return prev;
       }, [])
-      .sort((a: any, b: any) => a.id - b.id)
+      .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
   );
 
   useEffect(() => {
@@ -99,7 +99,10 @@ const Sticker = () => {
           ) : (
             <Fragment>
               {pokemonStickerFilter.map(
-                (value: { shop: any; pack: any[]; pokemonId: any; pokemonName: any; stickerUrl: any; id: string }, index: React.Key) => (
+                (
+                  value: { shop: boolean; pack: string[]; pokemonId: number; pokemonName: string; stickerUrl: string; id: string },
+                  index: React.Key
+                ) => (
                   <OverlayTrigger
                     key={index}
                     placement="auto"

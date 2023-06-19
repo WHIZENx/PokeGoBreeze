@@ -1,3 +1,5 @@
+import { Combat } from './combat.model';
+
 interface EvolutionBranch {
   evolution: string;
   candyCost: number;
@@ -20,7 +22,7 @@ interface EvolutionBranch {
 export interface PokemonModel {
   eliteQuickMove?: string[];
   eliteCinematicMove?: string[];
-  form?: string | null;
+  form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: any;
   formChange: null;
@@ -159,8 +161,8 @@ export interface PokemonNameModel {
 
 export interface PokemonMoveData {
   pokemon: any;
-  fmove: any;
-  cmove: any;
+  fmove: Combat | undefined;
+  cmove: Combat | undefined;
   dpsDef: number;
   dpsAtk: number;
   tdoAtk: number;
@@ -171,8 +173,8 @@ export interface PokemonMoveData {
   attackHpRemain: number;
   defendHpRemain: number;
   death: number;
-  shadow: any;
-  purified: any;
-  mShadow: any;
-  elite: { fmove: any; cmove: any };
+  shadow: boolean;
+  purified: boolean;
+  mShadow: boolean;
+  elite: { fmove: boolean; cmove: boolean };
 }

@@ -13,7 +13,7 @@ interface TempEvo {
   tempEvolution: number;
 }
 
-export interface Evolution {
+export interface EvolutionModel {
   id: number;
   name: string;
   evo_list: EvoList[];

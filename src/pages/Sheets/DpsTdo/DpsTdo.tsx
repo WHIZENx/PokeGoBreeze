@@ -33,6 +33,8 @@ import { hideSpinner } from '../../../store/actions/spinner.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/move.enum';
 import { OptionsSheetState, RouterState, SpinnerState, StoreState } from '../../../store/models/state.model';
+import { Combat } from '../../../core/models/combat.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
   const a = rowA.pokemon.name.toLowerCase();
@@ -55,7 +57,7 @@ const cmoveSort = (rowA: { cmove: { name: string } }, rowB: { cmove: { name: str
 const columns: any = [
   {
     name: 'ID',
-    selector: (row: { pokemon: { num: any } }) => row.pokemon?.num,
+    selector: (row: { pokemon: { num: number } }) => row.pokemon?.num,
     sortable: true,
     minWidth: '60px',
     maxWidth: '120px',
@@ -63,9 +65,9 @@ const columns: any = [
   {
     name: 'Pokémon Name',
     selector: (row: {
-      pokemon: { num: any; forme: string; name: string; sprite: string; baseSpecies: string };
-      shadow: any;
-      purified: any;
+      pokemon: { num: number; forme: string; name: string; sprite: string; baseSpecies: string };
+      shadow: boolean;
+      purified: boolean;
     }) => (
       <Link
         to={`/pokemon/${row.pokemon?.num}${
@@ -94,7 +96,7 @@ const columns: any = [
   },
   {
     name: 'Fast Move',
-    selector: (row: { fmove: { id: string; name: string; type: string }; elite: { fmove: any } }) => (
+    selector: (row: { fmove: { id: string; name: string; type: string }; elite: { fmove: Combat } }) => (
       <Link className="d-flex align-items-center" to={'/move/' + row.fmove?.id} title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
@@ -119,7 +121,12 @@ const columns: any = [
   },
   {
     name: 'Charged Move',
-    selector: (row: { cmove: { id: string; name: string; type: string }; elite: { cmove: any }; mShadow: any; purified: any }) => (
+    selector: (row: {
+      cmove: { id: string; name: string; type: string };
+      elite: { cmove: Combat };
+      mShadow: boolean;
+      purified: boolean;
+    }) => (
       <Link
         className="d-flex align-items-center"
         to={'/move/' + row.cmove?.id}
@@ -176,7 +183,7 @@ const columns: any = [
   },
   {
     name: 'CP',
-    selector: (row: { cp: any }) => row.cp ?? '',
+    selector: (row: { cp: number }) => row.cp ?? '',
     sortable: true,
     minWidth: '100px',
   },
@@ -268,28 +275,28 @@ const DpsTdo = () => {
 
   const addCPokeData = (
     dataList: {
-      pokemon: any;
-      fmove: any;
-      cmove: any;
+      pokemon: PokemonDataModel;
+      fmove: Combat;
+      cmove: Combat;
       dps: number;
       tdo: number;
       multiDpsTdo: number;
-      shadow: any;
-      purified: any;
-      mShadow: any;
-      elite: { fmove: any; cmove: any };
+      shadow: boolean;
+      purified: boolean;
+      mShadow: boolean;
+      elite: { fmove: boolean; cmove: boolean };
       cp: number;
     }[],
-    movePoke: any,
-    pokemon: any,
+    movePoke: string[],
+    pokemon: PokemonDataModel,
     vf: string,
-    shadow: any,
-    purified: any,
-    felite: any,
-    celite: any,
+    shadow: boolean,
+    purified: boolean,
+    felite: boolean,
+    celite: boolean,
     specialMove: any = null
   ) => {
-    movePoke.forEach((vc: any) => {
+    movePoke?.forEach((vc: string) => {
       const fmove = data?.combat?.find((item) => item.name === vf);
       const cmove = data?.combat?.find((item) => item.name === vc);
 
@@ -352,8 +359,8 @@ const DpsTdo = () => {
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           shadow,
-          purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
-          mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
+          purified: purified && specialMove != null && specialMove?.includes(statsAttacker.cmove.name),
+          mShadow: shadow && specialMove != null && specialMove?.includes(statsAttacker.cmove.name),
           elite: {
             fmove: felite,
             cmove: celite,
@@ -365,21 +372,21 @@ const DpsTdo = () => {
   };
 
   const addFPokeData = (
-    dataList: any,
+    dataList: any[],
     combat: {
-      cinematicMoves: any;
-      shadowMoves: string | any[];
-      eliteCinematicMoves: any;
-      purifiedMoves: any;
+      cinematicMoves: string[];
+      shadowMoves: string[];
+      eliteCinematicMoves: string[];
+      purifiedMoves: string[];
     },
     movePoke: any[],
-    pokemon: any,
-    felite: any
+    pokemon: PokemonDataModel,
+    felite: boolean
   ) => {
     movePoke.forEach((vf: any) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false);
       if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
-        if (combat.shadowMoves.length > 0) {
+        if (combat.shadowMoves?.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
           addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves);
         }
@@ -392,9 +399,9 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: any[] = [];
-    Object.values(data?.pokemonData ?? []).forEach((pokemon: any) => {
+    Object.values(data?.pokemonData ?? []).forEach((pokemon) => {
       let combatPoke: any = data?.pokemonCombat?.filter(
-        (item: { id: number; baseSpecies: string }) =>
+        (item) =>
           item.id === pokemon.num &&
           item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
       );
@@ -418,7 +425,7 @@ const DpsTdo = () => {
 
   const filterBestOptions = (result: any[], best: string | number) => {
     best = best === 1 ? 'dps' : best === 2 ? 'tdo' : 'multiDpsTdo';
-    const group = result.reduce((result: { [x: string]: any[] }, obj: { pokemon: { name: string | number } }) => {
+    const group = result.reduce((result: { [x: string]: any[] }, obj: { pokemon: PokemonDataModel }) => {
       (result[obj.pokemon.name] = result[obj.pokemon.name] || []).push(obj);
       return result;
     }, {});
@@ -430,17 +437,12 @@ const DpsTdo = () => {
   const searchFilter = () => {
     let result = dpsTable.filter(
       (item: {
-        isForceReleasedGO: any;
-        fmove?: { type: string };
-        cmove?: { type: string };
-        pokemon?: {
-          name: string;
-          num: { toString: () => string | any[] };
-          forme: string;
-          releasedGO: any;
-        };
-        shadow?: any;
-        elite?: { fmove: any; cmove: any };
+        fmove: { type: string };
+        cmove: { type: string };
+        pokemon: { name: string | null | undefined; num: number; forme: string };
+        shadow: boolean;
+        elite: { fmove: boolean; cmove: boolean };
+        isForceReleasedGO: boolean;
       }) => {
         const boolFilterType =
           selectTypes.length === 0 ||
@@ -463,16 +465,18 @@ const DpsTdo = () => {
 
         let boolReleaseGO = true;
         if (releasedGO) {
-          const result = data?.details?.find((pokemon: { name: string; id: any }) => {
-            if (item.pokemon?.name.toLowerCase().includes('_mega')) {
-              return pokemon.id === item.pokemon?.num && pokemon.name === item.pokemon?.name.toUpperCase().replaceAll('-', '_');
+          const result = data?.details?.find((pokemon) => {
+            if (item.pokemon.name?.toLowerCase().includes('_mega')) {
+              return pokemon.id === item.pokemon?.num && pokemon.name === item.pokemon.name?.toUpperCase().replaceAll('-', '_');
             } else {
               return (
-                pokemon.id === item.pokemon?.num &&
+                pokemon.id === item.pokemon.num &&
                 pokemon.name ===
-                  (pokemon.id === 555 && !item.pokemon?.name.toLowerCase().includes('zen')
-                    ? item.pokemon?.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
-                    : convertName(item.pokemon?.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
+                  (pokemon.id === 555 && !item.pokemon.name?.toLowerCase().includes('zen')
+                    ? item.pokemon.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+                    : convertName(item.pokemon.name ?? '')
+                        .replace('NIDORAN_F', 'NIDORAN_FEMALE')
+                        .replace('NIDORAN_M', 'NIDORAN_MALE'))
               );
             }
           });
@@ -584,7 +588,7 @@ const DpsTdo = () => {
     if (selectTypes.includes(value)) {
       return setSelectTypes([...selectTypes].filter((item) => item !== value));
     }
-    return setSelectTypes((oldArr: any[]) => [...oldArr, value]);
+    return setSelectTypes((oldArr: string[]) => [...oldArr, value]);
   };
 
   const onCalculateTable = (e: { preventDefault: () => void }) => {

@@ -95,13 +95,13 @@ export const computeCandyColor = (candyData: Candy[], id: number) => {
   }, ${data?.primaryColor.a || 1})`;
 };
 
-export const computeBgType = (types: string[] | string, shadow = false, purified = false, opacity = 1, styleSheet?: any) => {
+export const computeBgType = (types: string[] | string | undefined, shadow = false, purified = false, opacity = 1, styleSheet?: any) => {
   const colorsPalette: any[] = [];
   if (typeof types === 'string') {
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
     return color.split(')')[0] + `, ${opacity ?? 1})`;
   } else {
-    types.forEach((type: string) => {
+    types?.forEach((type: string) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
       colorsPalette.push(color.split(')')[0] + `, ${opacity ?? 1})`);
     });
@@ -115,8 +115,8 @@ export const computeBgType = (types: string[] | string, shadow = false, purified
   return `linear-gradient(to bottom right, ${colorsPalette[0]}, ${colorsPalette[1] ?? colorsPalette[0]})`;
 };
 
-export const queryAssetForm = (pokemonAssets: Asset[], id: number, name: string) => {
-  if (name.split('-')[1] === 'A') {
+export const queryAssetForm = (pokemonAssets: Asset[], id: number | undefined, name: string | undefined) => {
+  if (name?.split('-')[1] === 'A') {
     name = name.replace('-A', '-Armor');
   }
   const pokemon = pokemonAssets?.find((item) => item.id === id);
@@ -150,13 +150,13 @@ export const queryAssetForm = (pokemonAssets: Asset[], id: number, name: string)
     }
   }
   try {
-    return pokemon.image.find((item) => name.replaceAll(pokemon.name + '_', '') === item.form);
+    return pokemon.image.find((item) => name?.replaceAll(pokemon.name + '_', '') === item.form);
   } catch {
     return null;
   }
 };
 
-export const findAssetForm = (pokemonAssets: Asset[], id: number, name: string) => {
+export const findAssetForm = (pokemonAssets: Asset[], id: number | undefined, name: string | undefined) => {
   const form = queryAssetForm(pokemonAssets, id, name);
   if (form) {
     return form.default;

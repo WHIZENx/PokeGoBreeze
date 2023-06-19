@@ -124,7 +124,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                     return true;
                   }
                   const result = data?.details?.find(
-                    (item: { name: string; id: any }) =>
+                    (item) =>
                       item.id === pokemon.pokemon_id &&
                       item.name ===
                         (item.id === 555 && !pokemon.pokemon_name.toLowerCase().includes('zen')
@@ -134,95 +134,107 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
                   return result ? result.releasedGO : false;
                 })
                 .slice(0, firstInit + eachCounter * startIndex)
-                .map((value: any, index: React.Key) => (
-                  <Fragment key={index}>
-                    <tr>
-                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-                        <Link
-                          to={`/pokemon/${value.pokemon_id}${
-                            value.pokemon_forme ? `?form=${convertFormName(value.pokemon_id, value.pokemon_forme.toLowerCase())}` : ''
-                          }`}
-                        >
-                          <div className="d-flex justify-content-center">
-                            <div
-                              className={
-                                'position-relative group-pokemon-sprite ' + theme.palette.mode === 'light'
-                                  ? 'filter-shadow-hover'
-                                  : 'filter-light-shadow-hover'
-                              }
-                            >
+                .map(
+                  (
+                    value: {
+                      pokemon_id: number;
+                      pokemon_forme: string;
+                      cmove: { shadow: boolean; purified: boolean; id: string; type: string; name: string; elite: boolean };
+                      pokemon_name: string;
+                      fmove: { id: string; type: string; name: string; elite: boolean };
+                      ratio: number;
+                    },
+                    index: React.Key
+                  ) => (
+                    <Fragment key={index}>
+                      <tr>
+                        <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+                          <Link
+                            to={`/pokemon/${value.pokemon_id}${
+                              value.pokemon_forme ? `?form=${convertFormName(value.pokemon_id, value.pokemon_forme.toLowerCase())}` : ''
+                            }`}
+                          >
+                            <div className="d-flex justify-content-center">
+                              <div
+                                className={
+                                  'position-relative group-pokemon-sprite ' + theme.palette.mode === 'light'
+                                    ? 'filter-shadow-hover'
+                                    : 'filter-light-shadow-hover'
+                                }
+                              >
+                                {value.cmove.shadow && (
+                                  <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                                )}
+                                {value.cmove.purified && (
+                                  <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
+                                )}
+                                <img
+                                  className="pokemon-sprite-counter"
+                                  alt="img-pokemon"
+                                  src={
+                                    findAssetForm(data?.assets ?? [], value.pokemon_id, value.pokemon_name)
+                                      ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], value.pokemon_id, value.pokemon_name))
+                                      : APIService.getPokeFullSprite(value.pokemon_id)
+                                  }
+                                />
+                              </div>
+                            </div>
+                            <span className="caption" style={{ color: theme.palette.text.primary }}>
+                              #{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, '-', ' ')}
+                            </span>
+                          </Link>
+                        </td>
+                        <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+                          <Link to={'../move/' + value.fmove.id} className="d-grid">
+                            <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+                              <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
+                            </div>
+                            <span style={{ marginRight: 5, fontSize: '0.9rem' }}>
+                              {splitAndCapitalize(value.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+                            </span>
+                            <span className="w-100">
+                              {value.fmove.elite && (
+                                <span className="type-icon-small ic elite-ic">
+                                  <span>Elite</span>
+                                </span>
+                              )}
+                            </span>
+                          </Link>
+                        </td>
+                        <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+                          <Link to={'../move/' + value.cmove.id} className="d-grid">
+                            <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+                              <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
+                            </div>
+                            <span style={{ marginRight: 5, fontSize: '0.9rem' }}>
+                              {splitAndCapitalize(value.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+                            </span>
+                            <span className="w-100">
+                              {value.cmove.elite && (
+                                <span className="type-icon-small ic elite-ic">
+                                  <span>Elite</span>
+                                </span>
+                              )}
                               {value.cmove.shadow && (
-                                <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                                <span className="type-icon-small ic shadow-ic">
+                                  <span>Shadow</span>
+                                </span>
                               )}
                               {value.cmove.purified && (
-                                <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
+                                <span className="type-icon-small ic purified-ic">
+                                  <span>Purified</span>
+                                </span>
                               )}
-                              <img
-                                className="pokemon-sprite-counter"
-                                alt="img-pokemon"
-                                src={
-                                  findAssetForm(data?.assets ?? [], value.pokemon_id, value.pokemon_name)
-                                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], value.pokemon_id, value.pokemon_name))
-                                    : APIService.getPokeFullSprite(value.pokemon_id)
-                                }
-                              />
-                            </div>
-                          </div>
-                          <span className="caption" style={{ color: theme.palette.text.primary }}>
-                            #{value.pokemon_id} {splitAndCapitalize(value.pokemon_name, '-', ' ')}
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-                        <Link to={'../move/' + value.fmove.id} className="d-grid">
-                          <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
-                          </div>
-                          <span style={{ marginRight: 5, fontSize: '0.9rem' }}>
-                            {splitAndCapitalize(value.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
-                          </span>
-                          <span className="w-100">
-                            {value.fmove.elite && (
-                              <span className="type-icon-small ic elite-ic">
-                                <span>Elite</span>
-                              </span>
-                            )}
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-                        <Link to={'../move/' + value.cmove.id} className="d-grid">
-                          <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
-                          </div>
-                          <span style={{ marginRight: 5, fontSize: '0.9rem' }}>
-                            {splitAndCapitalize(value.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
-                          </span>
-                          <span className="w-100">
-                            {value.cmove.elite && (
-                              <span className="type-icon-small ic elite-ic">
-                                <span>Elite</span>
-                              </span>
-                            )}
-                            {value.cmove.shadow && (
-                              <span className="type-icon-small ic shadow-ic">
-                                <span>Shadow</span>
-                              </span>
-                            )}
-                            {value.cmove.purified && (
-                              <span className="type-icon-small ic purified-ic">
-                                <span>Purified</span>
-                              </span>
-                            )}
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-                        {value.ratio.toFixed(2)}
-                      </td>
-                    </tr>
-                  </Fragment>
-                ))}
+                            </span>
+                          </Link>
+                        </td>
+                        <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+                          {value.ratio.toFixed(2)}
+                        </td>
+                      </tr>
+                    </Fragment>
+                  )
+                )}
             </Fragment>
           ) : (
             <tr className="counter-none" style={{ verticalAlign: 'top' }}>

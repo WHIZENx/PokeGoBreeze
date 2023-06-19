@@ -1,5 +1,5 @@
 import { splitAndCapitalize } from '../util/Utils';
-import { LeaguePVP } from './models/league.model';
+import { League, LeaguePVP } from './models/league.model';
 
 const leagueModel = () => {
   return {
@@ -24,37 +24,16 @@ export const pvpFindPath = (data: any[], path: string) => {
   return data.filter((item: string) => item.includes(path)).map((item: string) => item.replace(path, ''));
 };
 
-export const convertPVPRankings = (
-  data: {
-    // eslint-disable-next-line no-unused-vars
-    map: (arg0: (league: any) => any) => Iterable<any> | null | undefined;
-    // eslint-disable-next-line no-unused-vars
-    filter: (arg0: (item: any) => any) => {
-      (): any;
-      new (): any;
-      map: {
-        // eslint-disable-next-line no-unused-vars
-        (arg0: (item: any) => number): {
-          (): any;
-          new (): any;
-          // eslint-disable-next-line no-unused-vars
-          sort: { (arg0: (a: any, b: any) => number): number; new (): any };
-        };
-        new (): any;
-      };
-    };
-  },
-  leagues: any[]
-) => {
-  return Array.from(new Set(data.map((league: string) => league.split('/')[0]))).map((league: any) => {
+export const convertPVPRankings = (data: any[], leagues: League[]) => {
+  return Array.from(new Set(data.map((league) => league.split('/')[0]))).map((league: string) => {
     let item;
     if (league !== 'all') {
-      item = leagues.find((item: { iconUrl: any[] }) => item.iconUrl.includes(league));
+      item = leagues.find((item) => item.iconUrl.includes(league));
       if (!item) {
-        item = leagues.find((item: { title: string }) => item.title.replaceAll('_', '').includes(league.toUpperCase()));
+        item = leagues.find((item) => item.title.replaceAll('_', '').includes(league.toUpperCase()));
       }
       if (!item) {
-        item = leagues.find((item: { id: string | any[] }) => item.id.includes(league.toUpperCase()));
+        item = leagues.find((item) => item.id.includes(league.toUpperCase()));
       }
     }
 
@@ -65,49 +44,24 @@ export const convertPVPRankings = (
       result.name = splitAndCapitalize(league, '_', ' ');
     }
     result.cp = data
-      .filter(
-        // eslint-disable-next-line no-unused-vars
-        (item: { startsWith: (arg0: any) => any; includes: (arg0: string) => any }) =>
-          item.startsWith(league) && item.includes(`${league}/overall/`)
-      )
-      .map((item: string) => parseInt(item.replace(`${league}/overall/rankings-`, '')))
-      .sort((a: number, b: number) => a - b);
+      .filter((item) => item.startsWith(league) && item.includes(`${league}/overall/`))
+      .map((item) => parseInt(item.replace(`${league}/overall/rankings-`, '')))
+      .sort((a, b) => a - b);
     result.logo = item ? item.iconUrl : null;
     return result;
   });
 };
 
-export const convertPVPTrain = (
-  data: {
-    // eslint-disable-next-line no-unused-vars
-    map: (arg0: (league: any) => any) => Iterable<any> | null | undefined;
-    // eslint-disable-next-line no-unused-vars
-    filter: (arg0: (item: any) => any) => {
-      (): any;
-      new (): any;
-      map: {
-        // eslint-disable-next-line no-unused-vars
-        (arg0: (item: any) => number): {
-          (): any;
-          new (): any;
-          // eslint-disable-next-line no-unused-vars
-          sort: { (arg0: (a: any, b: any) => number): number; new (): any };
-        };
-        new (): any;
-      };
-    };
-  },
-  leagues: any[]
-) => {
-  return Array.from(new Set(data.map((league: string) => league.split('/')[0]))).map((league: any) => {
+export const convertPVPTrain = (data: any[], leagues: League[]) => {
+  return Array.from(new Set(data.map((league) => league.split('/')[0]))).map((league: string) => {
     let item;
     if (league !== 'all') {
-      item = leagues.find((item: { iconUrl: any[] }) => item.iconUrl.includes(league));
+      item = leagues.find((item) => item.iconUrl.includes(league));
       if (!item) {
-        item = leagues.find((item: { title: string }) => item.title.replaceAll('_', '').includes(league.toUpperCase()));
+        item = leagues.find((item) => item.title.replaceAll('_', '').includes(league.toUpperCase()));
       }
       if (!item) {
-        item = leagues.find((item: { id: string | any[] }) => item.id.includes(league.toUpperCase()));
+        item = leagues.find((item) => item.id.includes(league.toUpperCase()));
       }
     }
     const result: LeaguePVP = leagueModel();
@@ -117,13 +71,9 @@ export const convertPVPTrain = (
       result.name = splitAndCapitalize(league, '_', ' ');
     }
     result.cp = data
-      .filter(
-        // eslint-disable-next-line no-unused-vars
-        (item: { startsWith: (arg0: any) => any; includes: (arg0: string) => any }) =>
-          item.startsWith(league) && item.includes(`${league}/`)
-      )
-      .map((item: string) => parseInt(item.replace(`${league}/`, '')))
-      .sort((a: number, b: number) => a - b);
+      .filter((item) => item.startsWith(league) && item.includes(`${league}/`))
+      .map((item) => parseInt(item.replace(`${league}/`, '')))
+      .sort((a, b) => a - b);
     result.logo = item ? item.iconUrl : null;
     return result;
   });

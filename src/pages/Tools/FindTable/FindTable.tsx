@@ -17,32 +17,32 @@ import { SpinnerState } from '../../../store/models/state.model';
 const columnsIV: any = [
   {
     name: 'Level',
-    selector: (row: { level: any }) => row.level,
+    selector: (row: { level: number }) => row.level,
     sortable: true,
   },
   {
     name: 'ATK',
-    selector: (row: { atk: any }) => row.atk,
+    selector: (row: { atk: number }) => row.atk,
     sortable: true,
   },
   {
     name: 'DEF',
-    selector: (row: { def: any }) => row.def,
+    selector: (row: { def: number }) => row.def,
     sortable: true,
   },
   {
     name: 'STA',
-    selector: (row: { sta: any }) => row.sta,
+    selector: (row: { sta: number }) => row.sta,
     sortable: true,
   },
   {
     name: 'HP',
-    selector: (row: { hp: any }) => row.hp,
+    selector: (row: { hp: number }) => row.hp,
     sortable: true,
   },
   {
     name: 'Percent',
-    selector: (row: { percent: any }) => row.percent,
+    selector: (row: { percent: number }) => row.percent,
     sortable: true,
   },
 ];
@@ -50,17 +50,17 @@ const columnsIV: any = [
 const columnsCP: any = [
   {
     name: 'Level',
-    selector: (row: { level: any }) => row.level,
+    selector: (row: { level: number }) => row.level,
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row: { cp: any }) => row.cp,
+    selector: (row: { cp: number }) => row.cp,
     sortable: true,
   },
   {
     name: 'HP',
-    selector: (row: { hp: any }) => row.hp,
+    selector: (row: { hp: number }) => row.hp,
     sortable: true,
   },
 ];
@@ -285,17 +285,17 @@ const FindTable = () => {
     const columns = [
       {
         name: 'Level',
-        selector: (row: { level: any }) => row.level,
+        selector: (row: { level: number }) => row.level,
         sortable: true,
       },
       {
         name: 'MIN CP',
-        selector: (row: { minCP: any }) => row.minCP,
+        selector: (row: { minCP: number }) => row.minCP,
         sortable: true,
       },
       {
         name: 'MAX CP',
-        selector: (row: { maxCP: any }) => row.maxCP,
+        selector: (row: { maxCP: number }) => row.maxCP,
         sortable: true,
       },
     ];
@@ -381,7 +381,7 @@ const FindTable = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e: any, v: any) => setSearchATKIv(v)}
+                onChange={(_: any, v: any) => setSearchATKIv(v)}
               />
               <div className="d-flex justify-content-between">
                 <b>DEF</b>
@@ -396,7 +396,7 @@ const FindTable = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e, v) => setSearchDEFIv(v)}
+                onChange={(_, v) => setSearchDEFIv(v)}
               />
               <div className="d-flex justify-content-between">
                 <b>STA</b>
@@ -411,7 +411,7 @@ const FindTable = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e, v) => setSearchSTAIv(v)}
+                onChange={(_, v) => setSearchSTAIv(v)}
               />
             </Box>
           </div>

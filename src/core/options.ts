@@ -1,6 +1,6 @@
 import { Asset } from './models/asset.model';
 import { Combat, CombatPokemon } from './models/combat.model';
-import { Evolution } from './models/evolution.model';
+import { EvolutionModel } from './models/evolution.model';
 import { League, LeagueData, LeagueReward, LeagueRewardPokemon } from './models/league.model';
 import { Sticker } from './models/sticker.model';
 import { Details } from './models/details.model';
@@ -358,11 +358,12 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
   return pokemon
     .filter((item) => !formSpecial.includes(item.name))
     .map((item) => {
-      const result: Evolution = evolutionModel();
+      const result: EvolutionModel = evolutionModel();
       result.id = item.id;
       result.name = item.name;
       if (item.form) {
         result.form = item.form
+          .toString()
           .replace(item.pokemonId + '_', '')
           .replace('GALARIAN', 'GALAR')
           .replace('HISUIAN', 'HISUI');
@@ -848,7 +849,8 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
   return pokemon
     .filter(
       (item) =>
-        (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
+        (!item.form && noneForm.includes(item.name)) ||
+        (item.form && (item.form.toString().includes('NORMAL') || !formSpecial.includes(item.name)))
     )
     .reduce((pokemonList: CombatPokemon[], item) => {
       if (item.name.endsWith('_S') && pokemonList.map((item) => item.name).includes(item.name.replace('_S', ''))) {
@@ -1189,14 +1191,15 @@ export const optionDetailsPokemon = (
   let result = pokemon
     .filter(
       (item) =>
-        (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
+        (!item.form && noneForm.includes(item.name)) ||
+        (item.form && (item.form.toString().includes('NORMAL') || !formSpecial.includes(item.name)))
     )
     .map((item) => {
       const result: Details = detailsPokemonModel();
       result.id = item.id;
       result.name = item.name.replace('_NORMAL', '');
       if (item.form) {
-        result.form = item.form.replace(`${item.pokemonId}_`, '');
+        result.form = item.form.toString().replace(`${item.pokemonId}_`, '');
       } else {
         if (result.id === 555) {
           result.form = 'STANDARD';

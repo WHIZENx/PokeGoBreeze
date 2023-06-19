@@ -3,7 +3,7 @@ import { Candy } from '../../core/models/candy.model';
 import { Combat, CombatPokemon } from '../../core/models/combat.model';
 import { CPM } from '../../core/models/cpm.model';
 import { Details } from '../../core/models/details.model';
-import { Evolution } from '../../core/models/evolution.model';
+import { EvolutionModel } from '../../core/models/evolution.model';
 import { LeagueData } from '../../core/models/league.model';
 import { Options } from '../../core/models/options.model';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../../core/models/pokemon.model';
@@ -28,7 +28,7 @@ export interface DataModel {
   pokemon?: PokemonModel[];
   pokemonName?: PokemonNameModel[];
   candy?: Candy[];
-  evolution?: Evolution[];
+  evolution?: EvolutionModel[];
   stickers?: Sticker[];
   assets?: Asset[];
   combat?: Combat[];

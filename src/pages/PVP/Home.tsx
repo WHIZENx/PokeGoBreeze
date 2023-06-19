@@ -51,7 +51,7 @@ const PVPHome = () => {
     }
   }, [rank, team, pvp]);
 
-  const renderLeagueLogo = (logo: string | string[], cp: number) => {
+  const renderLeagueLogo = (logo: string, cp: number) => {
     if (
       !logo ||
       (logo && logo.includes('GBL_littlecup')) ||
@@ -106,23 +106,15 @@ const PVPHome = () => {
           onChange={(e) =>
             setOptions({
               ...options,
-              rank: pvp?.rankings.find((item: { id: string }) => item.id === e.target.value),
+              rank: pvp?.rankings.find((item) => item.id === e.target.value),
             })
           }
         >
-          {pvp?.rankings.map(
-            (
-              value: {
-                id: any;
-                name: any;
-              },
-              index: React.Key
-            ) => (
-              <option key={index} value={value.id}>
-                {value.name}
-              </option>
-            )
-          )}
+          {pvp?.rankings.map((value, index: React.Key) => (
+            <option key={index} value={value.id}>
+              {value.name}
+            </option>
+          ))}
         </Form.Select>
       </div>
       {rank ? (
@@ -172,23 +164,15 @@ const PVPHome = () => {
           onChange={(e) =>
             setOptions({
               ...options,
-              team: pvp?.trains.find((item: { id: string }) => item.id === e.target.value),
+              team: pvp?.trains.find((item) => item.id === e.target.value),
             })
           }
         >
-          {pvp?.trains.map(
-            (
-              value: {
-                id: any;
-                name: any;
-              },
-              index: React.Key
-            ) => (
-              <option key={index} value={value.id}>
-                {value.name}
-              </option>
-            )
-          )}
+          {pvp?.trains.map((value, index: React.Key) => (
+            <option key={index} value={value.id}>
+              {value.name}
+            </option>
+          ))}
         </Form.Select>
       </div>
       {team ? (

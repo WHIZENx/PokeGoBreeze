@@ -27,6 +27,8 @@ import PopoverConfig from '../../Popover/PopoverConfig';
 import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { EvolutionModel } from '../../../core/models/evolution.model';
 
 const customTheme = createTheme({
   palette: {
@@ -58,7 +60,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
         return false;
       }
       const evoList = data?.map((item: { species: { url: string } }) => {
-        return item && evoData.filter((e: { id: number }) => e.id === parseInt(item.species.url.split('/')[6]));
+        return item && evoData.filter((e) => e.id === parseInt(item.species.url.split('/')[6]));
       })[0];
       const currForm = formDefault
         ? forme.form_name === '' && ['Alola', 'Galar'].includes(region)
@@ -66,7 +68,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           : forme.form_name
         : forme.form_name;
       if (!evoList) {
-        const pokemon = evoData.find((e: { id: any }) => e.id === id);
+        const pokemon = evoData.find((e) => e.id === id);
         if (pokemon) {
           return setArrEvoList((oldArr: any) => [
             ...oldArr,
@@ -80,9 +82,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
             ],
           ]);
         }
-        return setArrEvoList((oldArr: any) => [...oldArr, [{ name: (pokemonName as any)[id].name, id, baby: false, form: null }]]);
+        return setArrEvoList((oldArr: any) => [...oldArr, [{ name: pokemonName[id].name, id, baby: false, form: null }]]);
       } else if (evoList.length > 1) {
-        const evoInJSON = evoList.find((item: { name: string | any[] }) => item.name.includes(currForm.toUpperCase()));
+        const evoInJSON = evoList.find((item: { name: string }) => item.name.includes(currForm.toUpperCase()));
         if (evoInJSON) {
           const evoInAPI = data?.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
           if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
@@ -96,8 +98,8 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                 });
               });
             } else {
-              evoInJSON.evo_list.forEach((item: { evo_to_id: any; evo_to_form: any }) => {
-                const pokemonToEvo = evoData.find((e: { id: any; form: any }) => e.id === item.evo_to_id && e.form === item.evo_to_form);
+              evoInJSON.evo_list.forEach((item: { evo_to_id: number; evo_to_form: string }) => {
+                const pokemonToEvo = evoData.find((e) => e.id === item.evo_to_id && e.form === item.evo_to_form);
                 tempData.push({
                   ...evoInAPI,
                   species: {
@@ -111,9 +113,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           }
         }
       } else {
-        let evoInJSON = evoList.find((item: { name: string | any[] }) => item.name.includes(currForm.toUpperCase()));
+        let evoInJSON = evoList.find((item: { name: string }) => item.name.includes(currForm.toUpperCase()));
         if (!evoInJSON && ['Alola', 'Galar'].includes(region)) {
-          evoInJSON = evoList.find((item: { name: string | string[] }) => item.name.includes(''));
+          evoInJSON = evoList.find((item: { name: string }) => item.name.includes(''));
         }
         if (evoInJSON) {
           const evoInAPI = data?.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
@@ -121,7 +123,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
             const tempArr: any[] = [];
             evoInJSON.evo_list.forEach((value: { evo_to_form: string }) =>
               data?.forEach((item: { evolves_to: any[] }) => {
-                item.evolves_to.forEach((i: any) => {
+                item.evolves_to.forEach((i) => {
                   if (['kubfu', 'rockruff'].includes(forme.name) || value.evo_to_form.toLowerCase().replaceAll('_', '-') === currForm) {
                     tempArr.push({
                       ...i,
@@ -151,7 +153,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     [evoData, formDefault, forme, region, id]
   );
 
-  const formatEvoChain = (pokemon: any) => {
+  const formatEvoChain = (pokemon: PokemonDataModel) => {
     return {
       name: pokemon.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon.name.toLowerCase(),
       id: pokemon.num,
@@ -184,7 +186,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     if (!name) {
       return;
     }
-    const pokemon: any = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
+    const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
     arr.unshift([formatEvoChain(pokemon)]);
     return getPrevEvoChainJSON(pokemon?.prevo, arr);
   }, []);
@@ -192,8 +194,10 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
   const getCurrEvoChainJSON = useCallback((prev: { evos: any[] }, arr: any[][]) => {
     const evo: { name: any; id: any; baby: any; form: any; gmax: boolean; sprite: any }[] = [];
     prev.evos.forEach((name: string) => {
-      const pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
-      evo.push(formatEvoChain(pokemon));
+      const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+      if (pokemon) {
+        evo.push(formatEvoChain(pokemon));
+      }
     });
     arr.push(evo);
   }, []);
@@ -204,12 +208,14 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     }
     arr.push(
       evos.map((name: string) => {
-        const pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
-        return formatEvoChain(pokemon);
+        const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+        if (pokemon) {
+          return formatEvoChain(pokemon);
+        }
       })
     );
     evos.forEach((name: string) => {
-      const pokemon: any = Object.values(pokemonData).find((pokemon: any) => pokemon.name === name);
+      const pokemon: any = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
       getNextEvoChainJSON(pokemon?.evos, arr);
     });
   }, []);
@@ -225,8 +231,8 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
       } else if (forme.name === 'necrozma-dusk') {
         form += '-mane';
       }
-      let pokemon: any = Object.values(pokemonData).find(
-        (pokemon: any) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
+      let pokemon = Object.values(pokemonData).find(
+        (pokemon) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
       );
       if (!pokemon) {
         pokemon = Object.values(pokemonData).find((pokemon: any) => pokemon.num === id && pokemon.forme === null);
@@ -235,8 +241,11 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
       const prevEvo: any[] = [],
         curr: any = [],
         evo: any = [];
-      getPrevEvoChainJSON(pokemon.prevo, prevEvo);
-      const prev: any = Object.values(pokemonData).find((p: any) => p.name === pokemon.prevo);
+      if (!pokemon) {
+        return;
+      }
+      getPrevEvoChainJSON(pokemon?.prevo ?? '', prevEvo);
+      const prev: any = Object.values(pokemonData).find((p: any) => p.name === pokemon?.prevo);
       if (prev) {
         getCurrEvoChainJSON(prev, curr);
       } else {
@@ -249,31 +258,31 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     [getPrevEvoChainJSON, getCurrEvoChainJSON, getNextEvoChainJSON]
   );
 
-  const getPrevEvoChainStore = (poke: any, result: any[]) => {
+  const getPrevEvoChainStore = (poke: EvolutionModel, result: any[]) => {
     const evoList: any[] = [];
-    const pokemon = evoData.filter((pokemon: { evo_list: any[] }) =>
+    const pokemon = evoData.filter((pokemon) =>
       pokemon.evo_list.find((evo: { evo_to_id: number; evo_to_form: string }) => evo.evo_to_id === poke.id && evo.evo_to_form === poke.form)
     );
     if (pokemon.length === 0) {
       return;
     }
-    pokemon.forEach((evo: { id: number; name: string; form: string }) => {
+    pokemon.forEach((evo) => {
       evoList.unshift(modelEvoChain(evo));
       getPrevEvoChainStore(evo, result);
     });
     return result.push(evoList);
   };
 
-  const getCurrEvoChainStore = (poke: any, result: any[]) => {
+  const getCurrEvoChainStore = (poke: EvolutionModel, result: any[]) => {
     let evoList: any[] = [];
-    const pokemon = evoData.find((pokemon: { evo_list: any[] }) =>
+    const pokemon = evoData.find((pokemon) =>
       pokemon.evo_list.find((evo: { evo_to_id: number; evo_to_form: string }) => evo.evo_to_id === poke.id && evo.evo_to_form === poke.form)
     );
     if (!pokemon) {
       evoList.push(modelEvoChain(poke));
     } else {
       evoList = pokemon.evo_list
-        .map((evo: { purificationEvoCandyCost?: any; evo_to_name: string; evo_to_id: number; evo_to_form: string }) =>
+        .map((evo) =>
           modelEvoChain({
             id: evo.evo_to_id,
             name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
@@ -286,19 +295,18 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     return result.push(evoList);
   };
 
-  const getNextEvoChainStore = (poke: any, result: any[]) => {
+  const getNextEvoChainStore = (poke: EvolutionModel, result: any[]) => {
     if (!poke || (poke && poke.evo_list.length === 0)) {
       return;
     }
-    const evoList: any[] = poke.evo_list.map(
-      (evo: { purificationEvoCandyCost?: any; evo_to_id: number; evo_to_name: string; evo_to_form: string }) =>
-        modelEvoChain({
-          id: evo.evo_to_id,
-          name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
-          form: evo.evo_to_form,
-          prev: poke.name,
-          canPurified: evo.purificationEvoCandyCost ? true : false,
-        })
+    const evoList: any[] = poke.evo_list.map((evo) =>
+      modelEvoChain({
+        id: evo.evo_to_id,
+        name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
+        form: evo.evo_to_form,
+        prev: poke.name,
+        canPurified: evo.purificationEvoCandyCost ? true : false,
+      })
     );
     if (result.length === 3) {
       result[2].push(...evoList);
@@ -306,10 +314,8 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
       result.push(evoList);
     }
 
-    poke.evo_list.forEach((evo: { evo_to_id: number; evo_to_name: string; evo_to_form: string }) => {
-      const pokemon: any = evoData.find(
-        (pokemon: { id: number; form: string }) => pokemon.id === evo.evo_to_id && pokemon.form === evo.evo_to_form
-      );
+    poke.evo_list.forEach((evo) => {
+      const pokemon: any = evoData.find((pokemon) => pokemon.id === evo.evo_to_id && pokemon.form === evo.evo_to_form);
       getNextEvoChainStore(pokemon, result);
     });
 
@@ -332,7 +338,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     return setArrEvoList(result);
   };
 
-  const getGmaxChain = useCallback((id: any, form: { name: string }) => {
+  const getGmaxChain = useCallback((id: number | string, form: { name: string }) => {
     return setArrEvoList([
       [
         {
@@ -384,7 +390,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     setOptions({ ...options, purified: canPurified });
   };
 
-  const getQuestEvo = (prevId: number, form: any) => {
+  const getQuestEvo = (prevId: number, form: string) => {
     try {
       return evoData
         ?.find((item) => item?.evo_list?.find((value) => value.evo_to_form.includes(form) && value.evo_to_id === prevId))
@@ -432,7 +438,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     );
   };
 
-  const renderImageEvo = (value: any, chain: any[], evo: any, index: number, evoCount: number) => {
+  const renderImageEvo = (value: any, chain: string | string[], evo: any, index: number, evoCount: number) => {
     const form = value.form ?? forme.form_name;
     let offsetY = 35;
     offsetY += value.baby ? 20 : 0;

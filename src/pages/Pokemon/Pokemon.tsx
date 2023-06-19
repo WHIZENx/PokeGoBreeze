@@ -22,11 +22,12 @@ import { getFormsGO } from '../../core/forms';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SpinnerState, StatsState, StoreState } from '../../store/models/state.model';
+import { SearchingModel } from '../../store/models/searching.model';
 
 const Pokemon = (props: {
   prevRouter?: any;
-  searching?: any;
-  id?: any;
+  searching?: SearchingModel | null;
+  id?: string;
   onDecId?: any;
   onIncId?: any;
   isSearch?: boolean;
@@ -157,7 +158,7 @@ const Pokemon = (props: {
         }
       } else if (router.action === Action.Pop && props.searching) {
         defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
-        isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching.form);
+        isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching?.form);
       } else {
         defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
         isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
@@ -177,7 +178,7 @@ const Pokemon = (props: {
           : splitAndCapitalize(formParams ? isDefaultForm.form.name : data.name, '-', ' ');
       const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
       setFormName(nameInfo);
-      setReleased(checkReleased(data.id, nameInfo, isDefaultForm.form.is_default));
+      setReleased(checkReleased(data.id, nameInfo ?? '', isDefaultForm.form.is_default));
       setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
       setDefaultForm(isDefaultForm);
       if (params.id) {
@@ -241,11 +242,11 @@ const Pokemon = (props: {
   }, [dispatch, params.id, props.id, queryPokemon, reForm]);
 
   useEffect(() => {
-    const keyDownHandler = (event: any) => {
+    const keyDownHandler = (event: { keyCode: number; preventDefault: () => void }) => {
       if (!spinner.loading) {
         const currentId: any = getPokemonById(
           Object.values(dataStore?.pokemonName ?? []),
-          parseInt(params.id ? params.id.toLowerCase() : props.id)
+          parseInt(params.id ? params.id.toLowerCase() : props.id ?? '')
         );
         const result: any = {
           prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),

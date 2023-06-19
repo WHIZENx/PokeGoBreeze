@@ -152,11 +152,11 @@ const Damage = () => {
     });
   };
 
-  const onSetForm = (form: any) => {
+  const onSetForm = (form: string) => {
     setForm(form);
   };
 
-  const onSetFormObj = (form: any) => {
+  const onSetFormObj = (form: string) => {
     setFormObj(form);
   };
 
@@ -212,7 +212,7 @@ const Damage = () => {
     ]
   );
 
-  const handleCheckbox = (event: { target: { name: any; checked: any } }) => {
+  const handleCheckbox = (event: { target: { name: string; checked: boolean } }) => {
     setBattleState({
       ...battleState,
       [event.target.name]: event.target.checked,
@@ -277,11 +277,11 @@ const Damage = () => {
                 <div className="row text-center" style={{ width: 520 }}>
                   <div className="col">
                     <h5 className="text-success">- Current Pokémon Type -</h5>
-                    {form && <TypeInfo arr={form.form.types.map((ele: { type: { name: any } }) => ele.type.name)} />}
+                    {form && <TypeInfo arr={form.form.types.map((ele: { type: { name: string } }) => ele.type.name)} />}
                   </div>
                   <div className="col">
                     <h5 className="text-danger">- Object Pokémon Type -</h5>
-                    {formObj && <TypeInfo arr={formObj.form.types.map((ele: { type: { name: any } }) => ele.type.name)} />}
+                    {formObj && <TypeInfo arr={formObj.form.types.map((ele: { type: { name: string } }) => ele.type.name)} />}
                   </div>
                 </div>
               </div>
@@ -303,7 +303,7 @@ const Damage = () => {
                       - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
                     </p>
                     {findStabType(
-                      form.form.types.map((item: { type: { name: any } }) => item.type.name),
+                      form.form.types.map((item: { type: { name: string } }) => item.type.name),
                       move.type
                     )}
                     <p>
@@ -311,7 +311,7 @@ const Damage = () => {
                       <b>
                         {move.pve_power}
                         {findStabType(
-                          form.form.types.map((item: { type: { name: any } }) => item.type.name),
+                          form.form.types.map((item: { type: { name: string } }) => item.type.name),
                           move.type
                         ) && <span className={'caption-small text-success'}> (x1.2)</span>}
                       </b>
@@ -331,7 +331,7 @@ const Damage = () => {
                     <FormControlLabel
                       control={
                         <Switch
-                          onChange={(event, check) => {
+                          onChange={(_, check) => {
                             setEnableFriend(check);
                             setBattleState({
                               ...battleState,
@@ -376,7 +376,7 @@ const Damage = () => {
                           });
                         }}
                       >
-                        {Object.entries(globalOptions?.throw_charge ?? {}).map(([type, value]: any, index) => (
+                        {Object.entries(globalOptions?.throw_charge ?? {}).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={`caption-small dropdown-caption ${labels[index].style}`}>x{value}</span>

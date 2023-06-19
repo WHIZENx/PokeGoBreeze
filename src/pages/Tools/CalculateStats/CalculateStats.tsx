@@ -116,7 +116,7 @@ const Calculate = () => {
   );
 
   const onHandleLevel = useCallback(
-    (e: any, v: any) => {
+    (_: any, v: number) => {
       setStatLevel(v);
       setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
     },
@@ -176,7 +176,7 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e: any, v: any) => setATKIv(v)}
+                onChange={(_: any, v: any) => setATKIv(v)}
               />
               <div className="d-flex justify-content-between">
                 <b>DEF</b>
@@ -191,7 +191,7 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e: any, v: any) => setDEFIv(v)}
+                onChange={(_: any, v: any) => setDEFIv(v)}
               />
               <div className="d-flex justify-content-between">
                 <b>STA</b>
@@ -206,7 +206,7 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e: any, v: any) => setSTAIv(v)}
+                onChange={(_: any, v: any) => setSTAIv(v)}
               />
             </Box>
           </div>

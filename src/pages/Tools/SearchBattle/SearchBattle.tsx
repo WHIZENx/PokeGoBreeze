@@ -66,17 +66,15 @@ const FindBattle = () => {
       }
       let curr;
       if (form === '') {
-        curr = dataStore?.evolution?.find((item: { id: any; form: any }) => currId.includes(item.id) && form === item.form);
+        curr = dataStore?.evolution?.find((item) => currId.includes(item.id) && form === item.form);
       } else {
-        curr = dataStore?.evolution?.find(
-          (item: { id: any; form: string | any[] }) => currId.includes(item.id) && item.form.includes(form)
-        );
+        curr = dataStore?.evolution?.find((item) => currId.includes(item.id) && item.form.includes(form));
       }
-      if (!arr.map((i: { id: any }) => i.id).includes(curr?.id)) {
+      if (!arr.map((i: { id: number }) => i.id).includes(curr?.id ?? 0)) {
         arr.push({ ...curr, form });
       }
       return currEvoChain(
-        curr?.evo_list.map((i: { evo_to_id: any }) => i.evo_to_id),
+        curr?.evo_list.map((i) => i.evo_to_id),
         form,
         arr
       );
@@ -85,22 +83,22 @@ const FindBattle = () => {
   );
 
   const prevEvoChain = useCallback(
-    (obj: { id: any; evo_list: any[] }, defaultForm: any, arr: any[]): any => {
-      if (!arr.map((i: { id: any }) => i.id).includes(obj.id)) {
+    (obj: { id: number; evo_list: { evo_to_id: number; evo_to_form: string }[] }, defaultForm: string, arr: any[]): any => {
+      if (!arr.map((i: { id: number }) => i.id).includes(obj.id)) {
         arr.push({ ...obj, form: defaultForm });
       }
-      obj.evo_list.forEach((i: { evo_to_id: any; evo_to_form: any }) => {
+      obj.evo_list.forEach((i) => {
         currEvoChain([i.evo_to_id], i.evo_to_form, arr);
       });
-      const curr = dataStore?.evolution?.filter((item: { evo_list: any[] }) =>
-        item.evo_list.find((i: { evo_to_id: any; evo_to_form: any }) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
+      const curr = dataStore?.evolution?.filter((item) =>
+        item.evo_list.find((i) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
       );
       if (curr?.length === 0) {
         return arr;
       } else if (curr?.length === 1) {
         return prevEvoChain(curr[0], defaultForm, arr);
       } else {
-        return curr?.map((item: any) => prevEvoChain(item, defaultForm, arr));
+        return curr?.map((item) => prevEvoChain(item, defaultForm, arr));
       }
     },
     [currEvoChain, dataStore?.evolution]
@@ -109,29 +107,29 @@ const FindBattle = () => {
   const getEvoChain = useCallback(
     (id: any) => {
       const isForm = form.form.form_name.toUpperCase();
-      let curr = dataStore?.evolution?.filter((item: { evo_list: any[] }) =>
-        item.evo_list.find((i: { evo_to_id: any; evo_to_form: any }) => id === i.evo_to_id && isForm === i.evo_to_form)
+      let curr = dataStore?.evolution?.filter((item) =>
+        item.evo_list.find((i: { evo_to_id: number; evo_to_form: string }) => id === i.evo_to_id && isForm === i.evo_to_form)
       );
       if (curr?.length === 0) {
         if (isForm === '') {
-          curr = dataStore?.evolution?.filter((item: { id: any; form: any }) => id === item.id && isForm === item.form);
+          curr = dataStore?.evolution?.filter((item) => id === item.id && isForm === item.form);
         } else {
-          curr = dataStore?.evolution?.filter((item: { id: any; form: string | any[] }) => id === item.id && item.form.includes(isForm));
+          curr = dataStore?.evolution?.filter((item) => id === item.id && item.form.includes(isForm));
         }
       }
       if (curr?.length === 0) {
-        curr = dataStore?.evolution?.filter((item: { id: any; form: string }) => id === item.id && item.form === '');
+        curr = dataStore?.evolution?.filter((item) => id === item.id && item.form === '');
       }
-      return curr?.map((item: any) => prevEvoChain(item, isForm, []));
+      return curr?.map((item) => prevEvoChain(item, isForm, []));
     },
     [prevEvoChain, form, dataStore?.evolution]
   );
 
   const searchStatsPoke = useCallback(
-    (level: any) => {
+    (level: number) => {
       const arr: (() => any[]) | any[][] = [];
       getEvoChain(id)?.forEach((item: any[]) => {
-        const tempArr: { battleLeague: any; maxCP: any; form: any; id: number; name: string }[] = [];
+        const tempArr: { battleLeague: string; maxCP: number; form: any; id: number; name: string }[] = [];
         item.forEach((value: { form: string; id: number; name: string }) => {
           const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemonData ?? [], value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
@@ -236,7 +234,7 @@ const FindBattle = () => {
     }
   }, []);
 
-  const getImageList = (id: any) => {
+  const getImageList = (id: number) => {
     const isForm = form.form.form_name === '' ? 'NORMAL' : form.form.form_name.replaceAll('-', '_').toUpperCase();
     let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form.includes(isForm));
     if (!img) {
@@ -253,11 +251,11 @@ const FindBattle = () => {
     if (evoId === id) {
       return candy;
     }
-    const data = item.find((i: { evo_list: any[] }) => i.evo_list.find((e: { evo_to_id: any }) => e.evo_to_id === evoId));
+    const data = item.find((i: { evo_list: any[] }) => i.evo_list.find((e: { evo_to_id: number }) => e.evo_to_id === evoId));
     if (!data) {
       return candy;
     }
-    const prevEvo = data.evo_list.find((e: { evo_to_id: any }) => e.evo_to_id === evoId);
+    const prevEvo = data.evo_list.find((e: { evo_to_id: number }) => e.evo_to_id === evoId);
     if (!prevEvo) {
       return candy;
     }
@@ -333,7 +331,7 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setATKIv(v)}
+              onChange={(_: any, v: any) => setATKIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -348,7 +346,7 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setDEFIv(v)}
+              onChange={(_: any, v: any) => setDEFIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -363,7 +361,7 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setSTAIv(v)}
+              onChange={(_: any, v: any) => setSTAIv(v)}
             />
           </Box>
         </div>

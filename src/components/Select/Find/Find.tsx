@@ -5,6 +5,7 @@ import Form from './Form';
 import { useSelector } from 'react-redux';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../../store/models/state.model';
+import { PokemonModel } from '../../../core/models/pokemon.model';
 
 const Find = (props: {
   // eslint-disable-next-line no-unused-vars
@@ -48,8 +49,8 @@ const Find = (props: {
 
   const pokemonList = useRef(
     Object.values(pokemonName)
-      .filter((item: any) => item.id > 0)
-      .map((item: any) => {
+      .filter((item) => item.id > 0)
+      .map((item) => {
         return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
       })
   );
@@ -59,12 +60,12 @@ const Find = (props: {
 
   useEffect(() => {
     const results = pokemonList.current.filter(
-      (item: any) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+      (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
     );
     setPokemonListFilter(results);
   }, [searchTerm]);
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
+  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
@@ -72,14 +73,14 @@ const Find = (props: {
     }
   };
 
-  const getInfoPoke = (value: any) => {
-    const currentId: any = getPokemonById(Object.values(pokemonName), value.id);
+  const getInfoPoke = (value: PokemonModel) => {
+    const currentId = getPokemonById(Object.values(pokemonName), value.id);
     setId(value.id);
     setForm(null);
     if (props.setId) {
       props.setId(value.id);
     }
-    if (props.setName) {
+    if (props.setName && currentId) {
       props.setName(currentId.name);
     }
     if (props.clearStats) {
@@ -87,7 +88,7 @@ const Find = (props: {
     }
   };
 
-  const handleSetStats = (type: string, value: any) => {
+  const handleSetStats = (type: string, value: number) => {
     if (type === 'atk' && props.setStatATK) {
       props.setStatATK(value);
     } else if (type === 'def' && props.setStatDEF) {
@@ -99,17 +100,21 @@ const Find = (props: {
 
   const decId = () => {
     setTimeout(() => {
-      const currentId: any = getPokemonById(Object.values(pokemonName), id);
-      const prev = getPokemonByIndex(Object.values(pokemonName), currentId.index - 1);
-      setId(prev.id);
-      if (props.setId) {
-        props.setId(prev.id);
-      }
-      if (props.setName) {
-        props.setName(prev.name);
-      }
-      if (props.clearStats) {
-        props.clearStats();
+      const currentId = getPokemonById(Object.values(pokemonName), id);
+      if (currentId) {
+        const prev = getPokemonByIndex(Object.values(pokemonName), currentId.index - 1);
+        if (prev) {
+          setId(prev.id);
+          if (props.setId) {
+            props.setId(prev.id);
+          }
+          if (props.setName) {
+            props.setName(prev.name);
+          }
+          if (props.clearStats) {
+            props.clearStats();
+          }
+        }
       }
     }, 300);
     if (props.clearStats) {
@@ -119,17 +124,21 @@ const Find = (props: {
 
   const incId = () => {
     setTimeout(() => {
-      const currentId: any = getPokemonById(Object.values(pokemonName), id);
-      const next = getPokemonByIndex(Object.values(pokemonName), currentId.index + 1);
-      setId(next.id);
-      if (props.setId) {
-        props.setId(next.id);
-      }
-      if (props.setName) {
-        props.setName(next.name);
-      }
-      if (props.clearStats) {
-        props.clearStats();
+      const currentId = getPokemonById(Object.values(pokemonName), id);
+      if (currentId) {
+        const next = getPokemonByIndex(Object.values(pokemonName), currentId.index + 1);
+        if (next) {
+          setId(next.id);
+          if (props.setId) {
+            props.setId(next.id);
+          }
+          if (props.setName) {
+            props.setName(next.name);
+          }
+          if (props.clearStats) {
+            props.clearStats();
+          }
+        }
       }
     }, 300);
     if (props.clearStats) {
@@ -210,7 +219,7 @@ const Find = (props: {
                 setForm={props.setForm}
                 setFormOrigin={setForm}
                 id={id}
-                name={pokemonList.current.find((item: any) => item.id === id)?.name}
+                name={pokemonList.current.find((item) => item.id === id)?.name ?? ''}
                 data={pokemonData}
                 stats={stats}
                 onHandleSetStats={handleSetStats}

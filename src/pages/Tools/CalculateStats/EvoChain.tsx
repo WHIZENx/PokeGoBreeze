@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { splitAndCapitalize } from '../../../util/Utils';
 import APIService from '../../../services/API.service';
 
-const EvoChain = (props: { url: any; id: number }) => {
+const EvoChain = (props: { url: string; id: number }) => {
   const [arrEvoList, setArrEvoList]: any = useState([]);
 
   const getEvoChain = useCallback((data: any) => {
@@ -11,11 +11,11 @@ const EvoChain = (props: { url: any; id: number }) => {
     }
     setArrEvoList((oldArr: any) => [
       ...oldArr,
-      data.map((item: { species: { name: any; url: string }; is_baby: any }) => {
+      data.map((item: { species: { name: string; url: string }; is_baby: boolean }) => {
         return { name: item.species.name, id: item.species.url.split('/')[6], baby: item.is_baby };
       }),
     ]);
-    return data.map((item: { evolves_to: any }) => getEvoChain(item.evolves_to));
+    return data.map((item: { evolves_to: string }) => getEvoChain(item.evolves_to));
   }, []);
 
   useEffect(() => {
@@ -36,15 +36,15 @@ const EvoChain = (props: { url: any; id: number }) => {
           Evolution Chains
         </td>
       </tr>
-      {arrEvoList.map((value: any, index: React.Key) => (
+      {arrEvoList.map((value: { id: string; name: string }[], index: React.Key) => (
         <Fragment key={index}>
-          {value.map((value: any, index: React.Key) => (
+          {value.map((value, index: React.Key) => (
             <Fragment key={index}>
               {parseInt(value.id) !== props.id && (
                 <Fragment>
                   <tr className="text-center">
                     <td className="img-table-evo" colSpan={2}>
-                      <img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(value.id)} />
+                      <img width="96" height="96" alt="img-pokemon" src={APIService.getPokeSprite(parseInt(value.id))} />
                     </td>
                   </tr>
                   <tr>
@@ -53,7 +53,6 @@ const EvoChain = (props: { url: any; id: number }) => {
                   </tr>
                   <tr>
                     <td>CP</td>
-                    <td>5555</td>
                   </tr>
                 </Fragment>
               )}

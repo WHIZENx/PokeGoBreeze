@@ -21,6 +21,7 @@ import { Form } from 'react-bootstrap';
 import { TypeMove } from '../../enums/move.enum';
 import { hideSpinner } from '../../store/actions/spinner.action';
 import { StoreState, SpinnerState } from '../../store/models/state.model';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -31,13 +32,13 @@ const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
 const columns: any = [
   {
     name: 'id',
-    selector: (row: { num: any }) => row.num,
+    selector: (row: { num: number }) => row.num,
     sortable: true,
     minWidth: '40px',
   },
   {
     name: 'Name',
-    selector: (row: { num: any; forme: string; sprite: string; baseSpecies: string; name: string }) => (
+    selector: (row: PokemonDataModel) => (
       <Link to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}>
         <img
           height={48}
@@ -46,7 +47,7 @@ const columns: any = [
           src={APIService.getPokeIconSprite(row.sprite, true)}
           onError={(e: any) => {
             e.onerror = null;
-            e.target.src = APIService.getPokeIconSprite(row.baseSpecies);
+            e.target.src = APIService.getPokeIconSprite(row.baseSpecies ?? '');
           }}
         />
         {row.name}
@@ -70,7 +71,7 @@ const columns: any = [
   },
 ];
 
-const Move = (props: { id?: any }) => {
+const Move = (props: { id?: number }) => {
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -96,11 +97,11 @@ const Move = (props: { id?: any }) => {
       let move;
       if (params.id && parseInt(id) === 281) {
         move = data?.combat?.find(
-          (item: { type: string | null; track: number }) =>
+          (item) =>
             item.track === parseInt(id) && item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
         );
       } else {
-        move = data?.combat?.find((item: { track: number }) => item.track === parseInt(id));
+        move = data?.combat?.find((item) => item.track === parseInt(id));
       }
       if (move) {
         setMove(move);
@@ -147,12 +148,7 @@ const Move = (props: { id?: any }) => {
               onChange={(e: any) => {
                 searchParams.set('type', e.target.value.toLowerCase());
                 setSearchParams(searchParams);
-                setMove(
-                  data?.combat?.find(
-                    (item: { type: string | null; track: number }) =>
-                      item.track === move.track && item.type === e.target.value.toUpperCase()
-                  )
-                );
+                setMove(data?.combat?.find((item) => item.track === move.track && item.type === e.target.value.toUpperCase()));
               }}
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
@@ -213,7 +209,7 @@ const Move = (props: { id?: any }) => {
                         alt="img-type"
                         src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
                       />
-                      <span className="d-inline-block caption">{splitAndCapitalize(getWeatherEffective(move.type) as any, '_', ' ')}</span>
+                      <span className="d-inline-block caption">{splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}</span>
                     </td>
                   </tr>
                   <tr className="text-center">
@@ -246,7 +242,7 @@ const Move = (props: { id?: any }) => {
                     <tr>
                       <td>PVE Bar Charged</td>
                       <td colSpan={2} style={{ border: 'none' }}>
-                        {[...Array(getBarCharge(true, move.pve_energy)).keys()].map((value, index) => (
+                        {[...Array(getBarCharge(true, move.pve_energy)).keys()].map((_, index) => (
                           <div
                             style={{
                               width: (120 - 5 * Math.max(1, getBarCharge(true, move.pve_energy))) / getBarCharge(true, move.pve_energy),
@@ -288,7 +284,7 @@ const Move = (props: { id?: any }) => {
                     <tr>
                       <td>PVP Bar Charged</td>
                       <td colSpan={2} style={{ border: 'none' }}>
-                        {[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((value, index) => (
+                        {[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((_, index) => (
                           <div
                             style={{
                               width: (120 - 5 * Math.max(1, getBarCharge(false, move.pvp_energy))) / getBarCharge(false, move.pvp_energy),

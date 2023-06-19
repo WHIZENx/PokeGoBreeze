@@ -347,8 +347,8 @@ const RaidBattle = () => {
           defendHpRemain: Math.floor(statsDefender.hp) - Math.min(timeAllow, ttkAtk) * dpsAtk,
           death: Math.floor(statsDefender.hp / tdoAtk),
           shadow,
-          purified: purified && specialMove && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
-          mShadow: shadow && specialMove && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
+          purified: purified && specialMove != null && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
+          mShadow: shadow && specialMove != null && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
           elite: {
             fmove: felite,
             cmove: celite,

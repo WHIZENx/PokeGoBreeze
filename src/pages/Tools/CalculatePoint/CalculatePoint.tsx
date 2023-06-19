@@ -165,10 +165,10 @@ const CalculatePoint = () => {
             effective: getTypeEffective(
               typeEff,
               moveDef.type,
-              form.form.types.map((item: { type: { name: any } }) => item.type.name)
+              form.form.types.map((item: { type: { name: string } }) => item.type.name)
             ),
             stab: findStabType(
-              formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
               moveDef.type
             ),
             wb: (!pvpDmg || isRaid) && weaterBoosts,
@@ -250,10 +250,10 @@ const CalculatePoint = () => {
               effective: getTypeEffective(
                 typeEff,
                 fMove.type,
-                form.form.types.map((item: { type: { name: any } }) => item.type.name)
+                form.form.types.map((item: { type: { name: string } }) => item.type.name)
               ),
               stab: findStabType(
-                formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+                formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                 fMove.type
               ),
               wb: (!pvpDmg || isRaid) && weaterBoosts,
@@ -400,7 +400,7 @@ const CalculatePoint = () => {
                         - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
                       </p>
                       {findStabType(
-                        form.form.types.map((item: { type: { name: any } }) => item.type.name),
+                        form.form.types.map((item: { type: { name: string } }) => item.type.name),
                         move.type
                       )}
                       <p>
@@ -408,7 +408,7 @@ const CalculatePoint = () => {
                         <b>
                           {move.pve_power}
                           {findStabType(
-                            form.form.types.map((item: { type: { name: any } }) => item.type.name),
+                            form.form.types.map((item: { type: { name: string } }) => item.type.name),
                             move.type
                           ) && <span className={'caption-small text-success'}> (x1.2)</span>}
                         </b>
@@ -497,12 +497,12 @@ const CalculatePoint = () => {
                     move={moveDef}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)} />}
+                    control={<Checkbox checked={weaterBoosts} onChange={(_, check) => setWeaterBoosts(check)} />}
                     label="Weater Boosts"
                     disabled={pvpDmg}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={pvpDmg} onChange={(event, check) => setPvpDmg(check)} />}
+                    control={<Checkbox checked={pvpDmg} onChange={(_, check) => setPvpDmg(check)} />}
                     label="PVP stats"
                     disabled={isRaid}
                   />
@@ -515,7 +515,7 @@ const CalculatePoint = () => {
                         - Move Type: <span className={'type-icon-small ' + moveDef.type.toLowerCase()}>{capitalize(moveDef.type)}</span>
                       </p>
                       {findStabType(
-                        formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+                        formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                         moveDef.type
                       )}
                       <p>
@@ -523,7 +523,7 @@ const CalculatePoint = () => {
                         <b>
                           {moveDef.pve_power}
                           {findStabType(
-                            formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+                            formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                             moveDef.type
                           ) && <span className={'caption-small text-success'}> (x1.2)</span>}
                         </b>
@@ -624,7 +624,7 @@ const CalculatePoint = () => {
                         {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
-                            {[...Array(MAX_IV + 1).keys()].map((iv, index) => (
+                            {[...Array(MAX_IV + 1).keys()].map((_, index) => (
                               <td
                                 className="text-iv"
                                 style={{
@@ -676,7 +676,7 @@ const CalculatePoint = () => {
                           - Move Type: <span className={'type-icon-small ' + fMove.type.toLowerCase()}>{capitalize(fMove.type)}</span>
                         </p>
                         {findStabType(
-                          formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+                          formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                           fMove.type
                         )}
                         <p>
@@ -684,7 +684,7 @@ const CalculatePoint = () => {
                           <b>
                             {fMove.pve_power}
                             {findStabType(
-                              formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+                              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                               fMove.type
                             ) && <span className={'caption-small text-success'}> (x1.2)</span>}
                           </b>
@@ -711,7 +711,7 @@ const CalculatePoint = () => {
                           - Move Type: <span className={'type-icon-small ' + cMove.type.toLowerCase()}>{capitalize(cMove.type)}</span>
                         </p>
                         {findStabType(
-                          formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+                          formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                           cMove.type
                         )}
                         <p>
@@ -719,7 +719,7 @@ const CalculatePoint = () => {
                           <b>
                             {cMove.pve_power}
                             {findStabType(
-                              formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+                              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                               cMove.type
                             ) && <span className={'caption-small text-success'}> (x1.2)</span>}
                           </b>
@@ -728,12 +728,12 @@ const CalculatePoint = () => {
                     )}
                   </div>
                   <FormControlLabel
-                    control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)} />}
+                    control={<Checkbox checked={weaterBoosts} onChange={(_, check) => setWeaterBoosts(check)} />}
                     label="Weater Boosts"
                     disabled={pvpDmg}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={pvpDmg} onChange={(event, check) => setPvpDmg(check)} />}
+                    control={<Checkbox checked={pvpDmg} onChange={(_, check) => setPvpDmg(check)} />}
                     label="PVP stats"
                     disabled={isRaid}
                   />
@@ -753,7 +753,7 @@ const CalculatePoint = () => {
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}
-                      onChange={(e, v) => setDEFIv(v)}
+                      onChange={(_, v) => setDEFIv(v)}
                     />
                     <div className="d-flex justify-content-between">
                       <b>STA</b>
@@ -804,7 +804,7 @@ const CalculatePoint = () => {
                           <th />
                           {resultBulkpointDef ? (
                             <Fragment>
-                              {[...Array(resultBulkpointDef.maxLength).keys()].map((value, index) => (
+                              {[...Array(resultBulkpointDef.maxLength).keys()].map((_, index) => (
                                 <th key={index}>{index}</th>
                               ))}
                             </Fragment>
@@ -824,24 +824,11 @@ const CalculatePoint = () => {
                             <td>{level}</td>
                             {resultBulkpointDef ? (
                               <Fragment>
-                                {resultBulkpointDef.data[i].map(
-                                  (
-                                    value:
-                                      | string
-                                      | number
-                                      | boolean
-                                      | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-                                      | React.ReactFragment
-                                      | React.ReactPortal
-                                      | null
-                                      | undefined,
-                                    index: React.Key
-                                  ) => (
-                                    <td className="text-iv-bulk" key={index}>
-                                      {value}
-                                    </td>
-                                  )
-                                )}
+                                {resultBulkpointDef.data[i].map((value: string, index: React.Key) => (
+                                  <td className="text-iv-bulk" key={index}>
+                                    {value}
+                                  </td>
+                                ))}
                               </Fragment>
                             ) : (
                               <Fragment>

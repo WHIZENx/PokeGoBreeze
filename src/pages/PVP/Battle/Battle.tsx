@@ -38,6 +38,8 @@ import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
+import { Combat } from '../../../core/models/combat.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const Battle = () => {
   const dispatch = useDispatch();
@@ -61,8 +63,8 @@ const Battle = () => {
   const timelineNormalContainer: any = useRef();
   const playLine: any = useRef();
 
-  let timelineInterval: any;
-  let turnInterval: any;
+  let timelineInterval: NodeJS.Timeout;
+  let turnInterval: NodeJS.Timeout;
 
   const [pokemonCurr, setPokemonCurr]: any = useState({
     pokemonData: null,
@@ -98,11 +100,11 @@ const Battle = () => {
   const State = (
     timer: number,
     type: string | null,
-    color: null,
-    size: null,
-    tap: null,
-    block: null,
-    energy: any,
+    color: string | null,
+    size: number | null,
+    tap: boolean,
+    block: number,
+    energy: number,
     hp: number,
     move = null,
     immune = null
@@ -125,28 +127,28 @@ const Battle = () => {
   const calculateMoveDmgActual = (
     poke: {
       shadow: boolean;
-      hp?: any;
+      hp?: number;
       stats: any;
       currentStats: any;
-      pokemon: any;
-      fmove?: any;
-      cmove?: any;
+      pokemon: PokemonDataModel;
+      fmove?: Combat;
+      cmove?: Combat;
       cmoveSec?: any;
-      energy?: any;
-      block?: any;
+      energy?: number;
+      block?: number;
       turn?: number;
     },
     pokeObj: {
       shadow: boolean;
-      hp?: any;
+      hp?: number;
       stats: any;
       currentStats: any;
-      pokemon: any;
-      fmove?: any;
-      cmove?: any;
+      pokemon: PokemonDataModel;
+      fmove?: Combat;
+      cmove?: Combat;
       cmoveSec?: any;
-      energy?: any;
-      block?: any;
+      energy?: number;
+      block?: number;
       turn?: number;
     },
     move: { pvp_power: number; type: string }
@@ -174,8 +176,8 @@ const Battle = () => {
     cMovePri: any;
     cMoveSec: any;
     timeline?: any[];
-    energy: any;
-    block: any;
+    energy: number;
+    block: number;
   }) => {
     return {
       hp: poke.pokemonData.currentStats.stats.statsSTA,
@@ -227,37 +229,37 @@ const Battle = () => {
     }
 
     const timelinePri: {
-      buff: any;
-      timer: any;
-      type: any;
-      move: any;
-      color: any;
-      size: any;
-      tap: any;
-      block: any;
-      energy: any;
+      timer: number;
+      type: string | null;
+      move: null;
+      color: string | null;
+      size: number;
+      tap: boolean;
+      block: number;
+      energy: number;
       hp: number;
-      dmgImmune: any;
+      dmgImmune: boolean;
+      buff: { target: string; type: string; power: number }[] | null;
     }[] = [];
     const timelineSec: {
-      buff: any;
-      timer: any;
-      type: any;
-      move: any;
-      color: any;
-      size: any;
-      tap: any;
-      block: any;
-      energy: any;
+      timer: number;
+      type: string | null;
+      move: null;
+      color: string | null;
+      size: number;
+      tap: boolean;
+      block: number;
+      energy: number;
       hp: number;
-      dmgImmune: any;
+      dmgImmune: boolean;
+      buff: { target: string; type: string; power: number }[] | null;
     }[] = [];
 
-    timelinePri.push(State(0, 'W', null, null, null, player1.block, player1.energy, player1.hp));
-    timelinePri.push(State(1, 'W', null, null, null, player1.block, player1.energy, player1.hp));
+    timelinePri.push(State(0, 'W', null, null, false, player1.block, player1.energy, player1.hp));
+    timelinePri.push(State(1, 'W', null, null, false, player1.block, player1.energy, player1.hp));
 
-    timelineSec.push(State(0, 'W', null, null, null, player2.block, player2.energy, player2.hp));
-    timelineSec.push(State(1, 'W', null, null, null, player2.block, player2.energy, player2.hp));
+    timelineSec.push(State(0, 'W', null, null, false, player2.block, player2.energy, player2.hp));
+    timelineSec.push(State(1, 'W', null, null, false, player2.block, player2.energy, player2.hp));
 
     let timer = 1;
     let tapPri: boolean,
@@ -275,8 +277,8 @@ const Battle = () => {
     let chargeType: number;
     timelineInterval = setInterval(() => {
       timer += 1;
-      timelinePri.push(State(timer, null, null, null, null, player1.block, player1.energy, player1.hp));
-      timelineSec.push(State(timer, null, null, null, null, player2.block, player2.energy, player2.hp));
+      timelinePri.push(State(timer, null, null, null, false, player1.block, player1.energy, player1.hp));
+      timelineSec.push(State(timer, null, null, null, false, player2.block, player2.energy, player2.hp));
       if (!chargedPri && !chargedSec) {
         if (
           (!player1.disableCMovePri || !player1.disableCMoveSec) &&
@@ -290,7 +292,7 @@ const Battle = () => {
             timelinePri[timer] = {
               ...timelinePri[timer],
               type: 'P',
-              color: player1.cmove.type.toLowerCase(),
+              color: player1.cmove.type?.toLowerCase(),
               size: 12,
               move: player1.cmove,
             };
@@ -325,7 +327,7 @@ const Battle = () => {
             timelineSec[timer] = {
               ...timelineSec[timer],
               type: 'P',
-              color: player2.cmove.type.toLowerCase(),
+              color: player2.cmove.type?.toLowerCase(),
               size: 12,
               move: player2.cmove,
             };
@@ -509,11 +511,11 @@ const Battle = () => {
               player2.block -= 1;
             }
             const moveType = chargeType === 1 ? player1.cmove : player1.cmoveSec;
-            const arrBufAtk: any[] = [],
-              arrBufTarget: any[] = [];
+            const arrBufAtk: { target: string; type: string; power: number }[] | null = [],
+              arrBufTarget: { target: string; type: string; power: number }[] | null = [];
             const randInt = parseFloat(Math.random().toFixed(3));
             if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
-              moveType.buffs.forEach((value: { target: string; type: string; power: any }) => {
+              moveType.buffs.forEach((value: { target: string; type: string; power: number }) => {
                 if (value.target === 'target') {
                   player2 = {
                     ...player2,
@@ -563,8 +565,8 @@ const Battle = () => {
               player1.block -= 1;
             }
             const moveType = chargeType === 1 ? player2.cmove : player2.cmoveSec;
-            const arrBufAtk: any[] = [],
-              arrBufTarget: any[] = [];
+            const arrBufAtk: { target: string; type: string; power: any }[] = [],
+              arrBufTarget: { target: string; type: string; power: any }[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
             if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
               moveType.buffs.forEach((value: { target: string; type: string; power: any }) => {
@@ -633,25 +635,25 @@ const Battle = () => {
         clearInterval(timelineInterval);
         clearInterval(turnInterval);
         if (player1.hp <= 0) {
-          timelinePri.push(State(timer, 'X', null, null, null, null, player1.energy, player1.hp));
+          timelinePri.push(State(timer, 'X', null, null, false, 0, player1.energy, player1.hp));
           if (player2.hp <= 0) {
-            timelineSec.push(State(timer, 'X', null, null, null, null, player2.energy, player2.hp));
+            timelineSec.push(State(timer, 'X', null, null, false, 0, player2.energy, player2.hp));
           } else {
             if (timelinePri.length === timelineSec.length) {
-              timelineSec[timelineSec.length - 1] = State(timer, 'Q', null, null, null, null, player2.energy, player2.hp);
+              timelineSec[timelineSec.length - 1] = State(timer, 'Q', null, null, false, 0, player2.energy, player2.hp);
             } else {
-              timelineSec.push(State(timer, 'Q', null, null, null, null, player2.energy, player2.hp));
+              timelineSec.push(State(timer, 'Q', null, null, false, 0, player2.energy, player2.hp));
             }
           }
         } else if (player2.hp <= 0) {
-          timelineSec.push(State(timer, 'X', null, null, null, null, player2.energy, player2.hp));
+          timelineSec.push(State(timer, 'X', null, null, false, 0, player2.energy, player2.hp));
           if (player1.hp <= 0) {
-            timelinePri.push(State(timer, 'X', null, null, null, null, player1.energy, player1.hp));
+            timelinePri.push(State(timer, 'X', null, null, false, 0, player1.energy, player1.hp));
           } else {
             if (timelinePri.length === timelineSec.length) {
-              timelinePri[timelinePri.length - 1] = State(timer, 'Q', null, null, null, null, player1.energy, player1.hp);
+              timelinePri[timelinePri.length - 1] = State(timer, 'Q', null, null, false, 0, player1.energy, player1.hp);
             } else {
-              timelinePri.push(State(timer, 'Q', null, null, null, null, player1.energy, player1.hp));
+              timelinePri.push(State(timer, 'Q', null, null, false, 0, player1.energy, player1.hp));
             }
           }
         }
@@ -719,11 +721,11 @@ const Battle = () => {
           .filter((pokemon) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon: any) => pokemon.slug === name);
-            const id = pokemon.num;
-            const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
+            const pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+            const id = pokemon?.num;
+            const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
 
-            const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+            const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
             return {
               ...item,
@@ -749,7 +751,7 @@ const Battle = () => {
     fetchPokemon();
   }, [dispatch, league, clearData]);
 
-  const clearDataPokemonCurr = (removeCMoveSec: any) => {
+  const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj({ ...pokemonObj, timeline: [] });
     setPlayTimeline({
       pokemonCurr: { hp: 0, energyPri: null, energySec: null },
@@ -773,7 +775,7 @@ const Battle = () => {
     }
   };
 
-  const clearDataPokemonObj = (removeCMoveSec: any) => {
+  const clearDataPokemonObj = (removeCMoveSec: boolean) => {
     setPokemonCurr({ ...pokemonCurr, timeline: [] });
     setPlayTimeline({
       pokemonCurr: { hp: 0, energyPri: null, energySec: null },
@@ -1028,13 +1030,13 @@ const Battle = () => {
     }, 100);
   };
 
-  const findBuff = (move: { buffs: any[] }) => {
-    if (move.buffs.length === 0) {
+  const findBuff = (move: Combat | undefined) => {
+    if (move?.buffs.length === 0) {
       return;
     }
     return (
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
-        {move.buffs.map((value: { type: string; power: number; buffChance: number }, index: React.Key) => (
+        {move?.buffs.map((value, index: React.Key) => (
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
             <img width={15} height={15} alt="img-atk" src={value.type === 'atk' ? atk_logo : def_logo} />
             <div className="position-absolute icon-buff">
@@ -1059,14 +1061,19 @@ const Battle = () => {
                 {value.power}
               </span>
             </div>
-            <b style={{ fontSize: 12 }}>{value.buffChance * 100}%</b>
+            <b style={{ fontSize: 12 }}>{(value.buffChance ?? 0) * 100}%</b>
           </div>
         ))}
       </div>
     );
   };
 
-  const calculateStatPokemon = (e: any, type: string, pokemon: any, setPokemon: any) => {
+  const calculateStatPokemon = (
+    e: { preventDefault: () => void },
+    type: string,
+    pokemon: { pokemonData: { allStats: any[]; pokemon: PokemonDataModel | undefined } },
+    setPokemon: any
+  ) => {
     e.preventDefault();
     const level = parseInt((document.getElementById('level' + capitalize(type)) as HTMLInputElement).value);
     const atk = parseInt((document.getElementById('atkIV' + capitalize(type)) as HTMLInputElement).value);
@@ -1090,8 +1097,8 @@ const Battle = () => {
     if (!stats) {
       const statsBattle = calculateStatsByTag(
         pokemon.pokemonData.pokemon,
-        pokemon.pokemonData.pokemon.baseStats,
-        pokemon.pokemonData.pokemon.slug
+        pokemon.pokemonData.pokemon?.baseStats,
+        pokemon.pokemonData.pokemon?.slug
       );
 
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
@@ -1116,7 +1123,12 @@ const Battle = () => {
     });
   };
 
-  const onSetStats = (type: string, pokemon: any, setPokemon: any, isRandom: boolean) => {
+  const onSetStats = (
+    type: string,
+    pokemon: { pokemonData: { allStats: string | any[]; bestStats: { level: string; IV: { atk: string; def: string; sta: string } } } },
+    setPokemon: any,
+    isRandom: boolean
+  ) => {
     let stats: { level: string; IV: { atk: string; def: string; sta: string } };
     if (isRandom) {
       stats = pokemon.pokemonData.allStats[Math.floor(Math.random() * pokemon.pokemonData.allStats.length)];
@@ -1139,7 +1151,11 @@ const Battle = () => {
     });
   };
 
-  const renderInfoPokemon = (type: string, pokemon: any, setPokemon: any) => {
+  const renderInfoPokemon = (
+    type: string,
+    pokemon: { shadow?: any; pokemonData: any; fMove?: Combat; cMovePri?: Combat; cMoveSec?: Combat | string },
+    setPokemon: any
+  ) => {
     return (
       <Accordion defaultActiveKey={[]} alwaysOpen={true}>
         <Accordion.Item eventKey="0">
@@ -1274,14 +1290,14 @@ const Battle = () => {
               find={true}
               title="Fast Move"
               move={pokemon.fMove}
-              elite={pokemon.pokemonData.combatPoke.eliteQuickMoves.includes(pokemon.fMove.name)}
+              elite={pokemon.pokemonData.combatPoke.eliteQuickMoves.includes(pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
                 find={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes(pokemon.cMovePri.name)}
+                elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes(pokemon.cMovePri?.name)}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1291,9 +1307,9 @@ const Battle = () => {
                   find={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes(pokemon.cMoveSec.name)}
+                  elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes((pokemon.cMoveSec as Combat)?.name)}
                 />
-                {findBuff(pokemon.cMoveSec)}
+                {findBuff(pokemon.cMoveSec as Combat)}
               </div>
             )}
           </Accordion.Body>
@@ -1302,7 +1318,22 @@ const Battle = () => {
     );
   };
 
-  const renderPokemonInfo = (type: string, pokemon: any, setPokemon: any, clearDataPokemon: any) => {
+  const renderPokemonInfo = (
+    type: string,
+    pokemon: {
+      pokemonData: any;
+      energy?: number;
+      block?: number;
+      shadow: boolean;
+      cMovePri: any;
+      disableCMovePri?: any;
+      cMoveSec: any;
+      disableCMoveSec?: any;
+      fMove?: Combat | undefined;
+    },
+    setPokemon: any,
+    clearDataPokemon: any
+  ) => {
     return (
       <Fragment>
         <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />

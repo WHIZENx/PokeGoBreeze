@@ -1,7 +1,7 @@
 export interface LeaguePVP {
   id: string;
   name: string;
-  cp: number;
+  cp: number | number[];
   logo: string | null;
 }
 

@@ -14,13 +14,13 @@ const FromChange = ({ details, defaultName }: any) => {
   const [pokeAssets, setPokeAssets]: any = useState([]);
 
   const getImageList = useCallback(
-    (id: any) => {
+    (id: number) => {
       const model = data?.assets?.find((item) => item.id === id);
       return model
-        ? Array.from(new Set(model.image.map((item: { form: any }) => item.form))).map((value) => {
+        ? Array.from(new Set(model.image.map((item: { form: string }) => item.form))).map((value) => {
             return {
               form: value,
-              image: model.image.filter((item: { form: any }) => value === item.form),
+              image: model.image.filter((item: { form: string }) => value === item.form),
             };
           })
         : [];
@@ -58,7 +58,7 @@ const FromChange = ({ details, defaultName }: any) => {
             </div>
           </div>
           <div className="d-flex flex-column align-items-center justify-content-center w-50" style={{ rowGap: 15 }}>
-            {details.formChange.map((value: any, index: React.Key) => (
+            {details.formChange.map((value: { availableForm: string[] }, index: React.Key) => (
               <Fragment key={index}>
                 {value.availableForm.map((name: string, index: React.Key) => (
                   <div key={index} className="d-flex flex-column align-items-center justify-content-center" id={`form-${index}`}>
@@ -80,9 +80,9 @@ const FromChange = ({ details, defaultName }: any) => {
               </Fragment>
             ))}
           </div>
-          {details.formChange.map((value: any, index: React.Key) => (
+          {details.formChange.map((value: { availableForm: string[]; candyCost: string; stardustCost: string }, index: React.Key) => (
             <Fragment key={index}>
-              {value.availableForm.map((_: any, index: React.Key) => (
+              {value.availableForm.map((_: string, index: React.Key) => (
                 <Xarrow
                   labels={{
                     end: (

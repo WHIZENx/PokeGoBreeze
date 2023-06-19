@@ -73,7 +73,9 @@ const Form = (props: {
             cancelToken: source.token,
           });
           const pokeForm = await Promise.all(
-            pokeInfo.data.forms.map(async (item: { url: any }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
+            pokeInfo.data.forms.map(
+              async (item: { url: string }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data
+            )
           );
           dataPokeList.push(pokeInfo.data);
           dataFromList.push(pokeForm);
@@ -218,7 +220,7 @@ const Form = (props: {
     }
   };
 
-  const onSetTier = (tier: any) => {
+  const onSetTier = (tier: number) => {
     if (props.setTier) {
       props.setTier(tier);
     }

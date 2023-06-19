@@ -690,7 +690,7 @@ export const calculateAvgDPS = (
     TRAINER_FRIEND?: number;
     specific?: { FDmgenemy: number; CDmgenemy: number };
   } | null = null,
-  shadow = null
+  shadow = false
 ) => {
   const StabMultiply = STAB_MULTIPLY(globalOptions),
     ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
@@ -801,7 +801,7 @@ export const calculateAvgDPS = (
   return Math.max(FDPS, DPS);
 };
 
-export const calculateTDO = (globalOptions: Options | undefined, Def: number, HP: number, dps: number, shadow = null) => {
+export const calculateTDO = (globalOptions: Options | undefined, Def: number, HP: number, dps: number, shadow: any = null) => {
   const ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
   let y;

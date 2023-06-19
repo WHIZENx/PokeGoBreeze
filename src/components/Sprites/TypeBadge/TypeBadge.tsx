@@ -22,7 +22,7 @@ const TypeBadge = (props: {
 
   let move = props.move;
   if (!props.find) {
-    move = combat.find((item: { name: any }) => item.name === props.move.name);
+    move = combat.find((item) => item.name === props.move.name);
   }
 
   return (

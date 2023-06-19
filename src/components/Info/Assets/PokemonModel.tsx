@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 
-const PokemonModel = (props: { id: any; name: string }) => {
+const PokemonModel = (props: { id: number; name: string }) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -26,10 +26,10 @@ const PokemonModel = (props: { id: any; name: string }) => {
       const detail = data?.details?.find((item) => item.id === id);
       gender.current = detail ? detail.gender : null;
       return model
-        ? Array.from(new Set(model.image.map((item: { form: any }) => item.form))).map((value) => {
+        ? Array.from(new Set(model.image.map((item) => item.form))).map((value) => {
             return {
               form: value,
-              image: model.image.filter((item: { form: any }) => value === item.form),
+              image: model.image.filter((item) => value === item.form),
             };
           })
         : [];
@@ -48,9 +48,9 @@ const PokemonModel = (props: { id: any; name: string }) => {
         <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon ?? 'Standard')} />
       </h4>
       <div>
-        {pokeAssets.map((assets: { image: { gender: number; shiny: string; default: string }[]; form: string }, index: React.Key) => (
+        {pokeAssets.map((assets: { image: any[]; form: string }, index: React.Key) => (
           <div key={index} className="d-inline-block group-model text-center">
-            {assets.image.map((value: { gender: number; shiny: string; default: string }, index: React.Key) => (
+            {assets.image.map((value, index: React.Key) => (
               <div key={index} className="d-inline-block" style={{ width: value.gender === 3 ? '100%' : 'auto' }}>
                 <div className="sub-group-model">
                   {gender.current && !gender.current.genderlessPercent && (

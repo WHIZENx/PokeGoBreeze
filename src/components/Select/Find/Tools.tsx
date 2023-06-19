@@ -32,15 +32,15 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
   }, []);
 
   const filterFormList = useCallback(
-    (stats: any[], id: any) => {
-      const filterId = stats.filter((item: { id: any }) => item.id === id);
+    (stats: any[], id: number) => {
+      const filterId = stats.filter((item: { id: number }) => item.id === id);
       const filterForm = stats.find(
-        (item: { id: any; form: string }) => item.id === id && item.form !== 'a' && filterFormName(currForm.form.form_name, item.form)
+        (item: { id: number; form: string }) => item.id === id && item.form !== 'a' && filterFormName(currForm.form.form_name, item.form)
       );
       if (filterId.length === 1 && formList.length === 1 && !filterForm) {
         return filterId[0];
       } else if (filterId.length === formList.length && !filterForm) {
-        return stats.find((item: { id: any; form: string }) => item.id === id && item.form === 'Normal');
+        return stats.find((item: { id: number; form: string }) => item.id === id && item.form === 'Normal');
       } else {
         return filterForm;
       }
@@ -58,7 +58,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
       parseInt(tier) === 5 &&
       currForm &&
       currForm.form.form_name.includes('mega') &&
-      (Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass
+      Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass
     ) {
       setCurrTier(6);
       if (setTier) {
@@ -78,7 +78,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
       setStatDEF(raid && tier && !hide ? { defense: calculateRaidStat(formDEF.defense, tier) } : formDEF);
       setStatSTA(raid && tier && !hide ? { stamina: RAID_BOSS_TIER[tier].sta } : formSTA);
       setStatProd(raid && tier && !hide ? null : formProd);
-      setCurrDataPoke(dataPoke.find((item: { id: any }) => item.id === id));
+      setCurrDataPoke(dataPoke.find((item: { id: number }) => item.id === id));
 
       if (formATK && formDEF && formSTA) {
         onSetStats('atk', raid && tier && !hide ? calculateRaidStat(formATK.attack, tier) : formATK.attack);
@@ -131,7 +131,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
             </optgroup>
             {currForm && currForm.form.form_name.includes('mega') && (
               <Fragment>
-                {(Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass ? (
+                {Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">
                     <option value={6}>Tier Mega</option>
                   </optgroup>

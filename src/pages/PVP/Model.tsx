@@ -28,10 +28,13 @@ import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import CandyXL from '../../components/Sprites/Candy/CandyXL';
 import { StatsModel } from '../../core/models/stats.model';
+import { Asset } from '../../core/models/asset.model';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { Combat } from '../../core/models/combat.model';
 
 export const Keys = (
-  assets: any[],
-  pokemonData: any[],
+  assets: Asset[],
+  pokemonData: PokemonDataModel[],
   data: { matchups: any[]; counters: any[] },
   cp: string | undefined,
   type: string | undefined
@@ -44,15 +47,15 @@ export const Keys = (
     bgtype: number
   ) => {
     const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
-    const pokemon = pokemonData.find((pokemon: { slug: string }) => pokemon.slug === name);
-    const id = pokemon.num;
-    const form = findAssetForm(assets, pokemon.num, pokemon.name);
+    const pokemon = pokemonData.find((pokemon) => pokemon.slug === name);
+    const id = pokemon?.num;
+    const form = findAssetForm(assets, pokemon?.num, pokemon?.name);
 
     return (
       <Link
         to={`/pvp/${cp}/${type}/${data.opponent.replaceAll('_', '-')}`}
         className="list-item-ranking"
-        style={{ backgroundImage: computeBgType(pokemon.types, data.opponent.includes('_shadow')) }}
+        style={{ backgroundImage: computeBgType(pokemon?.types, data.opponent.includes('_shadow')) }}
       >
         <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
           <div className="d-flex justify-content-center">
@@ -71,7 +74,7 @@ export const Keys = (
             <b className="text-white text-shadow">
               #{id} {splitAndCapitalize(name, '-', ' ')}
             </b>
-            <TypeInfo shadow={true} hideText={true} height={20} arr={pokemon.types} />
+            <TypeInfo shadow={true} hideText={true} height={20} arr={pokemon?.types} />
           </div>
         </div>
         <div style={{ marginRight: 15 }}>
@@ -97,7 +100,7 @@ export const Keys = (
         </div>
         {data.matchups
           .sort((a: { rating: number }, b: { rating: number }) => b.rating - a.rating)
-          .map((matchup: any, index: React.Key) => (
+          .map((matchup, index: React.Key) => (
             <Fragment key={index}>{renderItemList(matchup, 0)}</Fragment>
           ))}
       </div>
@@ -110,7 +113,7 @@ export const Keys = (
         </div>
         {data.counters
           .sort((a: { rating: number }, b: { rating: number }) => a.rating - b.rating)
-          .map((counter: any, index: React.Key) => (
+          .map((counter, index: React.Key) => (
             <Fragment key={index}>{renderItemList(counter, 1)}</Fragment>
           ))}
       </div>
@@ -118,9 +121,21 @@ export const Keys = (
   );
 };
 
-export const OverAllStats = (data: any, statsRanking: StatsModel, cp: any) => {
+export const OverAllStats = (
+  data: {
+    scores: any[];
+    atk: { attack: number; rank: number } | undefined;
+    def: { defense: number; rank: number } | undefined;
+    sta: { stamina: number; rank: number } | undefined;
+    prod: { prod: number; rank: number } | undefined;
+    stats: any;
+    id: number;
+  },
+  statsRanking: StatsModel,
+  cp: number | string
+) => {
   const calculateStatsTopRank = (stats: { atk: number; def: number; sta: number }) => {
-    const maxCP = parseInt(cp);
+    const maxCP = parseInt(cp.toString());
 
     if (maxCP === 10000) {
       const cp = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 50);
@@ -137,7 +152,7 @@ export const OverAllStats = (data: any, statsRanking: StatsModel, cp: any) => {
   };
 
   const renderTopStats = (stats: any, id: number) => {
-    const maxCP = parseInt(cp);
+    const maxCP = parseInt(cp.toString());
     const currStats: any = calculateStatsTopRank(stats);
     return (
       <ul className="element-top">
@@ -205,7 +220,7 @@ export const OverAllStats = (data: any, statsRanking: StatsModel, cp: any) => {
   );
 };
 
-export const TypeEffective = (types: any) => {
+export const TypeEffective = (types: string[]) => {
   return (
     <div className="row text-white">
       <div className="col-lg-4" style={{ marginBottom: 15 }}>
@@ -245,7 +260,7 @@ export const TypeEffective = (types: any) => {
 export const MoveSet = (
   moves: { fastMoves: any[]; chargedMoves: any[] },
   combatList: { eliteQuickMoves: string | any[]; eliteCinematicMoves: string | any[] },
-  combatData: any[]
+  combatData: Combat[]
 ) => {
   const findArchetype = (archetype: string | string[]) => {
     return [
@@ -291,7 +306,7 @@ export const MoveSet = (
     if (name.includes('HIDDEN_POWER')) {
       name = 'HIDDEN_POWER';
     }
-    let move = combatData.find((move: { name: any }) => move.name === name);
+    let move: any = combatData.find((move) => move.name === name);
     if (oldName.includes('HIDDEN_POWER')) {
       move = { ...move, type: oldName.split('_')[2] };
     }
@@ -420,7 +435,7 @@ export const MoveSet = (
               return move;
             })
             .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)
-            .map((value: { moveId: any; uses: any }, index: React.Key) => (
+            .map((value: { moveId: string; uses: number }, index: React.Key) => (
               <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
             ))}
         </div>

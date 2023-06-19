@@ -6,15 +6,15 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
 
-const Mega = (props: { formList: any; id: number }) => {
+const Mega = (props: { formList: any[]; id: number }) => {
   const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
   const [arrEvoList, setArrEvoList]: any = useState([]);
 
   useEffect(() => {
     setArrEvoList(
       props.formList
-        .filter((item: { form: { form_name: string | string[] } }[]) => item[0].form.form_name.includes('mega'))
-        .map((item: { form: any }[]) => item[0].form)
+        .filter((item: { form: { form_name: string } }[]) => item[0].form.form_name.includes('mega'))
+        .map((item: { form: string }[]) => item[0].form)
     );
   }, [props.formList]);
 

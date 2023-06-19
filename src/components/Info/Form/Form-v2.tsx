@@ -53,16 +53,16 @@ const Form = ({
 
   const findFirst = useCallback(() => {
     return formList.map((item: any[]) => {
-      return item.find((item: { form: { is_default: any } }) => item.form.is_default);
+      return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
     })[0];
   }, [formList]);
 
   const findDefaultForm = useCallback(() => {
     return formList
       .map((item: any[]) => {
-        return item.find((item: { form: { is_default: any } }) => item.form.is_default);
+        return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
       })
-      .find((item: { id: any }) => item && item.id === idDefault);
+      .find((item: { id: number }) => item && item.id === idDefault);
   }, [formList, idDefault]);
 
   const findForm = useCallback(() => {
@@ -72,22 +72,22 @@ const Form = ({
     return formList
       .map((form: any[]) => {
         let curFrom = form.find(
-          (item: { form: { form_name: any; name: string }; default_name: string }) =>
+          (item: { form: { form_name: string; name: string }; default_name: string }) =>
             item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm
         );
         curFrom =
           curFrom ??
-          form.find((item: { form: { is_default: any } }) => item.form.is_default) ??
-          form.find((item: { form: { is_default: any } }) => !item.form.is_default);
+          form.find((item: { form: { is_default: boolean } }) => item.form.is_default) ??
+          form.find((item: { form: { is_default: boolean } }) => !item.form.is_default);
         if (paramForm && curFrom.form.form_name !== paramForm.toLowerCase()) {
-          const changeForm = form.find((item: { form: { form_name: any } }) => item.form.form_name === paramForm.toLowerCase());
+          const changeForm = form.find((item: { form: { form_name: string } }) => item.form.form_name === paramForm.toLowerCase());
           if (changeForm) {
             curFrom = changeForm;
           }
         }
         return curFrom;
       })
-      .find((item: { form: { form_name: any; name: string }; default_name: string; id: any }) => {
+      .find((item: { form: { form_name: string; name: string }; default_name: string; id: number }) => {
         return paramForm
           ? item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm
           : item.id === idDefault;
@@ -115,19 +115,19 @@ const Form = ({
   }, []);
 
   const filterFormList = useCallback(
-    (formName: string, stats: any[], id: any, formLength: number) => {
-      const filterId = stats.filter((item: { id: any }) => item.id === id);
+    (formName: string, stats: any[], id: number, formLength: number) => {
+      const filterId = stats.filter((item: { id: number }) => item.id === id);
       const firstFilter = stats.find(
-        (item: { id: any; form: string }) => item.id === id && formName.toLowerCase() === item.form.toLowerCase()
+        (item: { id: number; form: string }) => item.id === id && formName.toLowerCase() === item.form.toLowerCase()
       );
       if (firstFilter) {
         return firstFilter;
       }
-      const filterForm = stats.find((item: { id: any; form: any }) => item.id === id && filterFormName(formName, item.form));
+      const filterForm = stats.find((item: { id: number; form: string }) => item.id === id && filterFormName(formName, item.form));
       if (filterId.length === 1 && formLength === 1 && !filterForm) {
         return filterId[0];
       } else if (filterId.length === formLength && !filterForm) {
-        return stats.find((item: { id: any; form: string }) => item && item.id === id && item.form === 'Normal');
+        return stats.find((item: { id: number; form: string }) => item && item.id === id && item.form === 'Normal');
       } else {
         return filterForm;
       }
@@ -136,9 +136,9 @@ const Form = ({
   );
 
   const findFormData = (name: string) => {
-    const findData = pokeData.find((item: { name: any }) => name === item.name);
+    const findData = pokeData.find((item: { name: string }) => name === item.name);
     const findForm = formList
-      .map((item: any[]) => item.find((item: { form: { name: any } }) => item.form.name === name))
+      .map((item: any[]) => item.find((item: { form: { name: string } }) => item.form.name === name))
       .find((item: any) => item);
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));
@@ -240,7 +240,7 @@ const Form = ({
           );
         }
         if (!data) {
-          data = pokeData.find((item: { id: any }) => item.id === idDefault);
+          data = pokeData.find((item: { id: number }) => item.id === idDefault);
         }
         setDataPoke(data);
       }

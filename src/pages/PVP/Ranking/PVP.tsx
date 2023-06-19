@@ -74,7 +74,7 @@ const RankingPVP = () => {
   }, [pvp]);
 
   useEffect(() => {
-    if (dataStore?.combat?.every((combat: { archetype: string | null }) => !combat.archetype)) {
+    if (dataStore?.combat?.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
   }, [dataStore?.combat]);
@@ -108,14 +108,14 @@ const RankingPVP = () => {
         }
         file = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon: any = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
-          const id = pokemon.num;
-          const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
+          const pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+          const id = pokemon?.num;
+          const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
 
-          const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+          const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
           if (!styleSheet.current) {
-            styleSheet.current = getStyleSheet(`.${pokemon.types[0].toLowerCase()}`);
+            styleSheet.current = getStyleSheet(`.${pokemon?.types[0].toLowerCase()}`);
           }
 
           let fmoveData = item.moveset[0],
@@ -149,16 +149,16 @@ const RankingPVP = () => {
           }
 
           let combatPoke: any = dataStore?.pokemonCombat?.filter(
-            (item: { id: number; baseSpecies: string }) =>
-              item.id === pokemon.num &&
-              item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+            (item) =>
+              item.id === pokemon?.num &&
+              item.baseSpecies === (pokemon?.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
           );
-          const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
+          const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
           if (!result) {
             if (combatPoke) {
               combatPoke = combatPoke[0];
             } else {
-              combatPoke = combatPoke?.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon.name));
+              combatPoke = combatPoke?.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon?.name));
             }
           } else {
             combatPoke = result;
@@ -171,10 +171,10 @@ const RankingPVP = () => {
             form,
             pokemon,
             stats,
-            atk: statsRanking.attack.ranking.find((i: { attack: number }) => i.attack === stats.atk),
-            def: statsRanking.defense.ranking.find((i: { defense: number }) => i.defense === stats.def),
-            sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === (stats?.sta ?? 0)),
-            prod: statsRanking.statProd.ranking.find((i: { prod: number }) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
+            atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
+            def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
+            sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
+            prod: statsRanking.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
             fmove,
             cmovePri,
             cmoveSec,
@@ -316,7 +316,7 @@ const RankingPVP = () => {
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
-    const league = pvp?.rankings.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
+    const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (

@@ -1,3 +1,4 @@
+import { SearchingOptionsModel } from '../../core/models/searching.model';
 import {
   SET_POKEMON_MAIN_SEARCH,
   RESET_POKEMON_MAIN_SEARCH,
@@ -10,7 +11,7 @@ const initialize = {
   toolSearching: null,
 };
 
-const SearchingReducer = (state: any = initialize, action: any) => {
+const SearchingReducer = (state: SearchingOptionsModel = initialize, action: any) => {
   switch (action.type) {
     case SET_POKEMON_MAIN_SEARCH:
       return {

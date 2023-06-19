@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import './IVBar.scss';
 
-const IVbar = (props: { iv: number; style: React.CSSProperties | undefined; title: string }) => {
+const IVbar = (props: { iv: number; style: React.CSSProperties; title: string }) => {
   const ivWidthFirst = useRef(props.iv < 5 ? 20 * props.iv : 100);
   const ivWidthSec = useRef(props.iv >= 5 ? (props.iv < 10 ? 20 * (props.iv - 5) : 100) : 0);
   const ivWidthThird = useRef(props.iv >= 10 ? (props.iv < 15 ? 20 * (props.iv - 10) : 100) : 0);

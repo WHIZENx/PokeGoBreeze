@@ -1,6 +1,6 @@
 import { CPM } from './models/cpm.model';
 
-export const calculateCPM = (baseCPM: any, min: number, max: number) => {
+export const calculateCPM = (baseCPM: number[], min: number, max: number) => {
   const CPMModel = () => {
     return {
       level: 0,
@@ -28,9 +28,9 @@ export const calculateCPM = (baseCPM: any, min: number, max: number) => {
   for (let i = min + 0.5; i <= max; i += 1) {
     const result: CPM = CPMModel();
     result.level = i;
-    const cpmLow: any = cpmList.find((cp) => cp.level === Math.floor(i))?.multiplier;
-    const cpmHigh: any = cpmList.find((cp) => cp.level === Math.ceil(i))?.multiplier;
-    result.multiplier = Math.sqrt(Math.pow(cpmLow, 2) - Math.pow(cpmLow, 2) / 2 + Math.pow(cpmHigh, 2) / 2);
+    const cpmLow = cpmList.find((cp) => cp.level === Math.floor(i))?.multiplier;
+    const cpmHigh = cpmList.find((cp) => cp.level === Math.ceil(i))?.multiplier;
+    result.multiplier = Math.sqrt(Math.pow(cpmLow ?? 0, 2) - Math.pow(cpmLow ?? 0, 2) / 2 + Math.pow(cpmHigh ?? 0, 2) / 2);
     cpmList.push(result);
   }
   return cpmList.sort((a, b) => a.level - b.level);

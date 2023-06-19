@@ -39,7 +39,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       fMove = 'HIDDEN_POWER';
     }
 
-    let fmove: any = combat.find((item: { name: any }) => item.name === fMove);
+    let fmove: any = combat.find((item) => item.name === fMove);
     if (value.moveset[0].includes('HIDDEN_POWER')) {
       fmove = { ...fmove, type: value.moveset[0].split('_')[2] };
     }
@@ -51,7 +51,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     if (cMovePri === 'TECHNO_BLAST_DOUSE') {
       cMovePri = 'TECHNO_BLAST_WATER';
     }
-    cMovePri = combat.find((item: { name: any }) => item.name === cMovePri);
+    cMovePri = combat.find((item) => item.name === cMovePri);
     setCMovePri(cMovePri);
 
     if (cMoveSec === 'FUTURE_SIGHT') {
@@ -60,7 +60,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     if (cMoveSec === 'TECHNO_BLAST_DOUSE') {
       cMoveSec = 'TECHNO_BLAST_WATER';
     }
-    cMoveSec = combat.find((item: { name: any }) => item.name === cMoveSec);
+    cMoveSec = combat.find((item) => item.name === cMoveSec);
     setCMoveSec(cMoveSec);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
@@ -68,7 +68,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, league);
 
     let combatPoke: any = pokemonCombat.filter(
-      (item: { id: any; baseSpecies: string }) =>
+      (item) =>
         item.id === value.pokemon.num &&
         item.baseSpecies === (value.pokemon.baseSpecies ? convertName(value.pokemon.baseSpecies) : convertName(value.pokemon.name))
     );
@@ -105,7 +105,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     });
   };
 
-  const selectFMove = (value: any) => {
+  const selectFMove = (value: { sound: string }) => {
     clearData();
     setFMove(value);
     setPokemonBattle({
@@ -116,7 +116,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     setShowFMove(false);
   };
 
-  const selectCMovePri = (value: any) => {
+  const selectCMovePri = (value: { sound: string }) => {
     clearData();
     setCMovePri(value);
     setPokemonBattle({
@@ -127,7 +127,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     setShowCMovePri(false);
   };
 
-  const selectCMoveSec = (value: any) => {
+  const selectCMoveSec = (value: { sound: string }) => {
     clearData();
     setCMoveSec(value);
     setPokemonBattle({
@@ -281,8 +281,8 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
               <div className="result-move-select">
                 <div>
                   {data
-                    .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
-                    .moves.chargedMoves.map((value: { moveId: any }) => {
+                    .find((value: { speciesId: number }) => value.speciesId === pokemon.speciesId)
+                    .moves.chargedMoves.map((value: { moveId: string }) => {
                       let move = value.moveId;
                       if (move === 'FUTURE_SIGHT') {
                         move = 'FUTURESIGHT';
@@ -290,9 +290,9 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                       if (move === 'TECHNO_BLAST_DOUSE') {
                         move = 'TECHNO_BLAST_WATER';
                       }
-                      return combat.find((item: { name: any }) => item.name === move);
+                      return combat.find((item) => item.name === move);
                     })
-                    .filter((value: { name: any }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
+                    .filter((value: { name: string }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
                     .map((value: any, index: React.Key) => (
                       <div
                         className={'card-move ' + (pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
@@ -316,7 +316,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
         <Checkbox
           checked={!pokemonBattle.disableCMoveSec}
-          onChange={(event, check) => {
+          onChange={(_, check) => {
             clearData();
             setPokemonBattle({ ...pokemonBattle, disableCMoveSec: !check });
           }}
@@ -353,8 +353,8 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
               <div className="result-move-select">
                 <div>
                   {data
-                    .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
-                    .moves.chargedMoves.map((value: { moveId: any }) => {
+                    .find((value: { speciesId: number }) => value.speciesId === pokemon.speciesId)
+                    .moves.chargedMoves.map((value: { moveId: string }) => {
                       let move = value.moveId;
                       if (move === 'FUTURE_SIGHT') {
                         move = 'FUTURESIGHT';
@@ -362,9 +362,9 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                       if (move === 'TECHNO_BLAST_DOUSE') {
                         move = 'TECHNO_BLAST_WATER';
                       }
-                      return combat.find((item: { name: any }) => item.name === move);
+                      return combat.find((item) => item.name === move);
                     })
-                    .filter((value: { name: any }) => (cMoveSec === '' || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
+                    .filter((value: { name: string }) => (cMoveSec === '' || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
                     .map((value: any, index: React.Key) => (
                       <div
                         className="card-move"

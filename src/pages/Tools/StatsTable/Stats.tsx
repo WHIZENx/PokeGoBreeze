@@ -15,32 +15,32 @@ import { SpinnerState } from '../../../store/models/state.model';
 export const columnsStats: any = [
   {
     name: 'Rank',
-    selector: (row: { rank: any }) => row.rank,
+    selector: (row: { rank: number }) => row.rank,
     sortable: true,
   },
   {
     name: 'Level',
-    selector: (row: { level: any }) => row.level,
+    selector: (row: { level: number }) => row.level,
     sortable: true,
   },
   {
     name: 'IV ATK',
-    selector: (row: { IV: { atk: any } }) => row.IV.atk,
+    selector: (row: { IV: { atk: number } }) => row.IV.atk,
     sortable: true,
   },
   {
     name: 'IV DEF',
-    selector: (row: { IV: { def: any } }) => row.IV.def,
+    selector: (row: { IV: { def: number } }) => row.IV.def,
     sortable: true,
   },
   {
     name: 'IV STA',
-    selector: (row: { IV: { sta: any } }) => row.IV.sta,
+    selector: (row: { IV: { sta: number } }) => row.IV.sta,
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row: { CP: any }) => row.CP,
+    selector: (row: { CP: number }) => row.CP,
     sortable: true,
   },
   {
@@ -204,7 +204,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setATKIv(v)}
+              onChange={(_: any, v: any) => setATKIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -219,7 +219,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setDEFIv(v)}
+              onChange={(_: any, v: any) => setDEFIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -234,7 +234,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setSTAIv(v)}
+              onChange={(_: any, v: any) => setSTAIv(v)}
             />
           </Box>
         </div>

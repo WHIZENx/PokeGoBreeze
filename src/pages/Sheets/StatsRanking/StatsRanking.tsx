@@ -19,7 +19,7 @@ import { PokemonDataModel } from '../../../core/models/pokemon.model';
 const columnPokemon: any = [
   {
     name: '',
-    selector: (row: { num: any; forme: string; name: string }) => (
+    selector: (row: { num: number; forme: string; name: string }) => (
       <Link
         to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
@@ -31,17 +31,17 @@ const columnPokemon: any = [
   },
   {
     name: 'Ranking',
-    selector: (row: { rank: any }) => row.rank,
+    selector: (row: { rank: number }) => row.rank,
     width: '80px',
   },
   {
     name: 'ID',
-    selector: (row: { num: any }) => row.num,
+    selector: (row: { num: number }) => row.num,
     width: '80px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: { num: any; forme: string; name: string; sprite: string; baseSpecies: string }) => (
+    selector: (row: { num: number; forme: string; name: string; sprite: string; baseSpecies: string }) => (
       <>
         <img
           height={48}
@@ -60,8 +60,8 @@ const columnPokemon: any = [
   },
   {
     name: 'Type(s)',
-    selector: (row: { types: any[] }) =>
-      row.types.map((value: any, index: React.Key) => (
+    selector: (row: { types: string[] }) =>
+      row.types.map((value: string, index: React.Key) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -122,8 +122,8 @@ const StatsRanking = () => {
   const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemonData ?? []);
   const [search, setSearch] = useState('');
 
-  const mappingData = (pokemon: any[]) => {
-    return pokemon.map((data: PokemonDataModel | undefined) => {
+  const mappingData = (pokemon: PokemonDataModel[]) => {
+    return pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
       return {
         ...data,
@@ -169,7 +169,7 @@ const StatsRanking = () => {
   };
 
   const [sortId, setSortId] = useState(9);
-  const pokemonList = useRef(sortRanking(mappingData(Object.values(pokemonData).filter((pokemon: any) => pokemon.num > 0)), sortId));
+  const pokemonList = useRef(sortRanking(mappingData(Object.values(pokemonData).filter((pokemon) => pokemon.num > 0)), sortId));
   const [pokemonFilter, setPokemonFilter] = useState(pokemonList.current);
 
   const [select, setSelect]: any = useState(pokemonList.current[0]);

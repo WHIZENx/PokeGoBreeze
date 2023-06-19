@@ -2,7 +2,7 @@ import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
 import { MAX_IV } from './Constants';
-import { PokemonDataModel } from '../core/models/pokemon.model';
+import { PokemonDataModel, PokemonNameModel } from '../core/models/pokemon.model';
 import { Details } from '../core/models/details.model';
 import { StatsModel } from '../core/models/stats.model';
 
@@ -570,12 +570,12 @@ export const calRank = (
   return ((pokemonStats[type].max_rank - rank + 1) * 100) / pokemonStats[type].max_rank;
 };
 
-export const getPokemonById = (pokemonName: any, id: number) => {
-  return pokemonName.find((pokemon: any) => pokemon.id === id);
+export const getPokemonById = (pokemonName: PokemonNameModel[], id: number) => {
+  return pokemonName.find((pokemon) => pokemon.id === id);
 };
 
-export const getPokemonByIndex = (pokemonName: any, index: number) => {
-  return pokemonName.find((pokemon: any) => pokemon.index === index);
+export const getPokemonByIndex = (pokemonName: PokemonNameModel[], index: number) => {
+  return pokemonName.find((pokemon) => pokemon.index === index);
 };
 
 export const getCustomThemeDataTable = (theme: Theme) => {

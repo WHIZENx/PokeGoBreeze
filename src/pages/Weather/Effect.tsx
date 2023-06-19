@@ -35,13 +35,13 @@ const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) =>
     getWeatherEffective();
   }, [currentTypePri, currentTypeSec, getWeatherEffective, prop.types]);
 
-  const changeTypePri = (value: any) => {
+  const changeTypePri = (value: string) => {
     setShowTypePri(false);
     setCurrentTypePri(value);
     getWeatherEffective();
   };
 
-  const changeTypeSec = (value: any) => {
+  const changeTypeSec = (value: string) => {
     setShowTypeSec(false);
     setCurrentTypeSec(value);
     getWeatherEffective();
@@ -76,7 +76,7 @@ const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) =>
               {showTypePri && (
                 <div className="result-type result-type-weather">
                   <ul>
-                    {types.map((value: any, index: React.Key) => (
+                    {types.map((value: string, index: React.Key) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypePri(value)}>
                         <CardType value={capitalize(value)} />
                       </li>
@@ -119,7 +119,7 @@ const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) =>
               {showTypeSec && (
                 <div className="result-type result-type-weather">
                   <ul>
-                    {types.map((value: any, index: React.Key) => (
+                    {types.map((value: string, index: React.Key) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
                         <CardType value={capitalize(value)} />
                       </li>

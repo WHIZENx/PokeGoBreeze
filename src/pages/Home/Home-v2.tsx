@@ -78,7 +78,7 @@ const Home = () => {
           },
         };
       })
-      .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
+      .sort((a, b) => a.id - b.id)
   );
   const [selectTypes, setSelectTypes]: any = useState([]);
   const [listOfPokemon, setListOfPokemon]: any = useState([]);
@@ -92,7 +92,7 @@ const Home = () => {
     releasedGO: false,
     allShiny: false,
     gen: Object.values(genList).map((_, index) => index),
-    version: versionList.map((_: any, index: any) => index),
+    version: versionList.map((_, index) => index),
     mega: false,
     gmax: false,
     legendary: false,
@@ -131,7 +131,7 @@ const Home = () => {
       setLoading(true);
       const timeOutId = setTimeout(
         () => {
-          const result = dataList.current.filter((item: any) => {
+          const result = dataList.current.filter((item) => {
             const boolFilterType =
               selectTypes.length === 0 ||
               (item.types.every((item: any) => selectTypes.includes(item.toUpperCase())) && item.types.length === selectTypes.length);
@@ -220,7 +220,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        gen: versionList.map((value: any, index: any) => index),
+        gen: versionList.map((_: any, index: any) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -242,7 +242,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        version: versionList.map((value: any, index: any) => index),
+        version: versionList.map((_: any, index: any) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -377,7 +377,7 @@ const Home = () => {
                           }
                         />
                       </MenuItem>
-                      {versionList.map((value: string, index: React.Key) => (
+                      {versionList.map((value: string, index: any) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={version.includes(index)} />
                           <ListItemText primary={value} />

@@ -6,7 +6,7 @@ import TypeInfo from '../Sprites/Type/Type';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 
-const Info = (props: { data: { types: any }; currForm: { form: { id: any; types: any[] } } }) => {
+const Info = (props: { data: { types: string[] }; currForm: { form: { id: number; types: any[] } } }) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
   const weatherEffective = useSelector((state: StoreState) => state.store.data?.weatherBoost ?? {});
 
@@ -64,7 +64,7 @@ const Info = (props: { data: { types: any }; currForm: { form: { id: any; types:
         <li>Pokémon Type</li>
       </h5>
       <TypeInfo
-        arr={props.currForm ? props.currForm.form.types.map((ele: { type: { name: any } }) => ele.type.name) : []}
+        arr={props.currForm ? props.currForm.form.types.map((ele: { type: { name: string } }) => ele.type.name) : []}
         style={{ marginLeft: 15 }}
       />
       <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm ? props.currForm.form.types : [])} />

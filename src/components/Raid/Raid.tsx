@@ -32,11 +32,11 @@ const Raid = ({
   const [pokemonClass, setPokemonClass]: any = useState(null);
 
   useEffect(() => {
-    setPokemonClass((Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass);
+    setPokemonClass(Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass);
   }, [id]);
 
   useEffect(() => {
-    const pokemonClass = (Object.values(pokemonData).find((item: any) => item.num === id) as any)?.pokemonClass;
+    const pokemonClass = Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass;
     if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega') && currForm.form.form_name !== 'primal') {
       setTier(5);
     } else if (
