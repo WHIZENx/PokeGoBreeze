@@ -251,8 +251,8 @@ export const optionPokemon = (data: any[]) => {
           name,
           encounter: {
             ...item.data.pokemonSettings.encounter,
-            baseCaptureRate: pokemonEncounter.baseCaptureRate,
-            baseFleeRate: pokemonEncounter.baseFleeRate,
+            baseCaptureRate: pokemonEncounter?.baseCaptureRate,
+            baseFleeRate: pokemonEncounter?.baseFleeRate,
           },
         };
       }
@@ -577,11 +577,11 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
     result.id = pokemon.find((poke: { name: any }) => poke.name === item).id;
     result.name = item;
 
-    let formSet = imgs.filter((img: string | string[]) => img.includes(`Addressable Assets/pm${result.id}.`));
+    let formSet = imgs?.filter((img: string | string[]) => img.includes(`Addressable Assets/pm${result.id}.`));
 
     let count = 0,
       mega = false;
-    while (formSet.length > count) {
+    while (formSet?.length > count) {
       let form = formSet[count].split('.'),
         shiny = false,
         gender = 3;
@@ -611,14 +611,14 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
       count += shiny ? 2 : 1;
     }
 
-    formSet = imgs.filter(
+    formSet = imgs?.filter(
       (img: string | string[]) =>
         !img.includes(`Addressable Assets/`) &&
         (img.includes(`pokemon_icon_${result.id.toString().padStart(3, '0')}_51`) ||
           img.includes(`pokemon_icon_${result.id.toString().padStart(3, '0')}_52`))
     );
     if (!mega) {
-      for (let index = 0; index < formSet.length; index += 2) {
+      for (let index = 0; index < formSet?.length; index += 2) {
         result.image.push({
           gender: 3,
           pokemonId: result.id,
@@ -630,11 +630,11 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
     }
 
     const formList = result.image.map((img: any) => img.form.replaceAll('_', ''));
-    formSet = imgs.filter(
+    formSet = imgs?.filter(
       (img: string | string[]) =>
         !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_pm${result.id.toString().padStart(4, '0')}`)
     );
-    for (let index = 0; index < formSet.length; index += 2) {
+    for (let index = 0; index < formSet?.length; index += 2) {
       const subForm = formSet[index].replace('_shiny', '').split('_');
       const form = subForm[subForm.length - 1].toUpperCase();
       if (!formList.includes(form)) {
@@ -650,11 +650,11 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
     }
 
     if (result.image.length === 0) {
-      formSet = imgs.filter(
+      formSet = imgs?.filter(
         (img: string | string[]) =>
           !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_${result.id.toString().padStart(3, '0')}`)
       );
-      for (let index = 0; index < formSet.length; index += 2) {
+      for (let index = 0; index < formSet?.length; index += 2) {
         const form = 'NORMAL';
         if (!formList.includes(form)) {
           formList.push(form);
@@ -670,8 +670,8 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
     }
 
     mega = false;
-    let soundForm = sounds.filter((sound: string) => sound.includes(`Addressable Assets/pm${result.id}.`));
-    result.sound.cry = soundForm.map((sound: string) => {
+    let soundForm = sounds?.filter((sound: string) => sound.includes(`Addressable Assets/pm${result.id}.`));
+    result.sound.cry = soundForm?.map((sound: string) => {
       let form: any = sound.split('.');
       if (form[1] === 'cry') {
         form = 'NORMAL';
@@ -687,24 +687,24 @@ export const optionAssets = (pokemon: any[], family: any[], imgs: any[], sounds:
       };
     });
 
-    soundForm = sounds.filter(
+    soundForm = sounds?.filter(
       (sound: string | string[]) =>
         !sound.includes(`Addressable Assets/`) &&
         (sound.includes(`pv${result.id.toString().padStart(3, '0')}_51`) || sound.includes(`pv${result.id.toString().padStart(3, '0')}_52`))
     );
     if (!mega) {
-      soundForm.forEach((sound: string | string[]) => {
-        result.sound.cry.push({
+      soundForm?.forEach((sound: string | string[]) => {
+        result.sound.cry?.push({
           form: soundForm.length !== 2 ? 'MEGA' : sound.includes('_51') ? 'MEGA_X' : 'MEGA_Y',
           path: sound,
         });
       });
     }
-    soundForm = sounds.filter(
+    soundForm = sounds?.filter(
       (sound: string | string[]) => !sound.includes(`Addressable Assets/`) && sound.includes(`pv${result.id.toString().padStart(3, '0')}`)
     );
-    if (result.sound.cry.length === 0) {
-      soundForm.forEach((sound: string | string[]) => {
+    if (result.sound.cry?.length === 0) {
+      soundForm?.forEach((sound: string | string[]) => {
         result.sound.cry.push({
           form: sound.includes('_31') ? 'SPECIAL' : 'NORMAL',
           path: sound,
@@ -892,7 +892,8 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: st
   return pokemon
     .filter(
       (item: { form: any; name: string }) =>
-        (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
+        (!item.form && noneForm.includes(item.name)) ||
+        (item.form && (item.form.toString().includes('NORMAL') || !formSpecial.includes(item.name)))
     )
     .reduce(
       (
@@ -1292,7 +1293,8 @@ export const optionDetailsPokemon = (
   let result = pokemon
     .filter(
       (item: { form: any; name: string }) =>
-        (!item.form && noneForm.includes(item.name)) || (item.form && (item.form.includes('NORMAL') || !formSpecial.includes(item.name)))
+        (!item.form && noneForm.includes(item.name)) ||
+        (item.form && (item.form.toString().includes('NORMAL') || !formSpecial.includes(item.name)))
     )
     .map((item) => {
       const result: Details = detailsPokemonModel();
