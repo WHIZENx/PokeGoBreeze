@@ -37,7 +37,7 @@ export const TimeLineVertical = (
   const renderTimeline = (pokeCurr: { timeline: any }, pokeObj: { timeline: any }, end = false) => {
     return (
       <Fragment>
-        {pokeCurr.timeline.map((value: any, index: any) => (
+        {pokeCurr.timeline.map((value: any, index: number) => (
           <Fragment key={index}>
             {pokeObj.timeline[index] && pokeObj.timeline[index].type === 'C' && (
               <Fragment>
@@ -231,7 +231,7 @@ export const TimeLine = (
             borderBottom: border ? '1px solid lightgray' : 'none',
           }}
         >
-          {poke.timeline.map((value: { type: string; size: number | string; color: string }, index: any) => (
+          {poke.timeline.map((value: { type: string; size: number | string; color: string }, index: string | undefined) => (
             <Fragment key={index}>
               {value.type === 'B' && <HexagonIcon id={index} sx={{ color: 'purple', fontSize: value.size }} />}
               {value.type === 'F' && <div id={index} className={`fast-attack ${value.color} ${value.color}-border`} />}

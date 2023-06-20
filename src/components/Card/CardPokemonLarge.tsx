@@ -3,8 +3,16 @@ import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { findAssetForm } from '../../util/Compute';
 import { StoreState } from '../../store/models/state.model';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 
-const CardPokemonLarge = (props: { value: any; id: number; name: string; elite?: boolean; shadow?: boolean; purified?: boolean }) => {
+const CardPokemonLarge = (props: {
+  value: PokemonDataModel;
+  id: number;
+  name: string;
+  elite?: boolean;
+  shadow?: boolean;
+  purified?: boolean;
+}) => {
   const assets = useSelector((state: StoreState) => state.store?.data?.assets);
 
   return (

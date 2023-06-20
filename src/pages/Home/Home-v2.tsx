@@ -134,7 +134,7 @@ const Home = () => {
           const result = dataList.current.filter((item) => {
             const boolFilterType =
               selectTypes.length === 0 ||
-              (item.types.every((item: any) => selectTypes.includes(item.toUpperCase())) && item.types.length === selectTypes.length);
+              (item.types.every((item) => selectTypes.includes(item.toUpperCase())) && item.types.length === selectTypes.length);
             const boolFilterPoke =
               searchTerm === '' ||
               (match
@@ -175,7 +175,7 @@ const Home = () => {
   }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, legendary, mythic, ultrabeast, gen, version]);
 
   useEffect(() => {
-    const onScroll = (e: { target: { documentElement: { scrollTop: any; offsetHeight: any } } }) => {
+    const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
       const scrollTop = e.target.documentElement.scrollTop;
       const fullHeight = e.target.documentElement.offsetHeight;
       if (scrollTop * 1.5 >= fullHeight * (scrollID.current + 1)) {
@@ -339,7 +339,7 @@ const Home = () => {
                       value={gen}
                       onChange={handleChangeGen}
                       input={<OutlinedInput label="Generation(s)" />}
-                      renderValue={(selected: any) => 'Gen ' + selected.map((item: number) => (item + 1).toString()).join(', Gen ')}
+                      renderValue={(selected) => 'Gen ' + selected.map((item: number) => (item + 1).toString()).join(', Gen ')}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
                         <ListItemText
@@ -365,7 +365,7 @@ const Home = () => {
                       value={version}
                       onChange={handleChangeVersion}
                       input={<OutlinedInput label="Version(s)" />}
-                      renderValue={(selected: any) => selected.map((item: number) => versionList[item]).join(', ')}
+                      renderValue={(selected) => selected.map((item: number) => versionList[item]).join(', ')}
                       MenuProps={VersionProps}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
@@ -377,7 +377,7 @@ const Home = () => {
                           }
                         />
                       </MenuItem>
-                      {versionList.map((value: string, index: any) => (
+                      {versionList.map((value: string, index: number) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={version.includes(index)} />
                           <ListItemText primary={value} />

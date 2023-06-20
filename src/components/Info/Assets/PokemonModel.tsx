@@ -20,7 +20,7 @@ const PokemonModel = (props: { id: number; name: string }) => {
   const sound: any = useRef(null);
 
   const getImageList = useCallback(
-    (id: any) => {
+    (id: number) => {
       const model = data?.assets?.find((item) => item.id === id);
       sound.current = data?.assets?.find((item) => item.id === id);
       const detail = data?.details?.find((item) => item.id === id);

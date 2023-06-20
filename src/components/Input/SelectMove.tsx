@@ -12,7 +12,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
   const [resultMove, setResultMove]: any = useState(null);
   const [showMove, setShowMove] = useState(false);
 
-  const changeMove = (value: any) => {
+  const changeMove = (value: { name: string; elite: boolean; shadow: boolean; purified: boolean }) => {
     setShowMove(false);
     if (setMovePokemon) {
       setMovePokemon(value);
@@ -134,8 +134,8 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
               <div className="result-move-select">
                 <div>
                   {resultMove
-                    .filter((value: { name: any }) => value.name !== move.name)
-                    .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
+                    .filter((value: { name: string }) => value.name !== move.name)
+                    .map((value: { name: string; elite: boolean; shadow: boolean; purified: boolean }, index: React.Key) => (
                       <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
                         <CardMoveSmall value={value} />
                       </div>
@@ -163,7 +163,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
           <div className="result-move-select-default">
             <div>
               {resultMove
-                .filter((value: { name: any }) => value.name !== move.name)
+                .filter((value: { name: string }) => value.name !== move.name)
                 .map((value: { name: string; elite: boolean; shadow: boolean; purified: boolean }, index: React.Key) => (
                   <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
                     <CardMove value={value} />

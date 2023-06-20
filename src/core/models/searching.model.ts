@@ -5,7 +5,7 @@ export interface SearchingOptionsModel {
   toolSearching: ToolSearching | null;
 }
 
-interface ToolSearching {
+export interface ToolSearching {
   id: number;
   name?: string;
   form?: string;

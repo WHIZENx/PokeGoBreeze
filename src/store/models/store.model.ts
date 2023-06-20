@@ -8,6 +8,7 @@ import { LeagueData } from '../../core/models/league.model';
 import { Options } from '../../core/models/options.model';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../../core/models/pokemon.model';
 import { PVPDataModel } from '../../core/models/pvp.model';
+import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { Sticker } from '../../core/models/sticker.model';
 import { TypeEff } from '../../core/models/typeEff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
@@ -15,7 +16,7 @@ import { WeatherBoost } from '../../core/models/weatherBoost.model';
 export interface StoreModel {
   icon: string | null;
   data: DataModel | null;
-  searching: any;
+  searching: SearchingOptionsModel | null;
   timestamp: number | null;
 }
 

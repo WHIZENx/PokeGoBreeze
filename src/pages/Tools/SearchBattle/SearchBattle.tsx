@@ -57,18 +57,18 @@ const FindBattle = () => {
   };
 
   const currEvoChain = useCallback(
-    (currId: any, form: string, arr: any): void => {
+    (currId: number[] | undefined, form: string, arr: any): void => {
       if (form === 'GALARIAN') {
         form = 'GALAR';
       }
-      if (currId.length === 0) {
+      if (currId?.length === 0) {
         return arr;
       }
       let curr;
       if (form === '') {
-        curr = dataStore?.evolution?.find((item) => currId.includes(item.id) && form === item.form);
+        curr = dataStore?.evolution?.find((item) => currId?.includes(item.id) && form === item.form);
       } else {
-        curr = dataStore?.evolution?.find((item) => currId.includes(item.id) && item.form.includes(form));
+        curr = dataStore?.evolution?.find((item) => currId?.includes(item.id) && item.form.includes(form));
       }
       if (!arr.map((i: { id: number }) => i.id).includes(curr?.id ?? 0)) {
         arr.push({ ...curr, form });
@@ -105,7 +105,7 @@ const FindBattle = () => {
   );
 
   const getEvoChain = useCallback(
-    (id: any) => {
+    (id: number) => {
       const isForm = form.form.form_name.toUpperCase();
       let curr = dataStore?.evolution?.filter((item) =>
         item.evo_list.find((i: { evo_to_id: number; evo_to_form: string }) => id === i.evo_to_id && isForm === i.evo_to_form)
@@ -247,11 +247,11 @@ const FindBattle = () => {
     }
   };
 
-  const getCandyEvo = (item: any[], evoId: number, candy: number): any => {
+  const getCandyEvo = (item: any[], evoId: number, candy: number): number => {
     if (evoId === id) {
       return candy;
     }
-    const data = item.find((i: { evo_list: any[] }) => i.evo_list.find((e: { evo_to_id: number }) => e.evo_to_id === evoId));
+    const data = item.find((i: { evo_list: { evo_to_id: number }[] }) => i.evo_list.find((e) => e.evo_to_id === evoId));
     if (!data) {
       return candy;
     }

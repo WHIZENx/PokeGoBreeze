@@ -383,7 +383,7 @@ const DpsTdo = () => {
     pokemon: PokemonDataModel,
     felite: boolean
   ) => {
-    movePoke.forEach((vf: any) => {
+    movePoke.forEach((vf: string) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false);
       if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
         if (combat.shadowMoves?.length > 0) {

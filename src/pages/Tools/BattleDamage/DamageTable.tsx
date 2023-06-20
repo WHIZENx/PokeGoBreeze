@@ -43,18 +43,18 @@ const DamageTable = (props: {
     objPoke: { form: { pokemon: { name: string } } };
     type: string;
     currPoke: { form: { pokemon: { name: string } } };
-    currLevel: any;
+    currLevel: number;
     typeObj: string;
-    objLevel: any;
+    objLevel: number;
     move: {
       name: string;
       pve_power: number;
     };
     battleState: {
-      stab: any;
-      wb: any;
-      dodge: any;
-      trainer: any;
+      stab: boolean;
+      wb: boolean;
+      dodge: boolean;
+      trainer: boolean;
       flevel: number;
       clevel: string | number;
       effective: string | number;

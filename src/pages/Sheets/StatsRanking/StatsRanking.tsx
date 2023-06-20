@@ -113,7 +113,7 @@ const StatsRanking = () => {
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const conditionalRowStyles = [
     {
-      when: (row: { slug: string }) => row.slug === select?.slug,
+      when: (row: { name: string; slug: string }) => row.slug === select?.slug,
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -147,7 +147,7 @@ const StatsRanking = () => {
     });
   };
 
-  const sortRanking = (pokemon: any[], id: number) => {
+  const sortRanking = (pokemon: any[], id: string | number | undefined) => {
     let sortBy: string[] = [];
     if (id === 6) {
       sortBy = ['atk', 'attack'];
@@ -339,15 +339,15 @@ const StatsRanking = () => {
         defaultSortFieldId={9}
         defaultSortAsc={false}
         highlightOnHover={true}
-        onRowClicked={(row: any) => {
+        onRowClicked={(row) => {
           if (select.name !== row.name) {
             setSelect(row);
           }
         }}
-        onSort={(rows: any) => {
+        onSort={(rows) => {
           if (sortId !== rows.id) {
             setPokemonFilter(sortRanking(pokemonList.current, rows.id));
-            setSortId(rows.id);
+            setSortId(parseInt(rows.id?.toString() ?? ''));
           }
         }}
         conditionalRowStyles={conditionalRowStyles}

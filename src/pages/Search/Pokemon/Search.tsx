@@ -28,8 +28,8 @@ const Search = () => {
 
   const pokemonList = useRef(
     Object.values(pokemonName)
-      .filter((item: any) => item.id > 0)
-      .map((item: any) => {
+      .filter((item) => item.id > 0)
+      .map((item) => {
         return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
       })
   );
@@ -84,7 +84,7 @@ const Search = () => {
     }
   };
 
-  const onChangeSelect = (event: any) => {
+  const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const currentId = getPokemonById(Object.values(pokemonName), selectId);
     if (currentId) {
       const result = {

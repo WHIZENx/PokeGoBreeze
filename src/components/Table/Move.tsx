@@ -13,7 +13,7 @@ const Move = (props: {
   // eslint-disable-next-line no-unused-vars
   setMove: (arg0: any) => void;
   text: string;
-  selectDefault: any;
+  selectDefault: boolean;
 }) => {
   const data = useSelector((state: StoreState) => state.store.data);
 
@@ -34,16 +34,16 @@ const Move = (props: {
       const resultFirst = data?.pokemonCombat?.filter((item) => item.id === id);
       form = form.replaceAll('-', '_').replaceAll('_standard', '').toUpperCase();
       const result = resultFirst?.find((item) => item.name === form);
-      const simpleMove: { name: any; elite: boolean; shadow: boolean; purified: boolean }[] = [];
+      const simpleMove: { name: string; elite: boolean; shadow: boolean; purified: boolean }[] = [];
       if (resultFirst && (resultFirst.length === 1 || result == null)) {
         if (resultFirst?.length === 0) {
           return setResultMove('');
         }
         if (props.type !== TypeMove.CHARGE) {
-          resultFirst[0].quickMoves.forEach((value: string) => {
+          resultFirst[0].quickMoves.forEach((value) => {
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
           });
-          resultFirst[0].eliteQuickMoves.forEach((value: string) => {
+          resultFirst[0].eliteQuickMoves.forEach((value) => {
             simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
           });
           setCountFM(simpleMove.length);
@@ -51,13 +51,13 @@ const Move = (props: {
         if (props.type === TypeMove.FAST) {
           return setResultMove(simpleMove);
         }
-        resultFirst[0].cinematicMoves.forEach((value: string) => {
+        resultFirst[0].cinematicMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        resultFirst[0].eliteCinematicMoves.forEach((value: string) => {
+        resultFirst[0].eliteCinematicMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
-        resultFirst[0].shadowMoves.forEach((value: string) => {
+        resultFirst[0].shadowMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
         });
         resultFirst[0].purifiedMoves.forEach((value: string) => {
@@ -66,10 +66,10 @@ const Move = (props: {
         return setResultMove(simpleMove);
       }
       if (props.type !== TypeMove.CHARGE) {
-        result?.quickMoves.forEach((value: string) => {
+        result?.quickMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        result?.eliteQuickMoves.forEach((value: string) => {
+        result?.eliteQuickMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
         setCountFM(simpleMove.length);
@@ -77,16 +77,16 @@ const Move = (props: {
       if (props.type === TypeMove.FAST) {
         return setResultMove(simpleMove);
       }
-      result?.cinematicMoves.forEach((value: string) => {
+      result?.cinematicMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
       });
-      result?.eliteCinematicMoves.forEach((value: string) => {
+      result?.eliteCinematicMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
       });
-      result?.shadowMoves.forEach((value: string) => {
+      result?.shadowMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
       });
-      result?.purifiedMoves.forEach((value: string) => {
+      result?.purifiedMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
       });
       return setResultMove(simpleMove);
@@ -105,7 +105,7 @@ const Move = (props: {
     return findMoveData(move)?.type;
   };
 
-  const changeMove = (value: any) => {
+  const changeMove = (value: { name: string; elite?: boolean; shadow?: boolean; purified?: boolean }) => {
     setShowMove(false);
     setCurrentMove(value);
     props.setMove(findMoveData(value.name));
@@ -121,7 +121,7 @@ const Move = (props: {
           <div className="card-select">
             {currentMove ? (
               <CardType
-                value={findType(currentMove.name)}
+                value={findType(currentMove.name) ?? ''}
                 name={splitAndCapitalize(currentMove.name.replaceAll('_PLUS', '+'), '_', ' ')}
                 elite={currentMove.elite}
                 shadow={currentMove.shadow}
@@ -137,8 +137,8 @@ const Move = (props: {
                 {resultMove && (
                   <Fragment>
                     {resultMove
-                      .filter((value: { name: any }) => props.selectDefault || (!props.selectDefault && value.name !== currentMove.name))
-                      .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
+                      .filter((value: { name: string }) => props.selectDefault || (!props.selectDefault && value.name !== currentMove.name))
+                      .map((value: { name: string; elite: boolean; shadow: boolean; purified: boolean }, index: React.Key) => (
                         <Fragment key={index}>
                           {!props.type && index === 0 && (
                             <li className="card-header">
@@ -152,7 +152,7 @@ const Move = (props: {
                           )}
                           <li className="container card-pokemon" onMouseDown={() => changeMove(value)}>
                             <CardType
-                              value={findType(value.name)}
+                              value={findType(value.name) ?? ''}
                               name={splitAndCapitalize(value.name.replaceAll('_PLUS', '+'), '_', ' ')}
                               elite={value.elite}
                               shadow={value.shadow}

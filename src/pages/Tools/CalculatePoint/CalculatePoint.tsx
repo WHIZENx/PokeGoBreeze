@@ -71,28 +71,28 @@ const CalculatePoint = () => {
     }
   }, []);
 
-  const clearData = (reset: any) => {
+  const clearData = (reset: boolean) => {
     clearDataAtk(reset);
     clearDataDef(reset);
     clearDataBulk(reset);
     initialize.current = false;
   };
 
-  const clearDataAtk = (reset: any) => {
+  const clearDataAtk = (reset: boolean) => {
     setResultBreakPointAtk(null);
     if (!reset) {
       setMove(null);
     }
   };
 
-  const clearDataDef = (reset: any) => {
+  const clearDataDef = (reset: boolean) => {
     setResultBreakPointDef(null);
     if (!reset) {
       setMoveDef(null);
     }
   };
 
-  const clearDataBulk = (reset: any) => {
+  const clearDataBulk = (reset: boolean) => {
     setResultBulkPointDef(null);
     if (!reset) {
       setFMove(null);
@@ -125,10 +125,10 @@ const CalculatePoint = () => {
             effective: getTypeEffective(
               typeEff,
               move.type,
-              formDef.form.types.map((item: { type: { name: any } }) => item.type.name)
+              formDef.form.types.map((item: { type: { name: string } }) => item.type.name)
             ),
             stab: findStabType(
-              form.form.types.map((item: { type: { name: any } }) => item.type.name),
+              form.form.types.map((item: { type: { name: string } }) => item.type.name),
               move.type
             ),
             wb: (!pvpDmg || isRaid) && weaterBoosts,
@@ -231,10 +231,10 @@ const CalculatePoint = () => {
                 effective: getTypeEffective(
                   typeEff,
                   cMove.type,
-                  form.form.types.map((item: { type: { name: any } }) => item.type.name)
+                  form.form.types.map((item: { type: { name: string } }) => item.type.name)
                 ),
                 stab: findStabType(
-                  formDef.form.types.map((item: { type: { name: any } }) => item.type.name),
+                  formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                   cMove.type
                 ),
                 wb: (!pvpDmg || isRaid) && weaterBoosts,

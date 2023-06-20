@@ -108,7 +108,7 @@ const Calculate = () => {
   }, []);
 
   const onCalculateStatsPoke = useCallback(
-    (e: any) => {
+    (e: { preventDefault: () => void }) => {
       e.preventDefault();
       calculateStatsPoke();
     },

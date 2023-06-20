@@ -268,7 +268,7 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
 export const convertArrStats = (data: PokemonDataModel) => {
   return Object.values(data)
     .filter((pokemon) => pokemon.num > 0)
-    .map((value: any) => {
+    .map((value) => {
       const stats = calculateStatsByTag(value, value.baseStats, value.slug);
       return {
         id: value.num,
@@ -412,7 +412,7 @@ export const convertFormName = (id: number, form: string) => {
   return form;
 };
 
-export const convertFormGif = (name: string) => {
+export const convertFormGif = (name: string | undefined) => {
   if (name === 'nidoran') {
     name = 'nidoran_m';
   }

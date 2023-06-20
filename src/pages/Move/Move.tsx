@@ -93,23 +93,26 @@ const Move = (props: { id?: number }) => {
   };
 
   const queryMoveData = useCallback(
-    (id: any) => {
-      let move;
-      if (params.id && parseInt(id) === 281) {
-        move = data?.combat?.find(
-          (item) =>
-            item.track === parseInt(id) && item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
-        );
-      } else {
-        move = data?.combat?.find((item) => item.track === parseInt(id));
-      }
-      if (move) {
-        setMove(move);
-        document.title = `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}`;
-      } else {
-        enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
-        if (params.id) {
-          document.title = `#${params.id} - Not Found`;
+    (id: string | number | undefined) => {
+      if (id) {
+        let move;
+        if (params.id && parseInt(id.toString()) === 281) {
+          move = data?.combat?.find(
+            (item) =>
+              item.track === parseInt(id.toString()) &&
+              item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
+          );
+        } else {
+          move = data?.combat?.find((item) => item.track === parseInt(id.toString()));
+        }
+        if (move) {
+          setMove(move);
+          document.title = `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}`;
+        } else {
+          enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
+          if (params.id) {
+            document.title = `#${params.id} - Not Found`;
+          }
         }
       }
     },
@@ -471,12 +474,12 @@ const Move = (props: { id?: number }) => {
                     <td className="table-top-of-move" colSpan={2} style={{ padding: 0 }}>
                       <DataTable
                         columns={columns}
-                        data={topList.filter((pokemon: { num: any; name: string }) => {
+                        data={topList.filter((pokemon: { num: number; name: string }) => {
                           if (!releasedGO) {
                             return true;
                           }
                           const result = data?.details?.find(
-                            (item: { name: string; id: any }) =>
+                            (item) =>
                               item.id === pokemon.num &&
                               item.name ===
                                 (item.id === 555 && !pokemon.name.toLowerCase().includes('zen')

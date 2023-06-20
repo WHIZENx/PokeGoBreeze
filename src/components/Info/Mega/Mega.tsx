@@ -42,7 +42,7 @@ const Mega = (props: { formList: any[]; id: number }) => {
       </h4>
       <div className="mega-container scroll-evolution">
         <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
-          {arrEvoList.map((value: { name: string; sprites: { front_default: any } }, evo: React.Key) => (
+          {arrEvoList.map((value: { name: string; sprites: { front_default: string } }, evo: React.Key) => (
             <li key={evo} className="img-form-gender-group li-evo" style={{ width: 'fit-content', height: 'fit-content' }}>
               <img
                 id="img-pokemon"

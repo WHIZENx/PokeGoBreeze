@@ -1,8 +1,9 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import './Hexagon.scss';
+import { StatsModel } from '../../../core/models/stats.model';
 
-const Hexagon = (props: { defaultStats?: any; stats: any; size: number; animation: any; borderSize: number }) => {
+const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; animation: any; borderSize: number }) => {
   const canvasHex: any = useRef();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
@@ -32,14 +33,14 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: number; animatio
         fillStyle: string;
         fill: () => void;
         lineWidth: number;
-        strokeStyle: any;
+        strokeStyle: string;
         stroke: () => void;
         closePath: () => void;
       },
-      center: any,
-      percentage: any,
-      color: any,
-      fill: any
+      center: { x: number; y: number },
+      percentage: number,
+      color: string,
+      fill: boolean
     ) => {
       const start = getHexConerCord(center, percentage, 0);
       ctx.beginPath();
@@ -78,8 +79,8 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: number; animatio
         stroke: () => void;
         closePath: () => void;
       },
-      center: any,
-      stat: { switching: any; charger: any; closer: any; cons: any; atk: any; lead: any },
+      center: { x: number; y: number },
+      stat: { switching: number; charger: number; closer: number; cons: number; atk: number; lead: number },
       hexSize: number
     ) => {
       const stats: any = {

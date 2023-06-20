@@ -214,10 +214,10 @@ const RaidBattle = () => {
   };
 
   const findMove = useCallback(
-    (id: any, form: string) => {
-      const resultFirst = data?.pokemonCombat?.filter((item: { id: any }) => item.id === id);
+    (id: number, form: string) => {
+      const resultFirst = data?.pokemonCombat?.filter((item) => item.id === id);
       form = form.replaceAll('-', '_').replaceAll('_standard', '').toUpperCase();
-      const result = resultFirst?.find((item: { name: any }) => item.name === form);
+      const result = resultFirst?.find((item) => item.name === form);
       let simpleMove: any[] = [];
       if (resultFirst && (resultFirst.length === 1 || result == null)) {
         if (resultFirst.length === 0) {
@@ -227,50 +227,50 @@ const RaidBattle = () => {
           return setResultCMove('');
         }
         let simpleMove: any[] = [];
-        resultFirst[0].quickMoves.forEach((value: any) => {
+        resultFirst[0].quickMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        resultFirst[0].eliteQuickMoves.forEach((value: any) => {
+        resultFirst[0].eliteQuickMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
         setFMove(simpleMove[0]);
         setResultFMove(simpleMove);
         simpleMove = [];
-        resultFirst[0].cinematicMoves.forEach((value: any) => {
+        resultFirst[0].cinematicMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        resultFirst[0].eliteCinematicMoves.forEach((value: any) => {
+        resultFirst[0].eliteCinematicMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
-        resultFirst[0].shadowMoves.forEach((value: any) => {
+        resultFirst[0].shadowMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
         });
-        resultFirst[0].purifiedMoves.forEach((value: any) => {
+        resultFirst[0].purifiedMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
         });
         setCMove(simpleMove[0]);
         return setResultCMove(simpleMove);
       }
       simpleMove = [];
-      result?.quickMoves.forEach((value: any) => {
+      result?.quickMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
       });
-      result?.eliteQuickMoves.forEach((value: any) => {
+      result?.eliteQuickMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
       });
       setFMove(simpleMove[0]);
       setResultFMove(simpleMove);
       simpleMove = [];
-      result?.cinematicMoves.forEach((value: any) => {
+      result?.cinematicMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
       });
-      result?.eliteCinematicMoves.forEach((value: any) => {
+      result?.eliteCinematicMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
       });
-      result?.shadowMoves.forEach((value: any) => {
+      result?.shadowMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
       });
-      result?.purifiedMoves.forEach((value: any) => {
+      result?.purifiedMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
       });
       setCMove(simpleMove[0]);
@@ -310,9 +310,9 @@ const RaidBattle = () => {
           atk: statBossATK,
           def: statBossDEF,
           hp: statBossHP,
-          fmove: data?.combat?.find((item: { name: any }) => item.name === fMove.name),
-          cmove: data?.combat?.find((item: { name: any }) => item.name === cMove.name),
-          types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
+          fmove: data?.combat?.find((item) => item.name === fMove.name),
+          cmove: data?.combat?.find((item) => item.name === cMove.name),
+          types: form.form.types.map((type: { type: { name: string } }) => type.type.name),
           WEATHER_BOOSTS: weatherBoss,
         };
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
@@ -388,7 +388,7 @@ const RaidBattle = () => {
     Object.values(data?.pokemonData ?? []).forEach((pokemon) => {
       if (pokemon.forme !== 'Gmax') {
         let combatPoke: any = data?.pokemonCombat?.filter(
-          (item: { id: number; baseSpecies: string }) =>
+          (item) =>
             item.id === pokemon.num &&
             item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
@@ -437,20 +437,15 @@ const RaidBattle = () => {
 
   const calculateDPSBattle = (
     pokemon: {
-      fmoveTargetPokemon: { name: string };
-      cmoveTargetPokemon: { name: string };
-      dataTargetPokemon: {
-        baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
-        forme: string | null;
-        slug: string;
-        types: string | string[];
-      };
+      fmoveTargetPokemon?: { name: string };
+      cmoveTargetPokemon?: { name: string };
+      dataTargetPokemon: PokemonDataModel;
     },
     HpRemain: number,
     timer: number
   ) => {
-    const fmove = data?.combat?.find((item: { name: any }) => item.name === pokemon.fmoveTargetPokemon.name);
-    const cmove = data?.combat?.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
+    const fmove = data?.combat?.find((item) => item.name === pokemon.fmoveTargetPokemon?.name);
+    const cmove = data?.combat?.find((item) => item.name === pokemon.cmoveTargetPokemon?.name);
 
     if (fmove && cmove) {
       const stats = calculateStatsByTag(
@@ -472,9 +467,9 @@ const RaidBattle = () => {
         atk: statBossATK,
         def: statBossDEF,
         hp: Math.floor(HpRemain),
-        fmove: data?.combat?.find((item: { name: any }) => item.name === fMove.name),
-        cmove: data?.combat?.find((item: { name: any }) => item.name === cMove.name),
-        types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
+        fmove: data?.combat?.find((item) => item.name === fMove.name),
+        cmove: data?.combat?.find((item) => item.name === cMove.name),
+        types: form.form.types.map((type: { type: { name: string } }) => type.type.name),
         WEATHER_BOOSTS: weatherBoss,
       };
 
@@ -518,11 +513,9 @@ const RaidBattle = () => {
   };
 
   const calculateTrainerBattle = (trainerBattle: any[]) => {
-    const trainer = trainerBattle.map((trainer: { pokemons: any }) => trainer.pokemons);
+    const trainer = trainerBattle.map((trainer: { pokemons: any[] }) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter(
-      // eslint-disable-next-line no-unused-vars
-      (pokemons: { filter: (arg0: (pokemon: any) => boolean) => { (): any; new (): any; length: number } }) =>
-        pokemons.filter((pokemon: { dataTargetPokemon: any }) => !pokemon.dataTargetPokemon).length > 0
+      (pokemon) => pokemon.filter((item: { dataTargetPokemon: any }) => !item.dataTargetPokemon)?.length > 0
     );
     if (trainerNoPokemon.length > 0) {
       enqueueSnackbar('Please select Pokémon to raid battle!', { variant: 'error' });
@@ -531,25 +524,23 @@ const RaidBattle = () => {
     enqueueSnackbar('Simulator battle raid successfully!', { variant: 'success' });
 
     const turn: any[] = [];
-    trainer.forEach((pokemons: any[], id: any) => {
-      pokemons.forEach((pokemon: any, index: any) => {
+    trainer.forEach((pokemons: any[], id: number) => {
+      pokemons.forEach((_, index: number) => {
         turn[index] = turn[index] ?? [];
         turn[index].push({ ...trainer[id][index], trainerId: id });
       });
     });
-    const result:
-      | React.SetStateAction<null>
-      | {
-          pokemon: any[];
-          summary: {
-            dpsAtk: number;
-            dpsDef: number;
-            tdoAtk: number;
-            tdoDef: number;
-            timer: number;
-            bossHp: number;
-          };
-        }[] = [];
+    const result: {
+      pokemon: any[];
+      summary: {
+        dpsAtk: number;
+        dpsDef: number;
+        tdoAtk: number;
+        tdoDef: number;
+        timer: number;
+        bossHp: number;
+      };
+    }[] = [];
     let timer = 0,
       bossHp = statBossHP;
     turn.forEach((group) => {
@@ -564,16 +555,23 @@ const RaidBattle = () => {
           bossHp: Math.max(0, bossHp),
         },
       };
-      group.forEach((pokemon: any) => {
-        if (pokemon.dataTargetPokemon) {
-          const stat = calculateDPSBattle(pokemon, dataList.summary.bossHp, timer);
-          dataList.pokemon.push({ ...stat, trainerId: pokemon.trainerId });
+      group.forEach(
+        (pokemon: {
+          dataTargetPokemon: PokemonDataModel;
+          trainerId?: number;
+          fmoveTargetPokemon?: { name: string };
+          cmoveTargetPokemon?: { name: string };
+        }) => {
+          if (pokemon.dataTargetPokemon) {
+            const stat = calculateDPSBattle(pokemon, dataList.summary.bossHp, timer);
+            dataList.pokemon.push({ ...stat, trainerId: pokemon.trainerId });
 
-          if (enableTimeAllow) {
-            dataList.summary.timer = Math.min(timeAllow, dataList.summary.timer);
+            if (enableTimeAllow) {
+              dataList.summary.timer = Math.min(timeAllow, dataList.summary.timer);
+            }
           }
         }
-      });
+      );
 
       dataList.summary.tdoAtk = Math.min(
         dataList.summary.bossHp,
@@ -952,7 +950,7 @@ const RaidBattle = () => {
           </div>
           <div className="top-raid-group">
             {result
-              .filter((obj: { pokemon: { num: any; name: string } }) => {
+              .filter((obj: { pokemon: { num: number; name: string } }) => {
                 if (!used.onlyReleasedGO) {
                   return true;
                 }
@@ -1140,7 +1138,7 @@ const RaidBattle = () => {
                     #{id} {form ? splitAndCapitalize(form.form.name, '-', ' ') : name.toLowerCase()} Tier {tier}
                   </b>
                 </h3>
-                <TypeInfo arr={form.form.types.map((type: { type: { name: any } }) => type.type.name)} />
+                <TypeInfo arr={form.form.types.map((type: { type: { name: string } }) => type.type.name)} />
               </div>
               <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
                 <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite} />
@@ -1323,7 +1321,7 @@ const RaidBattle = () => {
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>
             {trainerBattleId !== null && (
               <Fragment>
-                {pokemonBattle.map((pokemon: any, index: React.Key) => (
+                {pokemonBattle.map((pokemon: PokemonDataModel, index: React.Key) => (
                   <div className={'' + (index === 0 ? '' : 'element-top')} key={index}>
                     <PokemonRaid
                       controls={true}

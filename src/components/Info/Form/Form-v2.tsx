@@ -20,6 +20,7 @@ import { hideSpinner } from '../../../store/actions/spinner.action';
 import { setSearchMainPage } from '../../../store/actions/searching.action';
 import Primal from '../Primal/Primal';
 import FromChange from '../FormChange/FormChange';
+import { StatsModel } from '../../../core/models/stats.model';
 
 const Form = ({
   pokemonRouter,
@@ -384,7 +385,14 @@ const Form = ({
           shiny_f={currForm && (currForm.form.sprites ? currForm.form.sprites.front_shiny_female : APIService.getPokeSprite(0))}
         />
       )}
-      <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} statProd={statProd} pokemonStats={stats} stats={dataPoke} />
+      <Stats
+        statATK={statATK}
+        statDEF={statDEF}
+        statSTA={statSTA}
+        statProd={statProd}
+        pokemonStats={stats}
+        stats={dataPoke as unknown as { stats: StatsModel }}
+      />
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
@@ -418,8 +426,8 @@ const Form = ({
       </div>
       <hr className="w-100" />
       {formList
-        .filter((item: { form: { form_name: string | string[] } }[]) => item[0].form.form_name.includes('mega'))
-        .map((item: { form: any }[]) => item[0].form).length > 0 &&
+        .filter((item: { form: { form_name: string } }[]) => item[0].form.form_name.includes('mega'))
+        .map((item: { form: string }[]) => item[0].form).length > 0 &&
       currForm &&
       !currForm.form.form_name.includes('gmax') ? (
         <div className="row w-100" style={{ margin: 0 }}>
@@ -440,8 +448,8 @@ const Form = ({
           </div>
         </div>
       ) : formList
-          .filter((item: { form: { form_name: string | string[] } }[]) => item[0].form.form_name.includes('primal'))
-          .map((item: { form: any }[]) => item[0].form).length > 0 &&
+          .filter((item: { form: { form_name: string } }[]) => item[0].form.form_name.includes('primal'))
+          .map((item: { form: string }[]) => item[0].form).length > 0 &&
         currForm &&
         !currForm.form.form_name.includes('gmax') ? (
         <div className="row w-100" style={{ margin: 0 }}>

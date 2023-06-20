@@ -11,7 +11,7 @@ const initialize = {
   toolSearching: null,
 };
 
-const SearchingReducer = (state: SearchingOptionsModel = initialize, action: any) => {
+const SearchingReducer = (state: SearchingOptionsModel = initialize, action: { type: string; payload: any }) => {
   switch (action.type) {
     case SET_POKEMON_MAIN_SEARCH:
       return {

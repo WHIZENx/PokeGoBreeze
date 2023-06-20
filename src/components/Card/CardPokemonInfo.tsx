@@ -7,16 +7,17 @@ import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
+import { StatsModel } from '../../core/models/stats.model';
 
 const CardPokemonInfo = (props: {
-  image: any;
+  image: { shiny: string | undefined; default: string | undefined };
   id: number;
   name: string;
   forme: string;
   defaultImg: boolean;
   types: string[];
-  pokemonStat: any;
-  stats: any;
+  pokemonStat: { atk: number; def: number; sta: number };
+  stats: StatsModel;
   icon: string;
   releasedGO: boolean;
 }) => {

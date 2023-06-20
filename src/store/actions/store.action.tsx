@@ -27,6 +27,7 @@ import { loadStats } from './stats.action';
 import { APIUrl } from '../../services/constants';
 import { PokemonDataModel, PokemonModel } from '../../core/models/pokemon.model';
 import { CombatPokemon } from '../../core/models/combat.model';
+import { CandyModel } from '../../core/models/candy.model';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -170,7 +171,7 @@ export const loadGameMaster = (
     if (!stateCandy) {
       APIService.getFetchUrl(APIUrl.CANDY_DATA, {
         cancelToken: APIService.getAxios().CancelToken.source().token,
-      }).then((candy: { data: { CandyColors: any[] } }) => {
+      }).then((candy: { data: { CandyColors: CandyModel[] } }) => {
         const candyData = optionPokemonCandy(candy.data.CandyColors, pokemon, pokemonFamily);
         setStateCandy(JSON.stringify(candyData));
         dispatch({
@@ -275,10 +276,10 @@ export const loadAssets = (
   setStateImage: any
 ) => {
   APIService.getFetchUrl(imageRoot.data[0].commit.tree.url, options).then((imageFolder: { data: { tree: any[] } }) => {
-    const imageFolderPath: any = imageFolder.data.tree.find((item: { path: string }) => item.path === 'Images');
+    const imageFolderPath = imageFolder.data.tree.find((item: { path: string }) => item.path === 'Images');
 
     APIService.getFetchUrl(imageFolderPath.url, options).then((image: { data: { tree: any[] } }) => {
-      const imagePath: any = image.data.tree.find((item: { path: string }) => item.path === 'Pokemon');
+      const imagePath = image.data.tree.find((item: { path: string }) => item.path === 'Pokemon');
 
       APIService.getFetchUrl(imagePath.url + '?recursive=1', options).then((imageData: { data: { tree: any[] } }) => {
         const assetImgFiles = optionPokeImg(imageData.data);
@@ -311,10 +312,10 @@ export const loadAssets = (
 
 export const loadSounds = (soundsRoot: { data: { commit: { tree: { url: string } } }[] }, setStateSound: any) => {
   APIService.getFetchUrl(soundsRoot.data[0].commit.tree.url, options).then((soundFolder: { data: { tree: any[] } }) => {
-    const soundFolderPath: any = soundFolder.data.tree.find((item: { path: string }) => item.path === 'Sounds');
+    const soundFolderPath = soundFolder.data.tree.find((item: { path: string }) => item.path === 'Sounds');
 
     APIService.getFetchUrl(soundFolderPath.url, options).then((sound: { data: { tree: any[] } }) => {
-      const soundPath: any = sound.data.tree.find((item: { path: string }) => item.path === 'Pokemon Cries');
+      const soundPath = sound.data.tree.find((item: { path: string }) => item.path === 'Pokemon Cries');
 
       APIService.getFetchUrl(soundPath.url + '?recursive=1', options).then((soundData: { data: { tree: any[] } }) => {
         const assetSoundFiles = optionPokeSound(soundData.data);
@@ -337,10 +338,10 @@ export const loadPVP = (dispatch: Dispatch, setStateTimestamp: any, stateTimesta
           })
         );
         APIService.getFetchUrl(pvpUrl, options).then((pvpRoot: { data: { tree: any[] } }) => {
-          const pvpRootPath: any = pvpRoot.data.tree.find((item: { path: string }) => item.path === 'src');
+          const pvpRootPath = pvpRoot.data.tree.find((item: { path: string }) => item.path === 'src');
 
           APIService.getFetchUrl(pvpRootPath.url, options).then((pvpFolder: { data: { tree: any[] } }) => {
-            const pvpFolderPath: any = pvpFolder.data.tree.find((item: { path: string }) => item.path === 'data');
+            const pvpFolderPath = pvpFolder.data.tree.find((item: { path: string }) => item.path === 'data');
 
             APIService.getFetchUrl(pvpFolderPath.url + '?recursive=1', options).then((pvp: { data: { tree: any } }) => {
               const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
@@ -361,8 +362,8 @@ export const loadPVP = (dispatch: Dispatch, setStateTimestamp: any, stateTimesta
           });
         });
       } else {
-        const pvpRank: any = pvpFindPath(JSON.parse(statePVP), 'rankings/');
-        const pvpTrain: any = pvpFindPath(JSON.parse(statePVP), 'training/analysis/');
+        const pvpRank = pvpFindPath(JSON.parse(statePVP), 'rankings/');
+        const pvpTrain = pvpFindPath(JSON.parse(statePVP), 'training/analysis/');
         dispatch({
           type: LOAD_PVP,
           payload: {

@@ -34,7 +34,7 @@ const initialize: StoreModel = {
   timestamp: null,
 };
 
-const StoreReducer = (state: StoreModel = initialize, action: any) => {
+const StoreReducer = (state: StoreModel = initialize, action: { type: string; payload: any }) => {
   switch (action.type) {
     case LOAD_STORE:
       return action.payload;

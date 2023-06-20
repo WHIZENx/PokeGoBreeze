@@ -429,7 +429,7 @@ const Leagues = () => {
             value: {
               id: string;
               iconUrl: string | string[];
-              enabled: any;
+              enabled: boolean;
               title: string;
               league: string;
               conditions: {
@@ -558,7 +558,7 @@ const Leagues = () => {
                     {value.conditions.banned.length !== 0 && (
                       <li style={{ fontWeight: 500 }}>
                         <h6 className="title-leagues text-danger">Ban List</h6>
-                        {value.conditions.banned.map((item: { id: string; name: string; form: any }, index: React.Key) => (
+                        {value.conditions.banned.map((item: { id: string; name: string; form: string }, index: React.Key) => (
                           <Link
                             className="img-link text-center"
                             key={index}
@@ -646,8 +646,8 @@ const Leagues = () => {
           <Modal.Body className="text-center">
             <h5 style={{ textDecoration: 'underline' }}>Random Pokémon</h5>
             {showData.data
-              .filter((item: { guaranteedLimited: any }) => !item.guaranteedLimited)
-              .map((item: { id: string; name: string; form: any }, index: React.Key) => (
+              .filter((item: { guaranteedLimited: boolean }) => !item.guaranteedLimited)
+              .map((item: { id: string; name: string; form: string }, index: React.Key) => (
                 <Link
                   className="img-link text-center"
                   key={index}
@@ -666,14 +666,14 @@ const Leagues = () => {
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
                 </Link>
               ))}
-            {showData.data.filter((item: { guaranteedLimited: any; rank: number }) => item.guaranteedLimited && item.rank === rank).length >
-              0 && (
+            {showData.data.filter((item: { guaranteedLimited: boolean; rank: number }) => item.guaranteedLimited && item.rank === rank)
+              .length > 0 && (
               <Fragment>
                 <hr />
                 <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>
                 {showData.data
-                  .filter((item: { guaranteedLimited: any; rank: number }) => item.guaranteedLimited && item.rank === rank)
-                  .map((item: { id: string; name: string; form: any }, index: React.Key) => (
+                  .filter((item: { guaranteedLimited: boolean; rank: number }) => item.guaranteedLimited && item.rank === rank)
+                  .map((item: { id: string; name: string; form: string }, index: React.Key) => (
                     <Link
                       className="img-link text-center"
                       key={index}

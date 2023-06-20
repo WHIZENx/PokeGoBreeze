@@ -9,20 +9,20 @@ import { StoreState } from '../../../store/models/state.model';
 
 const TypeBadge = (props: {
   move: any;
-  find?: any;
-  grow?: any;
+  find?: boolean;
+  grow?: boolean;
   style?: React.CSSProperties | undefined;
-  color?: any;
+  color?: string;
   title?: string;
-  elite?: any;
-  shadow?: any;
-  purified?: any;
+  elite?: boolean;
+  shadow?: boolean;
+  purified?: boolean;
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
   let move = props.move;
   if (!props.find) {
-    move = combat.find((item) => item.name === props.move.name);
+    move = combat.find((item) => item.name === props.move?.name);
   }
 
   return (
@@ -30,8 +30,8 @@ const TypeBadge = (props: {
       <span className="caption text-type-border" style={{ color: props.color ?? 'gray' }}>
         {props.title}
       </span>
-      <Link to={'/move/' + move.id} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
-        <span className={move.type.toLowerCase() + ' type-border position-relative'}>
+      <Link to={'/move/' + move?.id} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
+        <span className={move?.type?.toLowerCase() + ' type-border position-relative'}>
           {(props.elite || props.shadow || props.purified) && (
             <span className="type-badge-border">
               {props.elite && (
@@ -51,15 +51,15 @@ const TypeBadge = (props: {
               )}
             </span>
           )}
-          <span>{splitAndCapitalize(props.move.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
+          <span>{splitAndCapitalize(props.move?.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
         </span>
-        <span className={move.type.toLowerCase() + ' type-icon-border'}>
+        <span className={move?.type?.toLowerCase() + ' type-icon-border'}>
           <div style={{ width: 35 }}>
             <img
               style={{ padding: 5, backgroundColor: 'black' }}
               className="sprite-type"
               alt="img-type-pokemon"
-              src={APIService.getTypeHqSprite(capitalize(move.type))}
+              src={APIService.getTypeHqSprite(capitalize(move?.type))}
             />
           </div>
         </span>

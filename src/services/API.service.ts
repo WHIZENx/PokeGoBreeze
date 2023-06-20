@@ -46,7 +46,7 @@ class APIService {
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon - 256x256/${item}.png`;
   }
 
-  getTrainerModel(id: any) {
+  getTrainerModel(id: number | string) {
     id = id.toString().padStart(3, '0');
     return `${APIUrl.POKE_TRAINER_SPRITES_API_URL}${id}.png`;
   }
@@ -103,8 +103,8 @@ class APIService {
     return `${APIUrl.POGO_ASSET_API_URL}Weather/weatherIcon_large_${weather}${timeOfSun}.png`;
   }
 
-  getWeatherIconSprite(weather: any) {
-    weather = weather.toLowerCase().replaceAll('_', '').replaceAll('rainy', 'rain');
+  getWeatherIconSprite(weather: string | undefined) {
+    weather = weather?.toLowerCase().replaceAll('_', '').replaceAll('rainy', 'rain');
 
     if (weather === 'overcast') {
       weather = 'cloudy';
@@ -121,12 +121,15 @@ class APIService {
     return `${APIUrl.POKE_SPRITES_API_URL}${id}.png`;
   }
 
-  getPokeFullSprite(id: any, form?: string) {
-    if (id > 905) {
-      return `${APIUrl.POKE_ASSETS}${id}.png`;
+  getPokeFullSprite(id: number | string | undefined, form?: string) {
+    if (id) {
+      if (parseInt(id.toString()) > 905) {
+        return `${APIUrl.POKE_ASSETS}${id}.png`;
+      }
+      id = id.toString().padStart(3, '0');
+      return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id}${form ? `-${form}` : ''}.png`;
     }
-    id = id.toString().padStart(3, '0');
-    return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id}${form ? `-${form}` : ''}.png`;
+    return `${APIUrl.POKE_ASSETS}0.png`;
   }
 
   getPokeIconSprite(name: string, noFix = false) {
@@ -252,7 +255,7 @@ class APIService {
     return `${APIUrl.POKE_TYPES_API_URL}${type.toLowerCase()}.png`;
   }
 
-  getPokemonAsset(type: string, gen: number | string, name: string, file: string) {
+  getPokemonAsset(type: string, gen: number | string, name: string | undefined, file: string) {
     return `${APIUrl.POKE_ASSETS_URL}${type}/${gen}/${name}.${file}`;
   }
 }

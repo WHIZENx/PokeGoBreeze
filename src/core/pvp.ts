@@ -12,12 +12,12 @@ const leagueModel = () => {
 
 export const pvpConvertPath = (data: { tree: any[] }, path: string) => {
   return data.tree
-    .filter((item: { path: string | string[] }) => item.path.includes(path))
+    .filter((item: { path: string }) => item.path.includes(path))
     .map((item: { path: string }) => item.path.replace(path, ''));
 };
 
 export const pvpFindFirstPath = (data: any[], path: string) => {
-  return data.filter((item: { path: string | string[] }) => item.path.includes(path)).map((item: { path: string }) => item.path);
+  return data.filter((item: { path: string }) => item.path.includes(path)).map((item: { path: string }) => item.path);
 };
 
 export const pvpFindPath = (data: any[], path: string) => {
@@ -28,12 +28,12 @@ export const convertPVPRankings = (data: any[], leagues: League[]) => {
   return Array.from(new Set(data.map((league) => league.split('/')[0]))).map((league: string) => {
     let item;
     if (league !== 'all') {
-      item = leagues.find((item) => item.iconUrl.includes(league));
+      item = leagues.find((item) => item.iconUrl?.includes(league));
       if (!item) {
         item = leagues.find((item) => item.title.replaceAll('_', '').includes(league.toUpperCase()));
       }
       if (!item) {
-        item = leagues.find((item) => item.id.includes(league.toUpperCase()));
+        item = leagues.find((item) => item.id?.includes(league.toUpperCase()));
       }
     }
 
@@ -56,12 +56,12 @@ export const convertPVPTrain = (data: any[], leagues: League[]) => {
   return Array.from(new Set(data.map((league) => league.split('/')[0]))).map((league: string) => {
     let item;
     if (league !== 'all') {
-      item = leagues.find((item) => item.iconUrl.includes(league));
+      item = leagues.find((item) => item.iconUrl?.includes(league));
       if (!item) {
         item = leagues.find((item) => item.title.replaceAll('_', '').includes(league.toUpperCase()));
       }
       if (!item) {
-        item = leagues.find((item) => item.id.includes(league.toUpperCase()));
+        item = leagues.find((item) => item.id?.includes(league.toUpperCase()));
       }
     }
     const result: LeaguePVP = leagueModel();

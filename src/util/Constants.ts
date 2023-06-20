@@ -100,10 +100,10 @@ export const MULTIPLY_THROW_CHARGE = (options: Options | undefined, type: string
 };
 
 /* Shadow exclusive bonus for Pokémon in battle */
-export const SHADOW_ATK_BONUS = (options: any) => {
+export const SHADOW_ATK_BONUS = (options: Options | undefined) => {
   return getOption(options, ['combat_options', 'shadow_bonus', 'atk']);
 };
-export const SHADOW_DEF_BONUS = (options: any) => {
+export const SHADOW_DEF_BONUS = (options: Options | undefined) => {
   return getOption(options, ['combat_options', 'shadow_bonus', 'def']);
 };
 

@@ -38,16 +38,16 @@ const Form = ({
 
   const findFirst = useCallback(() => {
     return formList.map((item: any[]) => {
-      return item.find((item: { form: { is_default: any } }) => item.form.is_default);
+      return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
     })[0];
   }, [formList]);
 
   const findDefaultForm = useCallback(() => {
     return formList
       .map((item: any[]) => {
-        return item.find((item: { form: { is_default: any } }) => item.form.is_default);
+        return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
       })
-      .find((item: { id: any }) => item.id === idDefault);
+      .find((item: { id: number }) => item.id === idDefault);
   }, [formList, idDefault]);
 
   const findForm = () => {
@@ -61,15 +61,15 @@ const Form = ({
           (item: { form: { form_name: any; name: string }; default_name: string }) =>
             form && (item.form.form_name === form || item.form.name === item.default_name + '-' + form)
         );
-        return curFrom ?? form.find((item: { form: { is_default: any } }) => item.form.is_default);
+        return curFrom ?? form.find((item: { form: { is_default: boolean } }) => item.form.is_default);
       })
-      .find((item: { form: { form_name: any; name: string }; default_name: string; id: any }) =>
+      .find((item: { form: { form_name: any; name: string }; default_name: string; id: number }) =>
         form ? item.form.form_name === form || item.form.name === item.default_name + '-' + form : item.id === idDefault
       );
   };
 
   const [currForm, setCurrForm] = useState(findForm());
-  const [dataPoke, setDataPoke] = useState(pokeData.find((item: { id: any }) => item.id === idDefault));
+  const [dataPoke, setDataPoke] = useState(pokeData.find((item: { id: number }) => item.id === idDefault));
   const pokeID = useRef(null);
 
   const [statATK, setStatATK]: any = useState(null);
@@ -84,19 +84,21 @@ const Form = ({
   }, []);
 
   const filterFormList = useCallback(
-    (stats: any[], id: any) => {
-      const filterId = stats.filter((item: { id: any }) => item.id === id);
+    (stats: any[], id: number) => {
+      const filterId = stats.filter((item: { id: number }) => item.id === id);
       const firstFilter = stats.find(
-        (item: { id: any; form: string }) => item.id === id && currForm.form.form_name.toLowerCase() === item.form.toLowerCase()
+        (item: { id: number; form: string }) => item.id === id && currForm.form.form_name.toLowerCase() === item.form.toLowerCase()
       );
       if (firstFilter) {
         return firstFilter;
       }
-      const filterForm = stats.find((item: { id: any; form: any }) => item.id === id && filterFormName(currForm.form.form_name, item.form));
+      const filterForm = stats.find(
+        (item: { id: number; form: string }) => item.id === id && filterFormName(currForm.form.form_name, item.form)
+      );
       if (filterId.length === 1 && formList.length === 1 && !filterForm) {
         return filterId[0];
       } else if (filterId.length === formList.length && !filterForm) {
-        return stats.find((item: { id: any; form: string }) => item.id === id && item.form === 'Normal');
+        return stats.find((item: { id: number; form: string }) => item.id === id && item.form === 'Normal');
       } else {
         return filterForm;
       }
@@ -141,9 +143,9 @@ const Form = ({
       setSearchParams(searchParams);
       onSetReForm(true);
     }
-    const findData = pokeData.find((item: { name: any }) => name === item.name);
+    const findData = pokeData.find((item: { name: string }) => name === item.name);
     const findForm = formList
-      .map((item: any[]) => item.find((item: { form: { name: any } }) => item.form.name === name))
+      .map((item: any[]) => item.find((item: { form: { name: string } }) => item.form.name === name))
       .find((item: any) => item);
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));
@@ -293,7 +295,7 @@ const Form = ({
           <hr className="w-100" />
           {formList
             .filter((item: { form: { form_name: string | string[] } }[]) => item[0].form.form_name.includes('mega'))
-            .map((item: { form: any }[]) => item[0].form).length > 0 && !currForm.form.form_name.includes('gmax') ? (
+            .map((item: { form: string }[]) => item[0].form).length > 0 && !currForm.form.form_name.includes('gmax') ? (
             <div className="row w-100" style={{ margin: 0 }}>
               <div className="col-xl" style={{ padding: 0 }}>
                 <Evolution

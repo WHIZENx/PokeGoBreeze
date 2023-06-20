@@ -14,13 +14,13 @@ import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { StoreState } from '../../../store/models/state.model';
 
 const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA }: any) => {
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? {});
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
 
   const [currStatLevel, setCurrStatLevel]: any = useState(1);
   const [currStatType, setCurrStatType]: any = useState(null);
 
   const onHandleLevel = useCallback(
-    (e: any, v: any) => {
+    (_: any, v: any) => {
       setStatLevel(v);
       if (setStatLvATK) {
         setStatLvATK(
@@ -41,7 +41,7 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
   );
 
   const onHandleType = useCallback(
-    (v: any) => {
+    (v: string) => {
       setStatType(v);
       setCurrStatType(v);
       setStatLevel(1);

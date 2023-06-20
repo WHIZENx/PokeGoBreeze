@@ -9,10 +9,10 @@ import { StoreState } from '../../store/models/state.model';
 
 const CardMoveSmall = (props: {
   value: { name: string; elite: boolean; shadow: boolean; purified: boolean };
-  empty?: any;
+  empty?: boolean;
   disable?: boolean;
   show?: boolean;
-  select?: any;
+  select?: boolean;
   clearData?: any;
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);

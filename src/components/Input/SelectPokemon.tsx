@@ -12,10 +12,10 @@ import { StoreState } from '../../store/models/state.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 
 const SelectPokemon = (props: {
-  pokemon?: any;
+  pokemon?: PokemonDataModel;
   // eslint-disable-next-line no-unused-vars
   setCurrentPokemon: (arg0: any) => void;
-  selected: any;
+  selected: boolean;
   // eslint-disable-next-line no-unused-vars
   setFMovePokemon: (arg0: any) => void;
   // eslint-disable-next-line no-unused-vars
@@ -170,13 +170,13 @@ const SelectPokemon = (props: {
           <div>
             {Object.values(pokemonData)
               .filter(
-                (item: any) =>
+                (item) =>
                   item.num > 0 &&
                   (splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
                     item.num.toString().includes(search))
               )
               .slice(0, firstInit + eachCounter * startIndex)
-              .map((value: any, index) => (
+              .map((value, index) => (
                 <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
                   <CardPokemon value={value} />
                 </div>

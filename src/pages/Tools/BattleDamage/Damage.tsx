@@ -166,7 +166,7 @@ const Damage = () => {
       if (move) {
         const eff = {
           stab: findStabType(
-            form.form.types.map((item: { type: { name: any } }) => item.type.name),
+            form.form.types.map((item: { type: { name: string } }) => item.type.name),
             move.type
           ),
           wb: battleState.weather,

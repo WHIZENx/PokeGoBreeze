@@ -168,9 +168,9 @@ const Battle = () => {
   };
 
   const Pokemon = (poke: {
-    disableCMoveSec: any;
-    disableCMovePri: any;
-    shadow: any;
+    disableCMoveSec: boolean;
+    disableCMovePri: boolean;
+    shadow: boolean;
     pokemonData: any;
     fMove: any;
     cMovePri: any;
@@ -565,11 +565,11 @@ const Battle = () => {
               player1.block -= 1;
             }
             const moveType = chargeType === 1 ? player2.cmove : player2.cmoveSec;
-            const arrBufAtk: { target: string; type: string; power: any }[] = [],
-              arrBufTarget: { target: string; type: string; power: any }[] = [];
+            const arrBufAtk: { target: string; type: string; power: number }[] = [],
+              arrBufTarget: { target: string; type: string; power: number }[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
             if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
-              moveType.buffs.forEach((value: { target: string; type: string; power: any }) => {
+              moveType.buffs.forEach((value: { target: string; type: string; power: number }) => {
                 if (value.target === 'target') {
                   player1 = {
                     ...player1,
@@ -808,7 +808,7 @@ const Battle = () => {
   const arrBound: any = useRef([]);
   const arrStore: any = useRef([]);
 
-  const getTranslation = (elem: any) => {
+  const getTranslation = (elem: HTMLElement) => {
     return elem ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
   };
 
@@ -1153,7 +1153,7 @@ const Battle = () => {
 
   const renderInfoPokemon = (
     type: string,
-    pokemon: { shadow?: any; pokemonData: any; fMove?: Combat; cMovePri?: Combat; cMoveSec?: Combat | string },
+    pokemon: { shadow?: boolean; pokemonData: any; fMove?: Combat; cMovePri?: Combat; cMoveSec?: Combat | string },
     setPokemon: any
   ) => {
     return (

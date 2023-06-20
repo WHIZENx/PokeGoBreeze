@@ -9,6 +9,7 @@ import CardPokemon from '../../../components/Card/CardPokemon';
 import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
   const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
@@ -28,11 +29,11 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
   const [pokemonIcon, setPokemonIcon]: any = useState(null);
   const [score, setScore]: any = useState(null);
 
-  const selectPokemon = (value: any) => {
+  const selectPokemon = (value: { pokemon: PokemonDataModel | undefined; score: any; moveset?: any }) => {
     clearData();
     let [fMove, cMovePri, cMoveSec] = value.moveset;
-    setSearch(splitAndCapitalize(value.pokemon.name, '-', ' '));
-    setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
+    setSearch(splitAndCapitalize(value.pokemon?.name, '-', ' '));
+    setPokemonIcon(APIService.getPokeIconSprite(value.pokemon?.sprite ?? ''));
     setPokemon(value);
 
     if (fMove.includes('HIDDEN_POWER')) {
@@ -63,22 +64,22 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     cMoveSec = combat.find((item) => item.name === cMoveSec);
     setCMoveSec(cMoveSec);
 
-    const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
+    const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
     const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
     const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, league);
 
     let combatPoke: any = pokemonCombat.filter(
       (item) =>
-        item.id === value.pokemon.num &&
-        item.baseSpecies === (value.pokemon.baseSpecies ? convertName(value.pokemon.baseSpecies) : convertName(value.pokemon.name))
+        item.id === value.pokemon?.num &&
+        item.baseSpecies === (value.pokemon?.baseSpecies ? convertName(value.pokemon?.baseSpecies) : convertName(value.pokemon?.name))
     );
 
-    const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.pokemon.name));
+    const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.pokemon?.name));
     if (!result) {
       if (combatPoke) {
         combatPoke = combatPoke[0];
       } else {
-        combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon.name));
+        combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon?.name));
       }
     } else {
       combatPoke = result;
@@ -201,7 +202,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
             .filter((pokemon: { pokemon: { name: string } }) =>
               splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase())
             )
-            .map((value: { pokemon: { sprite: string; name: string }; score: number }, index: React.Key) => (
+            .map((value: { pokemon: PokemonDataModel; score: number }, index: React.Key) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
                 <CardPokemon value={value.pokemon} score={value.score} />
               </div>
@@ -219,19 +220,19 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
             <div className="result-move-select">
               <div>
                 {data
-                  .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
+                  .find((value: { speciesId: string }) => value.speciesId === pokemon.speciesId)
                   .moves.fastMoves.map((value: { moveId: string }) => {
                     let move = value.moveId;
                     if (move.includes('HIDDEN_POWER')) {
                       move = 'HIDDEN_POWER';
                     }
-                    let fmove: any = combat.find((item: { name: any }) => item.name === move);
+                    let fmove: any = combat.find((item: { name: string }) => item.name === move);
                     if (value.moveId.includes('HIDDEN_POWER')) {
                       fmove = { ...fmove, type: value.moveId.split('_')[2] };
                     }
                     return fmove;
                   })
-                  .filter((value: { name: any }) => value.name !== fMove.name)
+                  .filter((value: { name: string }) => value.name !== fMove.name)
                   .map((value: any, index: React.Key) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
                       <CardMoveSmall value={value} />

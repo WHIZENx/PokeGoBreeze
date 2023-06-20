@@ -20,12 +20,12 @@ const Find = (props: {
   // eslint-disable-next-line no-unused-vars
   setStatSTA?: (arg0: any) => void;
   hide?: boolean;
-  raid?: any;
+  raid?: boolean;
   setRaid?: any;
-  tier?: any;
+  tier?: number;
   setTier?: any;
   setForm?: any;
-  urlEvo?: any;
+  urlEvo?: { url: string | null };
   setUrlEvo?: any;
   title?: string;
   swap?: boolean;

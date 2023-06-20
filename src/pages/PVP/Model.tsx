@@ -123,12 +123,12 @@ export const Keys = (
 
 export const OverAllStats = (
   data: {
-    scores: any[];
+    scores: number[];
     atk: { attack: number; rank: number } | undefined;
     def: { defense: number; rank: number } | undefined;
     sta: { stamina: number; rank: number } | undefined;
     prod: { prod: number; rank: number } | undefined;
-    stats: any;
+    stats: { atk: number; def: number; sta: number };
     id: number;
   },
   statsRanking: StatsModel,
@@ -151,7 +151,7 @@ export const OverAllStats = (
     }
   };
 
-  const renderTopStats = (stats: any, id: number) => {
+  const renderTopStats = (stats: { atk: number; def: number; sta: number }, id: number) => {
     const maxCP = parseInt(cp.toString());
     const currStats: any = calculateStatsTopRank(stats);
     return (
@@ -258,8 +258,8 @@ export const TypeEffective = (types: string[]) => {
 };
 
 export const MoveSet = (
-  moves: { fastMoves: any[]; chargedMoves: any[] },
-  combatList: { eliteQuickMoves: string | any[]; eliteCinematicMoves: string | any[] },
+  moves: { fastMoves: { uses: number }[]; chargedMoves: { moveId: string; uses: number }[] },
+  combatList: { eliteQuickMoves: string[]; eliteCinematicMoves: string[] },
   combatData: Combat[]
 ) => {
   const findArchetype = (archetype: string | string[]) => {

@@ -123,7 +123,7 @@ const Raid = ({
               parseInt(tier),
               currForm && currForm.form.form_name.includes('mega') && !pokemonClass,
               currForm && currForm.form.form_name === 'primal' && pokemonClass,
-              details.find((pokemon: { id: any }) => pokemon.id === id)?.pokemonClass === 'ULTRA_BEAST'
+              details.find((pokemon) => pokemon.id === id)?.pokemonClass === 'ULTRA_BEAST'
             )}
           />
         </div>

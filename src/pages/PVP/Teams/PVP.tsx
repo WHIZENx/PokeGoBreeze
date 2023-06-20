@@ -25,7 +25,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
@@ -181,7 +181,7 @@ const TeamPVP = () => {
           const teamsData: {
             id: number | undefined;
             name: string;
-            speciesId: any;
+            speciesId: number;
             pokemonData: PokemonDataModel | undefined;
             form: string | null;
             stats:
@@ -193,11 +193,11 @@ const TeamPVP = () => {
             fmove: Combat | undefined;
             cmovePri: Combat | undefined;
             cmoveSec: Combat | undefined;
-            combatPoke: any;
-            shadow: any;
-            purified: any;
+            combatPoke: CombatPokemon;
+            shadow: boolean;
+            purified: boolean;
           }[] = [];
-          teams.forEach((value: any) => {
+          teams.forEach((value) => {
             teamsData.push(mappingPokemonData(value));
           });
           return {
@@ -232,7 +232,7 @@ const TeamPVP = () => {
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
-    const league = pvp?.trains?.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
+    const league = pvp?.trains?.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
         {league && (
@@ -477,10 +477,10 @@ const TeamPVP = () => {
                           {value.teamData.map(
                             (
                               value: {
-                                shadow: any;
-                                purified: any;
+                                shadow: boolean;
+                                purified: boolean;
                                 form: string;
-                                id: any;
+                                id: number;
                                 name: string;
                               },
                               index: React.Key
@@ -524,22 +524,22 @@ const TeamPVP = () => {
                         {value.teamData.map(
                           (
                             value: {
-                              pokemonData: { types: any[] };
+                              pokemonData: { types: string[] };
                               shadow: boolean | undefined;
                               purified: boolean | undefined;
                               speciesId: string;
                               form: string;
-                              id: any;
+                              id: number;
                               name: string;
-                              fmove: { name: any; id?: string; type?: any };
+                              fmove: { name: string; id?: string; type?: string };
                               combatPoke: {
-                                eliteQuickMoves: string | any[];
-                                eliteCinematicMoves: string | any[];
-                                shadowMoves: string | any[];
-                                purifiedMoves: string | any[];
+                                eliteQuickMoves: string[];
+                                eliteCinematicMoves: string[];
+                                shadowMoves: string[];
+                                purifiedMoves: string[];
                               };
-                              cmovePri: { name: any; id?: string; type?: any };
-                              cmoveSec: { name: any; id?: string; type?: any };
+                              cmovePri: { name: string; id?: string; type?: string };
+                              cmoveSec: { name: string; id?: string; type?: string };
                             },
                             index: React.Key
                           ) => (

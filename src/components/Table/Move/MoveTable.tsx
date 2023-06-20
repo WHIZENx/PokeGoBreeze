@@ -14,7 +14,15 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 
-const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; id?: number; maxHeight?: number | string }) => {
+const TableMove = (props: {
+  data: any;
+  statATK: number;
+  statDEF: number;
+  statSTA: number;
+  form: any;
+  id?: number;
+  maxHeight?: number | string;
+}) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
   const [move, setMove]: any = useState({ data: [] });
@@ -97,7 +105,15 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     }
   }, [findMove, props.form]);
 
-  const renderBestMovesetTable = (value: any, max: number, type: string) => {
+  const renderBestMovesetTable = (
+    value: {
+      fmove: { id: string; type: string; name: string; elite: boolean };
+      cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean };
+      eDPS: { [x: string]: number };
+    },
+    max: number,
+    type: string
+  ) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>

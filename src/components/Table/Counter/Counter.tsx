@@ -36,7 +36,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
     };
   }, [pokeID, currForm]);
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
+  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 0.8 >= fullHeight * (startIndex + 1)) {
@@ -119,7 +119,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
           {!frame ? (
             <Fragment>
               {counterList
-                .filter((pokemon: { pokemon_id: any; pokemon_name: string }) => {
+                .filter((pokemon: { pokemon_id: number; pokemon_name: string }) => {
                   if (!releasedGO) {
                     return true;
                   }

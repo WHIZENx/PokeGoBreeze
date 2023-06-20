@@ -267,9 +267,9 @@ export const optionFormSpecial = (data: any[]) => {
         Object.keys(item.data).includes('formSettings') &&
         item.data.formSettings.forms
     )
-    .map((item: { data: { formSettings: { forms: any } } }) => item.data.formSettings.forms)
+    .map((item: { data: { formSettings: { forms: string } } }) => item.data.formSettings.forms)
     .reduce((prev: any, curr: any) => [...prev, ...curr], [])
-    .filter((item: { assetBundleSuffix: any; isCostume: any; form: string }) => {
+    .filter((item: { assetBundleSuffix: string; isCostume: boolean; form: string }) => {
       return (
         item.assetBundleSuffix ||
         item.isCostume ||
@@ -282,7 +282,7 @@ export const optionFormSpecial = (data: any[]) => {
 };
 
 export const optionPokemonFamily = (pokemon: any[]) => {
-  return Array.from(new Set(pokemon.map((item: { pokemonId: any }) => item.pokemonId)));
+  return Array.from(new Set(pokemon.map((item: { pokemonId: string }) => item.pokemonId)));
 };
 
 export const optionPokemonFamilyGroup = (data: any[]) => {
@@ -595,7 +595,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
       }
     }
 
-    const formList = result.image.map((img: any) => img.form.replaceAll('_', ''));
+    const formList = result.image.map((img) => img.form.replaceAll('_', ''));
     formSet = imgs.filter(
       (img: string | string[]) =>
         !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_pm${result.id?.toString().padStart(4, '0')}`)
@@ -986,7 +986,7 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
               return whiteList;
             });
             const whiteList: any[] = [];
-            result.conditions.whiteList.forEach((value: any) => {
+            result.conditions.whiteList.forEach((value: { form: string[]; name: string }) => {
               if (typeof value.form !== 'string') {
                 value.form.forEach((form: string) => {
                   if (form === 'FORM_UNSET' && value.form.length === 1) {

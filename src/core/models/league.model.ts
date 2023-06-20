@@ -6,11 +6,11 @@ export interface LeaguePVP {
 }
 
 export interface League {
-  id: any;
+  id: string | null;
   title: string;
   enabled: boolean;
   conditions: any;
-  iconUrl: any;
+  iconUrl: string | null;
   league: string;
 }
 

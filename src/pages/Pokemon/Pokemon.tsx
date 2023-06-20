@@ -70,7 +70,7 @@ const Pokemon = (props: {
   const { enqueueSnackbar } = useSnackbar();
 
   const getRatioGender = useCallback((id: number) => {
-    return (Object.values(dataStore?.pokemonData ?? []).find((item: any) => id === item.num) as any)?.genderRatio;
+    return Object.values(dataStore?.pokemonData ?? []).find((item) => id === item.num)?.genderRatio;
   }, []);
 
   const fetchMap = useCallback(
@@ -83,10 +83,10 @@ const Pokemon = (props: {
       const dataPokeList: any[] = [];
       let dataFromList: any[] = [];
       await Promise.all(
-        data.varieties.map(async (value: { pokemon: { url: any } }) => {
+        data.varieties.map(async (value: { pokemon: { url: string } }) => {
           const pokeInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
           const pokeForm = await Promise.all(
-            pokeInfo.forms.map(async (item: { url: any }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
+            pokeInfo.forms.map(async (item: { url: string }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
           );
           dataPokeList.push(pokeInfo);
           dataFromList.push(pokeForm);
@@ -110,9 +110,9 @@ const Pokemon = (props: {
       dataFromList = dataFromList
         .map((item) => {
           return item
-            .map((item: { pokemon: { name: string | any[] } }) => ({
+            .map((item: { pokemon: { name: string } }) => ({
               form: item,
-              name: data.varieties.find((v: { pokemon: { name: any } }) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
+              name: data.varieties.find((v: { pokemon: { name: string } }) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
               default_name: data.name,
             }))
             .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
@@ -126,10 +126,10 @@ const Pokemon = (props: {
         isDefaultForm: {
           form: { form_name: string; name: string; version_group: { name: string }; is_default: boolean };
           default_name: string;
-          name: any;
+          name: string;
         },
-        defaultData: { weight: any; height: any };
-      let formParams: any = searchParams.get('form');
+        defaultData: { weight: number; height: number };
+      let formParams = searchParams.get('form');
 
       if (formParams) {
         if (data.id === 555 && formParams === 'galar') {
@@ -138,7 +138,7 @@ const Pokemon = (props: {
         defaultFrom = dataFromList.find((value) =>
           value.find(
             (item: { form: { form_name: string; name: string }; default_name: string }) =>
-              item.form.form_name === formParams.toLowerCase() || item.form.name === item.default_name + '-' + formParams.toLowerCase()
+              item.form.form_name === formParams?.toLowerCase() || item.form.name === item.default_name + '-' + formParams?.toLowerCase()
           )
         );
 
@@ -148,7 +148,9 @@ const Pokemon = (props: {
             isDefaultForm.form.form_name !== formParams.toLowerCase() &&
             isDefaultForm.form.name !== isDefaultForm.default_name + '-' + formParams.toLowerCase()
           ) {
-            isDefaultForm = defaultFrom.find((value: { form: { form_name: string } }) => value.form.form_name === formParams.toLowerCase());
+            isDefaultForm = defaultFrom.find(
+              (value: { form: { form_name: string } }) => value.form.form_name === formParams?.toLowerCase()
+            );
           }
         } else {
           defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
@@ -185,19 +187,21 @@ const Pokemon = (props: {
         document.title = `#${data.id} - ${nameInfo}`;
       }
       setOnChangeForm(false);
-      const currentId: any = getPokemonById(Object.values(dataStore?.pokemonName ?? []), data.id);
-      setDataStorePokemon({
-        prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
-        current: currentId,
-        next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
-      });
+      const currentId = getPokemonById(Object.values(dataStore?.pokemonName ?? []), data.id);
+      if (currentId) {
+        setDataStorePokemon({
+          prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
+          current: currentId,
+          next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
+        });
+      }
     },
     [searchParams, params.id]
   );
 
   const queryPokemon = useCallback(
     (
-      id: any,
+      id: number | string | undefined,
       axios: any,
       source: {
         // eslint-disable-next-line no-unused-vars
@@ -205,30 +209,32 @@ const Pokemon = (props: {
         token: any;
       }
     ) => {
-      if (!params.id || (params.id && data && parseInt(id) !== data.id)) {
-        dispatch(showSpinner());
+      if (id) {
+        if (!params.id || (params.id && data && parseInt(id.toString()) !== data.id)) {
+          dispatch(showSpinner());
+        }
+        if (data?.id !== parseInt(id.toString())) {
+          setForm(null);
+        }
+        axios
+          .getPokeSpices(id, {
+            cancelToken: source.token,
+          })
+          .then((res: { data: any }) => {
+            setPokeRatio(getRatioGender(res.data.id));
+            fetchMap(res.data, axios, source);
+            setData(res.data);
+          })
+          .catch((e: { message: string }) => {
+            enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
+            if (params.id) {
+              document.title = `#${params.id} - Not Found`;
+            }
+            setIsFound(false);
+            source.cancel(e.message);
+            dispatch(hideSpinner());
+          });
       }
-      if (data?.id !== parseInt(id)) {
-        setForm(null);
-      }
-      axios
-        .getPokeSpices(id, {
-          cancelToken: source.token,
-        })
-        .then((res: { data: any }) => {
-          setPokeRatio(getRatioGender(res.data.id));
-          fetchMap(res.data, axios, source);
-          setData(res.data);
-        })
-        .catch((e: { message: string }) => {
-          enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
-          if (params.id) {
-            document.title = `#${params.id} - Not Found`;
-          }
-          setIsFound(false);
-          source.cancel(e.message);
-          dispatch(hideSpinner());
-        });
     },
     [dispatch, enqueueSnackbar, getRatioGender, fetchMap, params.id]
   );
@@ -244,21 +250,23 @@ const Pokemon = (props: {
   useEffect(() => {
     const keyDownHandler = (event: { keyCode: number; preventDefault: () => void }) => {
       if (!spinner.loading) {
-        const currentId: any = getPokemonById(
+        const currentId = getPokemonById(
           Object.values(dataStore?.pokemonName ?? []),
           parseInt(params.id ? params.id.toLowerCase() : props.id ?? '')
         );
-        const result: any = {
-          prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
-          current: currentId,
-          next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
-        };
-        if (result.prev && event.keyCode === 37) {
-          event.preventDefault();
-          params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId();
-        } else if (result.next && event.keyCode === 39) {
-          event.preventDefault();
-          params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId();
+        if (currentId) {
+          const result = {
+            prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
+            current: currentId,
+            next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
+          };
+          if (result.prev && event.keyCode === 37) {
+            event.preventDefault();
+            params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId();
+          } else if (result.next && event.keyCode === 39) {
+            event.preventDefault();
+            params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId();
+          }
         }
       }
     };

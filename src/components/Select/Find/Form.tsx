@@ -11,31 +11,34 @@ import { getFormsGO } from '../../../core/forms';
 import { useDispatch } from 'react-redux';
 import { setSearchToolPage } from '../../../store/actions/searching.action';
 import { Action } from 'history';
+import { StatsModel } from '../../../core/models/stats.model';
+import { ToolSearching } from '../../../core/models/searching.model';
+import { PokemonNameModel } from '../../../core/models/pokemon.model';
 
 const Form = (props: {
   router: any;
-  searching: any;
-  raid?: any;
-  tier?: any;
-  id?: any;
+  searching: ToolSearching | null;
+  raid?: boolean | undefined;
+  tier?: number;
+  id?: number;
   onClearStats?: any;
   // eslint-disable-next-line no-unused-vars
   setTier?: (arg0: any) => void;
   onSetPrev?: () => void;
   onSetNext?: () => void;
   name: string;
-  hide?: any;
+  hide?: boolean;
   // eslint-disable-next-line no-unused-vars
   setRaid?: (arg0: boolean) => void;
-  form?: any;
+  form?: string | null;
   setForm?: any;
   setFormOrigin?: any;
-  stats: any;
+  stats: StatsModel;
   onHandleSetStats?: any;
   data: any;
   setUrlEvo: any;
   objective?: boolean;
-  pokemonName: any;
+  pokemonName: PokemonNameModel[];
 }) => {
   const dispatch = useDispatch();
 
@@ -68,7 +71,7 @@ const Form = (props: {
       // eslint-disable-next-line no-unused-vars
       let dataFromList: any | ((prevState: any[]) => any[]) = [];
       await Promise.all(
-        data.varieties.map(async (value: { pokemon: { url: any } }) => {
+        data.varieties.map(async (value: { pokemon: { url: string } }) => {
           const pokeInfo = await axios.getFetchUrl(value.pokemon.url, {
             cancelToken: source.token,
           });
@@ -90,10 +93,10 @@ const Form = (props: {
       }
       setPokeData(dataPokeList);
       let modify = false;
-      dataFromList = dataFromList.map((value: string | any[]) => {
+      dataFromList = dataFromList.map((value: string[]) => {
         if (value.length === 0) {
           modify = true;
-          return dataFromList.find((item: string | any[]) => item.length === dataFromList.length);
+          return dataFromList.find((item: string[]) => item.length === dataFromList.length);
         }
         return value;
       });
@@ -107,17 +110,17 @@ const Form = (props: {
           (item: {
             map: (
               // eslint-disable-next-line no-unused-vars
-              arg0: (item: { pokemon: { name: string | any[] } }) => {
-                form: { pokemon: { name: string | any[] } };
-                name: any;
-                default_name: any;
+              arg0: (item: { pokemon: { name: string } }) => {
+                form: { pokemon: { name: string } };
+                name: string;
+                default_name: string;
               }
             ) => { form: { id: number } | { id: number } }[];
           }) => {
             return item
-              .map((item: { pokemon: { name: string | any[] } }) => ({
+              .map((item: { pokemon: { name: string } }) => ({
                 form: item,
-                name: data.varieties.find((v: { pokemon: { name: any } }) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
+                name: data.varieties.find((v: { pokemon: { name: string } }) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
                 default_name: data.name,
               }))
               .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
@@ -129,13 +132,13 @@ const Form = (props: {
       }
       setFormList(dataFromList);
       const formDefault = dataFromList.map((item: any[]) => {
-        return item.find((item: { form: { is_default: any } }) => item.form.is_default);
+        return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
       });
-      const isDefault = formDefault.find((item: { form: { id: any } }) => item.form.id === data.id);
+      const isDefault = formDefault.find((item: { form: { id: number } }) => item.form.id === data.id);
       if (props.searching) {
         const form = formDefault.find(
-          (item: { form: { form_name: any } }) =>
-            item.form.form_name === (props.objective ? (props.searching.obj ? props.searching.obj.form : '') : props.searching.form)
+          (item: { form: { form_name: string } }) =>
+            item.form.form_name === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
         );
         setCurrForm(form ?? isDefault ?? formDefault[0]);
         setPokeID(data.id);
@@ -146,23 +149,28 @@ const Form = (props: {
         setCurrForm(formDefault[0]);
         setPokeID(formDefault[0].form.id);
       }
-      const currentId: any = getPokemonById(Object.values(props.pokemonName), data.id);
-      setDataStorePokemon({
-        prev: getPokemonByIndex(Object.values(props.pokemonName), currentId.index - 1),
-        current: currentId,
-        next: getPokemonByIndex(Object.values(props.pokemonName), currentId.index + 1),
-      });
+      const currentId = getPokemonById(Object.values(props.pokemonName), data.id);
+      if (currentId) {
+        setDataStorePokemon({
+          prev: getPokemonByIndex(Object.values(props.pokemonName), currentId.index - 1),
+          current: currentId,
+          next: getPokemonByIndex(Object.values(props.pokemonName), currentId.index + 1),
+        });
+      }
     },
     []
   );
 
   const queryPokemon = useCallback(
     (id: string, axios: any, source: { token: any; cancel: () => void }) => {
+      if (!id) {
+        return;
+      }
       axios
         .getPokeSpices(id, {
           cancelToken: source.token,
         })
-        .then((res: any) => {
+        .then((res: { data: { varieties: string[]; name: string; id: number } }) => {
           fetchMap(res.data, axios, source);
           setData(res.data);
         })
@@ -178,7 +186,7 @@ const Form = (props: {
     const axios = APIService;
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();
-    queryPokemon(props.id, axios, source);
+    queryPokemon(props.id?.toString() ?? '', axios, source);
   }, [props.id, queryPokemon]);
 
   useEffect(() => {
@@ -186,9 +194,9 @@ const Form = (props: {
       dispatch(
         props.objective
           ? setSearchToolPage({
-              ...props.searching,
+              ...(props.searching as ToolSearching),
               obj: {
-                id: props.id,
+                id: props.id ?? 0,
                 name: currForm?.default_name,
                 form: currForm?.form.form_name,
                 fullName: currForm?.form.name,
@@ -197,7 +205,7 @@ const Form = (props: {
             })
           : setSearchToolPage({
               ...props.searching,
-              id: props.id,
+              id: props.id ?? 0,
               name: currForm?.default_name,
               form: currForm?.form.form_name,
               fullName: currForm?.form.name,
@@ -212,7 +220,7 @@ const Form = (props: {
 
   const changeForm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const findForm = formList
-      .map((item: any) => item.find((item: { form: { name: any } }) => item.form.name === e.currentTarget.value))
+      .map((item: any) => item.find((item: { form: { name: string } }) => item.form.name === e.currentTarget.value))
       .find((item) => item);
     setCurrForm(findForm);
     if (props.onClearStats) {
@@ -255,7 +263,7 @@ const Form = (props: {
         alt="img-full-pokemon"
         src={
           props.form
-            ? APIService.getPokeFullSprite(props.id, splitAndCapitalize(convertFormNameImg(props.id, props.form), '-', '-'))
+            ? APIService.getPokeFullSprite(props.id, splitAndCapitalize(convertFormNameImg(props.id ?? 0, props.form), '-', '-'))
             : APIService.getPokeFullSprite(props.id)
         }
       />
@@ -281,7 +289,7 @@ const Form = (props: {
       </div>
       <div className="element-top" style={{ height: 64 }}>
         {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length && (
-          <TypeInfo arr={currForm.form.types.map((type: { type: { name: any } }) => type.type.name)} />
+          <TypeInfo arr={currForm.form.types.map((type: { type: { name: string } }) => type.type.name)} />
         )}
       </div>
       <h4>
@@ -297,7 +305,7 @@ const Form = (props: {
                 {value.map(
                   (
                     value: {
-                      form: { name: string; id: any; form_name: string };
+                      form: { name: string; id: number; form_name: string };
                       default_name: string;
                     },
                     index: React.Key

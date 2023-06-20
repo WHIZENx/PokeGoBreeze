@@ -417,14 +417,14 @@ export const calculateBetweenLevel = (
       defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
     }
 
-    data.forEach((ele: any) => {
+    data.forEach((ele) => {
       if (ele.level >= fromLV && ele.level <= toLV) {
-        betweenStadust += Math.ceil(ele.stadust * typeCostPowerUp(type).stadust);
-        betweenCandy += Math.ceil(ele.candy * typeCostPowerUp(type).candy);
-        betweenXlCandy += Math.ceil(ele.xl_candy * typeCostPowerUp(type).candy);
-        betweenStadustDiff += Math.abs(ele.stadust - Math.ceil(ele.stadust * typeCostPowerUp(type).stadust));
-        betweenCandyDiff += Math.abs(ele.candy - Math.ceil(ele.candy * typeCostPowerUp(type).candy));
-        betweenXlCandyDiff += Math.abs(ele.xl_candy - Math.ceil(ele.xl_candy * typeCostPowerUp(type).candy));
+        betweenStadust += Math.ceil((ele.stadust ?? 0) * typeCostPowerUp(type).stadust);
+        betweenCandy += Math.ceil((ele.candy ?? 0) * typeCostPowerUp(type).candy);
+        betweenXlCandy += Math.ceil((ele.xl_candy ?? 0) * typeCostPowerUp(type).candy);
+        betweenStadustDiff += Math.abs((ele.stadust ?? 0) - Math.ceil((ele.stadust ?? 0) * typeCostPowerUp(type).stadust));
+        betweenCandyDiff += Math.abs((ele.candy ?? 0) - Math.ceil((ele.candy ?? 0) * typeCostPowerUp(type).candy));
+        betweenXlCandyDiff += Math.abs((ele.xl_candy ?? 0) - Math.ceil((ele.xl_candy ?? 0) * typeCostPowerUp(type).candy));
       }
     });
 
@@ -1337,7 +1337,7 @@ export const queryStatesEvoChain = (
   const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, null);
 
   const statsProd: any[] = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, null, null, true);
-  const ultraStatsProd = sortStatsProd(statsProd.filter((item: { CP: number }) => item.CP <= 2500));
+  const ultraStatsProd = sortStatsProd(statsProd.filter((item) => item.CP <= 2500));
   const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item: any) => item.CP <= 1500));
   const littleStatsProd = sortStatsProd(greatStatsProd.filter((item: any) => item.CP <= 500));
 
@@ -1463,8 +1463,8 @@ const queryMoveCounter = (
   purified: boolean
 ) => {
   cmove.forEach((vc) => {
-    const mf = combat.find((item: { name: string }) => item.name === vf);
-    const mc = combat.find((item: { name: string }) => item.name === vc);
+    const mf = combat.find((item) => item.name === vf);
+    const mc = combat.find((item) => item.name === vc);
 
     if (mf && mc) {
       const options = {

@@ -47,7 +47,7 @@ const columns: any = [
   },
   {
     name: 'Power',
-    selector: (row: { pve_power: any }) => row.pve_power,
+    selector: (row: { pve_power: number }) => row.pve_power,
     sortable: true,
   },
   {

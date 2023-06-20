@@ -8,7 +8,7 @@ import { StatsModel } from '../../../core/models/stats.model';
 
 const Stats = (props: {
   pokemonStats: StatsModel;
-  stats?: { stats: any };
+  stats?: { stats: StatsModel };
   statATK?: {
     attack: number;
     rank: number;
