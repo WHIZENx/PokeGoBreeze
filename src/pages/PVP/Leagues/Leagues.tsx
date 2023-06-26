@@ -35,6 +35,14 @@ const Leagues = () => {
     try {
       const dataId = dataStore?.assets?.find((item) => item.id?.toString() === id.toString());
       if (dataId?.image.length === 0) {
+        if (form && !Object.keys(dataStore?.typeEff ?? {}).includes(form)) {
+          return APIService.getPokeFullSprite(
+            id,
+            capitalize(
+              convertFormName(parseInt(id), form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui'))
+            )
+          );
+        }
         return APIService.getPokeFullSprite(id);
       }
       const data = dataId?.image.find((item) => item.form === form);
@@ -436,8 +444,8 @@ const Leagues = () => {
                 max_cp: number;
                 max_level: number;
                 timestamp: { start: string; end: string };
-                unique_selected: any;
-                unique_type: any;
+                unique_selected: boolean;
+                unique_type: string[];
                 whiteList: any[];
                 banned: any[];
               };
@@ -533,7 +541,7 @@ const Leagues = () => {
                                 : '?form=' +
                                   convertFormName(
                                     parseInt(item.id),
-                                    item.form.toLowerCase().replace('galarian', 'galar').replace('hisuian', 'hisui')
+                                    item.form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui')
                                   ))
                             }
                             title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
@@ -570,7 +578,7 @@ const Leagues = () => {
                                 : '?form=' +
                                   convertFormName(
                                     parseInt(item.id),
-                                    item.form.toLowerCase().replace('galarian', 'galar').replace('hisuian', 'hisui')
+                                    item.form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui')
                                   ))
                             }
                             title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}

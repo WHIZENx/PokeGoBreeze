@@ -90,8 +90,8 @@ export const computeCandyColor = (candyData: Candy[], id: number) => {
   if (!data) {
     data = candyData.find((item) => item.familyId === 0);
   }
-  return `rgb(${Math.round(255 * (data?.secondaryColor.r ?? 0)) || 0}, ${Math.round(255 * (data?.secondaryColor.g ?? 0)) || 0}, ${
-    Math.round(255 * (data?.secondaryColor.b ?? 0)) || 0
+  return `rgb(${Math.round(255 * (data?.primaryColor.r ?? 0)) || 0}, ${Math.round(255 * (data?.primaryColor.g ?? 0)) || 0}, ${
+    Math.round(255 * (data?.primaryColor.b ?? 0)) || 0
   }, ${data?.primaryColor.a || 1})`;
 };
 
