@@ -439,7 +439,7 @@ const DpsTdo = () => {
       (item: {
         fmove: { type: string };
         cmove: { type: string };
-        pokemon: { name: string | null | undefined; num: number; forme: string };
+        pokemon: PokemonDataModel;
         shadow: boolean;
         elite: { fmove: boolean; cmove: boolean };
         isForceReleasedGO: boolean;
@@ -1007,10 +1007,9 @@ const DpsTdo = () => {
         <DataTable
           columns={columns}
           data={dataFilter}
-          noDataComponent={null}
           pagination={true}
-          defaultSortFieldId={defaultSorted.selectedColumn}
-          defaultSortAsc={defaultSorted.sortDirection === 'asc'}
+          defaultSortFieldId={defaultSorted?.selectedColumn}
+          defaultSortAsc={defaultSorted?.sortDirection === 'asc'}
           highlightOnHover={true}
           striped={true}
           paginationDefaultPage={defaultPage}
