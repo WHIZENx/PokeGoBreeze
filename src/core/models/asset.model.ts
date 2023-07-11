@@ -1,8 +1,4 @@
-interface Sound {
-  cry: any[];
-}
-
-interface Image {
+export interface Image {
   gender: number;
   pokemonId?: number;
   form: string;
@@ -14,5 +10,10 @@ export interface Asset {
   id?: number;
   name: string;
   image: Image[];
-  sound: Sound;
+  sound: {
+    cry: {
+      form: string;
+      path: string;
+    }[];
+  };
 }

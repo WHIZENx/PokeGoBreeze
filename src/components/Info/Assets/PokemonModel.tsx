@@ -9,6 +9,7 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
+import { Asset } from '../../../core/models/asset.model';
 
 const PokemonModel = (props: { id: number; name: string }) => {
   const theme = useTheme();
@@ -21,15 +22,15 @@ const PokemonModel = (props: { id: number; name: string }) => {
 
   const getImageList = useCallback(
     (id: number) => {
-      const model = data?.assets?.find((item) => item.id === id);
       sound.current = data?.assets?.find((item) => item.id === id);
+      const model: Asset = sound.current;
       const detail = data?.details?.find((item) => item.id === id);
       gender.current = detail ? detail.gender : null;
       return model
-        ? Array.from(new Set(model.image.map((item) => item.form))).map((value) => {
+        ? Array.from(new Set(model.image.map((item: { form: string }) => item.form))).map((value) => {
             return {
               form: value,
-              image: model.image.filter((item) => value === item.form),
+              image: model.image.filter((item: { form: string }) => value === item.form),
             };
           })
         : [];

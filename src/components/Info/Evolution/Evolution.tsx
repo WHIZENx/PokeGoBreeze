@@ -730,24 +730,26 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
             <InfoOutlinedIcon color="primary" />
           </span>
         </OverlayTrigger>
-        <div className="d-flex" style={{ marginLeft: '1em' }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                disabled={!purified}
-                checked={selectPurified}
-                onChange={(event, check) => {
-                  setOptions({ ...options, selectPurified: check });
-                }}
-              />
-            }
-            label={
-              <span>
-                <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> Purified
-              </span>
-            }
-          />
-        </div>
+        {purified && (
+          <div className="d-flex" style={{ marginLeft: '1em' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  disabled={!purified}
+                  checked={selectPurified}
+                  onChange={(_, check) => {
+                    setOptions({ ...options, selectPurified: check });
+                  }}
+                />
+              }
+              label={
+                <span>
+                  <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> Purified
+                </span>
+              }
+            />
+          </div>
+        )}
       </h4>
       <div className="evo-container scroll-evolution">
         <ul

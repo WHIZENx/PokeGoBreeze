@@ -88,15 +88,15 @@ export const optionSettings = (data: any[]) => {
   return settings;
 };
 
-export const optionPokeImg = (data: { tree: any[] }) => {
+export const optionPokeImg = (data: { tree: { path: string }[] }) => {
   return data.tree.map((item: { path: string }) => item.path.replace('.png', ''));
 };
 
-export const optionPokeSound = (data: { tree: any[] }) => {
+export const optionPokeSound = (data: { tree: { path: string }[] }) => {
   return data.tree.map((item: { path: string }) => item.path.replace('.wav', ''));
 };
 
-export const optionPokemonTypes = (data: any[]) => {
+export const optionPokemonTypes = (data: PokemonModel[] | any[]) => {
   const types: any = {};
   const typeSet = [
     'NORMAL',
@@ -119,7 +119,10 @@ export const optionPokemonTypes = (data: any[]) => {
     'FAIRY',
   ];
   data
-    .filter((item) => item.templateId.includes('POKEMON_TYPE') && Object.keys(item.data).includes('typeEffective'))
+    .filter(
+      (item: { templateId: string; data: {} }) =>
+        item.templateId.includes('POKEMON_TYPE') && Object.keys(item.data).includes('typeEffective')
+    )
     .forEach((item: { data: { typeEffective: { attackScalar: number[] } }; templateId: string }) => {
       const rootType = item.templateId.replace('POKEMON_TYPE_', '');
       types[rootType] = {} as TypeSet;
@@ -130,7 +133,7 @@ export const optionPokemonTypes = (data: any[]) => {
   return types;
 };
 
-export const optionPokemonData = (data: any[]) => {
+export const optionPokemonData = (data: PokemonModel[]) => {
   const ids = Array.from(new Set(Object.values(pokemonData).map((pokemon) => pokemon.num)));
   const result: any = pokemonData;
   data.forEach((pokemon) => {
@@ -281,8 +284,8 @@ export const optionFormSpecial = (data: any[]) => {
     .filter((form: string) => form !== 'MEWTWO_A' && form !== 'PIKACHU_ROCK_STAR' && form !== 'PIKACHU_POP_STAR');
 };
 
-export const optionPokemonFamily = (pokemon: any[]) => {
-  return Array.from(new Set(pokemon.map((item: { pokemonId: string }) => item.pokemonId)));
+export const optionPokemonFamily = (pokemon: PokemonModel[]) => {
+  return Array.from(new Set(pokemon.map((item) => item.pokemonId)));
 };
 
 export const optionPokemonFamilyGroup = (data: any[]) => {
@@ -543,7 +546,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
     result.id = pokemon.find((poke) => poke.name === item)?.id;
     result.name = item;
 
-    let formSet = imgs.filter((img) => img.includes(`Addressable Assets/pm${result.id}.`));
+    let formSet = imgs.filter((img) => img.includes(`Addressable Assets/pm${result.id}.`) && !img.includes('cry'));
 
     let count = 0,
       mega = false;
@@ -567,6 +570,9 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
       if (form.includes('MEGA')) {
         mega = true;
       }
+      // if (form === 'A') {
+      //   form = 'ARMOR';
+      // }
       result.image.push({
         gender,
         pokemonId: result.id,
@@ -636,7 +642,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
     }
 
     mega = false;
-    let soundForm = sounds.filter((sound: string) => sound.includes(`Addressable Assets/pm${result.id}.`));
+    let soundForm = sounds.filter((sound: string) => sound.includes(`Addressable Assets/pm${result.id}.`) && sound.includes('cry'));
     result.sound.cry = soundForm.map((sound: string) => {
       let form: any = sound.split('.');
       if (form[1] === 'cry') {
@@ -660,7 +666,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
           sound.includes(`pv${result.id?.toString().padStart(3, '0')}_52`))
     );
     if (!mega) {
-      soundForm.forEach((sound: string | string[]) => {
+      soundForm.forEach((sound: string) => {
         result.sound.cry.push({
           form: soundForm.length !== 2 ? 'MEGA' : sound.includes('_51') ? 'MEGA_X' : 'MEGA_Y',
           path: sound,
@@ -671,7 +677,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
       (sound: string | string[]) => !sound.includes(`Addressable Assets/`) && sound.includes(`pv${result.id?.toString().padStart(3, '0')}`)
     );
     if (result.sound.cry.length === 0) {
-      soundForm.forEach((sound: string | string[]) => {
+      soundForm.forEach((sound: string) => {
         result.sound.cry.push({
           form: sound.includes('_31') ? 'SPECIAL' : 'NORMAL',
           path: sound,

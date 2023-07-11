@@ -31,7 +31,19 @@ export const calculateCPM = (baseCPM: number[], min: number, max: number) => {
     const cpmLow = cpmList.find((cp) => cp.level === Math.floor(i))?.multiplier;
     const cpmHigh = cpmList.find((cp) => cp.level === Math.ceil(i))?.multiplier;
     result.multiplier = Math.sqrt(Math.pow(cpmLow ?? 0, 2) - Math.pow(cpmLow ?? 0, 2) / 2 + Math.pow(cpmHigh ?? 0, 2) / 2);
+
+    if (i > 0) {
+      result.step = result.multiplier - cpmList[i - 0]?.multiplier;
+    }
+
     cpmList.push(result);
+  }
+
+  for (let i = min; i <= max; i += 0.5) {
+    const currLevel = cpmList.find((j) => j.level === i);
+    if (currLevel && i > 1) {
+      currLevel.step = currLevel.multiplier - (cpmList.find((j) => j.level === i - 0.5)?.multiplier ?? 0);
+    }
   }
   return cpmList.sort((a, b) => a.level - b.level);
 };

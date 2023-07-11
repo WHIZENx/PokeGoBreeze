@@ -154,7 +154,7 @@ export const loadGameMaster = (
   APIService.getFetchUrl(APIUrl.GAMEMASTER, {
     cancelToken: APIService.getAxios().CancelToken.source().token,
   }).then((gm) => {
-    const pokemon = optionPokemon(gm.data);
+    const pokemon: PokemonModel[] = optionPokemon(gm.data);
     const pokemonData = optionPokemonData(pokemon);
     const pokemonFamily = optionPokemonFamily(pokemon);
     const noneForm = optionFormNone(gm.data);

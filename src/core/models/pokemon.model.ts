@@ -74,6 +74,7 @@ export interface PokemonModel {
   candyToEvolve: number;
   kmBuddyDistance: number;
   modelHeight: number;
+  parentPokemonId?: string;
   evolutionBranch: EvolutionBranch[];
   modelScaleV2: number;
   buddyOffsetMale: number[];
