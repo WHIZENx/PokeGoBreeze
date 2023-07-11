@@ -499,6 +499,7 @@ const DpsTdo = () => {
     if (enableBest) {
       result = filterBestOptions(result, bestOf);
     }
+    setShowSpinner(false);
     return result;
   };
 
@@ -507,6 +508,7 @@ const DpsTdo = () => {
     if (spinner.loading) {
       dispatch(hideSpinner());
     }
+    setDataFilter(searchFilter());
   }, []);
 
   useEffect(() => {
@@ -520,7 +522,6 @@ const DpsTdo = () => {
     setShowSpinner(true);
     const timeOutId = setTimeout(() => {
       setDataFilter(searchFilter());
-      setShowSpinner(false);
     }, 500);
     return () => clearTimeout(timeOutId);
   }, [searchTerm]);
@@ -529,7 +530,6 @@ const DpsTdo = () => {
     setShowSpinner(true);
     const timeOutId = setTimeout(() => {
       setDataFilter(searchFilter());
-      setShowSpinner(false);
     }, 100);
     return () => clearTimeout(timeOutId);
   }, [
@@ -1007,9 +1007,10 @@ const DpsTdo = () => {
         <DataTable
           columns={columns}
           data={dataFilter}
+          noDataComponent={null}
           pagination={true}
-          defaultSortFieldId={defaultSorted?.selectedColumn}
-          defaultSortAsc={defaultSorted?.sortDirection === 'asc'}
+          defaultSortFieldId={defaultSorted.selectedColumn}
+          defaultSortAsc={defaultSorted.sortDirection === 'asc'}
           highlightOnHover={true}
           striped={true}
           paginationDefaultPage={defaultPage}
