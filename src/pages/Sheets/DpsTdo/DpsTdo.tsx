@@ -95,6 +95,22 @@ const columns: any = [
     sortFunction: nameSort,
   },
   {
+    name: 'Type(s)',
+    selector: (row: { pokemon: { types: string[] } }) =>
+      row.pokemon?.types.map((value: string, index: React.Key) => (
+        <img
+          key={index}
+          style={{ marginRight: 10 }}
+          width={25}
+          height={25}
+          alt="img-pokemon"
+          title={capitalize(value)}
+          src={APIService.getTypeSprite(capitalize(value))}
+        />
+      )),
+    width: '150px',
+  },
+  {
     name: 'Fast Move',
     selector: (row: { fmove: { id: string; name: string; type: string }; elite: { fmove: Combat } }) => (
       <Link className="d-flex align-items-center" to={'/move/' + row.fmove?.id} title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}>

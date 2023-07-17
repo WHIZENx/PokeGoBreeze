@@ -10,7 +10,7 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 
-const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
+const Counter = ({ def, form, currForm, pokeID }: any) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -50,7 +50,7 @@ const Counter = ({ def, form, currForm, pokeID, pokemonList }: any) => {
         resolve(
           counterPokemon(
             data?.options,
-            pokemonList,
+            data?.released ?? [],
             data?.typeEff,
             data?.weatherBoost,
             def,

@@ -1,7 +1,7 @@
 import { Asset } from './models/asset.model';
 import { Combat, CombatPokemon } from './models/combat.model';
 import { EvolutionModel } from './models/evolution.model';
-import { League, LeagueData, LeagueReward, LeagueRewardPokemon } from './models/league.model';
+import { League, LeagueCondition, LeagueData, LeagueReward, LeagueRewardPokemon } from './models/league.model';
 import { Sticker } from './models/sticker.model';
 import { Details } from './models/details.model';
 
@@ -939,7 +939,18 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
   const result: LeagueData = {
     allowLeagues: [],
     data: [],
-    season: {},
+    season: {
+      season: 0,
+      timestamp: {
+        start: '',
+        end: '',
+      },
+      rewards: {
+        rank: [],
+        pokemon: [],
+      },
+      settings: [],
+    },
   };
 
   result.allowLeagues = data
@@ -951,23 +962,26 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
   result.data = data
     .filter((item: { templateId: string }) => item.templateId.includes('COMBAT_LEAGUE_') && !item.templateId.includes('SETTINGS'))
     .map((item) => {
-      const result: League = leagueModel();
+      const result = leagueModel() as unknown as League;
       result.id = item.templateId.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '');
       result.title = item.data.combatLeague.title.replace('combat_', '').replace('_title', '').toUpperCase();
       result.enabled = item.data.combatLeague.enabled;
-      result.conditions = leagueConditionModel();
+      result.conditions = leagueConditionModel() as unknown as LeagueCondition;
       item.data.combatLeague.pokemonCondition.forEach(
         (con: {
-          pokemonBanList: any;
+          pokemonBanList: { pokemon: { id: string; form: string; forms: string }[] };
           type: string;
-          pokemonCaughtTimestamp: { afterTimestamp: any; beforeTimestamp: null };
+          pokemonCaughtTimestamp: { afterTimestamp: number; beforeTimestamp: number };
           withPokemonType: { pokemonType: string[] };
           pokemonLevelRange: { maxLevel: number };
           withPokemonCpLimit: { maxCp: number };
-          pokemonWhiteList: { pokemon: any[] };
+          pokemonWhiteList: { pokemon: { id: string; form: string; forms: string }[] };
         }) => {
           if (con.type === 'POKEMON_CAUGHT_TIMESTAMP') {
-            result.conditions.timestamp = {};
+            result.conditions.timestamp = {
+              start: 0,
+              end: 0,
+            };
             result.conditions.timestamp.start = con.pokemonCaughtTimestamp.afterTimestamp;
             result.conditions.timestamp.end = con.pokemonCaughtTimestamp.beforeTimestamp ?? null;
           }
@@ -984,7 +998,7 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
             result.conditions.max_cp = con.withPokemonCpLimit.maxCp;
           }
           if (con.type === 'POKEMON_WHITELIST') {
-            result.conditions.whiteList = con.pokemonWhiteList.pokemon.map((poke: { id: string; form: string; forms: string }) => {
+            result.conditions.whiteList = con.pokemonWhiteList.pokemon.map((poke) => {
               const whiteList: any = {};
               whiteList.id = pokemon.find((item) => item.name === poke.id)?.id;
               whiteList.name = poke.id;
@@ -1008,7 +1022,7 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
             result.conditions.whiteList = whiteList.sort((a: { id: number }, b: { id: number }) => a.id - b.id);
           }
           if (con.type === 'POKEMON_BANLIST') {
-            result.conditions.banned = con.pokemonBanList.pokemon.map((poke: { id: any; form: string; forms: string | any[] }) => {
+            result.conditions.banned = con.pokemonBanList.pokemon.map((poke: { id: any; form: string; forms: string }) => {
               const banList: any = {};
               banList.id = pokemon.find((item) => item.name === poke.id)?.id;
               banList.name = poke.id;

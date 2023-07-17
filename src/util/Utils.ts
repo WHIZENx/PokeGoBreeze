@@ -132,7 +132,11 @@ export const reversedCapitalize = (str: string, splitBy: string, joinBy: string)
   return str.replaceAll(joinBy, splitBy).toLowerCase();
 };
 
-export const getTime = (value: string | number, notFull = false) => {
+export const getTime = (value: string | number | undefined, notFull = false) => {
+  if (!value) {
+    return value;
+  }
+
   return notFull
     ? Moment(new Date(parseInt(value.toString()))).format('D MMMM YYYY')
     : Moment(new Date(parseInt(value.toString()))).format('HH:mm D MMMM YYYY');

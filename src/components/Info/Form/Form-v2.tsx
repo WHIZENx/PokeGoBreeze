@@ -10,7 +10,7 @@ import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
 import { capitalize, convertFormNameImg, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
-import { regionList } from '../../../util/Constants';
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, regionList } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -21,6 +21,8 @@ import { setSearchMainPage } from '../../../store/actions/searching.action';
 import Primal from '../Primal/Primal';
 import FromChange from '../FormChange/FormChange';
 import { StatsModel } from '../../../core/models/stats.model';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 const Form = ({
   pokemonRouter,
@@ -44,7 +46,7 @@ const Form = ({
   species,
   onSetIDPoke,
   paramForm,
-  pokemonList,
+  dataStore,
   pokemonDetail,
 }: any) => {
   const dispatch = useDispatch();
@@ -107,6 +109,8 @@ const Form = ({
   const [statDEF, setStatDEF]: any = useState(null);
   const [statSTA, setStatSTA]: any = useState(null);
   const [statProd, setStatProd]: any = useState(null);
+
+  const [shadowStats, setShadowStats] = useState(false);
 
   const filterFormName = useCallback((form: string, formStats: string) => {
     form = form === '' || form === 'standard' ? 'Normal' : form.includes('mega') ? form.toLowerCase() : capitalize(form);
@@ -385,7 +389,28 @@ const Form = ({
           shiny_f={currForm && (currForm.form.sprites ? currForm.form.sprites.front_shiny_female : APIService.getPokeSprite(0))}
         />
       )}
+      <div className="row-shadow-stats">
+        <FormControlLabel
+          control={<Switch color="secondary" checked={shadowStats} onChange={(_, check) => setShadowStats(check)} />}
+          label={
+            <span className="d-flex align-items-center">
+              <img
+                className={shadowStats ? '' : 'filter-gray'}
+                width={28}
+                height={28}
+                alt="pokemon-go-icon"
+                src={APIService.getPokeShadow()}
+              />
+              <span style={{ color: shadowStats ? 'black' : 'lightgray' }}>Shadow Stats</span>
+            </span>
+          }
+          disabled={!open}
+        />
+      </div>
       <Stats
+        shadowStats={shadowStats}
+        shadowATKBonumMultiply={SHADOW_ATK_BONUS(dataStore?.options)}
+        shadowDEFBonumMultiply={SHADOW_DEF_BONUS(dataStore?.options)}
         statATK={statATK}
         statDEF={statDEF}
         statSTA={statSTA}
@@ -420,7 +445,6 @@ const Form = ({
             pokeID={pokeID}
             def={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             form={currForm && currForm.form}
-            pokemonList={pokemonList}
           />
         </div>
       </div>

@@ -709,7 +709,7 @@ const Pokemon = (props: {
                         : ''
                       : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
                   }
-                  pokemonList={dataStore?.released}
+                  dataStore={dataStore}
                   pokemonDetail={getPokemonDetails(data.id, null)}
                 />
                 <PokemonModel id={data.id} name={data.name} />
