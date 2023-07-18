@@ -382,12 +382,12 @@ const CalculatePoint = () => {
                     move={move}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={weaterBoosts} onChange={(event, check) => setWeaterBoosts(check)} />}
+                    control={<Checkbox checked={weaterBoosts} onChange={(_, check) => setWeaterBoosts(check)} />}
                     label="Weater Boosts"
                     disabled={pvpDmg && !isRaid}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={pvpDmg} onChange={(event, check) => setPvpDmg(check)} />}
+                    control={<Checkbox checked={pvpDmg} onChange={(_, check) => setPvpDmg(check)} />}
                     label="PVP stats"
                     disabled={isRaid}
                   />

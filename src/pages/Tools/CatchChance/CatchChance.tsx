@@ -347,7 +347,7 @@ const CatchChance = () => {
                   control={
                     <Checkbox
                       checked={razzBerry}
-                      onChange={(event, check) =>
+                      onChange={(_, check) =>
                         setOptions({
                           ...options,
                           razzBerry: check,

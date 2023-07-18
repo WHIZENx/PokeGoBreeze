@@ -649,7 +649,7 @@ const DpsTdo = () => {
                 </div>
                 <div className="d-flex col-md-3">
                   <FormControlLabel
-                    control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
+                    control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
                     label="Match Pokémon"
                   />
                 </div>
@@ -658,30 +658,30 @@ const DpsTdo = () => {
             <div className="input-group">
               <span className="input-group-text">Filter show</span>
               <FormControlLabel
-                control={<Checkbox checked={showShadow} onChange={(event, check) => setFilters({ ...filters, showShadow: check })} />}
+                control={<Checkbox checked={showShadow} onChange={(_, check) => setFilters({ ...filters, showShadow: check })} />}
                 label="Shadow Pokémon"
               />
               <FormControlLabel
-                control={<Checkbox checked={showEliteMove} onChange={(event, check) => setFilters({ ...filters, showEliteMove: check })} />}
+                control={<Checkbox checked={showEliteMove} onChange={(_, check) => setFilters({ ...filters, showEliteMove: check })} />}
                 label="Elite Move"
               />
               <FormControlLabel
-                control={<Checkbox checked={showMega} onChange={(event, check) => setFilters({ ...filters, showMega: check })} />}
+                control={<Checkbox checked={showMega} onChange={(_, check) => setFilters({ ...filters, showMega: check })} />}
                 label="Mega"
               />
             </div>
             <div className="input-group border-input">
               <span className="input-group-text">Filter only by</span>
               <FormControlLabel
-                control={<Checkbox checked={enableShadow} onChange={(event, check) => setFilters({ ...filters, enableShadow: check })} />}
+                control={<Checkbox checked={enableShadow} onChange={(_, check) => setFilters({ ...filters, enableShadow: check })} />}
                 label="Shadow"
               />
               <FormControlLabel
-                control={<Checkbox checked={enableElite} onChange={(event, check) => setFilters({ ...filters, enableElite: check })} />}
+                control={<Checkbox checked={enableElite} onChange={(_, check) => setFilters({ ...filters, enableElite: check })} />}
                 label="Elite Moves"
               />
               <FormControlLabel
-                control={<Checkbox checked={enableMega} onChange={(event, check) => setFilters({ ...filters, enableMega: check })} />}
+                control={<Checkbox checked={enableMega} onChange={(_, check) => setFilters({ ...filters, enableMega: check })} />}
                 label="Mega"
               />
             </div>
@@ -691,7 +691,7 @@ const DpsTdo = () => {
                   <div className="input-group">
                     <span className="input-group-text">Filter best movesets</span>
                     <FormControlLabel
-                      control={<Switch checked={enableBest} onChange={(event, check) => setFilters({ ...filters, enableBest: check })} />}
+                      control={<Switch checked={enableBest} onChange={(_, check) => setFilters({ ...filters, enableBest: check })} />}
                       label="Best moveset of"
                     />
                     <Form.Select
@@ -710,7 +710,7 @@ const DpsTdo = () => {
                 <Box className="col-xxl-4">
                   <div className="input-group">
                     <FormControlLabel
-                      control={<Switch checked={releasedGO} onChange={(event, check) => setFilters({ ...filters, releasedGO: check })} />}
+                      control={<Switch checked={releasedGO} onChange={(_, check) => setFilters({ ...filters, releasedGO: check })} />}
                       label={
                         <span className="d-flex align-items-center">
                           Released in GO
@@ -781,7 +781,7 @@ const DpsTdo = () => {
                   sx={{ marginLeft: 1 }}
                   control={
                     <Switch
-                      onChange={(event, check) => {
+                      onChange={(_, check) => {
                         setFilters({ ...filters, enableDelay: check });
                         if (check) {
                           setOptions({
@@ -971,7 +971,7 @@ const DpsTdo = () => {
                     <FormControlLabel
                       control={
                         <Switch
-                          onChange={(event, check) => {
+                          onChange={(_, check) => {
                             setOptions({
                               ...options,
                               TRAINER_FRIEND: check,

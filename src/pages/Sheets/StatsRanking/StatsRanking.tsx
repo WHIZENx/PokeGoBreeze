@@ -328,7 +328,7 @@ const StatsRanking = () => {
           />
         </div>
         <FormControlLabel
-          control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
+          control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
           label="Match Pokémon"
         />
       </div>

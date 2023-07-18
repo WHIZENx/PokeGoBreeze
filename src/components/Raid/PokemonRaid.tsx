@@ -5,11 +5,24 @@ import SelectPokemon from '../Input/SelectPokemon';
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 import update from 'immutability-helper';
 import { TypeMove } from '../../enums/move.enum';
+import APIService from '../../services/API.service';
 
-const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRemovePokemon, clearData }: any) => {
+const PokemonRaid = ({
+  id,
+  pokemon,
+  data,
+  setData,
+  defaultSetting,
+  controls,
+  onCopyPokemon,
+  onRemovePokemon,
+  onOptionsPokemon,
+  clearData,
+}: any) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(pokemon.dataTargetPokemon);
   const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(pokemon.fmoveTargetPokemon);
   const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(pokemon.cmoveTargetPokemon);
@@ -31,9 +44,30 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
   return (
     <div>
       <span className="input-group-text justify-content-center position-relative">
+        {dataTargetPokemon && (
+          <div className="d-flex text-group-small">
+            <span>
+              LV: {dataTargetPokemon.stats?.level} {dataTargetPokemon.stats?.iv.atk}/{dataTargetPokemon.stats?.iv.def}/
+              {dataTargetPokemon.stats?.iv.sta}{' '}
+              {dataTargetPokemon.stats?.isShadow && <img height={24} alt="img-shadow" src={APIService.getPokeShadow()} />}
+            </span>
+          </div>
+        )}
         <Badge color="primary" overlap="circular" badgeContent={id + 1} /> <b style={{ marginLeft: 15 }}>Pokémon Battle</b>
         {controls && (
           <div className="d-flex ic-group-small">
+            <span
+              className={'ic-copy-small text-white ' + (dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
+              title="Copy"
+              onClick={() => {
+                if (dataTargetPokemon) {
+                  onOptionsPokemon(id, dataTargetPokemon);
+                }
+              }}
+              style={{ marginRight: 5 }}
+            >
+              <SettingsIcon sx={{ fontSize: 16 }} />
+            </span>
             <span
               className={'ic-copy-small text-white ' + (dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
               title="Copy"
@@ -67,6 +101,7 @@ const PokemonRaid = ({ id, pokemon, data, setData, controls, onCopyPokemon, onRe
         clearData={clearData}
         selected={true}
         pokemon={dataTargetPokemon}
+        defaultSetting={defaultSetting}
         setCurrentPokemon={setDataTargetPokemon}
         setFMovePokemon={setFmoveTargetPokemon}
         setCMovePokemon={setCmoveTargetPokemon}

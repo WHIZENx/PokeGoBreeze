@@ -291,11 +291,11 @@ const Home = () => {
                 </div>
                 <div className="d-flex flex-wrap" style={{ paddingLeft: 8, paddingRight: 8 }}>
                   <FormControlLabel
-                    control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
+                    control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
                     label="Match Pokémon"
                   />
                   <FormControlLabel
-                    control={<Switch checked={releasedGO} onChange={(event, check) => setFilters({ ...filters, releasedGO: check })} />}
+                    control={<Switch checked={releasedGO} onChange={(_, check) => setFilters({ ...filters, releasedGO: check })} />}
                     label={
                       <span className="d-flex align-items-center">
                         Released in GO
@@ -313,7 +313,7 @@ const Home = () => {
                 </div>
                 <div className="d-flex" style={{ paddingLeft: 8, paddingRight: 8 }}>
                   <FormControlLabel
-                    control={<Switch checked={allShiny} onChange={(event, check) => setFilters({ ...filters, allShiny: check })} />}
+                    control={<Switch checked={allShiny} onChange={(_, check) => setFilters({ ...filters, allShiny: check })} />}
                     label={
                       <span className="d-flex align-items-center">
                         Show All Shiny Pokémon (Only Possible)

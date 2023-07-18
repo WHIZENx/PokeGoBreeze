@@ -1,5 +1,15 @@
 import { Combat } from './combat.model';
 
+export interface PokemonDataStats {
+  level: number;
+  isShadow: boolean;
+  iv: {
+    atk: number;
+    def: number;
+    sta: number;
+  };
+}
+
 interface EvolutionBranch {
   evolution: string;
   candyCost: number;
@@ -152,6 +162,7 @@ export interface PokemonDataModel {
   version: string | null;
   isForceReleasedGO?: boolean;
   baseStatsGO?: boolean;
+  stats?: PokemonDataStats | null;
 }
 
 export interface PokemonNameModel {

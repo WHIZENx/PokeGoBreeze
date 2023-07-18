@@ -1383,7 +1383,7 @@ const Battle = () => {
                 control={
                   <Checkbox
                     checked={pokemon.shadow ?? false}
-                    onChange={(event, check) => setPokemon({ ...pokemon, timeline: [], shadow: check })}
+                    onChange={(_, check) => setPokemon({ ...pokemon, timeline: [], shadow: check })}
                   />
                 }
                 label={
@@ -1550,7 +1550,7 @@ const Battle = () => {
                 )}
                 <div className="d-flex justify-content-center">
                   <FormControlLabel
-                    control={<Checkbox checked={showTap} onChange={(event, check) => setOptions({ ...options, showTap: check })} />}
+                    control={<Checkbox checked={showTap} onChange={(_, check) => setOptions({ ...options, showTap: check })} />}
                     label="Show Tap Move"
                   />
                   <RadioGroup

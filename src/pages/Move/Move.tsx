@@ -452,7 +452,7 @@ const Move = (props: { id?: number }) => {
                           {'Top Pokémon in move ' + splitAndCapitalize(move.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
                         </span>
                         <FormControlLabel
-                          control={<Switch checked={releasedGO} onChange={(event, check) => setReleaseGO(check)} />}
+                          control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
                           label={
                             <span className="d-flex align-items-center">
                               Released in GO

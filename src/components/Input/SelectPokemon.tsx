@@ -9,7 +9,7 @@ import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { PokemonDataModel, PokemonDataStats } from '../../core/models/pokemon.model';
 
 const SelectPokemon = (props: {
   pokemon?: PokemonDataModel;
@@ -22,6 +22,7 @@ const SelectPokemon = (props: {
   setCMovePokemon: (arg0: any) => void;
   clearData?: () => void;
   disable?: boolean;
+  defaultSetting?: PokemonDataStats;
 }) => {
   const data = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
@@ -50,6 +51,9 @@ const SelectPokemon = (props: {
     if (iconName !== name) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
       setSearch(name);
+      if (!props.pokemon?.stats && props.defaultSetting) {
+        value.stats = props.defaultSetting;
+      }
       if (props.setCurrentPokemon) {
         props.setCurrentPokemon(value);
       }

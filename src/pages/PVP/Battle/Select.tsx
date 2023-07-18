@@ -247,7 +247,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
         <Checkbox
           checked={!pokemonBattle.disableCMovePri}
-          onChange={(event, check) => {
+          onChange={(_, check) => {
             clearData();
             setPokemonBattle({ ...pokemonBattle, disableCMovePri: !check });
           }}
