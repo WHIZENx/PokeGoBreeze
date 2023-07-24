@@ -1,4 +1,4 @@
-import { PRIMAL_STATS } from '../core/forms';
+import { MEGA_RAYQUAZA, PRIMAL_STATS } from '../core/forms';
 import { Combat, CombatPokemon } from '../core/models/combat.model';
 import { Options } from '../core/models/options.model';
 import { PokemonDataModel } from '../core/models/pokemon.model';
@@ -597,11 +597,25 @@ export const calculateStatsByTag = (
   if (pokemon?.baseStatsGO) {
     return pokemon.baseStats;
   }
-  const checkNerf = tag && tag.toLowerCase().includes('mega') ? false : true;
-  const primal = tag && tag.toLowerCase().includes('primal');
-  const atk = primal ? PRIMAL_STATS.attack : calBaseATK(baseStats, checkNerf);
-  const def = primal ? PRIMAL_STATS.defense : calBaseDEF(baseStats, checkNerf);
-  const sta = primal ? PRIMAL_STATS.stamina : tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+  const checkNerf = tag?.toLowerCase().includes('mega') ? false : true;
+  const primal = tag?.toLowerCase().includes('primal');
+  let atk = 0;
+  let def = 0;
+  let sta = 0;
+
+  if (primal) {
+    atk = PRIMAL_STATS.attack;
+    def = PRIMAL_STATS.defense;
+    sta = PRIMAL_STATS.stamina;
+  } else if (pokemon?.slug === 'rayquaza-mega') {
+    atk = MEGA_RAYQUAZA.attack;
+    def = MEGA_RAYQUAZA.defense;
+    sta = MEGA_RAYQUAZA.stamina;
+  } else {
+    atk = calBaseATK(baseStats, checkNerf);
+    def = calBaseDEF(baseStats, checkNerf);
+    sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+  }
   return {
     atk,
     def,

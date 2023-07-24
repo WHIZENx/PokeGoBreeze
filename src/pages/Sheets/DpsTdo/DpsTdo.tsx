@@ -233,7 +233,7 @@ const DpsTdo = () => {
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
       ? optionStore?.dpsSheet?.defaultSorted
       : {
-          selectedColumn: 7,
+          selectedColumn: 8,
           sortDirection: 'desc',
         }
   );
