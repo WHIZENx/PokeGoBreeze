@@ -153,30 +153,31 @@ export const versionList: string[] = [
 ];
 
 export const typeCostPowerUp = (type: string) => {
-  if (type === 'shadow') {
-    return {
-      stadust: 1.2,
-      candy: 1.2,
-      type,
-    };
-  } else if (type === 'purified') {
-    return {
-      stadust: 0.9,
-      candy: 0.9,
-      type,
-    };
-  } else if (type === 'lucky') {
-    return {
-      stadust: 0.5,
-      candy: 1,
-      type,
-    };
-  } else {
-    return {
-      stadust: 1,
-      candy: 1,
-      type,
-    };
+  switch (type) {
+    case 'shadow':
+      return {
+        stadust: 1.2,
+        candy: 1.2,
+        type,
+      };
+    case 'purified':
+      return {
+        stadust: 0.9,
+        candy: 0.9,
+        type,
+      };
+    case 'lucky':
+      return {
+        stadust: 0.5,
+        candy: 1,
+        type,
+      };
+    default:
+      return {
+        stadust: 1,
+        candy: 1,
+        type,
+      };
   }
 };
 
