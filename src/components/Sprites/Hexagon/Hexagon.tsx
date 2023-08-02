@@ -7,7 +7,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
 
-  const getHexConerCord = useCallback((center: { x: number; y: number }, size: number, i: number) => {
+  const getHexConnerCord = useCallback((center: { x: number; y: number }, size: number, i: number) => {
     const angleDeg = 60 * i - 30;
     const angleRad = (Math.PI / 180) * angleDeg;
     const x = center.x + size * Math.cos(angleRad);
@@ -20,32 +20,12 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
   };
 
   const drawLineHex = useCallback(
-    (
-      ctx: {
-        beginPath: () => void;
-        // eslint-disable-next-line no-unused-vars
-        moveTo: (arg0: any, arg1: any) => void;
-        // eslint-disable-next-line no-unused-vars
-        lineTo: (arg0: any, arg1: any) => void;
-        // eslint-disable-next-line no-unused-vars
-        setLineDash: (arg0: number[]) => void;
-        fillStyle: string;
-        fill: () => void;
-        lineWidth: number;
-        strokeStyle: any;
-        stroke: () => void;
-        closePath: () => void;
-      },
-      center: any,
-      percentage: any,
-      color: any,
-      fill: any
-    ) => {
-      const start = getHexConerCord(center, percentage, 0);
+    (ctx: CanvasRenderingContext2D, center: any, percentage: any, color: any, fill: any) => {
+      const start = getHexConnerCord(center, percentage, 0);
       ctx.beginPath();
       ctx.moveTo(start.x, start.y);
       for (let i = 1; i <= 6; i++) {
-        const end = getHexConerCord(center, percentage, i);
+        const end = getHexConnerCord(center, percentage, i);
         ctx.lineTo(end.x, end.y);
       }
       ctx.setLineDash([20, 15]);
@@ -58,26 +38,12 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
       ctx.stroke();
       ctx.closePath();
     },
-    [getHexConerCord]
+    [getHexConnerCord]
   );
 
   const drawStatsHex = useCallback(
     (
-      ctx: {
-        beginPath: () => void;
-        // eslint-disable-next-line no-unused-vars
-        moveTo: (arg0: any, arg1: any) => void;
-        // eslint-disable-next-line no-unused-vars
-        lineTo: (arg0: any, arg1: any) => void;
-        // eslint-disable-next-line no-unused-vars
-        setLineDash: (arg0: any[]) => void;
-        lineWidth: number;
-        fillStyle: string;
-        fill: () => void;
-        strokeStyle: string;
-        stroke: () => void;
-        closePath: () => void;
-      },
+      ctx: CanvasRenderingContext2D,
       center: any,
       stat: { switching: any; charger: any; closer: any; cons: any; atk: any; lead: any },
       hexSize: number
@@ -90,11 +56,11 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
         '4': ((stat.atk || 0) * hexSize) / 100,
         '5': ((stat.lead || 0) * hexSize) / 100,
       };
-      const start = getHexConerCord(center, Math.min(stats['0'], 100), 0);
+      const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
       ctx.beginPath();
       ctx.moveTo(start.x, start.y);
       for (let i = 1; i <= 6; i++) {
-        const end = getHexConerCord(center, Math.min(stats[i.toString()], 100), i);
+        const end = getHexConnerCord(center, Math.min(stats[i.toString()], 100), i);
         ctx.lineTo(end.x, end.y);
       }
       ctx.setLineDash([]);
@@ -106,7 +72,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
       ctx.stroke();
       ctx.closePath();
     },
-    [getHexConerCord]
+    [getHexConnerCord]
   );
 
   const loop = (type: number, startStat: number, endStat: number) => {
@@ -171,7 +137,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
   }, [drawHexagon, defaultStats, setDefaultStats, props.animation, props.stats]);
 
   const animateId: any = useRef(null);
-  const onPlayAnimaion = () => {
+  const onPlayAnimation = () => {
     if (animateId.current) {
       cancelAnimationFrame(animateId.current);
       animateId.current = null;
@@ -249,7 +215,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
           </div>
         </Fragment>
       )}
-      <canvas onClick={() => onPlayAnimaion()} ref={canvasHex} width={props.size ?? 0} height={(props.size ?? 0) + 4} />
+      <canvas onClick={() => onPlayAnimation()} ref={canvasHex} width={props.size ?? 0} height={(props.size ?? 0) + 4} />
     </div>
   );
 };

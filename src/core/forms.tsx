@@ -29,3 +29,9 @@ export const PRIMAL_STATS = {
   defense: 268,
   stamina: 218,
 };
+
+export const MEGA_RAYQUAZA = {
+  attack: 377,
+  defense: 210,
+  stamina: 227,
+};

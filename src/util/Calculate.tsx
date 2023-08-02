@@ -1,4 +1,4 @@
-import { PRIMAL_STATS } from '../core/forms';
+import { MEGA_RAYQUAZA, PRIMAL_STATS } from '../core/forms';
 import data from '../data/cp_multiplier.json';
 import { TypeMove } from '../enums/type-move.enum';
 import {
@@ -584,9 +584,23 @@ export const calculateStatsByTag = (
   }
   const checkNerf = tag && tag.toLowerCase().includes('mega') ? false : true;
   const primal = tag && tag.toLowerCase().includes('primal');
-  const atk = primal ? PRIMAL_STATS.attack : calBaseATK(baseStats, checkNerf);
-  const def = primal ? PRIMAL_STATS.defense : calBaseDEF(baseStats, checkNerf);
-  const sta = primal ? PRIMAL_STATS.stamina : tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+  let atk = 0;
+  let def = 0;
+  let sta = 0;
+
+  if (primal) {
+    atk = PRIMAL_STATS.attack;
+    def = PRIMAL_STATS.defense;
+    sta = PRIMAL_STATS.stamina;
+  } else if (pokemon?.slug === 'rayquaza-mega') {
+    atk = MEGA_RAYQUAZA.attack;
+    def = MEGA_RAYQUAZA.defense;
+    sta = MEGA_RAYQUAZA.stamina;
+  } else {
+    atk = calBaseATK(baseStats, checkNerf);
+    def = calBaseDEF(baseStats, checkNerf);
+    sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+  }
   return {
     atk,
     def,
