@@ -23,6 +23,9 @@ import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SpinnerState, StatsState, StoreState } from '../../store/models/state.model';
 import { SearchingModel } from '../../store/models/searching.model';
+import { Species } from '../../core/models/API/species.model';
+import { PokemonInfo } from '../../core/models/API/info.model';
+import { PokemonForm } from '../../core/models/API/form.model';
 
 const Pokemon = (props: {
   prevRouter?: any;
@@ -58,7 +61,7 @@ const Pokemon = (props: {
 
   const [version, setVersion]: any = useState(null);
   const [region, setRegion] = useState(null);
-  const [WH, setWH] = useState({ weight: 0, height: 0 });
+  const [WH, setWH]: any = useState({ weight: 0, height: 0 });
   const [formName, setFormName]: any = useState(null);
   const [form, setForm]: any = useState(null);
   const [released, setReleased] = useState(true);
@@ -75,18 +78,18 @@ const Pokemon = (props: {
 
   const fetchMap = useCallback(
     async (
-      data: { varieties: any[]; name: string; id: number; generation: { url: string } },
+      data: Species,
       // eslint-disable-next-line no-unused-vars
       axios: { getFetchUrl: (arg0: any, arg1: { cancelToken: any }) => any },
       source: { token: any }
     ) => {
-      const dataPokeList: any[] = [];
+      const dataPokeList: PokemonInfo[] | undefined = [];
       let dataFromList: any[] = [];
       await Promise.all(
-        data.varieties.map(async (value: { pokemon: { url: string } }) => {
-          const pokeInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
+        data.varieties.map(async (value) => {
+          const pokeInfo: PokemonInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
           const pokeForm = await Promise.all(
-            pokeInfo.forms.map(async (item: { url: string }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
+            pokeInfo.forms.map(async (item) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
           );
           dataPokeList.push(pokeInfo);
           dataFromList.push(pokeForm);
@@ -95,7 +98,7 @@ const Pokemon = (props: {
 
       setPokeData(dataPokeList);
       let modify = false;
-      dataFromList = dataFromList.map((value) => {
+      dataFromList = dataFromList?.map((value) => {
         if (value.length === 0) {
           modify = true;
           return dataFromList.find((item) => item.length === dataFromList.length);
@@ -112,7 +115,7 @@ const Pokemon = (props: {
           return item
             .map((item: { pokemon: { name: string } }) => ({
               form: item,
-              name: data.varieties.find((v: { pokemon: { name: string } }) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
+              name: data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name,
               default_name: data.name,
             }))
             .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
@@ -122,13 +125,7 @@ const Pokemon = (props: {
         dataFromList.push(getFormsGO(data.id));
       }
       setFormList(dataFromList);
-      let defaultFrom,
-        isDefaultForm: {
-          form: { form_name: string; name: string; version_group: { name: string }; is_default: boolean };
-          default_name: string;
-          name: string;
-        },
-        defaultData: { weight: number; height: number };
+      let defaultFrom, isDefaultForm: { form: PokemonForm; default_name: string; name: string }, defaultData: PokemonInfo | undefined;
       let formParams = searchParams.get('form');
 
       if (formParams) {
@@ -169,7 +166,7 @@ const Pokemon = (props: {
       if (!defaultData) {
         defaultData = dataPokeList.find((value) => value.name === isDefaultForm.name);
       }
-      setWH((prevWH) => ({ ...prevWH, weight: defaultData.weight, height: defaultData.height }));
+      setWH((prevWH: any) => ({ ...prevWH, weight: defaultData?.weight, height: defaultData?.height }));
       setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom[0]).form.version_group.name, '-', ' '));
       if (!params.id) {
         setRegion(regionList[parseInt(data.generation.url.split('/')[6])]);

@@ -1,4 +1,4 @@
-export interface FormAPI {
+export interface PokemonForm {
   form_name: string;
   form_names: string[];
   form_order: number;
@@ -9,10 +9,7 @@ export interface FormAPI {
   name: string;
   names: string[];
   order: number;
-  pokemon: {
-    name: string;
-    url: string;
-  };
+  pokemon: Path;
   sprites: {
     back_default: string;
     back_female: string;
@@ -24,16 +21,15 @@ export interface FormAPI {
     front_shiny_female: string;
   };
   types: SlotType[];
-  version_group: {
-    name: string;
-    url: string;
-  };
+  version_group: Path;
+}
+
+interface Path {
+  name: string;
+  url: string;
 }
 
 interface SlotType {
   slot: number;
-  type: {
-    name: string;
-    url: string;
-  };
+  type: Path;
 }
