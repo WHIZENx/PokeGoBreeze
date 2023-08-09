@@ -828,7 +828,7 @@ export const optionCombat = (data: any[], movesData: any[], types: any) => {
         const move = moves.find((move: { movementId: string }) => move.movementId === result.name);
         result.id = move.id;
         result.track = move.id;
-        result.name = result.name.replace('_FAST', '');
+        result.name = result.name?.toString().replace('_FAST', '');
         result.pve_power = move.power ?? 0.0;
         if (result.name === 'STRUGGLE') {
           result.pve_energy = -33;
