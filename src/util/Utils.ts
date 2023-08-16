@@ -204,7 +204,7 @@ export const convertNameRanking = (text: string) => {
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
   if (text.includes('_')) {
-    form = ` (${capitalize(text.split('_')[1])})`;
+    form = ` (${capitalize(text.split('_').at(1))})`;
   }
   return text + form;
 };
@@ -212,13 +212,13 @@ export const convertNameRankingToForm = (text: string) => {
 export const convertNameRankingToOri = (text: string, form: string, local = false) => {
   const formOri = form;
   if (text.includes('pyroar') || text.includes('frillish') || text.includes('jellicent') || text.includes('urshifu')) {
-    return text.split('_')[0];
+    return text.split('_').at(0);
   }
   if (text.includes('_mega') || text === 'ho_oh' || text.includes('castform') || text.includes('tapu') || text.includes('basculin_blue')) {
     return text.replaceAll('_', '-');
   }
   if (formOri.includes('(') && formOri.includes(')')) {
-    form = '-' + form.split(' (')[1].replace(')', '').toLowerCase();
+    form = '-' + form.split(' (').at(1)?.replace(')', '').toLowerCase();
   }
   text = text
     .toLowerCase()
@@ -351,7 +351,7 @@ export const findMoveTeam = (move: any, moveSet: string[]) => {
     if (m.length === move.length) {
       let count = 0;
       for (let i = 0; i < move.length; i++) {
-        if (m[i][0] === move[i][0]) {
+        if (m[i].at(0) === move[i].at(0)) {
           count++;
         }
       }
@@ -618,6 +618,6 @@ export const getCustomThemeDataTable = (theme: Theme) => {
 };
 
 export const getDataWithKey = (data: any, key: string | number) => {
-  const result = Object.entries(data ?? {}).find((k) => k[0] === key.toString());
+  const result = Object.entries(data ?? {}).find((k) => k.at(0) === key.toString());
   return result ? result[1] : {};
 };

@@ -191,7 +191,7 @@ export const OverAllStats = (
               borderSize={320}
               size={180}
               stats={{
-                lead: data.scores[0],
+                lead: data.scores.at(0),
                 atk: data.scores[4],
                 cons: data.scores[5],
                 closer: data.scores[1],
@@ -308,7 +308,7 @@ export const MoveSet = (
     }
     let move: any = combatData.find((move) => move.name === name);
     if (oldName.includes('HIDDEN_POWER')) {
-      move = { ...move, type: oldName.split('_')[2] };
+      move = { ...move, type: oldName.split('_').at(2) };
     }
 
     let elite = false;

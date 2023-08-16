@@ -13,8 +13,8 @@ const Primal = (props: { formList: any[]; id: number }) => {
   useEffect(() => {
     setArrEvoList(
       props.formList
-        .filter((item: { form: { form_name: string } }[]) => item[0].form.form_name.includes('primal'))
-        .map((item: { form: string }[]) => item[0].form)
+        .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name.includes('primal'))
+        .map((item: { form: string }[]) => item.at(0)?.form)
     );
   }, [props.formList]);
 

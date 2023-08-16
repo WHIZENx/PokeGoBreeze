@@ -59,9 +59,11 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
       if (data?.length === 0) {
         return false;
       }
-      const evoList = data?.map((item: { species: { url: string } }) => {
-        return item && evoData.filter((e) => e.id === parseInt(item.species.url.split('/')[6]));
-      })[0];
+      const evoList = data
+        ?.map((item: { species: { url: string } }) => {
+          return item && evoData.filter((e) => e.id === parseInt(item.species.url.split('/').at(6) ?? ''));
+        })
+        .at(0);
       const currForm = formDefault
         ? forme.form_name === '' && ['Alola', 'Galar'].includes(region)
           ? region
@@ -86,13 +88,15 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
       } else if (evoList.length > 1) {
         const evoInJSON = evoList.find((item: { name: string }) => item.name.includes(currForm.toUpperCase()));
         if (evoInJSON) {
-          const evoInAPI = data?.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
+          const evoInAPI = data?.find(
+            (item: { species: { url: string } }) => parseInt(item.species.url.split('/').at(6) ?? '') === evoInJSON.id
+          );
           if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
             const tempData: any[] = [];
             if (evoInAPI.evolves_to.length > 0) {
               evoInJSON.evo_list.forEach((item: { evo_to_id: number }) => {
                 evoInAPI.evolves_to.forEach((value: { species: { url: string } }) => {
-                  if (parseInt(value.species.url.split('/')[6]) === item.evo_to_id) {
+                  if (parseInt(value.species.url.split('/').at(6) ?? '') === item.evo_to_id) {
                     return tempData.push(value);
                   }
                 });
@@ -118,7 +122,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           evoInJSON = evoList.find((item: { name: string }) => item.name.includes(''));
         }
         if (evoInJSON) {
-          const evoInAPI = data?.find((item: { species: { url: string } }) => parseInt(item.species.url.split('/')[6]) === evoInJSON.id);
+          const evoInAPI = data?.find(
+            (item: { species: { url: string } }) => parseInt(item.species.url.split('/').at(6) ?? '') === evoInJSON.id
+          );
           if (evoInJSON.evo_list.length !== evoInAPI.evolves_to.length) {
             const tempArr: any[] = [];
             evoInJSON.evo_list.forEach((value: { evo_to_form: string }) =>
@@ -142,7 +148,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
         data?.map((item: { species: { name: string; url: string }; is_baby: boolean; form: string }) => {
           return {
             name: item.species.name,
-            id: parseInt(item.species.url.split('/')[6]),
+            id: parseInt(item.species.url.split('/').at(6) ?? ''),
             baby: item.is_baby,
             form: item.form ?? null,
           };
@@ -388,7 +394,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
   };
 
   const checkCanPurified = () => {
-    const canPurified = arrEvoList.find((evoList: any[]) => evoList.find((evo: { purified: boolean }) => evo.purified)) ? true : false;
+    const canPurified = arrEvoList.some((evoList: any[]) => evoList.find((evo: { purified: boolean }) => evo.purified));
     setOptions({ ...options, purified: canPurified });
   };
 

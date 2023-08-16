@@ -74,7 +74,7 @@ const PokemonPVP = () => {
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
-        let fmoveData = data.moveset[0],
+        let fmoveData = data.moveset.at(0),
           cMoveDataPri = data.moveset[1],
           cMoveDataSec = data.moveset[2];
         if (fmoveData.includes('HIDDEN_POWER')) {
@@ -100,8 +100,8 @@ const PokemonPVP = () => {
           cmoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
         }
 
-        if (data.moveset[0].includes('HIDDEN_POWER')) {
-          fmove = { ...fmove, type: data.moveset[0].split('_')[2] };
+        if (data.moveset.at(0).includes('HIDDEN_POWER')) {
+          fmove = { ...fmove, type: data.moveset.at(0).split('_').at(2) };
         }
 
         let combatPoke: any = dataStore?.pokemonCombat?.filter(
@@ -111,7 +111,7 @@ const PokemonPVP = () => {
         );
         const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
         if (!result) {
-          combatPoke = combatPoke[0];
+          combatPoke = combatPoke.at(0);
         } else {
           combatPoke = result;
         }

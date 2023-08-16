@@ -1,4 +1,4 @@
-import { MEGA_RAYQUAZA, PRIMAL_STATS } from '../core/forms';
+import { findStatsPokeGO } from '../core/forms';
 import { Combat, CombatPokemon } from '../core/models/combat.model';
 import { Options } from '../core/models/options.model';
 import { PokemonDataModel } from '../core/models/pokemon.model';
@@ -125,7 +125,7 @@ export const sortStatsPokemon = (stats: any[]) => {
   const attackStats = stats.map((item: { id: number; name: string; baseStatsPokeGo: { attack: number } }) => {
     return {
       id: item.id,
-      form: item.name.split('-')[1] ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      form: item.name.split('-').at(1) ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
       attack: item.baseStatsPokeGo.attack,
       rank: attackRanking.length - attackRanking.indexOf(item.baseStatsPokeGo.attack),
     };
@@ -149,7 +149,7 @@ export const sortStatsPokemon = (stats: any[]) => {
   const defenseStats = stats.map((item: { id: number; name: string; baseStatsPokeGo: { defense: number } }) => {
     return {
       id: item.id,
-      form: item.name.split('-')[1] ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      form: item.name.split('-').at(1) ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
       defense: item.baseStatsPokeGo.defense,
       rank: defenseRanking.length - defenseRanking.indexOf(item.baseStatsPokeGo.defense),
     };
@@ -173,7 +173,7 @@ export const sortStatsPokemon = (stats: any[]) => {
   const staminaStats = stats.map((item: { id: number; name: string; baseStatsPokeGo: { stamina: number } }) => {
     return {
       id: item.id,
-      form: item.name.split('-')[1] ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      form: item.name.split('-').at(1) ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
       stamina: item.baseStatsPokeGo.stamina,
       rank: staminaRanking.length - staminaRanking.indexOf(item.baseStatsPokeGo.stamina),
     };
@@ -194,7 +194,7 @@ export const sortStatsPokemon = (stats: any[]) => {
   const prodStats = stats.map((item: { id: number; name: string; baseStatsProd: number }) => {
     return {
       id: item.id,
-      form: item.name.split('-')[1] ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      form: item.name.split('-').at(1) ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
       prod: item.baseStatsProd,
       rank: prodRanking.length - prodRanking.indexOf(item.baseStatsProd),
     };
@@ -597,20 +597,17 @@ export const calculateStatsByTag = (
   if (pokemon?.baseStatsGO) {
     return pokemon.baseStats;
   }
-  const checkNerf = tag?.toLowerCase().includes('mega') ? false : true;
-  const primal = tag?.toLowerCase().includes('primal');
+  const from = tag?.toLowerCase();
+  const checkNerf = from?.includes('mega') ? false : true;
   let atk = 0;
   let def = 0;
   let sta = 0;
 
-  if (primal) {
-    atk = PRIMAL_STATS.attack;
-    def = PRIMAL_STATS.defense;
-    sta = PRIMAL_STATS.stamina;
-  } else if (pokemon?.slug === 'rayquaza-mega') {
-    atk = MEGA_RAYQUAZA.attack;
-    def = MEGA_RAYQUAZA.defense;
-    sta = MEGA_RAYQUAZA.stamina;
+  const result = findStatsPokeGO(from);
+  if (result) {
+    atk = result.attack;
+    def = result.defense;
+    sta = result.stamina;
   } else {
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
@@ -783,15 +780,15 @@ export const calculateAvgDPS = (
     y = 900 / (Def * (DEFAULT_POKEMON_SHADOW ? ShadowDefBonus : 1));
   }
 
-  const FDPS = FDmg / (FDur + (options && options.delay ? options.delay.ftime : 0));
-  const CDPS = CDmg / (CDur + (options && options.delay ? options.delay.ctime : 0));
+  const FDPS = FDmg / (FDur + (options?.delay ? options.delay.ftime : 0));
+  const CDPS = CDmg / (CDur + (options?.delay ? options.delay.ctime : 0));
 
   const CEPSM = CE === 100 ? 0.5 * FE + 0.5 * y * CDWS : 0;
-  const FEPS = FE / (FDur + (options && options.delay ? options.delay.ftime : 0));
-  const CEPS = (CE + CEPSM) / (CDur + (options && options.delay ? options.delay.ctime : 0));
+  const FEPS = FE / (FDur + (options?.delay ? options.delay.ftime : 0));
+  const CEPS = (CE + CEPSM) / (CDur + (options?.delay ? options.delay.ctime : 0));
 
   let x = 0.5 * CE + 0.5 * FE;
-  if (options && options.specific) {
+  if (options?.specific) {
     const bar = getBarCharge(true, CE);
     let λ = 0;
     if (bar === 1) {
@@ -1083,7 +1080,7 @@ export const queryTopMove = (
     );
     const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.name));
     if (result === undefined) {
-      combatPoke = combatPoke[0];
+      combatPoke = combatPoke.at(0);
     } else {
       combatPoke = result;
     }
@@ -1518,7 +1515,7 @@ const queryMoveCounter = (
 
 const sortCounterDPS = (data: any[]) => {
   data = data.sort((a: { dps: number }, b: { dps: number }) => b.dps - a.dps);
-  return data.map((item) => ({ ...item, ratio: (item.dps * 100) / data[0].dps }));
+  return data.map((item) => ({ ...item, ratio: (item.dps * 100) / data.at(0).dps }));
 };
 
 export const counterPokemon = (
@@ -1533,7 +1530,7 @@ export const counterPokemon = (
 ) => {
   const dataList: any[] = [];
   combatList.forEach((value) => {
-    if (value.quickMoves[0] !== 'STRUGGLE' && value.cinematicMoves[0] !== 'STRUGGLE' && !value.name.includes('_FEMALE')) {
+    if (value.quickMoves.at(0) !== 'STRUGGLE' && value.cinematicMoves.at(0) !== 'STRUGGLE' && !value.name.includes('_FEMALE')) {
       const pokemon = pokemonList.find((item) => {
         const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()), true);
         return item.slug === name;

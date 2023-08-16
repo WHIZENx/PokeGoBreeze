@@ -47,7 +47,7 @@ const SelectPokemon = (props: {
     setShowPokemon(false);
     const name = splitAndCapitalize(value.name, '-', ' ');
     const iconName =
-      pokemonIcon && pokemonIcon.split('/')[9] ? splitAndCapitalize(pokemonIcon.split('/')[9].replace('.png', ''), '-', ' ') : '';
+      pokemonIcon && pokemonIcon.split('/').at(9) ? splitAndCapitalize(pokemonIcon.split('/').at(9)?.replace('.png', ''), '-', ' ') : '';
     if (iconName !== name) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
       setSearch(name);
@@ -93,27 +93,27 @@ const SelectPokemon = (props: {
     const simpleMove: any[] = [];
     if (resultFirst.length === 1 || result == null) {
       if (type === TypeMove.FAST) {
-        resultFirst[0].quickMoves.forEach((value: string) => {
+        resultFirst.at(0)?.quickMoves.forEach((value: string) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        resultFirst[0].eliteQuickMoves.forEach((value: string) => {
+        resultFirst.at(0)?.eliteQuickMoves.forEach((value: string) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
       } else {
-        resultFirst[0].cinematicMoves.forEach((value: string) => {
+        resultFirst.at(0)?.cinematicMoves.forEach((value: string) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        resultFirst[0].eliteCinematicMoves.forEach((value: string) => {
+        resultFirst.at(0)?.eliteCinematicMoves.forEach((value: string) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
-        resultFirst[0].shadowMoves.forEach((value: string) => {
+        resultFirst.at(0)?.shadowMoves.forEach((value: string) => {
           simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
         });
-        resultFirst[0].purifiedMoves.forEach((value: string) => {
+        resultFirst.at(0)?.purifiedMoves.forEach((value: string) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
         });
       }
-      return simpleMove[0];
+      return simpleMove.at(0);
     }
     if (type === TypeMove.FAST) {
       result.quickMoves.forEach((value: string) => {
@@ -136,7 +136,7 @@ const SelectPokemon = (props: {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
       });
     }
-    return simpleMove[0];
+    return simpleMove.at(0);
   };
 
   useEffect(() => {

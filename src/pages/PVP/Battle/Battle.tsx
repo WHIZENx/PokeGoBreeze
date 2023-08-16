@@ -514,7 +514,7 @@ const Battle = () => {
             const arrBufAtk: { target: string; type: string; power: number }[] | null = [],
               arrBufTarget: { target: string; type: string; power: number }[] | null = [];
             const randInt = parseFloat(Math.random().toFixed(3));
-            if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
+            if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs.at(0).buffChance) {
               moveType.buffs.forEach((value: { target: string; type: string; power: number }) => {
                 if (value.target === 'target') {
                   player2 = {
@@ -568,7 +568,7 @@ const Battle = () => {
             const arrBufAtk: { target: string; type: string; power: number }[] = [],
               arrBufTarget: { target: string; type: string; power: number }[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
-            if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
+            if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs.at(0).buffChance) {
               moveType.buffs.forEach((value: { target: string; type: string; power: number }) => {
                 if (value.target === 'target') {
                   player1 = {
@@ -816,7 +816,7 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches.at(0).clientX) - rect.left);
     if (elem && x <= timelineNormal.current.clientWidth - 2) {
       elem.style.transform = 'translate(' + x + 'px, -50%)';
     }
@@ -837,7 +837,7 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches.at(0).clientX) - rect.left);
     if (elem && x <= timelineFit.current.clientWidth) {
       elem.style.transform = 'translate(' + x + 'px, -50%)';
     }

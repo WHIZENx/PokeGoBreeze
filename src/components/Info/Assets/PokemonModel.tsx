@@ -93,7 +93,9 @@ const PokemonModel = (props: { id: number; name: string }) => {
                 </div>
               </div>
             ))}
-            <div className="desc text-black">{splitAndCapitalize(assets.form.toLowerCase(), '_', ' ')}</div>
+            <div className="desc text-black">
+              {splitAndCapitalize((props.id === 150 && assets.form === 'A' ? 'ARMOR' : assets.form).toLowerCase(), '_', ' ')}
+            </div>
           </div>
         ))}
         {pokeAssets.length === 0 && (

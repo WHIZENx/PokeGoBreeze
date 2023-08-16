@@ -115,13 +115,13 @@ const RankingPVP = () => {
           const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
           if (!styleSheet.current) {
-            styleSheet.current = getStyleSheet(`.${pokemon?.types[0].toLowerCase()}`);
+            styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
           }
 
-          let fmoveData = item.moveset[0],
-            cMoveDataPri = item.moveset[1],
-            cMoveDataSec = item.moveset[2];
-          if (fmoveData.includes('HIDDEN_POWER')) {
+          let fmoveData = item.moveset.at(0),
+            cMoveDataPri = item.moveset.at(1),
+            cMoveDataSec = item.moveset.at(2);
+          if (fmoveData?.includes('HIDDEN_POWER')) {
             fmoveData = 'HIDDEN_POWER';
           }
           if (cMoveDataPri === 'FUTURE_SIGHT') {
@@ -144,8 +144,8 @@ const RankingPVP = () => {
             cmoveSec = dataStore?.combat?.find((item: { name: string }) => item.name === cMoveDataSec);
           }
 
-          if (item.moveset[0].includes('HIDDEN_POWER')) {
-            fmove = { ...fmove, type: item.moveset[0].split('_')[2] };
+          if (item.moveset.at(0)?.includes('HIDDEN_POWER')) {
+            fmove = { ...fmove, type: item.moveset.at(0)?.split('_').at(2) };
           }
 
           let combatPoke: any = dataStore?.pokemonCombat?.filter(
@@ -156,7 +156,7 @@ const RankingPVP = () => {
           const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
           if (!result) {
             if (combatPoke) {
-              combatPoke = combatPoke[0];
+              combatPoke = combatPoke.at(0);
             } else {
               combatPoke = combatPoke?.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon?.name));
             }

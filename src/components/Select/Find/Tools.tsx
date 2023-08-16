@@ -38,7 +38,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
         (item: { id: number; form: string }) => item.id === id && item.form !== 'a' && filterFormName(currForm.form.form_name, item.form)
       );
       if (filterId.length === 1 && formList.length === 1 && !filterForm) {
-        return filterId[0];
+        return filterId.at(0);
       } else if (filterId.length === formList.length && !filterForm) {
         return stats.find((item: { id: number; form: string }) => item.id === id && item.form === 'Normal');
       } else {

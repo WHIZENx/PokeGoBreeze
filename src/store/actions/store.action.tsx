@@ -60,7 +60,7 @@ const options = {
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
   try {
     APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options).then((res: { data: { url: string }[] }) => {
-      APIService.getFetchUrl(res.data[0].url, options).then((file: { data: { files: { filename: string }[] | any[] } }) => {
+      APIService.getFetchUrl(res.data.at(0)?.url ?? '', options).then((file: { data: { files: { filename: string }[] | any[] } }) => {
         dispatch({
           type: LOAD_LOGO_POKEGO,
           payload: file.data.files
@@ -109,8 +109,8 @@ export const loadTimestamp = (
       payload: parseInt(GMtimestamp.data),
     });
 
-    const imageTimestamp = new Date(imageRoot.data[0].commit.committer.date).getTime();
-    const soundTimestamp = new Date(soundsRoot.data[0].commit.committer.date).getTime();
+    const imageTimestamp = new Date(imageRoot.data.at(0).commit.committer.date).getTime();
+    const soundTimestamp = new Date(soundsRoot.data.at(0).commit.committer.date).getTime();
     setStateTimestamp(
       JSON.stringify({
         ...JSON.parse(stateTimestamp),
@@ -275,7 +275,7 @@ export const loadAssets = (
   noneForm: string[],
   setStateImage: any
 ) => {
-  APIService.getFetchUrl(imageRoot.data[0].commit.tree.url, options).then((imageFolder: { data: { tree: any[] } }) => {
+  APIService.getFetchUrl(imageRoot.data.at(0)?.commit.tree.url ?? '', options).then((imageFolder: { data: { tree: any[] } }) => {
     const imageFolderPath = imageFolder.data.tree.find((item: { path: string }) => item.path === 'Images');
 
     APIService.getFetchUrl(imageFolderPath.url, options).then((image: { data: { tree: any[] } }) => {
@@ -311,7 +311,7 @@ export const loadAssets = (
 };
 
 export const loadSounds = (soundsRoot: { data: { commit: { tree: { url: string } } }[] }, setStateSound: any) => {
-  APIService.getFetchUrl(soundsRoot.data[0].commit.tree.url, options).then((soundFolder: { data: { tree: any[] } }) => {
+  APIService.getFetchUrl(soundsRoot.data.at(0)?.commit.tree.url ?? '', options).then((soundFolder: { data: { tree: any[] } }) => {
     const soundFolderPath = soundFolder.data.tree.find((item: { path: string }) => item.path === 'Sounds');
 
     APIService.getFetchUrl(soundFolderPath.url, options).then((sound: { data: { tree: any[] } }) => {
@@ -328,16 +328,16 @@ export const loadSounds = (soundsRoot: { data: { commit: { tree: { url: string }
 export const loadPVP = (dispatch: Dispatch, setStateTimestamp: any, stateTimestamp: any, setStatePVP: any, statePVP: any) => {
   APIService.getFetchUrl(APIUrl.FETCH_PVP_DATA, options).then(
     (res: { data: { commit: { tree: { url: string }; committer: { date: Date } } }[] }) => {
-      const pvpDate = new Date(res.data[0].commit.committer.date).getTime();
+      const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();
       if (pvpDate !== JSON.parse(stateTimestamp).pvp) {
-        const pvpUrl = res.data[0].commit.tree.url;
+        const pvpUrl = res.data.at(0)?.commit.tree.url;
         setStateTimestamp(
           JSON.stringify({
             ...JSON.parse(stateTimestamp),
             pvp: pvpDate,
           })
         );
-        APIService.getFetchUrl(pvpUrl, options).then((pvpRoot: { data: { tree: any[] } }) => {
+        APIService.getFetchUrl(pvpUrl ?? '', options).then((pvpRoot: { data: { tree: any[] } }) => {
           const pvpRootPath = pvpRoot.data.tree.find((item: { path: string }) => item.path === 'src');
 
           APIService.getFetchUrl(pvpRootPath.url, options).then((pvpFolder: { data: { tree: any[] } }) => {

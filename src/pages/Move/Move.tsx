@@ -89,7 +89,7 @@ const Move = (props: { id?: number }) => {
     const result = Object.entries(data?.weatherBoost ?? {})?.find(([, value]: any) => {
       return value.includes(type.toUpperCase());
     });
-    return result && result[0];
+    return result && result.at(0);
   };
 
   const queryMoveData = useCallback(

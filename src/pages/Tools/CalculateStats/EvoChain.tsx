@@ -12,7 +12,7 @@ const EvoChain = (props: { url: string; id: number }) => {
     setArrEvoList((oldArr: any) => [
       ...oldArr,
       data.map((item: { species: { name: string; url: string }; is_baby: boolean }) => {
-        return { name: item.species.name, id: item.species.url.split('/')[6], baby: item.is_baby };
+        return { name: item.species.name, id: item.species.url.split('/').at(6), baby: item.is_baby };
       }),
     ]);
     return data.map((item: { evolves_to: string }) => getEvoChain(item.evolves_to));

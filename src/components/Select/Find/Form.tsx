@@ -140,14 +140,14 @@ const Form = (props: {
           (item: { form: { form_name: string } }) =>
             item.form.form_name === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
         );
-        setCurrForm(form ?? isDefault ?? formDefault[0]);
+        setCurrForm(form ?? isDefault ?? formDefault.at(0));
         setPokeID(data.id);
       } else if (isDefault) {
         setCurrForm(isDefault);
         setPokeID(isDefault.form.id);
       } else {
-        setCurrForm(formDefault[0]);
-        setPokeID(formDefault[0].form.id);
+        setCurrForm(formDefault.at(0));
+        setPokeID(formDefault.at(0).form.id);
       }
       const currentId = getPokemonById(Object.values(props.pokemonName), data.id);
       if (currentId) {

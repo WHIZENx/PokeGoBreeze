@@ -275,28 +275,28 @@ const RaidBattle = () => {
           return setResultCMove('');
         }
         let simpleMove: any[] = [];
-        resultFirst[0].quickMoves.forEach((value) => {
+        resultFirst.at(0)?.quickMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        resultFirst[0].eliteQuickMoves.forEach((value) => {
+        resultFirst.at(0)?.eliteQuickMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
-        setFMove(simpleMove[0]);
+        setFMove(simpleMove.at(0));
         setResultFMove(simpleMove);
         simpleMove = [];
-        resultFirst[0].cinematicMoves.forEach((value) => {
+        resultFirst.at(0)?.cinematicMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        resultFirst[0].eliteCinematicMoves.forEach((value) => {
+        resultFirst.at(0)?.eliteCinematicMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
-        resultFirst[0].shadowMoves.forEach((value) => {
+        resultFirst.at(0)?.shadowMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
         });
-        resultFirst[0].purifiedMoves.forEach((value) => {
+        resultFirst.at(0)?.purifiedMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
         });
-        setCMove(simpleMove[0]);
+        setCMove(simpleMove.at(0));
         return setResultCMove(simpleMove);
       }
       simpleMove = [];
@@ -306,7 +306,7 @@ const RaidBattle = () => {
       result?.eliteQuickMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
       });
-      setFMove(simpleMove[0]);
+      setFMove(simpleMove.at(0));
       setResultFMove(simpleMove);
       simpleMove = [];
       result?.cinematicMoves.forEach((value) => {
@@ -321,7 +321,7 @@ const RaidBattle = () => {
       result?.purifiedMoves.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
       });
-      setCMove(simpleMove[0]);
+      setCMove(simpleMove.at(0));
       return setResultCMove(simpleMove);
     },
     [data?.pokemonCombat]
@@ -442,7 +442,7 @@ const RaidBattle = () => {
         );
         const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
         if (!result) {
-          combatPoke = combatPoke[0];
+          combatPoke = combatPoke.at(0);
         } else {
           combatPoke = result;
         }
@@ -457,11 +457,11 @@ const RaidBattle = () => {
       const sortedTDO = dataList.sort((a, b) => a.tdoAtk - b.tdoAtk);
       const sortedHP = dataList.sort((a, b) => a.attackHpRemain - b.attackHpRemain);
       const result = {
-        minDPS: sortedDPS[0].dpsAtk,
+        minDPS: sortedDPS.at(0).dpsAtk,
         maxDPS: sortedDPS[dataList.length - 1].dpsAtk,
-        minTDO: sortedTDO[0].tdoAtk,
+        minTDO: sortedTDO.at(0).tdoAtk,
         maxTDO: sortedTDO[dataList.length - 1].tdoAtk,
-        minHP: sortedHP[0].attackHpRemain,
+        minHP: sortedHP.at(0).attackHpRemain,
         maxHP: sortedHP[dataList.length - 1].attackHpRemain,
       };
       setResultBoss(result);
@@ -1271,11 +1271,13 @@ const RaidBattle = () => {
                   </div>
                   <span className="d-flex ic-group">
                     <span
-                      className={'ic-copy text-white ' + (trainer.pokemons[0].dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
+                      className={
+                        'ic-copy text-white ' + (trainer.pokemons.at(0).dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')
+                      }
                       title="Copy"
                       style={{ marginRight: 5 }}
                       onClick={() => {
-                        if (trainer.pokemons[0].dataTargetPokemon) {
+                        if (trainer.pokemons.at(0).dataTargetPokemon) {
                           setCountTrainer(countTrainer + 1);
                           setTrainerBattle(
                             update(trainerBattle, {

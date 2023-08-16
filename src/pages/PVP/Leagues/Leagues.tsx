@@ -47,7 +47,9 @@ const Leagues = () => {
         return APIService.getPokeFullSprite(id);
       }
       const data = dataId?.image.find((item) => item.form === form);
-      return data ? APIService.getPokemonModel(data.default) : APIService.getPokemonModel(dataId ? dataId.image[0]?.default : null);
+      return data
+        ? APIService.getPokemonModel(data.default)
+        : APIService.getPokemonModel(dataId ? dataId.image.at(0)?.default ?? null : null);
     } catch {
       return APIService.getPokeFullSprite(id);
     }
@@ -83,7 +85,7 @@ const Leagues = () => {
             textTitle = splitAndCapitalize(value.title.toLowerCase(), '_', ' ');
           }
           if ((value.id ?? '').includes('SAFARI_ZONE')) {
-            textTitle += ` ${(value.id ?? '').split('_')[3]} ${capitalize((value.id ?? '').split('_')[4])}`;
+            textTitle += ` ${(value.id ?? '').split('_').at(3)} ${capitalize((value.id ?? '').split('_').at(4))}`;
           }
           return search === '' || textTitle.toLowerCase().includes(search.toLowerCase());
         })
@@ -449,7 +451,7 @@ const Leagues = () => {
                     ? splitAndCapitalize((value.id ?? '').replace('VS_', '').toLowerCase(), '_', ' ')
                     : splitAndCapitalize(value.title.toLowerCase(), '_', ' ')) +
                     ((value.id ?? '').includes('SAFARI_ZONE')
-                      ? ` ${(value.id ?? '').split('_')[3]} ${capitalize((value.id ?? '').split('_')[4])}`
+                      ? ` ${(value.id ?? '').split('_').at(3)} ${capitalize((value.id ?? '').split('_').at(4))}`
                       : '')}{' '}
                   {dataStore?.leagues?.allowLeagues.includes(value.id ?? '') && (
                     <span className="d-inline-block caption text-success">(Opened)</span>

@@ -24,14 +24,32 @@ export const getFormsGO = (id: number) => {
 };
 
 // Pokemon GO Stats Change
-export const PRIMAL_STATS = {
+interface PokeGOStats {
+  id: string;
+  attack: number;
+  defense: number;
+  stamina: number;
+}
+
+const PRIMAL_STATS: PokeGOStats = {
+  id: 'primal',
   attack: 353,
   defense: 268,
   stamina: 218,
 };
 
-export const MEGA_RAYQUAZA = {
+const MEGA_RAYQUAZA: PokeGOStats = {
+  id: 'rayquaza-mega',
   attack: 377,
   defense: 210,
   stamina: 227,
+};
+
+const pokeGOStats: PokeGOStats[] = [PRIMAL_STATS, MEGA_RAYQUAZA];
+
+export const findStatsPokeGO = (id: string | undefined) => {
+  if (!id) {
+    return null;
+  }
+  return pokeGOStats.find((pokemon) => id.includes(pokemon.id));
 };

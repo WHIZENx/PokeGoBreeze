@@ -55,9 +55,11 @@ const Form = ({
   const [searchParams, setSearchParams] = useSearchParams();
 
   const findFirst = useCallback(() => {
-    return formList.map((item: any[]) => {
-      return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
-    })[0];
+    return formList
+      .map((item: any[]) => {
+        return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
+      })
+      .at(0);
   }, [formList]);
 
   const findDefaultForm = useCallback(() => {
@@ -130,7 +132,7 @@ const Form = ({
       }
       const filterForm = stats.find((item: { id: number; form: string }) => item.id === id && filterFormName(formName, item.form));
       if (filterId.length === 1 && formLength === 1 && !filterForm) {
-        return filterId[0];
+        return filterId.at(0);
       } else if (filterId.length === formLength && !filterForm) {
         return stats.find((item: { id: number; form: string }) => item && item.id === id && item.form === 'Normal');
       } else {
@@ -150,7 +152,7 @@ const Form = ({
     if (findForm.form.form_name !== '' && region) {
       setRegion(region);
     } else {
-      setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+      setRegion(regionList[parseInt(species.generation.url.split('/').at(6))]);
     }
     const nameInfo = splitAndCapitalize(findForm.form.name, '-', ' ');
     setFormName(nameInfo);
@@ -162,7 +164,7 @@ const Form = ({
       setDataPoke(oriForm);
       setWH((prevWH: any) => ({ ...prevWH, weight: oriForm.weight, height: oriForm.height }));
     } else if (findForm) {
-      const oriForm = pokeData[0];
+      const oriForm = pokeData.at(0);
       oriForm.types = findForm.form.types;
       setDataPoke(oriForm);
       setWH((prevWH: any) => ({ ...prevWH, weight: oriForm.weight, height: oriForm.height }));
@@ -170,11 +172,11 @@ const Form = ({
       setDataPoke(findData);
       setWH((prevWH: any) => ({ ...prevWH, weight: findData.weight, height: findData.height }));
     } else {
-      setDataPoke(pokeData[0]);
+      setDataPoke(pokeData.at(0));
       setWH((prevWH: any) => ({
         ...prevWH,
-        weight: pokeData[0].weight,
-        height: pokeData[0].height,
+        weight: pokeData.at(0).weight,
+        height: pokeData.at(0).height,
       }));
     }
     setVersion(findForm.form.version_group.name);
@@ -199,7 +201,7 @@ const Form = ({
       if (findForm?.form.form_name !== '' && region) {
         setRegion(region);
       } else {
-        setRegion(regionList[parseInt(species.generation.url.split('/')[6])]);
+        setRegion(regionList[parseInt(species.generation.url.split('/').at(6))]);
       }
     }
   }, [formList, region, setRegion, species.generation.url, formName]);
@@ -236,7 +238,7 @@ const Form = ({
       const currentForm = findForm() ?? findFirst();
       setCurrForm(currentForm);
       setPokeID(findFirst() ? findFirst().form.id : idDefault);
-      if (!dataPoke || dataPoke?.types.length === 0 || pokeID !== parseInt(dataPoke.species.url.split('/')[6])) {
+      if (!dataPoke || dataPoke?.types.length === 0 || pokeID !== parseInt(dataPoke.species.url.split('/').at(6) ?? '')) {
         let data;
         if (paramForm) {
           data = pokeData.find(
@@ -450,14 +452,14 @@ const Form = ({
       </div>
       <hr className="w-100" />
       {formList
-        .filter((item: { form: { form_name: string } }[]) => item[0].form.form_name.includes('mega'))
-        .map((item: { form: string }[]) => item[0].form).length > 0 &&
+        .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name.includes('mega'))
+        .map((item: { form: string }[]) => item.at(0)?.form).length > 0 &&
       currForm &&
       !currForm.form.form_name.includes('gmax') ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
-              gen={parseInt(species.generation.url.split('/')[6])}
+              gen={parseInt(species.generation.url.split('/').at(6))}
               onSetIDPoke={onSetIDPoke}
               evolution_url={species.evolution_chain ? species.evolution_chain.url : []}
               id={idDefault}
@@ -472,14 +474,14 @@ const Form = ({
           </div>
         </div>
       ) : formList
-          .filter((item: { form: { form_name: string } }[]) => item[0].form.form_name.includes('primal'))
-          .map((item: { form: string }[]) => item[0].form).length > 0 &&
+          .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name.includes('primal'))
+          .map((item: { form: string }[]) => item.at(0)?.form).length > 0 &&
         currForm &&
         !currForm.form.form_name.includes('gmax') ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
-              gen={parseInt(species.generation.url.split('/')[6])}
+              gen={parseInt(species.generation.url.split('/').at(6))}
               onSetIDPoke={onSetIDPoke}
               evolution_url={species.evolution_chain ? species.evolution_chain.url : []}
               id={idDefault}
@@ -495,13 +497,13 @@ const Form = ({
         </div>
       ) : (
         <Evolution
-          gen={parseInt(species.generation.url.split('/')[6])}
+          gen={parseInt(species.generation.url.split('/').at(6))}
           onSetIDPoke={onSetIDPoke}
           evolution_url={species.evolution_chain ? species.evolution_chain.url : []}
           id={idDefault}
           forme={currForm && currForm.form}
           formDefault={currForm && pokeID === currForm.form.id}
-          region={regionList[parseInt(species.generation.url.split('/')[6])]}
+          region={regionList[parseInt(species.generation.url.split('/').at(6))]}
         />
       )}
       {pokemonDetail?.formChange && <FromChange details={pokemonDetail} defaultName={currForm && currForm.default_name} />}

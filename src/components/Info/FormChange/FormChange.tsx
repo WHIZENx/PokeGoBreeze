@@ -48,7 +48,7 @@ const FromChange = ({ details, defaultName }: any) => {
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
                   src={APIService.getPokemonModel(
-                    pokeAssets.find((pokemon: { form: string }) => pokemon.form === details.form)?.image[0].default
+                    pokeAssets.find((pokemon: { form: string }) => pokemon.form === details.form)?.image.at(0).default
                   )}
                 />
               </div>
@@ -67,8 +67,9 @@ const FromChange = ({ details, defaultName }: any) => {
                         className="pokemon-sprite-large"
                         alt="pokemon-model"
                         src={APIService.getPokemonModel(
-                          pokeAssets.find((pokemon: { form: string }) => pokemon.form === name.replace(`${defaultName.toUpperCase()}_`, ''))
-                            ?.image[0].default
+                          pokeAssets
+                            .find((pokemon: { form: string }) => pokemon.form === name.replace(`${defaultName.toUpperCase()}_`, ''))
+                            ?.image.at(0).default
                         )}
                       />
                     </div>

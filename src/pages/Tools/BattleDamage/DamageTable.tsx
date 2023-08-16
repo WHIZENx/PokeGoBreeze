@@ -186,7 +186,7 @@ const DamageTable = (props: {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize((Object.keys(globalOptions?.throw_charge ?? {}) as any)[props.result.battleState.clevel])
+                  ? capitalize((Object.keys(globalOptions?.throw_charge ?? {}) as any).at(props.result.battleState.clevel))
                   : '-'}
               </td>
             </tr>

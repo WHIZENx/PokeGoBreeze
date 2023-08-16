@@ -172,7 +172,7 @@ const StatsRanking = () => {
   const pokemonList = useRef(sortRanking(mappingData(Object.values(pokemonData).filter((pokemon) => pokemon.num > 0)), sortId));
   const [pokemonFilter, setPokemonFilter] = useState(pokemonList.current);
 
-  const [select, setSelect]: any = useState(pokemonList.current[0]);
+  const [select, setSelect]: any = useState(pokemonList.current.at(0));
 
   const [filters, setFilters] = useState({ match: false });
   const { match } = filters;

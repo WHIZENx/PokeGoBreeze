@@ -40,10 +40,10 @@ const Move = (props: {
           return setResultMove('');
         }
         if (props.type !== TypeMove.CHARGE) {
-          resultFirst[0].quickMoves.forEach((value) => {
+          resultFirst.at(0)?.quickMoves.forEach((value) => {
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
           });
-          resultFirst[0].eliteQuickMoves.forEach((value) => {
+          resultFirst.at(0)?.eliteQuickMoves.forEach((value) => {
             simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
           });
           setCountFM(simpleMove.length);
@@ -51,16 +51,16 @@ const Move = (props: {
         if (props.type === TypeMove.FAST) {
           return setResultMove(simpleMove);
         }
-        resultFirst[0].cinematicMoves.forEach((value) => {
+        resultFirst.at(0)?.cinematicMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
         });
-        resultFirst[0].eliteCinematicMoves.forEach((value) => {
+        resultFirst.at(0)?.eliteCinematicMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
         });
-        resultFirst[0].shadowMoves.forEach((value) => {
+        resultFirst.at(0)?.shadowMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
         });
-        resultFirst[0].purifiedMoves.forEach((value: string) => {
+        resultFirst.at(0)?.purifiedMoves.forEach((value: string) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
         });
         return setResultMove(simpleMove);

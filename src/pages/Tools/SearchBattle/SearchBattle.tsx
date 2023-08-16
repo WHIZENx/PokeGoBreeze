@@ -238,7 +238,7 @@ const FindBattle = () => {
     const isForm = form.form.form_name === '' ? 'NORMAL' : form.form.form_name.replaceAll('-', '_').toUpperCase();
     let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form.includes(isForm));
     if (!img) {
-      img = dataStore?.assets?.find((item) => item.id === id)?.image[0];
+      img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
     }
     try {
       return img?.default;
@@ -445,7 +445,7 @@ const FindBattle = () => {
             {evoChain.map((value: any[], index: React.Key) => (
               <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
-                  {!value[0].form ? 'Normal' : splitAndCapitalize(value[0].form, '-', ' ')}
+                  {!value.at(0).form ? 'Normal' : splitAndCapitalize(value.at(0).form, '-', ' ')}
                   {' Form'}
                 </div>
                 <Accordion.Item eventKey={'0'}>

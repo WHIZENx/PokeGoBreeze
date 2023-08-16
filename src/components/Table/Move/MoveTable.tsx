@@ -60,18 +60,18 @@ const TableMove = (props: {
   const findMove = useCallback(() => {
     const combatPoke = data?.pokemonCombat?.filter((item) =>
       props.form?.id
-        ? item.id === parseInt(props.data?.species.url.split('/')[6])
+        ? item.id === parseInt(props.data?.species.url.split('/').at(6))
         : item.name ===
           (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
     );
     if (combatPoke) {
       if (combatPoke.length === 1) {
-        filterMoveType(combatPoke[0]);
+        filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke[0]));
       } else if (combatPoke.length === 0 && props.id) {
         const combatPoke: any = data?.pokemonCombat?.filter((item) => (item.id === props.id ?? 0) && item.baseSpecies === item.name);
-        filterMoveType(combatPoke[0]);
-        return setMove(setRankMove(combatPoke[0]));
+        filterMoveType(combatPoke.at(0));
+        return setMove(setRankMove(combatPoke.at(0)));
       }
 
       const result = combatPoke.find((item) => props.form && item.name === convertName(props.form?.name ?? props.form));

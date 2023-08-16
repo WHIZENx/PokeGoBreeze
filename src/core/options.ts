@@ -228,8 +228,8 @@ export const optionPokemonSpawn = (data: any[]) => {
     .filter((item) => item.templateId.includes('SPAWN') && Object.keys(item.data).includes('genderSettings'))
     .map((item: { data: { genderSettings: { gender: any } }; templateId: string }) => {
       return {
-        id: parseInt(item.templateId.split('_')[1].replace('V', '')),
-        name: item.templateId.split('POKEMON_')[1],
+        id: parseInt(item.templateId.split('_').at(1)?.replace('V', '') ?? ''),
+        name: item.templateId.split('POKEMON_').at(1),
         gender: item.data.genderSettings.gender,
       };
     });
@@ -242,7 +242,7 @@ export const optionPokemon = (data: any[]) => {
       const name = item.data.pokemonSettings.form ?? item.data.pokemonSettings.pokemonId;
       return {
         ...item.data.pokemonSettings,
-        id: parseInt(item.templateId.split('_')[0].replace('V', '')),
+        id: parseInt(item.templateId.split('_').at(0).replace('V', '')),
         name,
       };
     });
@@ -277,7 +277,8 @@ export const optionFormSpecial = (data: any[]) => {
         item.assetBundleSuffix ||
         item.isCostume ||
         (item.form &&
-          (item.form.includes('NORMAL') || (!item.form.includes('UNOWN') && item.form.split('_')[item.form.split('_').length - 1] === 'S')))
+          (item.form.includes('NORMAL') ||
+            (!item.form.includes('UNOWN') && item.form.split('_').at(item.form.split('_').length - 1) === 'S')))
       );
     })
     .map((item: { form: string }) => item.form)
@@ -296,7 +297,7 @@ export const optionPokemonFamilyGroup = (data: any[]) => {
     )
     .map((item) => {
       return {
-        familyId: parseInt(item.templateId.split('_')[0].replace('V', '')),
+        familyId: parseInt(item.templateId.split('_').at(0).replace('V', '')),
         familyName: item.data.pokemonFamily.familyId,
       };
     });
@@ -442,22 +443,22 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
             dataEvo.quest.onlyUpsideDown = evo.onlyUpsideDown;
           }
           if (evo.questDisplay) {
-            const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
+            const questDisplay = evo.questDisplay.at(0).questRequirementTemplateId;
             const template = data.find((template: { templateId: number }) => template.templateId === questDisplay);
             dataEvo.quest.condition = null;
             try {
-              const condition = template.data.evolutionQuestTemplate.goals[0].condition[0];
+              const condition = template.data.evolutionQuestTemplate.goals.at(0).condition.at(0);
               dataEvo.quest.condition = {};
               dataEvo.quest.condition.desc = condition.type.replace('WITH_', '');
               if (condition.withPokemonType) {
-                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_')[2]);
+                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_').at(2));
               }
               if (condition.withThrowType) {
-                dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_')[2];
+                dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_').at(2);
               }
               // tslint:disable-next-line: no-empty
             } catch {} // eslint-disable-line no-empty
-            dataEvo.quest.goal = template.data.evolutionQuestTemplate.goals[0].target;
+            dataEvo.quest.goal = template.data.evolutionQuestTemplate.goals.at(0).target;
             dataEvo.quest.type = template.data.evolutionQuestTemplate.questType.replace('QUEST_', '');
           } else if (item.evolutionBranch && item.evolutionBranch.length > 1 && Object.keys(dataEvo.quest).length === 0) {
             if (evo.form) {
@@ -468,7 +469,7 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
           }
           if (evo.temporaryEvolution) {
             const tempEvo: any = {};
-            tempEvo.tempEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1];
+            tempEvo.tempEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION').at(1);
             tempEvo.firstTempEvolution = evo.temporaryEvolutionEnergyCost;
             tempEvo.tempEvolution = evo.temporaryEvolutionEnergyCostSubsequent;
             result.temp_evo.push(tempEvo);
@@ -508,7 +509,7 @@ export const optionSticker = (data: any[], pokemon: PokemonModel[]) => {
     if (item.templateId.includes('STICKER_')) {
       if (Object.keys(item.data).includes('iapItemDisplay')) {
         const id = item.data.iapItemDisplay.sku.replace('STICKER_', '');
-        const sticker: any = stickers.find((sticker) => sticker.id === id.split('.')[0]);
+        const sticker: any = stickers.find((sticker) => sticker.id === id.split('.').at(0));
         if (sticker) {
           sticker.shop = true;
           sticker.pack.push(parseInt(id.replace(sticker.id + '.', '')));
@@ -713,11 +714,11 @@ export const optionCombat = (data: any[], types: TypeEff) => {
   };
 
   const moves = data
-    .filter((item: { templateId: string | string[] }) => item.templateId[0] === 'V' && item.templateId.includes('MOVE'))
+    .filter((item: { templateId: string | string[] }) => item.templateId.at(0) === 'V' && item.templateId.includes('MOVE'))
     .map((item: { data: { moveSettings: any }; templateId: string }) => {
       return {
         ...item.data.moveSettings,
-        id: parseInt(item.templateId.split('_')[0].replace('V', '')),
+        id: parseInt(item.templateId.split('_').at(0)?.replace('V', '') ?? ''),
       };
     });
   const sequence = data
@@ -1246,7 +1247,7 @@ export const optionDetailsPokemon = (
 
       const combat = pokemonCombat.find((pokemon: { id: number }) => pokemon.id === result.id);
 
-      if (combat?.quickMoves[0] !== combat?.cinematicMoves[0] && form && form.default) {
+      if (combat?.quickMoves.at(0) !== combat?.cinematicMoves.at(0) && form && form.default) {
         result.releasedGO = form.default.includes('Addressable Assets/');
       }
 

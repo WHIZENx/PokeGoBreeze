@@ -41,8 +41,8 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     }
 
     let fmove: any = combat.find((item) => item.name === fMove);
-    if (value.moveset[0].includes('HIDDEN_POWER')) {
-      fmove = { ...fmove, type: value.moveset[0].split('_')[2] };
+    if (value.moveset.at(0).includes('HIDDEN_POWER')) {
+      fmove = { ...fmove, type: value.moveset.at(0).split('_').at(2) };
     }
     setFMove(fmove);
 
@@ -77,7 +77,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.pokemon?.name));
     if (!result) {
       if (combatPoke) {
-        combatPoke = combatPoke[0];
+        combatPoke = combatPoke.at(0);
       } else {
         combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon?.name));
       }
@@ -228,7 +228,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                     }
                     let fmove: any = combat.find((item: { name: string }) => item.name === move);
                     if (value.moveId.includes('HIDDEN_POWER')) {
-                      fmove = { ...fmove, type: value.moveId.split('_')[2] };
+                      fmove = { ...fmove, type: value.moveId.split('_').at(2) };
                     }
                     return fmove;
                   })

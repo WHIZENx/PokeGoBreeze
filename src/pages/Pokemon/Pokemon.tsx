@@ -120,7 +120,7 @@ const Pokemon = (props: {
             }))
             .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
         })
-        .sort((a, b) => a[0].form.id - b[0].form.id);
+        .sort((a, b) => a.at(0).form.id - b.at(0).form.id);
       if (data.id === 150) {
         dataFromList.push(getFormsGO(data.id));
       }
@@ -140,7 +140,7 @@ const Pokemon = (props: {
         );
 
         if (defaultFrom) {
-          isDefaultForm = defaultFrom[0];
+          isDefaultForm = defaultFrom.at(0);
           if (
             isDefaultForm.form.form_name !== formParams.toLowerCase() &&
             isDefaultForm.form.name !== isDefaultForm.default_name + '-' + formParams.toLowerCase()
@@ -162,14 +162,14 @@ const Pokemon = (props: {
         defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
         isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
       }
-      defaultData = dataPokeList.find((value) => value.name === isDefaultForm.form.name);
+      defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.form.name);
       if (!defaultData) {
-        defaultData = dataPokeList.find((value) => value.name === isDefaultForm.name);
+        defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.name);
       }
       setWH((prevWH: any) => ({ ...prevWH, weight: defaultData?.weight, height: defaultData?.height }));
-      setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom[0]).form.version_group.name, '-', ' '));
+      setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom.at(0)).form.version_group.name, '-', ' '));
       if (!params.id) {
-        setRegion(regionList[parseInt(data.generation.url.split('/')[6])]);
+        setRegion(regionList[parseInt(data.generation.url.split('/').at(6) ?? '')]);
       }
       const nameInfo =
         router.action === Action.Pop && props.searching
@@ -274,7 +274,7 @@ const Pokemon = (props: {
   }, [params.id, props.id, spinner.loading]);
 
   const getNumGen = (url: string) => {
-    return 'Gen ' + url.split('/')[6];
+    return 'Gen ' + url.split('/').at(6);
   };
 
   const setVersionName = (version: string) => {
@@ -561,7 +561,7 @@ const Pokemon = (props: {
                           </td>
                           <td colSpan={2}>
                             <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                              <b>{data.generation.name.split('-')[1].toUpperCase()}</b>{' '}
+                              <b>{data.generation.name.split('-').at(1).toUpperCase()}</b>{' '}
                               <span className="text-gen">({getNumGen(data.generation.url)})</span>
                             </h5>
                           </td>

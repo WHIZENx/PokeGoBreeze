@@ -65,7 +65,7 @@ const TeamPVP = () => {
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
       if (!styleSheet.current) {
-        styleSheet.current = getStyleSheet(`.${pokemon?.types[0].toLowerCase()}`);
+        styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
       }
 
       let combatPoke: any = dataStore?.pokemonCombat?.filter(
@@ -77,7 +77,7 @@ const TeamPVP = () => {
       const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
       if (!result) {
         if (combatPoke) {
-          combatPoke = combatPoke[0];
+          combatPoke = combatPoke.at(0);
         } else {
           combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(pokemon?.name));
         }
@@ -180,7 +180,7 @@ const TeamPVP = () => {
           const teams = item.team.split('|');
           const teamsData: {
             id: number | undefined;
-            name: string;
+            name: string | undefined;
             speciesId: number;
             pokemonData: PokemonDataModel | undefined;
             form: string | null;
@@ -197,9 +197,7 @@ const TeamPVP = () => {
             shadow: boolean;
             purified: boolean;
           }[] = [];
-          teams.forEach((value) => {
-            teamsData.push(mappingPokemonData(value));
-          });
+          teams.forEach((value) => teamsData.push(mappingPokemonData(value)));
           return {
             ...item,
             teamsTotalGames,

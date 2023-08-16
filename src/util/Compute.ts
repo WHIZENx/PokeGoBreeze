@@ -99,24 +99,24 @@ export const computeBgType = (types: string[] | string | undefined, shadow = fal
   const colorsPalette: any[] = [];
   if (typeof types === 'string') {
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
-    return color.split(')')[0] + `, ${opacity ?? 1})`;
+    return color.split(')').at(0) + `, ${opacity ?? 1})`;
   } else {
     types?.forEach((type: string) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
-      colorsPalette.push(color.split(')')[0] + `, ${opacity ?? 1})`);
+      colorsPalette.push(color.split(')').at(0) + `, ${opacity ?? 1})`);
     });
   }
   if (shadow) {
-    return `linear-gradient(to bottom right, ${colorsPalette[0]}, rgb(202, 156, 236), ${colorsPalette[1] ?? colorsPalette[0]})`;
+    return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, rgb(202, 156, 236), ${colorsPalette[1] ?? colorsPalette.at(0)})`;
   }
   if (purified) {
-    return `linear-gradient(to bottom right, ${colorsPalette[0]}, white, ${colorsPalette[1] ?? colorsPalette[0]})`;
+    return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, white, ${colorsPalette[1] ?? colorsPalette.at(0)})`;
   }
-  return `linear-gradient(to bottom right, ${colorsPalette[0]}, ${colorsPalette[1] ?? colorsPalette[0]})`;
+  return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, ${colorsPalette[1] ?? colorsPalette.at(0)})`;
 };
 
 export const queryAssetForm = (pokemonAssets: Asset[], id: number | undefined, name: string | undefined) => {
-  if (name?.split('-')[1] === 'A') {
+  if (name?.split('-').at(1) === 'A') {
     name = name.replace('-A', '-Armor');
   }
   const pokemon = pokemonAssets?.find((item) => item.id === id);
@@ -144,7 +144,7 @@ export const queryAssetForm = (pokemonAssets: Asset[], id: number | undefined, n
       }
     }
     try {
-      return pokemon.image[0];
+      return pokemon.image.at(0);
     } catch {
       return null;
     }

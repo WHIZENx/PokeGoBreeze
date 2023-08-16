@@ -45,8 +45,8 @@ const PVPHome = () => {
   useEffect(() => {
     if (!rank && !team && pvp) {
       setOptions({
-        rank: pvp.rankings[0],
-        team: pvp.trains ? pvp.trains[0] : null,
+        rank: pvp.rankings.at(0),
+        team: pvp.trains ? pvp.trains.at(0) : null,
       });
     }
   }, [rank, team, pvp]);

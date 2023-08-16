@@ -152,7 +152,7 @@ const SearchTypes = () => {
 
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const [currentType, setCurrentType]: any = useState(typeList.current[0]);
+  const [currentType, setCurrentType]: any = useState(typeList.current.at(0));
   const [result, setResult]: any = useState({
     pokemonList: [],
     fastMove: [],
