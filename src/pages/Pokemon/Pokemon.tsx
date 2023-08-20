@@ -177,7 +177,7 @@ const Pokemon = (props: {
           : splitAndCapitalize(formParams ? isDefaultForm.form.name : data.name, '-', ' ');
       const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
       setFormName(nameInfo);
-      setReleased(checkReleased(data.id, nameInfo ?? '', isDefaultForm.form.is_default));
+      setReleased(checkReleased(data.id, nameInfo ?? '', isDefaultForm?.form?.is_default));
       setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
       setDefaultForm(isDefaultForm);
       if (params.id) {

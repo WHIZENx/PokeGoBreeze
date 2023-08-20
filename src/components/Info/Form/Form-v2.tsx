@@ -156,7 +156,7 @@ const Form = ({
     }
     const nameInfo = splitAndCapitalize(findForm.form.name, '-', ' ');
     setFormName(nameInfo);
-    setReleased(checkReleased(pokeID, nameInfo, findForm.form.is_default));
+    setReleased(checkReleased(pokeID, nameInfo, findForm?.form?.is_default));
     setForm(splitAndCapitalize(convertFormNameImg(pokeID, findForm.form.form_name), '-', '-'));
     if (findData && findForm) {
       const oriForm = findData;
