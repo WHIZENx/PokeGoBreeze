@@ -927,12 +927,14 @@ export const optionPokemonCombat = (data: any[], pokemon: any[], formSpecial: st
           if (result.id === 235) {
             const moves = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
               .smeargleMovesSettings;
-            result.quickMoves = moves.quickMoves.map((move: string) => move.replace('_FAST', ''));
+            result.quickMoves = moves.quickMoves.map((move: string) => move?.toString().replace('_FAST', ''));
             result.cinematicMoves = moves.cinematicMoves;
           } else {
-            result.quickMoves = item.quickMoves ? item.quickMoves.map((move: string) => move.replace('_FAST', '')) : [];
+            result.quickMoves = item.quickMoves ? item.quickMoves.map((move: string) => move?.toString().replace('_FAST', '')) : [];
             result.cinematicMoves = item.cinematicMoves;
-            result.eliteQuickMoves = item.eliteQuickMove ? item.eliteQuickMove.map((move: string) => move.replace('_FAST', '')) : [];
+            result.eliteQuickMoves = item.eliteQuickMove
+              ? item.eliteQuickMove.map((move: string) => move?.toString().replace('_FAST', ''))
+              : [];
             result.eliteCinematicMoves = item.eliteCinematicMove ?? [];
             if (item.shadow) {
               result.shadowMoves.push(item.shadow.shadowChargeMove);
