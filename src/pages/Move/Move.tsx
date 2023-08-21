@@ -22,6 +22,8 @@ import { TypeMove } from '../../enums/move.enum';
 import { hideSpinner } from '../../store/actions/spinner.action';
 import { StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -31,7 +33,7 @@ const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
 
 const columns: any = [
   {
-    name: 'id',
+    name: 'Id',
     selector: (row: { num: number }) => row.num,
     sortable: true,
     minWidth: '40px',
@@ -56,6 +58,11 @@ const columns: any = [
     sortable: true,
     minWidth: '250px',
     sortFunction: nameSort,
+  },
+  {
+    name: 'Elite',
+    selector: (row: { isElite: boolean }) => (row.isElite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
+    width: '64px',
   },
   {
     name: 'DPS',

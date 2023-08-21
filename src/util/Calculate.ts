@@ -1068,6 +1068,7 @@ export const queryTopMove = (
     baseSpecies: string | null;
     sprite: string;
     releasedGO: boolean;
+    isElite: boolean;
     dps: number;
     tdo: number;
   }[] = [];
@@ -1086,10 +1087,12 @@ export const queryTopMove = (
     }
     if (combatPoke !== undefined) {
       let pokemonList;
+      let isElite = false;
       if (move.type_move === TypeMove.FAST) {
         pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
         if (!pokemonList) {
           pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
+          isElite = true;
         }
       } else if (move.type_move === TypeMove.CHARGE) {
         pokemonList = combatPoke.cinematicMoves.includes(move.name);
@@ -1101,6 +1104,7 @@ export const queryTopMove = (
         }
         if (!pokemonList) {
           pokemonList = combatPoke.eliteCinematicMoves.includes(move.name);
+          isElite = true;
         }
       }
       if (pokemonList) {
@@ -1129,6 +1133,7 @@ export const queryTopMove = (
           baseSpecies: value.baseSpecies,
           sprite: value.sprite,
           releasedGO: value.releasedGO,
+          isElite,
           dps,
           tdo,
         });
