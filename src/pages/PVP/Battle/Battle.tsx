@@ -702,7 +702,7 @@ const Battle = () => {
       try {
         dispatch(showSpinner());
         clearData();
-        let file: RankingsPVP[] = (
+        const file: RankingsPVP[] = (
           await axios.getFetchUrl(axios.getRankingFile('all', parseInt(league), 'overall'), {
             cancelToken: source.token,
           })
@@ -717,26 +717,27 @@ const Battle = () => {
             : 'Master League'
         }`;
 
-        file = file
-          .filter((pokemon) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs'))
-          .map((item) => {
-            const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
-            const id = pokemon?.num;
-            const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
+        setData(
+          file
+            .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
+            .map((item) => {
+              const name = convertNameRankingToOri(item.speciesId.replace('_shadow', ''), item.speciesName);
+              const pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+              const id = pokemon?.num;
+              const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
 
-            const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+              const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
-            return {
-              ...item,
-              name,
-              pokemon,
-              id,
-              form,
-              stats,
-            };
-          });
-        setData(file);
+              return {
+                ...item,
+                name,
+                pokemon,
+                id,
+                form,
+                stats,
+              };
+            })
+        );
         dispatch(hideSpinner());
       } catch (e: any) {
         source.cancel();
@@ -1377,21 +1378,6 @@ const Battle = () => {
                 <option value={1}>1</option>
                 <option value={2}>2</option>
               </Form.Select>
-            </div>
-            <div className="border-input" style={{ padding: '0 8px' }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={pokemon.shadow ?? false}
-                    onChange={(_, check) => setPokemon({ ...pokemon, timeline: [], shadow: check })}
-                  />
-                }
-                label={
-                  <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> Shadow
-                  </span>
-                }
-              />
             </div>
             {pokemon && (
               <div className="w-100 bg-ref-pokemon">

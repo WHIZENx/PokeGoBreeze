@@ -37,6 +37,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(
         { REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
+          REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
           NODE_ENV: JSON.stringify('production'),
           DEBUG: true
         }

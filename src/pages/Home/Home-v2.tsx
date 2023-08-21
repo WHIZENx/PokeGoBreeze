@@ -220,7 +220,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        gen: versionList.map((_: any, index: any) => index),
+        gen: versionList.map((_, index: number) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -242,7 +242,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        version: versionList.map((_: any, index: any) => index),
+        version: versionList.map((_, index: number) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -350,7 +350,7 @@ const Home = () => {
                           }
                         />
                       </MenuItem>
-                      {Object.values(genList).map((value: any, index) => (
+                      {Object.values(genList).map((_, index) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={gen.includes(index)} />
                           <ListItemText primary={`Generation ${index + 1} (${regionList[index + 1]})`} />
@@ -473,21 +473,34 @@ const Home = () => {
       <div className="text-center bg-white">
         <div className="loading-group-spin-table" style={{ display: !loading ? 'none' : 'block' }} />
         <ul className="d-grid pokemon-content">
-          {listOfPokemon.map((row: any, index: React.Key) => (
-            <CardPokemonInfo
-              key={index}
-              name={row.name}
-              forme={row.forme}
-              defaultImg={allShiny}
-              image={row.image}
-              id={row.id}
-              types={row.types}
-              pokemonStat={row.goStats}
-              stats={stats}
-              icon={icon ?? ''}
-              releasedGO={row.releasedGO}
-            />
-          ))}
+          {listOfPokemon.map(
+            (
+              row: {
+                name: string;
+                forme: string;
+                image: { shiny: string | undefined; default: string | undefined };
+                id: number;
+                types: string[];
+                goStats: { atk: number; def: number; sta: number };
+                releasedGO: boolean;
+              },
+              index: React.Key
+            ) => (
+              <CardPokemonInfo
+                key={index}
+                name={row.name}
+                forme={row.forme}
+                defaultImg={allShiny}
+                image={row.image}
+                id={row.id}
+                types={row.types}
+                pokemonStat={row.goStats}
+                stats={stats}
+                icon={icon ?? ''}
+                releasedGO={row.releasedGO}
+              />
+            )
+          )}
         </ul>
       </div>
     </Fragment>

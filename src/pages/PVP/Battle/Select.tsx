@@ -29,7 +29,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
   const [pokemonIcon, setPokemonIcon]: any = useState(null);
   const [score, setScore]: any = useState(null);
 
-  const selectPokemon = (value: { pokemon: PokemonDataModel | undefined; score: any; moveset?: any }) => {
+  const selectPokemon = (value: { pokemon: PokemonDataModel | undefined; score: number; moveset?: any; speciesId: string }) => {
     clearData();
     let [fMove, cMovePri, cMoveSec] = value.moveset;
     setSearch(splitAndCapitalize(value.pokemon?.name, '-', ' '));
@@ -103,6 +103,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
         cMovePri: new Audio(APIService.getSoundMove(cMovePri.sound)),
         cMoveSec: new Audio(APIService.getSoundMove(cMoveSec.sound)),
       },
+      shadow: value.speciesId.includes('_shadow'),
     });
   };
 
@@ -168,8 +169,13 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     <Fragment>
       <h5>Pokémon</h5>
       <div className="border-box-battle position-relative">
-        {(score || pokemonIcon) && (
+        {(score || pokemonIcon || pokemon) && (
           <span className="pokemon-select-right">
+            {pokemon.speciesId.includes('_shadow') && (
+              <span style={{ marginRight: 5 }} className="type-icon-small ic shadow-ic">
+                Shadow
+              </span>
+            )}
             {score && (
               <span style={{ marginRight: 5 }} className="type-icon-small ic elite-ic">
                 {score}
@@ -202,9 +208,9 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
             .filter((pokemon: { pokemon: { name: string } }) =>
               splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase())
             )
-            .map((value: { pokemon: PokemonDataModel; score: number }, index: React.Key) => (
+            .map((value: { pokemon: PokemonDataModel; score: number; speciesId: string }, index: React.Key) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
-                <CardPokemon value={value.pokemon} score={value.score} />
+                <CardPokemon value={value.pokemon} score={value.score} isShadow={value.speciesId.includes('_shadow')} />
               </div>
             ))}
         </div>
