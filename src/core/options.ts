@@ -1,19 +1,23 @@
-import { Asset } from './models/asset.model';
-import { Combat, CombatPokemon } from './models/combat.model';
-import { EvolutionModel } from './models/evolution.model';
-import { League, LeagueCondition, LeagueData, LeagueReward, LeagueRewardPokemon } from './models/league.model';
-import { Sticker } from './models/sticker.model';
-import { Details } from './models/details.model';
+import { Asset, AssetDataModel } from './models/asset.model';
+import { CombatDataModel, CombatPokemon, CombatPokemonDataModel } from './models/combat.model';
+import { EvolutionDataModel } from './models/evolution.model';
+import { LeagueDataModel, LeagueOptionsDataModel, LeagueRewardDataModel, LeagueRewardPokemonDataModel } from './models/league.model';
+import { Sticker, StickerDataModel } from './models/sticker.model';
+import { Details, DetailsPokemonModel } from './models/details.model';
 
 import pokemonData from '../data/pokemon.json';
 import { capitalize, convertName, splitAndCapitalize } from '../util/Utils';
 import { TypeSet } from './models/type.model';
-import { Candy, CandyModel } from './models/candy.model';
+import { Candy, CandyDataModel, CandyModel } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonModel } from './models/pokemon.model';
 import { TypeEff } from './models/typeEff.model';
 
 export const getOption = (options: any, args: string[]) => {
+  if (!options) {
+    return options;
+  }
+
   args.forEach((arg: string) => {
     options = options[arg];
   });
@@ -134,7 +138,7 @@ export const optionPokemonTypes = (data: PokemonModel[] | any[]) => {
 };
 
 export const optionPokemonData = (data: PokemonModel[]) => {
-  const ids = Array.from(new Set(Object.values(pokemonData).map((pokemon) => pokemon.num)));
+  const ids = [...new Set(Object.values(pokemonData).map((pokemon) => pokemon.num))];
   const result: any = pokemonData;
   data.forEach((pokemon) => {
     if (!ids.includes(pokemon.id)) {
@@ -185,7 +189,7 @@ export const optionPokemonData = (data: PokemonModel[]) => {
 };
 
 export const optionPokemonName = (details: Details[] | undefined) => {
-  const pokemonDataId = Array.from(new Set(Object.values(pokemonData).map((p) => p.num)));
+  const pokemonDataId = [...new Set(Object.values(pokemonData).map((p) => p.num))];
   const result: any = {};
   pokemonDataId
     .filter((id: number) => id > 0)
@@ -228,8 +232,8 @@ export const optionPokemonSpawn = (data: any[]) => {
     .filter((item) => item.templateId.includes('SPAWN') && Object.keys(item.data).includes('genderSettings'))
     .map((item: { data: { genderSettings: { gender: any } }; templateId: string }) => {
       return {
-        id: parseInt(item.templateId.split('_').at(1)?.replace('V', '') ?? ''),
-        name: item.templateId.split('POKEMON_').at(1),
+        id: parseInt(item.templateId.split('_')[1]?.replace('V', '') ?? ''),
+        name: item.templateId.split('POKEMON_')[1],
         gender: item.data.genderSettings.gender,
       };
     });
@@ -242,7 +246,7 @@ export const optionPokemon = (data: any[]) => {
       const name = item.data.pokemonSettings.form ?? item.data.pokemonSettings.pokemonId;
       return {
         ...item.data.pokemonSettings,
-        id: parseInt(item.templateId.split('_').at(0).replace('V', '')),
+        id: parseInt(item.templateId.split('_')[0].replace('V', '')),
         name,
       };
     });
@@ -277,8 +281,7 @@ export const optionFormSpecial = (data: any[]) => {
         item.assetBundleSuffix ||
         item.isCostume ||
         (item.form &&
-          (item.form.includes('NORMAL') ||
-            (!item.form.includes('UNOWN') && item.form.split('_').at(item.form.split('_').length - 1) === 'S')))
+          (item.form.includes('NORMAL') || (!item.form.includes('UNOWN') && item.form.split('_')[item.form.split('_').length - 1] === 'S')))
       );
     })
     .map((item: { form: string }) => item.form)
@@ -286,7 +289,7 @@ export const optionFormSpecial = (data: any[]) => {
 };
 
 export const optionPokemonFamily = (pokemon: PokemonModel[]) => {
-  return Array.from(new Set(pokemon.map((item) => item.pokemonId)));
+  return [...new Set(pokemon.map((item) => item.pokemonId))];
 };
 
 export const optionPokemonFamilyGroup = (data: any[]) => {
@@ -297,38 +300,18 @@ export const optionPokemonFamilyGroup = (data: any[]) => {
     )
     .map((item) => {
       return {
-        familyId: parseInt(item.templateId.split('_').at(0).replace('V', '')),
+        familyId: parseInt(item.templateId.split('_')[0].replace('V', '')),
         familyName: item.data.pokemonFamily.familyId,
       };
     });
 };
 
 export const optionPokemonCandy = (candyData: CandyModel[], pokemon: PokemonModel[], pokemonFamily: string[]) => {
-  const candyModel = () => {
-    return {
-      familyId: 0,
-      familyGroup: [],
-      primaryColor: {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 0,
-      },
-      secondaryColor: {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 0,
-      },
-      familyName: null,
-    };
-  };
-
   const resultCandy: Candy[] = [];
   pokemonFamily.forEach((poke, index) => {
     const candy = candyData.find((item) => index + 1 === item.FamilyId);
     if (candy) {
-      const result: Candy = candyModel();
+      const result = new CandyDataModel();
       result.familyId = index + 1;
       result.familyName = `FAMILY_${poke}`;
       result.primaryColor = candy.PrimaryColor;
@@ -347,22 +330,10 @@ export const optionPokemonCandy = (candyData: CandyModel[], pokemon: PokemonMode
 };
 
 export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecial: string[]) => {
-  const evolutionModel = () => {
-    return {
-      id: 0,
-      name: '',
-      evo_list: [],
-      temp_evo: [],
-      purified: {},
-      thirdMove: {},
-      form: '',
-    };
-  };
-
   return pokemon
     .filter((item) => !formSpecial.includes(item.name))
     .map((item) => {
-      const result: EvolutionModel = evolutionModel();
+      const result = new EvolutionDataModel();
       result.id = item.id;
       result.name = item.name;
       if (item.form) {
@@ -443,22 +414,22 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
             dataEvo.quest.onlyUpsideDown = evo.onlyUpsideDown;
           }
           if (evo.questDisplay) {
-            const questDisplay = evo.questDisplay.at(0).questRequirementTemplateId;
+            const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
             const template = data.find((template: { templateId: number }) => template.templateId === questDisplay);
             dataEvo.quest.condition = null;
             try {
-              const condition = template.data.evolutionQuestTemplate.goals.at(0).condition.at(0);
+              const condition = template.data.evolutionQuestTemplate.goals[0].condition[0];
               dataEvo.quest.condition = {};
               dataEvo.quest.condition.desc = condition.type.replace('WITH_', '');
               if (condition.withPokemonType) {
-                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_').at(2));
+                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_')[2]);
               }
               if (condition.withThrowType) {
-                dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_').at(2);
+                dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_')[2];
               }
               // tslint:disable-next-line: no-empty
             } catch {} // eslint-disable-line no-empty
-            dataEvo.quest.goal = template.data.evolutionQuestTemplate.goals.at(0).target;
+            dataEvo.quest.goal = template.data.evolutionQuestTemplate.goals[0].target;
             dataEvo.quest.type = template.data.evolutionQuestTemplate.questType.replace('QUEST_', '');
           } else if (item.evolutionBranch && item.evolutionBranch.length > 1 && Object.keys(dataEvo.quest).length === 0) {
             if (evo.form) {
@@ -469,7 +440,7 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
           }
           if (evo.temporaryEvolution) {
             const tempEvo: any = {};
-            tempEvo.tempEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION').at(1);
+            tempEvo.tempEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1];
             tempEvo.firstTempEvolution = evo.temporaryEvolutionEnergyCost;
             tempEvo.tempEvolution = evo.temporaryEvolutionEnergyCostSubsequent;
             result.temp_evo.push(tempEvo);
@@ -492,30 +463,18 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
 };
 
 export const optionSticker = (data: any[], pokemon: PokemonModel[]) => {
-  const stickerModel = () => {
-    return {
-      id: '',
-      maxCount: 0,
-      stickerUrl: null,
-      pokemonId: null,
-      pokemonName: null,
-      shop: false,
-      pack: [],
-    };
-  };
-
   const stickers: Sticker[] = [];
   data.forEach((item: { templateId: string | string[]; data: { iapItemDisplay?: any; stickerMetadata?: any } }) => {
     if (item.templateId.includes('STICKER_')) {
       if (Object.keys(item.data).includes('iapItemDisplay')) {
         const id = item.data.iapItemDisplay.sku.replace('STICKER_', '');
-        const sticker: any = stickers.find((sticker) => sticker.id === id.split('.').at(0));
+        const sticker: any = stickers.find((sticker) => sticker.id === id.split('.')[0]);
         if (sticker) {
           sticker.shop = true;
           sticker.pack.push(parseInt(id.replace(sticker.id + '.', '')));
         }
       } else if (Object.keys(item.data).includes('stickerMetadata')) {
-        const sticker: Sticker = stickerModel();
+        const sticker = new StickerDataModel();
         sticker.id = item.data.stickerMetadata.stickerId.replace('STICKER_', '');
         sticker.maxCount = item.data.stickerMetadata.maxCount ?? 0;
         sticker.stickerUrl = item.data.stickerMetadata.stickerUrl ?? null;
@@ -531,19 +490,8 @@ export const optionSticker = (data: any[], pokemon: PokemonModel[]) => {
 };
 
 export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: string[], sounds: string[]) => {
-  const assetModel = () => {
-    return {
-      id: 0,
-      name: '',
-      image: [],
-      sound: {
-        cry: [],
-      },
-    };
-  };
-
   return family.map((item: string) => {
-    const result: Asset = assetModel();
+    const result = new AssetDataModel();
     result.id = pokemon.find((poke) => poke.name === item)?.id;
     result.name = item;
 
@@ -690,35 +638,12 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
 };
 
 export const optionCombat = (data: any[], types: TypeEff) => {
-  const combatModel = () => {
-    return {
-      name: '',
-      type: null,
-      type_move: null,
-      pvp_power: 0,
-      pvp_energy: 0,
-      sound: null,
-      buffs: [],
-      id: 0,
-      track: 0,
-      pve_power: 0,
-      pve_energy: 0,
-      durationMs: 0,
-      damageWindowStartMs: 0,
-      damageWindowEndMs: 0,
-      accuracyChance: 0,
-      criticalChance: 0,
-      staminaLossScalar: 0,
-      archetype: null,
-    };
-  };
-
   const moves = data
-    .filter((item: { templateId: string | string[] }) => item.templateId.at(0) === 'V' && item.templateId.includes('MOVE'))
+    .filter((item: { templateId: string | string[] }) => item.templateId[0] === 'V' && item.templateId.includes('MOVE'))
     .map((item: { data: { moveSettings: any }; templateId: string }) => {
       return {
         ...item.data.moveSettings,
-        id: parseInt(item.templateId.split('_').at(0)?.replace('V', '') ?? ''),
+        id: parseInt(item.templateId.split('_')[0]?.replace('V', '') ?? ''),
       };
     });
   const sequence = data
@@ -752,7 +677,7 @@ export const optionCombat = (data: any[], types: TypeEff) => {
         };
         templateId: string | string[];
       }) => {
-        const result: Combat = combatModel();
+        const result = new CombatDataModel();
         result.name = item.data.combatMove.uniqueId;
         result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
         if (item.templateId.includes(TypeMove.FAST)) {
@@ -802,7 +727,7 @@ export const optionCombat = (data: any[], types: TypeEff) => {
         const move = moves.find((move: { movementId: string }) => move.movementId === result.name);
         result.id = move.id;
         result.track = move.id;
-        result.name = result.name?.toString().replace('_FAST', '');
+        result.name = result.name?.toString().replace('387', 'GEOMANCY').replace('_FAST', '');
         result.pve_power = move.power ?? 0.0;
         if (result.name === 'STRUGGLE') {
           result.pve_energy = -33;
@@ -839,20 +764,6 @@ export const optionCombat = (data: any[], types: TypeEff) => {
 };
 
 export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSpecial: string[], noneForm: string[]) => {
-  const combatPokemonModel = () => {
-    return {
-      id: 0,
-      name: '',
-      baseSpecies: '',
-      quickMoves: [],
-      cinematicMoves: [],
-      shadowMoves: [],
-      purifiedMoves: [],
-      eliteQuickMoves: [],
-      eliteCinematicMoves: [],
-    };
-  };
-
   return pokemon
     .filter(
       (item) =>
@@ -871,7 +782,7 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
           pokemonPrev.shadowMoves.push(shadowCharge);
         }
       } else {
-        const result: CombatPokemon = combatPokemonModel();
+        const result = new CombatPokemonDataModel();
         result.id = item.id;
         result.name = item.name.replace('_NORMAL', '');
         result.baseSpecies = item.pokemonId;
@@ -884,7 +795,7 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
           result.quickMoves = item.quickMoves ? item.quickMoves.map((move: string) => move?.toString().replace('_FAST', '')) : [];
           result.cinematicMoves = item.cinematicMoves;
           result.eliteQuickMoves = item.eliteQuickMove
-            ? item.eliteQuickMove.map((move: string) => move?.toString().replace('_FAST', ''))
+            ? item.eliteQuickMove.map((move: string) => move?.toString().replace('387', 'GEOMANCY').replace('_FAST', ''))
             : [];
           result.eliteCinematicMoves = item.eliteCinematicMove ?? [];
           if (item.shadow) {
@@ -899,63 +810,7 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
 };
 
 export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
-  const leagueModel = () => {
-    return {
-      id: null,
-      title: '',
-      enabled: false,
-      conditions: {},
-      iconUrl: null,
-      league: '',
-    };
-  };
-
-  const leagueConditionModel = () => {
-    return {
-      timestamp: null,
-      unique_selected: false,
-      unique_type: false,
-      max_level: null,
-      max_cp: 0,
-      whiteList: [],
-      banned: [],
-    };
-  };
-
-  const leagueRewardModel = () => {
-    return {
-      type: false,
-      count: 0,
-      step: 0,
-    };
-  };
-
-  const leagueRewardPokemonModel = () => {
-    return {
-      guaranteedLimited: false,
-      id: null,
-      name: '',
-      form: '',
-    };
-  };
-
-  const result: LeagueData = {
-    allowLeagues: [],
-    data: [],
-    season: {
-      season: 0,
-      timestamp: {
-        start: '',
-        end: '',
-      },
-      rewards: {
-        rank: [],
-        pokemon: [],
-      },
-      settings: [],
-    },
-  };
-
+  const result = new LeagueOptionsDataModel();
   result.allowLeagues = data
     .find((item: { templateId: string }) => item.templateId === 'VS_SEEKER_CLIENT_SETTINGS')
     .data.vsSeekerClientSettings.allowedVsSeekerLeagueTemplateId.map((item: string) =>
@@ -965,11 +820,10 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
   result.data = data
     .filter((item: { templateId: string }) => item.templateId.includes('COMBAT_LEAGUE_') && !item.templateId.includes('SETTINGS'))
     .map((item) => {
-      const result = leagueModel() as unknown as League;
+      const result = new LeagueDataModel();
       result.id = item.templateId.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '');
       result.title = item.data.combatLeague.title.replace('combat_', '').replace('_title', '').toUpperCase();
       result.enabled = item.data.combatLeague.enabled;
-      result.conditions = leagueConditionModel() as unknown as LeagueCondition;
       item.data.combatLeague.pokemonCondition.forEach(
         (con: {
           pokemonBanList: { pokemon: { id: string; form: string; forms: string }[] };
@@ -1093,7 +947,7 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
             reward: { pokemonReward: any; itemLootTable: any; item: { stardust: number; item: string | boolean; count: number } },
             index: number
           ) => {
-            const result: LeagueReward = leagueRewardModel();
+            const result = new LeagueRewardDataModel();
             result.step = index + 1;
             if (reward.pokemonReward) {
               result.type = 'pokemon';
@@ -1136,7 +990,7 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
               premium: [],
             };
           }
-          const result: LeagueRewardPokemon = leagueRewardPokemonModel();
+          const result = new LeagueRewardPokemonDataModel();
           let poke: { pokemonId: string; pokemonDisplay: { form: string } };
           if (value.guaranteedLimitedPokemonReward) {
             result.guaranteedLimited = true;
@@ -1183,23 +1037,6 @@ export const optionDetailsPokemon = (
   pokemonCombat: CombatPokemon[],
   noneForm: string[]
 ) => {
-  const detailsPokemonModel = () => {
-    return {
-      id: 0,
-      name: '',
-      releasedGO: false,
-      form: '',
-      gender: null,
-      isTransferable: null,
-      isDeployable: null,
-      isTradable: null,
-      pokemonClass: null,
-      disableTransferToPokemonHome: null,
-      isBaby: false,
-      formChange: null,
-    };
-  };
-
   const spawn = optionPokemonSpawn(data);
   const pokemonForm = Object.values(pokemonData)
     .slice(1)
@@ -1218,7 +1055,7 @@ export const optionDetailsPokemon = (
         (item.form && (item.form.toString().includes('NORMAL') || !formSpecial.includes(item.name)))
     )
     .map((item) => {
-      const result: Details = detailsPokemonModel();
+      const result: Details = new DetailsPokemonModel();
       result.id = item.id;
       result.name = item.name.replace('_NORMAL', '');
       if (item.form) {
@@ -1249,7 +1086,7 @@ export const optionDetailsPokemon = (
 
       const combat = pokemonCombat.find((pokemon: { id: number }) => pokemon.id === result.id);
 
-      if (combat?.quickMoves.at(0) !== combat?.cinematicMoves.at(0) && form && form.default) {
+      if (combat?.quickMoves[0] !== combat?.cinematicMoves[0] && form && form.default) {
         result.releasedGO = form.default.includes('Addressable Assets/');
       }
 
@@ -1264,7 +1101,7 @@ export const optionDetailsPokemon = (
     if (pokemon.form === 'NORMAL' && !pokemon.releasedGO && pokemon.form !== formOrigin?.form) {
       const checkForm: boolean = result.find((poke) => poke.form === formOrigin?.form)?.releasedGO ?? false;
       pokemon.releasedGO = checkForm;
-      if (pokemon.id === 201 || pokemon.id === 999 || pokemon.id === 1000) {
+      if (pokemon.id === 201 || pokemon.id === 718 || pokemon.id === 999 || pokemon.id === 1000) {
         pokemon.releasedGO = true;
       }
     }
@@ -1277,7 +1114,7 @@ export const optionDetailsPokemon = (
       if (item.tempEvoOverrides) {
         item.tempEvoOverrides.forEach((evos: { tempEvoId: string }) => {
           if (evos.tempEvoId) {
-            const detail: Details = detailsPokemonModel();
+            const detail = new DetailsPokemonModel();
             detail.id = item.id;
             detail.form = evos.tempEvoId.replace('TEMP_EVOLUTION_', '');
             const gender = spawn.find((item) => item.id === detail.id && item.name === detail.name);

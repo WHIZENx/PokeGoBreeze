@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { StatsModel } from '../../../core/models/stats.model';
 
-const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; animation: any; borderSize: number }) => {
+const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; animation: number; borderSize: number }) => {
   const canvasHex: any = useRef();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);

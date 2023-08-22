@@ -31,6 +31,7 @@ import { StatsModel } from '../../core/models/stats.model';
 import { Asset } from '../../core/models/asset.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { Combat } from '../../core/models/combat.model';
+import { MAX_IV, MAX_LEVEL } from '../../util/Constants';
 
 export const Keys = (
   assets: Asset[],
@@ -138,12 +139,12 @@ export const OverAllStats = (
     const maxCP = parseInt(cp.toString());
 
     if (maxCP === 10000) {
-      const cp = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 50);
-      const buddyCP = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 51);
-      return {
-        '50': { cp },
-        '51': { cp: buddyCP },
-      };
+      const cp = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
+      const buddyCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      const result: any = {};
+      result[MAX_LEVEL - 1] = { cp };
+      result[MAX_LEVEL] = { cp: buddyCP };
+      return result;
     } else {
       const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
       const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
@@ -157,10 +158,10 @@ export const OverAllStats = (
     return (
       <ul className="element-top">
         <li className="element-top">
-          CP: <b>{maxCP === 10000 ? `${currStats['50'].cp}-${currStats['51'].cp}` : `${currStats.CP}`}</b>
+          CP: <b>{maxCP === 10000 ? `${currStats[MAX_LEVEL - 1].cp}-${currStats[MAX_LEVEL].cp}` : `${currStats.CP}`}</b>
         </li>
         <li className={currStats.level <= 40 ? 'element-top' : ''}>
-          Level: <b>{maxCP === 10000 ? '50-51' : `${currStats.level}`} </b>
+          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${currStats.level}`} </b>
           {(currStats.level > 40 || maxCP === 10000) && (
             <b>
               (
@@ -170,9 +171,9 @@ export const OverAllStats = (
           )}
         </li>
         <li className="element-top">
-          <IVbar title="Attack" iv={maxCP === 10000 ? 15 : currStats.IV.atk} style={{ maxWidth: 500 }} />
-          <IVbar title="Defense" iv={maxCP === 10000 ? 15 : currStats.IV.def} style={{ maxWidth: 500 }} />
-          <IVbar title="HP" iv={maxCP === 10000 ? 15 : currStats.IV.sta} style={{ maxWidth: 500 }} />
+          <IVbar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats.IV.atk} style={{ maxWidth: 500 }} />
+          <IVbar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats.IV.def} style={{ maxWidth: 500 }} />
+          <IVbar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats.IV.sta} style={{ maxWidth: 500 }} />
         </li>
       </ul>
     );

@@ -140,7 +140,7 @@ const CalculatePoint = () => {
       }
       lv++;
     }
-    const colorTone = computeColorTone(Array.from(new Set(group)).sort((a, b) => a - b));
+    const colorTone = computeColorTone([...new Set(group)].sort((a, b) => a - b));
     setResultBreakPointAtk({ data: dataList, colorTone });
     enqueueSnackbar('Calculate breakpoint attacker successfully!', { variant: 'success' });
   };
@@ -184,8 +184,8 @@ const CalculatePoint = () => {
       lv++;
     }
 
-    const colorToneDef = computeColorTone(Array.from(new Set(groupDef)).sort((a, b) => b - a));
-    const colorToneSta = computeColorTone(Array.from(new Set(groupSta)).sort((a, b) => a - b));
+    const colorToneDef = computeColorTone([...new Set(groupDef)].sort((a, b) => b - a));
+    const colorToneSta = computeColorTone([...new Set(groupSta)].sort((a, b) => a - b));
     setResultBreakPointDef({
       dataDef: dataListDef,
       dataSta: dataListSta,
@@ -747,9 +747,9 @@ const CalculatePoint = () => {
                     <PokeGoSlider
                       value={DEFIv}
                       aria-label="DEF marks"
-                      defaultValue={0}
-                      min={0}
-                      max={15}
+                      defaultValue={MIN_IV}
+                      min={MIN_IV}
+                      max={MAX_IV}
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}
@@ -762,9 +762,9 @@ const CalculatePoint = () => {
                     <PokeGoSlider
                       value={STAIv}
                       aria-label="STA marks"
-                      defaultValue={0}
-                      min={0}
-                      max={15}
+                      defaultValue={MIN_IV}
+                      min={MIN_IV}
+                      max={MAX_IV}
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}

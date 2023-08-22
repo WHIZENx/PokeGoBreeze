@@ -2,58 +2,58 @@ import React from 'react';
 import styled from 'styled-components';
 import APIService from '../../../services/API.service';
 
-const Circle: any = styled.div`
-  width: ${(props: any) => props.size + 5}px;
-  height: ${(props: any) => props.size + 5}px;
+const Circle = styled.div`
+  width: ${(props: { size: number }) => props.size + 5}px;
+  height: ${(props: { size: number }) => props.size + 5}px;
   background: #0000003b;
   border-radius: 50%;
   border: 5px solid lightgray;
   position: relative;
 `;
 
-const Fill: any = styled.div`
+const Fill = styled.div`
   position: absolute;
   border-radius: 50%;
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
+  width: ${(props: { size: number }) => props.size}px;
+  height: ${(props: { size: number }) => props.size}px;
   clip: rect(
-    ${(props: any) => props.size - (props.energy * props.size) / props.moveEnergy}px,
-    ${(props: any) => props.size}px,
-    ${(props: any) => props.size}px,
+    ${(props: { energy: number; moveEnergy: number; size: number }) => props.size - (props.energy * props.size) / props.moveEnergy}px,
+    ${(props: { size: number }) => props.size}px,
+    ${(props: { size: number }) => props.size}px,
     0px
   );
-  filter: brightness(${(props: any) => props.brightness});
+  filter: brightness(${(props: { energy: number; moveEnergy: number; size: number; brightness: number }) => props.brightness});
   transition: 0.1s;
 `;
 
-const Icon: any = styled.div`
-  width: ${(props: any) => props.size / 2}px;
-  height: ${(props: any) => props.size / 2}px;
+const Icon = styled.div`
+  width: ${(props: { size: number }) => props.size / 2}px;
+  height: ${(props: { size: number }) => props.size / 2}px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  mask: url(${(props: any) => props.url}) center/contain;
+  mask: url(${(props: { size: number; url: string }) => props.url}) center/contain;
   background: #ffffff75;
 `;
 
-const IconFill: any = styled.div`
+const IconFill = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  width: ${(props: any) => props.size / 2}px;
-  height: ${(props: any) => props.size / 2}px;
+  width: ${(props: { size: number }) => props.size / 2}px;
+  height: ${(props: { size: number }) => props.size / 2}px;
   transform: translate(-50%, -50%);
   clip: rect(
-    ${(props: any) =>
+    ${(props: { energy: number; moveEnergy: number; size: number }) =>
       props.size / 2 +
       (props.size - props.size / 2) / 2 -
       (props.energy * (props.size / 2 + (props.size - props.size / 2))) / props.moveEnergy}px,
-    ${(props: any) => props.size / 2}px,
-    ${(props: any) => props.size / 2}px,
+    ${(props: { size: number }) => props.size / 2}px,
+    ${(props: { size: number }) => props.size / 2}px,
     0px
   );
-  mask: url(${(props: any) => props.url}) center/contain;
+  mask: url(${(props: { energy: number; moveEnergy: number; size: number; url: string }) => props.url}) center/contain;
   background: white;
   transition: 0.1s;
 `;

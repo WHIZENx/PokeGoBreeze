@@ -181,7 +181,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
       name: pokemon.form !== '' ? pokeSetName(pokemon.name.replace(`_${pokemon.form}`, '')) : pokeSetName(pokemon.name),
       id: pokemon.id,
       baby: false,
-      form: pokemon.form,
+      form: pokemon.id === 718 && pokemon.form === '' ? 'TEN_PERCENT' : pokemon.form,
       gmax: false,
       sprite: convertModelSpritName(pokemon.name),
       purified: pokemon.canPurified ?? false,
@@ -276,10 +276,12 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     if (pokemon.length === 0) {
       return;
     }
-    pokemon.forEach((evo) => {
-      evoList.unshift(modelEvoChain(evo));
-      getPrevEvoChainStore(evo, result);
-    });
+    pokemon
+      .filter((p) => !(p.id === 718 && p.form === ''))
+      .forEach((evo) => {
+        evoList.unshift(modelEvoChain(evo));
+        getPrevEvoChainStore(evo, result);
+      });
     return result.push(evoList);
   };
 
@@ -630,7 +632,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                       <Badge
                         color="secondary"
                         overlap="circular"
-                        badgeContent={splitAndCapitalize(form, '-', ' ')}
+                        badgeContent={splitAndCapitalize(form.replace('_', '-'), '-', ' ')}
                         anchorOrigin={{
                           vertical: 'top',
                           horizontal: 'left',

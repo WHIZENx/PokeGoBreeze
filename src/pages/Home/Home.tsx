@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import pokemonData from '../../data/pokemon.json';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
+import { MAX_IV } from '../../util/Constants';
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -80,8 +81,8 @@ const Home = () => {
           def: stats.def,
           sta: stats?.sta ?? 0,
           minCP: calculateCP(stats.atk, stats.def, stats?.sta ?? 0, 1),
-          maxCP_40: calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 40),
-          maxCP_50: calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 50),
+          maxCP_40: calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, 40),
+          maxCP_50: calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, 50),
         };
       })
       .sort((a: { id: number }, b: { id: number }) => a.id - b.id)

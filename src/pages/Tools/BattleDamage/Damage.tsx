@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDataWithKey, LevelRating } from '../../../util/Utils';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 
 import './Damage.scss';
@@ -109,15 +109,15 @@ const Damage = () => {
 
   useEffect(() => {
     if (statATK !== 0) {
-      setStatLvATK(calculateStatsBattle(statATK, 15, statLevel, false, statType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1));
+      setStatLvATK(calculateStatsBattle(statATK, MAX_IV, statLevel, false, statType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1));
     }
     if (statDEFObj !== 0) {
       setStatLvDEFObj(
-        calculateStatsBattle(statDEFObj, 15, statLevelObj, false, statTypeObj === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
+        calculateStatsBattle(statDEFObj, MAX_IV, statLevelObj, false, statTypeObj === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
       );
     }
     if (statSTAObj !== 0) {
-      setStatLvSTAObj(calculateStatsBattle(statSTAObj, 15, statLevelObj));
+      setStatLvSTAObj(calculateStatsBattle(statSTAObj, MAX_IV, statLevelObj));
     }
   }, [globalOptions, statATK, statLevel, statType, statATKObj, statDEF, statDEFObj, statLevelObj, statSTA, statSTAObj, statTypeObj]);
 

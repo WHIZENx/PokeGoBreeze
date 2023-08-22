@@ -19,6 +19,7 @@ import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { SpinnerState, StoreState, SearchingState } from '../../../store/models/state.model';
+import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 
 const Calculate = () => {
   const dispatch = useDispatch();
@@ -170,9 +171,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={ATKIv}
                 aria-label="ATK marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -185,9 +186,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={DEFIv}
                 aria-label="DEF marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -200,9 +201,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={STAIv}
                 aria-label="STA marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -264,11 +265,11 @@ const Calculate = () => {
               <LevelSlider
                 aria-label="Level"
                 value={statLevel}
-                defaultValue={1}
+                defaultValue={MIN_LEVEL}
                 valueLabelDisplay="off"
                 step={0.5}
-                min={1}
-                max={typePoke === 'buddy' ? 51 : 50}
+                min={MIN_LEVEL}
+                max={typePoke === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={pokeStats ? false : true}
                 onChange={(pokeStats ? onHandleLevel : null) as any}

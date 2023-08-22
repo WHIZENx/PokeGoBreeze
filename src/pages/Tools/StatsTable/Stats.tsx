@@ -11,6 +11,7 @@ import Find from '../../../components/Select/Find/Find';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { SpinnerState } from '../../../store/models/state.model';
+import { MIN_IV, MAX_IV } from '../../../util/Constants';
 
 export const columnsStats: any = [
   {
@@ -198,9 +199,9 @@ const StatsTable = () => {
             <PokeGoSlider
               value={ATKIv}
               aria-label="ATK marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -213,9 +214,9 @@ const StatsTable = () => {
             <PokeGoSlider
               value={DEFIv}
               aria-label="DEF marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -228,9 +229,9 @@ const StatsTable = () => {
             <PokeGoSlider
               value={STAIv}
               aria-label="STA marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}

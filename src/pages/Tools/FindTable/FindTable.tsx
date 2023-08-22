@@ -13,6 +13,7 @@ import Find from '../../../components/Select/Find/Find';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { SpinnerState } from '../../../store/models/state.model';
+import { MAX_IV, MIN_IV } from '../../../util/Constants';
 
 const columnsIV: any = [
   {
@@ -145,7 +146,14 @@ const FindTable = () => {
   }, []);
 
   const findStatsCP = useCallback(() => {
-    if (searchATKIv < 0 || searchATKIv > 15 || searchDEFIv < 0 || searchDEFIv > 15 || searchSTAIv < 0 || searchSTAIv > 15) {
+    if (
+      searchATKIv < MIN_IV ||
+      searchATKIv > MAX_IV ||
+      searchDEFIv < MIN_IV ||
+      searchDEFIv > MAX_IV ||
+      searchSTAIv < MIN_IV ||
+      searchSTAIv > MAX_IV
+    ) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
@@ -304,7 +312,7 @@ const FindTable = () => {
       return {
         level: item.level,
         minCP: calculateCP(statATK, statDEF, statSTA, item.level),
-        maxCP: calculateCP(statATK + 15, statDEF + 15, statSTA + 15, item.level),
+        maxCP: calculateCP(statATK + MAX_IV, statDEF + MAX_IV, statSTA + MAX_IV, item.level),
       };
     });
 
@@ -375,9 +383,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchATKIv}
                 aria-label="ATK marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -390,9 +398,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchDEFIv}
                 aria-label="DEF marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -405,9 +413,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchSTAIv}
                 aria-label="STA marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}

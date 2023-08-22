@@ -245,16 +245,6 @@ ul {
   width: fit-content !important;
 }
 
-.icc {
-  display: inline-block;
-  font-size: 10px;
-  padding: 1px 6px !important;
-  font-weight: bold !important;
-  text-shadow: none !important;
-  text-align: center;
-  width: fit-content !important;
-}
-
 .shadow-ic { background-color: #c184ec; }
 .bug { background-color: #9cb820; }
 .dark { background-color: #504843; }
@@ -264,7 +254,6 @@ ul {
 .elite-ic,
 .score-ic { background-color: #f8d030; }
 
-.unavailable,
 .fighting { background-color: #c03028; }
 .fire { background-color: #f08030; }
 .flying { background-color: #9096f0; }

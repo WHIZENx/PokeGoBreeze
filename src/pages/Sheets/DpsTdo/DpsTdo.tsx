@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
 import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
-import { DEFAULT_POKEMON_DEF_OBJ, MAX_LEVEL, MIN_LEVEL } from '../../../util/Constants';
+import { DEFAULT_POKEMON_DEF_OBJ, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -251,9 +251,9 @@ const DpsTdo = () => {
       enableDelay: false,
       releasedGO: true,
       bestOf: 3,
-      IV_ATK: 15,
-      IV_DEF: 15,
-      IV_HP: 15,
+      IV_ATK: MAX_IV,
+      IV_DEF: MAX_IV,
+      IV_HP: MAX_IV,
       POKEMON_LEVEL: 40,
     }
   );
@@ -850,9 +850,9 @@ const DpsTdo = () => {
                     defaultValue={IV_ATK}
                     type="number"
                     className="form-control"
-                    placeholder="0-15"
-                    min={0}
-                    max={15}
+                    placeholder={`${MIN_IV}-${MAX_IV}`}
+                    min={MIN_IV}
+                    max={MAX_IV}
                     required={true}
                     onChange={(e: any) =>
                       setFilters({
@@ -868,9 +868,9 @@ const DpsTdo = () => {
                     defaultValue={IV_DEF}
                     type="number"
                     className="form-control"
-                    placeholder="0-15"
-                    min={0}
-                    max={15}
+                    placeholder={`${MIN_IV}-${MAX_IV}`}
+                    min={MIN_IV}
+                    max={MAX_IV}
                     required={true}
                     onChange={(e: any) =>
                       setFilters({
@@ -886,9 +886,9 @@ const DpsTdo = () => {
                     defaultValue={IV_HP}
                     type="number"
                     className="form-control"
-                    placeholder="0-15"
-                    min={0}
-                    max={15}
+                    placeholder={`${MIN_IV}-${MAX_IV}`}
+                    min={MIN_IV}
+                    max={MAX_IV}
                     required={true}
                     onChange={(e: any) =>
                       setFilters({

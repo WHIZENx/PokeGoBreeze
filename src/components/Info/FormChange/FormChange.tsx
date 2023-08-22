@@ -17,7 +17,7 @@ const FromChange = ({ details, defaultName }: any) => {
     (id: number) => {
       const model = data?.assets?.find((item) => item.id === id);
       return model
-        ? Array.from(new Set(model.image.map((item: { form: string }) => item.form))).map((value) => {
+        ? [...new Set(model.image.map((item: { form: string }) => item.form))].map((value) => {
             return {
               form: value,
               image: model.image.filter((item: { form: string }) => value === item.form),
@@ -68,7 +68,10 @@ const FromChange = ({ details, defaultName }: any) => {
                         alt="pokemon-model"
                         src={APIService.getPokemonModel(
                           pokeAssets
-                            .find((pokemon: { form: string }) => pokemon.form === name.replace(`${defaultName.toUpperCase()}_`, ''))
+                            .find(
+                              (pokemon: { form: string }) =>
+                                pokemon.form === name.replace('_COMPLETE', '').replace(`${defaultName.toUpperCase()}_`, '')
+                            )
                             ?.image.at(0).default
                         )}
                       />

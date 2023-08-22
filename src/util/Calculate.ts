@@ -107,8 +107,8 @@ export const calBaseSTA = (stats: any, nerf: boolean) => {
 };
 
 export const sortStatsPokemon = (stats: any[]) => {
-  const attackRanking = Array.from(
-    new Set(
+  const attackRanking = [
+    ...new Set(
       stats
         .sort(
           (a: { baseStatsPokeGo: { attack: number } }, b: { baseStatsPokeGo: { attack: number } }) =>
@@ -117,8 +117,8 @@ export const sortStatsPokemon = (stats: any[]) => {
         .map((item: { baseStatsPokeGo: { attack: number } }) => {
           return item.baseStatsPokeGo.attack;
         })
-    )
-  );
+    ),
+  ];
 
   const minATK = Math.min(...attackRanking);
   const maxATK = Math.max(...attackRanking);
@@ -131,8 +131,8 @@ export const sortStatsPokemon = (stats: any[]) => {
     };
   });
 
-  const defenseRanking = Array.from(
-    new Set(
+  const defenseRanking = [
+    ...new Set(
       stats
         .sort(
           (a: { baseStatsPokeGo: { defense: number } }, b: { baseStatsPokeGo: { defense: number } }) =>
@@ -141,8 +141,8 @@ export const sortStatsPokemon = (stats: any[]) => {
         .map((item: { baseStatsPokeGo: { defense: number } }) => {
           return item.baseStatsPokeGo.defense;
         })
-    )
-  );
+    ),
+  ];
 
   const minDEF = Math.min(...defenseRanking);
   const maxDEF = Math.max(...defenseRanking);
@@ -155,8 +155,8 @@ export const sortStatsPokemon = (stats: any[]) => {
     };
   });
 
-  const staminaRanking = Array.from(
-    new Set(
+  const staminaRanking = [
+    ...new Set(
       stats
         .sort(
           (a: { baseStatsPokeGo: { stamina: number } }, b: { baseStatsPokeGo: { stamina: number } }) =>
@@ -165,8 +165,8 @@ export const sortStatsPokemon = (stats: any[]) => {
         .map((item: { baseStatsPokeGo: { stamina: number } }) => {
           return item.baseStatsPokeGo.stamina;
         })
-    )
-  );
+    ),
+  ];
 
   const minSTA = Math.min(...staminaRanking);
   const maxSTA = Math.max(...staminaRanking);
@@ -179,15 +179,15 @@ export const sortStatsPokemon = (stats: any[]) => {
     };
   });
 
-  const prodRanking = Array.from(
-    new Set(
+  const prodRanking = [
+    ...new Set(
       stats
         .sort((a: { baseStatsProd: number }, b: { baseStatsProd: number }) => a.baseStatsProd - b.baseStatsProd)
         .map((item: { baseStatsProd: number }) => {
           return item.baseStatsProd;
         })
-    )
-  );
+    ),
+  ];
 
   const minPROD = Math.min(...prodRanking);
   const maxPROD = Math.max(...prodRanking);
@@ -242,11 +242,11 @@ export const calculateCP = (atk: number, def: number, sta: number, level: number
 };
 
 export const calculateRaidStat = (stat: number, tier: number) => {
-  return Math.floor((stat + 15) * RAID_BOSS_TIER[tier].CPm);
+  return Math.floor((stat + MAX_IV) * RAID_BOSS_TIER[tier].CPm);
 };
 
 export const calculateRaidCP = (atk: number, def: number, tier: number) => {
-  return Math.floor(((atk + 15) * Math.sqrt(def + 15) * Math.sqrt(RAID_BOSS_TIER[tier].sta)) / 10);
+  return Math.floor(((atk + MAX_IV) * Math.sqrt(def + MAX_IV) * Math.sqrt(RAID_BOSS_TIER[tier].sta)) / 10);
 };
 
 export const calculateDmgOutput = (atk: number, dps: number) => {
@@ -277,7 +277,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
   let minLevel = 1;
   let maxLevel = 1;
   for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
-    if (cp <= calculateCP(atk + 15, def + 15, sta + 15, i)) {
+    if (cp <= calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, i)) {
       minLevel = i;
       break;
     }
@@ -1178,10 +1178,10 @@ const queryMove = (
         ftime: DEFAULT_ENEMY_ATK_DELAY,
         ctime: DEFAULT_ENEMY_ATK_DELAY,
       },
-      POKEMON_DEF_OBJ: 160,
-      IV_ATK: 15,
-      IV_DEF: 15,
-      IV_HP: 15,
+      POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ,
+      IV_ATK: MAX_IV,
+      IV_DEF: MAX_IV,
+      IV_HP: MAX_IV,
       POKEMON_LEVEL: 40,
     };
 
@@ -1485,10 +1485,10 @@ const queryMoveCounter = (
     if (mf && mc) {
       const options = {
         objTypes: types,
-        POKEMON_DEF_OBJ: calculateStatsBattle(def, 15, 40, true),
-        IV_ATK: 15,
-        IV_DEF: 15,
-        IV_HP: 15,
+        POKEMON_DEF_OBJ: calculateStatsBattle(def, MAX_IV, 40, true),
+        IV_ATK: MAX_IV,
+        IV_DEF: MAX_IV,
+        IV_HP: MAX_IV,
         POKEMON_LEVEL: 40,
       };
 

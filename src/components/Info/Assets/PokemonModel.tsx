@@ -27,7 +27,7 @@ const PokemonModel = (props: { id: number; name: string }) => {
       const detail = data?.details?.find((item) => item.id === id);
       gender.current = detail ? detail.gender : null;
       return model
-        ? Array.from(new Set(model.image.map((item: { form: string }) => item.form))).map((value) => {
+        ? [...new Set(model.image.map((item: { form: string }) => item.form))].map((value) => {
             return {
               form: value,
               image: model.image.filter((item: { form: string }) => value === item.form),

@@ -25,7 +25,7 @@ export const pvpFindPath = (data: any[], path: string) => {
 };
 
 export const convertPVPRankings = (data: any[], leagues: League[]) => {
-  return Array.from(new Set(data.map((league) => league.split('/').at(0)))).map((league: string) => {
+  return [...new Set(data.map((league) => league.split('/').at(0)))].map((league: string) => {
     let item;
     if (league !== 'all') {
       item = leagues.find((item) => item.iconUrl?.includes(league));
@@ -53,7 +53,7 @@ export const convertPVPRankings = (data: any[], leagues: League[]) => {
 };
 
 export const convertPVPTrain = (data: any[], leagues: League[]) => {
-  return Array.from(new Set(data.map((league) => league.split('/').at(0)))).map((league: string) => {
+  return [...new Set(data.map((league) => league.split('/').at(0)))].map((league: string) => {
     let item;
     if (league !== 'all') {
       item = leagues.find((item) => item.iconUrl?.includes(league));

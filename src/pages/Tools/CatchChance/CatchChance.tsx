@@ -410,7 +410,7 @@ const CatchChance = () => {
                   className="w-75"
                   style={{ maxWidth: 400 }}
                   value={level}
-                  defaultValue={1}
+                  defaultValue={MIN_LEVEL}
                   valueLabelDisplay="off"
                   marks={[
                     {
@@ -419,7 +419,7 @@ const CatchChance = () => {
                     },
                   ]}
                   step={0.5}
-                  min={1}
+                  min={MIN_LEVEL}
                   max={MAX_LEVEL - 1}
                   disabled={data ? false : true}
                   onChange={(data ? onHandleLevel : null) as any}

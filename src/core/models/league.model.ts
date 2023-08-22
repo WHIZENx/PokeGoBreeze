@@ -15,7 +15,7 @@ export interface League {
 }
 
 export interface LeagueCondition {
-  timestamp: {
+  timestamp?: {
     start: number;
     end: number;
   };
@@ -85,4 +85,86 @@ export interface LeagueData {
     };
     settings: SettingLeague[];
   };
+}
+
+export class LeagueOptionsDataModel {
+  allowLeagues!: string[];
+  data!: League[];
+  season!: {
+    season: number;
+    timestamp: {
+      start: number | string;
+      end: number | string;
+    };
+    rewards: {
+      rank: RankRewardLeague[];
+      pokemon: PokemonRewardLeague[];
+    };
+    settings: SettingLeague[];
+  };
+
+  constructor() {
+    this.allowLeagues = [];
+    this.data = [];
+    this.season = {
+      season: 0,
+      timestamp: {
+        start: '',
+        end: '',
+      },
+      rewards: {
+        rank: [],
+        pokemon: [],
+      },
+      settings: [],
+    };
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class LeagueDataModel {
+  id!: string | null;
+  title!: string;
+  enabled!: boolean;
+  conditions!: LeagueCondition;
+  iconUrl!: string | null;
+  league!: string;
+
+  constructor() {
+    this.title = '';
+    this.conditions = {
+      unique_selected: false,
+      unique_type: [],
+      max_level: null,
+      max_cp: 0,
+      whiteList: [],
+      banned: [],
+    };
+    this.league = '';
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class LeagueRewardDataModel {
+  type!: boolean | string;
+  count!: number;
+  step!: number;
+
+  constructor() {
+    this.count = 0;
+    this.step = 0;
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class LeagueRewardPokemonDataModel {
+  guaranteedLimited!: boolean;
+  id?: number | null;
+  name: string;
+  form: string;
+
+  constructor() {
+    this.name = '';
+    this.form = '';
+  }
 }

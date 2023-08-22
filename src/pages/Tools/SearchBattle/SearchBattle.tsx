@@ -20,6 +20,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, SpinnerState, StoreState } from '../../../store/models/state.model';
+import { MIN_IV, MAX_IV } from '../../../util/Constants';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -325,9 +326,9 @@ const FindBattle = () => {
             <PokeGoSlider
               value={ATKIv}
               aria-label="ATK marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -340,9 +341,9 @@ const FindBattle = () => {
             <PokeGoSlider
               value={DEFIv}
               aria-label="DEF marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -355,9 +356,9 @@ const FindBattle = () => {
             <PokeGoSlider
               value={STAIv}
               aria-label="STA marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}

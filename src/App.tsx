@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom';
 import packageInfo from '../package.json';
 import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/actions/store.action';
 import { showSpinnerWithMsg } from './store/actions/spinner.action';
-// import importedComponent from 'react-imported-component';
 
 import './App.scss';
 
@@ -46,98 +45,6 @@ import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
 import { SYNC_MSG, TRANSITION_TIME } from './util/Constants';
 import { StatsState, StoreState } from './store/models/state.model';
-
-// const AsyncHome = importedComponent(
-//     () => import(/* webpackChunkName:'Home' */ './pages/Home/Home')
-// );
-
-// const AsyncTypeEffect = importedComponent(
-//     () => import(/* webpackChunkName:'TypeEffect' */ './pages/TypeEffect/TypeEffect')
-// );
-
-// const AsyncWeather = importedComponent(
-//     () => import(/* webpackChunkName:'Weather' */ './pages/Weather/Weather')
-// );
-
-// const AsyncSearchPokemon = importedComponent(
-//     () => import(/* webpackChunkName:'SearchPokemon' */ './pages/Search/Pokemon/Search')
-// );
-
-// const AsyncSearchMove = importedComponent(
-//     () => import(/* webpackChunkName:'SearchMove' */ './pages/Search/Move/Search')
-// );
-
-// const AsyncPokemon = importedComponent(
-//     () => import(/* webpackChunkName:'Pokemon' */ './pages/Pokemon/Pokemon')
-// );
-
-// const AsyncFindTable = importedComponent(
-//     () => import(/* webpackChunkName:'FindTable' */ './pages/Tools/FindTable/FindTable')
-// );
-
-// const AsyncCalculateStats = importedComponent(
-//     () => import(/* webpackChunkName:'CalculateStats' */ './pages/Tools/CalculateStats/CalculateStats')
-// );
-
-// const AsyncDamage = importedComponent(
-//     () => import(/* webpackChunkName:'Damage' */ './pages/Tools/BattleDamage/Damage')
-// );
-
-// const AsyncDpsTable = importedComponent(
-//     () => import(/* webpackChunkName:'DpsTable' */ './pages/DpsSheet/DpsTable')
-// );
-
-// const AsyncMove = importedComponent(
-//     () => import(/* webpackChunkName:'Move' */ './pages/Move/Move')
-// );
-
-// const AsyncError = importedComponent(
-//     () => import(/* webpackChunkName:'Error' */ './pages/Error/Error')
-// );
-
-// const AsyncLeagues = importedComponent(
-//     () => import(/* webpackChunkName:'Leagues' */ './pages/Leagues/Leagues')
-// );
-
-// const AsyncSearchBattle = importedComponent(
-//     () => import(/* webpackChunkName:'SearchBattle' */ './pages/Tools/SearchBattle/SearchBattle')
-// );
-
-// const AsyncStatsTable = importedComponent(
-//     () => import(/* webpackChunkName:'StatsTable' */ './pages/Tools/StatsTable/Stats')
-// );
-
-// const AsyncSticker = importedComponent(
-//     () => import(/* webpackChunkName:'Sticker' */ './pages/Sticker/Sticker')
-// );
-
-// const AsyncRaidBattle = importedComponent(
-//     () => import(/* webpackChunkName:'RaidBattle' */ './pages/Tools/RaidBattle/RaidBattle')
-// );
-
-// const AsyncCalculatePoint = importedComponent(
-//     () => import(/* webpackChunkName:'CalculatePoint' */ './pages/Tools/CalculatePoint/CalculatePoint')
-// );
-
-// const AsyncRankingPVP = importedComponent(
-//     () => import(/* webpackChunkName:'RankingPVP' */ './pages/PVP/Ranking/PVP')
-// );
-
-// const AsyncPokemonPVP = importedComponent(
-//     () => import(/* webpackChunkName:'PokemonPVP' */ './pages/PVP/Pokemon/Pokemon')
-// );
-
-// const AsyncPVPHome = importedComponent(
-//     () => import(/* webpackChunkName:'PVPHome' */ './pages/PVP/Home')
-// );
-
-// const AsyncTeamPVP = importedComponent(
-//     () => import(/* webpackChunkName:'TeamPVP' */ './pages/PVP/Teams/PVP')
-// );
-
-// const AsyncBattle = importedComponent(
-//     () => import(/* webpackChunkName:'Battle' */ './pages/PVP/Battle/Battle')
-// );
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });

@@ -16,7 +16,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { scoreType } from '../../../util/Constants';
+import { MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 
@@ -121,12 +121,10 @@ const PokemonPVP = () => {
         let bestStats: any = storeStats.current;
         if (!bestStats) {
           if (maxCP === 10000) {
-            const cp = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 50);
-            const buddyCP = calculateCP(stats.atk + 15, stats.def + 15, (stats?.sta ?? 0) + 15, 51);
-            bestStats = {
-              '50': { cp },
-              '51': { cp: buddyCP },
-            };
+            const cp = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
+            const buddyCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+            bestStats[MAX_LEVEL - 1] = { cp };
+            bestStats[MAX_LEVEL] = { cp: buddyCP };
           } else {
             const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
             const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);

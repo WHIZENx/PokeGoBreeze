@@ -6,7 +6,7 @@ import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/Calculate';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from '../../../util/Constants';
+import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from '../../../util/Constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -817,7 +817,7 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches.at(0).clientX) - rect.left);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
     if (elem && x <= timelineNormal.current.clientWidth - 2) {
       elem.style.transform = 'translate(' + x + 'px, -50%)';
     }
@@ -838,7 +838,7 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches.at(0).clientX) - rect.left);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
     if (elem && x <= timelineFit.current.clientWidth) {
       elem.style.transform = 'translate(' + x + 'px, -50%)';
     }
@@ -1230,8 +1230,8 @@ const Battle = () => {
                   id={'level' + capitalize(type)}
                   type="number"
                   step={0.5}
-                  min={1}
-                  max={51}
+                  min={MIN_LEVEL}
+                  max={MAX_LEVEL}
                 />
               </div>
               <div className="input-group">
@@ -1242,8 +1242,8 @@ const Battle = () => {
                   id={'atkIV' + capitalize(type)}
                   type="number"
                   step={1}
-                  min={0}
-                  max={15}
+                  min={MIN_IV}
+                  max={MAX_IV}
                 />
               </div>
               <div className="input-group">
@@ -1254,8 +1254,8 @@ const Battle = () => {
                   id={'defIV' + capitalize(type)}
                   type="number"
                   step={1}
-                  min={0}
-                  max={15}
+                  min={MIN_IV}
+                  max={MAX_IV}
                 />
               </div>
               <div className="input-group">
@@ -1266,8 +1266,8 @@ const Battle = () => {
                   id={'hpIV' + capitalize(type)}
                   type="number"
                   step={1}
-                  min={0}
-                  max={15}
+                  min={MIN_IV}
+                  max={MAX_IV}
                 />
               </div>
               <div className="w-100 element-top">

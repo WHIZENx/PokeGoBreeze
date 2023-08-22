@@ -5,19 +5,20 @@ import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
 
 import bgCandyXL from '../../../assets/bg_CandyXL.png';
 import { StoreState } from '../../../store/models/state.model';
+import * as CandyModel from '../../../core/models/candy.model';
 
 const Background: any = styled.div`
   position: absolute;
-  background: ${(props: any) => computeCandyBgColor(props.candy, props.id)};
+  background: ${(props: { candy: CandyModel.Candy[]; id: number }) => computeCandyBgColor(props.candy, props.id)};
   clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
   width: ${(props: any) => props.size ?? 30}px;
   height: ${(props: any) => props.size ?? 30}px;
 `;
 
 const Fill: any = styled.div`
-  background: ${(props: any) => computeCandyColor(props.candy, props.id)};
-  width: ${(props: any) => props.size ?? 30}px;
-  height: ${(props: any) => props.size ?? 30}px;
+  background: ${(props: { candy: CandyModel.Candy[]; id: number; size: number }) => computeCandyColor(props.candy, props.id)};
+  width: ${(props: { size: number }) => props.size ?? 30}px;
+  height: ${(props: { size: number }) => props.size ?? 30}px;
   mask: url(${bgCandyXL}) center/contain;
 `;
 

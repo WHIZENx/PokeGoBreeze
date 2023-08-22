@@ -419,14 +419,19 @@ export const convertFormName = (id: number, form: string) => {
 export const convertFormGif = (name: string | undefined) => {
   if (name === 'nidoran') {
     name = 'nidoran_m';
+  } else if (name === 'zygarde') {
+    name = 'zygarde-10';
   }
+
   return name
     ?.replace('mr', 'mr.')
     .replace('-hisui', '')
     .replace('slowking-galar', 'slowking')
     .replace('articuno-galar', 'articuno')
     .replace('zapdos-galar', 'zapdos')
-    .replace('moltres-galar', 'moltres');
+    .replace('moltres-galar', 'moltres')
+    .replace('ten-percent', '10')
+    .replace('-fifty-percent', '');
 };
 
 export const convertFormNameImg = (id: number, form: string) => {

@@ -82,9 +82,9 @@ const RaidBattle = () => {
       level: 40,
       isShadow: false,
       iv: {
-        atk: 15,
-        def: 15,
-        sta: 15,
+        atk: MAX_IV,
+        def: MAX_IV,
+        sta: MAX_IV,
       },
       onlyShadow: false,
       onlyMega: false,
@@ -96,9 +96,9 @@ const RaidBattle = () => {
       level: 40,
       isShadow: false,
       iv: {
-        atk: 15,
-        def: 15,
-        sta: 15,
+        atk: MAX_IV,
+        def: MAX_IV,
+        sta: MAX_IV,
       },
       onlyShadow: false,
       onlyMega: false,
@@ -141,7 +141,7 @@ const RaidBattle = () => {
     setShow(true);
     setTrainerBattleId(id);
     setPokemonBattle(pokemons);
-    setTempPokemonBattle(Array.from(pokemons));
+    setTempPokemonBattle([...pokemons]);
   };
 
   const handleShowOption = () => {
@@ -758,8 +758,8 @@ const RaidBattle = () => {
           <input
             value={filters.selected.iv.atk}
             type="number"
-            min={0}
-            max={15}
+            min={MIN_IV}
+            max={MAX_IV}
             required={true}
             className="form-control"
             placeholder="IV ATK"
@@ -771,8 +771,8 @@ const RaidBattle = () => {
           <input
             value={filters.selected.iv.def}
             type="number"
-            min={0}
-            max={15}
+            min={MIN_IV}
+            max={MAX_IV}
             required={true}
             className="form-control"
             placeholder="IV DEF"
@@ -784,8 +784,8 @@ const RaidBattle = () => {
           <input
             value={filters.selected.iv.sta}
             type="number"
-            min={0}
-            max={15}
+            min={MIN_IV}
+            max={MAX_IV}
             required={true}
             className="form-control"
             placeholder="IV STA"
@@ -957,8 +957,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.atk}
               type="number"
-              min={0}
-              max={15}
+              min={MIN_IV}
+              max={MAX_IV}
               required={true}
               className="form-control"
               placeholder="IV ATK"
@@ -979,8 +979,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.def}
               type="number"
-              min={0}
-              max={15}
+              min={MIN_IV}
+              max={MAX_IV}
               required={true}
               className="form-control"
               placeholder="IV DEF"
@@ -1001,8 +1001,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.sta}
               type="number"
-              min={0}
-              max={15}
+              min={MIN_IV}
+              max={MAX_IV}
               required={true}
               className="form-control"
               placeholder="IV STA"
