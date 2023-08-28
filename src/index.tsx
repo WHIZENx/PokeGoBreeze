@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Analytics } from '@vercel/analytics/react';
 import './index.scss';
 
 import { Provider } from 'react-redux';
@@ -36,6 +37,7 @@ ReactDOM.render(
         </ReduxRouter>
       </SnackbarProvider>
     </Provider>
+    <Analytics />
   </React.StrictMode>,
   document.getElementById('root')
 );
