@@ -28,6 +28,8 @@ import { APIUrl } from '../../services/constants';
 import { PokemonDataModel, PokemonModel } from '../../core/models/pokemon.model';
 import { CombatPokemon } from '../../core/models/combat.model';
 import { CandyModel } from '../../core/models/candy.model';
+import { getDbPokemonEncounter } from '../../services/db.service';
+import { DbModel } from '../../core/models/API/db.model';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -153,8 +155,15 @@ export const loadGameMaster = (
 ) => {
   APIService.getFetchUrl(APIUrl.GAMEMASTER, {
     cancelToken: APIService.getAxios().CancelToken.source().token,
-  }).then((gm) => {
-    const pokemon: PokemonModel[] = optionPokemon(gm.data);
+  }).then(async (gm) => {
+    let pokemonEncounter: DbModel;
+    try {
+      pokemonEncounter = await getDbPokemonEncounter();
+    } catch (e) {
+      throw e;
+    }
+
+    const pokemon: PokemonModel[] = optionPokemon(gm.data, pokemonEncounter?.rows);
     const pokemonData = optionPokemonData(pokemon);
     const pokemonFamily = optionPokemonFamily(pokemon);
     const noneForm = optionFormNone(gm.data);
@@ -236,11 +245,21 @@ export const loadGameMaster = (
       payload: league,
     });
 
-    if (timestampLoaded.sounds) {
-      loadSounds(soundsRoot, setStateSound);
-    }
-    if (timestampLoaded.images) {
-      loadAssets(dispatch, imageRoot, gm.data, pokemon, pokemonFamily, pokemonData, formSpecial, pokemonCombat, noneForm, setStateImage);
+    if (timestampLoaded.images || timestampLoaded.sounds) {
+      loadAssets(
+        dispatch,
+        imageRoot,
+        soundsRoot,
+        gm.data,
+        pokemon,
+        pokemonFamily,
+        pokemonData,
+        formSpecial,
+        pokemonCombat,
+        noneForm,
+        setStateImage,
+        setStateSound
+      );
     } else {
       const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage), JSON.parse(stateSound));
       const details = optionDetailsPokemon(gm.data, pokemonData, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
@@ -266,6 +285,7 @@ export const loadGameMaster = (
 export const loadAssets = (
   dispatch: Dispatch,
   imageRoot: { data: { commit: { tree: { url: string } } }[] },
+  soundsRoot: { data: { commit: { tree: { url: string } } }[] },
   data: any,
   pokemon: PokemonModel[],
   pokemonFamily: string[],
@@ -273,55 +293,54 @@ export const loadAssets = (
   formSpecial: string[],
   pokemonCombat: CombatPokemon[],
   noneForm: string[],
-  setStateImage: any
+  setStateImage: any,
+  setStateSound: any
 ) => {
-  APIService.getFetchUrl(imageRoot.data.at(0)?.commit.tree.url ?? '', options).then((imageFolder: { data: { tree: any[] } }) => {
+  Promise.all([
+    APIService.getFetchUrl(imageRoot.data.at(0)?.commit.tree.url ?? '', options),
+    APIService.getFetchUrl(soundsRoot.data.at(0)?.commit.tree.url ?? '', options),
+  ]).then(([imageFolder, soundFolder]) => {
     const imageFolderPath = imageFolder.data.tree.find((item: { path: string }) => item.path === 'Images');
-
-    APIService.getFetchUrl(imageFolderPath.url, options).then((image: { data: { tree: any[] } }) => {
-      const imagePath = image.data.tree.find((item: { path: string }) => item.path === 'Pokemon');
-
-      APIService.getFetchUrl(imagePath.url + '?recursive=1', options).then((imageData: { data: { tree: any[] } }) => {
-        const assetImgFiles = optionPokeImg(imageData.data);
-        setStateImage(JSON.stringify(assetImgFiles));
-
-        const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetImgFiles);
-        const details = optionDetailsPokemon(data, pokemonData, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
-
-        dispatch({
-          type: LOAD_ASSETS,
-          payload: assetsPokemon,
-        });
-
-        dispatch({
-          type: LOAD_DETAILS,
-          payload: details,
-        });
-
-        dispatch({
-          type: LOAD_POKEMON_NAME,
-        });
-
-        dispatch({
-          type: LOAD_RELEASED_GO,
-        });
-      });
-    });
-  });
-};
-
-export const loadSounds = (soundsRoot: { data: { commit: { tree: { url: string } } }[] }, setStateSound: any) => {
-  APIService.getFetchUrl(soundsRoot.data.at(0)?.commit.tree.url ?? '', options).then((soundFolder: { data: { tree: any[] } }) => {
     const soundFolderPath = soundFolder.data.tree.find((item: { path: string }) => item.path === 'Sounds');
 
-    APIService.getFetchUrl(soundFolderPath.url, options).then((sound: { data: { tree: any[] } }) => {
-      const soundPath = sound.data.tree.find((item: { path: string }) => item.path === 'Pokemon Cries');
+    Promise.all([APIService.getFetchUrl(imageFolderPath.url, options), APIService.getFetchUrl(soundFolderPath.url, options)]).then(
+      ([image, sound]) => {
+        const imagePath = image.data.tree.find((item: { path: string }) => item.path === 'Pokemon');
+        const soundPath = sound.data.tree.find((item: { path: string }) => item.path === 'Pokemon Cries');
 
-      APIService.getFetchUrl(soundPath.url + '?recursive=1', options).then((soundData: { data: { tree: any[] } }) => {
-        const assetSoundFiles = optionPokeSound(soundData.data);
-        setStateSound(JSON.stringify(assetSoundFiles));
-      });
-    });
+        Promise.all([
+          APIService.getFetchUrl(imagePath.url + '?recursive=1', options),
+          APIService.getFetchUrl(soundPath.url + '?recursive=1', options),
+        ]).then(([imageData, soundData]) => {
+          const assetImgFiles = optionPokeImg(imageData.data);
+          setStateImage(JSON.stringify(assetImgFiles));
+
+          const assetSoundFiles = optionPokeSound(soundData.data);
+          setStateSound(JSON.stringify(assetSoundFiles));
+
+          const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
+          const details = optionDetailsPokemon(data, pokemonData, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
+
+          dispatch({
+            type: LOAD_ASSETS,
+            payload: assetsPokemon,
+          });
+
+          dispatch({
+            type: LOAD_DETAILS,
+            payload: details,
+          });
+
+          dispatch({
+            type: LOAD_POKEMON_NAME,
+          });
+
+          dispatch({
+            type: LOAD_RELEASED_GO,
+          });
+        });
+      }
+    );
   });
 };
 

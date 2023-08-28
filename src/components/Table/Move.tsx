@@ -14,6 +14,7 @@ const Move = (props: {
   setMove: (arg0: any) => void;
   text: string;
   selectDefault: boolean;
+  clearData?: any;
 }) => {
   const data = useSelector((state: StoreState) => state.store.data);
 
@@ -109,6 +110,10 @@ const Move = (props: {
     setShowMove(false);
     setCurrentMove(value);
     props.setMove(findMoveData(value.name));
+
+    if (props.clearData) {
+      props.clearData();
+    }
   };
 
   return (

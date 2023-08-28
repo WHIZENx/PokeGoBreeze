@@ -10,7 +10,7 @@ import { capitalize, convertName, splitAndCapitalize } from '../util/Utils';
 import { TypeSet } from './models/type.model';
 import { Candy, CandyDataModel, CandyModel } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
-import { PokemonDataModel, PokemonModel } from './models/pokemon.model';
+import { PokemonDataModel, PokemonEncounter, PokemonModel } from './models/pokemon.model';
 import { TypeEff } from './models/typeEff.model';
 
 export const getOption = (options: any, args: string[]) => {
@@ -239,15 +239,21 @@ export const optionPokemonSpawn = (data: any[]) => {
     });
 };
 
-export const optionPokemon = (data: any[]) => {
+export const optionPokemon = (data: any[], encounter: PokemonEncounter[]) => {
   return data
     .filter((item) => item.templateId.includes('POKEMON') && Object.keys(item.data).includes('pokemonSettings'))
     .map((item) => {
       const name = item.data.pokemonSettings.form ?? item.data.pokemonSettings.pokemonId;
+      const pokemonEncounter = encounter?.find((pokemon) => pokemon.name === name);
       return {
         ...item.data.pokemonSettings,
         id: parseInt(item.templateId.split('_')[0].replace('V', '')),
         name,
+        encounter: {
+          ...item.data.pokemonSettings.encounter,
+          baseCaptureRate: pokemonEncounter?.basecapturerate,
+          baseFleeRate: pokemonEncounter?.basefleerate,
+        },
       };
     });
 };
@@ -591,9 +597,9 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
     }
 
     mega = false;
-    let soundForm = sounds.filter((sound: string) => sound.includes(`Addressable Assets/pm${result.id}.`) && sound.includes('cry'));
-    result.sound.cry = soundForm.map((sound: string) => {
-      let form: any = sound.split('.');
+    let soundForm = sounds.filter((sound) => sound.includes(`Addressable Assets/pm${result.id}.`) && sound.includes('cry'));
+    result.sound.cry = soundForm.map((sound) => {
+      let form: string | string[] = sound.split('.');
       if (form[1] === 'cry') {
         form = 'NORMAL';
       } else {

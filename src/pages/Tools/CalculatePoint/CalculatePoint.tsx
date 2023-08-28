@@ -39,7 +39,7 @@ const CalculatePoint = () => {
   const [DEFIv, setDEFIv]: any = useState(0);
   const [STAIv, setSTAIv]: any = useState(0);
 
-  const [weaterBoosts, setWeaterBoosts] = useState(false);
+  const [weatherBoosts, setWeatherBoosts] = useState(false);
   const [pvpDmg, setPvpDmg] = useState(false);
 
   const [statDefATK, setStatDefATK] = useState(0);
@@ -60,7 +60,7 @@ const CalculatePoint = () => {
 
   const [resultBreakPointAtk, setResultBreakPointAtk]: any = useState(null);
   const [resultBreakPointDef, setResultBreakPointDef]: any = useState(null);
-  const [resultBulkpointDef, setResultBulkPointDef]: any = useState(null);
+  const [resultBulkPointDef, setResultBulkPointDef]: any = useState(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -131,7 +131,7 @@ const CalculatePoint = () => {
               form.form.types.map((item: { type: { name: string } }) => item.type.name),
               move.type
             ),
-            wb: (!pvpDmg || isRaid) && weaterBoosts,
+            wb: (!pvpDmg || isRaid) && weatherBoosts,
           },
           false
         );
@@ -171,7 +171,7 @@ const CalculatePoint = () => {
               formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
               moveDef.type
             ),
-            wb: (!pvpDmg || isRaid) && weaterBoosts,
+            wb: (!pvpDmg || isRaid) && weatherBoosts,
           },
           false
         );
@@ -237,7 +237,7 @@ const CalculatePoint = () => {
                   formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                   cMove.type
                 ),
-                wb: (!pvpDmg || isRaid) && weaterBoosts,
+                wb: (!pvpDmg || isRaid) && weatherBoosts,
               },
               false
             )) /
@@ -256,7 +256,7 @@ const CalculatePoint = () => {
                 formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
                 fMove.type
               ),
-              wb: (!pvpDmg || isRaid) && weaterBoosts,
+              wb: (!pvpDmg || isRaid) && weatherBoosts,
             },
             false
           )
@@ -264,7 +264,7 @@ const CalculatePoint = () => {
     );
   };
 
-  const calculateBulkpointDef = () => {
+  const calculateBulkPointDef = () => {
     setResultBulkPointDef(null);
     let dataList: any[] = [];
     let lv = 0;
@@ -285,7 +285,7 @@ const CalculatePoint = () => {
     enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: 'success' });
   };
 
-  const setIconBattle = (mode: number, pri: string, sec: string) => {
+  const setIconBattle = (_: number, pri: string, sec: string) => {
     return (
       <div className="d-flex">
         <div className="border-type-stat text-center">
@@ -380,14 +380,31 @@ const CalculatePoint = () => {
                     form={form ? form.form.pokemon.name : name.toLowerCase()}
                     setMove={setMove}
                     move={move}
+                    clearData={setResultBreakPointAtk}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={weaterBoosts} onChange={(_, check) => setWeaterBoosts(check)} />}
-                    label="Weater Boosts"
+                    control={
+                      <Checkbox
+                        checked={weatherBoosts}
+                        onChange={(_, check) => {
+                          setResultBreakPointAtk(null);
+                          setWeatherBoosts(check);
+                        }}
+                      />
+                    }
+                    label="Weather Boosts"
                     disabled={pvpDmg && !isRaid}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={pvpDmg} onChange={(_, check) => setPvpDmg(check)} />}
+                    control={
+                      <Checkbox
+                        checked={pvpDmg}
+                        onChange={(_, check) => {
+                          setResultBreakPointAtk(null);
+                          setPvpDmg(check);
+                        }}
+                      />
+                    }
                     label="PVP stats"
                     disabled={isRaid}
                   />
@@ -495,14 +512,31 @@ const CalculatePoint = () => {
                     form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
                     setMove={setMoveDef}
                     move={moveDef}
+                    clearData={setResultBreakPointDef}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={weaterBoosts} onChange={(_, check) => setWeaterBoosts(check)} />}
-                    label="Weater Boosts"
+                    control={
+                      <Checkbox
+                        checked={weatherBoosts}
+                        onChange={(_, check) => {
+                          setResultBreakPointDef(null);
+                          setWeatherBoosts(check);
+                        }}
+                      />
+                    }
+                    label="Weather Boosts"
                     disabled={pvpDmg}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={pvpDmg} onChange={(_, check) => setPvpDmg(check)} />}
+                    control={
+                      <Checkbox
+                        checked={pvpDmg}
+                        onChange={(_, check) => {
+                          setResultBreakPointDef(null);
+                          setPvpDmg(check);
+                        }}
+                      />
+                    }
                     label="PVP stats"
                     disabled={isRaid}
                   />
@@ -652,7 +686,7 @@ const CalculatePoint = () => {
               </div>
             </div>
           </Tab>
-          <Tab eventKey="bulkpoint" title="Bulkpoint Attacker">
+          <Tab eventKey="bulkpoint" title="BulkPoint Attacker">
             <div className="tab-body">
               <div className="row">
                 <div className="col-lg-4">
@@ -666,6 +700,7 @@ const CalculatePoint = () => {
                       setMove={setFMove}
                       move={fMove}
                       type={TypeMove.FAST}
+                      clearData={setResultBulkPointDef}
                     />
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -701,6 +736,7 @@ const CalculatePoint = () => {
                       setMove={setCMove}
                       move={cMove}
                       type={TypeMove.CHARGE}
+                      clearData={setResultBulkPointDef}
                     />
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -728,12 +764,28 @@ const CalculatePoint = () => {
                     )}
                   </div>
                   <FormControlLabel
-                    control={<Checkbox checked={weaterBoosts} onChange={(_, check) => setWeaterBoosts(check)} />}
-                    label="Weater Boosts"
+                    control={
+                      <Checkbox
+                        checked={weatherBoosts}
+                        onChange={(_, check) => {
+                          setResultBulkPointDef(null);
+                          setWeatherBoosts(check);
+                        }}
+                      />
+                    }
+                    label="Weather Boosts"
                     disabled={pvpDmg}
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={pvpDmg} onChange={(_, check) => setPvpDmg(check)} />}
+                    control={
+                      <Checkbox
+                        checked={pvpDmg}
+                        onChange={(_, check) => {
+                          setResultBulkPointDef(null);
+                          setPvpDmg(check);
+                        }}
+                      />
+                    }
                     label="PVP stats"
                     disabled={isRaid}
                   />
@@ -768,21 +820,21 @@ const CalculatePoint = () => {
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}
-                      onChange={(e, v) => setSTAIv(v)}
+                      onChange={(_, v) => setSTAIv(v)}
                     />
                   </div>
                   <button
                     className="text-center btn btn-primary w-100"
                     style={{ marginBottom: 20 }}
-                    onClick={() => calculateBulkpointDef()}
+                    onClick={() => calculateBulkPointDef()}
                     disabled={!(fMove && cMove)}
                   >
                     Calculate
                   </button>
                 </div>
                 <div className="col-lg-8" style={{ overflowX: 'auto' }}>
-                  <h3>Bulkpoint</h3>
-                  {resultBulkpointDef && setIconBattle(2, 'def', 'atk')}
+                  <h3>BulkPoint</h3>
+                  {resultBulkPointDef && setIconBattle(2, 'def', 'atk')}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
@@ -802,9 +854,9 @@ const CalculatePoint = () => {
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
-                          {resultBulkpointDef ? (
+                          {resultBulkPointDef ? (
                             <Fragment>
-                              {[...Array(resultBulkpointDef.maxLength).keys()].map((_, index) => (
+                              {[...Array(resultBulkPointDef.maxLength).keys()].map((_, index) => (
                                 <th key={index}>{index}</th>
                               ))}
                             </Fragment>
@@ -822,9 +874,9 @@ const CalculatePoint = () => {
                         {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
-                            {resultBulkpointDef ? (
+                            {resultBulkPointDef ? (
                               <Fragment>
-                                {resultBulkpointDef.data[i].map((value: string, index: React.Key) => (
+                                {resultBulkPointDef.data[i].map((value: string, index: React.Key) => (
                                   <td className="text-iv-bulk" key={index}>
                                     {value}
                                   </td>
@@ -832,7 +884,7 @@ const CalculatePoint = () => {
                               </Fragment>
                             ) : (
                               <Fragment>
-                                {[...Array(12).keys()].map((iv, index) => (
+                                {[...Array(12).keys()].map((_, index) => (
                                   <td key={index} />
                                 ))}
                               </Fragment>

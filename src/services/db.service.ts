@@ -45,3 +45,21 @@ export const createDbPokemonName = async (pokemon: PokemonInfo) => {
     ${pokemon.name}
   )`;
 };
+
+export const getDbPokemonEncounter = async () => {
+  return await db.sql`SELECT * from tblPokemonEncounter`;
+};
+
+export const createDbPokemonEncounter = async (pokemon: any, index: any) => {
+  return await db.sql`INSERT INTO tblPokemonEncounter(
+    Id,
+    Name,
+    Basecapturerate,
+    Basefleerate
+  ) VALUES (
+    ${parseInt(index + 1)},
+    ${pokemon.name},
+    ${parseFloat(pokemon.baseCaptureRate)},
+    ${parseFloat(pokemon.baseFleeRate)}
+  )`;
+};

@@ -168,3 +168,17 @@ export class LeagueRewardPokemonDataModel {
     this.form = '';
   }
 }
+
+// tslint:disable-next-line:max-classes-per-file
+export class LeaguePVPPokemonDataModel {
+  id!: string;
+  name: string;
+  cp!: number | number[];
+  logo!: string | null;
+
+  constructor() {
+    this.id = '';
+    this.name = '';
+    this.cp = 0;
+  }
+}

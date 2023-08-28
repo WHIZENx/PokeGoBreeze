@@ -1,14 +1,5 @@
 import { splitAndCapitalize } from '../util/Utils';
-import { League, LeaguePVP } from './models/league.model';
-
-const leagueModel = () => {
-  return {
-    id: '',
-    name: '',
-    cp: 0,
-    logo: null,
-  };
-};
+import { League, LeaguePVP, LeaguePVPPokemonDataModel } from './models/league.model';
 
 export const pvpConvertPath = (data: { tree: any[] }, path: string) => {
   return data.tree
@@ -37,7 +28,7 @@ export const convertPVPRankings = (data: any[], leagues: League[]) => {
       }
     }
 
-    const result: LeaguePVP = leagueModel();
+    const result: LeaguePVP = new LeaguePVPPokemonDataModel();
     result.id = league;
     result.name = splitAndCapitalize(item ? item.title : league, '_', ' ');
     if (!result.name.toLowerCase().includes(result.id)) {
@@ -64,7 +55,7 @@ export const convertPVPTrain = (data: any[], leagues: League[]) => {
         item = leagues.find((item) => item.id?.includes(league.toUpperCase()));
       }
     }
-    const result: LeaguePVP = leagueModel();
+    const result: LeaguePVP = new LeaguePVPPokemonDataModel();
     result.id = league;
     result.name = splitAndCapitalize(item ? item.title : league, '_', ' ');
     if (!result.name.toLowerCase().includes(result.id)) {

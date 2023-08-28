@@ -274,8 +274,8 @@ export const calculateCatchChance = (baseCaptureRate: number, level: number, mul
 export const predictStat = (atk: number, def: number, sta: number, cp: number | string) => {
   cp = parseInt(cp.toString());
   const dataStat: any = {};
-  let minLevel = 1;
-  let maxLevel = 1;
+  let minLevel = MIN_LEVEL + 1;
+  let maxLevel = MIN_LEVEL + 1;
   for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
     if (cp <= calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, i)) {
       minLevel = i;

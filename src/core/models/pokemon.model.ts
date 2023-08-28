@@ -48,6 +48,8 @@ export interface PokemonModel {
     shoulderModeScale: number;
   };
   encounter: {
+    baseCaptureRate?: number;
+    baseFleeRate?: number;
     collisionRadiusM: number;
     collisionHeightM: number;
     collisionHeadRadiusM: number;
@@ -189,4 +191,11 @@ export interface PokemonMoveData {
   purified: boolean;
   mShadow: boolean;
   elite: { fmove: boolean; cmove: boolean };
+}
+
+export interface PokemonEncounter {
+  id: number;
+  name: string;
+  basecapturerate: number;
+  basefleerate: number;
 }

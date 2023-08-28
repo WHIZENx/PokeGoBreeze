@@ -430,7 +430,7 @@ const CatchChance = () => {
                   <div className="w-25 text-center d-inline-block">
                     <h1>FLEE</h1>
                     <hr className="w-100" />
-                    <h5>{data?.baseFleeRate * 100}%</h5>
+                    <h5>{Math.round(data?.baseFleeRate * 100)}%</h5>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
