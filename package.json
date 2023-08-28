@@ -1,6 +1,6 @@
 {
   "name": "pokego-breeze",
-  "version": "3.2.3",
+  "version": "3.2.5",
   "main": "index.tsx",
   "license": "MIT",
   "description": "Web Application for Pokémon GO Tools&Information",
@@ -20,6 +20,7 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/react-router-dom": "^5.3.3",
+    "@vercel/analytics": "^1.0.2",
     "@vercel/postgres": "^0.4.1",
     "axios": "^0.26.1",
     "bootstrap": "^5.2.0-beta1",

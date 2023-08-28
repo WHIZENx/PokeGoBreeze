@@ -53,7 +53,7 @@ const columnPokemon: any = [
             e.target.src = APIService.getPokeIconSprite(row.baseSpecies);
           }}
         />
-        {splitAndCapitalize(row.name, '-', ' ')}
+        {splitAndCapitalize(row.name?.replaceAll('_', '-'), '-', ' ')}
       </>
     ),
     minWidth: '200px',

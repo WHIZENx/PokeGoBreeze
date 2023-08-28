@@ -116,6 +116,7 @@ export const genList: any = {
   6: [650, 721],
   7: [722, 809],
   8: [810, 905],
+  9: [906, 1008],
 };
 
 export const regionList: any = {
@@ -150,6 +151,7 @@ export const versionList: string[] = [
   'Sword Shield',
   'Ultra Sun Ultra Moon',
   'X Y',
+  'Scarlet Violet',
 ];
 
 export const typeCostPowerUp = (type: string) => {
@@ -226,6 +228,8 @@ export const genRoman = (gen: number) => {
       return 'VII';
     case 8:
       return 'VIII';
+    case 9:
+      return 'IX';
     default:
       return '';
   }
