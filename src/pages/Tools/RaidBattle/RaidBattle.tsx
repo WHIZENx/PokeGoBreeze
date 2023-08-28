@@ -1598,7 +1598,7 @@ const RaidBattle = () => {
 
       <Modal show={showSettingPokemon.isShow} onHide={handleCloseSettingPokemon} centered={true}>
         <Modal.Header closeButton={true}>
-          <Modal.Title>Pokemon Settings</Modal.Title>
+          <Modal.Title>Pokémon Settings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalFormSetting()}</div>

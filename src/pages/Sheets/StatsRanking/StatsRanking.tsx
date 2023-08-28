@@ -318,7 +318,7 @@ const StatsRanking = () => {
       <Stats statATK={select.atk} statDEF={select.def} statSTA={select.sta} statProd={select.statProd} pokemonStats={stats} />
       <div className="d-flex" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
-          <span className="input-group-text">Find Pokemon</span>
+          <span className="input-group-text">Find Pokémon</span>
           <input
             type="text"
             className="form-control input-search"

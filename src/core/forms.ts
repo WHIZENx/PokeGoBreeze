@@ -1,4 +1,4 @@
-// Pokemon GO Forms
+// Pokémon GO Forms
 const GO_FORMS = [
   {
     default_id: 150,
@@ -23,7 +23,7 @@ export const getFormsGO = (id: number) => {
   return GO_FORMS.filter((pokemon) => pokemon.default_id === id);
 };
 
-// Pokemon GO Stats Change
+// Pokémon GO Stats Change
 interface PokeGOStats {
   id: string;
   attack: number;
