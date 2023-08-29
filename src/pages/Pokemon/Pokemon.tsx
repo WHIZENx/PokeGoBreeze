@@ -4,7 +4,7 @@ import APIService from '../../services/API.service';
 import './Pokemon.scss';
 
 import { convertFormNameImg, convertName, getPokemonById, getPokemonByIndex, splitAndCapitalize } from '../../util/Utils';
-import { regionList } from '../../util/Constants';
+import { KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constants';
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -257,10 +257,10 @@ const Pokemon = (props: {
             current: currentId,
             next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
           };
-          if (result.prev && event.keyCode === 37) {
+          if (result.prev && event.keyCode === KEY_LEFT) {
             event.preventDefault();
             params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId();
-          } else if (result.next && event.keyCode === 39) {
+          } else if (result.next && event.keyCode === KEY_RIGHT) {
             event.preventDefault();
             params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId();
           }

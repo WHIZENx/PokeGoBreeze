@@ -13,6 +13,8 @@ import configureStore, { history } from './store';
 import Main from './App';
 import { RouterState } from './store/models/state.model';
 
+import { Analytics } from '@vercel/analytics/react';
+
 if (module.hot) {
   module.hot.accept();
 }
@@ -35,6 +37,7 @@ ReactDOM.render(
         </ReduxRouter>
       </SnackbarProvider>
     </Provider>
+    <Analytics />
   </React.StrictMode>,
   document.getElementById('root')
 );

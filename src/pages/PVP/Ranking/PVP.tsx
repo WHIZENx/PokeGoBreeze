@@ -378,8 +378,8 @@ const RankingPVP = () => {
               type="text"
               className="form-control input-search"
               placeholder="Enter Name or ID"
-              value={search}
-              onInput={(e: any) => setSearch(e.target.value)}
+              defaultValue={search}
+              onKeyUp={(e: any) => setSearch(e.target.value)}
             />
           </div>
           <div className="ranking-container">
@@ -402,10 +402,11 @@ const RankingPVP = () => {
             </div>
             <Accordion alwaysOpen={true}>
               {rankingData
-                .filter((pokemon: { speciesId: string; speciesName: string }) =>
-                  splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), '-', ' ')
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
+                .filter(
+                  (pokemon: { speciesId: string; speciesName: string; id: number }) =>
+                    splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), '-', ' ')
+                      .toLowerCase()
+                      .includes(search.toLowerCase()) || pokemon.id.toString().includes(search)
                 )
                 .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
                   sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]

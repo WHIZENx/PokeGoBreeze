@@ -293,7 +293,7 @@ const SearchTypes = () => {
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charge Moves: ${result.chargedMove.length}/${allData.chargedMoves} (${Math.round(
+              <b>{`Charged Moves: ${result.chargedMove.length}/${allData.chargedMoves} (${Math.round(
                 (result.chargedMove.length * 100) / (allData.chargedMoves ?? 0)
               )}%)`}</b>
             </span>

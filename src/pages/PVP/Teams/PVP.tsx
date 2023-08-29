@@ -282,8 +282,8 @@ const TeamPVP = () => {
               type="text"
               className="form-control input-search"
               placeholder="Enter Name or ID"
-              value={search}
-              onInput={(e: any) => setSearch(e.target.value)}
+              defaultValue={search}
+              onKeyUp={(e: any) => setSearch(e.target.value)}
             />
           </div>
           <div className="ranking-container card-container">
@@ -338,8 +338,10 @@ const TeamPVP = () => {
               </div>
             </div>
             {rankingData.performers
-              .filter((pokemon: { name: string }) =>
-                splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase())
+              .filter(
+                (pokemon: { name: string; id: number }) =>
+                  splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
+                  pokemon.id.toString().includes(search)
               )
               .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
                 sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy]

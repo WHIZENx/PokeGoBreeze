@@ -643,8 +643,8 @@ const DpsTdo = () => {
                     type="text"
                     className="form-control input-search"
                     placeholder="Enter Name or ID"
-                    value={searchTerm}
-                    onInput={(e: any) => setSearchTerm(e.target.value)}
+                    defaultValue={searchTerm}
+                    onKeyUp={(e: any) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <div className="d-flex col-md-3">

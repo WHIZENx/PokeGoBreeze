@@ -264,7 +264,7 @@ const TableMove = (props: {
                     </span>
                   </th>
                   <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('offensive', 'charged')}>
-                    Charge
+                    Charged
                     <span style={{ opacity: stateSorted.offensive.sortBy === 'charged' ? 1 : 0.3 }}>
                       {stateSorted.offensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
@@ -316,7 +316,7 @@ const TableMove = (props: {
                     </span>
                   </th>
                   <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('defensive', 'charged')}>
-                    Charge
+                    Charged
                     <span style={{ opacity: stateSorted.defensive.sortBy === 'charged' ? 1 : 0.3 }}>
                       {stateSorted.defensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>

@@ -657,11 +657,7 @@ export const calculateDamagePVE = (
     }
     modifier = isStab * isWb * isFriend * isDodge * isCharge * isMega * isTrainer * eff.effective;
   } else {
-    if (stab) {
-      modifier = StabMultiply;
-    } else {
-      modifier = 1;
-    }
+    modifier = stab ? StabMultiply : 1;
   }
   if (notPure) {
     return 0.5 * power * (atk / defObj) * modifier + 1;

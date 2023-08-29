@@ -90,7 +90,7 @@ const Leagues = () => {
           return search === '' || textTitle.toLowerCase().includes(search.toLowerCase());
         })
       );
-    }, 500);
+    }, 300);
     return () => clearTimeout(timeOutId);
   }, [search]);
 
@@ -276,7 +276,7 @@ const Leagues = () => {
                         alt="img-pokemon"
                         src={APIService.getItemSprite('Item_1202')}
                       />
-                      <span className="caption text-black">TM Charge Move</span>
+                      <span className="caption text-black">TM Charged Move</span>
                     </Fragment>
                   )}
                 </Badge>
@@ -365,7 +365,7 @@ const Leagues = () => {
                         alt="img-pokemon"
                         src={APIService.getItemSprite('Item_1202')}
                       />
-                      <span className="caption text-black">TM Charge Move</span>
+                      <span className="caption text-black">TM Charged Move</span>
                     </Fragment>
                   )}
                 </Badge>
@@ -436,8 +436,8 @@ const Leagues = () => {
           type="text"
           className="form-control input-search"
           placeholder="Enter League Name"
-          value={search}
-          onInput={(e: any) => setSearch(e.target.value)}
+          defaultValue={search}
+          onKeyUp={(e: any) => setSearch(e.target.value)}
         />
       </div>
       <Accordion alwaysOpen={true}>

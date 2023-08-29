@@ -8,6 +8,7 @@ import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
+import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
 
 const Search = () => {
   const theme = useTheme();
@@ -40,10 +41,13 @@ const Search = () => {
   }, []);
 
   useEffect(() => {
-    const results = pokemonList.current.filter(
-      (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
-    );
-    setPokemonListFilter(results);
+    const timeOutId = setTimeout(() => {
+      const results = pokemonList.current.filter(
+        (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+      );
+      setPokemonListFilter(results);
+    });
+    return () => clearTimeout(timeOutId);
   }, [searchTerm]);
 
   useEffect(() => {
@@ -84,7 +88,7 @@ const Search = () => {
     }
   };
 
-  const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
     const currentId = getPokemonById(Object.values(pokemonName), selectId);
     if (currentId) {
       const result = {
@@ -92,13 +96,15 @@ const Search = () => {
         current: currentId,
         next: getPokemonByIndex(Object.values(pokemonName), currentId.index + 1),
       };
-      if (event.keyCode === 13) {
+      if (event.keyCode === KEY_ENTER) {
         setShowResult(false);
         setId(selectId);
-      } else if (result.prev && event.keyCode === 38) {
+      } else if (result.prev && event.keyCode === KEY_UP) {
         setSelectId(result.prev.id);
-      } else if (result.next && event.keyCode === 40) {
+      } else if (result.next && event.keyCode === KEY_DOWN) {
         setSelectId(result.next.id);
+      } else {
+        setSearchTerm(search);
       }
     }
   };
@@ -118,11 +124,10 @@ const Search = () => {
             className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
             style={{ backgroundColor: (theme.palette.background as any).input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
-            value={searchTerm}
-            onInput={(e: any) => setSearchTerm(e.target.value)}
+            defaultValue={searchTerm}
             onFocus={() => setShowResult(true)}
             onBlur={() => setShowResult(false)}
-            onKeyUp={(e) => onChangeSelect(e)}
+            onKeyUp={(e: any) => onChangeSelect(e, e.target.value)}
           />
         </div>
         <div className="result" style={{ display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>

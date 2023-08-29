@@ -145,8 +145,8 @@ const Search = () => {
                         type="text"
                         variant="outlined"
                         placeholder="Enter Name or ID"
-                        value={fMoveName}
-                        onChange={(e: any) => setFilters({ ...filters, fMoveName: e.target.value })}
+                        defaultValue={fMoveName}
+                        onKeyUp={(e: any) => setFilters({ ...filters, fMoveName: e.target.value })}
                         size="small"
                       />
                     </div>
@@ -201,8 +201,8 @@ const Search = () => {
                         type="text"
                         variant="outlined"
                         placeholder="Enter Name or ID"
-                        value={cMoveName}
-                        onChange={(e: any) => setFilters({ ...filters, cMoveName: e.target.value })}
+                        defaultValue={cMoveName}
+                        onKeyUp={(e: any) => setFilters({ ...filters, cMoveName: e.target.value })}
                         size="small"
                       />
                     </div>

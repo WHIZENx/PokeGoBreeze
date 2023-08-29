@@ -2,6 +2,13 @@ import { Options } from '../core/models/options.model';
 import { getOption } from '../core/options';
 import APIService from '../services/API.service';
 
+// KeyCode
+export const KEY_ENTER = 13;
+export const KEY_LEFT = 37;
+export const KEY_UP = 38;
+export const KEY_RIGHT = 39;
+export const KEY_DOWN = 40;
+
 export const SYNC_MSG = 'Waiting to sync current data';
 
 export const TRANSITION_TIME = '0.3s';

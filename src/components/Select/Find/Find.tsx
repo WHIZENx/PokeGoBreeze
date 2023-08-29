@@ -59,10 +59,13 @@ const Find = (props: {
   const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
 
   useEffect(() => {
-    const results = pokemonList.current.filter(
-      (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
-    );
-    setPokemonListFilter(results);
+    const timeOutId = setTimeout(() => {
+      const results = pokemonList.current.filter(
+        (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+      );
+      setPokemonListFilter(results);
+    });
+    return () => clearTimeout(timeOutId);
   }, [searchTerm]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
@@ -162,8 +165,8 @@ const Find = (props: {
             aria-label="search"
             aria-describedby="input-search"
             placeholder="Enter Name or ID"
-            value={searchTerm}
-            onInput={(e: any) => setSearchTerm(e.target.value)}
+            defaultValue={searchTerm}
+            onKeyUp={(e: any) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="result tools" onScroll={listenScrollEvent.bind(this)}>

@@ -101,7 +101,7 @@ const CardPokemonInfo = (props: {
         <TypeInfo arr={props.types} hideText={true} height={24} />
         <b>
           <span style={{ fontSize: 14 }} className="text-info text-center caption text-black">{`#${props.id} ${splitAndCapitalize(
-            props.name,
+            props.name.replaceAll('_', '-'),
             '-',
             ' '
           )}`}</span>
