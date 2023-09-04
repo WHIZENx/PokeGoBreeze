@@ -30,8 +30,8 @@ interface EvolutionBranch {
 }
 
 export interface PokemonModel {
-  eliteQuickMove?: string[];
-  eliteCinematicMove?: string[];
+  eliteQuickMoves?: string[];
+  eliteCinematicMoves?: string[];
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: any;

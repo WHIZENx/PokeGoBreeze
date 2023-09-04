@@ -6,7 +6,17 @@ import { Link } from 'react-router-dom';
 
 import { checkPokemonGO, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
-import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import {
+  FORM_GMAX,
+  FORM_MEGA,
+  MAX_IV,
+  MAX_LEVEL,
+  MIN_IV,
+  MIN_LEVEL,
+  RAID_BOSS_TIER,
+  SHADOW_ATK_BONUS,
+  SHADOW_DEF_BONUS,
+} from '../../../util/Constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -416,14 +426,14 @@ const RaidBattle = () => {
   ) => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
-      if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
+      if (!pokemon.forme || !pokemon.forme?.toUpperCase().includes(FORM_MEGA)) {
         if (combat.shadowMoves.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         }
         addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves, pokemonTarget);
       }
-      if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) && combat.shadowMoves.length > 0) {
+      if ((!pokemon.forme || !pokemon.forme?.toUpperCase().includes(FORM_MEGA)) && combat.shadowMoves.length > 0) {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves, pokemonTarget);
       } else {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true, null, pokemonTarget);
@@ -434,7 +444,7 @@ const RaidBattle = () => {
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: any[] | (() => any[]) = [];
     Object.values(data?.pokemonData ?? []).forEach((pokemon) => {
-      if (pokemon.forme !== 'Gmax') {
+      if (pokemon.forme?.toUpperCase() !== FORM_GMAX) {
         let combatPoke: any = data?.pokemonCombat?.filter(
           (item) =>
             item.id === pokemon.num &&
@@ -496,11 +506,7 @@ const RaidBattle = () => {
     const cmove = data?.combat?.find((item) => item.name === pokemon.cmoveTargetPokemon?.name);
 
     if (fmove && cmove) {
-      const stats = calculateStatsByTag(
-        pokemon as unknown as PokemonDataModel,
-        pokemon.dataTargetPokemon.baseStats,
-        pokemon.dataTargetPokemon.slug
-      );
+      const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
       const statsGO = pokemon.dataTargetPokemon.stats ?? used;
       const statsAttacker = {
         atk: calculateStatsBattle(stats.atk, statsGO.iv.atk * (statsGO.isShadow ? SHADOW_ATK_BONUS(data?.options) : 1), statsGO.level),
@@ -1458,7 +1464,9 @@ const RaidBattle = () => {
                                             alt="img-pokemon"
                                             src={APIService.getPokeIconSprite(data?.pokemon.sprite, true)}
                                           />
-                                          <span className="caption">{splitAndCapitalize(data?.pokemon.name, '-', ' ')}</span>
+                                          <span className="caption">
+                                            {splitAndCapitalize(data?.pokemon.name.replaceAll('_', '-'), '-', ' ')}
+                                          </span>
                                         </div>
                                       </td>
                                       <td>{data?.dpsAtk.toFixed(2)}</td>

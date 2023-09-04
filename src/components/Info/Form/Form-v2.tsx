@@ -10,7 +10,18 @@ import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
 import { capitalize, convertFormNameImg, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, regionList } from '../../../util/Constants';
+import {
+  FORM_GMAX,
+  FORM_HERO,
+  FORM_INCARNATE,
+  FORM_MEGA,
+  FORM_NORMAL,
+  FORM_PRIMAL,
+  FORM_STANDARD,
+  SHADOW_ATK_BONUS,
+  SHADOW_DEF_BONUS,
+  regionList,
+} from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -115,9 +126,14 @@ const Form = ({
   const [shadowStats, setShadowStats] = useState(false);
 
   const filterFormName = useCallback((form: string, formStats: string) => {
-    form = form === '' || form === 'standard' ? 'Normal' : form.includes('mega') ? form.toLowerCase() : capitalize(form);
-    formStats = formStats.includes('Mega') ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
-    formStats = formStats === 'Hero' ? 'Normal' : formStats;
+    form =
+      form === '' || form?.toUpperCase() === FORM_STANDARD
+        ? 'Normal'
+        : form?.toUpperCase().includes(FORM_MEGA)
+        ? form.toLowerCase()
+        : capitalize(form);
+    formStats = formStats.toUpperCase().includes(FORM_MEGA) ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
+    formStats = formStats.toUpperCase() === FORM_HERO ? 'Normal' : formStats;
     return form.toLowerCase().includes(formStats.toLowerCase());
   }, []);
 
@@ -134,7 +150,7 @@ const Form = ({
       if (filterId.length === 1 && formLength === 1 && !filterForm) {
         return filterId.at(0);
       } else if (filterId.length === formLength && !filterForm) {
-        return stats.find((item: { id: number; form: string }) => item && item.id === id && item.form === 'Normal');
+        return stats.find((item: { id: number; form: string }) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       } else {
         return filterForm;
       }
@@ -192,7 +208,9 @@ const Form = ({
           .map((item: any[]) =>
             item.find(
               (item: { form: { form_name: string } }) =>
-                item.form.form_name === 'normal' || item.form.form_name === 'standard' || item.form.form_name === 'incarnate'
+                item.form.form_name?.toUpperCase() === FORM_NORMAL ||
+                item.form.form_name?.toUpperCase() === FORM_STANDARD ||
+                item.form.form_name?.toUpperCase() === FORM_INCARNATE
             )
           )
           .find((item: any) => item);
@@ -452,10 +470,10 @@ const Form = ({
       </div>
       <hr className="w-100" />
       {formList
-        .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name.includes('mega'))
+        .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA))
         .map((item: { form: string }[]) => item.at(0)?.form).length > 0 &&
       currForm &&
-      !currForm.form.form_name.includes('gmax') ? (
+      !currForm.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
@@ -474,10 +492,10 @@ const Form = ({
           </div>
         </div>
       ) : formList
-          .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name.includes('primal'))
+          .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL))
           .map((item: { form: string }[]) => item.at(0)?.form).length > 0 &&
         currForm &&
-        !currForm.form.form_name.includes('gmax') ? (
+        !currForm.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution

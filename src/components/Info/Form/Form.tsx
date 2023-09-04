@@ -10,7 +10,7 @@ import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
-import { regionList } from '../../../util/Constants';
+import { FORM_GMAX, FORM_HERO, FORM_MEGA, FORM_NORMAL, FORM_STANDARD, regionList } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -79,9 +79,14 @@ const Form = ({
   const [statSTA, setStatSTA]: any = useState(null);
 
   const filterFormName = useCallback((form: string, formStats: string) => {
-    form = form === '' || form === 'standard' ? 'Normal' : form.includes('mega') ? form.toLowerCase() : capitalize(form);
-    formStats = formStats.includes('Mega') ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
-    formStats = formStats === 'Hero' ? 'Normal' : formStats;
+    form =
+      form === '' || form?.toUpperCase() === FORM_STANDARD
+        ? 'Normal'
+        : form?.toUpperCase().includes(FORM_MEGA)
+        ? form.toLowerCase()
+        : capitalize(form);
+    formStats = formStats.toUpperCase().includes(FORM_MEGA) ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
+    formStats = formStats.toUpperCase() === FORM_HERO ? 'Normal' : formStats;
     return form.toLowerCase().includes(formStats.toLowerCase());
   }, []);
 
@@ -100,7 +105,7 @@ const Form = ({
       if (filterId.length === 1 && formList.length === 1 && !filterForm) {
         return filterId.at(0);
       } else if (filterId.length === formList.length && !filterForm) {
-        return stats.find((item: { id: number; form: string }) => item.id === id && item.form === 'Normal');
+        return stats.find((item: { id: number; form: string }) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       } else {
         return filterForm;
       }
@@ -296,8 +301,9 @@ const Form = ({
         <Fragment>
           <hr className="w-100" />
           {formList
-            .filter((item: { form: { form_name: string | string[] } }[]) => item.at(0)?.form.form_name.includes('mega'))
-            .map((item: { form: string }[]) => item.at(0)?.form).length > 0 && !currForm.form.form_name.includes('gmax') ? (
+            .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA))
+            .map((item: { form: string }[]) => item.at(0)?.form).length > 0 &&
+          !currForm.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
             <div className="row w-100" style={{ margin: 0 }}>
               <div className="col-xl" style={{ padding: 0 }}>
                 <Evolution

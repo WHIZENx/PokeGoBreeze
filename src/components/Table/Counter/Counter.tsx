@@ -128,7 +128,7 @@ const Counter = ({ def, form, currForm, pokeID }: any) => {
                       item.id === pokemon.pokemon_id &&
                       item.name ===
                         (item.id === 555 && !pokemon.pokemon_name.toLowerCase().includes('zen')
-                          ? pokemon.pokemon_name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+                          ? pokemon.pokemon_name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
                           : convertName(pokemon.pokemon_name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
                   );
                   return result ? result.releasedGO : false;

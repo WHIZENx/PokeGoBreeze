@@ -94,7 +94,7 @@ const Move = (props: { id?: number }) => {
 
   const getWeatherEffective = (type: string) => {
     const result = Object.entries(data?.weatherBoost ?? {})?.find(([, value]: any) => {
-      return value.includes(type.toUpperCase());
+      return value.includes(type?.toUpperCase());
     });
     return result && result.at(0);
   };
@@ -158,7 +158,7 @@ const Move = (props: { id?: number }) => {
               onChange={(e: any) => {
                 searchParams.set('type', e.target.value.toLowerCase());
                 setSearchParams(searchParams);
-                setMove(data?.combat?.find((item) => item.track === move.track && item.type === e.target.value.toUpperCase()));
+                setMove(data?.combat?.find((item) => item.track === move.track && item.type === e.target.value?.toUpperCase()));
               }}
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
@@ -490,7 +490,7 @@ const Move = (props: { id?: number }) => {
                               item.id === pokemon.num &&
                               item.name ===
                                 (item.id === 555 && !pokemon.name.toLowerCase().includes('zen')
-                                  ? pokemon.name.toUpperCase().replaceAll(' ', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+                                  ? pokemon.name?.toUpperCase().replaceAll(' ', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
                                   : convertName(pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
                           );
                           return result ? result.releasedGO : false;

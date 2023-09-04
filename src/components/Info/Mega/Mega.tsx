@@ -5,6 +5,7 @@ import { splitAndCapitalize } from '../../../util/Utils';
 
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
+import { FORM_MEGA } from '../../../util/Constants';
 
 const Mega = (props: { formList: any[]; id: number }) => {
   const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
@@ -13,7 +14,7 @@ const Mega = (props: { formList: any[]; id: number }) => {
   useEffect(() => {
     setArrEvoList(
       props.formList
-        .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name.includes('mega'))
+        .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA))
         .map((item: { form: string }[]) => item.at(0)?.form)
     );
   }, [props.formList]);

@@ -37,5 +37,11 @@ export class DetailsPokemonModel {
     this.id = 0;
     this.name = '';
     this.form = '';
+    this.disableTransferToPokemonHome = false;
+    this.isTransferable = false;
+    this.formChange = null;
+    this.pokemonClass = null;
+    this.isTradable = false;
+    this.releasedGO = false;
   }
 }

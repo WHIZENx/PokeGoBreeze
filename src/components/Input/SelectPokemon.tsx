@@ -141,7 +141,7 @@ const SelectPokemon = (props: {
 
   useEffect(() => {
     setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : null);
-    setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : '');
+    setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
   }, [props.pokemon]);
 
   return (

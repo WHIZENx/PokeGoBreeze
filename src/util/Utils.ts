@@ -1,10 +1,11 @@
 import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
-import { MAX_IV } from './Constants';
-import { PokemonDataModel, PokemonNameModel } from '../core/models/pokemon.model';
+import { FORM_GMAX, FORM_INCARNATE, FORM_NORMAL, FORM_STANDARD, MAX_IV } from './Constants';
+import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
 import { Details } from '../core/models/details.model';
 import { StatsModel } from '../core/models/stats.model';
+import { CombatPokemon } from '../core/models/combat.model';
 
 export const marks = [...Array(MAX_IV + 1).keys()].map((n) => {
   return { value: n, label: n.toString() };
@@ -244,7 +245,7 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
   if (local && text === 'mewtwo-armor') {
     return text;
   }
-  if (text.includes('standard')) {
+  if (text?.toUpperCase().includes(FORM_STANDARD)) {
     form = '-standard';
   }
   let invalidForm: string[] = [
@@ -365,13 +366,13 @@ export const findMoveTeam = (move: any, moveSet: string[]) => {
 
 const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: string; id: number }) => {
   if (item.name.toLowerCase().includes('_mega')) {
-    return pokemon.id === item.num && pokemon.name === item.name.toUpperCase().replaceAll('-', '_');
+    return pokemon.id === item.num && pokemon.name === item.name?.toUpperCase().replaceAll('-', '_');
   } else {
     return (
       pokemon.id === item.num &&
       pokemon.name ===
         (pokemon.id === 555 && !item.name.toLowerCase().includes('zen')
-          ? item.name.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+          ? item.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
           : convertName(item.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
     );
   }
@@ -450,16 +451,16 @@ export const convertFormNameImg = (id: number, form: string) => {
     (id === 774 && form !== 'red') ||
     id === 854 ||
     id === 855 ||
-    (id === 869 && form !== 'gmax') ||
+    (id === 869 && form?.toUpperCase() !== FORM_GMAX) ||
     form === 'totem' ||
-    form === 'normal' ||
+    form?.toUpperCase() === FORM_NORMAL ||
     form === 'plant' ||
     form === 'altered' ||
     form === 'overcast' ||
     form === 'land' ||
-    form === 'standard' ||
+    form?.toUpperCase() === FORM_STANDARD ||
     form === 'spring' ||
-    form === 'incarnate' ||
+    form?.toUpperCase() === FORM_INCARNATE ||
     form === 'ordinary' ||
     form === 'aria' ||
     form === 'natural' ||
@@ -491,9 +492,9 @@ export const convertFormNameImg = (id: number, form: string) => {
     return form.replace('-totem', '');
   } else if (form?.includes('totem-')) {
     return form.replace('totem-', '').replace('disguised', '');
-  } else if (id === 849 && form === 'gmax') {
+  } else if (id === 849 && form?.toUpperCase() !== FORM_GMAX) {
     return 'amped-gmax';
-  } else if (id === 892 && form === 'gmax') {
+  } else if (id === 892 && form?.toUpperCase() !== FORM_GMAX) {
     return 'single-strike-gmax';
   } else if (form === 'armor') {
     return '';
@@ -625,4 +626,15 @@ export const getCustomThemeDataTable = (theme: Theme) => {
 export const getDataWithKey = (data: any, key: string | number) => {
   const result = Object.entries(data ?? {}).find((k) => k.at(0) === key.toString());
   return result ? result[1] : {};
+};
+
+export const checkMoveSetAvailable = (pokemon: PokemonModel | CombatPokemon) => {
+  const allMoves = pokemon.quickMoves
+    .concat(pokemon.cinematicMoves)
+    .concat(pokemon.eliteQuickMoves ?? [])
+    .concat(pokemon.eliteCinematicMoves ?? []);
+  if (allMoves.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
+    return false;
+  }
+  return true;
 };

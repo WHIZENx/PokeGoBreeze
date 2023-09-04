@@ -62,6 +62,18 @@ export const RAID_BOSS_TIER: any = {
   },
 };
 
+export const FORM_NORMAL = 'NORMAL';
+export const FORM_STANDARD = 'STANDARD';
+export const FORM_INCARNATE = 'INCARNATE';
+export const FORM_HERO = 'HERO';
+export const FORM_MEGA = 'MEGA';
+export const FORM_GMAX = 'GMAX';
+export const FORM_PRIMAL = 'PRIMAL';
+
+export const TYPE_LEGENDARY = 'LEGENDARY';
+export const TYPE_MYTHIC = 'MYTHIC';
+export const TYPE_ULTRA_BEAST = 'ULTRA_BEAST';
+
 export const DEFAULT_POKEMON_DEF_OBJ = 160;
 export const DEFAULT_POKEMON_SHADOW = false;
 export const DEFAULT_TRAINER_FRIEND = false;

@@ -29,6 +29,7 @@ import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { EvolutionModel } from '../../../core/models/evolution.model';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
 
 const customTheme = createTheme({
   palette: {
@@ -86,7 +87,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
         }
         return setArrEvoList((oldArr: any) => [...oldArr, [{ name: pokemonName[id].name, id, baby: false, form: null }]]);
       } else if (evoList.length > 1) {
-        const evoInJSON = evoList.find((item: { name: string }) => item.name.includes(currForm.toUpperCase()));
+        const evoInJSON = evoList.find((item: { name: string }) => item.name.includes(currForm?.toUpperCase()));
         if (evoInJSON) {
           const evoInAPI = data?.find(
             (item: { species: { url: string } }) => parseInt(item.species.url.split('/').at(6) ?? '') === evoInJSON.id
@@ -117,7 +118,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           }
         }
       } else {
-        let evoInJSON = evoList.find((item: { name: string }) => item.name.includes(currForm.toUpperCase()));
+        let evoInJSON = evoList.find((item: { name: string }) => item.name.includes(currForm?.toUpperCase()));
         if (!evoInJSON && ['Alola', 'Galar'].includes(region)) {
           evoInJSON = evoList.find((item: { name: string }) => item.name.includes(''));
         }
@@ -234,7 +235,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
 
   const getEvoChainJSON = useCallback(
     (id: number, forme: { form_name: string; name: string }) => {
-      let form = forme.form_name === '' || forme.form_name.includes('mega') ? null : forme.form_name;
+      let form = forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) ? null : forme.form_name;
       if (forme.form_name === '10') {
         form += '%';
       }
@@ -333,9 +334,9 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
   };
 
   const getEvoChainStore = (id: number, forme: { form_name: string; name: string }) => {
-    const form = forme.form_name === '' || forme.form_name.includes('mega') ? '' : forme.form_name;
+    const form = forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) ? '' : forme.form_name;
     const result: any[] = [];
-    let pokemon = evoData.find((pokemon) => pokemon.id === id && pokemon.form === form.toUpperCase());
+    let pokemon = evoData.find((pokemon) => pokemon.id === id && pokemon.form === form?.toUpperCase());
     if (!pokemon) {
       pokemon = evoData.find((pokemon) => pokemon.id === id);
     }
@@ -355,7 +356,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           name: form.name.replace('-gmax', ''),
           id,
           baby: false,
-          form: 'normal',
+          form: FORM_NORMAL.toLowerCase(),
           gmax: true,
           sprite: convertModelSpritName(form.name.replace('-gmax', '')),
         },
@@ -365,7 +366,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
           name: form.name.replace('-gmax', ''),
           id,
           baby: false,
-          form: 'gmax',
+          form: FORM_GMAX.toLowerCase(),
           gmax: true,
           sprite: convertModelSpritName(form.name.replace('-gmax', '-gigantamax').replace('-low-key', '')),
         },
@@ -375,7 +376,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
 
   useEffect(() => {
     if (id && forme) {
-      if (forme.form_name !== 'gmax') {
+      if (forme.form_name?.toUpperCase() !== FORM_GMAX) {
         getEvoChainStore(id, forme);
       } else {
         getGmaxChain(id, forme);
@@ -470,7 +471,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
             },
           }
         : { position: 'right', offset: { x: -8 } };
-    const data = getQuestEvo(parseInt(value.id.toString()), form.toUpperCase());
+    const data = getQuestEvo(parseInt(value.id.toString()), form?.toUpperCase());
     return (
       <Fragment>
         <span id={'evo-' + evo + '-' + index}>
@@ -627,7 +628,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
             <Fragment>
               {chain.length > 1 || (chain.length === 1 && form.form_name !== '') ? (
                 <Fragment>
-                  {form !== '' && !form.includes('mega') ? (
+                  {form !== '' && !form?.toUpperCase().includes(FORM_MEGA) ? (
                     <ThemeProvider theme={customTheme}>
                       <Badge
                         color="secondary"

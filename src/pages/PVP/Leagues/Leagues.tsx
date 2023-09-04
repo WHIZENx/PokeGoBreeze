@@ -18,6 +18,7 @@ import Xarrow from 'react-xarrows';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { SpinnerState, StoreState } from '../../../store/models/state.model';
 import { LeagueCondition } from '../../../core/models/league.model';
+import { FORM_NORMAL } from '../../../util/Constants';
 
 const Leagues = () => {
   const dispatch = useDispatch();
@@ -533,7 +534,7 @@ const Leagues = () => {
                             to={
                               '/pokemon/' +
                               item.id +
-                              (item.form === 'NORMAL'
+                              (item.form?.toUpperCase() === FORM_NORMAL
                                 ? ''
                                 : '?form=' +
                                   convertFormName(
@@ -554,7 +555,9 @@ const Leagues = () => {
                             </div>
                             <span className="caption">
                               {splitAndCapitalize(item.name.toLowerCase(), '_', ' ') +
-                                (item.form === 'NORMAL' ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                                (item.form?.toUpperCase() === FORM_NORMAL
+                                  ? ''
+                                  : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
                             </span>
                           </Link>
                         )
@@ -572,7 +575,7 @@ const Leagues = () => {
                             to={
                               '/pokemon/' +
                               item.id +
-                              (item.form === 'NORMAL'
+                              (item.form?.toUpperCase() === FORM_NORMAL
                                 ? ''
                                 : '?form=' +
                                   convertFormName(
@@ -593,7 +596,9 @@ const Leagues = () => {
                             </div>
                             <span className="caption">
                               {splitAndCapitalize(item.name.toLowerCase(), '_', ' ') +
-                                (item.form === 'NORMAL' ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                                (item.form?.toUpperCase() === FORM_NORMAL
+                                  ? ''
+                                  : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
                             </span>
                           </Link>
                         )

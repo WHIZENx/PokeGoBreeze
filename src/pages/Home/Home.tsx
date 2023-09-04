@@ -103,7 +103,7 @@ const Home = () => {
     tableScrollID.current = 1;
     const result = dataList.current.filter((item) => {
       const boolFilterType =
-        item.types.map((item) => selectTypes.includes(item.toUpperCase())).filter((bool: boolean) => bool === true).length ===
+        item.types.map((item) => selectTypes.includes(item?.toUpperCase())).filter((bool: boolean) => bool === true).length ===
         selectTypes.length;
       const boolFilterPoke =
         searchTerm === '' || item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm);

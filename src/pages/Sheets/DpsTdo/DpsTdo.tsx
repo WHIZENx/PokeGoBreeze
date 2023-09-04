@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
 import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
-import { DEFAULT_POKEMON_DEF_OBJ, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
+import { DEFAULT_POKEMON_DEF_OBJ, FORM_MEGA, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -401,7 +401,7 @@ const DpsTdo = () => {
   ) => {
     movePoke.forEach((vf: string) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false);
-      if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
+      if (!pokemon.forme || !pokemon.forme.toLowerCase().toUpperCase().includes(FORM_MEGA)) {
         if (combat.shadowMoves?.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
           addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves);
@@ -462,7 +462,7 @@ const DpsTdo = () => {
       }) => {
         const boolFilterType =
           selectTypes.length === 0 ||
-          (selectTypes.includes(item.fmove?.type.toUpperCase()) && selectTypes.includes(item.cmove?.type.toUpperCase()));
+          (selectTypes.includes(item.fmove?.type?.toUpperCase()) && selectTypes.includes(item.cmove?.type?.toUpperCase()));
         const boolFilterPoke =
           searchTerm === '' ||
           (match
@@ -473,11 +473,11 @@ const DpsTdo = () => {
 
         const boolShowShadow = !showShadow && item.shadow;
         const boolShowElite = !showEliteMove && (item.elite?.fmove || item.elite?.cmove);
-        const boolShowMega = !showMega && item.pokemon?.forme && item.pokemon?.forme.toLowerCase().includes('mega');
+        const boolShowMega = !showMega && item.pokemon?.forme && item.pokemon?.forme.toLowerCase().toUpperCase().includes(FORM_MEGA);
 
         const boolOnlyShadow = enableShadow && item.shadow;
         const boolOnlyElite = enableElite && (item.elite?.fmove || item.elite?.cmove);
-        const boolOnlyMega = enableMega && item.pokemon?.forme && item.pokemon?.forme.toLowerCase().includes('mega');
+        const boolOnlyMega = enableMega && item.pokemon?.forme && item.pokemon?.forme.toLowerCase().toUpperCase().includes(FORM_MEGA);
 
         let boolReleaseGO = true;
         if (releasedGO) {

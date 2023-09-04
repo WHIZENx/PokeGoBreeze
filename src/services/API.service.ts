@@ -1,5 +1,6 @@
 import axios, { AxiosStatic } from 'axios';
 import { APIUrl } from './constants';
+import { FORM_MEGA } from '../util/Constants';
 
 class APIService {
   date: Date;
@@ -8,6 +9,7 @@ class APIService {
   constructor() {
     this.date = new Date();
     this.axios = axios;
+    this.axios.defaults.timeout = 10000;
   }
 
   getAxios() {
@@ -87,7 +89,7 @@ class APIService {
     if (type.toLowerCase() === 'unknown') {
       return this.getPokeSprite(0);
     }
-    return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
+    return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type?.toUpperCase()}.png`;
   }
 
   getTypeHqSprite(type: string) {
@@ -172,7 +174,7 @@ class APIService {
 
   getPokeGifSprite(name: string) {
     name = name.replace('mega-x', 'megax').replace('mega-y', 'megay');
-    if (!name.includes('mega') && name.includes('-m')) {
+    if (!name?.toUpperCase().includes(FORM_MEGA) && name.includes('-m')) {
       name = name.replace('-m', '');
     }
     if (name.includes('gengar')) {

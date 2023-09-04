@@ -20,7 +20,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, SpinnerState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV } from '../../../util/Constants';
+import { MIN_IV, MAX_IV, FORM_NORMAL } from '../../../util/Constants';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -107,7 +107,7 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const isForm = form.form.form_name.toUpperCase();
+      const isForm = form.form.form_name?.toUpperCase();
       let curr = dataStore?.evolution?.filter((item) =>
         item.evo_list.find((i: { evo_to_id: number; evo_to_form: string }) => id === i.evo_to_id && isForm === i.evo_to_form)
       );
@@ -236,7 +236,7 @@ const FindBattle = () => {
   }, []);
 
   const getImageList = (id: number) => {
-    const isForm = form.form.form_name === '' ? 'NORMAL' : form.form.form_name.replaceAll('-', '_').toUpperCase();
+    const isForm = form.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form.form.form_name.replaceAll('-', '_').toUpperCase();
     let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form.includes(isForm));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
@@ -446,7 +446,7 @@ const FindBattle = () => {
             {evoChain.map((value: any[], index: React.Key) => (
               <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
-                  {!value.at(0).form ? 'Normal' : splitAndCapitalize(value.at(0).form, '-', ' ')}
+                  {!value.at(0).form?.toUpperCase() ? FORM_NORMAL : splitAndCapitalize(value.at(0).form, '-', ' ')}
                   {' Form'}
                 </div>
                 <Accordion.Item eventKey={'0'}>

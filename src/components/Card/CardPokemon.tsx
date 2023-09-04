@@ -22,7 +22,7 @@ const CardPokemon = (props: { value: { sprite: string; name: string }; score?: n
               <img className="position-absolute" style={{ bottom: 0, right: 5 }} height={24} src={APIService.getPokeShadow()} />
             )}
           </div>
-          {splitAndCapitalize(props.value.name, '-', ' ')}
+          {splitAndCapitalize(props.value.name.replaceAll('_', '-'), '-', ' ')}
           {props.score && (
             <span style={{ marginLeft: 10 }} className="type-icon-small ic elite-ic">
               {props.score}

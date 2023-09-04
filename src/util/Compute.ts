@@ -1,6 +1,7 @@
 import { Asset } from '../core/models/asset.model';
 import { Candy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
+import { FORM_NORMAL, FORM_STANDARD } from './Constants';
 import { convertName, getStyleRuleValue } from './Utils';
 
 export const priorityBadge = (priority: number) => {
@@ -123,11 +124,11 @@ export const queryAssetForm = (pokemonAssets: Asset[], id: number | undefined, n
   if (!pokemon) {
     return null;
   }
-  const standard = pokemon.image.filter((item) => item.form.includes('STANDARD'));
+  const standard = pokemon.image.filter((item) => item.form?.toUpperCase().includes(FORM_STANDARD));
   name = convertName(name);
 
   if (pokemon.name === name || standard.length > 0) {
-    const image = pokemon.image.find((item) => item.form === 'NORMAL');
+    const image = pokemon.image.find((item) => item.form?.toUpperCase() === FORM_NORMAL);
     if (image) {
       return image;
     }
@@ -140,7 +141,7 @@ export const queryAssetForm = (pokemonAssets: Asset[], id: number | undefined, n
       } else if (name.includes('ZEN')) {
         return pokemon.image.find((item) => !item.form.includes('GALARIAN') && item.form.includes('ZEN'));
       } else {
-        return pokemon.image.find((item) => item.form === 'STANDARD');
+        return pokemon.image.find((item) => item.form?.toUpperCase() === FORM_STANDARD);
       }
     }
     try {

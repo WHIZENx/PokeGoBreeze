@@ -15,6 +15,7 @@ import {
   DEFAULT_POKEMON_SHADOW,
   DEFAULT_TRAINER_FRIEND,
   DEFAULT_WEATHER_BOOSTS,
+  FORM_MEGA,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -27,10 +28,17 @@ import {
   STAB_MULTIPLY,
   typeCostPowerUp,
 } from './Constants';
-import { capitalize, convertName, splitAndCapitalize, convertNameRankingToOri, convertNameRankingToForm } from './Utils';
+import {
+  capitalize,
+  convertName,
+  splitAndCapitalize,
+  convertNameRankingToOri,
+  convertNameRankingToForm,
+  checkMoveSetAvailable,
+} from './Utils';
 
 const weatherMultiple = (globalOptions: Options | undefined, weatherBoost: any, weather: string, type: string) => {
-  return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: string) => item === type.toUpperCase().replaceAll(' ', '_'))
+  return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: string) => item === type?.toUpperCase().replaceAll(' ', '_'))
     ? STAB_MULTIPLY(globalOptions)
     : 1;
 };
@@ -39,9 +47,9 @@ export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj:
   let valueEffective = 1;
   typesObj.forEach((type: any) => {
     try {
-      valueEffective *= typeEffective[typeMove.toUpperCase()][type.type.name.toUpperCase()];
+      valueEffective *= typeEffective[typeMove?.toUpperCase()][type.type.name?.toUpperCase()];
     } catch {
-      valueEffective *= typeEffective[typeMove.toUpperCase()][type.toUpperCase()];
+      valueEffective *= typeEffective[typeMove?.toUpperCase()][type?.toUpperCase()];
     }
   });
   return valueEffective;
@@ -598,10 +606,10 @@ export const calculateStatsByTag = (
     return pokemon.baseStats;
   }
   const from = tag?.toLowerCase();
-  const checkNerf = from?.includes('mega') ? false : true;
-  let atk = 0;
-  let def = 0;
-  let sta = 0;
+  const checkNerf = from?.toUpperCase().includes(FORM_MEGA) ? false : true;
+  let atk = 0,
+    def = 0,
+    sta = 0;
 
   const result = findStatsPokeGO(from);
   if (result) {
@@ -1531,7 +1539,7 @@ export const counterPokemon = (
 ) => {
   const dataList: any[] = [];
   combatList.forEach((value) => {
-    if (value.quickMoves.at(0) !== 'STRUGGLE' && value.cinematicMoves.at(0) !== 'STRUGGLE' && !value.name.includes('_FEMALE')) {
+    if (checkMoveSetAvailable(value) && !value.name.includes('_FEMALE')) {
       const pokemon = pokemonList.find((item) => {
         const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()), true);
         return item.slug === name;

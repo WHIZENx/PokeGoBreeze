@@ -14,7 +14,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: any) => {
       types?.forEach((type: { type: { name: string } }) => {
-        if (value.includes(type.type.name.toUpperCase()) && !data.includes(key)) {
+        if (value.includes(type.type.name?.toUpperCase()) && !data.includes(key)) {
           data.push(key);
         }
       });
@@ -34,7 +34,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
     Object.entries(typeEffective).forEach(([key, value]: any) => {
       let valueEffective = 1;
       types?.forEach((type: { type: { name: string } }) => {
-        valueEffective *= value[type.type.name.toUpperCase()];
+        valueEffective *= value[type.type.name?.toUpperCase()];
       });
       if (valueEffective >= 2.56) {
         data.very_weak.push(key);

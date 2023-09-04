@@ -21,10 +21,10 @@ export const convertPVPRankings = (data: any[], leagues: League[]) => {
     if (league !== 'all') {
       item = leagues.find((item) => item.iconUrl?.includes(league));
       if (!item) {
-        item = leagues.find((item) => item.title.replaceAll('_', '').includes(league.toUpperCase()));
+        item = leagues.find((item) => item.title.replaceAll('_', '').includes(league?.toUpperCase()));
       }
       if (!item) {
-        item = leagues.find((item) => item.id?.includes(league.toUpperCase()));
+        item = leagues.find((item) => item.id?.includes(league?.toUpperCase()));
       }
     }
 
@@ -49,10 +49,10 @@ export const convertPVPTrain = (data: any[], leagues: League[]) => {
     if (league !== 'all') {
       item = leagues.find((item) => item.iconUrl?.includes(league));
       if (!item) {
-        item = leagues.find((item) => item.title.replaceAll('_', '').includes(league.toUpperCase()));
+        item = leagues.find((item) => item.title.replaceAll('_', '').includes(league?.toUpperCase()));
       }
       if (!item) {
-        item = leagues.find((item) => item.id?.includes(league.toUpperCase()));
+        item = leagues.find((item) => item.id?.includes(league?.toUpperCase()));
       }
     }
     const result: LeaguePVP = new LeaguePVPPokemonDataModel();

@@ -54,7 +54,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
         types.forEach((type: string) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective >= 2.56) {
           data.very_weak?.push(key);
@@ -76,7 +76,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
         types.forEach((type: string) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective === 1) {
           data.neutral?.push(key);
@@ -96,7 +96,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
         types.forEach((type: string) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective <= 0.3) {
           data.super_resist?.push(key);

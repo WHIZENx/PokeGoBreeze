@@ -4,7 +4,7 @@ import APIService from '../../services/API.service';
 import './Pokemon.scss';
 
 import { convertFormNameImg, convertName, getPokemonById, getPokemonByIndex, splitAndCapitalize } from '../../util/Utils';
-import { KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constants';
+import { FORM_NORMAL, KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constants';
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -295,7 +295,9 @@ const Pokemon = (props: {
       );
 
       if (isDefault && !pokemonForm) {
-        pokemonForm = dataStore?.details?.find((item: { id: number; form: string }) => item.id === id && item.form === 'NORMAL');
+        pokemonForm = dataStore?.details?.find(
+          (item: { id: number; form: string }) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL
+        );
       }
     }
 

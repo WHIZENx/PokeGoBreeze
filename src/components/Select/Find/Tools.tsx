@@ -3,7 +3,7 @@ import Stats from '../../Info/Stats/Stats';
 import { calculateRaidStat } from '../../../util/Calculate';
 
 import { Form } from 'react-bootstrap';
-import { RAID_BOSS_TIER } from '../../../util/Constants';
+import { FORM_MEGA, FORM_NORMAL, RAID_BOSS_TIER } from '../../../util/Constants';
 
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
@@ -25,8 +25,8 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
   const [statProd, setStatProd]: any = useState(null);
 
   const filterFormName = useCallback((form: string, formStats: string) => {
-    form = form === '' ? 'Normal' : form.includes('mega') ? form.toLowerCase() : capitalize(form);
-    formStats = formStats.includes('Mega') ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
+    form = form === '' ? 'Normal' : form?.toUpperCase().includes(FORM_MEGA) ? form.toLowerCase() : capitalize(form);
+    formStats = formStats.toUpperCase().includes(FORM_MEGA) ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
     formStats = formStats === 'Hero' ? 'Normal' : formStats;
     return form.toLowerCase().includes(formStats.toLowerCase());
   }, []);
@@ -40,7 +40,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
       if (filterId.length === 1 && formList.length === 1 && !filterForm) {
         return filterId.at(0);
       } else if (filterId.length === formList.length && !filterForm) {
-        return stats.find((item: { id: number; form: string }) => item.id === id && item.form === 'Normal');
+        return stats.find((item: { id: number; form: string }) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       } else {
         return filterForm;
       }
@@ -49,7 +49,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
   );
 
   useEffect(() => {
-    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name.includes('mega')) {
+    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name?.toUpperCase().includes(FORM_MEGA)) {
       setCurrTier(5);
       if (setTier) {
         setTier(5);
@@ -57,7 +57,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
     } else if (
       parseInt(tier) === 5 &&
       currForm &&
-      currForm.form.form_name.includes('mega') &&
+      currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
       Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass
     ) {
       setCurrTier(6);
@@ -123,13 +123,13 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
             <optgroup label="Normal Tiers">
               <option value={1}>Tier 1</option>
               <option value={3}>Tier 3</option>
-              {currForm && !currForm.form.form_name.includes('mega') && <option value={5}>Tier 5</option>}
+              {currForm && !currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) && <option value={5}>Tier 5</option>}
             </optgroup>
             <optgroup label="Legacy Tiers">
               <option value={2}>Tier 2</option>
               <option value={4}>Tier 4</option>
             </optgroup>
-            {currForm && currForm.form.form_name.includes('mega') && (
+            {currForm && currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) && (
               <Fragment>
                 {Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">

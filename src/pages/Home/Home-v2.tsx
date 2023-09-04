@@ -9,7 +9,17 @@ import { calculateStatsByTag } from '../../util/Calculate';
 import { convertFormNameImg, mappingReleasedGO, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
-import { genList, regionList, TRANSITION_TIME, versionList } from '../../util/Constants';
+import {
+  FORM_GMAX,
+  FORM_MEGA,
+  genList,
+  regionList,
+  TRANSITION_TIME,
+  TYPE_LEGENDARY,
+  TYPE_MYTHIC,
+  TYPE_ULTRA_BEAST,
+  versionList,
+} from '../../util/Constants';
 import {
   Checkbox,
   FormControl,
@@ -138,7 +148,7 @@ const Home = () => {
           const result = dataList.current.filter((item) => {
             const boolFilterType =
               selectTypes.length === 0 ||
-              (item.types.every((item) => selectTypes.includes(item.toUpperCase())) && item.types.length === selectTypes.length);
+              (item.types.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
             const boolFilterPoke =
               searchTerm === '' ||
               (match
@@ -146,11 +156,11 @@ const Home = () => {
                 : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
                   item.id.toString().includes(searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = mega ? item.forme?.includes('Mega') : true;
-            const boolGmax = gmax ? item.forme === 'Gmax' : true;
-            const boolLegend = legendary ? item.class === 'LEGENDARY' : true;
-            const boolMythic = mythic ? item.class === 'MYTHIC' : true;
-            const boolUltra = ultrabeast ? item.class === 'ULTRA_BEAST' : true;
+            const boolMega = mega ? item.forme?.toUpperCase().includes(FORM_MEGA) : true;
+            const boolGmax = gmax ? item.forme?.toUpperCase() === FORM_GMAX : true;
+            const boolLegend = legendary ? item.class === TYPE_LEGENDARY : true;
+            const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
+            const boolUltra = ultrabeast ? item.class === TYPE_ULTRA_BEAST : true;
 
             const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
             const findVersion = item.version === -1 ? true : version.includes(item.version);

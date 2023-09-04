@@ -70,7 +70,7 @@ const FromChange = ({ details, defaultName }: any) => {
                           pokeAssets
                             .find(
                               (pokemon: { form: string }) =>
-                                pokemon.form === name.replace('_COMPLETE', '').replace(`${defaultName.toUpperCase()}_`, '')
+                                pokemon.form === name.replace('_COMPLETE', '').replace(`${defaultName?.toUpperCase()}_`, '')
                             )
                             ?.image.at(0).default
                         )}

@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDataWithKey, LevelRating } from '../../../util/Utils';
-import { MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_MEGA, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 
 import './Damage.scss';
@@ -171,7 +171,7 @@ const Damage = () => {
           ),
           wb: battleState.weather,
           dodge: battleState.dodge,
-          mega: form.form.pokemon.forme && form.form.pokemon.forme.toLowerCase().includes('mega') ? true : false,
+          mega: form.form.pokemon.forme && form.form.pokemon.forme?.toUpperCase().includes(FORM_MEGA) ? true : false,
           trainer: battleState.trainer,
           flevel: enableFriend ? battleState.flevel : 0,
           clevel: battleState.clevel,
