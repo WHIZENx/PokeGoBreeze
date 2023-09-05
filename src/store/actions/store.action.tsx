@@ -30,6 +30,7 @@ import { CombatPokemon } from '../../core/models/combat.model';
 import { CandyModel } from '../../core/models/candy.model';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { DbModel } from '../../core/models/API/db.model';
+import { setBar, setPercent, showSpinner } from './spinner.action';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -105,40 +106,51 @@ export const loadTimestamp = (
     }),
     APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
     APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
-  ]).then(([GMtimestamp, imageRoot, soundsRoot]) => {
-    dispatch({
-      type: LOAD_TIMESTAMP,
-      payload: parseInt(GMtimestamp.data),
+  ])
+    .then(([GMtimestamp, imageRoot, soundsRoot]) => {
+      dispatch({
+        type: LOAD_TIMESTAMP,
+        payload: parseInt(GMtimestamp.data),
+      });
+
+      const imageTimestamp = new Date(imageRoot.data.at(0).commit.committer.date).getTime();
+      const soundTimestamp = new Date(soundsRoot.data.at(0).commit.committer.date).getTime();
+      setStateTimestamp(
+        JSON.stringify({
+          ...JSON.parse(stateTimestamp),
+          gamemaster: parseInt(GMtimestamp.data),
+          images: imageTimestamp,
+          sounds: soundTimestamp,
+        })
+      );
+
+      const timestampLoaded = {
+        images: !stateImage || JSON.parse(stateTimestamp).images !== imageTimestamp,
+        sounds: !stateSound || JSON.parse(stateTimestamp).sounds !== soundTimestamp,
+      };
+      dispatch(setPercent(40));
+      loadGameMaster(
+        dispatch,
+        imageRoot,
+        soundsRoot,
+        timestampLoaded,
+        setStateImage,
+        setStateSound,
+        setStateCandy,
+        stateImage,
+        stateSound,
+        stateCandy
+      );
+    })
+    .catch((e) => {
+      dispatch(setBar(false));
+      dispatch(
+        showSpinner({
+          error: true,
+          msg: e.message,
+        })
+      );
     });
-
-    const imageTimestamp = new Date(imageRoot.data.at(0).commit.committer.date).getTime();
-    const soundTimestamp = new Date(soundsRoot.data.at(0).commit.committer.date).getTime();
-    setStateTimestamp(
-      JSON.stringify({
-        ...JSON.parse(stateTimestamp),
-        gamemaster: parseInt(GMtimestamp.data),
-        images: imageTimestamp,
-        sounds: soundTimestamp,
-      })
-    );
-
-    const timestampLoaded = {
-      images: !stateImage || JSON.parse(stateTimestamp).images !== imageTimestamp,
-      sounds: !stateSound || JSON.parse(stateTimestamp).sounds !== soundTimestamp,
-    };
-    loadGameMaster(
-      dispatch,
-      imageRoot,
-      soundsRoot,
-      timestampLoaded,
-      setStateImage,
-      setStateSound,
-      setStateCandy,
-      stateImage,
-      stateSound,
-      stateCandy
-    );
-  });
 };
 
 export const loadGameMaster = (
@@ -155,131 +167,145 @@ export const loadGameMaster = (
 ) => {
   APIService.getFetchUrl(APIUrl.GAMEMASTER, {
     cancelToken: APIService.getAxios().CancelToken.source().token,
-  }).then(async (gm) => {
-    let pokemonEncounter: DbModel;
-    try {
-      pokemonEncounter = await getDbPokemonEncounter();
-    } catch (e) {
-      throw e;
-    }
+  })
+    .then(async (gm) => {
+      let pokemonEncounter: DbModel;
+      try {
+        pokemonEncounter = await getDbPokemonEncounter();
+      } catch (e) {
+        throw e;
+      }
 
-    const pokemon: PokemonModel[] = optionPokemon(gm.data, pokemonEncounter?.rows);
-    const pokemonData = optionPokemonData(pokemon);
-    const pokemonFamily = optionPokemonFamily(pokemon);
-    const noneForm = optionFormNone(gm.data);
-    const formSpecial = optionFormSpecial(gm.data);
+      const pokemon: PokemonModel[] = optionPokemon(gm.data, pokemonEncounter?.rows);
+      const pokemonData = optionPokemonData(pokemon);
+      const pokemonFamily = optionPokemonFamily(pokemon);
+      const noneForm = optionFormNone(gm.data);
+      const formSpecial = optionFormSpecial(gm.data);
 
-    const league = optionLeagues(gm.data, pokemon);
-    const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial, noneForm);
+      const league = optionLeagues(gm.data, pokemon);
+      const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial, noneForm);
 
-    const typeEff = optionPokemonTypes(gm.data);
-    const weatherBoost = optionPokemonWeather(gm.data);
+      const typeEff = optionPokemonTypes(gm.data);
+      const weatherBoost = optionPokemonWeather(gm.data);
 
-    dispatch(loadStats(pokemonData));
+      dispatch(loadStats(pokemonData));
+      dispatch(setPercent(60));
 
-    if (!stateCandy) {
-      APIService.getFetchUrl(APIUrl.CANDY_DATA, {
-        cancelToken: APIService.getAxios().CancelToken.source().token,
-      }).then((candy: { data: { CandyColors: CandyModel[] } }) => {
-        const candyData = optionPokemonCandy(candy.data.CandyColors, pokemon, pokemonFamily);
-        setStateCandy(JSON.stringify(candyData));
+      if (!stateCandy) {
+        APIService.getFetchUrl(APIUrl.CANDY_DATA, {
+          cancelToken: APIService.getAxios().CancelToken.source().token,
+        }).then((candy: { data: { CandyColors: CandyModel[] } }) => {
+          const candyData = optionPokemonCandy(candy.data.CandyColors, pokemon, pokemonFamily);
+          setStateCandy(JSON.stringify(candyData));
+          dispatch({
+            type: LOAD_CANDY,
+            payload: candyData,
+          });
+        });
+      } else {
         dispatch({
           type: LOAD_CANDY,
-          payload: candyData,
+          payload: JSON.parse(stateCandy),
         });
-      });
-    } else {
+      }
+      dispatch(setPercent(80));
+
       dispatch({
-        type: LOAD_CANDY,
-        payload: JSON.parse(stateCandy),
+        type: LOAD_OPTIONS,
+        payload: optionSettings(gm.data),
       });
-    }
 
-    dispatch({
-      type: LOAD_OPTIONS,
-      payload: optionSettings(gm.data),
-    });
+      dispatch({
+        type: LOAD_TYPE_EFF,
+        payload: typeEff,
+      });
 
-    dispatch({
-      type: LOAD_TYPE_EFF,
-      payload: typeEff,
-    });
+      dispatch({
+        type: LOAD_WEATHER_BOOST,
+        payload: weatherBoost,
+      });
 
-    dispatch({
-      type: LOAD_WEATHER_BOOST,
-      payload: weatherBoost,
-    });
+      dispatch({
+        type: LOAD_POKEMON,
+        payload: pokemon,
+      });
 
-    dispatch({
-      type: LOAD_POKEMON,
-      payload: pokemon,
-    });
+      dispatch({
+        type: LOAD_POKEMON_DATA,
+        payload: pokemonData,
+      });
 
-    dispatch({
-      type: LOAD_POKEMON_DATA,
-      payload: pokemonData,
-    });
+      dispatch({
+        type: LOAD_EVOLUTION,
+        payload: optionEvolution(gm.data, pokemon, formSpecial),
+      });
 
-    dispatch({
-      type: LOAD_EVOLUTION,
-      payload: optionEvolution(gm.data, pokemon, formSpecial),
-    });
+      dispatch({
+        type: LOAD_STICKER,
+        payload: optionSticker(gm.data, pokemon),
+      });
 
-    dispatch({
-      type: LOAD_STICKER,
-      payload: optionSticker(gm.data, pokemon),
-    });
+      dispatch({
+        type: LOAD_COMBAT,
+        payload: optionCombat(gm.data, typeEff),
+      });
 
-    dispatch({
-      type: LOAD_COMBAT,
-      payload: optionCombat(gm.data, typeEff),
-    });
+      dispatch({
+        type: LOAD_POKEMON_COMBAT,
+        payload: pokemonCombat,
+      });
 
-    dispatch({
-      type: LOAD_POKEMON_COMBAT,
-      payload: pokemonCombat,
-    });
+      dispatch({
+        type: LOAD_LEAGUES,
+        payload: league,
+      });
 
-    dispatch({
-      type: LOAD_LEAGUES,
-      payload: league,
-    });
+      if (timestampLoaded.images || timestampLoaded.sounds) {
+        loadAssets(
+          dispatch,
+          imageRoot,
+          soundsRoot,
+          gm.data,
+          pokemon,
+          pokemonFamily,
+          pokemonData,
+          formSpecial,
+          pokemonCombat,
+          noneForm,
+          setStateImage,
+          setStateSound
+        );
+      } else {
+        const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage), JSON.parse(stateSound));
+        const details = optionDetailsPokemon(gm.data, pokemonData, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
+        dispatch({
+          type: LOAD_ASSETS,
+          payload: assetsPokemon,
+        });
+        dispatch({
+          type: LOAD_DETAILS,
+          payload: details,
+        });
+        dispatch({
+          type: LOAD_POKEMON_NAME,
+        });
 
-    if (timestampLoaded.images || timestampLoaded.sounds) {
-      loadAssets(
-        dispatch,
-        imageRoot,
-        soundsRoot,
-        gm.data,
-        pokemon,
-        pokemonFamily,
-        pokemonData,
-        formSpecial,
-        pokemonCombat,
-        noneForm,
-        setStateImage,
-        setStateSound
+        dispatch({
+          type: LOAD_RELEASED_GO,
+        });
+      }
+      dispatch(setPercent(100));
+      setTimeout(() => dispatch(setBar(false)), 500);
+    })
+    .catch((e) => {
+      dispatch(setBar(false));
+      dispatch(
+        showSpinner({
+          error: true,
+          msg: e.message,
+        })
       );
-    } else {
-      const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage), JSON.parse(stateSound));
-      const details = optionDetailsPokemon(gm.data, pokemonData, pokemon, formSpecial, assetsPokemon, pokemonCombat, noneForm);
-      dispatch({
-        type: LOAD_ASSETS,
-        payload: assetsPokemon,
-      });
-      dispatch({
-        type: LOAD_DETAILS,
-        payload: details,
-      });
-      dispatch({
-        type: LOAD_POKEMON_NAME,
-      });
-
-      dispatch({
-        type: LOAD_RELEASED_GO,
-      });
-    }
-  });
+    });
 };
 
 export const loadAssets = (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -11,14 +11,15 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 import './Navbar.scss';
-import { IconButton } from '@mui/material';
+import { Box, IconButton, LinearProgress } from '@mui/material';
 import { loadThemeData } from '../store/actions/theme.action';
-import { StoreState } from '../store/models/state.model';
+import { SpinnerState, StoreState } from '../store/models/state.model';
 
 const NavbarComponent = ({ mode, toggleColorMode }: any) => {
   const dispatch = useDispatch();
 
   const dataStore = useSelector((state: StoreState) => state.store);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
 
   const [version] = useLocalStorage('version', '');
@@ -38,111 +39,118 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
   };
 
   return (
-    <Navbar collapseOnSelect={true} bg="dark" expand="lg" variant="dark">
-      <Link className="navbar-brand" to="/">
-        <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{ marginLeft: 10, marginRight: 10 }} />
-        PokéGoBreeze
-      </Link>
-      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-      <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="me-auto">
-          <Link className="nav-link" to="/">
-            Home
-          </Link>
-          <NavDropdown title="Search">
-            <Link className="dropdown-item" to="/search-pokemon">
-              Pokémon
+    <Fragment>
+      <Navbar collapseOnSelect={true} bg="dark" expand="lg" variant="dark">
+        <Link className="navbar-brand" to="/">
+          <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{ marginLeft: 10, marginRight: 10 }} />
+          PokéGoBreeze
+        </Link>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
+            <Link className="nav-link" to="/">
+              Home
             </Link>
-            <Link className="dropdown-item" to="/search-moves">
-              Moves
+            <NavDropdown title="Search">
+              <Link className="dropdown-item" to="/search-pokemon">
+                Pokémon
+              </Link>
+              <Link className="dropdown-item" to="/search-moves">
+                Moves
+              </Link>
+              <Link className="dropdown-item" to="/search-types">
+                Types
+              </Link>
+            </NavDropdown>
+            <NavDropdown title="Effective">
+              <Link className="dropdown-item" to="/type-effective">
+                Type Effective
+              </Link>
+              <Link className="dropdown-item" to="/weather-boosts">
+                Weather Boosts
+              </Link>
+            </NavDropdown>
+            <NavDropdown title="Tools">
+              <NavDropdown.Header>Search&Find</NavDropdown.Header>
+              <Link className="dropdown-item" to="/find-cp-iv">
+                Find IV&CP
+              </Link>
+              <Link className="dropdown-item" to="/search-battle-stats">
+                Search Battle Leagues Stats
+              </Link>
+              <Link className="dropdown-item" to="/stats-table">
+                Stats Table
+              </Link>
+              <NavDropdown.Divider />
+              <NavDropdown.Header>Calculation</NavDropdown.Header>
+              <Link className="dropdown-item" to="/calculate-catch-chance">
+                Calculate Catch Chance
+              </Link>
+              <Link className="dropdown-item" to="/calculate-stats">
+                Calculate Stats
+              </Link>
+              <Link className="dropdown-item" to="/calculate-point">
+                Calculate Break&Bulk Point
+              </Link>
+              <NavDropdown.Divider />
+              <NavDropdown.Header>Battle Simulator</NavDropdown.Header>
+              <Link className="dropdown-item" to="/damage-calculate">
+                Damage Simulator
+              </Link>
+              <Link className="dropdown-item" to="/raid-battle">
+                Raid Battle
+              </Link>
+            </NavDropdown>
+            <NavDropdown title="Stats Sheets">
+              <Link className="dropdown-item" to="/dps-tdo-sheets">
+                DPS&TDO Sheets
+              </Link>
+              <Link className="dropdown-item" to="/stats-ranking">
+                Stats Ranking
+              </Link>
+            </NavDropdown>
+            <NavDropdown title="PVP">
+              <Link className="dropdown-item" to="/pvp">
+                Simulator
+              </Link>
+              <Link className="dropdown-item" to="/battle-leagues">
+                Battle Leagues
+              </Link>
+            </NavDropdown>
+            <Link className="nav-link" to="/stickers">
+              Stickers
             </Link>
-            <Link className="dropdown-item" to="/search-types">
-              Types
-            </Link>
-          </NavDropdown>
-          <NavDropdown title="Effective">
-            <Link className="dropdown-item" to="/type-effective">
-              Type Effective
-            </Link>
-            <Link className="dropdown-item" to="/weather-boosts">
-              Weather Boosts
-            </Link>
-          </NavDropdown>
-          <NavDropdown title="Tools">
-            <NavDropdown.Header>Search&Find</NavDropdown.Header>
-            <Link className="dropdown-item" to="/find-cp-iv">
-              Find IV&CP
-            </Link>
-            <Link className="dropdown-item" to="/search-battle-stats">
-              Search Battle Leagues Stats
-            </Link>
-            <Link className="dropdown-item" to="/stats-table">
-              Stats Table
-            </Link>
-            <NavDropdown.Divider />
-            <NavDropdown.Header>Calculation</NavDropdown.Header>
-            <Link className="dropdown-item" to="/calculate-catch-chance">
-              Calculate Catch Chance
-            </Link>
-            <Link className="dropdown-item" to="/calculate-stats">
-              Calculate Stats
-            </Link>
-            <Link className="dropdown-item" to="/calculate-point">
-              Calculate Break&Bulk Point
-            </Link>
-            <NavDropdown.Divider />
-            <NavDropdown.Header>Battle Simulator</NavDropdown.Header>
-            <Link className="dropdown-item" to="/damage-calculate">
-              Damage Simulator
-            </Link>
-            <Link className="dropdown-item" to="/raid-battle">
-              Raid Battle
-            </Link>
-          </NavDropdown>
-          <NavDropdown title="Stats Sheets">
-            <Link className="dropdown-item" to="/dps-tdo-sheets">
-              DPS&TDO Sheets
-            </Link>
-            <Link className="dropdown-item" to="/stats-ranking">
-              Stats Ranking
-            </Link>
-          </NavDropdown>
-          <NavDropdown title="PVP">
-            <Link className="dropdown-item" to="/pvp">
-              Simulator
-            </Link>
-            <Link className="dropdown-item" to="/battle-leagues">
-              Battle Leagues
-            </Link>
-          </NavDropdown>
-          <Link className="nav-link" to="/stickers">
-            Stickers
-          </Link>
-        </Nav>
-        {dataStore.timestamp && (
-          <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
-            <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
-              Update: {getTime(dataStore.timestamp, true)}
-            </span>
-            <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
-              <b>{version}</b>
-            </span>
-          </Navbar.Text>
-        )}
-        <IconButton
-          className={stateTheme + '-mode'}
-          onClick={onChangeTheme}
-          style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
-          color="inherit"
-        >
-          {mode === 'light' ? (
-            <LightModeIcon fontSize="large" style={{ color: 'white' }} />
-          ) : (
-            <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
+          </Nav>
+          {dataStore.timestamp && (
+            <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
+              <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
+                Update: {getTime(dataStore.timestamp, true)}
+              </span>
+              <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
+                <b>{version}</b>
+              </span>
+            </Navbar.Text>
           )}
-        </IconButton>
-      </Navbar.Collapse>
-    </Navbar>
+          <IconButton
+            className={stateTheme + '-mode'}
+            onClick={onChangeTheme}
+            style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
+            color="inherit"
+          >
+            {mode === 'light' ? (
+              <LightModeIcon fontSize="large" style={{ color: 'white' }} />
+            ) : (
+              <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
+            )}
+          </IconButton>
+        </Navbar.Collapse>
+      </Navbar>
+      {spinner.bar.show && (
+        <Box sx={{ width: '100%', position: 'absolute', zIndex: 7 }}>
+          <LinearProgress variant="determinate" value={spinner.bar.percent} />
+        </Box>
+      )}
+    </Fragment>
   );
 };
 

@@ -795,10 +795,10 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
         result.name = item.name.replace('_NORMAL', '');
         result.baseSpecies = item.pokemonId;
         if (result.id === 235) {
-          const moves = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
+          const moves: PokemonModel = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
             .smeargleMovesSettings;
-          result.quickMoves = moves.quickMoves.map((move: string) => move.replace('_FAST', ''));
-          result.cinematicMoves = moves.cinematicMoves;
+          result.quickMoves = moves.quickMoves.map((move) => convertIdMove(move?.toString()).replace('_FAST', ''));
+          result.cinematicMoves = moves.cinematicMoves.map((move) => convertIdMove(move?.toString()));
         } else {
           result.quickMoves = item.quickMoves ? item.quickMoves.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) : [];
           result.cinematicMoves = item.cinematicMoves.map((move) => convertIdMove(move?.toString()));

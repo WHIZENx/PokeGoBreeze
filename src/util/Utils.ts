@@ -122,7 +122,7 @@ export const splitAndCapitalize = (str: string | undefined | null, splitBy: stri
   }
   return str
     .split(splitBy)
-    .map((text: string) => capitalize(text))
+    .map((text) => capitalize(text))
     .join(joinBy);
 };
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import packageInfo from '../package.json';
 import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/actions/store.action';
-import { showSpinnerWithMsg } from './store/actions/spinner.action';
+import { setBar, setPercent, showSpinnerWithMsg } from './store/actions/spinner.action';
 
 import './App.scss';
 
@@ -74,9 +74,12 @@ function App() {
 
   useEffect(() => {
     dispatch(showSpinnerWithMsg(SYNC_MSG));
+    dispatch(setBar(true));
+    dispatch(setPercent(0));
     loadTheme(dispatch, stateTheme, setStateTheme);
     loadCPM(dispatch);
     loadPokeGOLogo(dispatch);
+    dispatch(setPercent(15));
     loadTimestamp(
       dispatch,
       stateTimestamp,
