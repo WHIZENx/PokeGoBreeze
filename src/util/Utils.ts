@@ -628,7 +628,10 @@ export const getDataWithKey = (data: any, key: string | number) => {
   return result ? result[1] : {};
 };
 
-export const checkMoveSetAvailable = (pokemon: PokemonModel | CombatPokemon) => {
+export const checkMoveSetAvailable = (pokemon: PokemonModel | CombatPokemon | undefined) => {
+  if (!pokemon) {
+    return false;
+  }
   const allMoves = pokemon.quickMoves
     .concat(pokemon.cinematicMoves)
     .concat(pokemon.eliteQuickMoves ?? [])
@@ -637,4 +640,21 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | CombatPokemon) => 
     return false;
   }
   return true;
+};
+
+export const convertIdMove = (name: string) => {
+  switch (name) {
+    case '387':
+      return 'GEOMANCY';
+    case '389':
+      return 'OBLIVION_WING';
+    case '391':
+      return 'TRIPLE_AXEL';
+    case '392':
+      return 'TRAILBLAZE';
+    case '393':
+      return 'SCORCHING_SANDS';
+    default:
+      return name;
+  }
 };

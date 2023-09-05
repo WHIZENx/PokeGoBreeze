@@ -9,7 +9,7 @@ class APIService {
   constructor() {
     this.date = new Date();
     this.axios = axios;
-    this.axios.defaults.timeout = 10000;
+    // this.axios.defaults.timeout = 10000;
   }
 
   getAxios() {

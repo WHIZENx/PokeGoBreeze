@@ -602,24 +602,27 @@ export const calculateStatsByTag = (
   baseStats: { hp: number; atk: number; def: number; sta?: number; spa: number; spd: number; spe: number } | undefined,
   tag: string | null | undefined
 ) => {
-  if (pokemon?.baseStatsGO) {
-    return pokemon.baseStats;
-  }
-  const from = tag?.toLowerCase();
-  const checkNerf = from?.toUpperCase().includes(FORM_MEGA) ? false : true;
   let atk = 0,
     def = 0,
     sta = 0;
 
-  const result = findStatsPokeGO(from);
-  if (result) {
-    atk = result.attack;
-    def = result.defense;
-    sta = result.stamina;
-  } else {
-    atk = calBaseATK(baseStats, checkNerf);
-    def = calBaseDEF(baseStats, checkNerf);
-    sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+  if (pokemon) {
+    if (pokemon?.baseStatsGO) {
+      return pokemon.baseStats;
+    }
+    const from = tag?.toLowerCase();
+    const checkNerf = from?.toUpperCase().includes(FORM_MEGA) ? false : true;
+
+    const result = findStatsPokeGO(from);
+    if (result) {
+      atk = result.attack;
+      def = result.defense;
+      sta = result.stamina;
+    } else {
+      atk = calBaseATK(baseStats, checkNerf);
+      def = calBaseDEF(baseStats, checkNerf);
+      sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+    }
   }
   return {
     atk,

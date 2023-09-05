@@ -4,12 +4,13 @@ import APIService from '../../../services/API.service';
 import { convertName, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
-import { calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
+import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
 import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { MAX_IV, MAX_LEVEL } from '../../../util/Constants';
 
 const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
   const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
@@ -65,7 +66,20 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     setCMoveSec(cMoveSec);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
-    const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
+    let minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
+    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+
+    if (maxPokeCP < minCP) {
+      if (maxPokeCP <= 500) {
+        minCP = 0;
+      } else if (maxPokeCP <= 1500) {
+        minCP = 500;
+      } else if (maxPokeCP <= 2500) {
+        minCP = 1500;
+      } else {
+        minCP = 2500;
+      }
+    }
     const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, league);
 
     let combatPoke: any = pokemonCombat.filter(

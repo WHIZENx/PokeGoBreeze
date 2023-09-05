@@ -146,7 +146,20 @@ export const OverAllStats = (
       result[MAX_LEVEL] = { cp: buddyCP };
       return result;
     } else {
-      const minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+      let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+      const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+
+      if (maxPokeCP < minCP) {
+        if (maxPokeCP <= 500) {
+          minCP = 0;
+        } else if (maxPokeCP <= 1500) {
+          minCP = 500;
+        } else if (maxPokeCP <= 2500) {
+          minCP = 1500;
+        } else {
+          minCP = 2500;
+        }
+      }
       const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
       return allStats[allStats.length - 1];
     }

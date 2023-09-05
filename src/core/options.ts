@@ -6,13 +6,14 @@ import { Sticker, StickerDataModel } from './models/sticker.model';
 import { Details, DetailsPokemonModel } from './models/details.model';
 
 import pokemonData from '../data/pokemon.json';
-import { capitalize, checkMoveSetAvailable, convertName, splitAndCapitalize } from '../util/Utils';
+import { capitalize, checkMoveSetAvailable, convertIdMove, convertName, splitAndCapitalize } from '../util/Utils';
 import { TypeSet } from './models/type.model';
 import { Candy, CandyDataModel, CandyModel } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonEncounter, PokemonModel } from './models/pokemon.model';
 import { TypeEff } from './models/typeEff.model';
 import { FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
+import { APIUrl } from '../services/constants';
 
 export const getOption = (options: any, args: string[]) => {
   if (!options) {
@@ -676,8 +677,7 @@ export const optionCombat = (data: any[], types: TypeEff) => {
         data: {
           combatMove: {
             uniqueId: string;
-            // eslint-disable-next-line no-unused-vars
-            type: { replace: (arg0: string, arg1: string) => null };
+            type: string;
             power: number;
             energyDelta: number;
             buffs: { [x: string]: any };
@@ -735,7 +735,7 @@ export const optionCombat = (data: any[], types: TypeEff) => {
         const move = moves.find((move: { movementId: string }) => move.movementId === result.name);
         result.id = move.id;
         result.track = move.id;
-        result.name = result.name?.toString().replace('387', 'GEOMANCY').replace('_FAST', '');
+        result.name = convertIdMove(result.name?.toString()).replace('_FAST', '');
         result.pve_power = move.power ?? 0.0;
         if (result.name === 'STRUGGLE') {
           result.pve_energy = -33;
@@ -800,12 +800,12 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
           result.quickMoves = moves.quickMoves.map((move: string) => move.replace('_FAST', ''));
           result.cinematicMoves = moves.cinematicMoves;
         } else {
-          result.quickMoves = item.quickMoves ? item.quickMoves.map((move: string) => move?.toString().replace('_FAST', '')) : [];
-          result.cinematicMoves = item.cinematicMoves;
+          result.quickMoves = item.quickMoves ? item.quickMoves.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) : [];
+          result.cinematicMoves = item.cinematicMoves.map((move) => convertIdMove(move?.toString()));
           result.eliteQuickMoves = item.eliteQuickMoves
-            ? item.eliteQuickMoves.map((move: string) => move?.toString().replace('387', 'GEOMANCY').replace('_FAST', ''))
+            ? item.eliteQuickMoves.map((move) => convertIdMove(move?.toString()).replace('_FAST', ''))
             : [];
-          result.eliteCinematicMoves = item.eliteCinematicMoves ?? [];
+          result.eliteCinematicMoves = item.eliteCinematicMoves?.map((move) => convertIdMove(move?.toString())) ?? [];
           if (item.shadow) {
             result.shadowMoves.push(item.shadow.shadowChargeMove);
             result.purifiedMoves.push(item.shadow.purifiedChargeMove);
@@ -913,8 +913,8 @@ export const optionLeagues = (data: any[], pokemon: PokemonModel[]) => {
         }
       );
       result.iconUrl = item.data.combatLeague.iconUrl
-        .replace('https://storage.googleapis.com/prod-public-images/', '')
-        .replace('https://prodholoholo-public-images.nianticlabs.com/LeagueIcons/', '');
+        .replace(APIUrl.POGO_PROD_ASSET_URL, '')
+        .replace(`${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/`, '');
       result.league = item.data.combatLeague.badgeType.replace('BADGE_', '');
       if (item.data.combatLeague.bannedPokemon) {
         const banList = result.conditions.banned.concat(
@@ -1092,11 +1092,11 @@ export const optionDetailsPokemon = (
       }
       result.formChange = item.formChange ?? null;
 
-      const form = assets?.find((asset) => asset.id === result.id)?.image.find((img: { form: string }) => img.form === result.form);
+      const form = assets?.find((asset) => asset.id === result.id)?.image.find((img) => img.form === result.form);
 
-      const combat = pokemonCombat.find((pokemon: { id: number }) => pokemon.id === result.id);
+      const combat = pokemonCombat.find((pokemon) => pokemon.id === result.id);
 
-      if (combat?.quickMoves[0] !== combat?.cinematicMoves[0] && form && form.default) {
+      if (checkMoveSetAvailable(combat) && form && form.default) {
         result.releasedGO = form.default.includes('Addressable Assets/');
       }
 

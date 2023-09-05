@@ -39,7 +39,7 @@ import { Link } from 'react-router-dom';
 import { StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { Combat } from '../../../core/models/combat.model';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { PokemonBattle, PokemonBattleData } from '../models/battle.model';
 
 const Battle = () => {
   const dispatch = useDispatch();
@@ -124,35 +124,7 @@ const Battle = () => {
     };
   };
 
-  const calculateMoveDmgActual = (
-    poke: {
-      shadow: boolean;
-      hp?: number;
-      stats: any;
-      currentStats: any;
-      pokemon: PokemonDataModel;
-      fmove?: Combat;
-      cmove?: Combat;
-      cmoveSec?: any;
-      energy?: number;
-      block?: number;
-      turn?: number;
-    },
-    pokeObj: {
-      shadow: boolean;
-      hp?: number;
-      stats: any;
-      currentStats: any;
-      pokemon: PokemonDataModel;
-      fmove?: Combat;
-      cmove?: Combat;
-      cmoveSec?: any;
-      energy?: number;
-      block?: number;
-      turn?: number;
-    },
-    move: { pvp_power: number; type: string }
-  ) => {
+  const calculateMoveDmgActual = (poke: PokemonBattleData, pokeObj: PokemonBattleData, move: { pvp_power: number; type: string }) => {
     const atkPoke = calculateStatsBattle(poke.stats.atk, poke.currentStats.IV.atk, poke.currentStats.level, true);
     const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.currentStats.IV.def, pokeObj.currentStats.level, true);
     poke.shadow = poke.shadow ?? false;
@@ -167,18 +139,7 @@ const Battle = () => {
     );
   };
 
-  const Pokemon = (poke: {
-    disableCMoveSec: boolean;
-    disableCMovePri: boolean;
-    shadow: boolean;
-    pokemonData: any;
-    fMove: any;
-    cMovePri: any;
-    cMoveSec: any;
-    timeline?: any[];
-    energy: number;
-    block: number;
-  }) => {
+  const Pokemon = (poke: PokemonBattle) => {
     return {
       hp: poke.pokemonData.currentStats.stats.statsSTA,
       stats: poke.pokemonData.stats,
@@ -722,11 +683,21 @@ const Battle = () => {
             .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
             .map((item) => {
               const name = convertNameRankingToOri(item.speciesId.replace('_shadow', ''), item.speciesName);
-              const pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
-              const id = pokemon?.num;
-              const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
+              let pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
 
-              const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+              if (!pokemon) {
+                pokemon = Object.values(dataStore?.pokemonData ?? []).find(
+                  (pokemon) => pokemon.slug === item.speciesId.replace('_shadow', '')
+                );
+                if (!pokemon) {
+                  return null;
+                }
+              }
+
+              const id = pokemon.num ?? 0;
+              const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
+
+              const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
               return {
                 ...item,
@@ -737,6 +708,7 @@ const Battle = () => {
                 stats,
               };
             })
+            .filter((pokemon) => pokemon)
         );
         dispatch(hideSpinner());
       } catch (e: any) {
@@ -1069,12 +1041,7 @@ const Battle = () => {
     );
   };
 
-  const calculateStatPokemon = (
-    e: { preventDefault: () => void },
-    type: string,
-    pokemon: { pokemonData: { allStats: any[]; pokemon: PokemonDataModel | undefined } },
-    setPokemon: any
-  ) => {
+  const calculateStatPokemon = (e: { preventDefault: () => void }, type: string, pokemon: PokemonBattle, setPokemon: any) => {
     e.preventDefault();
     const level = parseInt((document.getElementById('level' + capitalize(type)) as HTMLInputElement).value);
     const atk = parseInt((document.getElementById('atkIV' + capitalize(type)) as HTMLInputElement).value);
@@ -1124,12 +1091,7 @@ const Battle = () => {
     });
   };
 
-  const onSetStats = (
-    type: string,
-    pokemon: { pokemonData: { allStats: string | any[]; bestStats: { level: string; IV: { atk: string; def: string; sta: string } } } },
-    setPokemon: any,
-    isRandom: boolean
-  ) => {
+  const onSetStats = (type: string, pokemon: PokemonBattle, setPokemon: any, isRandom: boolean) => {
     let stats: { level: string; IV: { atk: string; def: string; sta: string } };
     if (isRandom) {
       stats = pokemon.pokemonData.allStats[Math.floor(Math.random() * pokemon.pokemonData.allStats.length)];
@@ -1152,11 +1114,7 @@ const Battle = () => {
     });
   };
 
-  const renderInfoPokemon = (
-    type: string,
-    pokemon: { shadow?: boolean; pokemonData: any; fMove?: Combat; cMovePri?: Combat; cMoveSec?: Combat | string },
-    setPokemon: any
-  ) => {
+  const renderInfoPokemon = (type: string, pokemon: PokemonBattle, setPokemon: any) => {
     return (
       <Accordion defaultActiveKey={[]} alwaysOpen={true}>
         <Accordion.Item eventKey="0">
@@ -1177,7 +1135,7 @@ const Battle = () => {
               </div>
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
-              <Link to={`/pvp/${params.cp}/overall/${pokemon.pokemonData.speciesId.replaceAll('_', '-')}`}>
+              <Link to={`/pvp/${params.cp}/overall/${pokemon.pokemonData.speciesId?.replaceAll('_', '-')}`}>
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
               </Link>
               <b>{`#${pokemon.pokemonData.id} ${splitAndCapitalize(pokemon.pokemonData.name, '-', ' ')}`}</b>
@@ -1291,14 +1249,14 @@ const Battle = () => {
               find={true}
               title="Fast Move"
               move={pokemon.fMove}
-              elite={pokemon.pokemonData.combatPoke.eliteQuickMoves.includes(pokemon.fMove?.name)}
+              elite={pokemon.pokemonData.combatPoke?.eliteQuickMoves.includes(pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
                 find={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes(pokemon.cMovePri?.name)}
+                elite={pokemon.pokemonData.combatPoke?.eliteCinematicMoves.includes(pokemon.cMovePri?.name)}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1308,7 +1266,7 @@ const Battle = () => {
                   find={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes((pokemon.cMoveSec as Combat)?.name)}
+                  elite={pokemon.pokemonData.combatPoke?.eliteCinematicMoves.includes((pokemon.cMoveSec as Combat)?.name)}
                 />
                 {findBuff(pokemon.cMoveSec as Combat)}
               </div>
