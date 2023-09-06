@@ -303,7 +303,7 @@ export const loadGameMaster = (
       dispatch(
         showSpinner({
           error: true,
-          msg: e.stack ?? '' + e.cause ?? '',
+          msg: e.message ?? '' + e.cause ?? '',
         })
       );
     });
