@@ -25,9 +25,9 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { Combat, CombatPokemon } from '../../../core/models/combat.model';
+import { Combat } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { PokemonTeamData } from '../models/battle.model';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -178,25 +178,7 @@ const TeamPVP = () => {
 
         file.teams = file.teams.map((item) => {
           const teams = item.team.split('|');
-          const teamsData: {
-            id: number | undefined;
-            name: string | undefined;
-            speciesId: number;
-            pokemonData: PokemonDataModel | undefined;
-            form: string | null;
-            stats:
-              | { hp?: number; atk: number; def: number; sta?: number | undefined; spa?: number; spd?: number; spe?: number }
-              | { atk: number; def: number; sta: number };
-            atk: { id: number; form: string; attack: number; rank: number } | undefined;
-            def: { id: number; form: string; defense: number; rank: number } | undefined;
-            sta: { id: number; form: string; stamina: number; rank: number } | undefined;
-            fmove: Combat | undefined;
-            cmovePri: Combat | undefined;
-            cmoveSec: Combat | undefined;
-            combatPoke: CombatPokemon;
-            shadow: boolean;
-            purified: boolean;
-          }[] = [];
+          const teamsData: PokemonTeamData[] = [];
           teams.forEach((value) => teamsData.push(mappingPokemonData(value)));
           return {
             ...item,

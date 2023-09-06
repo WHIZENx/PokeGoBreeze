@@ -32,8 +32,8 @@ interface EvolutionBranch {
 }
 
 export interface PokemonModel {
-  eliteQuickMoves?: string[];
-  eliteCinematicMoves?: string[];
+  eliteQuickMove?: string[];
+  eliteCinematicMove?: string[];
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: any;
@@ -281,6 +281,7 @@ export class PokemonDataModel {
     this.baseForme = null;
     this.prevo = capitalize(pokemon.parentPokemonId ?? '');
     this.isForceReleasedGO = checkMoveSetAvailable(pokemon);
+    this.releasedGO = false;
     this.isTransferable = pokemon.isTransferable;
     this.isDeployable = pokemon.isDeployable;
     this.isTradable = pokemon.isTradable;
@@ -290,5 +291,6 @@ export class PokemonDataModel {
     this.gen = 0;
     this.region = 'Unknown';
     this.version = 'pokémon-gO';
+    this.baseSpecies = capitalize(pokemon.pokemonId);
   }
 }

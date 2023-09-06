@@ -108,7 +108,12 @@ const RankingPVP = () => {
         }
         file = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+          let pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+
+          if (!pokemon) {
+            pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
+          }
+
           const id = pokemon?.num;
           const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
 
@@ -149,9 +154,7 @@ const RankingPVP = () => {
           }
 
           let combatPoke: any = dataStore?.pokemonCombat?.filter(
-            (item) =>
-              item.id === pokemon?.num &&
-              item.baseSpecies === (pokemon?.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+            (item) => item.id === pokemon?.num && item.baseSpecies === convertName(pokemon?.baseSpecies ?? pokemon?.name)
           );
           const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
           if (!result) {

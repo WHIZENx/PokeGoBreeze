@@ -74,9 +74,6 @@ function App() {
   const colorMode = useContext(ColorModeContext);
 
   useEffect(() => {
-    dispatch(showSpinnerWithMsg(SYNC_MSG));
-    dispatch(setBar(true));
-    dispatch(setPercent(0));
     loadTheme(dispatch, stateTheme, setStateTheme);
     loadCPM(dispatch);
     loadPokeGOLogo(dispatch);
@@ -95,6 +92,9 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
+    dispatch(showSpinnerWithMsg(SYNC_MSG));
+    dispatch(setBar(true));
+    dispatch(setPercent(0));
     setVersion(packageInfo.version);
     dispatch(setDevice());
   }, [dispatch]);

@@ -8,11 +8,11 @@ export const pvpConvertPath = (data: { tree: any[] }, path: string) => {
 };
 
 export const pvpFindFirstPath = (data: any[], path: string) => {
-  return data.filter((item: { path: string }) => item.path.includes(path)).map((item: { path: string }) => item.path);
+  return data?.filter((item: { path: string }) => item.path.includes(path)).map((item: { path: string }) => item.path);
 };
 
 export const pvpFindPath = (data: any[], path: string) => {
-  return data.filter((item: string) => item.includes(path)).map((item: string) => item.replace(path, ''));
+  return data?.filter((item: string) => item.includes(path)).map((item: string) => item.replace(path, ''));
 };
 
 export const convertPVPRankings = (data: any[], leagues: League[]) => {

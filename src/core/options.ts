@@ -769,10 +769,10 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
         } else {
           result.quickMoves = item.quickMoves ? item.quickMoves.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) : [];
           result.cinematicMoves = item.cinematicMoves.map((move) => convertIdMove(move?.toString()));
-          result.eliteQuickMoves = item.eliteQuickMoves
-            ? item.eliteQuickMoves.map((move) => convertIdMove(move?.toString()).replace('_FAST', ''))
+          result.eliteQuickMoves = item.eliteQuickMove
+            ? item.eliteQuickMove.map((move) => convertIdMove(move?.toString()).replace('_FAST', ''))
             : [];
-          result.eliteCinematicMoves = item.eliteCinematicMoves?.map((move) => convertIdMove(move?.toString())) ?? [];
+          result.eliteCinematicMoves = item.eliteCinematicMove?.map((move) => convertIdMove(move?.toString())) ?? [];
           if (item.shadow) {
             result.shadowMoves.push(item.shadow.shadowChargeMove);
             result.purifiedMoves.push(item.shadow.purifiedChargeMove);

@@ -36,3 +36,23 @@ export interface PokemonBattle {
   energy?: number;
   block?: number;
 }
+
+export interface PokemonTeamData {
+  id: number | undefined;
+  name: string | undefined;
+  speciesId: number;
+  pokemonData: PokemonDataModel | undefined;
+  form: string | null;
+  stats:
+    | { hp?: number; atk: number; def: number; sta?: number | undefined; spa?: number; spd?: number; spe?: number }
+    | { atk: number; def: number; sta: number };
+  atk: { id: number; form: string; attack: number; rank: number } | undefined;
+  def: { id: number; form: string; defense: number; rank: number } | undefined;
+  sta: { id: number; form: string; stamina: number; rank: number } | undefined;
+  fmove: Combat | undefined;
+  cmovePri: Combat | undefined;
+  cmoveSec: Combat | undefined;
+  combatPoke: CombatPokemon;
+  shadow: boolean;
+  purified: boolean;
+}
