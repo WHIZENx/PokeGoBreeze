@@ -31,6 +31,7 @@ import { CandyModel } from '../../core/models/candy.model';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { DbModel } from '../../core/models/API/db.model';
 import { setBar, setPercent, showSpinner } from './spinner.action';
+import { isMobile } from 'react-device-detect';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -169,11 +170,13 @@ export const loadGameMaster = (
     cancelToken: APIService.getAxios().CancelToken.source().token,
   })
     .then(async (gm) => {
-      let pokemonEncounter: DbModel;
+      let pokemonEncounter: DbModel = new DbModel();
       try {
         pokemonEncounter = await getDbPokemonEncounter();
       } catch (e) {
-        throw e;
+        if (!isMobile) {
+          throw e;
+        }
       }
 
       const pokemon: PokemonModel[] = optionPokemon(gm.data, pokemonEncounter?.rows);
@@ -302,7 +305,7 @@ export const loadGameMaster = (
       dispatch(
         showSpinner({
           error: true,
-          msg: e.message + e.filename + e.lineno?.toString(),
+          msg: e.message,
         })
       );
     });

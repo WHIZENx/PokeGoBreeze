@@ -16,3 +16,17 @@ interface Field {
   name: string;
   tableID: number;
 }
+
+export class DbModel {
+  command!: string;
+  fields: Field[];
+  rowAsArray?: boolean;
+  rowCount!: number;
+  rows: any[];
+  viaNeonFetch?: boolean;
+
+  constructor() {
+    this.fields = [];
+    this.rows = [];
+  }
+}
