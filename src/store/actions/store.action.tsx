@@ -31,7 +31,6 @@ import { CandyModel } from '../../core/models/candy.model';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { DbModel } from '../../core/models/API/db.model';
 import { setBar, setPercent, showSpinner } from './spinner.action';
-import { AxiosError } from 'axios';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -298,12 +297,12 @@ export const loadGameMaster = (
       dispatch(setPercent(100));
       setTimeout(() => dispatch(setBar(false)), 500);
     })
-    .catch((e: AxiosError) => {
+    .catch((e: ErrorEvent) => {
       dispatch(setBar(false));
       dispatch(
         showSpinner({
           error: true,
-          msg: e.message ?? '' + e.cause ?? '',
+          msg: e.error + e.filename + e.lineno.toString(),
         })
       );
     });
