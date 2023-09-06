@@ -302,7 +302,7 @@ export const loadGameMaster = (
       dispatch(
         showSpinner({
           error: true,
-          msg: e.error + e.filename + e.lineno.toString(),
+          msg: e.message + e.filename + e.lineno?.toString(),
         })
       );
     });
