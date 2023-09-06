@@ -1,3 +1,5 @@
+import { capitalize } from '@mui/material';
+import { checkMoveSetAvailable } from '../../util/Utils';
 import { Combat } from './combat.model';
 
 export interface PokemonDataStats {
@@ -123,13 +125,13 @@ export interface PokemonDataModel {
     F: number;
   };
   baseStats: {
-    hp: number;
+    hp?: number;
     atk: number;
     def: number;
     sta?: number;
-    spa: number;
-    spd: number;
-    spe: number;
+    spa?: number;
+    spd?: number;
+    spe?: number;
   };
   heightm: number;
   weightkg: number;
@@ -198,4 +200,95 @@ export interface PokemonEncounter {
   name: string;
   basecapturerate: number;
   basefleerate: number;
+}
+
+export class PokemonDataModel {
+  num!: number;
+  name!: string;
+  alias!: string;
+  slug!: string;
+  sprite!: string;
+  types!: string[];
+  genderRatio!: {
+    M: number;
+    F: number;
+  };
+  baseStats!: {
+    hp?: number;
+    atk: number;
+    def: number;
+    sta?: number;
+    spa?: number;
+    spd?: number;
+    spe?: number;
+  };
+  heightm!: number;
+  weightkg!: number;
+  color!: string;
+  evos!: string[];
+  baseForme!: string | null;
+  baseFormeAlias!: string | null;
+  baseFormeSlug!: string | null;
+  baseFormeSprite!: string | null;
+  cosmeticFormes!: string[];
+  cosmeticFormesAliases!: string[];
+  cosmeticFormesSprites!: string[];
+  otherFormes!: string[];
+  otherFormesAliases!: string[];
+  otherFormesSprites!: string[];
+  formeOrder!: string[];
+  prevo!: string | null;
+  canGigantamax!: boolean | null | string;
+  baseSpecies!: string | null;
+  forme!: string | null;
+  changesFrom!: string | null;
+  cannotDynamax!: boolean;
+  releasedGO!: boolean;
+  isTransferable?: boolean | null;
+  isDeployable!: boolean | null;
+  isTradable!: boolean | null;
+  pokemonClass!: string | null;
+  disableTransferToPokemonHome!: boolean | null;
+  isBaby!: boolean;
+  gen!: number;
+  region!: string | null;
+  version!: string | null;
+  isForceReleasedGO?: boolean;
+  baseStatsGO?: boolean;
+  stats?: PokemonDataStats | null;
+
+  constructor(pokemon: PokemonModel, types: string[]) {
+    this.num = pokemon.id;
+    this.name = capitalize(pokemon.name);
+    this.alias = pokemon.name.toLowerCase();
+    this.slug = pokemon.name.toLowerCase();
+    this.sprite = 'unknown-pokemon';
+    this.types = types;
+    this.genderRatio = {
+      M: 0.5,
+      F: 0.5,
+    };
+    this.baseStatsGO = true;
+    this.baseStats = {
+      atk: pokemon.stats.baseAttack,
+      def: pokemon.stats.baseDefense,
+      sta: pokemon.stats.baseStamina,
+    };
+    this.heightm = pokemon.pokedexHeightM;
+    this.weightkg = pokemon.pokedexWeightKg;
+    this.color = 'None';
+    this.evos = pokemon.evolutionIds ? pokemon.evolutionIds.map((name: string) => capitalize(name)) : [];
+    this.baseForme = null;
+    this.prevo = capitalize(pokemon.parentPokemonId ?? '');
+    this.isForceReleasedGO = checkMoveSetAvailable(pokemon);
+    this.isTransferable = pokemon.isTransferable;
+    this.isDeployable = pokemon.isDeployable;
+    this.isTradable = pokemon.isTradable;
+    this.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '');
+    this.disableTransferToPokemonHome = pokemon.disableTransferToPokemonHome ? true : false;
+    this.isBaby = false;
+    this.gen = 0;
+    this.region = 'Unknown';
+    this.version = 'pokémon-gO';
+  }
 }

@@ -45,6 +45,7 @@ import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
 import { SYNC_MSG, TRANSITION_TIME } from './util/Constants';
 import { StatsState, StoreState } from './store/models/state.model';
+import { setDevice } from './store/actions/device.action';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -95,6 +96,7 @@ function App() {
 
   useEffect(() => {
     setVersion(packageInfo.version);
+    dispatch(setDevice());
   }, [dispatch]);
 
   const renderPage = (page: JSX.Element, condition: boolean = false) => {

@@ -185,7 +185,7 @@ const TeamPVP = () => {
             pokemonData: PokemonDataModel | undefined;
             form: string | null;
             stats:
-              | { hp: number; atk: number; def: number; sta?: number | undefined; spa: number; spd: number; spe: number }
+              | { hp?: number; atk: number; def: number; sta?: number | undefined; spa?: number; spd?: number; spe?: number }
               | { atk: number; def: number; sta: number };
             atk: { id: number; form: string; attack: number; rank: number } | undefined;
             def: { id: number; form: string; defense: number; rank: number } | undefined;

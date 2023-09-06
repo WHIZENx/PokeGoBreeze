@@ -599,7 +599,7 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
 
 export const calculateStatsByTag = (
   pokemon: PokemonDataModel | undefined,
-  baseStats: { hp: number; atk: number; def: number; sta?: number; spa: number; spd: number; spe: number } | undefined,
+  baseStats: { hp?: number; atk: number; def: number; sta?: number; spa?: number; spd?: number; spe?: number } | undefined,
   tag: string | null | undefined
 ) => {
   let atk = 0,
@@ -1474,7 +1474,7 @@ const queryMoveCounter = (
   combat: Combat[],
   pokemon: PokemonDataModel,
   stats:
-    | { hp: number; atk: number; def: number; sta?: number | undefined; spa: number; spd: number; spe: number }
+    | { hp?: number; atk: number; def: number; sta?: number | undefined; spa?: number; spd?: number; spe?: number }
     | { atk: number; def: number; sta: number },
   def: number,
   types: string | string[],

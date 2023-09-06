@@ -151,40 +151,7 @@ export const optionPokemonData = (data: PokemonModel[]) => {
       if (pokemon.type2) {
         types.push(capitalize(pokemon.type2.replace('POKEMON_TYPE_', '')));
       }
-      result[pokemon.name.toLowerCase()] = {
-        num: pokemon.id,
-        name: capitalize(pokemon.name),
-        alias: pokemon.name.toLowerCase(),
-        slug: pokemon.name.toLowerCase(),
-        sprite: 'unknown-pokemon',
-        types,
-        genderRatio: {
-          M: 0.5,
-          F: 0.5,
-        },
-        baseStatsGO: true,
-        baseStats: {
-          atk: pokemon.stats.baseAttack,
-          def: pokemon.stats.baseDefense,
-          sta: pokemon.stats.baseStamina,
-        },
-        heightm: pokemon.pokedexHeightM,
-        weightkg: pokemon.pokedexWeightKg,
-        color: 'None',
-        evos: pokemon.evolutionIds ? pokemon.evolutionIds.map((name: string) => capitalize(name)) : [],
-        baseForme: null,
-        prevo: capitalize(pokemon.parentPokemonId),
-        isForceReleasedGO: checkMoveSetAvailable(pokemon),
-        isTransferable: pokemon.isTransferable,
-        isDeployable: pokemon.isDeployable,
-        isTradable: pokemon.isTradable,
-        pokemonClass: null,
-        disableTransferToPokemonHome: false,
-        isBaby: false,
-        gen: 0,
-        region: 'Unknown',
-        version: 'pokémon-gO',
-      };
+      result[pokemon.name.toLowerCase()] = new PokemonDataModel(pokemon, types);
     }
   });
   return result;
