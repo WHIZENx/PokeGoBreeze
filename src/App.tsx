@@ -74,27 +74,30 @@ function App() {
   const colorMode = useContext(ColorModeContext);
 
   useEffect(() => {
+    const fetchData = async () => {
+      await loadTimestamp(
+        dispatch,
+        stateTimestamp,
+        setStateTimestamp,
+        setStateImage,
+        setStateSound,
+        setStateCandy,
+        stateImage,
+        stateSound,
+        stateCandy
+      );
+    };
+    dispatch(setBar(true));
+    dispatch(setPercent(0));
     loadTheme(dispatch, stateTheme, setStateTheme);
     loadCPM(dispatch);
     loadPokeGOLogo(dispatch);
     dispatch(setPercent(15));
-    loadTimestamp(
-      dispatch,
-      stateTimestamp,
-      setStateTimestamp,
-      setStateImage,
-      setStateSound,
-      setStateCandy,
-      stateImage,
-      stateSound,
-      stateCandy
-    );
+    fetchData();
   }, [dispatch]);
 
   useEffect(() => {
     dispatch(showSpinnerWithMsg(SYNC_MSG));
-    dispatch(setBar(true));
-    dispatch(setPercent(0));
     setVersion(packageInfo.version);
     dispatch(setDevice());
   }, [dispatch]);

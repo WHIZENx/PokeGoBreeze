@@ -73,6 +73,7 @@ const Counter = ({ def, form, currForm, pokeID }: any) => {
         setCounterList(data);
         setFrame(false);
       })
+      .catch(() => clearTimeout(timeOutId))
       .finally(() => clearTimeout(timeOutId));
   };
 

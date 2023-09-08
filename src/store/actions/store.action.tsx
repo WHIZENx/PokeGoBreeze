@@ -90,7 +90,7 @@ export const loadCPM = (dispatch: Dispatch) => {
   });
 };
 
-export const loadTimestamp = (
+export const loadTimestamp = async (
   dispatch: Dispatch,
   stateTimestamp: any,
   setStateTimestamp: any,
@@ -101,14 +101,14 @@ export const loadTimestamp = (
   stateSound: any,
   stateCandy: any
 ) => {
-  Promise.all([
+  await Promise.all([
     APIService.getFetchUrl(APIUrl.TIMESTAMP, {
       cancelToken: APIService.getAxios().CancelToken.source().token,
     }),
     APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
     APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
   ])
-    .then(([GMtimestamp, imageRoot, soundsRoot]) => {
+    .then(async ([GMtimestamp, imageRoot, soundsRoot]) => {
       dispatch({
         type: LOAD_TIMESTAMP,
         payload: parseInt(GMtimestamp.data),
@@ -257,7 +257,7 @@ export const loadGameMaster = (
       });
 
       if (timestampLoaded.images || timestampLoaded.sounds) {
-        loadAssets(
+        await loadAssets(
           dispatch,
           imageRoot,
           soundsRoot,
@@ -314,7 +314,7 @@ export const loadGameMaster = (
     });
 };
 
-export const loadAssets = (
+export const loadAssets = async (
   dispatch: Dispatch,
   imageRoot: { data: { commit: { tree: { url: string } } }[] },
   soundsRoot: { data: { commit: { tree: { url: string } } }[] },
@@ -328,19 +328,19 @@ export const loadAssets = (
   setStateImage: any,
   setStateSound: any
 ) => {
-  Promise.all([
+  await Promise.all([
     APIService.getFetchUrl(imageRoot.data.at(0)?.commit.tree.url ?? '', options),
     APIService.getFetchUrl(soundsRoot.data.at(0)?.commit.tree.url ?? '', options),
-  ]).then(([imageFolder, soundFolder]) => {
+  ]).then(async ([imageFolder, soundFolder]) => {
     const imageFolderPath = imageFolder.data.tree.find((item: { path: string }) => item.path === 'Images');
     const soundFolderPath = soundFolder.data.tree.find((item: { path: string }) => item.path === 'Sounds');
 
-    Promise.all([APIService.getFetchUrl(imageFolderPath.url, options), APIService.getFetchUrl(soundFolderPath.url, options)]).then(
-      ([image, sound]) => {
+    await Promise.all([APIService.getFetchUrl(imageFolderPath.url, options), APIService.getFetchUrl(soundFolderPath.url, options)]).then(
+      async ([image, sound]) => {
         const imagePath = image.data.tree.find((item: { path: string }) => item.path === 'Pokemon');
         const soundPath = sound.data.tree.find((item: { path: string }) => item.path === 'Pokemon Cries');
 
-        Promise.all([
+        await Promise.all([
           APIService.getFetchUrl(imagePath.url + '?recursive=1', options),
           APIService.getFetchUrl(soundPath.url + '?recursive=1', options),
         ]).then(([imageData, soundData]) => {
