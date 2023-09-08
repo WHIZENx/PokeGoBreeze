@@ -60,11 +60,7 @@ const Home = () => {
         return {
           id: item.num,
           name: item.name,
-          forme:
-            item.forme ??
-            (item.gen === 0 && item.name.indexOf('_') > -1
-              ? item.name.slice(item.name.indexOf('_') + 1).replaceAll('_', '-') + (item.num === 931 ? '-plumage' : '')
-              : null),
+          forme: item.forme,
           types: item.types,
           color: item.color.toLowerCase(),
           sprite: item.sprite.toLowerCase(),
@@ -81,14 +77,13 @@ const Home = () => {
           class: item?.pokemonClass,
           releasedGO: item.releasedGO,
           image: {
-            default:
-              assetForm && assetForm.default
-                ? APIService.getPokemonModel(assetForm.default)
-                : APIService.getPokeFullSprite(
-                    item.num,
-                    splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase() ?? ''), '-', '-')
-                  ),
-            shiny: assetForm && assetForm.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
+            default: assetForm?.default
+              ? APIService.getPokemonModel(assetForm.default)
+              : APIService.getPokeFullSprite(
+                  item.num,
+                  splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase() ?? ''), '-', '-')
+                ),
+            shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
           },
         };
       })

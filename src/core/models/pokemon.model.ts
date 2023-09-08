@@ -1,6 +1,7 @@
 import { capitalize } from '@mui/material';
 import { checkMoveSetAvailable } from '../../util/Utils';
 import { Combat } from './combat.model';
+import { genList } from '../../util/Constants';
 
 export interface PokemonDataStats {
   level: number;
@@ -258,6 +259,13 @@ export class PokemonDataModel {
   stats?: PokemonDataStats | null;
 
   constructor(pokemon: PokemonModel, types: string[]) {
+    let gen = 0;
+    Object.entries(genList).forEach(([key, value]: any) => {
+      if (pokemon.id >= value[0] && pokemon.id <= value[1]) {
+        gen = parseInt(key);
+        return;
+      }
+    });
     this.num = pokemon.id;
     this.name = capitalize(pokemon.name);
     this.alias = pokemon.name.toLowerCase();
@@ -286,11 +294,15 @@ export class PokemonDataModel {
     this.isDeployable = pokemon.isDeployable;
     this.isTradable = pokemon.isTradable;
     this.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '');
-    this.disableTransferToPokemonHome = pokemon.disableTransferToPokemonHome ? true : false;
+    this.disableTransferToPokemonHome = pokemon.disableTransferToPokemonHome ?? false;
     this.isBaby = false;
-    this.gen = 0;
+    this.gen = gen;
     this.region = 'Unknown';
-    this.version = 'pokémon-gO';
+    this.version = 'scarlet-violet';
     this.baseSpecies = capitalize(pokemon.pokemonId);
+    this.forme =
+      this.name.indexOf('_') > -1
+        ? this.name.slice(this.name.indexOf('_') + 1).replaceAll('_', '-') + (this.num === 931 ? '-plumage' : '')
+        : null;
   }
 }

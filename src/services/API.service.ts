@@ -100,7 +100,12 @@ class APIService {
   }
 
   getWeatherSprite(weather: string) {
-    weather = weather.toLowerCase().replaceAll('_', '').replaceAll('rainy', 'rain').replace('partlycloudy', 'partlyCloudy');
+    weather = weather
+      .toLowerCase()
+      .replaceAll(' ', '')
+      .replaceAll('_', '')
+      .replaceAll('rainy', 'rain')
+      .replace('partlycloudy', 'partlyCloudy');
     const timeOfSun = this.date.getHours() > 6 && this.date.getHours() < 18 ? 'Day' : 'Night';
     return `${APIUrl.POGO_ASSET_API_URL}Weather/weatherIcon_large_${weather}${timeOfSun}.png`;
   }

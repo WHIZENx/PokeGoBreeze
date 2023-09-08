@@ -191,9 +191,7 @@ export const loadGameMaster = (
       const typeEff = optionPokemonTypes(gm.data);
       const weatherBoost = optionPokemonWeather(gm.data);
 
-      dispatch(loadStats(pokemonData));
       dispatch(setPercent(60));
-
       if (!stateCandy) {
         APIService.getFetchUrl(APIUrl.CANDY_DATA, {
           cancelToken: APIService.getAxios().CancelToken.source().token,
@@ -231,11 +229,6 @@ export const loadGameMaster = (
       dispatch({
         type: LOAD_POKEMON,
         payload: pokemon,
-      });
-
-      dispatch({
-        type: LOAD_POKEMON_DATA,
-        payload: pokemonData,
       });
 
       dispatch({
@@ -289,14 +282,24 @@ export const loadGameMaster = (
           type: LOAD_DETAILS,
           payload: details,
         });
-        dispatch({
-          type: LOAD_POKEMON_NAME,
-        });
-
-        dispatch({
-          type: LOAD_RELEASED_GO,
-        });
       }
+
+      dispatch(setPercent(90));
+      dispatch(loadStats(pokemonData));
+
+      dispatch({
+        type: LOAD_POKEMON_DATA,
+        payload: pokemonData,
+      });
+
+      dispatch({
+        type: LOAD_POKEMON_NAME,
+      });
+
+      dispatch({
+        type: LOAD_RELEASED_GO,
+      });
+
       dispatch(setPercent(100));
       setTimeout(() => dispatch(setBar(false)), 500);
     })
@@ -358,14 +361,6 @@ export const loadAssets = (
           dispatch({
             type: LOAD_DETAILS,
             payload: details,
-          });
-
-          dispatch({
-            type: LOAD_POKEMON_NAME,
-          });
-
-          dispatch({
-            type: LOAD_RELEASED_GO,
           });
         });
       }

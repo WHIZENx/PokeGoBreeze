@@ -1548,7 +1548,7 @@ export const counterPokemon = (
         return item.slug === name;
       });
       if (pokemon === undefined) {
-        return;
+        return false;
       }
       const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
       value.quickMoves.forEach((vf) => {

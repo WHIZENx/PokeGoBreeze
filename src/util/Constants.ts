@@ -153,6 +153,7 @@ export const regionList: any = {
 };
 
 export const versionList: string[] = [
+  'Pokémon GO',
   'Black 2 White 2',
   'Black White',
   'Diamond Pearl',

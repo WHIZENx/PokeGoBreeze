@@ -1088,6 +1088,10 @@ export const optionDetailsPokemon = (
         .slice(1)
         .find((poke) => poke.num === pokemon.id && poke.slug.toUpperCase() === pokemon.name);
       if (pokeForm) {
+        if (pokeForm.isForceReleasedGO) {
+          const form = assets?.find((asset) => asset.id === pokeForm.num);
+          pokeForm.isForceReleasedGO = (form?.image.length ?? 0) > 0;
+        }
         pokemon.releasedGO = pokeForm.isForceReleasedGO ?? false;
       }
     }
