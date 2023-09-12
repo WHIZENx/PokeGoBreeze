@@ -1,5 +1,5 @@
 import '../PVP.scss';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 import { capitalize, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -37,7 +37,6 @@ const PokemonPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
 
   const [rankingPoke, setRankingPoke]: any = useState(null);
-  const storeStats = useRef(null);
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
@@ -118,31 +117,29 @@ const PokemonPVP = () => {
 
         const maxCP = parseInt(params.cp);
 
-        let bestStats: any = storeStats.current;
-        if (!bestStats) {
-          if (maxCP === 10000) {
-            const cp = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
-            const buddyCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
-            bestStats[MAX_LEVEL - 1] = { cp };
-            bestStats[MAX_LEVEL] = { cp: buddyCP };
-          } else {
-            let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-            const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+        let bestStats: any = {};
+        if (maxCP === 10000) {
+          const cp = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
+          const buddyCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+          bestStats[MAX_LEVEL - 1] = { cp };
+          bestStats[MAX_LEVEL] = { cp: buddyCP };
+        } else {
+          let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+          const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
 
-            if (maxPokeCP < minCP) {
-              if (maxPokeCP <= 500) {
-                minCP = 0;
-              } else if (maxPokeCP <= 1500) {
-                minCP = 500;
-              } else if (maxPokeCP <= 2500) {
-                minCP = 1500;
-              } else {
-                minCP = 2500;
-              }
+          if (maxPokeCP < minCP) {
+            if (maxPokeCP <= 500) {
+              minCP = 0;
+            } else if (maxPokeCP <= 1500) {
+              minCP = 500;
+            } else if (maxPokeCP <= 2500) {
+              minCP = 1500;
+            } else {
+              minCP = 2500;
             }
-            const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
-            bestStats = allStats[allStats.length - 1];
           }
+          const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
+          bestStats = allStats[allStats.length - 1];
         }
 
         setRankingPoke({
