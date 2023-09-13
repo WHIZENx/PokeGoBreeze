@@ -492,9 +492,9 @@ export const convertFormNameImg = (id: number, form: string) => {
     return form.replace('-totem', '');
   } else if (form?.includes('totem-')) {
     return form.replace('totem-', '').replace('disguised', '');
-  } else if (id === 849 && form?.toUpperCase() !== FORM_GMAX) {
+  } else if (id === 849 && form?.toUpperCase() === FORM_GMAX) {
     return 'amped-gmax';
-  } else if (id === 892 && form?.toUpperCase() !== FORM_GMAX) {
+  } else if (id === 892 && form?.toUpperCase() === FORM_GMAX) {
     return 'single-strike-gmax';
   } else if (form === 'armor') {
     return '';

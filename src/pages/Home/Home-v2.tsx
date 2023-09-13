@@ -6,7 +6,7 @@ import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { calculateStatsByTag } from '../../util/Calculate';
-import { convertFormNameImg, mappingReleasedGO, splitAndCapitalize } from '../../util/Utils';
+import { convertFormNameImg, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
 import {
@@ -35,6 +35,7 @@ import {
 } from '@mui/material';
 import { hideSpinner } from '../../store/actions/spinner.action';
 import { StoreState, StatsState, SpinnerState } from '../../store/models/state.model';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 
 const VersionProps = {
   PaperProps: {
@@ -53,41 +54,41 @@ const Home = () => {
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const types = Object.keys(data?.typeEff ?? []);
   const dataList = useRef(
-    mappingReleasedGO(data?.pokemonData, data?.details)
-      .map((item) => {
-        const stats = calculateStatsByTag(item, item.baseStats, item.slug);
-        const assetForm = queryAssetForm(data?.assets ?? [], item.num, item.name);
+    data?.released
+      ?.map((item: PokemonDataModel | undefined) => {
+        const stats = calculateStatsByTag(item, item?.baseStats, item?.slug);
+        const assetForm = queryAssetForm(data?.assets ?? [], item?.num, item?.name);
         return {
-          id: item.num,
-          name: item.name,
-          forme: item.forme,
-          types: item.types,
-          color: item.color.toLowerCase(),
-          sprite: item.sprite.toLowerCase(),
-          baseSpecies: item.baseSpecies,
-          baseStats: item.baseStats,
-          gen: item.gen,
-          region: item.region,
-          version: versionList.indexOf(splitAndCapitalize(item.version, '-', ' ')),
+          id: item?.num,
+          name: item?.name,
+          forme: assetForm?.default ? item?.forme : convertFormNameImg(item?.num ?? 0, item?.forme?.toLowerCase() ?? ''),
+          types: item?.types,
+          color: item?.color.toLowerCase(),
+          sprite: item?.sprite.toLowerCase(),
+          baseSpecies: item?.baseSpecies,
+          baseStats: item?.baseStats,
+          gen: item?.gen,
+          region: item?.region,
+          version: versionList.indexOf(splitAndCapitalize(item?.version, '-', ' ')),
           goStats: {
             atk: stats.atk,
             def: stats.def,
             sta: stats?.sta ?? 0,
           },
           class: item?.pokemonClass,
-          releasedGO: item.releasedGO,
+          releasedGO: item?.releasedGO,
           image: {
             default: assetForm?.default
               ? APIService.getPokemonModel(assetForm.default)
               : APIService.getPokeFullSprite(
-                  item.num,
-                  splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase() ?? ''), '-', '-')
+                  item?.num,
+                  splitAndCapitalize(convertFormNameImg(item?.num ?? 0, item?.forme?.toLowerCase() ?? ''), '-', '-')
                 ),
             shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
           },
         };
       })
-      .sort((a, b) => a.id - b.id)
+      .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0))
   );
   const [selectTypes, setSelectTypes]: any = useState([]);
   const [listOfPokemon, setListOfPokemon]: any = useState([]);
@@ -140,25 +141,25 @@ const Home = () => {
       setLoading(true);
       const timeOutId = setTimeout(
         () => {
-          const result = dataList.current.filter((item) => {
+          const result = dataList.current?.filter((item) => {
             const boolFilterType =
               selectTypes.length === 0 ||
-              (item.types.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
+              (item.types?.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
             const boolFilterPoke =
               searchTerm === '' ||
               (match
-                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id.toString() === searchTerm
+                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id?.toString() === searchTerm
                 : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  item.id.toString().includes(searchTerm));
+                  item.id?.toString().includes(searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
             const boolMega = mega ? item.forme?.toUpperCase().includes(FORM_MEGA) : true;
-            const boolGmax = gmax ? item.forme?.toUpperCase() === FORM_GMAX : true;
+            const boolGmax = gmax ? item.forme?.toUpperCase().includes(FORM_GMAX) : true;
             const boolLegend = legendary ? item.class === TYPE_LEGENDARY : true;
             const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
             const boolUltra = ultrabeast ? item.class === TYPE_ULTRA_BEAST : true;
 
-            const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
-            const findVersion = item.version === -1 ? true : version.includes(item.version);
+            const findGen = item.gen === 0 ? true : gen.includes((item.gen ?? 0) - 1);
+            const findVersion = item.version === -1 ? true : version.includes(item?.version);
             return (
               boolFilterType &&
               boolFilterPoke &&
@@ -174,7 +175,7 @@ const Home = () => {
           });
           scrollID.current = 0;
           setResult(result);
-          setListOfPokemon(result.slice(0, subItem));
+          setListOfPokemon(result?.slice(0, subItem));
           setLoading(false);
         },
         listOfPokemon > result ? listOfPokemon : result.length

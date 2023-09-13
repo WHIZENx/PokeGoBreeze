@@ -67,18 +67,18 @@ const Form = ({
 
   const findFirst = useCallback(() => {
     return formList
-      .map((item: any[]) => {
-        return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
+      .map((item: { form: { is_default: boolean } }[]) => {
+        return item.find((item) => item.form.is_default);
       })
       .at(0);
   }, [formList]);
 
   const findDefaultForm = useCallback(() => {
     return formList
-      .map((item: any[]) => {
-        return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
+      .map((item: { form: { is_default: boolean } }[]) => {
+        return item.find((item) => item.form.is_default);
       })
-      .find((item: { id: number }) => item && item.id === idDefault);
+      .find((item: { id: number }) => item?.id === idDefault);
   }, [formList, idDefault]);
 
   const findForm = useCallback(() => {
@@ -86,17 +86,11 @@ const Form = ({
       paramForm += '-standard';
     }
     return formList
-      .map((form: any[]) => {
-        let curFrom = form.find(
-          (item: { form: { form_name: string; name: string }; default_name: string }) =>
-            item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm
-        );
-        curFrom =
-          curFrom ??
-          form.find((item: { form: { is_default: boolean } }) => item.form.is_default) ??
-          form.find((item: { form: { is_default: boolean } }) => !item.form.is_default);
-        if (paramForm && curFrom.form.form_name !== paramForm.toLowerCase()) {
-          const changeForm = form.find((item: { form: { form_name: string } }) => item.form.form_name === paramForm.toLowerCase());
+      .map((form: { form: { form_name: string; name: string; is_default: boolean }; default_name: string; id: number }[]) => {
+        let curFrom = form.find((item) => item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm);
+        curFrom = curFrom ?? form.find((item) => item.form.is_default) ?? form.find((item) => !item.form.is_default);
+        if (paramForm && curFrom?.form.form_name !== paramForm.toLowerCase()) {
+          const changeForm = form.find((item) => item.form.form_name === paramForm.toLowerCase());
           if (changeForm) {
             curFrom = changeForm;
           }
@@ -161,7 +155,7 @@ const Form = ({
   const findFormData = (name: string) => {
     const findData = pokeData.find((item: { name: string }) => name === item.name);
     const findForm = formList
-      .map((item: any[]) => item.find((item: { form: { name: string } }) => item.form.name === name))
+      .map((item: { form: { name: string } }[]) => item.find((item) => item.form.name === name))
       .find((item: any) => item);
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));

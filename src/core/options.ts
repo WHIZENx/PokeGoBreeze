@@ -12,7 +12,7 @@ import { Candy, CandyDataModel, CandyModel } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonEncounter, PokemonModel } from './models/pokemon.model';
 import { TypeEff } from './models/typeEff.model';
-import { FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
 import { APIUrl } from '../services/constants';
 
 export const getOption = (options: any, args: string[]) => {
@@ -141,6 +141,13 @@ export const optionPokemonTypes = (data: PokemonModel[] | any[]) => {
 
 export const optionPokemonData = (data: PokemonModel[]) => {
   const ids = [...new Set(Object.values(pokemonData).map((pokemon) => pokemon.num))];
+  Object.values(pokemonData).forEach((pokemon) => {
+    if (pokemon.num === 849 && pokemon.forme?.toUpperCase() === FORM_GMAX) {
+      pokemon.forme = 'amped-gmax';
+    } else if (pokemon.num === 849 && pokemon.forme?.toUpperCase() === FORM_GMAX) {
+      pokemon.forme = 'single-strike-gmax';
+    }
+  });
   const result: any = pokemonData;
   data.forEach((pokemon) => {
     if (!ids.includes(pokemon.id)) {

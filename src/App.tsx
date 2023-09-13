@@ -111,7 +111,7 @@ function App() {
       <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
       {data && stats && (
         <Routes>
-          <Route path="/" element={renderPage(<Home />, data.typeEff && data.pokemonData && data.details && data.assets ? true : false)} />
+          <Route path="/" element={renderPage(<Home />, data.typeEff && data.released && data.assets ? true : false)} />
           <Route path="/type-effective" element={renderPage(<TypeEffect />, data.typeEff ? true : false)} />
           <Route path="/weather-boosts" element={renderPage(<Weather />, data.typeEff && data.weatherBoost ? true : false)} />
           <Route

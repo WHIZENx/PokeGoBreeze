@@ -124,6 +124,17 @@ const Pokemon = (props: {
       if (data.id === 150) {
         dataFromList.push(getFormsGO(data.id));
       }
+      if (
+        dataFromList.filter((form) => form.find((pokemon: { form: { form_name: string } }) => pokemon.form.form_name === 'gmax')).length > 1
+      ) {
+        dataFromList.forEach((form) => {
+          form.forEach((pokemon: { form: { form_name: string; name: string }; default_name: string }) => {
+            if (pokemon.form.form_name === 'gmax') {
+              pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
+            }
+          });
+        });
+      }
       setFormList(dataFromList);
       let defaultFrom, isDefaultForm: { form: PokemonForm; default_name: string; name: string }, defaultData: PokemonInfo | undefined;
       let formParams = searchParams.get('form');

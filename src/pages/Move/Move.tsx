@@ -24,6 +24,7 @@ import { StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
+import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -252,15 +253,7 @@ const Move = (props: { id?: number }) => {
                     <tr>
                       <td>PVE Bar Charged</td>
                       <td colSpan={2} style={{ border: 'none' }}>
-                        {[...Array(getBarCharge(true, move.pve_energy)).keys()].map((_, index) => (
-                          <div
-                            style={{
-                              width: (120 - 5 * Math.max(1, getBarCharge(true, move.pve_energy))) / getBarCharge(true, move.pve_energy),
-                            }}
-                            key={index}
-                            className={'d-inline-block bar-charge ' + move.type.toLowerCase()}
-                          />
-                        ))}
+                        <ChargedBar barCount={getBarCharge(true, move.pve_energy)} color={move.type.toLowerCase()} />
                       </td>
                     </tr>
                   )}
@@ -294,15 +287,7 @@ const Move = (props: { id?: number }) => {
                     <tr>
                       <td>PVP Bar Charged</td>
                       <td colSpan={2} style={{ border: 'none' }}>
-                        {[...Array(getBarCharge(false, move.pvp_energy)).keys()].map((_, index) => (
-                          <div
-                            style={{
-                              width: (120 - 5 * Math.max(1, getBarCharge(false, move.pvp_energy))) / getBarCharge(false, move.pvp_energy),
-                            }}
-                            key={index}
-                            className={'d-inline-block bar-charge ' + move.type.toLowerCase()}
-                          />
-                        ))}
+                        <ChargedBar barCount={getBarCharge(false, move.pvp_energy)} color={move.type.toLowerCase()} />
                       </td>
                     </tr>
                   )}
