@@ -12,6 +12,7 @@ import { queryAssetForm } from '../../util/Compute';
 import {
   FORM_GMAX,
   FORM_MEGA,
+  FORM_PRIMAL,
   genList,
   regionList,
   TRANSITION_TIME,
@@ -105,12 +106,13 @@ const Home = () => {
     version: versionList.map((_, index) => index),
     mega: false,
     gmax: false,
+    primal: false,
     legendary: false,
     mythic: false,
     ultrabeast: false,
   });
 
-  const { match, releasedGO, allShiny, gen, version, mega, gmax, legendary, mythic, ultrabeast } = filters;
+  const { match, releasedGO, allShiny, gen, version, mega, gmax, primal, legendary, mythic, ultrabeast } = filters;
 
   const [btnSelected, setBtnSelected] = useState({
     gen: true,
@@ -154,6 +156,7 @@ const Home = () => {
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
             const boolMega = mega ? item.forme?.toUpperCase().includes(FORM_MEGA) : true;
             const boolGmax = gmax ? item.forme?.toUpperCase().includes(FORM_GMAX) : true;
+            const boolPrimal = primal ? item.forme?.toUpperCase().includes(FORM_PRIMAL) : true;
             const boolLegend = legendary ? item.class === TYPE_LEGENDARY : true;
             const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
             const boolUltra = ultrabeast ? item.class === TYPE_ULTRA_BEAST : true;
@@ -168,6 +171,7 @@ const Home = () => {
               findVersion &&
               boolMega &&
               boolGmax &&
+              boolPrimal &&
               boolLegend &&
               boolMythic &&
               boolUltra
@@ -182,7 +186,7 @@ const Home = () => {
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, legendary, mythic, ultrabeast, gen, version]);
+  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, primal, legendary, mythic, ultrabeast, gen, version]);
 
   useEffect(() => {
     const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
@@ -402,7 +406,14 @@ const Home = () => {
                     control={
                       <Checkbox
                         checked={mega}
-                        onChange={(_, check) => setFilters({ ...filters, mega: check, gmax: check ? false : filters.gmax })}
+                        onChange={(_, check) =>
+                          setFilters({
+                            ...filters,
+                            mega: check,
+                            gmax: check ? false : filters.gmax,
+                            primal: check ? false : filters.primal,
+                          })
+                        }
                       />
                     }
                     label="Mega"
@@ -411,10 +422,28 @@ const Home = () => {
                     control={
                       <Checkbox
                         checked={gmax}
-                        onChange={(_, check) => setFilters({ ...filters, gmax: check, mega: check ? false : filters.mega })}
+                        onChange={(_, check) =>
+                          setFilters({
+                            ...filters,
+                            gmax: check,
+                            mega: check ? false : filters.mega,
+                            primal: check ? false : filters.primal,
+                          })
+                        }
                       />
                     }
                     label="Gmax"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={primal}
+                        onChange={(_, check) =>
+                          setFilters({ ...filters, primal: check, mega: check ? false : filters.mega, gmax: check ? false : filters.gmax })
+                        }
+                      />
+                    }
+                    label="Primal"
                   />
                   <FormControlLabel
                     control={

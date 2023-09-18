@@ -199,9 +199,9 @@ const Form = ({
         .find((item: any) => item);
       if (!findForm) {
         findForm = formList
-          .map((item: any[]) =>
+          .map((item: { form: { form_name: string } }[]) =>
             item.find(
-              (item: { form: { form_name: string } }) =>
+              (item) =>
                 item.form.form_name?.toUpperCase() === FORM_NORMAL ||
                 item.form.form_name?.toUpperCase() === FORM_STANDARD ||
                 item.form.form_name?.toUpperCase() === FORM_INCARNATE
@@ -299,16 +299,16 @@ const Form = ({
           <b>Form varieties</b>
         </h4>
         <div className="scroll-form">
-          {formList.map((value: any[], index: React.Key | number) => (
-            <Fragment key={index}>
-              {value.map(
-                (
-                  value: {
-                    form: { id: null; name: string; form_name: string };
-                    default_name: string;
-                  },
-                  index: React.Key | number
-                ) => (
+          {formList.map(
+            (
+              value: {
+                form: { id: null; name: string; form_name: string };
+                default_name: string;
+              }[],
+              index: React.Key | number
+            ) => (
+              <Fragment key={index}>
+                {value.map((value, index: React.Key | number) => (
                   <button
                     key={index}
                     className={
@@ -365,10 +365,10 @@ const Form = ({
                     )}
                     {!value.form.id && <small className="text-danger">* Only in GO</small>}
                   </button>
-                )
-              )}
-            </Fragment>
-          ))}
+                ))}
+              </Fragment>
+            )
+          )}
         </div>
       </div>
       {ratio.M !== 0 || ratio.F !== 0 ? (
