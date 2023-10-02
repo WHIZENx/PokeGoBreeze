@@ -230,7 +230,7 @@ interface Stats {
   stat: Path;
 }
 
-interface Type {
+export interface Type {
   slot: number;
   type: Path;
 }

@@ -262,9 +262,7 @@ export const optionFormSpecial = (data: any[]) => {
       return (
         item.assetBundleSuffix ||
         item.isCostume ||
-        (item.form &&
-          (item.form?.toUpperCase().includes(FORM_NORMAL) ||
-            (!item.form.includes('UNOWN') && item.form.split('_')[item.form.split('_').length - 1] === 'S')))
+        (item.form && (item.form?.toUpperCase().includes(FORM_NORMAL) || !item.form.includes('UNOWN')))
       );
     })
     .map((item: { form: string }) => item.form)
@@ -750,10 +748,11 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
     .filter(
       (item) =>
         (!item.form && noneForm.includes(item.name)) ||
+        item.name?.toString().endsWith('_S') ||
         (item.form && (item.form.toString().toUpperCase().includes(FORM_NORMAL) || !formSpecial.includes(item.name)))
     )
     .reduce((pokemonList: CombatPokemon[], item) => {
-      if (item.name.endsWith('_S') && pokemonList.map((item) => item.name).includes(item.name.replace('_S', ''))) {
+      if (item.name?.toString().endsWith('_S')) {
         const pokemonPrev = pokemonList.find((poke) => poke.name === item.name.replace('_S', ''));
         const purifiedCharge = item.shadow?.purifiedChargeMove;
         const shadowCharge = item.shadow?.shadowChargeMove;

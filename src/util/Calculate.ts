@@ -1168,8 +1168,8 @@ const queryMove = (
   purified: boolean
 ) => {
   cmove.forEach((vc: string) => {
-    const mf = combat.find((item: { name: string }) => item.name === vf);
-    const mc = combat.find((item: { name: string }) => item.name === vc);
+    const mf = combat.find((item) => item.name === vf);
+    const mc = combat.find((item) => item.name === vc);
 
     if (!mf || !mc) {
       return;
@@ -1201,7 +1201,9 @@ const queryMove = (
       calculateStatsBattle(atk, options.IV_ATK, options.POKEMON_LEVEL, true),
       calculateStatsBattle(def, options.IV_DEF, options.POKEMON_LEVEL, true),
       calculateStatsBattle(sta, options.IV_HP, options.POKEMON_LEVEL, true),
-      type
+      type,
+      null,
+      shadow
     );
     const defensive = calculateAvgDPS(
       globalOptions,
@@ -1213,7 +1215,8 @@ const queryMove = (
       calculateStatsBattle(def, options.IV_DEF, options.POKEMON_LEVEL, true),
       calculateStatsBattle(sta, options.IV_HP, options.POKEMON_LEVEL, true),
       type,
-      options
+      options,
+      shadow
     );
 
     dataList.push({ fmove: mf, cmove: mc, eDPS: { offensive, defensive } });
@@ -1509,7 +1512,8 @@ const queryMoveCounter = (
         calculateStatsBattle(stats.def, options.IV_DEF, options.POKEMON_LEVEL, true),
         calculateStatsBattle(stats?.sta ?? 0, options.IV_HP, options.POKEMON_LEVEL, true),
         pokemon.types,
-        options
+        options,
+        shadow
       );
 
       dataList.push({

@@ -3,7 +3,7 @@ import { CPMData } from '../core/models/cpm.model';
 import { PokemonInfo } from '../core/models/API/info.model';
 
 const db = createPool({
-  connectionString: process.env.REACT_APP_POKEGO_BREEZE_DB_URL + '?sslmode=require',
+  connectionString: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
 });
 
 export const getDbCpMultiply = async () => {

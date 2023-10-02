@@ -1,3 +1,5 @@
+import { Type } from './info.model';
+
 export interface PokemonForm {
   form_name: string;
   form_names: string[];
@@ -32,4 +34,71 @@ interface Path {
 interface SlotType {
   slot: number;
   type: Path;
+}
+
+interface TypeModify {
+  type: { name: string };
+}
+
+interface Form {
+  form_name: string;
+  form_names: string[];
+  form_order: number;
+  id: number | null;
+  is_battle_only: boolean;
+  is_default: boolean;
+  is_mega: boolean;
+  is_shadow: boolean;
+  name: string;
+  version_group: { name: string };
+  types: TypeModify[] | Type[];
+}
+
+export interface PokemonFormModify {
+  default_id: number;
+  default_name: string;
+  id?: number;
+  name: string;
+  form: Form;
+}
+
+export class PokemonFormModifyModel {
+  // tslint:disable-next-line:variable-name
+  default_id!: number;
+  // tslint:disable-next-line:variable-name
+  default_name!: string;
+  id?: number;
+  name!: string;
+  form!: Form;
+
+  constructor(
+    id: number,
+    defaultName: string,
+    name: string,
+    formName: string,
+    isBattleOnly: boolean,
+    isDefault: boolean,
+    isMega: boolean,
+    isShadow: boolean,
+    fullFormName: string,
+    version: string,
+    types: TypeModify[] | Type[]
+  ) {
+    this.default_id = id;
+    this.default_name = defaultName;
+    this.name = name;
+    this.form = {
+      form_name: formName,
+      form_names: [],
+      form_order: 0,
+      id: null,
+      is_battle_only: isBattleOnly,
+      is_default: isDefault,
+      is_mega: isMega,
+      is_shadow: isShadow,
+      name: fullFormName,
+      version_group: { name: version },
+      types,
+    };
+  }
 }

@@ -32,8 +32,7 @@ import { setSearchMainPage } from '../../../store/actions/searching.action';
 import Primal from '../Primal/Primal';
 import FromChange from '../FormChange/FormChange';
 import { StatsModel } from '../../../core/models/stats.model';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
 
 const Form = ({
   pokemonRouter,
@@ -75,10 +74,10 @@ const Form = ({
 
   const findDefaultForm = useCallback(() => {
     return formList
-      .map((item: { form: { is_default: boolean } }[]) => {
+      .map((item: PokemonFormModify[]) => {
         return item.find((item) => item.form.is_default);
       })
-      .find((item: { id: number }) => item?.id === idDefault);
+      .find((item: PokemonFormModify) => item?.id === idDefault);
   }, [formList, idDefault]);
 
   const findForm = useCallback(() => {
@@ -86,7 +85,7 @@ const Form = ({
       paramForm += '-standard';
     }
     return formList
-      .map((form: { form: { form_name: string; name: string; is_default: boolean }; default_name: string; id: number }[]) => {
+      .map((form: PokemonFormModify[]) => {
         let curFrom = form.find((item) => item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm);
         curFrom = curFrom ?? form.find((item) => item.form.is_default) ?? form.find((item) => !item.form.is_default);
         if (paramForm && curFrom?.form.form_name !== paramForm.toLowerCase()) {
@@ -97,7 +96,7 @@ const Form = ({
         }
         return curFrom;
       })
-      .find((item: { form: { form_name: string; name: string }; default_name: string; id: number }) => {
+      .find((item: PokemonFormModify) => {
         return paramForm
           ? item.form.form_name === paramForm || item.form.name === item.default_name + '-' + paramForm
           : item.id === idDefault;
@@ -117,8 +116,6 @@ const Form = ({
   const [statSTA, setStatSTA]: any = useState(null);
   const [statProd, setStatProd]: any = useState(null);
 
-  const [shadowStats, setShadowStats] = useState(false);
-
   const filterFormName = useCallback((form: string, formStats: string) => {
     form =
       form === '' || form?.toUpperCase() === FORM_STANDARD
@@ -132,19 +129,17 @@ const Form = ({
   }, []);
 
   const filterFormList = useCallback(
-    (formName: string, stats: any[], id: number, formLength: number) => {
-      const filterId = stats.filter((item: { id: number }) => item.id === id);
-      const firstFilter = stats.find(
-        (item: { id: number; form: string }) => item.id === id && formName.toLowerCase() === item.form.toLowerCase()
-      );
+    (formName: string, stats: { id: number; form: string }[], id: number, formLength: number) => {
+      const firstFilter = stats.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
       if (firstFilter) {
         return firstFilter;
       }
-      const filterForm = stats.find((item: { id: number; form: string }) => item.id === id && filterFormName(formName, item.form));
+      const filterId = stats.filter((item) => item.id === id);
+      const filterForm = stats.find((item) => item.id === id && filterFormName(formName, item.form));
       if (filterId.length === 1 && formLength === 1 && !filterForm) {
         return filterId.at(0);
       } else if (filterId.length === formLength && !filterForm) {
-        return stats.find((item: { id: number; form: string }) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
+        return stats.find((item) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       } else {
         return filterForm;
       }
@@ -154,9 +149,9 @@ const Form = ({
 
   const findFormData = (name: string) => {
     const findData = pokeData.find((item: { name: string }) => name === item.name);
-    const findForm = formList
-      .map((item: { form: { name: string } }[]) => item.find((item) => item.form.name === name))
-      .find((item: any) => item);
+    const findForm: PokemonFormModify = formList
+      .map((item: PokemonFormModify[]) => item.find((item) => item.form.name === name))
+      .find((item: PokemonFormModify) => item);
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));
     if (findForm.form.form_name !== '' && region) {
@@ -195,11 +190,11 @@ const Form = ({
   useEffect(() => {
     if (!region && formName) {
       let findForm = formList
-        .map((item: any[]) => item.find((item: { form: { name: string } }) => item.form.name === reversedCapitalize(formName, '-', ' ')))
-        .find((item: any) => item);
+        .map((item: PokemonFormModify[]) => item.find((item) => item.form.name === reversedCapitalize(formName, '-', ' ')))
+        .find((item: PokemonFormModify) => item);
       if (!findForm) {
         findForm = formList
-          .map((item: { form: { form_name: string } }[]) =>
+          .map((item: PokemonFormModify[]) =>
             item.find(
               (item) =>
                 item.form.form_name?.toUpperCase() === FORM_NORMAL ||
@@ -207,7 +202,7 @@ const Form = ({
                 item.form.form_name?.toUpperCase() === FORM_INCARNATE
             )
           )
-          .find((item: any) => item);
+          .find((item: PokemonFormModify) => item);
       }
       const region = Object.values(regionList).find((item: any) => findForm?.form.form_name.includes(item.toLowerCase()));
       if (findForm?.form.form_name !== '' && region) {
@@ -299,76 +294,73 @@ const Form = ({
           <b>Form varieties</b>
         </h4>
         <div className="scroll-form">
-          {formList.map(
-            (
-              value: {
-                form: { id: null; name: string; form_name: string };
-                default_name: string;
-              }[],
-              index: React.Key | number
-            ) => (
-              <Fragment key={index}>
-                {value.map((value, index: React.Key | number) => (
-                  <button
-                    key={index}
-                    className={
-                      'btn btn-form ' +
-                      ((currForm && pokeID === currForm.form.id && value.form.id === currForm.form.id) ||
-                      (currForm && pokeID !== currForm.form.id && value.form.id === currForm.form.id)
-                        ? 'form-selected'
-                        : '')
-                    }
-                    onClick={() => changeForm(value.form.name, value.form.form_name)}
-                  >
-                    <div className="d-flex w-100 justify-content-center">
-                      <div style={{ width: 64 }}>
-                        <img
-                          className="pokemon-sprite-medium"
-                          onError={(e: any) => {
-                            e.onerror = null;
-                            APIService.getFetchUrl(e.target.currentSrc)
-                              .then(() => {
-                                e.target.src = APIService.getPokeIconSprite(value.default_name);
-                              })
-                              .catch(() => {
-                                e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
-                              });
-                          }}
-                          alt="img-icon-form"
-                          src={
-                            value.form.name.includes('-totem') ||
-                            value.form.name.includes('-hisui') ||
-                            value.form.name.includes('power-construct') ||
-                            value.form.name.includes('own-tempo') ||
-                            value.form.name.includes('-meteor') ||
-                            value.form.name === 'mewtwo-armor' ||
-                            value.form.name === 'arceus-unknown' ||
-                            value.form.name === 'dialga-origin' ||
-                            value.form.name === 'palkia-origin' ||
-                            value.form.name === 'mothim-sandy' ||
-                            value.form.name === 'mothim-trash' ||
-                            value.form.name === 'basculin-white-striped' ||
-                            value.form.name === 'greninja-battle-bond' ||
-                            value.form.name === 'urshifu-rapid-strike' ||
-                            (pokeID && pokeID >= 899)
-                              ? APIService.getPokeIconSprite('unknown-pokemon')
-                              : APIService.getPokeIconSprite(value.form.name)
-                          }
-                        />
-                      </div>
+          {formList.map((value: PokemonFormModify[], index: React.Key | number) => (
+            <Fragment key={index}>
+              {value.map((value, index: React.Key | number) => (
+                <button
+                  key={index}
+                  className={
+                    'btn btn-form ' +
+                    ((currForm && pokeID === currForm.form.id && value.form.id === currForm.form.id) ||
+                    (currForm && pokeID !== currForm.form.id && value.form.id === currForm.form.id)
+                      ? 'form-selected'
+                      : '')
+                  }
+                  onClick={() => changeForm(value.form.name, value.form.form_name)}
+                >
+                  <div className="d-flex w-100 justify-content-center">
+                    <div className="position-relative" style={{ width: 64 }}>
+                      {value.form.is_shadow && (
+                        <img height={24} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                      )}
+                      <img
+                        className="pokemon-sprite-medium"
+                        onError={(e: any) => {
+                          e.onerror = null;
+                          APIService.getFetchUrl(e.target.currentSrc)
+                            .then(() => {
+                              e.target.src = APIService.getPokeIconSprite(value.default_name);
+                            })
+                            .catch(() => {
+                              e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                            });
+                        }}
+                        alt="img-icon-form"
+                        src={
+                          value.form.name.includes('-totem') ||
+                          value.form.name.includes('-hisui') ||
+                          value.form.name.includes('power-construct') ||
+                          value.form.name.includes('own-tempo') ||
+                          value.form.name.includes('-meteor') ||
+                          value.form.name === 'mewtwo-armor' ||
+                          value.form.name === 'arceus-unknown' ||
+                          value.form.name === 'dialga-origin' ||
+                          value.form.name === 'palkia-origin' ||
+                          value.form.name === 'mothim-sandy' ||
+                          value.form.name === 'mothim-trash' ||
+                          value.form.name === 'basculin-white-striped' ||
+                          value.form.name === 'greninja-battle-bond' ||
+                          value.form.name === 'urshifu-rapid-strike' ||
+                          (pokeID && pokeID >= 899)
+                            ? APIService.getPokeIconSprite('unknown-pokemon')
+                            : value.form.name.includes('-shadow')
+                            ? APIService.getPokeIconSprite(value.default_name)
+                            : APIService.getPokeIconSprite(value.form.name)
+                        }
+                      />
                     </div>
-                    <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                    {value.form.id === pokeID && (
-                      <b>
-                        <small>(Default)</small>
-                      </b>
-                    )}
-                    {!value.form.id && <small className="text-danger">* Only in GO</small>}
-                  </button>
-                ))}
-              </Fragment>
-            )
-          )}
+                  </div>
+                  <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
+                  {value.form.id === pokeID && (
+                    <b>
+                      <small>(Default)</small>
+                    </b>
+                  )}
+                  {!value.form.id && <small className="text-danger">* Only in GO</small>}
+                </button>
+              ))}
+            </Fragment>
+          ))}
         </div>
       </div>
       {ratio.M !== 0 || ratio.F !== 0 ? (
@@ -377,54 +369,36 @@ const Form = ({
             <Gender
               ratio={ratio}
               sex="Male"
-              default_m={currForm && currForm.form.sprites.front_default}
-              shiny_m={currForm && currForm.form.sprites.front_shiny}
-              default_f={currForm && currForm.form.sprites.front_female}
-              shiny_f={currForm && currForm.form.sprites.front_shiny_female}
+              default_m={currForm?.form.sprites?.front_default}
+              shiny_m={currForm?.form.sprites?.front_shiny}
+              default_f={currForm?.form.sprites?.front_female}
+              shiny_f={currForm?.form.sprites?.front_shiny_female}
             />
           )}
           {ratio.F !== 0 && (
             <Gender
               ratio={ratio}
               sex="Female"
-              default_m={currForm && currForm.form.sprites.front_default}
-              shiny_m={currForm && currForm.form.sprites.front_shiny}
-              default_f={currForm && currForm.form.sprites.front_female}
-              shiny_f={currForm && currForm.form.sprites.front_shiny_female}
+              default_m={currForm?.form.sprites?.front_default}
+              shiny_m={currForm?.form.sprites?.front_shiny}
+              default_f={currForm?.form.sprites?.front_female}
+              shiny_f={currForm?.form.sprites?.front_shiny_female}
             />
           )}
         </div>
       ) : (
         <Gender
           sex="Genderless"
-          default_m={currForm && (currForm.form.sprites ? currForm.form.sprites.front_default : APIService.getPokeSprite(0))}
-          shiny_m={currForm && (currForm.form.sprites ? currForm.form.sprites.front_shiny : APIService.getPokeSprite(0))}
-          default_f={currForm && (currForm.form.sprites ? currForm.form.sprites.front_female : APIService.getPokeSprite(0))}
-          shiny_f={currForm && (currForm.form.sprites ? currForm.form.sprites.front_shiny_female : APIService.getPokeSprite(0))}
+          default_m={currForm?.form.sprites?.front_default}
+          shiny_m={currForm?.form.sprites?.front_shiny}
+          default_f={currForm?.form.sprites?.front_female}
+          shiny_f={currForm?.form.sprites?.front_shiny_female}
         />
       )}
-      <div className="row-shadow-stats">
-        <FormControlLabel
-          control={<Switch color="secondary" checked={shadowStats} onChange={(_, check) => setShadowStats(check)} />}
-          label={
-            <span className="d-flex align-items-center">
-              <img
-                className={shadowStats ? '' : 'filter-gray'}
-                width={28}
-                height={28}
-                alt="pokemon-go-icon"
-                src={APIService.getPokeShadow()}
-              />
-              <span style={{ color: shadowStats ? 'black' : 'lightgray' }}>Shadow Stats</span>
-            </span>
-          }
-          disabled={!open}
-        />
-      </div>
       <Stats
-        shadowStats={shadowStats}
-        shadowATKBonumMultiply={SHADOW_ATK_BONUS(dataStore?.options)}
-        shadowDEFBonumMultiply={SHADOW_DEF_BONUS(dataStore?.options)}
+        isShadow={currForm?.form.is_shadow}
+        shadowATKBonusMultiply={SHADOW_ATK_BONUS(dataStore?.options)}
+        shadowDEFBonusMultiply={SHADOW_DEF_BONUS(dataStore?.options)}
         statATK={statATK}
         statDEF={statDEF}
         statSTA={statSTA}
@@ -436,29 +410,38 @@ const Form = ({
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
           <Info data={dataPoke} currForm={currForm} />
-          <h5 className="element-top">
-            <li>Raid</li>
-          </h5>
-          <Raid
-            currForm={currForm}
-            id={idDefault}
-            statATK={statATK ? statATK.attack : calBaseATK(dataPoke ? dataPoke.stats : defaultStats, true)}
-            statDEF={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
-          />
+          {!currForm?.form.is_shadow && (
+            <Fragment>
+              <h5>
+                <li>Raid</li>
+              </h5>
+              <Raid
+                currForm={currForm}
+                id={idDefault}
+                statATK={statATK ? statATK.attack : calBaseATK(dataPoke ? dataPoke.stats : defaultStats, true)}
+                statDEF={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
+              />
+            </Fragment>
+          )}
         </div>
         <div className="col-md-7" style={{ padding: 0 }}>
           <TableMove
             data={dataPoke}
-            form={currForm && currForm.form}
+            form={currForm?.form}
             statATK={statATK ? statATK.attack : calBaseATK(dataPoke ? dataPoke.stats : defaultStats, true)}
             statDEF={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             statSTA={statSTA ? statSTA.stamina : calBaseSTA(dataPoke ? dataPoke.stats : defaultStats, true)}
+            shadowATKBonusMultiply={SHADOW_ATK_BONUS(dataStore?.options)}
+            shadowDEFBonusMultiply={SHADOW_DEF_BONUS(dataStore?.options)}
+            isShadow={currForm?.form.is_shadow}
           />
           <Counter
             currForm={currForm}
             pokeID={pokeID}
             def={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
-            form={currForm && currForm.form}
+            form={currForm?.form}
+            shadowDEFBonusMultiply={SHADOW_DEF_BONUS(dataStore?.options)}
+            isShadow={currForm?.form.is_shadow}
           />
         </div>
       </div>
@@ -486,7 +469,7 @@ const Form = ({
           </div>
         </div>
       ) : formList
-          .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL))
+          .filter((item: PokemonFormModify[]) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL))
           .map((item: { form: string }[]) => item.at(0)?.form).length > 0 &&
         currForm &&
         !currForm.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (

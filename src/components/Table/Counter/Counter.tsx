@@ -10,7 +10,7 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 
-const Counter = ({ def, form, currForm, pokeID }: any) => {
+const Counter = ({ def, form, currForm, pokeID, shadowDEFBonusMultiply, isShadow }: any) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -34,7 +34,7 @@ const Counter = ({ def, form, currForm, pokeID }: any) => {
       clearTimeout(timeOutId);
       controller.abort();
     };
-  }, [pokeID, currForm]);
+  }, [pokeID, currForm, isShadow]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -53,13 +53,13 @@ const Counter = ({ def, form, currForm, pokeID }: any) => {
             data?.released ?? [],
             data?.typeEff,
             data?.weatherBoost,
-            def,
+            def * (isShadow ? shadowDEFBonusMultiply ?? 1 : 1),
             form.types,
             data?.combat ?? [],
             data?.pokemonCombat ?? []
           )
         );
-      }, 3000);
+      }, 1000);
       controller.signal.addEventListener('abort', () => {
         reject();
       });

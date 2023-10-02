@@ -22,6 +22,9 @@ const TableMove = (props: {
   form: any;
   id?: number;
   maxHeight?: number | string;
+  shadowATKBonusMultiply?: number;
+  shadowDEFBonusMultiply?: number;
+  isShadow?: boolean;
 }) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
@@ -52,18 +55,25 @@ const TableMove = (props: {
       chargedMoves: combat.cinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
       eliteFastMoves: combat.eliteQuickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
       eliteChargedMoves: combat.eliteCinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
-      purifiedMoves: combat.purifiedMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      purifiedMoves: props.form?.is_shadow ? [] : combat.purifiedMoves.map((move) => data?.combat?.find((item) => item.name === move)),
       shadowMoves: combat.shadowMoves.map((move) => data?.combat?.find((item) => item.name === move)),
     });
   };
 
   const findMove = useCallback(() => {
-    const combatPoke = data?.pokemonCombat?.filter((item) =>
-      props.form?.id
-        ? item.id === parseInt(props.data?.species.url.split('/').at(6))
-        : item.name ===
-          (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
-    );
+    const combatPoke = data?.pokemonCombat
+      ?.filter((item) =>
+        props.form?.id || props.form?.is_shadow
+          ? item.id === parseInt(props.data?.species.url.split('/').at(6))
+          : item.name ===
+            (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
+      )
+      .map((c) => {
+        return {
+          ...c,
+          purifiedMoves: props.form?.is_shadow ? [] : c.purifiedMoves,
+        };
+      });
     if (combatPoke) {
       if (combatPoke.length === 1) {
         filterMoveType(combatPoke.at(0));
@@ -83,7 +93,7 @@ const TableMove = (props: {
         setMove(setRankMove(result));
       }
     }
-  }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
+  }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form, props.isShadow]);
 
   const setRankMove = (result: CombatPokemon) => {
     return rankMove(
@@ -92,8 +102,8 @@ const TableMove = (props: {
       data?.weatherBoost,
       data?.combat ?? [],
       result,
-      props.statATK,
-      props.statDEF,
+      props.statATK * (props.isShadow ? props.shadowATKBonusMultiply ?? 1 : 1),
+      props.statDEF * (props.isShadow ? props.shadowDEFBonusMultiply ?? 1 : 1),
       props.statSTA,
       props.data?.types.map((item: { type: { name: string } }) => capitalize(item?.type?.name ?? item))
     );

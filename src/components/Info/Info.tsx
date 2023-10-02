@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import TypeEffective from '../Effective/TypeEffective';
 import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
 import TypeInfo from '../Sprites/Type/Type';
@@ -56,7 +56,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
   };
 
   return (
-    <Fragment>
+    <div style={{ marginBottom: 15 }}>
       <h4 className="element-top info-title">
         <b>Information</b>
       </h4>
@@ -69,7 +69,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
       />
       <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm ? props.currForm.form.types : [])} />
       <TypeEffective typeEffective={getTypeEffective(props.currForm ? props.currForm.form.types : [])} />
-    </Fragment>
+    </div>
   );
 };
 

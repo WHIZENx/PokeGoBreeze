@@ -7,9 +7,9 @@ import './Stats.scss';
 import { StatsModel } from '../../../core/models/stats.model';
 
 const Stats = (props: {
-  shadowStats?: boolean;
-  shadowATKBonumMultiply?: number;
-  shadowDEFBonumMultiply?: number;
+  isShadow?: boolean;
+  shadowATKBonusMultiply?: number;
+  shadowDEFBonusMultiply?: number;
   pokemonStats: StatsModel;
   stats?: { stats: StatsModel };
   statATK?: {
@@ -87,17 +87,17 @@ const Stats = (props: {
       sta: (sta * 100) / props.pokemonStats.stamina.max_stats,
       prod: (prod * 100) / props.pokemonStats.statProd.max_stats,
     });
-  }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.shadowStats]);
+  }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.isShadow]);
 
   const setShadowStats = (stats: number, type?: string) => {
-    if (props.shadowStats) {
+    if (props.isShadow) {
       return Math.round(
         stats *
           (type === 'atk'
-            ? props.shadowATKBonumMultiply ?? 0
+            ? props.shadowATKBonusMultiply ?? 0
             : type === 'def'
-            ? props.shadowDEFBonumMultiply ?? 0
-            : (props.shadowDEFBonumMultiply ?? 0) * (props.shadowATKBonumMultiply ?? 0))
+            ? props.shadowDEFBonusMultiply ?? 0
+            : (props.shadowDEFBonusMultiply ?? 0) * (props.shadowATKBonusMultiply ?? 0))
       );
     }
     return stats;

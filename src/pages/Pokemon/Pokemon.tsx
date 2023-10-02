@@ -25,7 +25,8 @@ import { RouterState, SpinnerState, StatsState, StoreState } from '../../store/m
 import { SearchingModel } from '../../store/models/searching.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
-import { PokemonForm } from '../../core/models/API/form.model';
+import { PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
+import { CancelTokenSource } from 'axios';
 
 const Pokemon = (props: {
   prevRouter?: any;
@@ -68,6 +69,17 @@ const Pokemon = (props: {
   const [isFound, setIsFound] = useState(true);
   const [defaultForm, setDefaultForm]: any = useState(true);
 
+  const [costModifier, setCostModifier]: any = useState({
+    purified: {
+      candy: null,
+      stardust: null,
+    },
+    thirdMove: {
+      candy: null,
+      stardust: null,
+    },
+  });
+
   const [onChangeForm, setOnChangeForm] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -77,13 +89,8 @@ const Pokemon = (props: {
   }, []);
 
   const fetchMap = useCallback(
-    async (
-      data: Species,
-      // eslint-disable-next-line no-unused-vars
-      axios: { getFetchUrl: (arg0: any, arg1: { cancelToken: any }) => any },
-      source: { token: any }
-    ) => {
-      const dataPokeList: PokemonInfo[] | undefined = [];
+    async (data: Species, axios: any, source: CancelTokenSource) => {
+      const dataPokeList: PokemonInfo[] = [];
       let dataFromList: any[] = [];
       await Promise.all(
         data.varieties.map(async (value) => {
@@ -96,6 +103,18 @@ const Pokemon = (props: {
         })
       );
 
+      const costModifier = getCostModifier(data.id);
+      setCostModifier({
+        purified: {
+          candy: costModifier?.purified.candy,
+          stardust: costModifier?.purified.stardust,
+        },
+        thirdMove: {
+          candy: costModifier?.thirdMove.candy,
+          stardust: costModifier?.thirdMove.stardust,
+        },
+      });
+
       setPokeData(dataPokeList);
       let modify = false;
       dataFromList = dataFromList?.map((value) => {
@@ -105,11 +124,13 @@ const Pokemon = (props: {
         }
         return value;
       });
+
       if (modify) {
         dataFromList = dataFromList.map((value, index) => {
           return [value[index]];
         });
       }
+
       dataFromList = dataFromList
         .map((item) => {
           return item
@@ -121,20 +142,39 @@ const Pokemon = (props: {
             .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
         })
         .sort((a, b) => a.at(0).form.id - b.at(0).form.id);
+
       if (data.id === 150) {
         dataFromList.push(getFormsGO(data.id));
       }
-      if (
-        dataFromList.filter((form) => form.find((pokemon: { form: { form_name: string } }) => pokemon.form.form_name === 'gmax')).length > 1
-      ) {
+
+      if (dataFromList.filter((form) => form.find((pokemon: PokemonFormModify) => pokemon.form.form_name === 'gmax')).length > 1) {
         dataFromList.forEach((form) => {
-          form.forEach((pokemon: { form: { form_name: string; name: string }; default_name: string }) => {
+          form.forEach((pokemon: PokemonFormModify) => {
             if (pokemon.form.form_name === 'gmax') {
               pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
             }
           });
         });
       }
+
+      if (costModifier?.purified.candy && costModifier?.purified.stardust) {
+        const pokemonDefault = dataPokeList.find((p) => p.is_default);
+        const pokemonModify = new PokemonFormModifyModel(
+          data.id,
+          data.name,
+          data.name,
+          'shadow',
+          true,
+          true,
+          false,
+          true,
+          `${data.name}-shadow`,
+          'Pokémon-GO',
+          pokemonDefault?.types ?? []
+        );
+        dataFromList.push([pokemonModify]);
+      }
+
       setFormList(dataFromList);
       let defaultFrom, isDefaultForm: { form: PokemonForm; default_name: string; name: string }, defaultData: PokemonInfo | undefined;
       let formParams = searchParams.get('form');
@@ -145,7 +185,7 @@ const Pokemon = (props: {
         }
         defaultFrom = dataFromList.find((value) =>
           value.find(
-            (item: { form: { form_name: string; name: string }; default_name: string }) =>
+            (item: PokemonFormModify) =>
               item.form.form_name === formParams?.toLowerCase() || item.form.name === item.default_name + '-' + formParams?.toLowerCase()
           )
         );
@@ -156,21 +196,19 @@ const Pokemon = (props: {
             isDefaultForm.form.form_name !== formParams.toLowerCase() &&
             isDefaultForm.form.name !== isDefaultForm.default_name + '-' + formParams.toLowerCase()
           ) {
-            isDefaultForm = defaultFrom.find(
-              (value: { form: { form_name: string } }) => value.form.form_name === formParams?.toLowerCase()
-            );
+            isDefaultForm = defaultFrom.find((value: PokemonFormModify) => value.form.form_name === formParams?.toLowerCase());
           }
         } else {
-          defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
+          defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
           isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
       } else if (router.action === Action.Pop && props.searching) {
-        defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
+        defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
         isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching?.form);
       } else {
-        defaultFrom = dataFromList.map((value) => value.find((item: { form: { is_default: boolean } }) => item.form.is_default));
+        defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
         isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
       }
       defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.form.name);
@@ -208,15 +246,7 @@ const Pokemon = (props: {
   );
 
   const queryPokemon = useCallback(
-    (
-      id: number | string | undefined,
-      axios: any,
-      source: {
-        // eslint-disable-next-line no-unused-vars
-        cancel: (arg0: string) => void;
-        token: any;
-      }
-    ) => {
+    (id: number | string | undefined, axios: any, source: CancelTokenSource) => {
       if (id) {
         if (!params.id || (params.id && data && parseInt(id.toString()) !== data.id)) {
           dispatch(showSpinner());
@@ -534,7 +564,7 @@ const Pokemon = (props: {
                       className="pokemon-main-sprite"
                       style={{ verticalAlign: 'baseline' }}
                       alt="img-full-pokemon"
-                      src={APIService.getPokeFullSprite(data.id, splitAndCapitalize(form, '-', '-'))}
+                      src={APIService.getPokeFullSprite(data.id, splitAndCapitalize(form?.endsWith('Shadow') ? '' : form, '-', '-'))}
                     />
                   </div>
                   <div className="d-inline-block">
@@ -640,21 +670,13 @@ const Pokemon = (props: {
                           <td style={{ padding: 0 }}>
                             <div className="d-flex align-items-center row-extra td-costs">
                               <Candy id={data.id} style={{ marginRight: 5 }} />
-                              <span>
-                                {getCostModifier(data.id) && getCostModifier(data.id)?.thirdMove.candy
-                                  ? `x${getCostModifier(data.id)?.thirdMove.candy}`
-                                  : 'Unavailable'}
-                              </span>
+                              <span>{costModifier.thirdMove.candy ? `x${costModifier.thirdMove.candy}` : 'Unavailable'}</span>
                             </div>
                             <div className="row-extra d-flex">
                               <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
                                 <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                               </div>
-                              <span>
-                                {getCostModifier(data.id) && getCostModifier(data.id)?.thirdMove.stardust
-                                  ? `x${getCostModifier(data.id)?.thirdMove.stardust}`
-                                  : 'Unavailable'}
-                              </span>
+                              <span>{costModifier.thirdMove.stardust ? `x${costModifier.thirdMove.stardust}` : 'Unavailable'}</span>
                             </div>
                           </td>
                         </tr>
@@ -669,21 +691,13 @@ const Pokemon = (props: {
                           <td style={{ padding: 0 }}>
                             <div className="d-flex align-items-center row-extra td-costs">
                               <Candy id={data.id} style={{ marginRight: 5 }} />
-                              <span>
-                                {getCostModifier(data.id) && getCostModifier(data.id)?.purified.candy
-                                  ? `x${getCostModifier(data.id)?.purified.candy}`
-                                  : 'Unavailable'}
-                              </span>
+                              <span>{costModifier.purified.candy ? `x${costModifier.purified.candy}` : 'Unavailable'}</span>
                             </div>
                             <div className="row-extra d-flex">
                               <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
                                 <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                               </div>
-                              <span>
-                                {getCostModifier(data.id) && getCostModifier(data.id)?.purified.stardust
-                                  ? `x${getCostModifier(data.id)?.purified.stardust}`
-                                  : 'Unavailable'}
-                              </span>
+                              <span>{costModifier.purified.stardust ? `x${costModifier.purified.stardust}` : 'Unavailable'}</span>
                             </div>
                           </td>
                         </tr>
