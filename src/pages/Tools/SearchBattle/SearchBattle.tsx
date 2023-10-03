@@ -20,7 +20,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, SpinnerState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV, FORM_NORMAL } from '../../../util/Constants';
+import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN } from '../../../util/Constants';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -59,7 +59,7 @@ const FindBattle = () => {
 
   const currEvoChain = useCallback(
     (currId: number[] | undefined, form: string, arr: any): void => {
-      if (form === 'GALARIAN') {
+      if (form === FORM_GALARIAN) {
         form = 'GALAR';
       }
       if (currId?.length === 0) {

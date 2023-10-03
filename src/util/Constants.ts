@@ -69,6 +69,9 @@ export const FORM_HERO = 'HERO';
 export const FORM_MEGA = 'MEGA';
 export const FORM_GMAX = 'GMAX';
 export const FORM_PRIMAL = 'PRIMAL';
+export const FORM_ALOLA = 'ALOLA';
+export const FORM_HISUIAN = 'HISUIAN';
+export const FORM_GALARIAN = 'GALARIAN';
 
 export const TYPE_LEGENDARY = 'LEGENDARY';
 export const TYPE_MYTHIC = 'MYTHIC';

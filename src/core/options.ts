@@ -12,7 +12,7 @@ import { Candy, CandyDataModel, CandyModel } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonEncounter, PokemonModel } from './models/pokemon.model';
 import { TypeEff } from './models/typeEff.model';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
+import { FORM_ALOLA, FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
 import { APIUrl } from '../services/constants';
 
 export const getOption = (options: any, args: string[]) => {
@@ -260,9 +260,12 @@ export const optionFormSpecial = (data: any[]) => {
     .reduce((prev: any, curr: any) => [...prev, ...curr], [])
     .filter((item: { assetBundleSuffix: string; isCostume: boolean; form: string }) => {
       return (
-        item.assetBundleSuffix ||
-        item.isCostume ||
-        (item.form && (item.form?.toUpperCase().includes(FORM_NORMAL) || !item.form.includes('UNOWN')))
+        (item.assetBundleSuffix ||
+          item.isCostume ||
+          (item.form && (item.form?.toUpperCase().includes(FORM_NORMAL) || !item.form.includes('UNOWN')))) &&
+        !item.form?.toString().toUpperCase().includes(FORM_ALOLA) &&
+        !item.form?.toString().toUpperCase().includes(FORM_HISUIAN) &&
+        !item.form?.toString().toUpperCase().includes(FORM_GALARIAN)
       );
     })
     .map((item: { form: string }) => item.form)
@@ -321,8 +324,8 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
         result.form = item.form
           .toString()
           .replace(item.pokemonId + '_', '')
-          .replace('GALARIAN', 'GALAR')
-          .replace('HISUIAN', 'HISUI');
+          .replace(FORM_GALARIAN, 'GALAR')
+          .replace(FORM_HISUIAN, 'HISUI');
       }
       if (item.evolutionBranch) {
         item.evolutionBranch.forEach((evo) => {
@@ -332,10 +335,10 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
             dataEvo.evo_to_form = evo.form
               .replace(name + '_', '')
               .replace(FORM_NORMAL, '')
-              .replace('GALARIAN', 'GALAR')
-              .replace('HISUIAN', 'HISUI');
+              .replace(FORM_GALARIAN, 'GALAR')
+              .replace(FORM_HISUIAN, 'HISUI');
           } else {
-            dataEvo.evo_to_form = result.form.replace('GALARIAN', 'GALAR').replace('HISUIAN', '_HISUI');
+            dataEvo.evo_to_form = result.form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, '_HISUI');
           }
           dataEvo.evo_to_id = pokemon.find((poke) => poke.name === name)?.id;
           dataEvo.evo_to_name = name.replace('_NORMAL', '');
