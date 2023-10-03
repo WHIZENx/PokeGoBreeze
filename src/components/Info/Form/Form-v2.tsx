@@ -18,8 +18,6 @@ import {
   FORM_NORMAL,
   FORM_PRIMAL,
   FORM_STANDARD,
-  SHADOW_ATK_BONUS,
-  SHADOW_DEF_BONUS,
   regionList,
 } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
@@ -56,7 +54,6 @@ const Form = ({
   species,
   onSetIDPoke,
   paramForm,
-  dataStore,
   pokemonDetail,
 }: any) => {
   const dispatch = useDispatch();
@@ -313,6 +310,9 @@ const Form = ({
                       {value.form.is_shadow && (
                         <img height={24} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                       )}
+                      {value.form.is_purified && (
+                        <img height={24} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
+                      )}
                       <img
                         className="pokemon-sprite-medium"
                         onError={(e: any) => {
@@ -343,7 +343,7 @@ const Form = ({
                           value.form.name === 'urshifu-rapid-strike' ||
                           (pokeID && pokeID >= 899)
                             ? APIService.getPokeIconSprite('unknown-pokemon')
-                            : value.form.name.includes('-shadow')
+                            : value.form.name.includes('-shadow') || value.form.name.includes('-purified')
                             ? APIService.getPokeIconSprite(value.default_name)
                             : APIService.getPokeIconSprite(value.form.name)
                         }
@@ -397,8 +397,6 @@ const Form = ({
       )}
       <Stats
         isShadow={currForm?.form.is_shadow}
-        shadowATKBonusMultiply={SHADOW_ATK_BONUS(dataStore?.options)}
-        shadowDEFBonusMultiply={SHADOW_DEF_BONUS(dataStore?.options)}
         statATK={statATK}
         statDEF={statDEF}
         statSTA={statSTA}
@@ -410,7 +408,7 @@ const Form = ({
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
           <Info data={dataPoke} currForm={currForm} />
-          {!currForm?.form.is_shadow && (
+          {!currForm?.form.is_shadow && !currForm?.form.is_purified && (
             <Fragment>
               <h5>
                 <li>Raid</li>
@@ -431,16 +429,12 @@ const Form = ({
             statATK={statATK ? statATK.attack : calBaseATK(dataPoke ? dataPoke.stats : defaultStats, true)}
             statDEF={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             statSTA={statSTA ? statSTA.stamina : calBaseSTA(dataPoke ? dataPoke.stats : defaultStats, true)}
-            shadowATKBonusMultiply={SHADOW_ATK_BONUS(dataStore?.options)}
-            shadowDEFBonusMultiply={SHADOW_DEF_BONUS(dataStore?.options)}
-            isShadow={currForm?.form.is_shadow}
           />
           <Counter
             currForm={currForm}
             pokeID={pokeID}
             def={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             form={currForm?.form}
-            shadowDEFBonusMultiply={SHADOW_DEF_BONUS(dataStore?.options)}
             isShadow={currForm?.form.is_shadow}
           />
         </div>
@@ -460,8 +454,8 @@ const Form = ({
               id={idDefault}
               forme={currForm && currForm.form}
               formDefault={currForm && pokeID === currForm.form.id}
-              eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}
               pokemonRouter={pokemonRouter}
+              purified={currForm?.form.is_purified}
             />
           </div>
           <div className="col-xl" style={{ padding: 0 }}>
@@ -482,8 +476,8 @@ const Form = ({
               id={idDefault}
               forme={currForm && currForm.form}
               formDefault={currForm && pokeID === currForm.form.id}
-              eqForm={formList.length === 1 && species.pokedex_numbers.length > 1}
               pokemonRouter={pokemonRouter}
+              purified={currForm?.form.is_purified}
             />
           </div>
           <div className="col-xl" style={{ padding: 0 }}>
@@ -499,6 +493,8 @@ const Form = ({
           forme={currForm && currForm.form}
           formDefault={currForm && pokeID === currForm.form.id}
           region={regionList[parseInt(species.generation.url.split('/').at(6))]}
+          pokemonRouter={pokemonRouter}
+          purified={currForm?.form.is_purified}
         />
       )}
       {pokemonDetail?.formChange && <FromChange details={pokemonDetail} defaultName={currForm && currForm.default_name} />}

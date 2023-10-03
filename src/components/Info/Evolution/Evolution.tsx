@@ -1,4 +1,4 @@
-import { Badge, Checkbox, FormControlLabel } from '@mui/material';
+import { Badge } from '@mui/material';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
@@ -41,19 +41,12 @@ const customTheme = createTheme({
   },
 } as any);
 
-const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter }: any) => {
+const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter, purified }: any) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
   const pokemonName = useSelector((state: StoreState) => state.store.data?.pokemonName ?? []);
   const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
   const [arrEvoList, setArrEvoList]: any = useState([]);
-  const optionsDefault = {
-    selectPurified: false,
-    purified: false,
-  };
-  const [options, setOptions] = useState(optionsDefault);
-
-  const { selectPurified, purified } = options;
 
   const getEvoChain = useCallback(
     (data: any) => {
@@ -384,21 +377,10 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
     }
   }, [forme, id]);
 
-  useEffect(() => {
-    if (arrEvoList.length > 0) {
-      checkCanPurified();
-    }
-  }, [arrEvoList]);
-
   const handlePokeID = (id: string) => {
     if (id !== id.toString()) {
       onSetIDPoke(parseInt(id));
     }
-  };
-
-  const checkCanPurified = () => {
-    const canPurified = arrEvoList.some((evoList: any[]) => evoList.find((evo: { purified: boolean }) => evo.purified));
-    setOptions({ ...options, purified: canPurified });
   };
 
   const getQuestEvo = (prevId: number, form: string) => {
@@ -424,7 +406,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
   const renderImgGif = (value: { sprite?: string; id: number | string }) => {
     return (
       <>
-        {purified && selectPurified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+        {purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
         <img
           className="pokemon-sprite"
           id="img-pokemon"
@@ -488,12 +470,10 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
                             style={{ color: (theme.palette as any).customText.caption, width: 'max-content' }}
                           >
                             <Candy id={value.id} />
-                            <span style={{ marginLeft: 2 }}>{`x${
-                              purified && selectPurified ? data?.purificationEvoCandyCost : data?.candyCost
-                            }`}</span>
+                            <span style={{ marginLeft: 2 }}>{`x${purified ? data?.purificationEvoCandyCost : data?.candyCost}`}</span>
                           </span>
                         )}
-                        {purified && selectPurified && (
+                        {purified && (
                           <span className="d-block text-end caption text-danger">{`-${
                             (data?.candyCost ?? 0) - (data?.purificationEvoCandyCost ?? 0)
                           }`}</span>
@@ -739,26 +719,6 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter 
             <InfoOutlinedIcon color="primary" />
           </span>
         </OverlayTrigger>
-        {purified && (
-          <div className="d-flex" style={{ marginLeft: '1em' }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  disabled={!purified}
-                  checked={selectPurified}
-                  onChange={(_, check) => {
-                    setOptions({ ...options, selectPurified: check });
-                  }}
-                />
-              }
-              label={
-                <span>
-                  <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> Purified
-                </span>
-              }
-            />
-          </div>
-        )}
       </h4>
       <div className="evo-container scroll-evolution">
         <ul

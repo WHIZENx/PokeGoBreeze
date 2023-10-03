@@ -49,6 +49,7 @@ interface Form {
   is_default: boolean;
   is_mega: boolean;
   is_shadow: boolean;
+  is_purified: boolean;
   name: string;
   version_group: { name: string };
   types: TypeModify[] | Type[];
@@ -80,9 +81,11 @@ export class PokemonFormModifyModel {
     isDefault: boolean,
     isMega: boolean,
     isShadow: boolean,
+    isPurified: boolean,
     fullFormName: string,
     version: string,
-    types: TypeModify[] | Type[]
+    types: TypeModify[] | Type[],
+    formId: number | null = null
   ) {
     this.default_id = id;
     this.default_name = defaultName;
@@ -91,11 +94,12 @@ export class PokemonFormModifyModel {
       form_name: formName,
       form_names: [],
       form_order: 0,
-      id: null,
+      id: formId,
       is_battle_only: isBattleOnly,
       is_default: isDefault,
       is_mega: isMega,
       is_shadow: isShadow,
+      is_purified: isPurified,
       name: fullFormName,
       version_group: { name: version },
       types,

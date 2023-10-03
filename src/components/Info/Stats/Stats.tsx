@@ -5,11 +5,12 @@ import { checkRankAllAvailable } from '../../../util/Utils';
 
 import './Stats.scss';
 import { StatsModel } from '../../../core/models/stats.model';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../../store/models/state.model';
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 
 const Stats = (props: {
   isShadow?: boolean;
-  shadowATKBonusMultiply?: number;
-  shadowDEFBonusMultiply?: number;
   pokemonStats: StatsModel;
   stats?: { stats: StatsModel };
   statATK?: {
@@ -29,6 +30,7 @@ const Stats = (props: {
     rank: number;
   };
 }) => {
+  const data = useSelector((state: StoreState) => state.store.data);
   const theme = useTheme();
   const [isAvailable, setIsAvailable]: any = useState({
     attackRank: null,
@@ -94,10 +96,10 @@ const Stats = (props: {
       return Math.round(
         stats *
           (type === 'atk'
-            ? props.shadowATKBonusMultiply ?? 0
+            ? SHADOW_ATK_BONUS(data?.options) ?? 0
             : type === 'def'
-            ? props.shadowDEFBonusMultiply ?? 0
-            : (props.shadowDEFBonusMultiply ?? 0) * (props.shadowATKBonusMultiply ?? 0))
+            ? SHADOW_DEF_BONUS(data?.options) ?? 0
+            : (SHADOW_ATK_BONUS(data?.options) ?? 0) * (SHADOW_DEF_BONUS(data?.options) ?? 0))
       );
     }
     return stats;

@@ -159,7 +159,7 @@ const Pokemon = (props: {
 
       if (costModifier?.purified.candy && costModifier?.purified.stardust) {
         const pokemonDefault = dataPokeList.find((p) => p.is_default);
-        const pokemonModify = new PokemonFormModifyModel(
+        const pokemonShadowModify = new PokemonFormModifyModel(
           data.id,
           data.name,
           data.name,
@@ -168,11 +168,28 @@ const Pokemon = (props: {
           true,
           false,
           true,
+          false,
           `${data.name}-shadow`,
           'Pokémon-GO',
-          pokemonDefault?.types ?? []
+          pokemonDefault?.types ?? [],
+          -1
         );
-        dataFromList.push([pokemonModify]);
+        const pokemonPurifiedModify = new PokemonFormModifyModel(
+          data.id,
+          data.name,
+          data.name,
+          'purified',
+          true,
+          true,
+          false,
+          false,
+          true,
+          `${data.name}-purified`,
+          'Pokémon-GO',
+          pokemonDefault?.types ?? [],
+          -2
+        );
+        dataFromList.push([pokemonShadowModify, pokemonPurifiedModify]);
       }
 
       setFormList(dataFromList);
@@ -564,7 +581,10 @@ const Pokemon = (props: {
                       className="pokemon-main-sprite"
                       style={{ verticalAlign: 'baseline' }}
                       alt="img-full-pokemon"
-                      src={APIService.getPokeFullSprite(data.id, splitAndCapitalize(form?.endsWith('Shadow') ? '' : form, '-', '-'))}
+                      src={APIService.getPokeFullSprite(
+                        data.id,
+                        splitAndCapitalize(form?.endsWith('Shadow') || form?.endsWith('Purified') ? '' : form, '-', '-')
+                      )}
                     />
                   </div>
                   <div className="d-inline-block">
@@ -733,7 +753,6 @@ const Pokemon = (props: {
                         : ''
                       : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
                   }
-                  dataStore={dataStore}
                   pokemonDetail={getPokemonDetails(data.id, null)}
                 />
                 <PokemonModel id={data.id} name={data.name} />
