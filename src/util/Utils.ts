@@ -1,7 +1,7 @@
 import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
-import { FORM_GMAX, FORM_INCARNATE, FORM_NORMAL, FORM_STANDARD, MAX_IV } from './Constants';
+import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_INCARNATE, FORM_NORMAL, FORM_STANDARD, MAX_IV } from './Constants';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
 import { Details } from '../core/models/details.model';
 import { StatsModel } from '../core/models/stats.model';
@@ -192,8 +192,8 @@ export const convertName = (text: string | undefined) => {
     .replace('PUMPKABOO_AVERAGE', 'PUMPKABOO')
     .replace('GOURGEIST_AVERAGE', 'GOURGEIST')
     .replace('_ARMOR', '_A')
-    .replace('_GALAR', '_GALARIAN')
-    .replace('_HISUI', '_HISUIAN')
+    .replace('_GALAR', `_${FORM_GALARIAN}`)
+    .replace('_HISUI', `_${FORM_HISUIAN}`)
     .replace('_POM_POM', '_POMPOM')
     .replace("_PA'U", '_PAU');
 };
@@ -372,7 +372,7 @@ const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: 
       pokemon.id === item.num &&
       pokemon.name ===
         (pokemon.id === 555 && !item.name.toLowerCase().includes('zen')
-          ? item.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+          ? item.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
           : convertName(item.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
     );
   }
@@ -657,4 +657,8 @@ export const convertIdMove = (name: string) => {
     default:
       return name;
   }
+};
+
+export const checkPokemonIncludeShadowForm = (pokemon: PokemonModel[], form: string) => {
+  return pokemon.some((p) => splitAndCapitalize(form, '-', '_').toUpperCase() === p.name && p.shadow);
 };

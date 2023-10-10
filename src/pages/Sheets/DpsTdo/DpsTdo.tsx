@@ -1,7 +1,16 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
 import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
-import { DEFAULT_POKEMON_DEF_OBJ, FORM_MEGA, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
+import {
+  DEFAULT_POKEMON_DEF_OBJ,
+  FORM_GALARIAN,
+  FORM_MEGA,
+  FORM_STANDARD,
+  MAX_IV,
+  MAX_LEVEL,
+  MIN_IV,
+  MIN_LEVEL,
+} from '../../../util/Constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -76,7 +85,7 @@ const columns: any = [
         title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
       >
         {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-        {row.purified && <img height={25} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+        {row.purified && <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />}
         <img
           height={48}
           alt="img-pokemon"
@@ -489,7 +498,7 @@ const DpsTdo = () => {
                 pokemon.id === item.pokemon.num &&
                 pokemon.name ===
                   (pokemon.id === 555 && !item.pokemon.name?.toLowerCase().includes('zen')
-                    ? item.pokemon.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+                    ? item.pokemon.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
                     : convertName(item.pokemon.name ?? '')
                         .replace('NIDORAN_F', 'NIDORAN_FEMALE')
                         .replace('NIDORAN_M', 'NIDORAN_MALE'))

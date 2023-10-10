@@ -4,7 +4,7 @@ import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 import { capitalize, convertFormName, convertName, splitAndCapitalize } from '../../util/Utils';
-import { STAB_MULTIPLY } from '../../util/Constants';
+import { FORM_GALARIAN, FORM_STANDARD, STAB_MULTIPLY } from '../../util/Constants';
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
@@ -475,7 +475,8 @@ const Move = (props: { id?: number }) => {
                               item.id === pokemon.num &&
                               item.name ===
                                 (item.id === 555 && !pokemon.name.toLowerCase().includes('zen')
-                                  ? pokemon.name?.toUpperCase().replaceAll(' ', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+                                  ? pokemon.name?.toUpperCase().replaceAll(' ', '_').replace('_GALAR', `_${FORM_GALARIAN}`) +
+                                    `_${FORM_STANDARD}`
                                   : convertName(pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
                           );
                           return result ? result.releasedGO : false;

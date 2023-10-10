@@ -344,7 +344,7 @@ const Form = ({
                           (pokeID && pokeID >= 899)
                             ? APIService.getPokeIconSprite('unknown-pokemon')
                             : value.form.name.includes('-shadow') || value.form.name.includes('-purified')
-                            ? APIService.getPokeIconSprite(value.default_name)
+                            ? APIService.getPokeIconSprite(value.name)
                             : APIService.getPokeIconSprite(value.form.name)
                         }
                       />
@@ -356,7 +356,7 @@ const Form = ({
                       <small>(Default)</small>
                     </b>
                   )}
-                  {!value.form.id && <small className="text-danger">* Only in GO</small>}
+                  {(value.form.id ?? 0) <= 0 && <small className="text-danger">* Only in GO</small>}
                 </button>
               ))}
             </Fragment>

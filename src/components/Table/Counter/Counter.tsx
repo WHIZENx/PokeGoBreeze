@@ -1,8 +1,8 @@
-import { capitalize, FormControlLabel, Switch, useTheme } from '@mui/material';
+import { FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
@@ -10,7 +10,7 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_GALARIAN, FORM_STANDARD, SHADOW_DEF_BONUS } from '../../../util/Constants';
 
 const customStyles: TableStyles = {
   head: {
@@ -310,7 +310,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
               item.id === pokemon.pokemon_id &&
               item.name ===
                 (item.id === 555 && !pokemon.pokemon_name.toLowerCase().includes('zen')
-                  ? pokemon.pokemon_name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', '_GALARIAN') + '_STANDARD'
+                  ? pokemon.pokemon_name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
                   : convertName(pokemon.pokemon_name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
           );
           return result ? result.releasedGO : false;

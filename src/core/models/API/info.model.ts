@@ -192,6 +192,7 @@ export interface PokemonInfo {
   stats: Stats[];
   types: Type[];
   weight: number;
+  is_include_shadow?: boolean;
 }
 
 interface Ability {

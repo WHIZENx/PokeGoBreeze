@@ -1,5 +1,4 @@
-import { capitalize } from '@mui/material';
-import { checkMoveSetAvailable } from '../../util/Utils';
+import { capitalize, checkMoveSetAvailable } from '../../util/Utils';
 import { Combat } from './combat.model';
 import { genList } from '../../util/Constants';
 

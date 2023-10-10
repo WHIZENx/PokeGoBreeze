@@ -38,16 +38,16 @@ const Form = ({
 
   const findFirst = useCallback(() => {
     return formList
-      .map((item: any[]) => {
-        return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
+      .map((item: { form: { is_default: boolean } }[]) => {
+        return item.find((item) => item.form.is_default);
       })
       .at(0);
   }, [formList]);
 
   const findDefaultForm = useCallback(() => {
     return formList
-      .map((item: any[]) => {
-        return item.find((item: { form: { is_default: boolean } }) => item.form.is_default);
+      .map((item: { form: { is_default: boolean } }[]) => {
+        return item.find((item) => item.form.is_default);
       })
       .find((item: { id: number }) => item.id === idDefault);
   }, [formList, idDefault]);
@@ -58,14 +58,11 @@ const Form = ({
       form += '-standard';
     }
     return formList
-      .map((form: any[]) => {
-        const curFrom = form.find(
-          (item: { form: { form_name: any; name: string }; default_name: string }) =>
-            form && (item.form.form_name === form || item.form.name === item.default_name + '-' + form)
-        );
-        return curFrom ?? form.find((item: { form: { is_default: boolean } }) => item.form.is_default);
+      .map((f: { form: { form_name: string; name: string; is_default: boolean }; default_name: string }[]) => {
+        const curFrom = f.find((item) => form && (item.form.form_name === form || item.form.name === item.default_name + '-' + form));
+        return curFrom ?? f.find((item) => item.form.is_default);
       })
-      .find((item: { form: { form_name: any; name: string }; default_name: string; id: number }) =>
+      .find((item: { form: { form_name: string; name: string }; default_name: string; id: number }) =>
         form ? item.form.form_name === form || item.form.name === item.default_name + '-' + form : item.id === idDefault
       );
   };
@@ -152,7 +149,7 @@ const Form = ({
     }
     const findData = pokeData.find((item: { name: string }) => name === item.name);
     const findForm = formList
-      .map((item: any[]) => item.find((item: { form: { name: string } }) => item.form.name === name))
+      .map((item: { form: { name: string } }[]) => item.find((item) => item.form.name === name))
       .find((item: any) => item);
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item: any) => findForm.form.form_name.includes(item.toLowerCase()));

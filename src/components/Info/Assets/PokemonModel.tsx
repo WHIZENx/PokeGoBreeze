@@ -51,7 +51,7 @@ const PokemonModel = (props: { id: number; name: string }) => {
       <div>
         {pokeAssets.map((assets: { image: any[]; form: string }, index: React.Key) => (
           <div key={index} className="d-inline-block group-model text-center">
-            {assets.image.map((value, index: React.Key) => (
+            {assets.image.map((value: { gender: number; shiny: string | null; default: string | null }, index: React.Key) => (
               <div key={index} className="d-inline-block" style={{ width: value.gender === 3 ? '100%' : 'auto' }}>
                 <div className="sub-group-model">
                   {gender.current && !gender.current.genderlessPercent && (

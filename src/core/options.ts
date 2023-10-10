@@ -12,7 +12,7 @@ import { Candy, CandyDataModel, CandyModel } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonEncounter, PokemonModel } from './models/pokemon.model';
 import { TypeEff } from './models/typeEff.model';
-import { FORM_ALOLA, FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
+import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
 import { APIUrl } from '../services/constants';
 
 export const getOption = (options: any, args: string[]) => {
@@ -242,7 +242,7 @@ export const optionFormNone = (data: any[]) => {
     )
     .map((item: { data: { formSettings: { pokemon: string; forms: any } } }) => item.data.formSettings)
     .filter((item: { pokemon: string; forms: any[] }) => {
-      return !item.forms?.find((form: { form: string }) => form.form === `${item.pokemon}_NORMAL`);
+      return !item.forms?.find((form: { form: string }) => form.form === `${item.pokemon}_${FORM_NORMAL}`);
     })
     .map((item: { pokemon: string }) => item.pokemon);
 };
@@ -260,12 +260,9 @@ export const optionFormSpecial = (data: any[]) => {
     .reduce((prev: any, curr: any) => [...prev, ...curr], [])
     .filter((item: { assetBundleSuffix: string; isCostume: boolean; form: string }) => {
       return (
-        (item.assetBundleSuffix ||
-          item.isCostume ||
-          (item.form && (item.form?.toUpperCase().includes(FORM_NORMAL) || !item.form.includes('UNOWN')))) &&
-        !item.form?.toString().toUpperCase().includes(FORM_ALOLA) &&
-        !item.form?.toString().toUpperCase().includes(FORM_HISUIAN) &&
-        !item.form?.toString().toUpperCase().includes(FORM_GALARIAN)
+        item.assetBundleSuffix ||
+        item.isCostume ||
+        (item.form && item.form?.toUpperCase().includes(FORM_NORMAL) && !item.form.includes('UNOWN'))
       );
     })
     .map((item: { form: string }) => item.form)
@@ -341,7 +338,7 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
             dataEvo.evo_to_form = result.form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, '_HISUI');
           }
           dataEvo.evo_to_id = pokemon.find((poke) => poke.name === name)?.id;
-          dataEvo.evo_to_name = name.replace('_NORMAL', '');
+          dataEvo.evo_to_name = name.replace(`_${FORM_NORMAL}`, '');
           if (evo.candyCost) {
             dataEvo.candyCost = evo.candyCost;
           }
@@ -768,7 +765,7 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
       } else {
         const result = new CombatPokemonDataModel();
         result.id = item.id;
-        result.name = item.name.replace('_NORMAL', '');
+        result.name = item.name.replace(`_${FORM_NORMAL}`, '');
         result.baseSpecies = item.pokemonId;
         if (result.id === 235) {
           const moves: PokemonModel = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
@@ -1041,7 +1038,7 @@ export const optionDetailsPokemon = (
     .map((item) => {
       const result: Details = new DetailsPokemonModel();
       result.id = item.id;
-      result.name = item.name.replace('_NORMAL', '');
+      result.name = item.name.replace(`_${FORM_NORMAL}`, '');
       if (item.form) {
         result.form = item.form.toString().replace(`${item.pokemonId}_`, '');
       } else {

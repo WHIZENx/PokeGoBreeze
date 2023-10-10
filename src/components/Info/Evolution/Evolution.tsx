@@ -29,7 +29,7 @@ import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { EvolutionModel } from '../../../core/models/evolution.model';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
+import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
 
 const customTheme = createTheme({
   palette: {
@@ -169,7 +169,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter,
   };
 
   const modelEvoChain = (pokemon: { id: number; name: string; form: string; prev?: string; canPurified?: boolean }) => {
-    pokemon.name = pokemon.name.replace('_GALARIAN', '_GALAR').replace('_HISUIAN', '_HISUI');
+    pokemon.name = pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI');
     return {
       prev: pokemon.prev,
       name: pokemon.form !== '' ? pokeSetName(pokemon.name.replace(`_${pokemon.form}`, '')) : pokeSetName(pokemon.name),

@@ -10,10 +10,10 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
   const weatherEffective = useSelector((state: StoreState) => state.store.data?.weatherBoost ?? {});
 
-  const getWeatherEffective = (types: any[]) => {
+  const getWeatherEffective = (types: { type: { name: string } }[]) => {
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: any) => {
-      types?.forEach((type: { type: { name: string } }) => {
+      types?.forEach((type) => {
         if (value.includes(type.type.name?.toUpperCase()) && !data.includes(key)) {
           data.push(key);
         }
@@ -22,7 +22,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
     return data;
   };
 
-  const getTypeEffective = (types: any[]) => {
+  const getTypeEffective = (types: { type: { name: string } }[]) => {
     const data: any = {
       very_weak: [],
       weak: [],
@@ -33,7 +33,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
     };
     Object.entries(typeEffective).forEach(([key, value]: any) => {
       let valueEffective = 1;
-      types?.forEach((type: { type: { name: string } }) => {
+      types?.forEach((type) => {
         valueEffective *= value[type.type.name?.toUpperCase()];
       });
       if (valueEffective >= 2.56) {
