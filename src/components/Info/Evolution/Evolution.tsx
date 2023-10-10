@@ -326,8 +326,11 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter,
     return result;
   };
 
-  const getEvoChainStore = (id: number, forme: { form_name: string; name: string }) => {
-    const form = forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) ? '' : forme.form_name;
+  const getEvoChainStore = (id: number, forme: { form_name: string; name: string; is_default: boolean }) => {
+    const form =
+      forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) || forme.is_default
+        ? ''
+        : forme.form_name.replace('-shadow', '').replace('-purified', '');
     const result: any[] = [];
     let pokemon = evoData.find((pokemon) => pokemon.id === id && pokemon.form === form?.toUpperCase());
     if (!pokemon) {
