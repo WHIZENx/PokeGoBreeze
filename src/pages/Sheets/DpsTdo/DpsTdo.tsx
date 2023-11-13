@@ -4,12 +4,17 @@ import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormNa
 import {
   DEFAULT_POKEMON_DEF_OBJ,
   FORM_GALARIAN,
+  FORM_GMAX,
   FORM_MEGA,
+  FORM_PRIMAL,
   FORM_STANDARD,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
   MIN_LEVEL,
+  TYPE_LEGENDARY,
+  TYPE_MYTHIC,
+  TYPE_ULTRA_BEAST,
 } from '../../../util/Constants';
 import {
   calculateAvgDPS,
@@ -253,9 +258,19 @@ const DpsTdo = () => {
       showEliteMove: true,
       showShadow: true,
       showMega: true,
+      showGmax: true,
+      showPrimal: true,
+      showLegendary: true,
+      showMythic: true,
+      showUltrabeast: true,
       enableShadow: false,
       enableElite: false,
       enableMega: false,
+      enableGmax: false,
+      enablePrimal: false,
+      enableLegendary: false,
+      enableMythic: false,
+      enableUltrabeast: false,
       enableBest: false,
       enableDelay: false,
       releasedGO: true,
@@ -273,10 +288,20 @@ const DpsTdo = () => {
     showShadow,
     enableShadow,
     showMega,
+    showGmax,
+    showPrimal,
+    showLegendary,
+    showMythic,
+    showUltrabeast,
     enableElite,
     enableMega,
     enableBest,
     enableDelay,
+    enableGmax,
+    enablePrimal,
+    enableLegendary,
+    enableMythic,
+    enableUltrabeast,
     releasedGO,
     bestOf,
     IV_ATK,
@@ -482,11 +507,21 @@ const DpsTdo = () => {
 
         const boolShowShadow = !showShadow && item.shadow;
         const boolShowElite = !showEliteMove && (item.elite?.fmove || item.elite?.cmove);
-        const boolShowMega = !showMega && item.pokemon?.forme && item.pokemon?.forme.toLowerCase().toUpperCase().includes(FORM_MEGA);
+        const boolShowMega = !showMega && item.pokemon?.forme?.toUpperCase().includes(FORM_MEGA);
+        const boolShowGmax = !showGmax && item.pokemon?.forme?.toUpperCase().includes(FORM_GMAX);
+        const boolShowPrimal = !showPrimal && item.pokemon?.forme?.toUpperCase().includes(FORM_PRIMAL);
+        const boolShowLegend = !showLegendary && item.pokemon?.pokemonClass === TYPE_LEGENDARY;
+        const boolShowMythic = !showMythic && item.pokemon?.pokemonClass === TYPE_MYTHIC;
+        const boolShowUltra = !showUltrabeast && item.pokemon?.pokemonClass === TYPE_ULTRA_BEAST;
 
         const boolOnlyShadow = enableShadow && item.shadow;
         const boolOnlyElite = enableElite && (item.elite?.fmove || item.elite?.cmove);
-        const boolOnlyMega = enableMega && item.pokemon?.forme && item.pokemon?.forme.toLowerCase().toUpperCase().includes(FORM_MEGA);
+        const boolOnlyMega = enableMega && item.pokemon?.forme?.toUpperCase().includes(FORM_MEGA);
+        const boolOnlyGmax = enableGmax && item.pokemon?.forme?.toUpperCase().includes(FORM_GMAX);
+        const boolOnlyPrimal = enablePrimal && item.pokemon?.forme?.toUpperCase().includes(FORM_PRIMAL);
+        const boolOnlyLegend = enableLegendary && item.pokemon?.pokemonClass === TYPE_LEGENDARY;
+        const boolOnlyMythic = enableMythic && item.pokemon?.pokemonClass === TYPE_MYTHIC;
+        const boolOnlyUltra = enableUltrabeast && item.pokemon?.pokemonClass === TYPE_ULTRA_BEAST;
 
         let boolReleaseGO = true;
         if (releasedGO) {
@@ -507,17 +542,56 @@ const DpsTdo = () => {
           });
           boolReleaseGO = item.isForceReleasedGO ?? (result ? result.releasedGO : false);
         }
-        if (enableShadow || enableElite || enableMega) {
+        if (
+          enableShadow ||
+          enableElite ||
+          enableMega ||
+          enableGmax ||
+          enablePrimal ||
+          enableLegendary ||
+          enableMythic ||
+          enableUltrabeast
+        ) {
           return (
             boolFilterType &&
             boolFilterPoke &&
             boolReleaseGO &&
-            !(boolShowShadow || boolShowElite || boolShowMega) &&
+            !(
+              boolShowShadow ||
+              boolShowElite ||
+              boolShowMega ||
+              boolShowGmax ||
+              boolShowPrimal ||
+              boolShowLegend ||
+              boolShowMythic ||
+              boolShowUltra
+            ) &&
             boolReleaseGO &&
-            (boolOnlyShadow || boolOnlyElite || boolOnlyMega)
+            (boolOnlyShadow ||
+              boolOnlyElite ||
+              boolOnlyMega ||
+              boolOnlyGmax ||
+              boolOnlyPrimal ||
+              boolOnlyLegend ||
+              boolOnlyMythic ||
+              boolOnlyUltra)
           );
         } else {
-          return boolFilterType && boolFilterPoke && boolReleaseGO && !(boolShowShadow || boolShowElite || boolShowMega);
+          return (
+            boolFilterType &&
+            boolFilterPoke &&
+            boolReleaseGO &&
+            !(
+              boolShowShadow ||
+              boolShowElite ||
+              boolShowMega ||
+              boolShowGmax ||
+              boolShowPrimal ||
+              boolShowLegend ||
+              boolShowMythic ||
+              boolShowUltra
+            )
+          );
         }
       }
     );
@@ -564,9 +638,19 @@ const DpsTdo = () => {
     showShadow,
     showEliteMove,
     showMega,
+    showGmax,
+    showPrimal,
+    showLegendary,
+    showMythic,
+    showUltrabeast,
     enableElite,
     enableShadow,
     enableMega,
+    enableGmax,
+    enablePrimal,
+    enableLegendary,
+    enableMythic,
+    enableUltrabeast,
     enableBest,
     bestOf,
     releasedGO,
@@ -626,7 +710,7 @@ const DpsTdo = () => {
 
   return (
     <Fragment>
-      <div className="head-filter border-types text-center w-100">
+      <div className="head-filter text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100" style={{ margin: 0 }}>
           {types.map((item, index) => (
@@ -643,7 +727,7 @@ const DpsTdo = () => {
           ))}
         </div>
         <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xxl" style={{ padding: 0 }}>
+          <div className="col-xxl border-input" style={{ padding: 0, height: 'fit-content' }}>
             <div className="border-input">
               <div className="row w-100" style={{ margin: 0 }}>
                 <div className="d-flex col-md-9" style={{ padding: 0 }}>
@@ -668,30 +752,118 @@ const DpsTdo = () => {
               <span className="input-group-text">Filter show</span>
               <FormControlLabel
                 control={<Checkbox checked={showShadow} onChange={(_, check) => setFilters({ ...filters, showShadow: check })} />}
-                label="Shadow Pokémon"
-              />
-              <FormControlLabel
-                control={<Checkbox checked={showEliteMove} onChange={(_, check) => setFilters({ ...filters, showEliteMove: check })} />}
-                label="Elite Move"
+                label="Shadow"
               />
               <FormControlLabel
                 control={<Checkbox checked={showMega} onChange={(_, check) => setFilters({ ...filters, showMega: check })} />}
                 label="Mega"
               />
+              <FormControlLabel
+                control={<Checkbox checked={showGmax} onChange={(_, check) => setFilters({ ...filters, showGmax: check })} />}
+                label="Gmax"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={showPrimal} onChange={(_, check) => setFilters({ ...filters, showPrimal: check })} />}
+                label="Primal"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={showLegendary} onChange={(_, check) => setFilters({ ...filters, showLegendary: check })} />}
+                label="Legendary"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={showMythic} onChange={(_, check) => setFilters({ ...filters, showMythic: check })} />}
+                label="Mythic"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={showUltrabeast} onChange={(_, check) => setFilters({ ...filters, showUltrabeast: check })} />}
+                label="Ultra Beast"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={showEliteMove} onChange={(_, check) => setFilters({ ...filters, showEliteMove: check })} />}
+                label="Elite Move"
+              />
             </div>
             <div className="input-group border-input">
               <span className="input-group-text">Filter only by</span>
               <FormControlLabel
-                control={<Checkbox checked={enableShadow} onChange={(_, check) => setFilters({ ...filters, enableShadow: check })} />}
+                control={
+                  <Checkbox
+                    checked={enableShadow}
+                    disabled={!showShadow}
+                    onChange={(_, check) => setFilters({ ...filters, enableShadow: check })}
+                  />
+                }
                 label="Shadow"
               />
               <FormControlLabel
-                control={<Checkbox checked={enableElite} onChange={(_, check) => setFilters({ ...filters, enableElite: check })} />}
-                label="Elite Moves"
+                control={
+                  <Checkbox
+                    checked={enableMega}
+                    disabled={!showMega}
+                    onChange={(_, check) => setFilters({ ...filters, enableMega: check })}
+                  />
+                }
+                label="Mega"
               />
               <FormControlLabel
-                control={<Checkbox checked={enableMega} onChange={(_, check) => setFilters({ ...filters, enableMega: check })} />}
-                label="Mega"
+                control={
+                  <Checkbox
+                    checked={enableGmax}
+                    disabled={!showGmax}
+                    onChange={(_, check) => setFilters({ ...filters, enableGmax: check })}
+                  />
+                }
+                label="Gmax"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={enablePrimal}
+                    disabled={!showPrimal}
+                    onChange={(_, check) => setFilters({ ...filters, enablePrimal: check })}
+                  />
+                }
+                label="Primal"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={enableLegendary}
+                    disabled={!showLegendary}
+                    onChange={(_, check) => setFilters({ ...filters, enableLegendary: check })}
+                  />
+                }
+                label="Legendary"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={enableMythic}
+                    disabled={!showMythic}
+                    onChange={(_, check) => setFilters({ ...filters, enableMythic: check })}
+                  />
+                }
+                label="Mythic"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={enableUltrabeast}
+                    disabled={!showUltrabeast}
+                    onChange={(_, check) => setFilters({ ...filters, enableUltrabeast: check })}
+                  />
+                }
+                label="Ultra Beast"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={enableElite}
+                    disabled={!showEliteMove}
+                    onChange={(_, check) => setFilters({ ...filters, enableElite: check })}
+                  />
+                }
+                label="Elite Moves"
               />
             </div>
             <div className="input-group">
@@ -700,6 +872,8 @@ const DpsTdo = () => {
                   <div className="input-group">
                     <span className="input-group-text">Filter best movesets</span>
                     <FormControlLabel
+                      className="border-input"
+                      style={{ marginRight: 0, paddingRight: 16 }}
                       control={<Switch checked={enableBest} onChange={(_, check) => setFilters({ ...filters, enableBest: check })} />}
                       label="Best moveset of"
                     />
@@ -741,7 +915,7 @@ const DpsTdo = () => {
             <div className="input-group">
               <div className="row w-100" style={{ margin: 0 }}>
                 <Box className="col-xl-4" style={{ padding: 0 }}>
-                  <div className="input-group">
+                  <div className="input-group h-100">
                     <span className="input-group-text">Target Pokémon</span>
                     <SelectPokemon
                       pokemon={dataTargetPokemon}
@@ -754,7 +928,7 @@ const DpsTdo = () => {
                   </div>
                 </Box>
                 <Box className="col-xl-4" style={{ padding: 0 }}>
-                  <div className="input-group">
+                  <div className="input-group h-100">
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
                       inputType={'small'}
@@ -767,7 +941,7 @@ const DpsTdo = () => {
                   </div>
                 </Box>
                 <Box className="col-xl-4" style={{ padding: 0 }}>
-                  <div className="input-group">
+                  <div className="input-group h-100">
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
                       inputType={'small'}
@@ -782,7 +956,7 @@ const DpsTdo = () => {
               </div>
             </div>
           </div>
-          <div className="col-xxl border-input" style={{ padding: 0 }}>
+          <div className="col-xxl border-input" style={{ padding: 0, height: 'fit-content' }}>
             <div className="head-types">Options</div>
             <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
               <div className="input-group">
@@ -835,7 +1009,7 @@ const DpsTdo = () => {
                 <input
                   type="number"
                   className="form-control"
-                  style={{ height: 42 }}
+                  style={{ height: 42, borderRadius: 0 }}
                   placeholder="Delay time (sec)"
                   aria-label="Charged Move Time"
                   min={0}
