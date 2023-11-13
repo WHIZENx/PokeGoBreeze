@@ -12,8 +12,8 @@ const rootReducer = {
   searching,
   options,
   stats,
-  theme,
   device,
+  theme,
 };
 
 export default rootReducer;
