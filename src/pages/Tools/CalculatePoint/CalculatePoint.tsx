@@ -332,6 +332,18 @@ const CalculatePoint = () => {
     );
   };
 
+  const getBorderSplit = (row: number, column: number) => {
+    const data = resultBulkPointDef?.data;
+    let classes = ' bg-zero';
+    if (data[row][column - 1] > 0) {
+      classes += ' bp-left-border';
+    }
+    if (data[row + 1][column] > 0) {
+      classes += ' bp-bottom-border';
+    }
+    return classes;
+  };
+
   return (
     <Fragment>
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
@@ -876,8 +888,8 @@ const CalculatePoint = () => {
                             <td>{level}</td>
                             {resultBulkPointDef ? (
                               <Fragment>
-                                {resultBulkPointDef.data[i].map((value: string, index: React.Key) => (
-                                  <td className="text-iv-bulk" key={index}>
+                                {resultBulkPointDef.data[i].map((value: number, index: number) => (
+                                  <td className={'text-iv-bulk' + (value === 0 ? getBorderSplit(i, index) : '')} key={index}>
                                     {value}
                                   </td>
                                 ))}
