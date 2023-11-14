@@ -74,9 +74,9 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
       const formSTA = filterFormList(stats.stamina.ranking, id);
       const formProd = filterFormList(stats.statProd.ranking, id);
 
-      setStatATK(raid && tier && !hide ? { attack: calculateRaidStat(formATK.attack, tier) } : formATK);
-      setStatDEF(raid && tier && !hide ? { defense: calculateRaidStat(formDEF.defense, tier) } : formDEF);
-      setStatSTA(raid && tier && !hide ? { stamina: RAID_BOSS_TIER[tier].sta } : formSTA);
+      setStatATK(raid && tier && !hide ? { attack: calculateRaidStat(formATK?.attack, tier) } : formATK);
+      setStatDEF(raid && tier && !hide ? { defense: calculateRaidStat(formDEF?.defense, tier) } : formDEF);
+      setStatSTA(raid && tier && !hide ? { stamina: RAID_BOSS_TIER[tier]?.sta } : formSTA);
       setStatProd(raid && tier && !hide ? null : formProd);
       setCurrDataPoke(dataPoke.find((item: { id: number }) => item.id === id));
 
