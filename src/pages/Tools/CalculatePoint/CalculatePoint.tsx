@@ -50,7 +50,7 @@ const CalculatePoint = () => {
   const [isRaid, setIsRaid] = useState(true);
   const [tier, setTier] = useState(1);
 
-  const [idDef, setIdDef] = useState(1);
+  const [idDef, setIdDef] = useState(searching && searching.obj ? searching.obj.id : 1);
   const [nameDef, setNameDef] = useState('Bulbasaur');
   const [formDef, setFormDef]: any = useState(null);
   const [moveDef, setMoveDef]: any = useState(null);
@@ -285,7 +285,7 @@ const CalculatePoint = () => {
     enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: 'success' });
   };
 
-  const setIconBattle = (_: number, pri: string, sec: string) => {
+  const setIconBattle = (pri: string, sec: string) => {
     return (
       <div className="d-flex">
         <div className="border-type-stat text-center">
@@ -374,6 +374,7 @@ const CalculatePoint = () => {
             setForm={onSetFormDef}
             setName={setNameDef}
             setId={setIdDef}
+            objective={true}
           />
         </div>
       </div>
@@ -455,7 +456,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8">
                   <h3>Attacker Breakpoint</h3>
-                  {resultBreakPointAtk && setIconBattle(0, 'atk', 'def')}
+                  {resultBreakPointAtk && setIconBattle('atk', 'def')}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
@@ -587,7 +588,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8">
                   <h3>Defender Breakpoint</h3>
-                  {resultBreakPointDef && setIconBattle(1, 'def', 'atk')}
+                  {resultBreakPointDef && setIconBattle('atk', 'def')}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
@@ -846,7 +847,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8" style={{ overflowX: 'auto' }}>
                   <h3>BulkPoint</h3>
-                  {resultBulkPointDef && setIconBattle(2, 'def', 'atk')}
+                  {resultBulkPointDef && setIconBattle('atk', 'def')}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
