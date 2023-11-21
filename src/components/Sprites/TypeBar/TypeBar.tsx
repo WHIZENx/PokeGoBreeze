@@ -5,7 +5,7 @@ import './TypeBar.scss';
 
 const TypeBar = (props: { type: string }) => {
   return (
-    <div className={'d-flex align-items-center border-type ' + props.type.toLowerCase()}>
+    <div className={'d-flex align-items-center border-type ' + props.type?.toLowerCase()}>
       <span style={{ width: 35 }}>
         <img
           style={{ padding: 5, backgroundColor: 'black' }}
@@ -14,7 +14,7 @@ const TypeBar = (props: { type: string }) => {
           src={APIService.getTypeHqSprite(capitalize(props.type))}
         />
       </span>
-      <h3>{splitAndCapitalize(props.type.toLowerCase(), '_', ' ')}</h3>
+      <h3>{splitAndCapitalize(props.type?.toLowerCase(), '_', ' ')}</h3>
     </div>
   );
 };

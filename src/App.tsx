@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import packageInfo from '../package.json';
 import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/actions/store.action';
-import { setBar, setPercent, showSpinnerWithMsg } from './store/actions/spinner.action';
+import { setBar, setPercent } from './store/actions/spinner.action';
 
 import './App.scss';
 
@@ -43,8 +43,7 @@ import { loadTheme } from './store/actions/theme.action';
 import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
-import { SYNC_MSG, TRANSITION_TIME } from './util/Constants';
-import { StatsState, StoreState } from './store/models/state.model';
+import { TRANSITION_TIME } from './util/Constants';
 import { setDevice } from './store/actions/device.action';
 
 // tslint:disable-next-line: no-empty
@@ -52,8 +51,6 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
   const dispatch = useDispatch();
-  const data = useSelector((state: StoreState) => state.store.data);
-  const stats = useSelector((state: StatsState) => state.stats);
 
   const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
@@ -97,131 +94,42 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(showSpinnerWithMsg(SYNC_MSG));
     setVersion(packageInfo.version);
     dispatch(setDevice());
   }, [dispatch]);
 
-  const renderPage = (page: JSX.Element, condition: boolean = false) => {
-    return condition ? page : <></>;
-  };
-
   return (
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
       <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
-      {data && stats && (
-        <Routes>
-          <Route path="/" element={renderPage(<Home />, data.typeEff && data.released && data.assets ? true : false)} />
-          <Route path="/type-effective" element={renderPage(<TypeEffect />, data.typeEff ? true : false)} />
-          <Route path="/weather-boosts" element={renderPage(<Weather />, data.typeEff && data.weatherBoost ? true : false)} />
-          <Route
-            path="/search-pokemon"
-            element={renderPage(
-              <SearchPokemon />,
-              data.pokemonName && data.pokemonData && data.evolution && data.details && data.released && data.candy && data.assets
-                ? true
-                : false
-            )}
-          />
-          <Route path="/search-moves" element={renderPage(<SearchMove />, data.combat && data.typeEff ? true : false)} />
-          <Route path="/search-types" element={renderPage(<SearchTypes />, data.released && data.combat && data.typeEff ? true : false)} />
-          <Route
-            path="/pokemon/:id"
-            element={renderPage(
-              <Pokemon />,
-              data.pokemonName && data.pokemonData && data.evolution && data.details && data.released && data.candy && data.assets
-                ? true
-                : false
-            )}
-          />
-          <Route
-            path="/move/:id"
-            element={renderPage(
-              <Move />,
-              data.weatherBoost && data.combat && data.options && data.released && data.typeEff && data.pokemonCombat ? true : false
-            )}
-          />
-          <Route path="/find-cp-iv" element={renderPage(<FindTable />, data.pokemonName && data.pokemonData ? true : false)} />
-          <Route
-            path="/calculate-stats"
-            element={renderPage(<CalculateStats />, data.pokemonName && data.pokemonData && data.options ? true : false)}
-          />
-          <Route
-            path="/search-battle-stats"
-            element={renderPage(
-              <SearchBattle />,
-              data.pokemonName && data.pokemonData && data.evolution && data.options && data.assets ? true : false
-            )}
-          />
-          <Route path="/stats-table" element={renderPage(<StatsTable />, data.pokemonName && data.pokemonData ? true : false)} />
-          <Route
-            path="/damage-calculate"
-            element={renderPage(<Damage />, data.pokemonName && data.pokemonData && data.options && data.typeEff ? true : false)}
-          />
-          <Route
-            path="/raid-battle"
-            element={renderPage(
-              <RaidBattle />,
-              data.pokemonName &&
-                data.pokemonData &&
-                data.pokemonCombat &&
-                data.combat &&
-                data.options &&
-                data.typeEff &&
-                data.weatherBoost &&
-                data.details &&
-                data.assets
-                ? true
-                : false
-            )}
-          />
-          <Route
-            path="/calculate-point"
-            element={renderPage(<CalculatePoint />, data.pokemonName && data.pokemonData && data.options && data.typeEff ? true : false)}
-          />
-          <Route
-            path="/calculate-catch-chance"
-            element={renderPage(<CatchChance />, data.pokemonName && data.pokemonData && data.pokemon ? true : false)}
-          />
-          <Route path="/pvp" element={renderPage(<PVPHome />, data.leagues ? true : false)} />
-          <Route
-            path="/pvp/rankings/:serie/:cp/:type"
-            element={renderPage(<RankingPVP />, data.pokemonData && data.assets && data.combat && data.pokemonCombat ? true : false)}
-          />
-          <Route
-            path="/pvp/:cp/:type/:pokemon"
-            element={renderPage(<PokemonPVP />, data.pokemonData && data.assets && data.combat && data.pokemonCombat ? true : false)}
-          />
-          <Route
-            path="/pvp/teams/:serie/:cp"
-            element={renderPage(<TeamPVP />, data.pokemonData && data.assets && data.combat && data.pokemonCombat ? true : false)}
-          />
-          <Route
-            path="/pvp/battle"
-            element={renderPage(<Battle />, data.options && data.typeEff && data.pokemonData && data.assets && data.combat ? true : false)}
-          />
-          <Route
-            path="/pvp/battle/:cp"
-            element={renderPage(<Battle />, data.options && data.typeEff && data.pokemonData && data.assets && data.combat ? true : false)}
-          />
-          <Route
-            path="/dps-tdo-sheets"
-            element={renderPage(
-              <DpsTdo />,
-              data.pokemonData && data.typeEff && data.weatherBoost && data.combat && data.pokemonCombat && data.options && data.details
-                ? true
-                : false
-            )}
-          />
-          <Route
-            path="/stats-ranking"
-            element={renderPage(<StatsRanking />, data.pokemonData && data.combat && data.pokemonCombat ? true : false)}
-          />
-          <Route path="/battle-leagues" element={renderPage(<Leagues />, data.leagues && data.assets ? true : false)} />
-          <Route path="/stickers" element={renderPage(<Sticker />, data.stickers ? true : false)} />
-          <Route path="*" element={<Error />} />
-        </Routes>
-      )}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/type-effective" element={<TypeEffect />} />
+        <Route path="/weather-boosts" element={<Weather />} />
+        <Route path="/search-pokemon" element={<SearchPokemon />} />
+        <Route path="/pokemon/:id" element={<Pokemon />} />
+        <Route path="/search-moves" element={<SearchMove />} />
+        <Route path="/move/:id" element={<Move />} />
+        <Route path="/search-types" element={<SearchTypes />} />
+        <Route path="/find-cp-iv" element={<FindTable />} />
+        <Route path="/calculate-stats" element={<CalculateStats />} />
+        <Route path="/search-battle-stats" element={<SearchBattle />} />
+        <Route path="/stats-table" element={<StatsTable />} />
+        <Route path="/damage-calculate" element={<Damage />} />
+        <Route path="/raid-battle" element={<RaidBattle />} />
+        <Route path="/calculate-point" element={<CalculatePoint />} />
+        <Route path="/calculate-catch-chance" element={<CatchChance />} />
+        <Route path="/dps-tdo-sheets" element={<DpsTdo />} />
+        <Route path="/stats-ranking" element={<StatsRanking />} />
+        <Route path="/pvp" element={<PVPHome />} />
+        <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP />} />
+        <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP />} />
+        <Route path="/pvp/battle" element={<Battle />} />
+        <Route path="/pvp/battle/:cp" element={<Battle />} />
+        <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP />} />
+        <Route path="/battle-leagues" element={<Leagues />} />
+        <Route path="/stickers" element={<Sticker />} />
+        <Route path="*" element={<Error />} />
+      </Routes>
       {/* <FooterComponent /> */}
       <Spinner />
     </Box>

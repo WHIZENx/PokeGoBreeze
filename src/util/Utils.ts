@@ -531,10 +531,10 @@ export const checkRankAllAvailable = (
     staminaRank: 0,
     statProdRank: 0,
   };
-  const checkRankAtk = pokemonStats.attack.ranking.find((item) => item.attack === stats.atk);
-  const checkRankDef = pokemonStats.defense.ranking.find((item) => item.defense === stats.def);
-  const checkRankSta = pokemonStats.stamina.ranking.find((item) => item.stamina === (stats?.sta ?? 0));
-  const checkRankProd = pokemonStats.statProd.ranking.find((item) => item.prod === stats.prod);
+  const checkRankAtk = pokemonStats?.attack.ranking.find((item) => item.attack === stats.atk);
+  const checkRankDef = pokemonStats?.defense.ranking.find((item) => item.defense === stats.def);
+  const checkRankSta = pokemonStats?.stamina.ranking.find((item) => item.stamina === (stats?.sta ?? 0));
+  const checkRankProd = pokemonStats?.statProd.ranking.find((item) => item.prod === stats.prod);
   if (checkRankAtk) {
     data.attackRank = checkRankAtk.rank;
   }

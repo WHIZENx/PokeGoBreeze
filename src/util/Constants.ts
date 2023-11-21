@@ -62,6 +62,27 @@ export const RAID_BOSS_TIER: any = {
   },
 };
 
+export const DEFAULT_TYPES = [
+  'BUG',
+  'DARK',
+  'DRAGON',
+  'ELECTRIC',
+  'FAIRY',
+  'FIGHTING',
+  'FIRE',
+  'FLYING',
+  'GHOST',
+  'GRASS',
+  'GROUND',
+  'ICE',
+  'NORMAL',
+  'POISON',
+  'PSYCHIC',
+  'ROCK',
+  'STEEL',
+  'WATER',
+];
+
 export const FORM_NORMAL = 'NORMAL';
 export const FORM_STANDARD = 'STANDARD';
 export const FORM_INCARNATE = 'INCARNATE';

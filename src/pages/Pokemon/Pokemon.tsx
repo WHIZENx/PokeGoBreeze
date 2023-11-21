@@ -275,12 +275,12 @@ const Pokemon = (props: {
         });
       }
     },
-    [searchParams, params.id]
+    [searchParams, params.id, dataStore?.pokemon, dataStore?.pokemonName, dataStore?.pokemonData, dataStore?.evolution, dataStore?.details]
   );
 
   const queryPokemon = useCallback(
     (id: number | string | undefined, axios: any, source: CancelTokenSource) => {
-      if (id) {
+      if (id && dataStore?.pokemon && dataStore?.pokemonName && dataStore?.pokemonData && dataStore?.evolution && dataStore?.details) {
         if (!params.id || (params.id && data && parseInt(id.toString()) !== data.id)) {
           dispatch(showSpinner());
         }
@@ -307,7 +307,7 @@ const Pokemon = (props: {
           });
       }
     },
-    [dispatch, enqueueSnackbar, getRatioGender, fetchMap, params.id]
+    [dispatch, enqueueSnackbar, getRatioGender, fetchMap]
   );
 
   useEffect(() => {
@@ -319,33 +319,35 @@ const Pokemon = (props: {
   }, [dispatch, params.id, props.id, queryPokemon, reForm]);
 
   useEffect(() => {
-    const keyDownHandler = (event: { keyCode: number; preventDefault: () => void }) => {
-      if (!spinner.loading) {
-        const currentId = getPokemonById(
-          Object.values(dataStore?.pokemonName ?? []),
-          parseInt(params.id ? params.id.toLowerCase() : props.id ?? '')
-        );
-        if (currentId) {
-          const result = {
-            prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
-            current: currentId,
-            next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
-          };
-          if (result.prev && event.keyCode === KEY_LEFT) {
-            event.preventDefault();
-            params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId();
-          } else if (result.next && event.keyCode === KEY_RIGHT) {
-            event.preventDefault();
-            params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId();
+    if (dataStore?.pokemonName) {
+      const keyDownHandler = (event: { keyCode: number; preventDefault: () => void }) => {
+        if (!spinner.loading) {
+          const currentId = getPokemonById(
+            Object.values(dataStore?.pokemonName ?? []),
+            parseInt(params.id ? params.id.toLowerCase() : props.id ?? '')
+          );
+          if (currentId) {
+            const result = {
+              prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
+              current: currentId,
+              next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
+            };
+            if (result.prev && event.keyCode === KEY_LEFT) {
+              event.preventDefault();
+              params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId();
+            } else if (result.next && event.keyCode === KEY_RIGHT) {
+              event.preventDefault();
+              params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId();
+            }
           }
         }
-      }
-    };
-    document.addEventListener('keyup', keyDownHandler, false);
-    return () => {
-      document.removeEventListener('keyup', keyDownHandler, false);
-    };
-  }, [params.id, props.id, spinner.loading]);
+      };
+      document.addEventListener('keyup', keyDownHandler, false);
+      return () => {
+        document.removeEventListener('keyup', keyDownHandler, false);
+      };
+    }
+  }, [params.id, props.id, spinner.loading, dataStore?.pokemonName]);
 
   const getNumGen = (url: string) => {
     return 'Gen ' + url.split('/').at(6);

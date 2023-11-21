@@ -7,6 +7,43 @@
   padding-bottom: 1rem;
 }
 
+.caption {
+  font-size: 12px;
+  color: gray;
+  display: block;
+  text-decoration: none !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.loading {
+  animation: loading-spin 1s linear infinite;
+}
+
+@keyframes loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.loading-spin-table {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 8px 8px 0 rgb(0 0 0 / 20%);
+}
+
 .link-url {
   color: #0d6efd;
   cursor: pointer;
@@ -103,6 +140,23 @@ img.badge-type-sprit {
   width: 100%;
   height: 20px;
   object-fit: contain;
+}
+
+.shadow-icon {
+  position: absolute;
+  bottom: 0;
+}
+
+.purified-icon {
+  position: absolute;
+  bottom: 0;
+}
+
+.type-select-bg {
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  column-gap: 5px;
 }
 
 .text-timestamp {

@@ -6,10 +6,11 @@ import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { calculateStatsByTag } from '../../util/Calculate';
-import { convertFormNameImg, splitAndCapitalize } from '../../util/Utils';
+import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
 import {
+  DEFAULT_TYPES,
   FORM_GMAX,
   FORM_MEGA,
   FORM_PRIMAL,
@@ -37,6 +38,7 @@ import {
 import { hideSpinner } from '../../store/actions/spinner.action';
 import { StoreState, StatsState, SpinnerState } from '../../store/models/state.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { PokemonHomeModel } from '../../core/models/pokemon-home.model';
 
 const VersionProps = {
   PaperProps: {
@@ -53,44 +55,9 @@ const Home = () => {
   const data = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const types = Object.keys(data?.typeEff ?? []);
-  const dataList = useRef(
-    data?.released
-      ?.map((item: PokemonDataModel | undefined) => {
-        const stats = calculateStatsByTag(item, item?.baseStats, item?.slug);
-        const assetForm = queryAssetForm(data?.assets ?? [], item?.num, item?.name);
-        return {
-          id: item?.num,
-          name: item?.name,
-          forme: assetForm?.default ? item?.forme : convertFormNameImg(item?.num ?? 0, item?.forme?.toLowerCase() ?? ''),
-          types: item?.types,
-          color: item?.color.toLowerCase(),
-          sprite: item?.sprite.toLowerCase(),
-          baseSpecies: item?.baseSpecies,
-          baseStats: item?.baseStats,
-          gen: item?.gen,
-          region: item?.region,
-          version: versionList.indexOf(splitAndCapitalize(item?.version, '-', ' ')),
-          goStats: {
-            atk: stats.atk,
-            def: stats.def,
-            sta: stats?.sta ?? 0,
-          },
-          class: item?.pokemonClass,
-          releasedGO: item?.releasedGO,
-          image: {
-            default: assetForm?.default
-              ? APIService.getPokemonModel(assetForm.default)
-              : APIService.getPokeFullSprite(
-                  item?.num,
-                  splitAndCapitalize(convertFormNameImg(item?.num ?? 0, item?.forme?.toLowerCase() ?? ''), '-', '-')
-                ),
-            shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
-          },
-        };
-      })
-      .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0))
-  );
+
+  const [types, setTypes]: any = useState([]);
+  const [dataList, setDataList]: [PokemonHomeModel[], any] = useState([]);
   const [selectTypes, setSelectTypes]: any = useState([]);
   const [listOfPokemon, setListOfPokemon]: any = useState([]);
   const [result, setResult]: any = useState([]);
@@ -132,6 +99,22 @@ const Home = () => {
   };
 
   useEffect(() => {
+    setTypes(data?.typeEff ? Object.keys(data?.typeEff) : DEFAULT_TYPES);
+  }, [data?.typeEff]);
+
+  useEffect(() => {
+    setDataList(
+      data?.released
+        ?.map((item: PokemonDataModel) => {
+          const stats = calculateStatsByTag(item, item?.baseStats, item?.slug);
+          const assetForm = queryAssetForm(data?.assets ?? [], item?.num, item?.name);
+          return new PokemonHomeModel(item, assetForm, versionList, stats);
+        })
+        .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0))
+    );
+  }, [data?.released]);
+
+  useEffect(() => {
     document.title = 'Home';
     if (spinner.loading) {
       dispatch(hideSpinner());
@@ -139,11 +122,11 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (dataList.current) {
+    if (dataList) {
       setLoading(true);
       const timeOutId = setTimeout(
         () => {
-          const result = dataList.current?.filter((item) => {
+          const result = dataList?.filter((item) => {
             const boolFilterType =
               selectTypes.length === 0 ||
               (item.types?.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
@@ -186,7 +169,7 @@ const Home = () => {
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, primal, legendary, mythic, ultrabeast, gen, version]);
+  }, [dataList, searchTerm, selectTypes, match, releasedGO, mega, gmax, primal, legendary, mythic, ultrabeast, gen, version]);
 
   useEffect(() => {
     const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
@@ -270,7 +253,7 @@ const Home = () => {
       <div className="head-filter border-types text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
         <div className="row w-100" style={{ margin: 0 }}>
-          {types.map((item, index) => (
+          {types.map((item: string, index: React.Key) => (
             <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
               <button
                 value={item}

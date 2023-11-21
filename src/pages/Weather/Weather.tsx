@@ -5,20 +5,27 @@ import Effect from './Effect';
 
 import './Weather.scss';
 import { useSelector, useDispatch } from 'react-redux';
-import { hideSpinner } from '../../store/actions/spinner.action';
+import { hideSpinner, showSpinnerWithMsg } from '../../store/actions/spinner.action';
 import { StoreState, SpinnerState } from '../../store/models/state.model';
+import { SYNC_MSG } from '../../util/Constants';
 
 const Weather = () => {
   const dispatch = useDispatch();
-  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
-  const weatherBoosts = useSelector((state: StoreState) => state.store.data?.weatherBoost);
+  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
+  const weatherBoosts = useSelector((state: StoreState) => state.store.data?.weatherBoost ?? {});
   const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   useEffect(() => {
-    document.title = 'Weather Boosts';
-    if (spinner.loading) {
+    if (Object.keys(typeEffective).length > 0 && Object.keys(weatherBoosts).length > 0 && spinner.loading) {
       dispatch(hideSpinner());
     }
+  }, [typeEffective, weatherBoosts]);
+
+  useEffect(() => {
+    if (Object.keys(typeEffective).length === 0 && Object.keys(weatherBoosts).length === 0) {
+      dispatch(showSpinnerWithMsg(SYNC_MSG));
+    }
+    document.title = 'Weather Boosts';
   }, []);
 
   return (

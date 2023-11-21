@@ -660,8 +660,8 @@ const Battle = () => {
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();
     const fetchPokemon = async () => {
+      dispatch(showSpinner());
       try {
-        dispatch(showSpinner());
         clearData();
         const file: RankingsPVP[] = (
           await axios.getFetchUrl(axios.getRankingFile('all', parseInt(league), 'overall'), {

@@ -84,26 +84,28 @@ const Search = () => {
   }, []);
 
   useEffect(() => {
-    setResultFMove(
-      combat
-        ?.filter((item) => item.type_move === TypeMove.FAST)
-        ?.filter(
-          (move) =>
-            (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(fMoveName.toLowerCase()) ||
-              move.track.toString().includes(fMoveName)) &&
-            (fMoveType === 'all' || fMoveType === capitalize(move.type))
-        )
-    );
-    setResultCMove(
-      combat
-        ?.filter((item) => item.type_move === TypeMove.CHARGE)
-        ?.filter(
-          (move) =>
-            (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(cMoveName.toLowerCase()) ||
-              move.track.toString().includes(cMoveName)) &&
-            (cMoveType === 'all' || cMoveType === capitalize(move.type))
-        )
-    );
+    if (combat.length > 0) {
+      setResultFMove(
+        combat
+          ?.filter((item) => item.type_move === TypeMove.FAST)
+          ?.filter(
+            (move) =>
+              (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(fMoveName.toLowerCase()) ||
+                move.track.toString().includes(fMoveName)) &&
+              (fMoveType === 'all' || fMoveType === capitalize(move.type))
+          )
+      );
+      setResultCMove(
+        combat
+          ?.filter((item) => item.type_move === TypeMove.CHARGE)
+          ?.filter(
+            (move) =>
+              (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(cMoveName.toLowerCase()) ||
+                move.track.toString().includes(cMoveName)) &&
+              (cMoveType === 'all' || cMoveType === capitalize(move.type))
+          )
+      );
+    }
   }, [fMoveName, fMoveType, cMoveName, cMoveType, combat]);
 
   return (

@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
 import {
   DEFAULT_POKEMON_DEF_OBJ,
+  DEFAULT_TYPES,
   FORM_GALARIAN,
   FORM_GMAX,
   FORM_MEGA,
@@ -43,10 +44,9 @@ import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDPSSheetPage } from '../../../store/actions/options.action';
-import { hideSpinner } from '../../../store/actions/spinner.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/move.enum';
-import { OptionsSheetState, RouterState, SpinnerState, StoreState } from '../../../store/models/state.model';
+import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
@@ -221,13 +221,12 @@ const columns: any = [
 
 const DpsTdo = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
   const router = useSelector((state: RouterState) => state.router);
 
-  const types = Object.keys(data?.typeEff ?? {});
+  const [types, setTypes]: any = useState(DEFAULT_TYPES);
 
   const [dpsTable, setDpsTable]: any = useState([]);
   const [dataFilter, setDataFilter]: any = useState([]);
@@ -604,33 +603,52 @@ const DpsTdo = () => {
 
   useEffect(() => {
     document.title = 'DPS&TDO Sheets';
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
-    setDataFilter(searchFilter());
   }, []);
 
   useEffect(() => {
-    setShowSpinner(true);
-    setTimeout(() => {
-      setDpsTable(calculateDPSTable());
-    }, 300);
-  }, [dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon]);
+    if (data?.typeEff) {
+      setTypes(Object.keys(data?.typeEff));
+    }
+  }, [data?.typeEff]);
 
   useEffect(() => {
-    setShowSpinner(true);
-    const timeOutId = setTimeout(() => {
-      setDataFilter(searchFilter());
-    }, 500);
-    return () => clearTimeout(timeOutId);
-  }, [searchTerm]);
+    if (data?.pokemonData && data?.pokemonCombat && data?.combat && data?.options && data?.typeEff && data?.weatherBoost) {
+      setShowSpinner(true);
+      const timeOutId = setTimeout(() => {
+        setDpsTable(calculateDPSTable());
+      }, 300);
+      return () => clearTimeout(timeOutId);
+    }
+  }, [
+    dataTargetPokemon,
+    fmoveTargetPokemon,
+    cmoveTargetPokemon,
+    data?.pokemonData,
+    data?.pokemonCombat,
+    data?.combat,
+    data?.options,
+    data?.typeEff,
+    data?.weatherBoost,
+  ]);
 
   useEffect(() => {
-    setShowSpinner(true);
-    const timeOutId = setTimeout(() => {
-      setDataFilter(searchFilter());
-    }, 100);
-    return () => clearTimeout(timeOutId);
+    if (dpsTable.length > 0) {
+      setShowSpinner(true);
+      const timeOutId = setTimeout(() => {
+        setDataFilter(searchFilter());
+      }, 500);
+      return () => clearTimeout(timeOutId);
+    }
+  }, [dpsTable, searchTerm]);
+
+  useEffect(() => {
+    if (dpsTable.length > 0) {
+      setShowSpinner(true);
+      const timeOutId = setTimeout(() => {
+        setDataFilter(searchFilter());
+      }, 100);
+      return () => clearTimeout(timeOutId);
+    }
   }, [
     dpsTable,
     match,
@@ -713,7 +731,7 @@ const DpsTdo = () => {
       <div className="head-filter text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100" style={{ margin: 0 }}>
-          {types.map((item, index) => (
+          {types.map((item: string, index: React.Key) => (
             <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
               <button
                 value={item}

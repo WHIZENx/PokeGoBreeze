@@ -450,20 +450,22 @@ const CatchChance = () => {
                     <h1>Attack</h1>
                     <hr className="w-100" />
                     <h5>
-                      {(data?.obShadowFormAttackProbability && shadow ? data?.obShadowFormAttackProbability : data?.attackProbability) *
-                        100}
-                      %
+                      {data &&
+                        `${
+                          (data.obShadowFormAttackProbability && shadow ? data.obShadowFormAttackProbability : data.attackProbability) * 100
+                        }%`}
                     </h5>
-                    <p>Time: {data?.attackTimerS / 10} sec</p>
+                    <p>{data && `Time: ${data.attackTimerS / 10} sec`}</p>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
                   <h1>Dodge</h1>
                   <hr className="w-100" />
                   <h5>
-                    {(data?.obShadowFormDodgeProbability && shadow ? data?.obShadowFormDodgeProbability : data?.dodgeProbability) * 100}%
+                    {data &&
+                      `${(data.obShadowFormDodgeProbability && shadow ? data.obShadowFormDodgeProbability : data.dodgeProbability) * 100}%`}
                   </h5>
-                  <p>Time: {data?.dodgeDurationS / 10} sec</p>
+                  <p>{data && `Time: ${data.dodgeDurationS / 10} sec`}</p>
                 </div>
               </div>
             </div>

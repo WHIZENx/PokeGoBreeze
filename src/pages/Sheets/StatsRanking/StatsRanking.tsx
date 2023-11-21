@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize, convertName, capitalize, convertFormName } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -12,8 +12,7 @@ import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
-import { hideSpinner } from '../../../store/actions/spinner.action';
-import { SpinnerState, StatsState, StoreState } from '../../../store/models/state.model';
+import { StatsState, StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const columnPokemon: any = [
@@ -109,8 +108,6 @@ const customStyles = {
 };
 
 const StatsRanking = () => {
-  const dispatch = useDispatch();
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const conditionalRowStyles = [
     {
       when: (row: { name: string; slug: string }) => row.slug === select?.slug,
@@ -169,36 +166,49 @@ const StatsRanking = () => {
   };
 
   const [sortId, setSortId] = useState(9);
-  const pokemonList = useRef(sortRanking(mappingData(Object.values(pokemonData).filter((pokemon) => pokemon.num > 0)), sortId));
-  const [pokemonFilter, setPokemonFilter] = useState(pokemonList.current);
+  const [pokemonList, setPokemonList]: [PokemonDataModel[], any] = useState([]);
+  const [pokemonFilter, setPokemonFilter]: [any[], any] = useState([]);
 
-  const [select, setSelect]: any = useState(pokemonList.current.at(0));
+  const [select, setSelect]: any = useState(null);
 
   const [filters, setFilters] = useState({ match: false });
   const { match } = filters;
 
   useEffect(() => {
     document.title = `Stats Ranking`;
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
   }, []);
 
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      setPokemonFilter(
-        pokemonList.current.filter(
-          (pokemon: { num: number; name: string }) =>
-            search === '' ||
-            (match
-              ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
-              : pokemon.num.toString().includes(search) ||
-                splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
-        )
-      );
-    }, 100);
-    return () => clearTimeout(timeOutId);
-  }, [search, match]);
+    if (Object.keys(pokemonData).length > 0 && pokemonList.length === 0) {
+      const pokemon = sortRanking(mappingData(Object.values(pokemonData).filter((pokemon) => pokemon.num > 0)), sortId);
+      setPokemonList(pokemon);
+      setPokemonFilter(pokemon);
+    }
+  }, [pokemonList, pokemonData]);
+
+  useEffect(() => {
+    if (!select && pokemonList.length > 0) {
+      setSelect(pokemonList.at(0));
+    }
+  }, [select, pokemonList]);
+
+  useEffect(() => {
+    if (pokemonList.length > 0) {
+      const timeOutId = setTimeout(() => {
+        setPokemonFilter(
+          pokemonList.filter(
+            (pokemon) =>
+              search === '' ||
+              (match
+                ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
+                : pokemon.num.toString().includes(search) ||
+                  splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
+          )
+        );
+      }, 100);
+      return () => clearTimeout(timeOutId);
+    }
+  }, [search, match, pokemonList]);
 
   return (
     <div className="element-bottom position-relative poke-container container">
@@ -209,7 +219,7 @@ const StatsRanking = () => {
               className="pokemon-main-sprite"
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
-              src={APIService.getPokeFullSprite(select.num, splitAndCapitalize(select.forme, '-', '-'))}
+              src={APIService.getPokeFullSprite(select?.num, splitAndCapitalize(select?.forme, '-', '-'))}
             />
           </div>
         </div>
@@ -224,7 +234,7 @@ const StatsRanking = () => {
                   </td>
                   <td colSpan={2}>
                     <h5 className="d-flex">
-                      <b>#{select.num}</b>
+                      <b>{select && `#${select?.num}`}</b>
                     </h5>
                   </td>
                 </tr>
@@ -235,7 +245,7 @@ const StatsRanking = () => {
                   <td colSpan={2}>
                     <h5 className="d-flex">
                       <b>
-                        {splitAndCapitalize(convertName(select.name.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
+                        {splitAndCapitalize(convertName(select?.name.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
                       </b>
                     </h5>
                   </td>
@@ -246,7 +256,7 @@ const StatsRanking = () => {
                   </td>
                   <td colSpan={2}>
                     <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                      {select.gen === 0 ? (
+                      {!select || select?.gen === 0 ? (
                         <b>Unknown</b>
                       ) : (
                         <>
@@ -261,7 +271,7 @@ const StatsRanking = () => {
                     <h5 className="d-flex">Region</h5>
                   </td>
                   <td colSpan={2}>
-                    <h5 className="d-flex">{splitAndCapitalize(select.region, '-', ' ')}</h5>
+                    <h5 className="d-flex">{splitAndCapitalize(select?.region, '-', ' ')}</h5>
                   </td>
                 </tr>
                 <tr>
@@ -269,7 +279,7 @@ const StatsRanking = () => {
                     <h5 className="d-flex">Version</h5>
                   </td>
                   <td colSpan={2}>
-                    <h5 className="d-flex">{select.version && splitAndCapitalize(select.version.replace(' Go', ' GO'), '-', ' ')}</h5>
+                    <h5 className="d-flex">{select?.version && splitAndCapitalize(select?.version.replace(' Go', ' GO'), '-', ' ')}</h5>
                   </td>
                 </tr>
                 <tr>
@@ -283,7 +293,7 @@ const StatsRanking = () => {
                           <h6>Weight:</h6>
                         </div>
                         <div className="d-inline-block">
-                          <h6>{select.weightkg} kg</h6>
+                          <h6>{select?.weightkg} kg</h6>
                         </div>
                       </div>
                     </div>
@@ -293,7 +303,7 @@ const StatsRanking = () => {
                           <h6>Height:</h6>
                         </div>
                         <div className="d-inline-block">
-                          <h6>{select.heightm} m</h6>
+                          <h6>{select?.heightm} m</h6>
                         </div>
                       </div>
                     </div>
@@ -315,7 +325,7 @@ const StatsRanking = () => {
           </div>
         </div>
       </div>
-      <Stats statATK={select.atk} statDEF={select.def} statSTA={select.sta} statProd={select.statProd} pokemonStats={stats} />
+      <Stats statATK={select?.atk} statDEF={select?.def} statSTA={select?.sta} statProd={select?.statProd} pokemonStats={stats} />
       <div className="d-flex" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
           <span className="input-group-text">Find Pokémon</span>
@@ -340,13 +350,13 @@ const StatsRanking = () => {
         defaultSortAsc={false}
         highlightOnHover={true}
         onRowClicked={(row) => {
-          if (select.name !== row.name) {
+          if (select?.name !== row.name) {
             setSelect(row);
           }
         }}
         onSort={(rows) => {
           if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonList.current, rows.id));
+            setPokemonFilter(sortRanking(pokemonList, rows.id));
             setSortId(parseInt(rows.id?.toString() ?? ''));
           }
         }}

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
+
+import '../../Tools/CalculateStats/CalculateStats.scss';
 
 import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
@@ -9,6 +11,7 @@ import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
 import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
+import { PokemonSearchingModel } from '../../../core/models/pokemon-seaching.model';
 
 const Search = () => {
   const theme = useTheme();
@@ -27,28 +30,34 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
 
-  const pokemonList = useRef(
-    Object.values(pokemonName)
-      .filter((item) => item.id > 0)
-      .map((item) => {
-        return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
-      })
-  );
+  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
   const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
+
+  useEffect(() => {
+    if (pokemonList.length === 0) {
+      setPokemonList(
+        Object.values(pokemonName)
+          .filter((item) => item.id > 0)
+          .map((item) => new PokemonSearchingModel(item))
+      );
+    }
+  }, [pokemonName]);
 
   useEffect(() => {
     document.title = 'Pokémon - Search';
   }, []);
 
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      const results = pokemonList.current.filter(
-        (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
-      );
-      setPokemonListFilter(results);
-    });
-    return () => clearTimeout(timeOutId);
-  }, [searchTerm]);
+    if (pokemonList) {
+      const timeOutId = setTimeout(() => {
+        const results = pokemonList.filter(
+          (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+        );
+        setPokemonListFilter(results);
+      });
+      return () => clearTimeout(timeOutId);
+    }
+  }, [pokemonList, searchTerm]);
 
   useEffect(() => {
     setSelectId(id);

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 import Form from './Form';
 
@@ -6,6 +6,9 @@ import { useSelector } from 'react-redux';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../../store/models/state.model';
 import { PokemonModel } from '../../../core/models/pokemon.model';
+import { PokemonSearchingModel } from '../../../core/models/pokemon-seaching.model';
+
+import loading from '../../../assets/loading.png';
 
 const Find = (props: {
   // eslint-disable-next-line no-unused-vars
@@ -47,26 +50,32 @@ const Find = (props: {
   );
   const [form, setForm] = useState(null);
 
-  const pokemonList = useRef(
-    Object.values(pokemonName)
-      .filter((item) => item.id > 0)
-      .map((item) => {
-        return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
-      })
-  );
+  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
 
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      const results = pokemonList.current.filter(
-        (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+    if (pokemonList.length === 0) {
+      setPokemonList(
+        Object.values(pokemonName)
+          .filter((item) => item.id > 0)
+          .map((item) => new PokemonSearchingModel(item))
       );
-      setPokemonListFilter(results);
-    });
-    return () => clearTimeout(timeOutId);
-  }, [searchTerm]);
+    }
+  }, [pokemonName]);
+
+  useEffect(() => {
+    if (pokemonList) {
+      const timeOutId = setTimeout(() => {
+        const results = pokemonList.filter(
+          (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+        );
+        setPokemonListFilter(results);
+      });
+      return () => clearTimeout(timeOutId);
+    }
+  }, [pokemonList, searchTerm]);
 
   const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -208,7 +217,7 @@ const Find = (props: {
     return (
       <div className="col d-flex justify-content-center text-center">
         <div>
-          {pokemonList.current?.length > 0 && (
+          {pokemonList.length > 0 && (
             <Fragment>
               <Form
                 router={router}
@@ -222,7 +231,7 @@ const Find = (props: {
                 setForm={props.setForm}
                 setFormOrigin={setForm}
                 id={id}
-                name={pokemonList.current.find((item) => item.id === id)?.name ?? ''}
+                name={pokemonList.find((item) => item.id === id)?.name ?? ''}
                 data={pokemonData}
                 stats={stats}
                 onHandleSetStats={handleSetStats}
@@ -245,19 +254,39 @@ const Find = (props: {
       <h1 id="main" className="text-center" style={{ marginBottom: 15 }}>
         {props.title ? props.title : 'Pokémon GO Tools'}
       </h1>
-      <div className="row search-container">
-        {props.swap ? (
-          <Fragment>
-            {showPokemon()}
-            {searchPokemon()}
-          </Fragment>
-        ) : (
-          <Fragment>
-            {searchPokemon()}
-            {showPokemon()}
-          </Fragment>
-        )}
-      </div>
+      {pokemonList.length > 0 ? (
+        <div className="row search-container">
+          {props.swap ? (
+            <Fragment>
+              {showPokemon()}
+              {searchPokemon()}
+            </Fragment>
+          ) : (
+            <Fragment>
+              {searchPokemon()}
+              {showPokemon()}
+            </Fragment>
+          )}
+        </div>
+      ) : (
+        <div className="ph-item d-flex justify-content-center w-100">
+          <div
+            className="ph-picture d-flex align-item-center justify-content-center position-relative w-50"
+            style={{ height: 600, backgroundColor: '#f8f8f8' }}
+          >
+            <div className="loading-group vertical-center">
+              <img className="loading" width={40} height={40} alt="img-pokemon" src={loading} />
+              <span className="caption text-black" style={{ fontSize: 18 }}>
+                <b>
+                  Loading<span id="p1">.</span>
+                  <span id="p2">.</span>
+                  <span id="p3">.</span>
+                </b>
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

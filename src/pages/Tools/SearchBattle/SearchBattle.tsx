@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { convertFormName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormName, splitAndCapitalize } from '../../../util/Utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -446,7 +446,7 @@ const FindBattle = () => {
             {evoChain.map((value: any[], index: React.Key) => (
               <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
-                  {!value.at(0).form?.toUpperCase() ? FORM_NORMAL : splitAndCapitalize(value.at(0).form, '-', ' ')}
+                  {!value.at(0).form?.toUpperCase() ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0).form, '-', ' ')}
                   {' Form'}
                 </div>
                 <Accordion.Item eventKey={'0'}>

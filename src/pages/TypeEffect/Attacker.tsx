@@ -23,7 +23,7 @@ const Attacker = (prop: { types: TypeEff | any }) => {
       resist: [],
       neutral: [],
     };
-    Object.entries(prop.types[currentType]).forEach(([key, value]) => {
+    Object.entries(prop.types[currentType] ?? []).forEach(([key, value]) => {
       if (value === 1.6) {
         data.weak.push(key);
       } else if (value === 1) {

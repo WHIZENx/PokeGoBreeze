@@ -45,8 +45,9 @@ const RankingPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
   const params: any = useParams();
 
-  const [rankingData, setRankingData]: any = useState(null);
+  const [rankingData, setRankingData]: any = useState([]);
   const [storeStats, setStoreStats]: any = useState(null);
+  const [onLoadData, setOnLoadData]: any = useState(false);
   const sortedBy = useRef('score');
   const [sorted, setSorted]: any = useState(1);
 
@@ -81,6 +82,7 @@ const RankingPVP = () => {
 
   useEffect(() => {
     const fetchPokemon = async () => {
+      dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
         let file: RankingsPVP[] = (
@@ -183,7 +185,7 @@ const RankingPVP = () => {
             cmoveSec,
             combatPoke,
             shadow: item.speciesName.includes('(Shadow)'),
-            purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec)),
+            purified: combatPoke?.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke?.purifiedMoves.includes(cMoveDataSec)),
           };
         });
         setRankingData(file);
@@ -199,23 +201,36 @@ const RankingPVP = () => {
         );
       }
     };
-    if (router.action === Action.Push) {
-      dispatch(showSpinner());
-      router.action = null as any;
-      setTimeout(() => fetchPokemon(), 100);
-    } else if (!rankingData && pvp) {
-      fetchPokemon();
-    } else {
-      dispatch(showSpinner());
+    if (statsRanking && dataStore?.pokemonCombat && dataStore?.combat && dataStore?.pokemonData && !onLoadData) {
+      setOnLoadData(true);
+      if (router.action === Action.Push) {
+        router.action = null as any;
+        setTimeout(() => fetchPokemon(), 100);
+      } else if (rankingData.length === 0 && pvp) {
+        fetchPokemon();
+      }
     }
-  }, [dispatch, params.serie, params.cp, params.type, rankingData, pvp, router.action]);
+  }, [
+    dispatch,
+    params.serie,
+    params.cp,
+    params.type,
+    rankingData,
+    pvp,
+    router.action,
+    onLoadData,
+    statsRanking,
+    dataStore?.pokemonCombat,
+    dataStore?.combat,
+    dataStore?.pokemonData,
+  ]);
 
   const renderItem = (data: any, key: string) => {
     return (
       <Accordion.Item eventKey={key}>
         <Accordion.Header
           onClick={() => {
-            if (!storeStats[key]) {
+            if (storeStats && !storeStats[key]) {
               setStoreStats(update(storeStats, { [key]: { $set: true } }));
             }
           }}
@@ -249,7 +264,7 @@ const RankingPVP = () => {
             backgroundImage: computeBgType(data.pokemon.types, data.shadow, data.purified, 0.8, styleSheet.current),
           }}
         >
-          {storeStats[key] && (
+          {storeStats && storeStats[key] && (
             <Fragment>
               <div className="pokemon-ranking-body ranking-body">
                 <div className="w-100 ranking-info element-top">
@@ -322,7 +337,7 @@ const RankingPVP = () => {
     const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
-        {league && (
+        {league ? (
           <div className="d-flex flex-wrap align-items-center element-top" style={{ columnGap: 10 }}>
             <img
               alt="img-league"
@@ -342,7 +357,7 @@ const RankingPVP = () => {
             />
             <h2>
               <b>
-                {league.name === 'All'
+                {league?.name === 'All'
                   ? cp === 500
                     ? 'Little Cup'
                     : cp === 1500
@@ -350,9 +365,13 @@ const RankingPVP = () => {
                     : cp === 2500
                     ? 'Ultra league'
                     : 'Master league'
-                  : league.name}
+                  : league?.name}
               </b>
             </h2>
+          </div>
+        ) : (
+          <div className="ph-item element-top">
+            <div className="ph-picture" style={{ width: '40%', height: 64, paddingLeft: 0, paddingRight: 0, marginBottom: 0 }} />
           </div>
         )}
       </Fragment>
@@ -361,66 +380,64 @@ const RankingPVP = () => {
 
   return (
     <Fragment>
-      {rankingData && storeStats && (
-        <div className="container pvp-container element-bottom">
-          {renderLeague()}
-          <hr />
-          <div className="element-top ranking-link-group">
-            {scoreType.map((type, index) => (
-              <Button
-                key={index}
-                className={params.type.toLowerCase() === type.toLowerCase() ? 'active' : ''}
-                onClick={() => navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`)}
+      <div className="container pvp-container element-bottom">
+        {renderLeague()}
+        <hr />
+        <div className="element-top ranking-link-group">
+          {scoreType.map((type, index) => (
+            <Button
+              key={index}
+              className={params.type.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+              onClick={() => navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`)}
+            >
+              {type}
+            </Button>
+          ))}
+        </div>
+        <div className="input-group border-input">
+          <input
+            type="text"
+            className="form-control input-search"
+            placeholder="Enter Name or ID"
+            defaultValue={search}
+            onKeyUp={(e: any) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="ranking-container">
+          <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
+            <div />
+            <div className="d-flex" style={{ marginRight: 15 }}>
+              <div
+                className="text-center"
+                style={{ width: 'max-content' }}
+                onClick={() => {
+                  setSorted(!sorted);
+                }}
               >
-                {type}
-              </Button>
-            ))}
-          </div>
-          <div className="input-group border-input">
-            <input
-              type="text"
-              className="form-control input-search"
-              placeholder="Enter Name or ID"
-              defaultValue={search}
-              onKeyUp={(e: any) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="ranking-container">
-            <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
-              <div />
-              <div className="d-flex" style={{ marginRight: 15 }}>
-                <div
-                  className="text-center"
-                  style={{ width: 'max-content' }}
-                  onClick={() => {
-                    setSorted(!sorted);
-                  }}
-                >
-                  <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
-                    Score
-                    {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
-                  </span>
-                </div>
+                <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
+                  Score
+                  {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                </span>
               </div>
             </div>
-            <Accordion alwaysOpen={true}>
-              {rankingData
-                .filter(
-                  (pokemon: { speciesId: string; speciesName: string; id: number }) =>
-                    splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), '-', ' ')
-                      .toLowerCase()
-                      .includes(search.toLowerCase()) || pokemon.id.toString().includes(search)
-                )
-                .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
-                  sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]
-                )
-                .map((value: any, index: string) => (
-                  <Fragment key={index}>{renderItem(value, index)}</Fragment>
-                ))}
-            </Accordion>
           </div>
+          <Accordion alwaysOpen={true}>
+            {rankingData
+              .filter(
+                (pokemon: { speciesId: string; speciesName: string; id: number }) =>
+                  splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), '-', ' ')
+                    .toLowerCase()
+                    .includes(search.toLowerCase()) || pokemon.id.toString().includes(search)
+              )
+              .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
+                sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]
+              )
+              .map((value: any, index: string) => (
+                <Fragment key={index}>{renderItem(value, index)}</Fragment>
+              ))}
+          </Accordion>
         </div>
-      )}
+      </div>
     </Fragment>
   );
 };

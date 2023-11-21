@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { capitalize, convertFormName, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
@@ -14,6 +14,7 @@ import { TypeMove } from '../../../enums/move.enum';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SpinnerState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { DEFAULT_TYPES } from '../../../util/Constants';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -147,12 +148,12 @@ const SearchTypes = () => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const typeList = useRef(Object.keys(data?.typeEff ?? {}));
+  const [typeList, setTypeList]: any = useState([]);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const [currentType, setCurrentType]: any = useState(typeList.current.at(0));
+  const [currentType, setCurrentType]: any = useState(null);
   const [result, setResult]: any = useState({
     pokemonList: [],
     fastMove: [],
@@ -167,21 +168,35 @@ const SearchTypes = () => {
   const [showType, setShowType] = useState(false);
 
   useEffect(() => {
-    document.title = `${capitalize(currentType)} - Type`;
+    if (currentType) {
+      document.title = `${capitalize(currentType)} - Type`;
+    }
     if (spinner.loading) {
       dispatch(hideSpinner());
     }
   }, [currentType]);
 
   useEffect(() => {
-    setResult({
-      pokemonList: data?.released
-        ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-        .filter((pokemon) => pokemon.types.includes(capitalize(currentType))),
-      fastMove: data?.combat?.filter((type) => type.type_move === TypeMove.FAST && type.type === currentType),
-      chargedMove: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE && type.type === currentType),
-    });
-  }, [currentType, releasedGO]);
+    setTypeList(data?.typeEff ? Object.keys(data?.typeEff) : DEFAULT_TYPES);
+  }, [data?.typeEff]);
+
+  useEffect(() => {
+    if (typeList.length > 0 && !currentType) {
+      setCurrentType(typeList.at(0));
+    }
+  }, [typeList, currentType]);
+
+  useEffect(() => {
+    if (data?.released) {
+      setResult({
+        pokemonList: data?.released
+          ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
+          .filter((pokemon) => pokemon.types.includes(capitalize(currentType))),
+        fastMove: data?.combat?.filter((type) => type.type_move === TypeMove.FAST && type.type === currentType),
+        chargedMove: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE && type.type === currentType),
+      });
+    }
+  }, [currentType, releasedGO, data?.released]);
 
   const changeType = (value: string) => {
     setShowType(false);
@@ -241,7 +256,7 @@ const SearchTypes = () => {
       <div className="row">
         <div className="col-xl-4 element-top">
           <div
-            className={'d-flex flex-column align-items-center type-info-container ' + currentType.toLowerCase() + '-border'}
+            className={'d-flex flex-column align-items-center type-info-container ' + currentType?.toLowerCase() + '-border'}
             style={{ background: computeBgType(currentType, false, false, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
@@ -254,7 +269,7 @@ const SearchTypes = () => {
             </div>
             <span
               style={{ width: 'max-content' }}
-              className={currentType.toLowerCase() + ' type-select-bg d-flex align-items-center filter-shadow element-top'}
+              className={currentType?.toLowerCase() + ' type-select-bg d-flex align-items-center filter-shadow element-top'}
             >
               <div style={{ display: 'contents', width: 16 }}>
                 <img
@@ -267,34 +282,40 @@ const SearchTypes = () => {
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('pokeball_sprite')} />{' '}
-              <b>{`Pokémon: ${result.pokemonList.length} (${Math.round((result.pokemonList.length * 100) / allData.pokemon)}%)`}</b>
+              <b>{`Pokémon: ${result.pokemonList?.length} (${
+                result.pokemonList && allData.pokemon && Math.round((result.pokemonList?.length * 100) / allData.pokemon)
+              }%)`}</b>
               <ul style={{ listStyleType: 'disc' }}>
                 <li>
-                  <b>{`Legacy Type: ${
-                    result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1).length
-                  } (${Math.round(
-                    (result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1).length * 100) / allData.pokemon
-                  )}%)`}</b>
+                  <b>{`Legacy Type: ${result.pokemonList?.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1).length} (${
+                    result.pokemonList &&
+                    allData.pokemon &&
+                    Math.round(
+                      (result.pokemonList?.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1).length * 100) / allData.pokemon
+                    )
+                  }%)`}</b>
                 </li>
                 <li>
-                  <b>{`Include Type: ${
-                    result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1).length
-                  } (${Math.round(
-                    (result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1).length * 100) / allData.pokemon
-                  )}%)`}</b>
+                  <b>{`Include Type: ${result.pokemonList?.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1).length} (${
+                    result.pokemonList &&
+                    allData.pokemon &&
+                    Math.round(
+                      (result.pokemonList?.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1).length * 100) / allData.pokemon
+                    )
+                  }%)`}</b>
                 </li>
               </ul>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
-              <b>{`Fast Moves: ${result.fastMove.length}/${allData.fastMoves} (${Math.round(
-                (result.fastMove.length * 100) / (allData.fastMoves ?? 0)
+              <b>{`Fast Moves: ${result.fastMove?.length}/${allData.fastMoves ?? 0} (${Math.round(
+                (result.fastMove?.length * 100) / (allData.fastMoves ?? 1)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charged Moves: ${result.chargedMove.length}/${allData.chargedMoves} (${Math.round(
-                (result.chargedMove.length * 100) / (allData.chargedMoves ?? 0)
+              <b>{`Charged Moves: ${result.chargedMove?.length}/${allData.chargedMoves ?? 0} (${Math.round(
+                (result.chargedMove?.length * 100) / (allData.chargedMoves ?? 1)
               )}%)`}</b>
             </span>
           </div>
@@ -304,7 +325,7 @@ const SearchTypes = () => {
             <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
               <DataTable
                 columns={columnPokemon}
-                data={result ? result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1) : []}
+                data={result ? result.pokemonList?.filter((pokemon: PokemonDataModel) => pokemon.types.length === 1) : []}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}
@@ -315,7 +336,7 @@ const SearchTypes = () => {
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
               <DataTable
                 columns={columnPokemon}
-                data={result ? result.pokemonList.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1) : []}
+                data={result ? result.pokemonList?.filter((pokemon: PokemonDataModel) => pokemon.types.length > 1) : []}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}

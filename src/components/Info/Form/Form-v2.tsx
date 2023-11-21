@@ -127,16 +127,16 @@ const Form = ({
 
   const filterFormList = useCallback(
     (formName: string, stats: { id: number; form: string }[], id: number, formLength: number) => {
-      const firstFilter = stats.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
+      const firstFilter = stats?.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
       if (firstFilter) {
         return firstFilter;
       }
-      const filterId = stats.filter((item) => item.id === id);
-      const filterForm = stats.find((item) => item.id === id && filterFormName(formName, item.form));
-      if (filterId.length === 1 && formLength === 1 && !filterForm) {
+      const filterId = stats?.filter((item) => item.id === id);
+      const filterForm = stats?.find((item) => item.id === id && filterFormName(formName, item.form));
+      if (filterId?.length === 1 && formLength === 1 && !filterForm) {
         return filterId.at(0);
-      } else if (filterId.length === formLength && !filterForm) {
-        return stats.find((item) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
+      } else if (filterId?.length === formLength && !filterForm) {
+        return stats?.find((item) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       } else {
         return filterForm;
       }
@@ -218,10 +218,10 @@ const Form = ({
 
   useEffect(() => {
     if (currForm && currForm.form && pokeID) {
-      setStatATK(filterFormList(currForm.form.form_name, stats.attack.ranking, idDefault, formList.length));
-      setStatDEF(filterFormList(currForm.form.form_name, stats.defense.ranking, idDefault, formList.length));
-      setStatSTA(filterFormList(currForm.form.form_name, stats.stamina.ranking, idDefault, formList.length));
-      setStatProd(filterFormList(currForm.form.form_name, stats.statProd.ranking, idDefault, formList.length));
+      setStatATK(filterFormList(currForm.form.form_name, stats?.attack.ranking, idDefault, formList.length));
+      setStatDEF(filterFormList(currForm.form.form_name, stats?.defense.ranking, idDefault, formList.length));
+      setStatSTA(filterFormList(currForm.form.form_name, stats?.stamina.ranking, idDefault, formList.length));
+      setStatProd(filterFormList(currForm.form.form_name, stats?.statProd.ranking, idDefault, formList.length));
       setPokeID(findDefaultForm() ? currForm.form.id : findFirst().form.id);
     }
   }, [
@@ -231,9 +231,9 @@ const Form = ({
     findDefaultForm,
     findFirst,
     idDefault,
-    stats.attack.ranking,
-    stats.defense.ranking,
-    stats.stamina.ranking,
+    stats?.attack.ranking,
+    stats?.defense.ranking,
+    stats?.stamina.ranking,
     formList.length,
   ]);
 
@@ -363,9 +363,9 @@ const Form = ({
           ))}
         </div>
       </div>
-      {ratio.M !== 0 || ratio.F !== 0 ? (
+      {ratio?.M !== 0 || ratio?.F !== 0 ? (
         <div className="d-flex flex-wrap" style={{ columnGap: 50, rowGap: 15 }}>
-          {ratio.M !== 0 && (
+          {ratio?.M !== 0 && (
             <Gender
               ratio={ratio}
               sex="Male"
@@ -375,7 +375,7 @@ const Form = ({
               shiny_f={currForm?.form.sprites?.front_shiny_female}
             />
           )}
-          {ratio.F !== 0 && (
+          {ratio?.F !== 0 && (
             <Gender
               ratio={ratio}
               sex="Female"
