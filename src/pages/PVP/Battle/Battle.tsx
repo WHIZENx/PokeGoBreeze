@@ -683,12 +683,10 @@ const Battle = () => {
             .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
             .map((item) => {
               const name = convertNameRankingToOri(item.speciesId.replace('_shadow', ''), item.speciesName);
-              let pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+              let pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
 
               if (!pokemon) {
-                pokemon = Object.values(dataStore?.pokemonData ?? []).find(
-                  (pokemon) => pokemon.slug === item.speciesId.replace('_shadow', '')
-                );
+                pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
                 if (!pokemon) {
                   return null;
                 }

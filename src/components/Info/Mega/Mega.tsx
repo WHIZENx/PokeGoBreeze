@@ -63,11 +63,11 @@ const Mega = (props: { formList: any[]; id: number }) => {
               </div>
               <span className="caption">
                 First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>x{getQuestEvo(value.name)?.firstTempEvolution}</b>
+                <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.firstTempEvolution}` : 'Unavailable'}</b>
               </span>
               <span className="caption">
                 Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>x{getQuestEvo(value.name)?.tempEvolution}</b>
+                <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.tempEvolution}` : 'Unavailable'}</b>
               </span>
             </li>
           ))}

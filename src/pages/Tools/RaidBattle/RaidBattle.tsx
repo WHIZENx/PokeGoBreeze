@@ -48,13 +48,12 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
-import { SpinnerState, StoreState, SearchingState } from '../../../store/models/state.model';
+import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { PokemonDataModel, PokemonMoveData } from '../../../core/models/pokemon.model';
 import { CombatPokemon } from '../../../core/models/combat.model';
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
@@ -443,7 +442,7 @@ const RaidBattle = () => {
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: any[] | (() => any[]) = [];
-    Object.values(data?.pokemonData ?? []).forEach((pokemon) => {
+    (data?.pokemonData ?? []).forEach((pokemon) => {
       if (pokemon.forme?.toUpperCase() !== FORM_GMAX) {
         let combatPoke: any = data?.pokemonCombat?.filter(
           (item) =>
@@ -668,9 +667,6 @@ const RaidBattle = () => {
 
   useEffect(() => {
     document.title = 'Raid Battle - Tools';
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
   }, []);
 
   useEffect(() => {

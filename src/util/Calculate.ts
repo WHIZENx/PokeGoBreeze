@@ -1349,12 +1349,12 @@ export const queryStatesEvoChain = (
 ) => {
   let pokemon: PokemonDataModel | undefined;
   if (item.form === '') {
-    pokemon = Object.values(pokemonData).find((value) => value.num === item.id && value.slug === item.name.toLowerCase());
+    pokemon = pokemonData.find((value) => value.num === item.id && value.slug === item.name.toLowerCase());
   } else {
-    pokemon = Object.values(pokemonData).find((value) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
+    pokemon = pokemonData.find((value) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
   }
   if (!pokemon) {
-    pokemon = Object.values(pokemonData).find((value) => value.num === item.id);
+    pokemon = pokemonData.find((value) => value.num === item.id);
   }
   const pokemonStats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
   const dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, 500);

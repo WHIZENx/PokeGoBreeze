@@ -16,11 +16,10 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import { TypeMove } from '../../enums/move.enum';
-import { hideSpinner } from '../../store/actions/spinner.action';
-import { StoreState, SpinnerState } from '../../store/models/state.model';
+import { StoreState } from '../../store/models/state.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -80,10 +79,8 @@ const columns: any = [
 ];
 
 const Move = (props: { id?: number }) => {
-  const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -126,12 +123,6 @@ const Move = (props: { id?: number }) => {
     },
     [enqueueSnackbar, params.id, data?.combat]
   );
-
-  useEffect(() => {
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
-  }, []);
 
   useEffect(() => {
     if (move === null) {

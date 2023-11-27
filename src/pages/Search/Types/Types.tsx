@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { capitalize, convertFormName, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
 import './Types.scss';
@@ -11,8 +11,7 @@ import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/move.enum';
-import { hideSpinner } from '../../../store/actions/spinner.action';
-import { StoreState, SpinnerState } from '../../../store/models/state.model';
+import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { DEFAULT_TYPES } from '../../../util/Constants';
 
@@ -144,12 +143,10 @@ const columnMove: any = [
 ];
 
 const SearchTypes = () => {
-  const dispatch = useDispatch();
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [typeList, setTypeList]: any = useState([]);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -170,9 +167,6 @@ const SearchTypes = () => {
   useEffect(() => {
     if (currentType) {
       document.title = `${capitalize(currentType)} - Type`;
-    }
-    if (spinner.loading) {
-      dispatch(hideSpinner());
     }
   }, [currentType]);
 

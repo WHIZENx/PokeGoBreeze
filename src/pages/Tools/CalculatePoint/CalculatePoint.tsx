@@ -15,14 +15,11 @@ import { useSnackbar } from 'notistack';
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import APIService from '../../../services/API.service';
-import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner } from '../../../store/actions/spinner.action';
+import { useSelector } from 'react-redux';
 import { TypeMove } from '../../../enums/move.enum';
-import { SearchingState, SpinnerState, StoreState } from '../../../store/models/state.model';
+import { SearchingState, StoreState } from '../../../store/models/state.model';
 
 const CalculatePoint = () => {
-  const dispatch = useDispatch();
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
   const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff ?? {});
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
@@ -66,9 +63,6 @@ const CalculatePoint = () => {
 
   useEffect(() => {
     document.title = 'Calculate Point Stats - Tools';
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
   }, []);
 
   const clearData = (reset: boolean) => {

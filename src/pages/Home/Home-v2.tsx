@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import loadingImg from '../../assets/loading.png';
 
 import './Home.scss';
@@ -35,8 +35,7 @@ import {
   Switch,
   useTheme,
 } from '@mui/material';
-import { hideSpinner } from '../../store/actions/spinner.action';
-import { StoreState, StatsState, SpinnerState } from '../../store/models/state.model';
+import { StoreState, StatsState } from '../../store/models/state.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { PokemonHomeModel } from '../../core/models/pokemon-home.model';
 
@@ -49,12 +48,10 @@ const VersionProps = {
 };
 
 const Home = () => {
-  const dispatch = useDispatch();
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [types, setTypes]: any = useState([]);
   const [dataList, setDataList]: [PokemonHomeModel[], any] = useState([]);
@@ -116,9 +113,6 @@ const Home = () => {
 
   useEffect(() => {
     document.title = 'Home';
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
   }, []);
 
   useEffect(() => {

@@ -58,7 +58,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
       parseInt(tier) === 5 &&
       currForm &&
       currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
-      Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass
+      pokemonData.find((item) => item.num === id)?.pokemonClass
     ) {
       setCurrTier(6);
       if (setTier) {
@@ -131,7 +131,7 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
             </optgroup>
             {currForm && currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) && (
               <Fragment>
-                {Object.values(pokemonData).find((item) => item.num === id)?.pokemonClass ? (
+                {pokemonData.find((item) => item.num === id)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">
                     <option value={6}>Tier Mega</option>
                   </optgroup>

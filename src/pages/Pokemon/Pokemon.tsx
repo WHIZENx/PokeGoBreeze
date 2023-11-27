@@ -53,6 +53,8 @@ const Pokemon = (props: {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemonName ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemonData ?? []);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -91,16 +93,16 @@ const Pokemon = (props: {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const getRatioGender = useCallback((id: number) => {
-    return Object.values(dataStore?.pokemonData ?? []).find((item) => id === item.num)?.genderRatio;
-  }, []);
+  const getRatioGender = (id: number) => {
+    return pokemonData.find((item) => id === item.num)?.genderRatio;
+  };
 
   const fetchMap = useCallback(
     async (data: Species, axios: any, source: CancelTokenSource) => {
       const dataPokeList: PokemonInfo[] = [];
       let dataFromList: any[] = [];
       await Promise.all(
-        data.varieties.map(async (value) => {
+        data?.varieties.map(async (value) => {
           const pokeInfo: PokemonInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
           const pokeForm = await Promise.all(
             pokeInfo.forms.map(async (item) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
@@ -113,7 +115,8 @@ const Pokemon = (props: {
         })
       );
 
-      const costModifier = getCostModifier(data.id);
+      setPokeRatio(getRatioGender(data?.id));
+      const costModifier = getCostModifier(data?.id);
       setCostModifier({
         purified: {
           candy: costModifier?.purified.candy,
@@ -146,15 +149,15 @@ const Pokemon = (props: {
           return item
             .map((item: { pokemon: { name: string } }) => ({
               form: item,
-              name: data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name,
-              default_name: data.name,
+              name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name,
+              default_name: data?.name,
             }))
             .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
         })
         .sort((a, b) => a.at(0).form.id - b.at(0).form.id);
 
-      if (data.id === 150) {
-        dataFromList.push(getFormsGO(data.id));
+      if (data?.id === 150) {
+        dataFromList.push(getFormsGO(data?.id));
       }
 
       if (dataFromList.filter((form) => form.find((pokemon: PokemonFormModify) => pokemon.form.form_name === 'gmax')).length > 1) {
@@ -172,11 +175,11 @@ const Pokemon = (props: {
         pokemonDefault.forEach((p, index) => {
           let form = '';
           if (!p.is_default) {
-            form = p.name.replace(`${data.name}-`, '') + '-';
+            form = p.name.replace(`${data?.name}-`, '') + '-';
           }
           const pokemonShadowModify = new PokemonFormModifyModel(
-            data.id,
-            data.name,
+            data?.id,
+            data?.name,
             p.name,
             `${form}shadow`,
             true,
@@ -190,8 +193,8 @@ const Pokemon = (props: {
             -1 + -2 * index
           );
           const pokemonPurifiedModify = new PokemonFormModifyModel(
-            data.id,
-            data.name,
+            data?.id,
+            data?.name,
             p.name,
             `${form}purified`,
             true,
@@ -213,7 +216,7 @@ const Pokemon = (props: {
       let formParams = searchParams.get('form');
 
       if (formParams) {
-        if (data.id === 555 && formParams === 'galar') {
+        if (data?.id === 555 && formParams === 'galar') {
           formParams += '-standard';
         }
         defaultFrom = dataFromList.find((value) =>
@@ -233,7 +236,7 @@ const Pokemon = (props: {
           }
         } else {
           defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
-          isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
+          isDefaultForm = defaultFrom.find((item) => item.form.id === data?.id);
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
@@ -242,7 +245,7 @@ const Pokemon = (props: {
         isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching?.form);
       } else {
         defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
-        isDefaultForm = defaultFrom.find((item) => item.form.id === data.id);
+        isDefaultForm = defaultFrom.find((item) => item.form.id === data?.id);
       }
       defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.form.name);
       if (!defaultData) {
@@ -251,37 +254,37 @@ const Pokemon = (props: {
       setWH((prevWH: any) => ({ ...prevWH, weight: defaultData?.weight, height: defaultData?.height }));
       setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom.at(0)).form.version_group.name, '-', ' '));
       if (!params.id) {
-        setRegion(regionList[parseInt(data.generation.url.split('/').at(6) ?? '')]);
+        setRegion(regionList[parseInt(data?.generation.url.split('/').at(6) ?? '')]);
       }
       const nameInfo =
         router.action === Action.Pop && props.searching
           ? props.searching.fullName
-          : splitAndCapitalize(formParams ? isDefaultForm.form.name : data.name, '-', ' ');
-      const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data.id, isDefaultForm.form.form_name), '-', '-') : null;
+          : splitAndCapitalize(formParams ? isDefaultForm.form.name : data?.name, '-', ' ');
+      const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data?.id, isDefaultForm.form.form_name), '-', '-') : null;
       setFormName(nameInfo);
-      setReleased(checkReleased(data.id, nameInfo ?? '', isDefaultForm?.form?.is_default));
+      setReleased(checkReleased(data?.id, nameInfo ?? '', isDefaultForm?.form?.is_default));
       setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
       setDefaultForm(isDefaultForm);
       if (params.id) {
-        document.title = `#${data.id} - ${nameInfo}`;
+        document.title = `#${data?.id} - ${nameInfo}`;
       }
       setOnChangeForm(false);
-      const currentId = getPokemonById(Object.values(dataStore?.pokemonName ?? []), data.id);
+      const currentId = getPokemonById(pokemonName, data?.id);
       if (currentId) {
         setDataStorePokemon({
-          prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
+          prev: getPokemonByIndex(pokemonName, currentId.index - 1),
           current: currentId,
-          next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
+          next: getPokemonByIndex(pokemonName, currentId.index + 1),
         });
       }
     },
-    [searchParams, params.id, dataStore?.pokemon, dataStore?.pokemonName, dataStore?.pokemonData, dataStore?.evolution, dataStore?.details]
+    [searchParams, params.id, dataStore?.pokemon, pokemonName, pokemonData, dataStore?.evolution, dataStore?.details]
   );
 
   const queryPokemon = useCallback(
     (id: number | string | undefined, axios: any, source: CancelTokenSource) => {
-      if (id && dataStore?.pokemon && dataStore?.pokemonName && dataStore?.pokemonData && dataStore?.evolution && dataStore?.details) {
-        if (!params.id || (params.id && data && parseInt(id.toString()) !== data.id)) {
+      if (id && dataStore?.pokemon && pokemonName.length > 0 && pokemonData.length > 0 && dataStore?.evolution && dataStore?.details) {
+        if (!params.id || (params.id && data && parseInt(id.toString()) !== data?.id)) {
           dispatch(showSpinner());
         }
         if (data?.id !== parseInt(id.toString())) {
@@ -292,7 +295,6 @@ const Pokemon = (props: {
             cancelToken: source.token,
           })
           .then((res: { data: any }) => {
-            setPokeRatio(getRatioGender(res.data.id));
             fetchMap(res.data, axios, source);
             setData(res.data);
           })
@@ -307,7 +309,7 @@ const Pokemon = (props: {
           });
       }
     },
-    [dispatch, enqueueSnackbar, getRatioGender, fetchMap]
+    [dispatch, enqueueSnackbar, fetchMap]
   );
 
   useEffect(() => {
@@ -319,18 +321,15 @@ const Pokemon = (props: {
   }, [dispatch, params.id, props.id, queryPokemon, reForm]);
 
   useEffect(() => {
-    if (dataStore?.pokemonName) {
+    if (pokemonName.length > 0) {
       const keyDownHandler = (event: { keyCode: number; preventDefault: () => void }) => {
         if (!spinner.loading) {
-          const currentId = getPokemonById(
-            Object.values(dataStore?.pokemonName ?? []),
-            parseInt(params.id ? params.id.toLowerCase() : props.id ?? '')
-          );
+          const currentId = getPokemonById(pokemonName, parseInt(params.id ? params.id.toLowerCase() : props.id ?? ''));
           if (currentId) {
             const result = {
-              prev: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index - 1),
+              prev: getPokemonByIndex(pokemonName, currentId.index - 1),
               current: currentId,
-              next: getPokemonByIndex(Object.values(dataStore?.pokemonName ?? []), currentId.index + 1),
+              next: getPokemonByIndex(pokemonName, currentId.index + 1),
             };
             if (result.prev && event.keyCode === KEY_LEFT) {
               event.preventDefault();
@@ -347,10 +346,10 @@ const Pokemon = (props: {
         document.removeEventListener('keyup', keyDownHandler, false);
       };
     }
-  }, [params.id, props.id, spinner.loading, dataStore?.pokemonName]);
+  }, [params.id, props.id, spinner.loading, pokemonName]);
 
   const getNumGen = (url: string) => {
-    return 'Gen ' + url.split('/').at(6);
+    return 'Gen ' + url?.split('/').at(6);
   };
 
   const setVersionName = (version: string) => {
@@ -400,389 +399,370 @@ const Pokemon = (props: {
         <Error />
       ) : (
         <Fragment>
-          {data && (
-            <Fragment>
-              <div className="w-100 row prev-next-block sticky-top">
-                {params.id ? (
-                  <Fragment>
-                    {dataStorePokemon?.prev && (
-                      <div
-                        title="Previous Pokémon"
-                        className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`}
-                        style={{ padding: 0 }}
-                      >
-                        <Link
-                          onClick={() => {
-                            setReForm(false);
-                            setForm(null);
-                          }}
-                          className="d-flex justify-content-start align-items-center"
-                          to={'/pokemon/' + dataStorePokemon?.prev?.id}
-                          title={`#${dataStorePokemon?.prev?.id} ${splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}`}
-                        >
-                          <div style={{ cursor: 'pointer' }}>
-                            <b>
-                              <NavigateBeforeIcon fontSize="large" />
-                            </b>
-                          </div>
-                          <div style={{ width: 60, cursor: 'pointer' }}>
-                            <img
-                              style={{ padding: '5px 5px 5px 0' }}
-                              className="pokemon-navigate-sprite"
-                              alt="img-full-pokemon"
-                              src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)}
-                            />
-                          </div>
-                          <div className="w-100" style={{ cursor: 'pointer' }}>
-                            <div style={{ textAlign: 'start' }}>
-                              <b>#{dataStorePokemon?.prev?.id}</b>
-                            </div>
-                            <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}</div>
-                          </div>
-                        </Link>
-                      </div>
-                    )}
-                    {dataStorePokemon?.next && (
-                      <div
-                        title="Next Pokémon"
-                        className={`next-block col${dataStorePokemon?.prev ? '-6' : ''}`}
-                        style={{ float: 'right', padding: 0 }}
-                      >
-                        <Link
-                          onClick={() => {
-                            setReForm(false);
-                            setForm(null);
-                          }}
-                          className="d-flex justify-content-end align-items-center"
-                          to={'/pokemon/' + dataStorePokemon?.next?.id}
-                          title={`#${dataStorePokemon?.next?.id} ${splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}`}
-                        >
-                          <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
-                            <div style={{ textAlign: 'end' }}>
-                              <b>#{dataStorePokemon?.next?.id}</b>
-                            </div>
-                            <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}</div>
-                          </div>
-                          <div style={{ width: 60, cursor: 'pointer' }}>
-                            <img
-                              style={{ padding: '5px 0 5px 5px' }}
-                              className="pokemon-navigate-sprite"
-                              alt="img-full-pokemon"
-                              src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)}
-                            />
-                          </div>
-                          <div style={{ cursor: 'pointer' }}>
-                            <b>
-                              <NavigateNextIcon fontSize="large" />
-                            </b>
-                          </div>
-                        </Link>
-                      </div>
-                    )}
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    {dataStorePokemon?.prev && (
-                      <div
-                        title="Previous Pokémon"
-                        className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`}
-                        style={{ padding: 0 }}
-                      >
-                        <div
-                          className="d-flex justify-content-start align-items-center"
-                          onClick={() => {
-                            if (router?.action === 'POP') {
-                              setFormName(null);
-                              router.action = null as any;
-                            }
-                            props.onDecId();
-                            setForm(null);
-                            if (props.first && props.setFirst) {
-                              props.setFirst(false);
-                            }
-                          }}
-                          title={`#${dataStorePokemon?.prev?.id} ${splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}`}
-                        >
-                          <div style={{ cursor: 'pointer' }}>
-                            <b>
-                              <NavigateBeforeIcon fontSize="large" />
-                            </b>
-                          </div>
-                          <div style={{ width: 60, cursor: 'pointer' }}>
-                            <img
-                              style={{ padding: '5px 5px 5px 0' }}
-                              className="pokemon-navigate-sprite"
-                              alt="img-full-pokemon"
-                              src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)}
-                            />
-                          </div>
-                          <div className="w-100" style={{ cursor: 'pointer' }}>
-                            <div style={{ textAlign: 'start' }}>
-                              <b>#{dataStorePokemon?.prev?.id}</b>
-                            </div>
-                            <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {dataStorePokemon?.next && (
-                      <div
-                        title="Next Pokémon"
-                        className={`next-block col${dataStorePokemon?.prev ? '-6' : ''}`}
-                        style={{ float: 'right', padding: 0 }}
-                      >
-                        <div
-                          className="d-flex justify-content-end align-items-center"
-                          onClick={() => {
-                            if (router?.action === 'POP') {
-                              setFormName(null);
-                              router.action = null as any;
-                            }
-                            props.onIncId();
-                            setForm(null);
-                            if (props.first && props.setFirst) {
-                              props.setFirst(false);
-                            }
-                          }}
-                          title={`#${dataStorePokemon?.next?.id} ${splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}`}
-                        >
-                          <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
-                            <div style={{ textAlign: 'end' }}>
-                              <b>#{dataStorePokemon?.next?.id}</b>
-                            </div>
-                            <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}</div>
-                          </div>
-                          <div style={{ width: 60, cursor: 'pointer' }}>
-                            <img
-                              style={{ padding: '5px 0 5px 5px' }}
-                              className="pokemon-navigate-sprite"
-                              alt="img-full-pokemon"
-                              src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)}
-                            />
-                          </div>
-                          <div style={{ cursor: 'pointer' }}>
-                            <b>
-                              <NavigateNextIcon fontSize="large" />
-                            </b>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </Fragment>
-                )}
-              </div>
-              <div
-                style={{ color: theme.palette.text.primary }}
-                className={'element-bottom position-relative poke-container' + (props.isSearch ? '' : ' container')}
-              >
-                <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-                  {!released && formName && (
-                    <Alert variant="danger">
-                      <h5 className="text-danger" style={{ margin: 0 }}>
-                        *{' '}
+          <div className="w-100 row prev-next-block sticky-top">
+            {params.id ? (
+              <Fragment>
+                {dataStorePokemon?.prev && (
+                  <div title="Previous Pokémon" className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`} style={{ padding: 0 }}>
+                    <Link
+                      onClick={() => {
+                        setReForm(false);
+                        setForm(null);
+                      }}
+                      className="d-flex justify-content-start align-items-center"
+                      to={'/pokemon/' + dataStorePokemon?.prev?.id}
+                      title={`#${dataStorePokemon?.prev?.id} ${splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}`}
+                    >
+                      <div style={{ cursor: 'pointer' }}>
                         <b>
-                          {splitAndCapitalize(convertName(formName.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
-                        </b>{' '}
-                        not released in Pokémon GO
+                          <NavigateBeforeIcon fontSize="large" />
+                        </b>
+                      </div>
+                      <div style={{ width: 60, cursor: 'pointer' }}>
                         <img
-                          width={50}
-                          height={50}
-                          style={{ marginLeft: 10 }}
-                          alt="pokemon-go-icon"
-                          src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                          style={{ padding: '5px 5px 5px 0' }}
+                          className="pokemon-navigate-sprite"
+                          alt="img-full-pokemon"
+                          src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)}
                         />
-                      </h5>
-                    </Alert>
-                  )}
-                  <div className="d-inline-block img-desc">
+                      </div>
+                      <div className="w-100" style={{ cursor: 'pointer' }}>
+                        <div style={{ textAlign: 'start' }}>
+                          <b>#{dataStorePokemon?.prev?.id}</b>
+                        </div>
+                        <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}</div>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+                {dataStorePokemon?.next && (
+                  <div
+                    title="Next Pokémon"
+                    className={`next-block col${dataStorePokemon?.prev ? '-6' : ''}`}
+                    style={{ float: 'right', padding: 0 }}
+                  >
+                    <Link
+                      onClick={() => {
+                        setReForm(false);
+                        setForm(null);
+                      }}
+                      className="d-flex justify-content-end align-items-center"
+                      to={'/pokemon/' + dataStorePokemon?.next?.id}
+                      title={`#${dataStorePokemon?.next?.id} ${splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}`}
+                    >
+                      <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
+                        <div style={{ textAlign: 'end' }}>
+                          <b>#{dataStorePokemon?.next?.id}</b>
+                        </div>
+                        <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}</div>
+                      </div>
+                      <div style={{ width: 60, cursor: 'pointer' }}>
+                        <img
+                          style={{ padding: '5px 0 5px 5px' }}
+                          className="pokemon-navigate-sprite"
+                          alt="img-full-pokemon"
+                          src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)}
+                        />
+                      </div>
+                      <div style={{ cursor: 'pointer' }}>
+                        <b>
+                          <NavigateNextIcon fontSize="large" />
+                        </b>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </Fragment>
+            ) : (
+              <Fragment>
+                {dataStorePokemon?.prev && (
+                  <div title="Previous Pokémon" className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`} style={{ padding: 0 }}>
+                    <div
+                      className="d-flex justify-content-start align-items-center"
+                      onClick={() => {
+                        if (router?.action === 'POP') {
+                          setFormName(null);
+                          router.action = null as any;
+                        }
+                        props.onDecId();
+                        setForm(null);
+                        if (props.first && props.setFirst) {
+                          props.setFirst(false);
+                        }
+                      }}
+                      title={`#${dataStorePokemon?.prev?.id} ${splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}`}
+                    >
+                      <div style={{ cursor: 'pointer' }}>
+                        <b>
+                          <NavigateBeforeIcon fontSize="large" />
+                        </b>
+                      </div>
+                      <div style={{ width: 60, cursor: 'pointer' }}>
+                        <img
+                          style={{ padding: '5px 5px 5px 0' }}
+                          className="pokemon-navigate-sprite"
+                          alt="img-full-pokemon"
+                          src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)}
+                        />
+                      </div>
+                      <div className="w-100" style={{ cursor: 'pointer' }}>
+                        <div style={{ textAlign: 'start' }}>
+                          <b>#{dataStorePokemon?.prev?.id}</b>
+                        </div>
+                        <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.prev?.name, '-', ' ')}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {dataStorePokemon?.next && (
+                  <div
+                    title="Next Pokémon"
+                    className={`next-block col${dataStorePokemon?.prev ? '-6' : ''}`}
+                    style={{ float: 'right', padding: 0 }}
+                  >
+                    <div
+                      className="d-flex justify-content-end align-items-center"
+                      onClick={() => {
+                        if (router?.action === 'POP') {
+                          setFormName(null);
+                          router.action = null as any;
+                        }
+                        props.onIncId();
+                        setForm(null);
+                        if (props.first && props.setFirst) {
+                          props.setFirst(false);
+                        }
+                      }}
+                      title={`#${dataStorePokemon?.next?.id} ${splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}`}
+                    >
+                      <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
+                        <div style={{ textAlign: 'end' }}>
+                          <b>#{dataStorePokemon?.next?.id}</b>
+                        </div>
+                        <div className="text-navigate">{splitAndCapitalize(dataStorePokemon?.next?.name, '-', ' ')}</div>
+                      </div>
+                      <div style={{ width: 60, cursor: 'pointer' }}>
+                        <img
+                          style={{ padding: '5px 0 5px 5px' }}
+                          className="pokemon-navigate-sprite"
+                          alt="img-full-pokemon"
+                          src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)}
+                        />
+                      </div>
+                      <div style={{ cursor: 'pointer' }}>
+                        <b>
+                          <NavigateNextIcon fontSize="large" />
+                        </b>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Fragment>
+            )}
+          </div>
+          <div
+            style={{ color: theme.palette.text.primary }}
+            className={'element-bottom position-relative poke-container' + (props.isSearch ? '' : ' container')}
+          >
+            <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
+              {!released && formName && (
+                <Alert variant="danger">
+                  <h5 className="text-danger" style={{ margin: 0 }}>
+                    * <b>{splitAndCapitalize(convertName(formName.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}</b>{' '}
+                    not released in Pokémon GO
                     <img
-                      className="pokemon-main-sprite"
-                      style={{ verticalAlign: 'baseline' }}
-                      alt="img-full-pokemon"
-                      src={APIService.getPokeFullSprite(
-                        data.id,
-                        splitAndCapitalize(
-                          form?.endsWith('Shadow') || form?.endsWith('Purified')
-                            ? form.replace('Shadow', '').replace('Purified', '').replaceAll('-', '').toLowerCase()
-                            : form,
-                          '-',
-                          '-'
-                        )
-                      )}
+                      width={50}
+                      height={50}
+                      style={{ marginLeft: 10 }}
+                      alt="pokemon-go-icon"
+                      src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
                     />
-                  </div>
-                  <div className="d-inline-block">
-                    <table className="table-info table-desc">
-                      <thead />
-                      <tbody>
-                        <tr>
-                          <td>
-                            <h5 className="d-flex">ID</h5>
-                          </td>
-                          <td colSpan={2}>
-                            <h5 className="d-flex">
-                              <b>#{data.id}</b>
-                            </h5>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h5 className="d-flex">Name</h5>
-                          </td>
-                          <td colSpan={2}>
-                            <h5 className="d-flex">
-                              <b>
-                                {formName &&
-                                  splitAndCapitalize(
-                                    convertName(formName.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'),
-                                    '_',
-                                    ' '
-                                  )}
-                              </b>
-                            </h5>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h5 className="d-flex">Generation</h5>
-                          </td>
-                          <td colSpan={2}>
-                            <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                              <b>{data.generation.name.split('-').at(1).toUpperCase()}</b>{' '}
-                              <span className="text-gen">({getNumGen(data.generation.url)})</span>
-                            </h5>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h5 className="d-flex">Region</h5>
-                          </td>
-                          <td colSpan={2}>
-                            <h5 className="d-flex">{region}</h5>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h5 className="d-flex">Version</h5>
-                          </td>
-                          <td colSpan={2}>
-                            <h5 className="d-flex">{version && version.replace(' Go', ' GO')}</h5>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <h5 className="d-flex">Body</h5>
-                          </td>
-                          <td colSpan={2} style={{ padding: 0 }}>
-                            <div className="d-flex align-items-center first-extra-col h-100" style={{ float: 'left', width: '50%' }}>
-                              <div>
-                                <div className="d-inline-block" style={{ marginRight: 5 }}>
-                                  <h6>Weight:</h6>
-                                </div>
-                                <div className="d-inline-block">
-                                  <h6>{WH.weight / 10} kg</h6>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="d-flex align-items-center h-100" style={{ float: 'left', width: '50%' }}>
-                              <div>
-                                <div className="d-inline-block" style={{ marginRight: 5 }}>
-                                  <h6>Height:</h6>
-                                </div>
-                                <div className="d-inline-block">
-                                  <h6>{WH.height / 10} m</h6>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="d-inline-block" style={{ padding: 0 }}>
-                    <table className="table-info table-main">
-                      <thead />
-                      <tbody>
-                        <tr className="text-center">
-                          <td className="table-sub-header">Unlock third move</td>
-                          <td className="table-sub-header">Costs</td>
-                        </tr>
-                        <tr className="info-costs">
-                          <td>
-                            <img alt="img-cost-info" width={100} src={APIService.getItemSprite('Item_1202')} />
-                          </td>
-                          <td style={{ padding: 0 }}>
-                            <div className="d-flex align-items-center row-extra td-costs">
-                              <Candy id={data.id} style={{ marginRight: 5 }} />
-                              <span>{costModifier.thirdMove.candy ? `x${costModifier.thirdMove.candy}` : 'Unavailable'}</span>
-                            </div>
-                            <div className="row-extra d-flex">
-                              <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
-                                <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                              </div>
-                              <span>{costModifier.thirdMove.stardust ? `x${costModifier.thirdMove.stardust}` : 'Unavailable'}</span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr className="text-center">
-                          <td className="table-sub-header">Purified</td>
-                          <td className="table-sub-header">Costs</td>
-                        </tr>
-                        <tr className="info-costs">
-                          <td>
-                            <img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()} />
-                          </td>
-                          <td style={{ padding: 0 }}>
-                            <div className="d-flex align-items-center row-extra td-costs">
-                              <Candy id={data.id} style={{ marginRight: 5 }} />
-                              <span>{costModifier.purified.candy ? `x${costModifier.purified.candy}` : 'Unavailable'}</span>
-                            </div>
-                            <div className="row-extra d-flex">
-                              <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
-                                <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                              </div>
-                              <span>{costModifier.purified.stardust ? `x${costModifier.purified.stardust}` : 'Unavailable'}</span>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <Form
-                  pokemonRouter={router}
-                  onChangeForm={onChangeForm}
-                  setOnChangeForm={setOnChangeForm}
-                  onSetReForm={setReForm}
-                  setVersion={setVersionName}
-                  region={region}
-                  setRegion={setRegion}
-                  setWH={setWH}
-                  formName={formName}
-                  setFormName={setFormName}
-                  setForm={setForm}
-                  setReleased={setReleased}
-                  checkReleased={checkReleased}
-                  idDefault={data.id}
-                  pokeData={pokeData}
-                  formList={formList}
-                  ratio={pokeRatio}
-                  stats={stats}
-                  species={data}
-                  onSetIDPoke={props.onSetIDPoke}
-                  paramForm={
-                    !searchParams.get('form') && props.searching
-                      ? props.first && router?.action === 'POP'
-                        ? props.searching.form
-                        : ''
-                      : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
-                  }
-                  pokemonDetail={getPokemonDetails(data.id, null)}
+                  </h5>
+                </Alert>
+              )}
+              <div className="d-inline-block img-desc">
+                <img
+                  className="pokemon-main-sprite"
+                  style={{ verticalAlign: 'baseline' }}
+                  alt="img-full-pokemon"
+                  src={APIService.getPokeFullSprite(
+                    data?.id,
+                    splitAndCapitalize(
+                      form?.endsWith('Shadow') || form?.endsWith('Purified')
+                        ? form.replace('Shadow', '').replace('Purified', '').replaceAll('-', '').toLowerCase()
+                        : form,
+                      '-',
+                      '-'
+                    )
+                  )}
                 />
-                <PokemonModel id={data.id} name={data.name} />
               </div>
-            </Fragment>
-          )}
+              <div className="d-inline-block">
+                <table className="table-info table-desc">
+                  <thead />
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h5 className="d-flex">ID</h5>
+                      </td>
+                      <td colSpan={2}>
+                        <h5 className="d-flex">
+                          <b>#{data?.id}</b>
+                        </h5>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h5 className="d-flex">Name</h5>
+                      </td>
+                      <td colSpan={2}>
+                        <h5 className="d-flex">
+                          <b>
+                            {formName &&
+                              splitAndCapitalize(convertName(formName.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
+                          </b>
+                        </h5>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h5 className="d-flex">Generation</h5>
+                      </td>
+                      <td colSpan={2}>
+                        <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
+                          <b>{data?.generation.name.split('-').at(1).toUpperCase()}</b>{' '}
+                          <span className="text-gen">({getNumGen(data?.generation.url)})</span>
+                        </h5>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h5 className="d-flex">Region</h5>
+                      </td>
+                      <td colSpan={2}>
+                        <h5 className="d-flex">{region}</h5>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h5 className="d-flex">Version</h5>
+                      </td>
+                      <td colSpan={2}>
+                        <h5 className="d-flex">{version && version.replace(' Go', ' GO')}</h5>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h5 className="d-flex">Body</h5>
+                      </td>
+                      <td colSpan={2} style={{ padding: 0 }}>
+                        <div className="d-flex align-items-center first-extra-col h-100" style={{ float: 'left', width: '50%' }}>
+                          <div>
+                            <div className="d-inline-block" style={{ marginRight: 5 }}>
+                              <h6>Weight:</h6>
+                            </div>
+                            <div className="d-inline-block">
+                              <h6>{WH.weight / 10} kg</h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center h-100" style={{ float: 'left', width: '50%' }}>
+                          <div>
+                            <div className="d-inline-block" style={{ marginRight: 5 }}>
+                              <h6>Height:</h6>
+                            </div>
+                            <div className="d-inline-block">
+                              <h6>{WH.height / 10} m</h6>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="d-inline-block" style={{ padding: 0 }}>
+                <table className="table-info table-main">
+                  <thead />
+                  <tbody>
+                    <tr className="text-center">
+                      <td className="table-sub-header">Unlock third move</td>
+                      <td className="table-sub-header">Costs</td>
+                    </tr>
+                    <tr className="info-costs">
+                      <td>
+                        <img alt="img-cost-info" width={100} src={APIService.getItemSprite('Item_1202')} />
+                      </td>
+                      <td style={{ padding: 0 }}>
+                        <div className="d-flex align-items-center row-extra td-costs">
+                          <Candy id={data?.id} style={{ marginRight: 5 }} />
+                          <span>{costModifier.thirdMove.candy ? `x${costModifier.thirdMove.candy}` : 'Unavailable'}</span>
+                        </div>
+                        <div className="row-extra d-flex">
+                          <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
+                            <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                          </div>
+                          <span>{costModifier.thirdMove.stardust ? `x${costModifier.thirdMove.stardust}` : 'Unavailable'}</span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="text-center">
+                      <td className="table-sub-header">Purified</td>
+                      <td className="table-sub-header">Costs</td>
+                    </tr>
+                    <tr className="info-costs">
+                      <td>
+                        <img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()} />
+                      </td>
+                      <td style={{ padding: 0 }}>
+                        <div className="d-flex align-items-center row-extra td-costs">
+                          <Candy id={data?.id} style={{ marginRight: 5 }} />
+                          <span>{costModifier.purified.candy ? `x${costModifier.purified.candy}` : 'Unavailable'}</span>
+                        </div>
+                        <div className="row-extra d-flex">
+                          <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
+                            <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                          </div>
+                          <span>{costModifier.purified.stardust ? `x${costModifier.purified.stardust}` : 'Unavailable'}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <Form
+              pokemonRouter={router}
+              onChangeForm={onChangeForm}
+              setOnChangeForm={setOnChangeForm}
+              onSetReForm={setReForm}
+              setVersion={setVersionName}
+              region={region}
+              setRegion={setRegion}
+              setWH={setWH}
+              formName={formName}
+              setFormName={setFormName}
+              setForm={setForm}
+              setReleased={setReleased}
+              checkReleased={checkReleased}
+              idDefault={data?.id}
+              pokeData={pokeData}
+              formList={formList}
+              ratio={pokeRatio}
+              stats={stats}
+              species={data}
+              onSetIDPoke={props.onSetIDPoke}
+              paramForm={
+                !searchParams.get('form') && props.searching
+                  ? props.first && router?.action === 'POP'
+                    ? props.searching.form
+                    : ''
+                  : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
+              }
+              pokemonDetail={getPokemonDetails(data?.id, null)}
+            />
+            <PokemonModel id={data?.id} name={data?.name} />
+          </div>
         </Fragment>
       )}
     </Fragment>

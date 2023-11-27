@@ -186,7 +186,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter,
     if (!name) {
       return;
     }
-    const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+    const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
     if (!pokemon) {
       return;
     }
@@ -198,7 +198,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter,
   const getCurrEvoChainJSON = useCallback((prev: { evos: string[] }, arr: any) => {
     const evo: { name: string; id: number; baby: boolean; form: string; gmax: boolean; sprite: string }[] = [];
     prev.evos.forEach((name: string) => {
-      const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+      const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
       if (pokemon) {
         evo.push(formatEvoChain(pokemon));
       }
@@ -212,14 +212,14 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter,
     }
     arr.push(
       evos.map((name: string) => {
-        const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+        const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
         if (pokemon) {
           return formatEvoChain(pokemon);
         }
       })
     );
     evos.forEach((name: string) => {
-      const pokemon = Object.values(pokemonData).find((pokemon) => pokemon.name === name);
+      const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
       if (pokemon) {
         getNextEvoChainJSON(pokemon.evos, arr);
       }
@@ -237,11 +237,11 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter,
       } else if (forme.name === 'necrozma-dusk') {
         form += '-mane';
       }
-      let pokemon = Object.values(pokemonData).find(
+      let pokemon = pokemonData.find(
         (pokemon) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
       );
       if (!pokemon) {
-        pokemon = Object.values(pokemonData).find((pokemon) => pokemon.num === id && pokemon.forme === null);
+        pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === null);
       }
 
       const prevEvo: any[] = [],
@@ -251,7 +251,7 @@ const Evolution = ({ forme, region, formDefault, id, onSetIDPoke, pokemonRouter,
         return;
       }
       getPrevEvoChainJSON(pokemon?.prevo ?? '', prevEvo);
-      const prev: any = Object.values(pokemonData).find((p) => p.name === pokemon?.prevo);
+      const prev = pokemonData.find((p) => p.name === pokemon?.prevo);
       if (prev) {
         getCurrEvoChainJSON(prev, curr);
       } else {

@@ -19,9 +19,8 @@ import StatsTable from './StatsDamageTable';
 
 import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/Compute';
-import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner } from '../../../store/actions/spinner.action';
-import { SearchingState, SpinnerState, StoreState } from '../../../store/models/state.model';
+import { useSelector } from 'react-redux';
+import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { TrainerFriendship } from '../../../core/models/options.model';
 
 const labels: any = {
@@ -44,8 +43,6 @@ const labels: any = {
 };
 
 const Damage = () => {
-  const dispatch = useDispatch();
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
   const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff ?? {});
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
@@ -102,9 +99,6 @@ const Damage = () => {
 
   useEffect(() => {
     document.title = 'Damage Simulator - Battle Simulator';
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
   }, []);
 
   useEffect(() => {

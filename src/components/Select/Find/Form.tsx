@@ -13,7 +13,7 @@ import { setSearchToolPage } from '../../../store/actions/searching.action';
 import { Action } from 'history';
 import { StatsModel } from '../../../core/models/stats.model';
 import { ToolSearching } from '../../../core/models/searching.model';
-import { PokemonNameModel } from '../../../core/models/pokemon.model';
+import { PokemonDataModel, PokemonNameModel } from '../../../core/models/pokemon.model';
 import { CancelTokenSource } from 'axios';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
@@ -38,7 +38,7 @@ const Form = (props: {
   setFormOrigin?: any;
   stats: StatsModel;
   onHandleSetStats?: any;
-  data: any;
+  data: PokemonDataModel[];
   setUrlEvo: any;
   objective?: boolean;
   pokemonName: PokemonNameModel[];
@@ -131,12 +131,12 @@ const Form = (props: {
       setCurrForm(formDefault.at(0));
       setPokeID(formDefault.at(0).form.id);
     }
-    const currentId = getPokemonById(Object.values(props.pokemonName), data.id);
+    const currentId = getPokemonById(props.pokemonName, data.id);
     if (currentId) {
       setDataStorePokemon({
-        prev: getPokemonByIndex(Object.values(props.pokemonName), currentId.index - 1),
+        prev: getPokemonByIndex(props.pokemonName, currentId.index - 1),
         current: currentId,
-        next: getPokemonByIndex(Object.values(props.pokemonName), currentId.index + 1),
+        next: getPokemonByIndex(props.pokemonName, currentId.index + 1),
       });
     }
   }, []);

@@ -56,13 +56,13 @@ const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: 
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const fmoveSort = (rowA: { fmove: { name: string } }, rowB: { fmove: { name: string } }) => {
+const fMoveSort = (rowA: { fmove: { name: string } }, rowB: { fmove: { name: string } }) => {
   const a = rowA.fmove.name.toLowerCase();
   const b = rowB.fmove.name.toLowerCase();
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const cmoveSort = (rowA: { cmove: { name: string } }, rowB: { cmove: { name: string } }) => {
+const cMoveSort = (rowA: { cmove: { name: string } }, rowB: { cmove: { name: string } }) => {
   const a = rowA.cmove.name.toLowerCase().replaceAll(' plus', '+');
   const b = rowB.cmove.name.toLowerCase().replaceAll(' plus', '+');
   return a === b ? 0 : a > b ? 1 : -1;
@@ -147,7 +147,7 @@ const columns: any = [
     ),
     sortable: true,
     minWidth: '200px',
-    sortFunction: fmoveSort,
+    sortFunction: fMoveSort,
   },
   {
     name: 'Charged Move',
@@ -191,7 +191,7 @@ const columns: any = [
     ),
     sortable: true,
     minWidth: '220px',
-    sortFunction: cmoveSort,
+    sortFunction: cMoveSort,
   },
   {
     name: 'DPS',
@@ -448,7 +448,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: any[] = [];
-    Object.values(data?.pokemonData ?? []).forEach((pokemon) => {
+    (data?.pokemonData ?? []).forEach((pokemon) => {
       let combatPoke: any = data?.pokemonCombat?.filter(
         (item) =>
           item.id === pokemon.num &&
@@ -612,7 +612,14 @@ const DpsTdo = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    if (data?.pokemonData && data?.pokemonCombat && data?.combat && data?.options && data?.typeEff && data?.weatherBoost) {
+    if (
+      (data?.pokemonData ?? []).length > 0 &&
+      data?.pokemonCombat &&
+      data?.combat &&
+      data?.options &&
+      data?.typeEff &&
+      data?.weatherBoost
+    ) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDpsTable(calculateDPSTable());

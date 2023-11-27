@@ -33,7 +33,7 @@ const SelectFind = (props: {
   const [search, setSearch] = useState('');
 
   const result = useRef(
-    Object.values(pokemonData).filter((pokemon) =>
+    pokemonData.filter((pokemon) =>
       props.data ? props.data.map((item) => item.speciesId).includes(convertNameRanking(pokemon.slug)) : true
     )
   );

@@ -179,8 +179,8 @@ const StatsRanking = () => {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(pokemonData).length > 0 && pokemonList.length === 0) {
-      const pokemon = sortRanking(mappingData(Object.values(pokemonData).filter((pokemon) => pokemon.num > 0)), sortId);
+    if (pokemonData.length > 0 && pokemonList.length === 0) {
+      const pokemon = sortRanking(mappingData(pokemonData.filter((pokemon) => pokemon.num > 0)), sortId);
       setPokemonList(pokemon);
       setPokemonFilter(pokemon);
     }

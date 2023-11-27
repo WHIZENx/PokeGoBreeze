@@ -10,19 +10,16 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTime, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
 import { rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
-import { hideSpinner } from '../../../store/actions/spinner.action';
-import { SpinnerState, StoreState } from '../../../store/models/state.model';
+import { StoreState } from '../../../store/models/state.model';
 import { League } from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/Constants';
 
 const Leagues = () => {
-  const dispatch = useDispatch();
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
   const [leagues, setLeagues]: [League[], any] = useState([]);
@@ -70,9 +67,6 @@ const Leagues = () => {
 
   useEffect(() => {
     document.title = 'Battle Leagues List';
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
   }, []);
 
   useEffect(() => {

@@ -53,7 +53,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       };
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
-        types.forEach((type: string) => {
+        types?.forEach((type: string) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective >= 2.56) {
@@ -75,7 +75,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       };
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
-        types.forEach((type: string) => {
+        types?.forEach((type: string) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective === 1) {
@@ -95,7 +95,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       };
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
-        types.forEach((type: string) => {
+        types?.forEach((type: string) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective <= 0.3) {

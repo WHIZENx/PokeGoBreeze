@@ -4,11 +4,10 @@ import { Link } from 'react-router-dom';
 import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
 
 import './SearchMoves.scss';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/move.enum';
-import { hideSpinner } from '../../../store/actions/spinner.action';
-import { StoreState, SpinnerState } from '../../../store/models/state.model';
+import { StoreState } from '../../../store/models/state.model';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
@@ -58,11 +57,9 @@ const columns: any = [
 ];
 
 const Search = () => {
-  const dispatch = useDispatch();
   const theme = useTheme();
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
   const types = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [filters, setFilters] = useState({
     fMoveType: 'all',
@@ -78,9 +75,6 @@ const Search = () => {
 
   useEffect(() => {
     document.title = 'Moves - Search';
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
   }, []);
 
   useEffect(() => {

@@ -19,14 +19,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
-import { SearchingState, SpinnerState, StoreState } from '../../../store/models/state.model';
+import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN } from '../../../util/Constants';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
@@ -230,9 +229,6 @@ const FindBattle = () => {
 
   useEffect(() => {
     document.title = 'Search Battle Leagues Stats - Tool';
-    if (spinner.loading) {
-      dispatch(hideSpinner());
-    }
   }, []);
 
   const getImageList = (id: number) => {

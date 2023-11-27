@@ -47,21 +47,21 @@ export const Keys = (
     },
     bgtype: number
   ) => {
-    const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
+    const name = convertNameRankingToOri(data?.opponent, convertNameRankingToForm(data?.opponent));
     const pokemon = pokemonData.find((pokemon) => pokemon.slug === name);
     const id = pokemon?.num;
     const form = findAssetForm(assets, pokemon?.num, pokemon?.name);
 
     return (
       <Link
-        to={`/pvp/${cp}/${type}/${data.opponent.replaceAll('_', '-')}`}
+        to={`/pvp/${cp}/${type}/${data?.opponent.replaceAll('_', '-')}`}
         className="list-item-ranking"
-        style={{ backgroundImage: computeBgType(pokemon?.types, data.opponent.includes('_shadow')) }}
+        style={{ backgroundImage: computeBgType(pokemon?.types, data?.opponent.includes('_shadow')) }}
       >
         <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
           <div className="d-flex justify-content-center">
             <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
-              {data.opponent.includes('_shadow') && (
+              {data?.opponent.includes('_shadow') && (
                 <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
               )}
               <img
@@ -83,7 +83,7 @@ export const Keys = (
             className="ranking-score score-ic text-white text-shadow filter-shadow"
             style={{ backgroundColor: bgtype === 0 ? 'lightgreen' : 'lightcoral' }}
           >
-            {data.rating}
+            {data?.rating}
           </span>
         </div>
       </Link>
@@ -99,7 +99,7 @@ export const Keys = (
             <span className="ranking-score score-ic">Rating</span>
           </div>
         </div>
-        {data.matchups
+        {data?.matchups
           .sort((a: { rating: number }, b: { rating: number }) => b.rating - a.rating)
           .map((matchup, index: React.Key) => (
             <Fragment key={index}>{renderItemList(matchup, 0)}</Fragment>
@@ -112,7 +112,7 @@ export const Keys = (
             <span className="ranking-score score-ic">Rating</span>
           </div>
         </div>
-        {data.counters
+        {data?.counters
           .sort((a: { rating: number }, b: { rating: number }) => a.rating - b.rating)
           .map((counter, index: React.Key) => (
             <Fragment key={index}>{renderItemList(counter, 1)}</Fragment>
@@ -139,15 +139,15 @@ export const OverAllStats = (
     const maxCP = parseInt(cp.toString());
 
     if (maxCP === 10000) {
-      const cp = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
-      const buddyCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      const cp = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
+      const buddyCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
       const result: any = {};
       result[MAX_LEVEL - 1] = { cp };
       result[MAX_LEVEL] = { cp: buddyCP };
       return result;
     } else {
       let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-      const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      const maxPokeCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
 
       if (maxPokeCP < minCP) {
         if (maxPokeCP <= 500) {
@@ -160,7 +160,7 @@ export const OverAllStats = (
           minCP = 2500;
         }
       }
-      const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
+      const allStats = calStatsProd(stats?.atk, stats?.def, stats?.sta ?? 0, minCP, maxCP);
       return allStats[allStats.length - 1];
     }
   };
@@ -171,11 +171,11 @@ export const OverAllStats = (
     return (
       <ul className="element-top">
         <li className="element-top">
-          CP: <b>{maxCP === 10000 ? `${currStats[MAX_LEVEL - 1].cp}-${currStats[MAX_LEVEL].cp}` : `${currStats.CP}`}</b>
+          CP: <b>{maxCP === 10000 ? `${currStats[MAX_LEVEL - 1]?.cp}-${currStats[MAX_LEVEL]?.cp}` : `${currStats?.CP}`}</b>
         </li>
-        <li className={currStats.level <= 40 ? 'element-top' : ''}>
-          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${currStats.level}`} </b>
-          {(currStats.level > 40 || maxCP === 10000) && (
+        <li className={currStats?.level <= 40 ? 'element-top' : ''}>
+          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${currStats?.level}`} </b>
+          {(currStats?.level > 40 || maxCP === 10000) && (
             <b>
               (
               <CandyXL id={id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
@@ -184,9 +184,9 @@ export const OverAllStats = (
           )}
         </li>
         <li className="element-top">
-          <IVbar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats.IV.atk} style={{ maxWidth: 500 }} />
-          <IVbar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats.IV.def} style={{ maxWidth: 500 }} />
-          <IVbar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats.IV.sta} style={{ maxWidth: 500 }} />
+          <IVbar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.atk} style={{ maxWidth: 500 }} />
+          <IVbar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.def} style={{ maxWidth: 500 }} />
+          <IVbar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.sta} style={{ maxWidth: 500 }} />
         </li>
       </ul>
     );
@@ -194,7 +194,7 @@ export const OverAllStats = (
 
   return (
     <div className="row w-100" style={{ margin: 0 }}>
-      {data.scores && (
+      {data?.scores && (
         <div className="col-lg-4 d-flex justify-content-center" style={{ padding: 10 }}>
           <div>
             <h5>
@@ -205,29 +205,29 @@ export const OverAllStats = (
               borderSize={320}
               size={180}
               stats={{
-                lead: data.scores.at(0),
-                atk: data.scores[4],
-                cons: data.scores[5],
-                closer: data.scores[1],
-                charger: data.scores[3],
-                switching: data.scores[2],
+                lead: data?.scores.at(0),
+                atk: data?.scores[4],
+                cons: data?.scores[5],
+                closer: data?.scores[1],
+                charger: data?.scores[3],
+                switching: data?.scores[2],
               }}
             />
           </div>
         </div>
       )}
-      <div className={(data.scores ? 'col-lg-8 ' : '') + 'container status-ranking'}>
+      <div className={(data?.scores ? 'col-lg-8 ' : '') + 'container status-ranking'}>
         <div>
           <h5>
             <b>Overall Stats</b>
           </h5>
-          <Stats statATK={data.atk} statDEF={data.def} statSTA={data.sta} statProd={data.prod} pokemonStats={statsRanking} />
+          <Stats statATK={data?.atk} statDEF={data?.def} statSTA={data?.sta} statProd={data?.prod} pokemonStats={statsRanking} />
         </div>
         <div>
           <h5>
             <b>Top Rank League</b>
           </h5>
-          {renderTopStats(data.stats, data.id)}
+          {renderTopStats(data?.stats, data?.id)}
         </div>
       </div>
     </div>
@@ -419,7 +419,7 @@ export const MoveSet = (
       <div className="col-xl-6" style={{ padding: 0, backgroundColor: 'lightgray' }}>
         <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">
-          {moves.fastMoves
+          {moves?.fastMoves
             .map((move: { uses: number }) => {
               if (!move.uses) {
                 move.uses = 0;
@@ -435,7 +435,7 @@ export const MoveSet = (
       <div className="col-xl-6" style={{ padding: 0, backgroundColor: 'lightgray' }}>
         <div className="moves-title">Charged Moves{moveOverlay()}</div>
         <div className="type-rank-list">
-          {moves.chargedMoves
+          {moves?.chargedMoves
             .map((move: { moveId: string; uses: number }) => {
               if (move.moveId === 'FUTURE_SIGHT') {
                 move.moveId = 'FUTURESIGHT';

@@ -110,10 +110,10 @@ const RankingPVP = () => {
         }
         file = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          let pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+          let pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
 
           if (!pokemon) {
-            pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
+            pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
           }
 
           const id = pokemon?.num;
@@ -201,7 +201,14 @@ const RankingPVP = () => {
         );
       }
     };
-    if (statsRanking && dataStore?.pokemonCombat && dataStore?.combat && dataStore?.pokemonData && !onLoadData) {
+    if (
+      statsRanking &&
+      dataStore?.pokemonCombat &&
+      dataStore?.combat &&
+      dataStore?.pokemonData?.length > 0 &&
+      dataStore?.assets &&
+      !onLoadData
+    ) {
       setOnLoadData(true);
       if (router.action === Action.Push) {
         router.action = null as any;
@@ -223,6 +230,7 @@ const RankingPVP = () => {
     dataStore?.pokemonCombat,
     dataStore?.combat,
     dataStore?.pokemonData,
+    dataStore?.assets,
   ]);
 
   const renderItem = (data: any, key: string) => {
@@ -312,7 +320,7 @@ const RankingPVP = () => {
                     )}
                   </div>
                   <hr />
-                  {Keys(dataStore?.assets ?? [], Object.values(dataStore?.pokemonData ?? []), data, params.cp, params.type)}
+                  {Keys(dataStore?.assets ?? [], dataStore?.pokemonData ?? [], data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />

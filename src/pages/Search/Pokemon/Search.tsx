@@ -31,15 +31,11 @@ const Search = () => {
   const [showResult, setShowResult] = useState(false);
 
   const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
-  const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
+  const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
 
   useEffect(() => {
-    if (pokemonList.length === 0) {
-      setPokemonList(
-        Object.values(pokemonName)
-          .filter((item) => item.id > 0)
-          .map((item) => new PokemonSearchingModel(item))
-      );
+    if (pokemonName.length > 0) {
+      setPokemonList(pokemonName.filter((item) => item.id > 0).map((item) => new PokemonSearchingModel(item)));
     }
   }, [pokemonName]);
 
@@ -48,7 +44,7 @@ const Search = () => {
   }, []);
 
   useEffect(() => {
-    if (pokemonList) {
+    if (pokemonList.length > 0) {
       const timeOutId = setTimeout(() => {
         const results = pokemonList.filter(
           (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
@@ -84,26 +80,26 @@ const Search = () => {
   };
 
   const decId = () => {
-    const currentId = getPokemonById(Object.values(pokemonName), selectId);
+    const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getPokemonByIndex(Object.values(pokemonName), currentId.index - 1)?.id);
+      setId(getPokemonByIndex(pokemonName, currentId.index - 1)?.id);
     }
   };
 
   const incId = () => {
-    const currentId = getPokemonById(Object.values(pokemonName), selectId);
+    const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getPokemonByIndex(Object.values(pokemonName), currentId.index + 1)?.id);
+      setId(getPokemonByIndex(pokemonName, currentId.index + 1)?.id);
     }
   };
 
   const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
-    const currentId = getPokemonById(Object.values(pokemonName), selectId);
+    const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
       const result = {
-        prev: getPokemonByIndex(Object.values(pokemonName), currentId.index - 1),
+        prev: getPokemonByIndex(pokemonName, currentId.index - 1),
         current: currentId,
-        next: getPokemonByIndex(Object.values(pokemonName), currentId.index + 1),
+        next: getPokemonByIndex(pokemonName, currentId.index + 1),
       };
       if (event.keyCode === KEY_ENTER) {
         setShowResult(false);

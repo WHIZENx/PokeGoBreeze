@@ -53,20 +53,16 @@ const Find = (props: {
   const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
+  const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
 
   useEffect(() => {
     if (pokemonList.length === 0) {
-      setPokemonList(
-        Object.values(pokemonName)
-          .filter((item) => item.id > 0)
-          .map((item) => new PokemonSearchingModel(item))
-      );
+      setPokemonList(pokemonName.filter((item) => item.id > 0).map((item) => new PokemonSearchingModel(item)));
     }
   }, [pokemonName]);
 
   useEffect(() => {
-    if (pokemonList) {
+    if (pokemonList.length > 0) {
       const timeOutId = setTimeout(() => {
         const results = pokemonList.filter(
           (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
@@ -86,7 +82,7 @@ const Find = (props: {
   };
 
   const getInfoPoke = (value: PokemonModel) => {
-    const currentId = getPokemonById(Object.values(pokemonName), value.id);
+    const currentId = getPokemonById(pokemonName, value.id);
     setId(value.id);
     setForm(null);
     if (props.setId) {
@@ -112,9 +108,9 @@ const Find = (props: {
 
   const decId = () => {
     setTimeout(() => {
-      const currentId = getPokemonById(Object.values(pokemonName), id);
+      const currentId = getPokemonById(pokemonName, id);
       if (currentId) {
-        const prev = getPokemonByIndex(Object.values(pokemonName), currentId.index - 1);
+        const prev = getPokemonByIndex(pokemonName, currentId.index - 1);
         if (prev) {
           setId(prev.id);
           if (props.setId) {
@@ -136,9 +132,9 @@ const Find = (props: {
 
   const incId = () => {
     setTimeout(() => {
-      const currentId = getPokemonById(Object.values(pokemonName), id);
+      const currentId = getPokemonById(pokemonName, id);
       if (currentId) {
-        const next = getPokemonByIndex(Object.values(pokemonName), currentId.index + 1);
+        const next = getPokemonByIndex(pokemonName, currentId.index + 1);
         if (next) {
           setId(next.id);
           if (props.setId) {

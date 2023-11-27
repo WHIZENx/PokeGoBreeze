@@ -21,21 +21,21 @@ export interface StoreModel {
 }
 
 export interface DataModel {
-  cpm?: CPM[];
-  typeEff?: TypeEff;
-  weatherBoost?: WeatherBoost;
-  options?: Options;
-  pokemonData?: PokemonDataModel[];
-  pokemon?: PokemonModel[];
-  pokemonName?: PokemonNameModel[];
-  candy?: Candy[];
-  evolution?: EvolutionModel[];
-  stickers?: Sticker[];
-  assets?: Asset[];
-  combat?: Combat[];
-  pokemonCombat?: CombatPokemon[];
-  leagues?: LeagueData;
-  details?: Details[];
-  pvp?: PVPDataModel;
-  released?: PokemonDataModel[];
+  cpm: CPM[];
+  typeEff: TypeEff;
+  weatherBoost: WeatherBoost;
+  options: Options;
+  pokemonData: PokemonDataModel[];
+  pokemon: PokemonModel[];
+  pokemonName: PokemonNameModel[];
+  candy: Candy[];
+  evolution: EvolutionModel[];
+  stickers: Sticker[];
+  assets: Asset[];
+  combat: Combat[];
+  pokemonCombat: CombatPokemon[];
+  leagues: LeagueData;
+  details: Details[];
+  pvp: PVPDataModel;
+  released: PokemonDataModel[];
 }

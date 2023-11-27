@@ -154,7 +154,7 @@ const Form = ({
     if (findForm.form.form_name !== '' && region) {
       setRegion(region);
     } else {
-      setRegion(regionList[parseInt(species.generation.url.split('/').at(6))]);
+      setRegion(regionList[parseInt(species?.generation.url.split('/').at(6))]);
     }
     const nameInfo = splitAndCapitalize(findForm.form.name, '-', ' ');
     setFormName(nameInfo);
@@ -205,10 +205,10 @@ const Form = ({
       if (findForm?.form.form_name !== '' && region) {
         setRegion(region);
       } else {
-        setRegion(regionList[parseInt(species.generation.url.split('/').at(6))]);
+        setRegion(regionList[parseInt(species?.generation.url.split('/').at(6))]);
       }
     }
-  }, [formList, region, setRegion, species.generation.url, formName]);
+  }, [formList, region, setRegion, species?.generation.url, formName]);
 
   useEffect(() => {
     if ((currForm || currForm === undefined) && pokeID) {
@@ -448,9 +448,9 @@ const Form = ({
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
-              gen={parseInt(species.generation.url.split('/').at(6))}
+              gen={parseInt(species?.generation.url.split('/').at(6))}
               onSetIDPoke={onSetIDPoke}
-              evolution_url={species.evolution_chain ? species.evolution_chain.url : []}
+              evolution_url={species?.evolution_chain ? species.evolution_chain.url : []}
               id={idDefault}
               forme={currForm && currForm.form}
               formDefault={currForm && pokeID === currForm.form.id}
@@ -470,9 +470,9 @@ const Form = ({
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
-              gen={parseInt(species.generation.url.split('/').at(6))}
+              gen={parseInt(species?.generation.url.split('/').at(6))}
               onSetIDPoke={onSetIDPoke}
-              evolution_url={species.evolution_chain ? species.evolution_chain.url : []}
+              evolution_url={species?.evolution_chain ? species.evolution_chain.url : []}
               id={idDefault}
               forme={currForm && currForm.form}
               formDefault={currForm && pokeID === currForm.form.id}
@@ -486,13 +486,13 @@ const Form = ({
         </div>
       ) : (
         <Evolution
-          gen={parseInt(species.generation.url.split('/').at(6))}
+          gen={parseInt(species?.generation.url.split('/').at(6))}
           onSetIDPoke={onSetIDPoke}
-          evolution_url={species.evolution_chain ? species.evolution_chain.url : []}
+          evolution_url={species?.evolution_chain ? species.evolution_chain.url : []}
           id={idDefault}
           forme={currForm && currForm.form}
           formDefault={currForm && pokeID === currForm.form.id}
-          region={regionList[parseInt(species.generation.url.split('/').at(6))]}
+          region={regionList[parseInt(species?.generation.url.split('/').at(6))]}
           pokemonRouter={pokemonRouter}
           purified={currForm?.form.is_purified}
         />

@@ -57,7 +57,7 @@ const TeamPVP = () => {
   const mappingPokemonData = (data: any) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-    const pokemon = Object.values(dataStore?.pokemonData ?? []).find((pokemon) => pokemon.slug === name);
+    const pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
     const id = pokemon?.num;
     const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
 
@@ -200,7 +200,7 @@ const TeamPVP = () => {
       pvp &&
       dataStore?.pokemonCombat &&
       dataStore?.combat &&
-      dataStore?.pokemonData &&
+      dataStore?.pokemonData?.length > 0 &&
       dataStore?.assets &&
       statsRanking
     ) {

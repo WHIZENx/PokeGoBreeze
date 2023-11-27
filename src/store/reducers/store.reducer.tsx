@@ -98,7 +98,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
         ...state,
         data: {
           ...state.data,
-          pokemonData: action.payload,
+          pokemonData: Object.values(action.payload) ?? [],
         },
       };
     case LOAD_EVOLUTION:
@@ -138,7 +138,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
         ...state,
         data: {
           ...state.data,
-          pokemonName: optionPokemonName(state.data?.details ?? []),
+          pokemonName: Object.values(optionPokemonName(state.data?.details ?? [])) ?? [],
         },
       };
     case LOAD_ASSETS:
