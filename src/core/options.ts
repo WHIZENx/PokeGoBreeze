@@ -420,11 +420,12 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
             }
           }
           if (evo.temporaryEvolution) {
-            const tempEvo: any = {};
-            tempEvo.tempEvolutionName = name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1];
-            tempEvo.firstTempEvolution = evo.temporaryEvolutionEnergyCost;
-            tempEvo.tempEvolution = evo.temporaryEvolutionEnergyCostSubsequent;
-            result.temp_evo.push(tempEvo);
+            result.temp_evo.push({
+              tempEvolutionName: name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1],
+              firstTempEvolution: evo.temporaryEvolutionEnergyCost,
+              tempEvolution: evo.temporaryEvolutionEnergyCostSubsequent,
+              requireMove: evo.obEvolutionBranchRequiredMove,
+            });
           }
           if (result.temp_evo.length === 0) {
             result.evo_list.push(dataEvo);
@@ -652,7 +653,7 @@ export const optionCombat = (data: any[], types: TypeEff) => {
             type: string;
             power: number;
             energyDelta: number;
-            buffs: { [x: string]: any };
+            buffs: { [x: string]: number };
           };
         };
         templateId: string | string[];
@@ -770,15 +771,14 @@ export const optionPokemonCombat = (data: any[], pokemon: PokemonModel[], formSp
         if (result.id === 235) {
           const moves: PokemonModel = data.find((item: { templateId: string }) => item.templateId === 'SMEARGLE_MOVES_SETTINGS').data
             .smeargleMovesSettings;
-          result.quickMoves = moves.quickMoves.map((move) => convertIdMove(move?.toString()).replace('_FAST', ''));
-          result.cinematicMoves = moves.cinematicMoves.map((move) => convertIdMove(move?.toString()));
+          result.quickMoves = moves.quickMoves?.map((move) => convertIdMove(move?.toString()).replace('_FAST', ''));
+          result.cinematicMoves = moves.cinematicMoves?.map((move) => convertIdMove(move?.toString()));
         } else {
-          result.quickMoves = item.quickMoves ? item.quickMoves.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) : [];
-          result.cinematicMoves = item.cinematicMoves.map((move) => convertIdMove(move?.toString()));
-          result.eliteQuickMoves = item.eliteQuickMove
-            ? item.eliteQuickMove.map((move) => convertIdMove(move?.toString()).replace('_FAST', ''))
-            : [];
+          result.quickMoves = item.quickMoves?.map((move) => convertIdMove(move?.toString()).replace('_FAST', ''));
+          result.cinematicMoves = item.cinematicMoves?.map((move) => convertIdMove(move?.toString()));
+          result.eliteQuickMoves = item.eliteQuickMove?.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) ?? [];
           result.eliteCinematicMoves = item.eliteCinematicMove?.map((move) => convertIdMove(move?.toString())) ?? [];
+          result.specialMoves = item.obSpecialAttackMoves?.map((move) => convertIdMove(move?.toString())) ?? [];
           if (item.shadow) {
             result.shadowMoves.push(item.shadow.shadowChargeMove);
             result.purifiedMoves.push(item.shadow.purifiedChargeMove);
@@ -1019,16 +1019,14 @@ export const optionDetailsPokemon = (
   noneForm: string[]
 ) => {
   const spawn = optionPokemonSpawn(data);
-  const pokemonForm = Object.values(pokemonData)
-    .slice(1)
-    .reduce((result: any, obj) => {
-      (result[obj.num] = result[obj.num] || []).push({
-        name: convertName(obj.slug),
-        form: (obj.forme ?? obj.baseForme ?? FORM_NORMAL).replaceAll('-', '_').toUpperCase(),
-        default: obj.forme ? false : true,
-      });
-      return result;
-    }, {});
+  const pokemonForm = pokemonData.slice(1).reduce((result: any, obj) => {
+    (result[obj.num] = result[obj.num] || []).push({
+      name: convertName(obj.slug),
+      form: (obj.forme ?? obj.baseForme ?? FORM_NORMAL).replaceAll('-', '_').toUpperCase(),
+      default: obj.forme ? false : true,
+    });
+    return result;
+  }, {});
   let result = pokemon
     .filter(
       (item) =>
@@ -1090,9 +1088,7 @@ export const optionDetailsPokemon = (
     }
 
     if (!pokemon.releasedGO) {
-      const pokeForm = Object.values(pokemonData)
-        .slice(1)
-        .find((poke) => poke.num === pokemon.id && poke.slug.toUpperCase() === pokemon.name);
+      const pokeForm = pokemonData.slice(1).find((poke) => poke.num === pokemon.id && poke.slug.toUpperCase() === pokemon.name);
       if (pokeForm) {
         if (pokeForm.isForceReleasedGO) {
           const form = assets?.find((asset) => asset.id === pokeForm.num);

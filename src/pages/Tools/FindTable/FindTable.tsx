@@ -93,11 +93,11 @@ const conditionalRowStyles = [
 const FindTable = () => {
   const [name, setName] = useState('Bulbasaur');
 
-  const [searchCP, setSearchCP]: any = useState('');
+  const [searchCP, setSearchCP] = useState('');
 
-  const [searchATKIv, setSearchATKIv]: any = useState(0);
-  const [searchDEFIv, setSearchDEFIv]: any = useState(0);
-  const [searchSTAIv, setSearchSTAIv]: any = useState(0);
+  const [searchATKIv, setSearchATKIv] = useState(0);
+  const [searchDEFIv, setSearchDEFIv] = useState(0);
+  const [searchSTAIv, setSearchSTAIv] = useState(0);
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -381,7 +381,7 @@ const FindTable = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_: any, v: any) => setSearchATKIv(v)}
+                onChange={(_, v: any) => setSearchATKIv(v as number)}
               />
               <div className="d-flex justify-content-between">
                 <b>DEF</b>
@@ -396,7 +396,7 @@ const FindTable = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_, v) => setSearchDEFIv(v)}
+                onChange={(_, v) => setSearchDEFIv(v as number)}
               />
               <div className="d-flex justify-content-between">
                 <b>STA</b>
@@ -411,7 +411,7 @@ const FindTable = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_, v) => setSearchSTAIv(v)}
+                onChange={(_, v) => setSearchSTAIv(v as number)}
               />
             </Box>
           </div>

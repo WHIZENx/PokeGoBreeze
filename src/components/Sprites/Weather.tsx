@@ -3,7 +3,7 @@ import React from 'react';
 import APIService from '../../services/API.service';
 import { splitAndCapitalize } from '../../util/Utils';
 
-const Weather = (props: { arr: any[]; style: React.CSSProperties | undefined; text?: string }) => {
+const Weather = (props: { arr: string[]; style: React.CSSProperties | undefined; text?: string }) => {
   const theme = useTheme();
   if (!props.arr || props.arr.length === 0) {
     return (
@@ -22,7 +22,7 @@ const Weather = (props: { arr: any[]; style: React.CSSProperties | undefined; te
     <div className="element-top" style={props.style}>
       {props.text && <p>{props.text}</p>}
       <div className="d-inline-flex flex-wrap type-list align-items-center">
-        {props.arr.map((value: string, index: React.Key) => (
+        {props.arr.map((value, index) => (
           <div className="text-center d-flex" key={index}>
             <div>
               <img height={50} alt="img-pokemon" src={APIService.getWeatherSprite(value)} />

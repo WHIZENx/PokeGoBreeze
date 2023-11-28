@@ -16,7 +16,7 @@ import { StoreState } from '../../../store/models/state.model';
 const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA }: any) => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
 
-  const [currStatLevel, setCurrStatLevel]: any = useState(1);
+  const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType]: any = useState(null);
 
   const onHandleLevel = useCallback(

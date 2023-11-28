@@ -6,7 +6,7 @@ import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { TypeEff } from '../../core/models/typeEff.model';
 
 const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) => {
-  const [types, setTypes]: any = useState([]);
+  const [types, setTypes]: [string[], any] = useState([]);
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');
   const [currentTypeSec, setCurrentTypeSec] = useState('');
@@ -76,7 +76,7 @@ const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) =>
               {showTypePri && (
                 <div className="result-type result-type-weather">
                   <ul>
-                    {types.map((value: string, index: React.Key) => (
+                    {types.map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypePri(value)}>
                         <CardType value={capitalize(value)} />
                       </li>
@@ -119,7 +119,7 @@ const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) =>
               {showTypeSec && (
                 <div className="result-type result-type-weather">
                   <ul>
-                    {types.map((value: string, index: React.Key) => (
+                    {types.map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
                         <CardType value={capitalize(value)} />
                       </li>

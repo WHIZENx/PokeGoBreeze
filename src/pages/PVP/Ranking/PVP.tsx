@@ -47,7 +47,7 @@ const RankingPVP = () => {
 
   const [rankingData, setRankingData]: any = useState([]);
   const [storeStats, setStoreStats]: any = useState(null);
-  const [onLoadData, setOnLoadData]: any = useState(false);
+  const [onLoadData, setOnLoadData] = useState(false);
   const sortedBy = useRef('score');
   const [sorted, setSorted]: any = useState(1);
 

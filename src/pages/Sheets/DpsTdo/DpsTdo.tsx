@@ -156,6 +156,7 @@ const columns: any = [
       elite: { cmove: Combat };
       mShadow: boolean;
       purified: boolean;
+      special: boolean;
     }) => (
       <Link
         className="d-flex align-items-center"
@@ -184,6 +185,11 @@ const columns: any = [
           {row.purified && (
             <span className="type-icon-small ic purified-ic">
               <span>Purified</span>
+            </span>
+          )}
+          {row.special && (
+            <span className="type-icon-small ic special-ic">
+              <span>Special</span>
             </span>
           )}
         </div>
@@ -319,8 +325,8 @@ const DpsTdo = () => {
   });
   const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
 
-  const [showSpinner, setShowSpinner]: any = useState(true);
-  const [selectTypes, setSelectTypes]: any = useState(optionStore?.dpsSheet?.selectTypes ?? []);
+  const [showSpinner, setShowSpinner] = useState(true);
+  const [selectTypes, setSelectTypes] = useState(optionStore?.dpsSheet?.selectTypes ?? []);
 
   const addCPokeData = (
     dataList: {
@@ -332,6 +338,7 @@ const DpsTdo = () => {
       multiDpsTdo: number;
       shadow: boolean;
       purified: boolean;
+      special: boolean;
       mShadow: boolean;
       elite: { fmove: boolean; cmove: boolean };
       cp: number;
@@ -341,6 +348,7 @@ const DpsTdo = () => {
     vf: string,
     shadow: boolean,
     purified: boolean,
+    special: boolean,
     felite: boolean,
     celite: boolean,
     specialMove: any = null
@@ -409,6 +417,7 @@ const DpsTdo = () => {
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           shadow,
           purified: purified && specialMove != null && specialMove?.includes(statsAttacker.cmove.name),
+          special,
           mShadow: shadow && specialMove != null && specialMove?.includes(statsAttacker.cmove.name),
           elite: {
             fmove: felite,
@@ -427,22 +436,24 @@ const DpsTdo = () => {
       shadowMoves: string[];
       eliteCinematicMoves: string[];
       purifiedMoves: string[];
+      specialMoves: string[];
     },
     movePoke: any[],
     pokemon: PokemonDataModel,
     felite: boolean
   ) => {
     movePoke.forEach((vf: string) => {
-      addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false);
+      addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, false, felite, false);
       if (!pokemon.forme || !pokemon.forme.toLowerCase().toUpperCase().includes(FORM_MEGA)) {
         if (combat.shadowMoves?.length > 0) {
-          addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
-          addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves);
+          addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, false, felite, false, combat.shadowMoves);
+          addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, false, felite, true, combat.shadowMoves);
         }
-        addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves);
-        addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves);
+        addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, false, felite, false, combat.shadowMoves);
+        addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, false, felite, false, combat.purifiedMoves);
       }
-      addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true);
+      addCPokeData(dataList, combat.specialMoves, pokemon, vf, false, false, true, felite, false, combat.specialMoves);
+      addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, false, felite, true);
     });
   };
 

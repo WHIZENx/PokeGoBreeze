@@ -1,5 +1,5 @@
 import { useSnackbar } from 'notistack';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Dispatch, Fragment, SetStateAction, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
@@ -24,6 +24,7 @@ import { PokemonDataModel } from '../../core/models/pokemon.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
+import { Combat } from '../../core/models/combat.model';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase();
@@ -84,7 +85,7 @@ const Move = (props: { id?: number }) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [move, setMove]: any = useState(null);
+  const [move, setMove]: [Combat | undefined, Dispatch<SetStateAction<Combat | undefined>>] = useState();
   const [releasedGO, setReleaseGO] = useState(true);
   const [topList, setTopList]: any = useState([]);
 
@@ -125,13 +126,17 @@ const Move = (props: { id?: number }) => {
   );
 
   useEffect(() => {
-    if (move === null) {
+    if (!move) {
       const id = params.id ? params.id.toLowerCase() : props.id;
       queryMoveData(id);
-    } else {
-      setTopList(queryTopMove(data?.options, data?.released, data?.typeEff, data?.weatherBoost, data?.pokemonCombat ?? [], move));
     }
-  }, [data, params.id, props.id, queryMoveData, move]);
+  }, [params.id, props.id, queryMoveData, move]);
+
+  useEffect(() => {
+    if (move && data?.options && data?.released && data?.typeEff && data?.weatherBoost && data?.pokemonCombat) {
+      setTopList(queryTopMove(data?.options, data?.released, data?.typeEff, data?.weatherBoost, data?.pokemonCombat, move));
+    }
+  }, [move, data?.options, data?.released, data?.typeEff, data?.weatherBoost, data?.pokemonCombat]);
 
   return (
     <div className={'element-bottom poke-container' + (props.id ? '' : ' container')}>
@@ -199,7 +204,7 @@ const Move = (props: { id?: number }) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div style={{ width: 'fit-content' }} className={'type-icon-small ' + move?.type.toLowerCase()}>
+                    <div style={{ width: 'fit-content' }} className={'type-icon-small ' + move?.type?.toLowerCase()}>
                       {capitalize(move?.type)}
                     </div>
                   )}
@@ -221,9 +226,9 @@ const Move = (props: { id?: number }) => {
                         className="img-type-icon"
                         height={25}
                         alt="img-type"
-                        src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
+                        src={APIService.getWeatherIconSprite(getWeatherEffective(move?.type ?? ''))}
                       />
-                      <span className="d-inline-block caption">{splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}</span>
+                      <span className="d-inline-block caption">{splitAndCapitalize(getWeatherEffective(move?.type ?? ''), '_', ' ')}</span>
                     </>
                   )}
                 </td>
@@ -254,7 +259,7 @@ const Move = (props: { id?: number }) => {
               <tr>
                 <td>PVE Energy</td>
                 <td colSpan={2}>
-                  {move?.pve_energy > 0 && '+'}
+                  {(move?.pve_energy ?? 0) > 0 && '+'}
                   {move?.pve_energy}
                 </td>
               </tr>
@@ -262,7 +267,7 @@ const Move = (props: { id?: number }) => {
                 <tr>
                   <td>PVE Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(true, move?.pve_energy)} color={move?.type.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(true, move?.pve_energy)} color={move?.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
@@ -292,7 +297,7 @@ const Move = (props: { id?: number }) => {
               <tr>
                 <td>PVP Energy</td>
                 <td colSpan={2}>
-                  {move?.pvp_energy > 0 && '+'}
+                  {(move?.pvp_energy ?? 0) > 0 && '+'}
                   {move?.pvp_energy}
                 </td>
               </tr>
@@ -300,47 +305,37 @@ const Move = (props: { id?: number }) => {
                 <tr>
                   <td>PVP Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(false, move?.pvp_energy)} color={move?.type.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(false, move?.pvp_energy)} color={move?.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
-              {move?.buffs.length > 0 && (
+              {(move?.buffs ?? []).length > 0 && (
                 <Fragment>
                   <tr className="text-center">
                     <td className="table-sub-header" colSpan={3}>
                       PVP Buffs
                     </td>
                   </tr>
-                  {move?.buffs.map(
-                    (
-                      value: {
-                        target: string;
-                        power: number;
-                        type: string;
-                        buffChance: number;
-                      },
-                      index: React.Key
-                    ) => (
-                      <tr key={index}>
-                        <td className="target-buff">
-                          <CircleIcon sx={{ fontSize: '5px' }} /> {capitalize(value.target)}
-                        </td>
-                        <td>
-                          {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}
-                          <span className="d-inline-block caption">
-                            {value.type === 'atk' ? 'Attack ' : 'Defense '}
-                            <span className={'buff-power ' + (value.power > 0 ? 'text-success' : 'text-danger')}>
-                              <b>
-                                {value.power > 0 && '+'}
-                                {value.power}
-                              </b>
-                            </span>
+                  {move?.buffs.map((value, index) => (
+                    <tr key={index}>
+                      <td className="target-buff">
+                        <CircleIcon sx={{ fontSize: '5px' }} /> {capitalize(value.target)}
+                      </td>
+                      <td>
+                        {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}
+                        <span className="d-inline-block caption">
+                          {value.type === 'atk' ? 'Attack ' : 'Defense '}
+                          <span className={'buff-power ' + (value.power > 0 ? 'text-success' : 'text-danger')}>
+                            <b>
+                              {value.power > 0 && '+'}
+                              {value.power}
+                            </b>
                           </span>
-                        </td>
-                        <td>{value.buffChance * 100}%</td>
-                      </tr>
-                    )
-                  )}
+                        </span>
+                      </td>
+                      <td>{(value.buffChance ?? 0) * 100}%</td>
+                    </tr>
+                  ))}
                 </Fragment>
               )}
 
@@ -374,7 +369,7 @@ const Move = (props: { id?: number }) => {
                 <td>Sound</td>
                 <td colSpan={2}>
                   <audio className="d-flex w-100" controls={true} style={{ height: 30 }}>
-                    <source src={APIService.getSoundMove(move?.sound)} type="audio/wav" />
+                    <source src={APIService.getSoundMove(move?.sound ?? '')} type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>
                 </td>

@@ -5,8 +5,7 @@ import Form from './Form';
 import { useSelector } from 'react-redux';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../../store/models/state.model';
-import { PokemonModel } from '../../../core/models/pokemon.model';
-import { PokemonSearchingModel } from '../../../core/models/pokemon-seaching.model';
+import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.model';
 
 import loading from '../../../assets/loading.png';
 
@@ -81,7 +80,7 @@ const Find = (props: {
     }
   };
 
-  const getInfoPoke = (value: PokemonModel) => {
+  const getInfoPoke = (value: PokemonSearchingModel) => {
     const currentId = getPokemonById(pokemonName, value.id);
     setId(value.id);
     setForm(null);
@@ -176,7 +175,7 @@ const Find = (props: {
         </div>
         <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
           <Fragment>
-            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value: any, index: React.Key) => (
+            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
               <div
                 className={'container card-pokemon ' + (value.id === id ? 'selected' : '')}
                 key={index}

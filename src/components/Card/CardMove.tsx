@@ -4,7 +4,7 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { StoreState } from '../../store/models/state.model';
 
-const CardMove = (props: { value: { name: string; elite: boolean; shadow: boolean; purified: boolean } }) => {
+const CardMove = (props: { value: { name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean } }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
   const data = props.value ? combat.find((item) => item.name === props.value.name) : false;
   const type = data ? capitalize(data.type) : '';
@@ -21,6 +21,7 @@ const CardMove = (props: { value: { name: string; elite: boolean; shadow: boolea
             {props.value.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
             {props.value.shadow && <span className="type-icon-small ic shadow-ic">Shadow</span>}
             {props.value.purified && <span className="type-icon-small ic purified-ic">Purified</span>}
+            {props.value.special && <span className="type-icon-small ic special-ic">Special</span>}
           </span>
         </div>
       )}

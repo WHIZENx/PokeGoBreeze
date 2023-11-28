@@ -25,7 +25,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 
@@ -92,11 +92,13 @@ const TeamPVP = () => {
       [fmove, cmovePri, cmoveSec] = moveSet.split('/');
     }
 
-    const fastMoveSet = combatPoke.quickMoves.concat(combatPoke.eliteQuickMoves);
-    const chargedMoveSet = combatPoke.cinematicMoves.concat(
-      combatPoke.eliteCinematicMoves,
-      combatPoke.shadowMoves,
-      combatPoke.purifiedMoves
+    const combatTemp = combatPoke as CombatPokemon;
+    const fastMoveSet = combatTemp.quickMoves.concat(combatTemp.eliteQuickMoves);
+    const chargedMoveSet = combatTemp.cinematicMoves.concat(
+      combatTemp.eliteCinematicMoves,
+      combatTemp.shadowMoves,
+      combatTemp.purifiedMoves,
+      combatTemp.specialMoves
     );
     fmove = dataStore?.combat?.find((item) => item.name === findMoveTeam(fmove, fastMoveSet));
     cmovePri = dataStore?.combat?.find((item) => item.name === findMoveTeam(cmovePri, chargedMoveSet));
@@ -111,9 +113,9 @@ const TeamPVP = () => {
       pokemonData: pokemon,
       form,
       stats,
-      atk: statsRanking.attack.ranking.find((i: { attack: number }) => i.attack === stats.atk),
-      def: statsRanking.defense.ranking.find((i: { defense: number }) => i.defense === stats.def),
-      sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === (stats?.sta ?? 0)),
+      atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
+      def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
+      sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
       fmove,
       cmovePri,
       cmoveSec,
@@ -379,9 +381,10 @@ const TeamPVP = () => {
                       title="Primary Charged Move"
                       color={'white'}
                       move={value.cmovePri}
-                      elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri.name)}
-                      shadow={value.combatPoke.shadowMoves.includes(value.cmovePri.name)}
-                      purified={value.combatPoke.purifiedMoves.includes(value.cmovePri.name)}
+                      elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri?.name)}
+                      shadow={value.combatPoke.shadowMoves.includes(value.cmovePri?.name)}
+                      purified={value.combatPoke.purifiedMoves.includes(value.cmovePri?.name)}
+                      special={value.combatPoke.specialMoves.includes(value.cmovePri?.name)}
                     />
                     {value.cmoveSec && (
                       <TypeBadge
@@ -390,9 +393,10 @@ const TeamPVP = () => {
                         title="Secondary Charged Move"
                         color={'white'}
                         move={value.cmoveSec}
-                        elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec.name)}
-                        shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec.name)}
-                        purified={value.combatPoke.purifiedMoves.includes(value.cmoveSec.name)}
+                        elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec?.name)}
+                        shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec?.name)}
+                        purified={value.combatPoke.purifiedMoves.includes(value.cmoveSec?.name)}
+                        special={value.combatPoke.specialMoves.includes(value.cmoveSec?.name)}
                       />
                     )}
                   </div>
@@ -520,15 +524,16 @@ const TeamPVP = () => {
                           form: string;
                           id: number;
                           name: string;
-                          fmove: { name: string; id?: string; type?: string };
+                          fmove: Combat;
                           combatPoke: {
                             eliteQuickMoves: string[];
                             eliteCinematicMoves: string[];
                             shadowMoves: string[];
                             purifiedMoves: string[];
+                            specialMoves: string;
                           };
-                          cmovePri: { name: string; id?: string; type?: string };
-                          cmoveSec: { name: string; id?: string; type?: string };
+                          cmovePri: Combat;
+                          cmoveSec: Combat;
                         },
                         index: React.Key
                       ) => (
@@ -587,9 +592,10 @@ const TeamPVP = () => {
                                   title="Primary Charged Move"
                                   color={'white'}
                                   move={value.cmovePri}
-                                  elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri.name)}
-                                  shadow={value.combatPoke.shadowMoves.includes(value.cmovePri.name)}
-                                  purified={value.combatPoke.purifiedMoves.includes(value.cmovePri.name)}
+                                  elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri?.name)}
+                                  shadow={value.combatPoke.shadowMoves.includes(value.cmovePri?.name)}
+                                  purified={value.combatPoke.purifiedMoves.includes(value.cmovePri?.name)}
+                                  special={value.combatPoke.specialMoves.includes(value.cmovePri?.name)}
                                 />
                                 {value.cmoveSec && (
                                   <TypeBadge
@@ -598,9 +604,10 @@ const TeamPVP = () => {
                                     title="Secondary Charged Move"
                                     color={'white'}
                                     move={value.cmoveSec}
-                                    elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec.name)}
-                                    shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec.name)}
-                                    purified={value.combatPoke.purifiedMoves.includes(value.cmoveSec.name)}
+                                    elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec?.name)}
+                                    shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec?.name)}
+                                    purified={value.combatPoke.purifiedMoves.includes(value.cmoveSec?.name)}
+                                    special={value.combatPoke.specialMoves.includes(value.cmoveSec?.name)}
                                   />
                                 )}
                               </div>

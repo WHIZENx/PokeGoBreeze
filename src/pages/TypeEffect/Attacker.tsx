@@ -7,7 +7,7 @@ import { TypeEff } from '../../core/models/typeEff.model';
 
 const Attacker = (prop: { types: TypeEff | any }) => {
   const theme = useTheme();
-  const [types, setTypes]: any = useState(null);
+  const [types, setTypes]: [string[], any] = useState([]);
 
   const [currentType, setCurrentType] = useState('BUG');
   const [showType, setShowType] = useState(false);
@@ -65,7 +65,7 @@ const Attacker = (prop: { types: TypeEff | any }) => {
           {showType && (
             <div className="result-type">
               <ul>
-                {types.map((value: string, index: React.Key) => (
+                {types.map((value, index) => (
                   <li
                     className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
                     style={{ backgroundColor: theme.palette.background.default }}

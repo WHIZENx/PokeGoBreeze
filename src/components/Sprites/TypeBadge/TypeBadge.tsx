@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
@@ -6,9 +6,10 @@ import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
+import { Combat } from '../../../core/models/combat.model';
 
 const TypeBadge = (props: {
-  move: any;
+  move: Combat | undefined;
   find?: boolean;
   grow?: boolean;
   style?: React.CSSProperties | undefined;
@@ -17,13 +18,16 @@ const TypeBadge = (props: {
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;
+  special?: boolean;
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  let move = props.move;
-  if (!props.find) {
-    move = combat.find((item) => item.name === props.move?.name);
-  }
+  const [move, setMove] = useState(props.move);
+  useEffect(() => {
+    if (!props.find && combat) {
+      setMove(combat.find((item) => item.name === props.move?.name));
+    }
+  }, [props.find, combat]);
 
   return (
     <div className={'type-badge-container' + (props.grow ? ' filter-shadow' : '')} style={props.style}>
@@ -32,7 +36,7 @@ const TypeBadge = (props: {
       </span>
       <Link to={'/move/' + move?.id} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
         <span className={move?.type?.toLowerCase() + ' type-border position-relative'}>
-          {(props.elite || props.shadow || props.purified) && (
+          {(props.elite || props.shadow || props.purified || props.special) && (
             <span className="type-badge-border">
               {props.elite && (
                 <span className="type-icon-small ic elite-ic">
@@ -47,6 +51,11 @@ const TypeBadge = (props: {
               {props.purified && (
                 <span className="type-icon-small ic purified-ic">
                   <span>Purified</span>
+                </span>
+              )}
+              {props.special && (
+                <span className="type-icon-small ic special-ic">
+                  <span>Special</span>
                 </span>
               )}
             </span>

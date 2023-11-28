@@ -58,16 +58,16 @@ const StatsTable = () => {
 
   const [searchCP, setSearchCP] = useState('');
 
-  const [ATKIv, setATKIv]: any = useState(0);
-  const [DEFIv, setDEFIv]: any = useState(0);
-  const [STAIv, setSTAIv]: any = useState(0);
+  const [ATKIv, setATKIv] = useState(0);
+  const [DEFIv, setDEFIv] = useState(0);
+  const [STAIv, setSTAIv] = useState(0);
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
   const currStatBattle: any = useRef([]);
-  const [battleLeague, setBattleLeague]: any = useState(500);
+  const [battleLeague, setBattleLeague] = useState(500);
 
   const [statsBattle, setStatsBattle]: any = useState([]);
 
@@ -150,9 +150,9 @@ const StatsTable = () => {
           <span className="text-danger">CP below 2500</span>
         </button>
         <button
-          className={'btn btn-form' + (battleLeague === null ? ' form-selected' : '')}
+          className={'btn btn-form' + (battleLeague === 0 ? ' form-selected' : '')}
           style={{ height: 200 }}
-          onClick={() => setBattleLeague(null)}
+          onClick={() => setBattleLeague(0)}
         >
           <img alt="img-league" width={128} height={128} src={APIService.getPokeLeague('master_league')} />
           <div>
@@ -197,7 +197,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_: any, v: any) => setATKIv(v)}
+              onChange={(_, v: any) => setATKIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -212,7 +212,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_: any, v: any) => setDEFIv(v)}
+              onChange={(_, v: any) => setDEFIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -227,7 +227,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_: any, v: any) => setSTAIv(v)}
+              onChange={(_, v: any) => setSTAIv(v)}
             />
           </Box>
         </div>

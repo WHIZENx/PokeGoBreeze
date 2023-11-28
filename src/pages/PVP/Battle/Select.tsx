@@ -366,7 +366,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
               value={cMoveSec}
               empty={cMoveSec === ''}
               show={pokemon ? true : false}
-              clearData={pokemonBattle.disableCMovePri ? false : removeChargeMoveSec}
+              clearData={pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
               disable={pokemonBattle.disableCMoveSec}
               select={data && data.length > 1}
             />

@@ -8,12 +8,12 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 
 const CardMoveSmall = (props: {
-  value: { name: string; elite: boolean; shadow: boolean; purified: boolean };
+  value: { name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
   empty?: boolean;
   disable?: boolean;
   show?: boolean;
   select?: boolean;
-  clearData?: any;
+  clearData?: () => void;
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
@@ -40,6 +40,7 @@ const CardMoveSmall = (props: {
                 {props.value.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
                 {props.value.shadow && <span className="type-icon-small ic shadow-ic">Shadow</span>}
                 {props.value.purified && <span className="type-icon-small ic purified-ic">Purified</span>}
+                {props.value.special && <span className="type-icon-small ic special-ic">Special</span>}
               </span>
               {props.show && !props.disable && (
                 <div className="select-down d-flex align-items-center">

@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { StatsModel } from '../../core/models/stats.model';
 
 const CardPokemonInfo = (props: {
-  image: { shiny: string | undefined; default: string | undefined };
+  image: { shiny: string | undefined | null; default: string | undefined | null };
   id: number;
   name: string;
   forme: string;
@@ -94,7 +94,7 @@ const CardPokemonInfo = (props: {
               ref={imageRef}
               className="pokemon-sprite-large"
               alt="pokemon-img"
-              src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default}
+              src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default ?? ''}
             />
           </span>
         </div>

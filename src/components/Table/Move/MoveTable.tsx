@@ -14,13 +14,14 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FormModel } from '../../../core/models/API/form.model';
 
 const TableMove = (props: {
   data: any;
   statATK: number;
   statDEF: number;
   statSTA: number;
-  form: any;
+  form: FormModel;
   id?: number;
   maxHeight?: number | string;
 }) => {
@@ -55,6 +56,7 @@ const TableMove = (props: {
       eliteChargedMoves: combat.eliteCinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
       purifiedMoves: props.form?.is_shadow ? [] : combat.purifiedMoves.map((move) => data?.combat?.find((item) => item.name === move)),
       shadowMoves: props.form?.is_purified ? [] : combat.shadowMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      specialMoves: combat.specialMoves.map((move) => data?.combat?.find((item) => item.name === move)),
     });
   };
 
@@ -78,9 +80,11 @@ const TableMove = (props: {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke[0]));
       } else if (combatPoke.length === 0 && props.id) {
-        const combatPoke: any = data?.pokemonCombat?.filter((item) => (item.id === props.id ?? 0) && item.baseSpecies === item.name);
-        filterMoveType(combatPoke.at(0));
-        return setMove(setRankMove(combatPoke.at(0)));
+        const combatPoke: CombatPokemon[] | undefined = data?.pokemonCombat?.filter(
+          (item) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
+        );
+        filterMoveType(combatPoke?.at(0));
+        return setMove(setRankMove(combatPoke?.at(0)));
       }
 
       const result = combatPoke.find(
@@ -96,7 +100,7 @@ const TableMove = (props: {
     }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
-  const setRankMove = (result: CombatPokemon) => {
+  const setRankMove = (result: CombatPokemon | undefined) => {
     return rankMove(
       data?.options,
       data?.typeEff,
@@ -119,7 +123,7 @@ const TableMove = (props: {
   const renderBestMovesetTable = (
     value: {
       fmove: { id: string; type: string; name: string; elite: boolean };
-      cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean };
+      cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
       eDPS: { [x: string]: number };
     },
     max: number,
@@ -164,6 +168,11 @@ const TableMove = (props: {
                   <span>Purified</span>
                 </span>
               )}
+              {value.cmove.special && (
+                <span className="type-icon-small ic special-ic">
+                  <span>Special</span>
+                </span>
+              )}
             </span>
           </Link>
         </td>
@@ -177,7 +186,7 @@ const TableMove = (props: {
   const renderMoveSetTable = (data: Combat[]) => {
     return (
       <Fragment>
-        {data?.map((value: Combat, index: React.Key) => (
+        {data?.map((value, index) => (
           <tr key={index}>
             <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
               <Link to={'../move/' + value.id} className="d-block">
@@ -199,6 +208,11 @@ const TableMove = (props: {
                   {value.purified && (
                     <span className="type-icon-small ic purified-ic">
                       <span>Purified</span>
+                    </span>
+                  )}
+                  {value.special && (
+                    <span className="type-icon-small ic special-ic">
+                      <span>Special</span>
                     </span>
                   )}
                 </span>
@@ -248,7 +262,12 @@ const TableMove = (props: {
               <tbody>
                 {moveOrigin &&
                   renderMoveSetTable(
-                    moveOrigin.chargedMoves.concat(moveOrigin.eliteChargedMoves, moveOrigin.purifiedMoves, moveOrigin.shadowMoves)
+                    moveOrigin.chargedMoves.concat(
+                      moveOrigin.eliteChargedMoves,
+                      moveOrigin.purifiedMoves,
+                      moveOrigin.shadowMoves,
+                      moveOrigin.specialMoves
+                    )
                   )}
               </tbody>
             </table>

@@ -10,13 +10,14 @@ import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Asset } from '../../../core/models/asset.model';
+import { PokemonModelComponent } from './models/pokemon-model.model';
 
 const PokemonModel = (props: { id: number; name: string }) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
 
-  const [pokeAssets, setPokeAssets]: any = useState([]);
+  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], any] = useState([]);
   const gender: any = useRef(null);
   const sound: any = useRef(null);
 
@@ -25,15 +26,8 @@ const PokemonModel = (props: { id: number; name: string }) => {
       sound.current = data?.assets?.find((item) => item.id === id);
       const model: Asset = sound.current;
       const detail = data?.details?.find((item) => item.id === id);
-      gender.current = detail ? detail.gender : null;
-      return model
-        ? [...new Set(model.image.map((item: { form: string }) => item.form))].map((value) => {
-            return {
-              form: value,
-              image: model.image.filter((item: { form: string }) => value === item.form),
-            };
-          })
-        : [];
+      gender.current = detail?.gender;
+      return model ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model.image)) : [];
     },
     [data?.assets]
   );
@@ -49,9 +43,9 @@ const PokemonModel = (props: { id: number; name: string }) => {
         <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon ?? 'Standard')} />
       </h4>
       <div>
-        {pokeAssets.map((assets: { image: any[]; form: string }, index: React.Key) => (
+        {pokeAssets.map((assets, index) => (
           <div key={index} className="d-inline-block group-model text-center">
-            {assets.image.map((value: { gender: number; shiny: string | null; default: string | null }, index: React.Key) => (
+            {assets.image.map((value, index) => (
               <div key={index} className="d-inline-block" style={{ width: value.gender === 3 ? '100%' : 'auto' }}>
                 <div className="sub-group-model">
                   {gender.current && !gender.current.genderlessPercent && (

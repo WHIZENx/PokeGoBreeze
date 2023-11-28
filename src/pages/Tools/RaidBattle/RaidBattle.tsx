@@ -51,6 +51,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { PokemonDataModel, PokemonMoveData } from '../../../core/models/pokemon.model';
 import { CombatPokemon } from '../../../core/models/combat.model';
+import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
@@ -275,7 +276,7 @@ const RaidBattle = () => {
       const resultFirst = data?.pokemonCombat?.filter((item) => item.id === id);
       form = form.replaceAll('-', '_').replaceAll('_standard', '').toUpperCase();
       const result = resultFirst?.find((item) => item.name === form);
-      let simpleMove: any[] = [];
+      let simpleMove: SelectMoveModel[] = [];
       if (resultFirst && (resultFirst.length === 1 || result == null)) {
         if (resultFirst.length === 0) {
           setFMove('');
@@ -285,50 +286,56 @@ const RaidBattle = () => {
         }
         let simpleMove: any[] = [];
         resultFirst.at(0)?.quickMoves.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
         resultFirst.at(0)?.eliteQuickMoves.forEach((value) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+          simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
         });
         setFMove(simpleMove.at(0));
         setResultFMove(simpleMove);
         simpleMove = [];
         resultFirst.at(0)?.cinematicMoves.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
         resultFirst.at(0)?.eliteCinematicMoves.forEach((value) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+          simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
         });
         resultFirst.at(0)?.shadowMoves.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+          simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
         });
         resultFirst.at(0)?.purifiedMoves.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+        });
+        resultFirst.at(0)?.specialMoves.forEach((value) => {
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
         });
         setCMove(simpleMove.at(0));
         return setResultCMove(simpleMove);
       }
       simpleMove = [];
       result?.quickMoves.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
       });
       result?.eliteQuickMoves.forEach((value) => {
-        simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+        simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
       });
       setFMove(simpleMove.at(0));
       setResultFMove(simpleMove);
       simpleMove = [];
       result?.cinematicMoves.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
       });
       result?.eliteCinematicMoves.forEach((value) => {
-        simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+        simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
       });
       result?.shadowMoves.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+        simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
       });
       result?.purifiedMoves.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+      });
+      result?.specialMoves.forEach((value) => {
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
       });
       setCMove(simpleMove.at(0));
       return setResultCMove(simpleMove);
@@ -1226,6 +1233,7 @@ const RaidBattle = () => {
                       elite={value.elite.cmove}
                       shadow={value.mShadow}
                       purified={value.purified}
+                      special={value.special}
                     />
                   </div>
                 </div>
@@ -1346,7 +1354,14 @@ const RaidBattle = () => {
               </div>
               <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
                 <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite} />
-                <TypeBadge title="Charged Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
+                <TypeBadge
+                  title="Charged Move"
+                  move={cMove}
+                  elite={cMove.elite}
+                  shadow={cMove.shadow}
+                  purified={cMove.purified}
+                  special={cMove.special}
+                />
               </div>
               <hr />
               <div className="row" style={{ margin: 0 }}>

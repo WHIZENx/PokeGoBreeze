@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { FORM_GALARIAN, FORM_STANDARD, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { CounterModel } from './models/counter.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -79,7 +80,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const [counterList, setCounterList]: any = useState([]);
+  const [counterList, setCounterList]: [CounterModel[], any] = useState([]);
   const [frame, setFrame] = useState(false);
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -89,12 +90,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
   const columns: any = [
     {
       name: 'Pokémon',
-      selector: (row: {
-        pokemon_id: number;
-        pokemon_forme: string;
-        cmove: { shadow: boolean; purified: boolean };
-        pokemon_name: string | undefined;
-      }) => (
+      selector: (row: CounterModel) => (
         <Link
           to={`/pokemon/${row.pokemon_id}${
             row.pokemon_forme ? `?form=${convertFormName(row.pokemon_id, row.pokemon_forme.toLowerCase())}` : ''
@@ -150,7 +146,9 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
     },
     {
       name: 'Charged',
-      selector: (row: { cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean } }) => (
+      selector: (row: {
+        cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
+      }) => (
         <Link to={'../move/' + row.cmove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cmove.type))} />
@@ -174,6 +172,11 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
                 <span>Purified</span>
               </span>
             )}
+            {row.cmove.special && (
+              <span className="type-icon-small ic special-ic">
+                <span>Special</span>
+              </span>
+            )}
           </span>
         </Link>
       ),
@@ -181,7 +184,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
     },
     {
       name: '%',
-      selector: (row: { ratio: number }) => parseFloat(row.ratio.toFixed(2)),
+      selector: (row: CounterModel) => parseFloat(row.ratio.toFixed(2)),
       sortable: true,
       width: '20%',
     },
@@ -259,7 +262,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
     setFrame(true);
     calculateCounter()
       .then((data) => {
-        setCounterList(data);
+        setCounterList(data as CounterModel[]);
         setFrame(false);
       })
       .catch(() => clearTimeout(timeOutId))
@@ -301,7 +304,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
         paginationPerPage={100}
         progressPending={frame}
         progressComponent={<CounterLoader />}
-        data={counterList.filter((pokemon: { pokemon_id: number; pokemon_name: string }) => {
+        data={counterList.filter((pokemon) => {
           if (!releasedGO) {
             return true;
           }

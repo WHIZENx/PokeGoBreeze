@@ -21,6 +21,7 @@ import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN } from '../../../util/Constants';
+import { EvolutionModel } from '../../../core/models/evolution.model';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -32,15 +33,15 @@ const FindBattle = () => {
   const [form, setForm]: any = useState(null);
   const [maxCP, setMaxCP] = useState(0);
 
-  const [searchCP, setSearchCP]: any = useState('');
+  const [searchCP, setSearchCP] = useState('');
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [ATKIv, setATKIv]: any = useState(0);
-  const [DEFIv, setDEFIv]: any = useState(0);
-  const [STAIv, setSTAIv]: any = useState(0);
+  const [ATKIv, setATKIv] = useState(0);
+  const [DEFIv, setDEFIv] = useState(0);
+  const [STAIv, setSTAIv] = useState(0);
 
   const [evoChain, setEvoChain]: any = useState([]);
   const [bestInLeague, setBestInLeague]: any = useState([]);
@@ -83,7 +84,7 @@ const FindBattle = () => {
   );
 
   const prevEvoChain = useCallback(
-    (obj: { id: number; evo_list: { evo_to_id: number; evo_to_form: string }[] }, defaultForm: string, arr: any[]): any => {
+    (obj: EvolutionModel, defaultForm: string, arr: any[]): any => {
       if (!arr.map((i: { id: number }) => i.id).includes(obj.id)) {
         arr.push({ ...obj, form: defaultForm });
       }
@@ -107,9 +108,7 @@ const FindBattle = () => {
   const getEvoChain = useCallback(
     (id: number) => {
       const isForm = form.form.form_name?.toUpperCase();
-      let curr = dataStore?.evolution?.filter((item) =>
-        item.evo_list.find((i: { evo_to_id: number; evo_to_form: string }) => id === i.evo_to_id && isForm === i.evo_to_form)
-      );
+      let curr = dataStore?.evolution?.filter((item) => item.evo_list.find((i) => id === i.evo_to_id && isForm === i.evo_to_form));
       if (curr?.length === 0) {
         if (isForm === '') {
           curr = dataStore?.evolution?.filter((item) => id === item.id && isForm === item.form);
@@ -244,15 +243,15 @@ const FindBattle = () => {
     }
   };
 
-  const getCandyEvo = (item: any[], evoId: number, candy: number): number => {
+  const getCandyEvo = (item: EvolutionModel[], evoId: number, candy: number): number => {
     if (evoId === id) {
       return candy;
     }
-    const data = item.find((i: { evo_list: { evo_to_id: number }[] }) => i.evo_list.find((e) => e.evo_to_id === evoId));
+    const data = item.find((i) => i.evo_list.find((e) => e.evo_to_id === evoId));
     if (!data) {
       return candy;
     }
-    const prevEvo = data.evo_list.find((e: { evo_to_id: number }) => e.evo_to_id === evoId);
+    const prevEvo = data.evo_list.find((e) => e.evo_to_id === evoId);
     if (!prevEvo) {
       return candy;
     }
@@ -328,7 +327,7 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_: any, v: any) => setATKIv(v)}
+              onChange={(_, v: any) => setATKIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -343,7 +342,7 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_: any, v: any) => setDEFIv(v)}
+              onChange={(_, v: any) => setDEFIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -358,7 +357,7 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_: any, v: any) => setSTAIv(v)}
+              onChange={(_, v: any) => setSTAIv(v)}
             />
           </Box>
         </div>

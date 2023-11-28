@@ -11,6 +11,7 @@ interface TempEvo {
   tempEvolutionName: string;
   firstTempEvolution: number;
   tempEvolution: number;
+  requireMove: string | undefined;
 }
 
 export interface EvolutionModel {

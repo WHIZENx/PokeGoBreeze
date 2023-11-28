@@ -690,8 +690,8 @@ export const calculateAvgDPS = (
   globalOptions: Options | undefined,
   typeEff: TypeEff | undefined,
   weatherBoost: WeatherBoost | undefined,
-  fmove: Combat,
-  cmove: Combat,
+  fmove: Combat | undefined,
+  cmove: Combat | undefined,
   Atk: number,
   Def: number,
   HP: number,
@@ -715,18 +715,18 @@ export const calculateAvgDPS = (
     ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
     MultiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions);
 
-  const FPow = fmove.pve_power;
-  const CPow = cmove.pve_power;
-  const FE = Math.abs(fmove.pve_energy);
-  const CE = Math.abs(cmove.pve_energy);
-  const FDur = fmove.durationMs / 1000;
-  const CDur = cmove.durationMs / 1000;
-  const FTYPE = capitalize(fmove.type);
-  const CTYPE = capitalize(cmove.type);
-  const CDWS = cmove.damageWindowStartMs / 1000;
+  const FPow = fmove?.pve_power ?? 0;
+  const CPow = cmove?.pve_power ?? 0;
+  const FE = Math.abs(fmove?.pve_energy ?? 0);
+  const CE = Math.abs(cmove?.pve_energy ?? 0);
+  const FDur = (fmove?.durationMs ?? 0) / 1000;
+  const CDur = (cmove?.durationMs ?? 0) / 1000;
+  const FTYPE = capitalize(fmove?.type);
+  const CTYPE = capitalize(cmove?.type);
+  const CDWS = (cmove?.damageWindowStartMs ?? 0) / 1000;
 
-  const FMulti = (typePoke.includes(FTYPE) ? StabMultiply : 1) * fmove.accuracyChance;
-  const CMulti = (typePoke.includes(CTYPE) ? StabMultiply : 1) * cmove.accuracyChance;
+  const FMulti = (typePoke.includes(FTYPE) ? StabMultiply : 1) * (fmove?.accuracyChance ?? 0);
+  const CMulti = (typePoke.includes(CTYPE) ? StabMultiply : 1) * (cmove?.accuracyChance ?? 0);
 
   let y, FDmg, CDmg, FDmgBase, CDmgBase;
   if (options) {
@@ -1066,7 +1066,7 @@ export const queryTopMove = (
   typeEff: TypeEff | undefined,
   weatherBoost: WeatherBoost | undefined,
   pokemonCombatList: CombatPokemon[],
-  move: Combat
+  move: Combat | undefined
 ) => {
   const dataPri: {
     num: number;
@@ -1076,11 +1076,12 @@ export const queryTopMove = (
     sprite: string;
     releasedGO: boolean;
     isElite: boolean;
+    isSpecial: boolean;
     dps: number;
     tdo: number;
   }[] = [];
   pokemonList?.forEach((value: PokemonDataModel) => {
-    if (move.track === 281) {
+    if (move?.track === 281) {
       move.name = 'HIDDEN_POWER';
     }
     let combatPoke: any = pokemonCombatList.filter(
@@ -1095,13 +1096,14 @@ export const queryTopMove = (
     if (combatPoke !== undefined) {
       let pokemonList;
       let isElite = false;
-      if (move.type_move === TypeMove.FAST) {
+      let isSpecial = true;
+      if (move?.type_move === TypeMove.FAST) {
         pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
         if (!pokemonList) {
           pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
           isElite = true;
         }
-      } else if (move.type_move === TypeMove.CHARGE) {
+      } else if (move?.type_move === TypeMove.CHARGE) {
         pokemonList = combatPoke.cinematicMoves.includes(move.name);
         if (!pokemonList) {
           pokemonList = combatPoke.shadowMoves.includes(move.name);
@@ -1112,6 +1114,10 @@ export const queryTopMove = (
         if (!pokemonList) {
           pokemonList = combatPoke.eliteCinematicMoves.includes(move.name);
           isElite = true;
+        }
+        if (!pokemonList) {
+          pokemonList = combatPoke.specialMoves.includes(move.name);
+          isSpecial = true;
         }
       }
       if (pokemonList) {
@@ -1141,6 +1147,7 @@ export const queryTopMove = (
           sprite: value.sprite,
           releasedGO: value.releasedGO,
           isElite,
+          isSpecial,
           dps,
           tdo,
         });
@@ -1165,7 +1172,8 @@ const queryMove = (
   felite: boolean,
   celite: boolean,
   shadow: boolean,
-  purified: boolean
+  purified: boolean,
+  special: boolean
 ) => {
   cmove.forEach((vc: string) => {
     const mf = combat.find((item) => item.name === vf);
@@ -1179,6 +1187,7 @@ const queryMove = (
     mc.elite = celite;
     mc.shadow = shadow;
     mc.purified = purified;
+    mc.special = special;
 
     const options = {
       delay: {
@@ -1228,7 +1237,7 @@ export const rankMove = (
   typeEff: TypeEff | undefined,
   weatherBoost: WeatherBoost | undefined,
   combat: Combat[],
-  move: CombatPokemon,
+  move: CombatPokemon | undefined,
   atk: number,
   def: number,
   sta: number,
@@ -1254,6 +1263,7 @@ export const rankMove = (
       false,
       false,
       false,
+      false,
       false
     );
     queryMove(
@@ -1271,9 +1281,27 @@ export const rankMove = (
       false,
       true,
       false,
+      false,
       false
     );
-    queryMove(globalOptions, typeEff, weatherBoost, combat, dataPri, vf, atk, def, sta, type, move.shadowMoves, false, false, true, false);
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.shadowMoves,
+      false,
+      false,
+      true,
+      false,
+      false
+    );
     queryMove(
       globalOptions,
       typeEff,
@@ -1286,6 +1314,25 @@ export const rankMove = (
       sta,
       type,
       move.purifiedMoves,
+      false,
+      false,
+      false,
+      true,
+      false
+    );
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.specialMoves,
+      false,
       false,
       false,
       false,
@@ -1308,6 +1355,7 @@ export const rankMove = (
       true,
       false,
       false,
+      false,
       false
     );
     queryMove(
@@ -1325,10 +1373,63 @@ export const rankMove = (
       true,
       true,
       false,
+      false,
       false
     );
-    queryMove(globalOptions, typeEff, weatherBoost, combat, dataPri, vf, atk, def, sta, type, move.shadowMoves, true, false, true, false);
-    queryMove(globalOptions, typeEff, weatherBoost, combat, dataPri, vf, atk, def, sta, type, move.purifiedMoves, true, false, false, true);
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.shadowMoves,
+      true,
+      false,
+      true,
+      false,
+      false
+    );
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.purifiedMoves,
+      true,
+      false,
+      false,
+      true,
+      false
+    );
+    queryMove(
+      globalOptions,
+      typeEff,
+      weatherBoost,
+      combat,
+      dataPri,
+      vf,
+      atk,
+      def,
+      sta,
+      type,
+      move.specialMoves,
+      true,
+      false,
+      false,
+      false,
+      true
+    );
   });
 
   return {

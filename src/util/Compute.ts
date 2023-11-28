@@ -173,6 +173,6 @@ export const findAssetFormShiny = (pokemonAssets: Asset[], id: number, name: str
   return null;
 };
 
-export const findStabType = (types: any[], findType: string) => {
-  return types.find((type: string) => type.toLowerCase() === findType.toLowerCase()) ? true : false;
+export const findStabType = (types: string[], findType: string) => {
+  return types.some((type) => type.toLowerCase() === findType.toLowerCase());
 };

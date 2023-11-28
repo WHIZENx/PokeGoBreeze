@@ -40,7 +40,7 @@ interface TypeModify {
   type: { name: string };
 }
 
-interface Form {
+export interface FormModel {
   form_name: string;
   form_names: string[];
   form_order: number;
@@ -60,7 +60,7 @@ export interface PokemonFormModify {
   default_name: string;
   id?: number;
   name: string;
-  form: Form;
+  form: FormModel;
 }
 
 export class PokemonFormModifyModel {
@@ -70,7 +70,7 @@ export class PokemonFormModifyModel {
   default_name!: string;
   id?: number;
   name!: string;
-  form!: Form;
+  form!: FormModel;
 
   constructor(
     id: number,

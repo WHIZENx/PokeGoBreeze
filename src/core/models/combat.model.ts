@@ -27,6 +27,7 @@ export interface Combat {
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;
+  special?: boolean;
 }
 
 export interface CombatPokemon {
@@ -39,6 +40,7 @@ export interface CombatPokemon {
   purifiedMoves: string[];
   eliteQuickMoves: string[];
   eliteCinematicMoves: string[];
+  specialMoves: string[];
 }
 
 export class CombatDataModel {
@@ -68,6 +70,7 @@ export class CombatDataModel {
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;
+  special?: boolean;
 
   constructor() {
     this.name = '';
@@ -98,6 +101,7 @@ export class CombatPokemonDataModel {
   purifiedMoves!: string[];
   eliteQuickMoves!: string[];
   eliteCinematicMoves!: string[];
+  specialMoves!: string[];
 
   constructor() {
     this.id = 0;
@@ -109,5 +113,6 @@ export class CombatPokemonDataModel {
     this.purifiedMoves = [];
     this.eliteQuickMoves = [];
     this.eliteCinematicMoves = [];
+    this.specialMoves = [];
   }
 }

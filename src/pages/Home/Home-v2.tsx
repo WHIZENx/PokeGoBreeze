@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react';
+import React, { useState, useRef, useEffect, Fragment, Dispatch, SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 import loadingImg from '../../assets/loading.png';
 
@@ -36,7 +36,6 @@ import {
   useTheme,
 } from '@mui/material';
 import { StoreState, StatsState } from '../../store/models/state.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { PokemonHomeModel } from '../../core/models/pokemon-home.model';
 
 const VersionProps = {
@@ -53,10 +52,10 @@ const Home = () => {
   const data = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
 
-  const [types, setTypes]: any = useState([]);
+  const [types, setTypes]: [string[], Dispatch<SetStateAction<string[]>>] = useState(DEFAULT_TYPES);
   const [dataList, setDataList]: [PokemonHomeModel[], any] = useState([]);
-  const [selectTypes, setSelectTypes]: any = useState([]);
-  const [listOfPokemon, setListOfPokemon]: any = useState([]);
+  const [selectTypes, setSelectTypes]: [string[], any] = useState([]);
+  const [listOfPokemon, setListOfPokemon]: [PokemonHomeModel[], any] = useState([]);
   const [result, setResult]: any = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -96,13 +95,15 @@ const Home = () => {
   };
 
   useEffect(() => {
-    setTypes(data?.typeEff ? Object.keys(data?.typeEff) : DEFAULT_TYPES);
+    if (data?.typeEff) {
+      setTypes(Object.keys(data?.typeEff));
+    }
   }, [data?.typeEff]);
 
   useEffect(() => {
     setDataList(
       data?.released
-        ?.map((item: PokemonDataModel) => {
+        ?.map((item) => {
           const stats = calculateStatsByTag(item, item?.baseStats, item?.slug);
           const assetForm = queryAssetForm(data?.assets ?? [], item?.num, item?.name);
           return new PokemonHomeModel(item, assetForm, versionList, stats);
@@ -247,7 +248,7 @@ const Home = () => {
       <div className="head-filter border-types text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
         <div className="row w-100" style={{ margin: 0 }}>
-          {types.map((item: string, index: React.Key) => (
+          {types.map((item, index) => (
             <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
               <button
                 value={item}
@@ -489,34 +490,21 @@ const Home = () => {
       <div className="text-center bg-white">
         <div className="loading-group-spin-table" style={{ display: !loading ? 'none' : 'block' }} />
         <ul className="d-grid pokemon-content">
-          {listOfPokemon.map(
-            (
-              row: {
-                name: string;
-                forme: string;
-                image: { shiny: string | undefined; default: string | undefined };
-                id: number;
-                types: string[];
-                goStats: { atk: number; def: number; sta: number };
-                releasedGO: boolean;
-              },
-              index: React.Key
-            ) => (
-              <CardPokemonInfo
-                key={index}
-                name={row.name}
-                forme={row.forme}
-                defaultImg={allShiny}
-                image={row.image}
-                id={row.id}
-                types={row.types}
-                pokemonStat={row.goStats}
-                stats={stats}
-                icon={icon ?? ''}
-                releasedGO={row.releasedGO}
-              />
-            )
-          )}
+          {listOfPokemon.map((row, index) => (
+            <CardPokemonInfo
+              key={index}
+              name={row.name}
+              forme={row.forme ?? ''}
+              defaultImg={allShiny}
+              image={row.image}
+              id={row.id}
+              types={row.types}
+              pokemonStat={row.goStats}
+              stats={stats}
+              icon={icon ?? ''}
+              releasedGO={row.releasedGO}
+            />
+          ))}
         </ul>
       </div>
     </Fragment>

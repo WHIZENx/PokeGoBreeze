@@ -5,7 +5,7 @@ import { splitAndCapitalize } from '../../util/Utils';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 const Affect = (prop: { weathers: WeatherBoost | any }) => {
-  const [weathers, setWeathers]: any = useState([]);
+  const [weathers, setWeathers]: [string[], any] = useState([]);
 
   const [currentWeather, setCurrentWeather] = useState('CLEAR');
   const [showWeather, setShowWeather] = useState(false);
@@ -44,7 +44,7 @@ const Affect = (prop: { weathers: WeatherBoost | any }) => {
           {showWeather && (
             <div className="result-weather">
               <ul>
-                {weathers.map((value: string, index: React.Key) => (
+                {weathers.map((value, index) => (
                   <li className="container card-pokemon" key={index} onMouseDown={() => changeWeather(value)}>
                     <CardWeather value={splitAndCapitalize(value, '_', ' ')} />
                   </li>

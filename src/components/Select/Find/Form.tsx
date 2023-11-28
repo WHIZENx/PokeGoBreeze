@@ -200,7 +200,7 @@ const Form = (props: {
 
   const changeForm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const findForm = formList
-      .map((item: any[]) => item.find((item: { form: { name: string } }) => item.form.name === e.currentTarget.value))
+      .map((item: { form: { name: string } }[]) => item.find((item) => item.form.name === e.currentTarget.value))
       .find((item: any) => item);
     setCurrForm(findForm);
     if (props.onClearStats) {

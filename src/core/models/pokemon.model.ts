@@ -29,9 +29,11 @@ interface EvolutionBranch {
   temporaryEvolution: string;
   temporaryEvolutionEnergyCost: number;
   temporaryEvolutionEnergyCostSubsequent: number;
+  obEvolutionBranchRequiredMove?: string;
 }
 
 export interface PokemonModel {
+  obSpecialAttackMoves?: string[];
   eliteQuickMove?: string[];
   eliteCinematicMove?: string[];
   form?: string | number | null;

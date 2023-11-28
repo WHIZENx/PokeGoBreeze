@@ -7,7 +7,7 @@ import { TypeEff } from '../../core/models/typeEff.model';
 
 const Defender = (prop: { types: TypeEff | any }) => {
   const theme = useTheme();
-  const [types, setTypes]: any = useState(null);
+  const [types, setTypes]: [string[], any] = useState([]);
 
   const [typeEffective, setTypeEffective]: any = useState(null);
 
@@ -94,7 +94,7 @@ const Defender = (prop: { types: TypeEff | any }) => {
               {showTypePri && (
                 <div className="result-type">
                   <ul>
-                    {types.map((value: string, index: React.Key) => (
+                    {types.map((value, index) => (
                       <li
                         className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
                         style={{ backgroundColor: theme.palette.background.default }}
@@ -142,7 +142,7 @@ const Defender = (prop: { types: TypeEff | any }) => {
               {showTypeSec && (
                 <div className="result-type">
                   <ul>
-                    {types.map((value: string, index: React.Key) => (
+                    {types.map((value, index) => (
                       <li
                         className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
                         style={{ backgroundColor: theme.palette.background.default }}

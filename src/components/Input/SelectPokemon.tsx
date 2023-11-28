@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { PokemonDataModel, PokemonDataStats } from '../../core/models/pokemon.model';
+import { SelectMoveModel } from './models/select-move.model';
 
 const SelectPokemon = (props: {
   pokemon?: PokemonDataModel;
@@ -92,50 +93,56 @@ const SelectPokemon = (props: {
         const resultFirst = combat.filter((item) => item.id === id);
         form = form ? form.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() : '';
         const result = resultFirst.find((item) => item.name.replace(item.baseSpecies + '_', '') === form);
-        const simpleMove: any[] = [];
+        const simpleMove: SelectMoveModel[] = [];
         if (resultFirst.length === 1 || result == null) {
           if (type === TypeMove.FAST) {
-            resultFirst.at(0)?.quickMoves.forEach((value: string) => {
-              simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+            resultFirst.at(0)?.quickMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
             });
-            resultFirst.at(0)?.eliteQuickMoves.forEach((value: string) => {
-              simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+            resultFirst.at(0)?.eliteQuickMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
             });
           } else {
-            resultFirst.at(0)?.cinematicMoves.forEach((value: string) => {
-              simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+            resultFirst.at(0)?.cinematicMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
             });
-            resultFirst.at(0)?.eliteCinematicMoves.forEach((value: string) => {
-              simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+            resultFirst.at(0)?.eliteCinematicMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
             });
-            resultFirst.at(0)?.shadowMoves.forEach((value: string) => {
-              simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+            resultFirst.at(0)?.shadowMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
             });
-            resultFirst.at(0)?.purifiedMoves.forEach((value: string) => {
-              simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+            resultFirst.at(0)?.purifiedMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+            });
+            resultFirst.at(0)?.specialMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
             });
           }
           return simpleMove.at(0);
         }
         if (type === TypeMove.FAST) {
-          result.quickMoves.forEach((value: string) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+          result.quickMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
           });
-          result.eliteQuickMoves.forEach((value: string) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+          result.eliteQuickMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
           });
         } else {
-          result.cinematicMoves.forEach((value: string) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+          result.cinematicMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
           });
-          result.eliteCinematicMoves.forEach((value: string) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+          result.eliteCinematicMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
           });
-          result.shadowMoves.forEach((value: string) => {
-            simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+          result.shadowMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
           });
-          result.purifiedMoves.forEach((value: string) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+          result.purifiedMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+          });
+          result.specialMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
           });
         }
         return simpleMove.at(0);

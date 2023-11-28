@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { convertNameRanking, splitAndCapitalize } from '../../../util/Utils';
@@ -27,7 +27,8 @@ const SelectFind = (props: {
   const firstInit = 20;
   const eachCounter = 10;
 
-  const [currentPokemon, setCurrentPokemon]: any = useState(null);
+  const [currentPokemon, setCurrentPokemon]: [PokemonDataModel | undefined, Dispatch<SetStateAction<PokemonDataModel | undefined>>] =
+    useState();
   const [showPokemon, setShowPokemon] = useState(false);
 
   const [search, setSearch] = useState('');
@@ -74,7 +75,7 @@ const SelectFind = (props: {
   };
 
   const removePokemon = () => {
-    setCurrentPokemon(null);
+    setCurrentPokemon(undefined);
     setShowPokemon(false);
     if (props.clearData) {
       props.clearData();
@@ -118,8 +119,8 @@ const SelectFind = (props: {
       >
         <div className="card-select">
           <CardPokemonLarge
-            id={currentPokemon && currentPokemon.num}
-            name={currentPokemon && splitAndCapitalize(currentPokemon.name, '-', ' ')}
+            id={currentPokemon?.num ?? 0}
+            name={splitAndCapitalize(currentPokemon?.name, '-', ' ') ?? ''}
             value={currentPokemon}
           />
           {currentPokemon && (

@@ -27,11 +27,11 @@ const Calculate = () => {
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
 
-  const [searchCP, setSearchCP]: any = useState('');
+  const [searchCP, setSearchCP] = useState('');
 
-  const [ATKIv, setATKIv]: any = useState(0);
-  const [DEFIv, setDEFIv]: any = useState(0);
-  const [STAIv, setSTAIv]: any = useState(0);
+  const [ATKIv, setATKIv] = useState(0);
+  const [DEFIv, setDEFIv] = useState(0);
+  const [STAIv, setSTAIv] = useState(0);
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -110,13 +110,10 @@ const Calculate = () => {
     [calculateStatsPoke]
   );
 
-  const onHandleLevel = useCallback(
-    (_: any, v: number) => {
-      setStatLevel(v);
-      setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
-    },
-    [globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]
-  );
+  const onHandleLevel = useCallback(() => {
+    setStatLevel(statLevel);
+    setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, statLevel, typePoke));
+  }, [globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
 
   return (
     <Fragment>
@@ -171,7 +168,7 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_: any, v: any) => setATKIv(v)}
+                onChange={(_, v: any) => setATKIv(v)}
               />
               <div className="d-flex justify-content-between">
                 <b>DEF</b>
@@ -186,7 +183,7 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_: any, v: any) => setDEFIv(v)}
+                onChange={(_, v: any) => setDEFIv(v)}
               />
               <div className="d-flex justify-content-between">
                 <b>STA</b>
@@ -201,7 +198,7 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_: any, v: any) => setSTAIv(v)}
+                onChange={(_, v: any) => setSTAIv(v)}
               />
             </Box>
           </div>

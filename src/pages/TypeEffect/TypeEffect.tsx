@@ -13,7 +13,7 @@ import { SpinnerState, StoreState } from '../../store/models/state.model';
 
 const TypeEffect = () => {
   const dispatch = useDispatch();
-  const typeEffective: any = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
+  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const theme = useTheme();
 

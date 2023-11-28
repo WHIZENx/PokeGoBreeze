@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 import { raidEgg } from '../../util/Compute';
@@ -28,8 +28,8 @@ const Raid = ({
   const theme = useTheme();
   const details = useSelector((state: StoreState) => state.store.data?.details ?? []);
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
-  const [tier, setTier]: any = useState(1);
-  const [pokemonClass, setPokemonClass]: any = useState(null);
+  const [tier, setTier]: [number, Dispatch<SetStateAction<number>>] = useState(1);
+  const [pokemonClass, setPokemonClass]: [string | null | undefined, Dispatch<SetStateAction<string | null | undefined>>] = useState();
 
   useEffect(() => {
     setPokemonClass(pokemonData.find((item) => item.num === id)?.pokemonClass);
@@ -38,14 +38,14 @@ const Raid = ({
   useEffect(() => {
     const pokemonClass = pokemonData.find((item) => item.num === id)?.pokemonClass;
     if (
-      parseInt(tier) > 5 &&
+      tier > 5 &&
       currForm &&
       !currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
       currForm.form.form_name?.toUpperCase() !== FORM_PRIMAL
     ) {
       setTier(5);
     } else if (
-      parseInt(tier) === 5 &&
+      tier === 5 &&
       currForm &&
       (currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) || currForm.form.form_name === 'primal') &&
       pokemonClass
@@ -53,7 +53,7 @@ const Raid = ({
       setTier(6);
     }
     if (setTierBoss) {
-      setTierBoss(parseInt(tier));
+      setTierBoss(tier);
     }
     if (setStatBossATK && setStatBossDEF && setStatBossHP) {
       setStatBossATK(calculateRaidStat(statATK, tier));
@@ -71,7 +71,7 @@ const Raid = ({
         <Form.Select
           className="w-50"
           onChange={(e) => {
-            setTier(e.target.value);
+            setTier(parseInt(e.target.value));
             if (clearData) {
               clearData();
             }
@@ -127,10 +127,10 @@ const Raid = ({
       <div className="row element-top container" style={{ margin: 0 }}>
         <div className="col d-flex justify-content-center align-items-center" style={{ marginBottom: 15 }}>
           <img
-            className={parseInt(tier) === 2 ? 'img-type-icon' : ''}
+            className={tier === 2 ? 'img-type-icon' : ''}
             alt="img-raid-egg"
             src={raidEgg(
-              parseInt(tier),
+              tier,
               currForm && currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) && !pokemonClass,
               currForm && currForm.form.form_name?.toUpperCase() === FORM_PRIMAL && pokemonClass,
               details.find((pokemon) => pokemon.id === id)?.pokemonClass === 'ULTRA_BEAST'

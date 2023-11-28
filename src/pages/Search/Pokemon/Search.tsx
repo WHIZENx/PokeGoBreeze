@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
 import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
-import { PokemonSearchingModel } from '../../../core/models/pokemon-seaching.model';
+import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.model';
 
 const Search = () => {
   const theme = useTheme();
@@ -24,7 +24,7 @@ const Search = () => {
   const firstInit = 20;
   const eachCounter = 10;
 
-  const [id, setId]: any = useState(router.action === Action.Pop && searching ? searching.id : 1);
+  const [id, setId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
   const [selectId, setSelectId]: any = useState(router.action === Action.Pop && searching ? searching.id : 1);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -82,14 +82,14 @@ const Search = () => {
   const decId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getPokemonByIndex(pokemonName, currentId.index - 1)?.id);
+      setId(getPokemonByIndex(pokemonName, currentId.index - 1)?.id ?? 0);
     }
   };
 
   const incId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getPokemonByIndex(pokemonName, currentId.index + 1)?.id);
+      setId(getPokemonByIndex(pokemonName, currentId.index + 1)?.id ?? 0);
     }
   };
 
@@ -166,7 +166,7 @@ const Search = () => {
           </Fragment>
         </div>
         <Pokemon
-          id={id}
+          id={id?.toString()}
           onSetIDPoke={setIDPoke}
           onIncId={incId}
           onDecId={decId}

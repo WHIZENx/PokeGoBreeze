@@ -6,24 +6,18 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
+import { PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 
 const FromChange = ({ details, defaultName }: any) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
 
-  const [pokeAssets, setPokeAssets]: any = useState([]);
+  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], any] = useState([]);
 
   const getImageList = useCallback(
     (id: number) => {
       const model = data?.assets?.find((item) => item.id === id);
-      return model
-        ? [...new Set(model.image.map((item: { form: string }) => item.form))].map((value) => {
-            return {
-              form: value,
-              image: model.image.filter((item: { form: string }) => value === item.form),
-            };
-          })
-        : [];
+      return model ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model.image)) : [];
     },
     [data?.assets]
   );
@@ -48,7 +42,7 @@ const FromChange = ({ details, defaultName }: any) => {
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
                   src={APIService.getPokemonModel(
-                    pokeAssets.find((pokemon: { form: string }) => pokemon.form === details.form)?.image.at(0).default
+                    pokeAssets?.find((pokemon) => pokemon.form === details.form)?.image?.at(0)?.default ?? ''
                   )}
                 />
               </div>
@@ -68,11 +62,10 @@ const FromChange = ({ details, defaultName }: any) => {
                         alt="pokemon-model"
                         src={APIService.getPokemonModel(
                           pokeAssets
-                            .find(
-                              (pokemon: { form: string }) =>
-                                pokemon.form === name.replace('_COMPLETE', '').replace(`${defaultName?.toUpperCase()}_`, '')
+                            ?.find(
+                              (pokemon) => pokemon.form === name.replace('_COMPLETE', '').replace(`${defaultName?.toUpperCase()}_`, '')
                             )
-                            ?.image.at(0).default
+                            ?.image.at(0)?.default ?? ''
                         )}
                       />
                     </div>
