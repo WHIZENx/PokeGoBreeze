@@ -222,8 +222,10 @@ const Form = (props: {
           <div
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              props.onSetPrev?.();
               setCurrForm(null);
+              props.setForm?.(null);
+              props.setFormOrigin?.(null);
+              props.onSetPrev?.();
             }}
           >
             <div>
@@ -252,8 +254,10 @@ const Form = (props: {
           <div
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              props.onSetNext?.();
               setCurrForm(null);
+              props.setForm?.(null);
+              props.setFormOrigin?.(null);
+              props.onSetNext?.();
             }}
           >
             <div>
