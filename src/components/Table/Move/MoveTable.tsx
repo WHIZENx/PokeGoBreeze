@@ -107,8 +107,8 @@ const TableMove = (props: {
       data?.weatherBoost,
       data?.combat ?? [],
       result,
-      props.statATK * (props.form?.is_shadow ? SHADOW_ATK_BONUS(data?.options) ?? 1 : 1),
-      props.statDEF * (props.form?.is_shadow ? SHADOW_DEF_BONUS(data?.options) ?? 1 : 1),
+      props.statATK * (props.form?.is_shadow ? SHADOW_ATK_BONUS(data?.options) : 1),
+      props.statDEF * (props.form?.is_shadow ? SHADOW_DEF_BONUS(data?.options) : 1),
       props.statSTA,
       props.data?.types.map((item: { type: { name: string } }) => capitalize(item?.type?.name ?? item))
     );

@@ -133,21 +133,21 @@ export const MIN_IV = 0;
 export const MAX_IV = 15;
 
 export const STAB_MULTIPLY = (options: Options | undefined) => {
-  return getOption(options, ['battle_options', 'stab']);
+  return getOption(options, ['battle_options', 'stab']) ?? 1;
 };
 export const MULTIPLY_LEVEL_FRIENDSHIP = (options: Options | undefined, level = DEFAULT_POKEMON_FRIEND_LEVEL) => {
-  return getOption(options, ['trainer_friendship', level.toString(), 'atk_bonus']);
+  return getOption(options, ['trainer_friendship', level.toString(), 'atk_bonus']) ?? 1;
 };
 export const MULTIPLY_THROW_CHARGE = (options: Options | undefined, type: string) => {
-  return getOption(options, ['throw_charge', type]);
+  return getOption(options, ['throw_charge', type]) ?? 1;
 };
 
 /* Shadow exclusive bonus for Pokémon in battle */
 export const SHADOW_ATK_BONUS = (options: Options | undefined) => {
-  return getOption(options, ['combat_options', 'shadow_bonus', 'atk']);
+  return getOption(options, ['combat_options', 'shadow_bonus', 'atk']) ?? 1;
 };
 export const SHADOW_DEF_BONUS = (options: Options | undefined) => {
-  return getOption(options, ['combat_options', 'shadow_bonus', 'def']);
+  return getOption(options, ['combat_options', 'shadow_bonus', 'def']) ?? 1;
 };
 
 export const genList: any = {

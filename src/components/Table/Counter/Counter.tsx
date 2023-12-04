@@ -245,7 +245,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
             data?.released ?? [],
             data?.typeEff,
             data?.weatherBoost,
-            def * (isShadow ? SHADOW_DEF_BONUS(data?.options) ?? 1 : 1),
+            def * (isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
             form.types,
             data?.combat ?? [],
             data?.pokemonCombat ?? []

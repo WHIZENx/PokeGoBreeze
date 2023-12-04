@@ -96,10 +96,10 @@ const Stats = (props: {
       return Math.round(
         stats *
           (type === 'atk'
-            ? SHADOW_ATK_BONUS(data?.options) ?? 0
+            ? SHADOW_ATK_BONUS(data?.options)
             : type === 'def'
-            ? SHADOW_DEF_BONUS(data?.options) ?? 0
-            : (SHADOW_ATK_BONUS(data?.options) ?? 0) * (SHADOW_DEF_BONUS(data?.options) ?? 0))
+            ? SHADOW_DEF_BONUS(data?.options)
+            : SHADOW_ATK_BONUS(data?.options) * SHADOW_DEF_BONUS(data?.options))
       );
     }
     return stats;
