@@ -606,9 +606,11 @@ const Pokemon = (props: {
                         <h5 className="d-flex">ID</h5>
                       </td>
                       <td colSpan={2}>
-                        <h5 className="d-flex">
-                          <b>#{data?.id}</b>
-                        </h5>
+                        {data && (
+                          <h5 className="d-flex">
+                            <b>#{data.id}</b>
+                          </h5>
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -629,10 +631,12 @@ const Pokemon = (props: {
                         <h5 className="d-flex">Generation</h5>
                       </td>
                       <td colSpan={2}>
-                        <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                          <b>{data?.generation.name.split('-').at(1).toUpperCase()}</b>{' '}
-                          <span className="text-gen">({getNumGen(data?.generation.url)})</span>
-                        </h5>
+                        {data && (
+                          <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
+                            <b>{data.generation.name.split('-').at(1).toUpperCase()}</b>{' '}
+                            <span className="text-gen">({getNumGen(data.generation.url)})</span>
+                          </h5>
+                        )}
                       </td>
                     </tr>
                     <tr>

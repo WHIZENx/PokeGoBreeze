@@ -247,7 +247,14 @@ const PokemonPVP = () => {
       ) : (
         <div
           style={{
-            backgroundImage: computeBgType(rankingPoke?.pokemon.types, rankingPoke?.shadow, rankingPoke?.purified, 0.8),
+            backgroundImage: computeBgType(
+              rankingPoke?.pokemon?.types,
+              rankingPoke?.shadow,
+              rankingPoke?.purified,
+              0.8,
+              undefined,
+              rankingPoke ? null : 'rgb(100, 100, 100)'
+            ),
             paddingTop: 15,
             paddingBottom: 15,
           }}
@@ -282,9 +289,11 @@ const PokemonPVP = () => {
                 <div>
                   <div className="d-flex flex-wrap align-items-center" style={{ gap: 15 }}>
                     <h3 className="text-white text-shadow">
-                      <b>
-                        #{rankingPoke?.id} {splitAndCapitalize(rankingPoke?.name, '-', ' ')}
-                      </b>
+                      {rankingPoke?.id && (
+                        <b>
+                          #{rankingPoke.id} {splitAndCapitalize(rankingPoke?.name, '-', ' ')}
+                        </b>
+                      )}
                     </h3>
                     <TypeInfo shadow={true} block={true} color={'white'} arr={rankingPoke?.pokemon.types} />
                   </div>
@@ -321,7 +330,7 @@ const PokemonPVP = () => {
                         elite={rankingPoke?.combatPoke.eliteCinematicMoves.includes(rankingPoke?.cmoveSec.name)}
                         shadow={rankingPoke?.combatPoke.shadowMoves.includes(rankingPoke?.cmoveSec.name)}
                         purified={rankingPoke?.combatPoke.purifiedMoves.includes(rankingPoke?.cmoveSec.name)}
-                        special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cMovePri?.name)}
+                        special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cmoveSec?.name)}
                       />
                     )}
                   </div>

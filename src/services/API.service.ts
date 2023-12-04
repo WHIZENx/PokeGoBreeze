@@ -93,6 +93,9 @@ class APIService {
   }
 
   getTypeHqSprite(type: string) {
+    if (!type) {
+      return this.getPokeSprite(0);
+    }
     if (type === 'Fighting') {
       type = 'Fight';
     }

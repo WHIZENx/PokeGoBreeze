@@ -22,12 +22,12 @@ const TypeBadge = (props: {
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [move, setMove] = useState(props.move);
+  const [move, setMove]: [Combat | undefined, any] = useState();
   useEffect(() => {
-    if (!props.find && combat) {
+    if (props.move?.name && combat.length > 0) {
       setMove(combat.find((item) => item.name === props.move?.name));
     }
-  }, [props.find, combat]);
+  }, [combat, props.move?.name]);
 
   return (
     <div className={'type-badge-container' + (props.grow ? ' filter-shadow' : '')} style={props.style}>

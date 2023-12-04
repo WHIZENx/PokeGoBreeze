@@ -368,10 +368,12 @@ const Move = (props: { id?: number }) => {
               <tr>
                 <td>Sound</td>
                 <td colSpan={2}>
-                  <audio className="d-flex w-100" controls={true} style={{ height: 30 }}>
-                    <source src={APIService.getSoundMove(move?.sound ?? '')} type="audio/wav" />
-                    Your browser does not support the audio element.
-                  </audio>
+                  {move?.sound && (
+                    <audio className="d-flex w-100" controls={true} style={{ height: 30 }}>
+                      <source src={APIService.getSoundMove(move.sound)} type="audio/wav" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  )}
                 </td>
               </tr>
             </tbody>

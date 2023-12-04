@@ -142,12 +142,15 @@ export const OverAllStats = (
       const cp = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
       const buddyCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
       const result: any = {};
-      result[MAX_LEVEL - 1] = { cp };
-      result[MAX_LEVEL] = { cp: buddyCP };
+      result[MAX_LEVEL - 1] = { cp: isNaN(cp) ? 0 : cp };
+      result[MAX_LEVEL] = { cp: isNaN(buddyCP) ? 0 : buddyCP };
       return result;
     } else {
       let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-      const maxPokeCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      let maxPokeCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      if (isNaN(maxPokeCP)) {
+        maxPokeCP = 0;
+      }
 
       if (maxPokeCP < minCP) {
         if (maxPokeCP <= 500) {
@@ -171,10 +174,10 @@ export const OverAllStats = (
     return (
       <ul className="element-top">
         <li className="element-top">
-          CP: <b>{maxCP === 10000 ? `${currStats[MAX_LEVEL - 1]?.cp}-${currStats[MAX_LEVEL]?.cp}` : `${currStats?.CP}`}</b>
+          CP: <b>{maxCP === 10000 ? `${currStats[MAX_LEVEL - 1]?.cp}-${currStats[MAX_LEVEL]?.cp}` : `${currStats?.CP ?? 0}`}</b>
         </li>
         <li className={currStats?.level <= 40 ? 'element-top' : ''}>
-          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${currStats?.level}`} </b>
+          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${currStats?.level ?? 0}`} </b>
           {(currStats?.level > 40 || maxCP === 10000) && (
             <b>
               (
@@ -184,9 +187,9 @@ export const OverAllStats = (
           )}
         </li>
         <li className="element-top">
-          <IVbar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.atk} style={{ maxWidth: 500 }} />
-          <IVbar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.def} style={{ maxWidth: 500 }} />
-          <IVbar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.sta} style={{ maxWidth: 500 }} />
+          <IVbar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.atk ?? 0} style={{ maxWidth: 500 }} />
+          <IVbar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.def ?? 0} style={{ maxWidth: 500 }} />
+          <IVbar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.sta ?? 0} style={{ maxWidth: 500 }} />
         </li>
       </ul>
     );
@@ -273,7 +276,7 @@ export const TypeEffective = (types: string[]) => {
 
 export const MoveSet = (
   moves: { fastMoves: { uses: number }[]; chargedMoves: { moveId: string; uses: number }[] },
-  combatList: { eliteQuickMoves: string[]; eliteCinematicMoves: string[] },
+  combatList: { eliteQuickMoves: string[]; eliteCinematicMoves: string[]; specialMoves: string[] },
   combatData: Combat[]
 ) => {
   const findArchetype = (archetype: string | string[]) => {
@@ -326,11 +329,15 @@ export const MoveSet = (
     }
 
     let elite = false;
+    let special = false;
     if (combatList.eliteQuickMoves.includes(name)) {
       elite = true;
     }
     if (combatList.eliteCinematicMoves.includes(name)) {
       elite = true;
+    }
+    if (combatList.specialMoves.includes(name)) {
+      special = true;
     }
 
     return (
@@ -343,7 +350,7 @@ export const MoveSet = (
         <div className="d-flex" style={{ columnGap: 10 }}>
           <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move.type)} />
           <span className="filter-shadow">
-            {splitAndCapitalize(oldName, '_', ' ')} {elite && <b className="filter-shadow">*</b>}
+            {splitAndCapitalize(oldName, '_', ' ')} {(elite || special) && <b className="filter-shadow">*</b>}
           </span>
         </div>
         <div className="d-flex align-items-center" style={{ columnGap: 10 }}>

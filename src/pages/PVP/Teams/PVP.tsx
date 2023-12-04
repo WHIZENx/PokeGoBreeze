@@ -343,7 +343,7 @@ const TeamPVP = () => {
               key={index}
               style={{
                 columnGap: '1rem',
-                backgroundImage: computeBgType(value.pokemonData.types, value.shadow, value.purified, 1, styleSheet.current),
+                backgroundImage: computeBgType(value?.pokemonData?.types, value?.shadow, value?.purified, 1, styleSheet.current),
               }}
             >
               <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll('_', '-')}`}>
@@ -543,7 +543,7 @@ const TeamPVP = () => {
                           style={{
                             padding: 15,
                             gap: '1rem',
-                            backgroundImage: computeBgType(value.pokemonData.types, value.shadow, value.purified),
+                            backgroundImage: computeBgType(value?.pokemonData?.types, value?.shadow, value?.purified),
                           }}
                         >
                           <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll('_', '-')}`}>
