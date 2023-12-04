@@ -1255,6 +1255,7 @@ const Battle = () => {
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
                 elite={pokemon.pokemonData.combatPoke?.eliteCinematicMoves.includes(pokemon.cMovePri?.name)}
+                special={pokemon.pokemonData.combatPoke?.specialMoves.includes(pokemon.cMovePri?.name)}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1265,6 +1266,7 @@ const Battle = () => {
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
                   elite={pokemon.pokemonData.combatPoke?.eliteCinematicMoves.includes((pokemon.cMoveSec as Combat)?.name)}
+                  special={pokemon.pokemonData.combatPoke?.specialMoves.includes(pokemon.cMovePri?.name)}
                 />
                 {findBuff(pokemon.cMoveSec as Combat)}
               </div>

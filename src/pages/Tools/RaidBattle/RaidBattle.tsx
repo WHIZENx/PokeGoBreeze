@@ -52,6 +52,7 @@ import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { PokemonDataModel, PokemonMoveData } from '../../../core/models/pokemon.model';
 import { CombatPokemon } from '../../../core/models/combat.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { TypeMove } from '../../../enums/move.enum';
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
@@ -1064,7 +1065,16 @@ const RaidBattle = () => {
                   <h6 className="text-center">
                     <b>Fast Moves</b>
                   </h6>
-                  <SelectMove clearData={clearData} result={resultFMove} move={fMove} setMovePokemon={setFMove} />
+                  <SelectMove
+                    pokemon={{
+                      num: id,
+                      forme: form?.form.form_name,
+                    }}
+                    clearData={clearData}
+                    move={fMove}
+                    setMovePokemon={setFMove}
+                    moveType={TypeMove.FAST}
+                  />
                 </div>
               </div>
               <div className="col d-flex justify-content-center">
@@ -1072,7 +1082,16 @@ const RaidBattle = () => {
                   <h6 className="text-center">
                     <b>Charged Moves</b>
                   </h6>
-                  <SelectMove clearData={clearData} result={resultCMove} move={cMove} setMovePokemon={setCMove} />
+                  <SelectMove
+                    pokemon={{
+                      num: id,
+                      forme: form?.form.form_name,
+                    }}
+                    clearData={clearData}
+                    move={cMove}
+                    setMovePokemon={setCMove}
+                    moveType={TypeMove.CHARGE}
+                  />
                 </div>
               </div>
             </div>

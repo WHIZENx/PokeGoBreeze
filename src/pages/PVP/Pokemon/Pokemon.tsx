@@ -309,6 +309,7 @@ const PokemonPVP = () => {
                       elite={rankingPoke?.combatPoke.eliteCinematicMoves.includes(rankingPoke?.cmovePri.name)}
                       shadow={rankingPoke?.combatPoke.shadowMoves.includes(rankingPoke?.cmovePri.name)}
                       purified={rankingPoke?.combatPoke.purifiedMoves.includes(rankingPoke?.cmovePri.name)}
+                      special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cMovePri?.name)}
                     />
                     {rankingPoke?.cmoveSec && (
                       <TypeBadge
@@ -320,6 +321,7 @@ const PokemonPVP = () => {
                         elite={rankingPoke?.combatPoke.eliteCinematicMoves.includes(rankingPoke?.cmoveSec.name)}
                         shadow={rankingPoke?.combatPoke.shadowMoves.includes(rankingPoke?.cmoveSec.name)}
                         purified={rankingPoke?.combatPoke.purifiedMoves.includes(rankingPoke?.cmoveSec.name)}
+                        special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cMovePri?.name)}
                       />
                     )}
                   </div>

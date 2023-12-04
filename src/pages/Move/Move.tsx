@@ -102,7 +102,7 @@ const Move = (props: { id?: number }) => {
     (id: string | number | undefined) => {
       if (id && data?.combat) {
         let move;
-        if (params.id && parseInt(id.toString()) === 281) {
+        if (id && parseInt(id.toString()) === 281) {
           move = data?.combat?.find(
             (item) =>
               item.track === parseInt(id.toString()) &&
@@ -116,13 +116,13 @@ const Move = (props: { id?: number }) => {
           document.title = `#${move?.track} - ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}`;
         } else {
           enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
-          if (params.id) {
-            document.title = `#${params.id} - Not Found`;
+          if (id) {
+            document.title = `#${id} - Not Found`;
           }
         }
       }
     },
-    [enqueueSnackbar, params.id, data?.combat]
+    [enqueueSnackbar, data?.combat]
   );
 
   useEffect(() => {

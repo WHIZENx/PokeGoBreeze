@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/move.enum';
 import { StoreState } from '../../../store/models/state.model';
+import { Combat } from '../../../core/models/combat.model';
 
 const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
@@ -24,34 +25,35 @@ const moveSort = (rowA: { type: string }, rowB: { type: string }) => {
 const columns: any = [
   {
     name: 'id',
-    selector: (row: { track: number }) => row.track,
+    selector: (row: Combat) => row.track,
     sortable: true,
   },
   {
     name: 'Type',
-    selector: (row: { type: string }) => <div className={'type-icon-small ' + row.type.toLowerCase()}>{capitalize(row.type)}</div>,
+    selector: (row: Combat) => <div className={'type-icon-small ' + row.type?.toLowerCase()}>{capitalize(row.type)}</div>,
     sortable: true,
     sortFunction: moveSort,
   },
   {
     name: 'Name',
-    selector: (row: { track: number; name: string; type: string }) => (
-      <Link to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type.toLowerCase() : '')}>
+    selector: (row: Combat) => (
+      <Link to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type?.toLowerCase() : '')}>
         {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
       </Link>
     ),
     sortable: true,
     sortFunction: nameSort,
-    width: '200px',
+    width: '180px',
   },
   {
-    name: 'Power',
-    selector: (row: { pve_power: number }) => row.pve_power,
+    name: 'Power (PVE/PVP)',
+    selector: (row: Combat) => `${row.pve_power}/${row.pvp_power}`,
     sortable: true,
+    width: '150px',
   },
   {
     name: 'DPS',
-    selector: (row: { pve_power: number; durationMs: number }) => parseFloat((row.pve_power / (row.durationMs / 1000)).toFixed(2)),
+    selector: (row: Combat) => parseFloat((row.pve_power / (row.durationMs / 1000)).toFixed(2)),
     sortable: true,
   },
 ];
@@ -70,8 +72,8 @@ const Search = () => {
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
-  const [resultFMove, setResultFMove]: any = useState([]);
-  const [resultCMove, setResultCMove]: any = useState([]);
+  const [resultFMove, setResultFMove]: [Combat[], any] = useState([]);
+  const [resultCMove, setResultCMove]: [Combat[], any] = useState([]);
 
   useEffect(() => {
     document.title = 'Moves - Search';
@@ -79,28 +81,32 @@ const Search = () => {
 
   useEffect(() => {
     if (combat.length > 0) {
-      setResultFMove(
-        combat
-          ?.filter((item) => item.type_move === TypeMove.FAST)
-          ?.filter(
-            (move) =>
-              (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(fMoveName.toLowerCase()) ||
-                move.track.toString().includes(fMoveName)) &&
-              (fMoveType === 'all' || fMoveType === capitalize(move.type))
-          )
-      );
-      setResultCMove(
-        combat
-          ?.filter((item) => item.type_move === TypeMove.CHARGE)
-          ?.filter(
-            (move) =>
-              (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(cMoveName.toLowerCase()) ||
-                move.track.toString().includes(cMoveName)) &&
-              (cMoveType === 'all' || cMoveType === capitalize(move.type))
-          )
-      );
+      const timeOutId = setTimeout(() => {
+        setResultFMove(searchMove(TypeMove.FAST, fMoveType, fMoveName));
+      }, 100);
+      return () => clearTimeout(timeOutId);
     }
-  }, [fMoveName, fMoveType, cMoveName, cMoveType, combat]);
+  }, [combat, fMoveType, fMoveName]);
+
+  useEffect(() => {
+    if (combat.length > 0) {
+      const timeOutId = setTimeout(() => {
+        setResultCMove(searchMove(TypeMove.CHARGE, cMoveType, cMoveName));
+      }, 100);
+      return () => clearTimeout(timeOutId);
+    }
+  }, [combat, cMoveType, cMoveName]);
+
+  const searchMove = (category: string, type: string, name: string) => {
+    return combat
+      .filter((item) => item.type_move === category)
+      .filter(
+        (move) =>
+          (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(name.toLowerCase()) ||
+            move.track.toString().includes(name)) &&
+          (type === 'all' || type === capitalize(move.type))
+      );
+  };
 
   return (
     <div className="container" style={{ marginTop: 20, marginBottom: 20 }}>

@@ -8,7 +8,7 @@ import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from './models/select-move.model';
 
-const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, result, selected, disable }: any) => {
+const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, selected, disable }: any) => {
   const combat = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
   const [resultMove, setResultMove]: [SelectMoveModel[], any] = useState([]);
   const [showMove, setShowMove] = useState(false);
@@ -27,8 +27,9 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
     (id: number, form: string, type: string, selected = false) => {
       if (combat.length > 0) {
         const resultFirst = combat.filter((item) => item.id === id);
+
         form = form ? form.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() : '';
-        const result = resultFirst.find((item) => item.name.replace(item.baseSpecies + '_', '') === form);
+        const result = resultFirst.find((item) => item.name.replace(item.baseSpecies + (form === '' ? '' : '_'), '') === form);
         const simpleMove: SelectMoveModel[] = [];
         if (resultFirst.length === 1 || result == null) {
           if (resultFirst.length === 0) {
@@ -58,7 +59,7 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
               simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
             });
           }
-          if (setMovePokemon && !selected && !move) {
+          if (setMovePokemon && (!selected || !move) && !move) {
             setMovePokemon(simpleMove.at(0));
           }
           return setResultMove(simpleMove);
@@ -87,38 +88,20 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
           });
         }
-        if (setMovePokemon && !selected && !move) {
+        if (setMovePokemon && (!selected || !move) && !move) {
           setMovePokemon(simpleMove.at(0));
         }
         return setResultMove(simpleMove);
       }
-      return;
     },
-    [setMovePokemon, combat]
+    [setMovePokemon, combat, move]
   );
 
   useEffect(() => {
-    if (pokemon && move) {
-      findMove(pokemon.num, pokemon.forme, moveType);
+    if (pokemon?.num && moveType) {
+      findMove(pokemon.num, pokemon?.forme ?? '', moveType, selected);
     }
-  }, [findMove]);
-
-  useEffect(() => {
-    if (result !== '' && move !== '') {
-      if (result) {
-        setResultMove(result);
-      } else {
-        if (pokemon && !move) {
-          findMove(pokemon.num, pokemon.forme, moveType);
-        }
-        if (!pokemon) {
-          setResultMove([]);
-        } else if (selected) {
-          findMove(pokemon.num, pokemon.forme, moveType, selected);
-        }
-      }
-    }
-  }, [findMove, pokemon, moveType, move, result, selected, setMovePokemon]);
+  }, [pokemon?.num, pokemon?.forme, moveType, selected]);
 
   const smallInput = () => {
     return (
@@ -129,14 +112,14 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
         }
         style={{ padding: 0, borderRadius: 0 }}
       >
-        {resultMove?.length === 0 && <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves Unavailable</span>}
+        {resultMove?.length === 0 && <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>}
         {resultMove?.length > 0 && (
           <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
             <CardMoveSmall
               value={move === '' ? null : move}
               show={pokemon ? true : false}
               disable={disable}
-              select={resultMove && resultMove.length > 1}
+              select={resultMove?.length > 1}
             />
             {showMove && resultMove && (
               <div className="result-move-select">

@@ -55,7 +55,7 @@ const Find = (props: {
   const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
 
   useEffect(() => {
-    if (pokemonList.length === 0) {
+    if (pokemonName.length > 0) {
       setPokemonList(pokemonName.filter((item) => item.id > 0).map((item) => new PokemonSearchingModel(item)));
     }
   }, [pokemonName]);
