@@ -6,7 +6,17 @@ import { Link } from 'react-router-dom';
 
 import { checkPokemonGO, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
-import { MAX_LEVEL, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/Constants';
+import {
+  FORM_GMAX,
+  FORM_MEGA,
+  MAX_IV,
+  MAX_LEVEL,
+  MIN_IV,
+  MIN_LEVEL,
+  RAID_BOSS_TIER,
+  SHADOW_ATK_BONUS,
+  SHADOW_DEF_BONUS,
+} from '../../../util/Constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -36,14 +46,19 @@ import { useSnackbar } from 'notistack';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 import update from 'immutability-helper';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
+import { StoreState, SearchingState } from '../../../store/models/state.model';
+import { PokemonDataModel, PokemonMoveData } from '../../../core/models/pokemon.model';
+import { CombatPokemon } from '../../../core/models/combat.model';
+import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { TypeMove } from '../../../enums/move.enum';
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('');
@@ -76,10 +91,11 @@ const RaidBattle = () => {
   const [filters, setFilters] = useState({
     used: {
       level: 40,
+      isShadow: false,
       iv: {
-        atk: 15,
-        def: 15,
-        sta: 15,
+        atk: MAX_IV,
+        def: MAX_IV,
+        sta: MAX_IV,
       },
       onlyShadow: false,
       onlyMega: false,
@@ -89,10 +105,11 @@ const RaidBattle = () => {
     },
     selected: {
       level: 40,
+      isShadow: false,
       iv: {
-        atk: 15,
-        def: 15,
-        sta: 15,
+        atk: MAX_IV,
+        def: MAX_IV,
+        sta: MAX_IV,
       },
       onlyShadow: false,
       onlyMega: false,
@@ -115,6 +132,12 @@ const RaidBattle = () => {
   const [show, setShow] = useState(false);
   const [showOption, setShowOption] = useState(false);
 
+  const [showSettingPokemon, setShowSettingPokemon]: any = useState({
+    isShow: false,
+    id: 0,
+    pokemon: null,
+  });
+
   const handleClose = () => {
     setTrainerBattle(update(trainerBattle, { [trainerBattleId]: { pokemons: { $set: tempPokemonBattle } } }));
     setShow(false);
@@ -129,14 +152,21 @@ const RaidBattle = () => {
     setShow(true);
     setTrainerBattleId(id);
     setPokemonBattle(pokemons);
-    setTempPokemonBattle(Array.from(pokemons));
+    setTempPokemonBattle([...pokemons]);
   };
 
   const handleShowOption = () => {
     setShowOption(true);
   };
 
+  const validIV = (value: number | undefined) => {
+    return !value || value < MIN_IV || value > MAX_IV;
+  };
+
   const handleSaveOption = () => {
+    if (validIV(selected.iv.atk) || validIV(selected.iv.def) || validIV(selected.iv.sta)) {
+      return;
+    }
     const changeResult =
       selected.level !== used.level ||
       selected.iv.atk !== used.iv.atk ||
@@ -163,6 +193,31 @@ const RaidBattle = () => {
 
   const handleCloseOption = () => {
     setShowOption(false);
+  };
+
+  const handleCloseSettingPokemon = () => {
+    setShowSettingPokemon({
+      isShow: false,
+      id: 0,
+      pokemon: null,
+    });
+  };
+
+  const handleSaveSettingPokemon = () => {
+    const pokemon: PokemonDataModel = showSettingPokemon.pokemon;
+    if (validIV(pokemon.stats?.iv.atk) || validIV(pokemon.stats?.iv.def) || validIV(pokemon.stats?.iv.sta)) {
+      return;
+    }
+    setPokemonBattle(
+      update(pokemonBattle, {
+        [showSettingPokemon.id]: {
+          dataTargetPokemon: {
+            $set: pokemon,
+          },
+        },
+      })
+    );
+    handleCloseSettingPokemon();
   };
 
   const initDataPoke: any = {
@@ -209,13 +264,21 @@ const RaidBattle = () => {
     setPokemonBattle(update(pokemonBattle, { $splice: [[index, 1]] }));
   };
 
+  const onOptionsPokemon = (index: number, pokemon: PokemonDataModel) => {
+    setShowSettingPokemon({
+      isShow: true,
+      id: index,
+      pokemon,
+    });
+  };
+
   const findMove = useCallback(
-    (id: any, form: string) => {
-      const resultFirst = data.pokemonCombat.filter((item: { id: any }) => item.id === id);
+    (id: number, form: string) => {
+      const resultFirst = data?.pokemonCombat?.filter((item) => item.id === id);
       form = form.replaceAll('-', '_').replaceAll('_standard', '').toUpperCase();
-      const result = resultFirst.find((item: { name: any }) => item.name === form);
-      let simpleMove: any[] = [];
-      if (resultFirst.length === 1 || result == null) {
+      const result = resultFirst?.find((item) => item.name === form);
+      let simpleMove: SelectMoveModel[] = [];
+      if (resultFirst && (resultFirst.length === 1 || result == null)) {
         if (resultFirst.length === 0) {
           setFMove('');
           setResultFMove('');
@@ -223,105 +286,88 @@ const RaidBattle = () => {
           return setResultCMove('');
         }
         let simpleMove: any[] = [];
-        resultFirst[0].quickMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+        resultFirst.at(0)?.quickMoves.forEach((value) => {
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
-        resultFirst[0].eliteQuickMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+        resultFirst.at(0)?.eliteQuickMoves.forEach((value) => {
+          simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
         });
-        setFMove(simpleMove[0]);
+        setFMove(simpleMove.at(0));
         setResultFMove(simpleMove);
         simpleMove = [];
-        resultFirst[0].cinematicMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+        resultFirst.at(0)?.cinematicMoves.forEach((value) => {
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
-        resultFirst[0].eliteCinematicMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+        resultFirst.at(0)?.eliteCinematicMoves.forEach((value) => {
+          simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
         });
-        resultFirst[0].shadowMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+        resultFirst.at(0)?.shadowMoves.forEach((value) => {
+          simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
         });
-        resultFirst[0].purifiedMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+        resultFirst.at(0)?.purifiedMoves.forEach((value) => {
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
         });
-        setCMove(simpleMove[0]);
+        resultFirst.at(0)?.specialMoves.forEach((value) => {
+          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+        });
+        setCMove(simpleMove.at(0));
         return setResultCMove(simpleMove);
       }
       simpleMove = [];
-      result.quickMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+      result?.quickMoves.forEach((value) => {
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
       });
-      result.eliteQuickMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+      result?.eliteQuickMoves.forEach((value) => {
+        simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
       });
-      setFMove(simpleMove[0]);
+      setFMove(simpleMove.at(0));
       setResultFMove(simpleMove);
       simpleMove = [];
-      result.cinematicMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+      result?.cinematicMoves.forEach((value) => {
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
       });
-      result.eliteCinematicMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+      result?.eliteCinematicMoves.forEach((value) => {
+        simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
       });
-      result.shadowMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+      result?.shadowMoves.forEach((value) => {
+        simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
       });
-      result.purifiedMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+      result?.purifiedMoves.forEach((value) => {
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
       });
-      setCMove(simpleMove[0]);
+      result?.specialMoves.forEach((value) => {
+        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+      });
+      setCMove(simpleMove.at(0));
       return setResultCMove(simpleMove);
     },
-    [data.pokemonCombat]
+    [data?.pokemonCombat]
   );
 
   const addCPokeData = (
-    dataList: {
-      pokemon: any;
-      fmove: any;
-      cmove: any;
-      dpsDef: number;
-      dpsAtk: number;
-      tdoAtk: number;
-      tdoDef: number;
-      multiDpsTdo: number;
-      ttkAtk: number;
-      ttkDef: number;
-      attackHpRemain: number;
-      defendHpRemain: number;
-      death: number;
-      shadow: any;
-      purified: any;
-      mShadow: any;
-      elite: { fmove: any; cmove: any };
-    }[],
-    movePoke: any[],
-    value: {
-      baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
-      forme: string | null;
-      slug: string;
-      types: any;
-    },
+    dataList: PokemonMoveData[],
+    movePoke: string[],
+    value: PokemonDataModel | undefined,
     vf: string,
     shadow: boolean,
     purified: boolean,
-    felite: any,
+    felite: boolean,
     celite: boolean,
-    specialMove: string | any[] | null,
+    specialMove: string | string[] | null,
     pokemonTarget: any
   ) => {
-    movePoke.forEach((vc: any) => {
-      const fmove = data.combat.find((item: { name: any }) => item.name === vf);
-      const cmove = data.combat.find((item: { name: any }) => item.name === vc);
+    movePoke.forEach((vc) => {
+      const fmove = data?.combat?.find((item: { name: string }) => item.name === vf);
+      const cmove = data?.combat?.find((item: { name: string }) => item.name === vc);
       if (fmove && cmove) {
-        const stats = calculateStatsByTag(value, value.baseStats, value.slug);
+        const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
         const statsAttackerTemp = {
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
+          hp: calculateStatsBattle(stats?.sta ?? 0, used.iv.sta, used.level),
           fmove,
           cmove,
-          types: value.types,
+          types: value?.types,
           shadow,
           WEATHER_BOOSTS: weatherCounter,
         };
@@ -329,16 +375,21 @@ const RaidBattle = () => {
           atk: statBossATK,
           def: statBossDEF,
           hp: statBossHP,
-          fmove: data.combat.find((item: { name: any }) => item.name === fMove.name),
-          cmove: data.combat.find((item: { name: any }) => item.name === cMove.name),
-          types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
+          fmove: data?.combat?.find((item) => item.name === fMove.name),
+          cmove: data?.combat?.find((item) => item.name === cMove.name),
+          types: form.form.types.map((type: { type: { name: string } }) => type.type.name),
           WEATHER_BOOSTS: weatherBoss,
         };
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
         statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
 
-        const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-        const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+        if (!statsAttacker || !statsDefender) {
+          enqueueSnackbar('Something went wrong!', { variant: 'error' });
+          return;
+        }
+
+        const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
+        const dpsAtk = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
         const ttkAtk = TimeToKill(Math.floor(statsDefender.hp), dpsAtk); // Time to Attacker kill Defender
         const ttkDef = TimeToKill(Math.floor(statsAttacker.hp), dpsDef); // Time to Defender kill Attacker
@@ -361,8 +412,8 @@ const RaidBattle = () => {
           defendHpRemain: Math.floor(statsDefender.hp) - Math.min(timeAllow, ttkAtk) * dpsAtk,
           death: Math.floor(statsDefender.hp / tdoAtk),
           shadow,
-          purified: purified && specialMove && specialMove.includes(statsAttacker.cmove.name),
-          mShadow: shadow && specialMove && specialMove.includes(statsAttacker.cmove.name),
+          purified: purified && specialMove != null && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
+          mShadow: shadow && specialMove != null && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
           elite: {
             fmove: felite,
             cmove: celite,
@@ -374,22 +425,22 @@ const RaidBattle = () => {
 
   const addFPokeData = (
     dataList: any,
-    combat: { cinematicMoves: any; shadowMoves: any; purifiedMoves: any; eliteCinematicMoves: any },
-    movePoke: any[],
-    pokemon: any,
+    combat: CombatPokemon,
+    movePoke: string[],
+    pokemon: PokemonDataModel,
     felite: boolean,
     pokemonTarget: boolean
   ) => {
-    movePoke.forEach((vf: any) => {
+    movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
-      if (!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) {
+      if (!pokemon.forme || !pokemon.forme?.toUpperCase().includes(FORM_MEGA)) {
         if (combat.shadowMoves.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         }
         addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves, pokemonTarget);
       }
-      if ((!pokemon.forme || !pokemon.forme.toLowerCase().includes('mega')) && combat.shadowMoves.length > 0) {
+      if ((!pokemon.forme || !pokemon.forme?.toUpperCase().includes(FORM_MEGA)) && combat.shadowMoves.length > 0) {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves, pokemonTarget);
       } else {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true, null, pokemonTarget);
@@ -399,16 +450,16 @@ const RaidBattle = () => {
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: any[] | (() => any[]) = [];
-    Object.values(data.pokemonData).forEach((pokemon: any) => {
-      if (pokemon.forme !== 'Gmax') {
-        let combatPoke = data.pokemonCombat.filter(
-          (item: { id: number; baseSpecies: string }) =>
+    (data?.pokemonData ?? []).forEach((pokemon) => {
+      if (pokemon.forme?.toUpperCase() !== FORM_GMAX) {
+        let combatPoke: any = data?.pokemonCombat?.filter(
+          (item) =>
             item.id === pokemon.num &&
             item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
-        const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
+        const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
         if (!result) {
-          combatPoke = combatPoke[0];
+          combatPoke = combatPoke.at(0);
         } else {
           combatPoke = result;
         }
@@ -423,11 +474,11 @@ const RaidBattle = () => {
       const sortedTDO = dataList.sort((a, b) => a.tdoAtk - b.tdoAtk);
       const sortedHP = dataList.sort((a, b) => a.attackHpRemain - b.attackHpRemain);
       const result = {
-        minDPS: sortedDPS[0].dpsAtk,
+        minDPS: sortedDPS.at(0).dpsAtk,
         maxDPS: sortedDPS[dataList.length - 1].dpsAtk,
-        minTDO: sortedTDO[0].tdoAtk,
+        minTDO: sortedTDO.at(0).tdoAtk,
         maxTDO: sortedTDO[dataList.length - 1].tdoAtk,
-        minHP: sortedHP[0].attackHpRemain,
+        minHP: sortedHP.at(0).attackHpRemain,
         maxHP: sortedHP[dataList.length - 1].attackHpRemain,
       };
       setResultBoss(result);
@@ -451,27 +502,23 @@ const RaidBattle = () => {
 
   const calculateDPSBattle = (
     pokemon: {
-      fmoveTargetPokemon: { name: string };
-      cmoveTargetPokemon: { name: string };
-      dataTargetPokemon: {
-        baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
-        forme: string | null;
-        slug: string;
-        types: any;
-      };
+      fmoveTargetPokemon?: { name: string };
+      cmoveTargetPokemon?: { name: string };
+      dataTargetPokemon: PokemonDataModel;
     },
     HpRemain: number,
     timer: number
   ) => {
-    const fmove = data.combat.find((item: { name: any }) => item.name === pokemon.fmoveTargetPokemon.name);
-    const cmove = data.combat.find((item: { name: any }) => item.name === pokemon.cmoveTargetPokemon.name);
+    const fmove = data?.combat?.find((item) => item.name === pokemon.fmoveTargetPokemon?.name);
+    const cmove = data?.combat?.find((item) => item.name === pokemon.cmoveTargetPokemon?.name);
 
     if (fmove && cmove) {
-      const stats = calculateStatsByTag(pokemon, pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
+      const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
+      const statsGO = pokemon.dataTargetPokemon.stats ?? used;
       const statsAttacker = {
-        atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
-        def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-        hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
+        atk: calculateStatsBattle(stats.atk, statsGO.iv.atk * (statsGO.isShadow ? SHADOW_ATK_BONUS(data?.options) : 1), statsGO.level),
+        def: calculateStatsBattle(stats.def, statsGO.iv.def * (statsGO.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1), statsGO.level),
+        hp: calculateStatsBattle(stats?.sta ?? 0, statsGO.iv.sta, statsGO.level),
         fmove,
         cmove,
         types: pokemon.dataTargetPokemon.types,
@@ -482,14 +529,19 @@ const RaidBattle = () => {
         atk: statBossATK,
         def: statBossDEF,
         hp: Math.floor(HpRemain),
-        fmove: data.combat.find((item: { name: any }) => item.name === fMove.name),
-        cmove: data.combat.find((item: { name: any }) => item.name === cMove.name),
-        types: form.form.types.map((type: { type: { name: any } }) => type.type.name),
+        fmove: data?.combat?.find((item) => item.name === fMove.name),
+        cmove: data?.combat?.find((item) => item.name === cMove.name),
+        types: form.form.types.map((type: { type: { name: string } }) => type.type.name),
         WEATHER_BOOSTS: weatherBoss,
       };
 
-      const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-      const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+      if (!statsDefender) {
+        enqueueSnackbar('Something went wrong!', { variant: 'error' });
+        return;
+      }
+
+      const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
+      const dpsAtk = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
       const ttkAtk = enableTimeAllow
         ? Math.min(timeAllow - timer, TimeToKill(Math.floor(statsDefender.hp), dpsAtk))
@@ -523,11 +575,9 @@ const RaidBattle = () => {
   };
 
   const calculateTrainerBattle = (trainerBattle: any[]) => {
-    const trainer = trainerBattle.map((trainer: { pokemons: any }) => trainer.pokemons);
+    const trainer = trainerBattle.map((trainer: { pokemons: any[] }) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter(
-      // eslint-disable-next-line no-unused-vars
-      (pokemons: { filter: (arg0: (pokemon: any) => boolean) => { (): any; new (): any; length: number } }) =>
-        pokemons.filter((pokemon: { dataTargetPokemon: any }) => !pokemon.dataTargetPokemon).length > 0
+      (pokemon) => pokemon.filter((item: { dataTargetPokemon: PokemonDataModel }) => !item.dataTargetPokemon)?.length > 0
     );
     if (trainerNoPokemon.length > 0) {
       enqueueSnackbar('Please select Pokémon to raid battle!', { variant: 'error' });
@@ -536,25 +586,23 @@ const RaidBattle = () => {
     enqueueSnackbar('Simulator battle raid successfully!', { variant: 'success' });
 
     const turn: any[] = [];
-    trainer.forEach((pokemons: any[], id: any) => {
-      pokemons.forEach((pokemon: any, index: any) => {
+    trainer.forEach((pokemons: any[], id: number) => {
+      pokemons.forEach((_, index: number) => {
         turn[index] = turn[index] ?? [];
         turn[index].push({ ...trainer[id][index], trainerId: id });
       });
     });
-    const result:
-      | React.SetStateAction<null>
-      | {
-          pokemon: any[];
-          summary: {
-            dpsAtk: number;
-            dpsDef: number;
-            tdoAtk: number;
-            tdoDef: number;
-            timer: number;
-            bossHp: number;
-          };
-        }[] = [];
+    const result: {
+      pokemon: any[];
+      summary: {
+        dpsAtk: number;
+        dpsDef: number;
+        tdoAtk: number;
+        tdoDef: number;
+        timer: number;
+        bossHp: number;
+      };
+    }[] = [];
     let timer = 0,
       bossHp = statBossHP;
     turn.forEach((group) => {
@@ -569,16 +617,23 @@ const RaidBattle = () => {
           bossHp: Math.max(0, bossHp),
         },
       };
-      group.forEach((pokemon: any) => {
-        if (pokemon.dataTargetPokemon) {
-          const stat = calculateDPSBattle(pokemon, dataList.summary.bossHp, timer);
-          dataList.pokemon.push({ ...stat, trainerId: pokemon.trainerId });
+      group.forEach(
+        (pokemon: {
+          dataTargetPokemon: PokemonDataModel;
+          trainerId?: number;
+          fmoveTargetPokemon?: { name: string };
+          cmoveTargetPokemon?: { name: string };
+        }) => {
+          if (pokemon.dataTargetPokemon) {
+            const stat = calculateDPSBattle(pokemon, dataList.summary.bossHp, timer);
+            dataList.pokemon.push({ ...stat, trainerId: pokemon.trainerId });
 
-          if (enableTimeAllow) {
-            dataList.summary.timer = Math.min(timeAllow, dataList.summary.timer);
+            if (enableTimeAllow) {
+              dataList.summary.timer = Math.min(timeAllow, dataList.summary.timer);
+            }
           }
         }
-      });
+      );
 
       dataList.summary.tdoAtk = Math.min(
         dataList.summary.bossHp,
@@ -608,7 +663,7 @@ const RaidBattle = () => {
           ...pokemon,
           tdoAtk,
           atkHpRemain:
-            dataList.summary.tdoAtk >= dataList.summary.bossHp
+            dataList.summary.tdoAtk >= Math.floor(dataList.summary.bossHp)
               ? Math.max(0, Math.floor(pokemon.hp) - Math.min(timeKill, pokemon.ttkDef) * pokemon.dpsDef)
               : Math.max(0, Math.floor(pokemon.hp) - Math.max(timeKill, pokemon.ttkDef) * pokemon.dpsDef),
         };
@@ -698,7 +753,7 @@ const RaidBattle = () => {
           <Form.Select
             value={filters.selected.level}
             className="form-control"
-            onChange={(e: any) => setFilters({ ...filters, selected: { ...selected, level: parseInt(e.target.value) } })}
+            onChange={(e: any) => setFilters({ ...filters, selected: { ...selected, level: parseFloat(e.target.value) } })}
           >
             {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
               <option key={index} value={value}>
@@ -713,8 +768,8 @@ const RaidBattle = () => {
           <input
             value={filters.selected.iv.atk}
             type="number"
-            min={0}
-            max={15}
+            min={MIN_IV}
+            max={MAX_IV}
             required={true}
             className="form-control"
             placeholder="IV ATK"
@@ -726,8 +781,8 @@ const RaidBattle = () => {
           <input
             value={filters.selected.iv.def}
             type="number"
-            min={0}
-            max={15}
+            min={MIN_IV}
+            max={MAX_IV}
             required={true}
             className="form-control"
             placeholder="IV DEF"
@@ -739,8 +794,8 @@ const RaidBattle = () => {
           <input
             value={filters.selected.iv.sta}
             type="number"
-            min={0}
-            max={15}
+            min={MIN_IV}
+            max={MAX_IV}
             required={true}
             className="form-control"
             placeholder="IV STA"
@@ -755,7 +810,7 @@ const RaidBattle = () => {
             control={
               <Checkbox
                 checked={filters.selected.onlyShadow}
-                onChange={(event, check) =>
+                onChange={(_, check) =>
                   setFilters({ ...filters, selected: { ...selected, onlyShadow: check, onlyMega: check ? false : selected.onlyMega } })
                 }
               />
@@ -766,7 +821,7 @@ const RaidBattle = () => {
             control={
               <Checkbox
                 checked={filters.selected.onlyMega}
-                onChange={(event, check) =>
+                onChange={(_, check) =>
                   setFilters({ ...filters, selected: { ...selected, onlyMega: check, onlyShadow: check ? false : selected.onlyShadow } })
                 }
               />
@@ -779,7 +834,7 @@ const RaidBattle = () => {
             control={
               <Switch
                 checked={filters.selected.onlyReleasedGO}
-                onChange={(event, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
+                onChange={(_, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
               />
             }
             label={
@@ -826,6 +881,160 @@ const RaidBattle = () => {
     );
   };
 
+  const modalFormSetting = () => {
+    const pokemon: PokemonDataModel = showSettingPokemon.pokemon;
+    if (!pokemon) {
+      return;
+    }
+    return (
+      <Fragment>
+        <div className="w-100 d-flex flex-column align-items-center">
+          <div className="position-relative" style={{ width: 96 }}>
+            {showSettingPokemon.pokemon.stats.isShadow && (
+              <img height={36} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+            )}
+            <img
+              alt="img-pokemon"
+              className="pokemon-sprite-large"
+              src={APIService.getPokeIconSprite(pokemon.sprite)}
+              onError={(e: any) => {
+                e.onerror = null;
+                e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+              }}
+            />
+          </div>
+          <div>
+            <b>{splitAndCapitalize(pokemon.name, '-', ' ')}</b>
+          </div>
+        </div>
+        <form className="element-top">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showSettingPokemon.pokemon.stats.isShadow}
+                onChange={(_, check) =>
+                  setShowSettingPokemon({
+                    ...showSettingPokemon,
+                    pokemon: {
+                      ...showSettingPokemon.pokemon,
+                      stats: { ...showSettingPokemon.pokemon.stats, isShadow: check },
+                    },
+                  })
+                }
+              />
+            }
+            label={
+              <span className="d-flex align-items-center">
+                <img
+                  className={showSettingPokemon.pokemon.stats.isShadow ? '' : 'filter-gray'}
+                  width={28}
+                  height={28}
+                  alt="pokemon-go-icon"
+                  src={APIService.getPokeShadow()}
+                />
+                <span style={{ color: showSettingPokemon.pokemon.stats.isShadow ? 'black' : 'lightgray' }}>Shadow</span>
+              </span>
+            }
+          />
+          <div>
+            <label className="form-label">Pokémon level</label>
+          </div>
+          <div className="input-group mb-3">
+            <span className="input-group-text">Level</span>
+            <Form.Select
+              value={pokemon.stats?.level}
+              className="form-control"
+              onChange={(e: any) =>
+                setShowSettingPokemon({
+                  ...showSettingPokemon,
+                  pokemon: {
+                    ...showSettingPokemon.pokemon,
+                    stats: { ...showSettingPokemon.pokemon.stats, level: parseFloat(e.target.value) },
+                  },
+                })
+              }
+            >
+              {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+                <option key={index} value={value}>
+                  {value}
+                </option>
+              ))}
+            </Form.Select>
+          </div>
+          <label className="form-label">Pokémon IV</label>
+          <div className="input-group mb-3">
+            <span className="input-group-text">ATK</span>
+            <input
+              value={pokemon.stats?.iv.atk}
+              type="number"
+              min={MIN_IV}
+              max={MAX_IV}
+              required={true}
+              className="form-control"
+              placeholder="IV ATK"
+              onInput={(e: any) =>
+                setShowSettingPokemon({
+                  ...showSettingPokemon,
+                  pokemon: {
+                    ...showSettingPokemon.pokemon,
+                    stats: {
+                      ...showSettingPokemon.pokemon.stats,
+                      iv: { ...showSettingPokemon.pokemon.stats.iv, atk: parseInt(e.target.value) },
+                    },
+                  },
+                })
+              }
+            />
+            <span className="input-group-text">DEF</span>
+            <input
+              value={pokemon.stats?.iv.def}
+              type="number"
+              min={MIN_IV}
+              max={MAX_IV}
+              required={true}
+              className="form-control"
+              placeholder="IV DEF"
+              onInput={(e: any) =>
+                setShowSettingPokemon({
+                  ...showSettingPokemon,
+                  pokemon: {
+                    ...showSettingPokemon.pokemon,
+                    stats: {
+                      ...showSettingPokemon.pokemon.stats,
+                      iv: { ...showSettingPokemon.pokemon.stats.iv, def: parseInt(e.target.value) },
+                    },
+                  },
+                })
+              }
+            />
+            <span className="input-group-text">STA</span>
+            <input
+              value={pokemon.stats?.iv.sta}
+              type="number"
+              min={MIN_IV}
+              max={MAX_IV}
+              required={true}
+              className="form-control"
+              placeholder="IV STA"
+              onInput={(e: any) =>
+                setShowSettingPokemon({
+                  ...showSettingPokemon,
+                  pokemon: {
+                    ...showSettingPokemon.pokemon,
+                    stats: {
+                      ...showSettingPokemon.pokemon.stats,
+                      iv: { ...showSettingPokemon.pokemon.stats.iv, sta: parseInt(e.target.value) },
+                    },
+                  },
+                })
+              }
+            />
+          </div>
+        </form>
+      </Fragment>
+    );
+  };
+
   return (
     <Fragment>
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
@@ -856,7 +1065,16 @@ const RaidBattle = () => {
                   <h6 className="text-center">
                     <b>Fast Moves</b>
                   </h6>
-                  <SelectMove clearData={clearData} result={resultFMove} move={fMove} setMovePokemon={setFMove} />
+                  <SelectMove
+                    pokemon={{
+                      num: id,
+                      forme: form?.form.form_name,
+                    }}
+                    clearData={clearData}
+                    move={fMove}
+                    setMovePokemon={setFMove}
+                    moveType={TypeMove.FAST}
+                  />
                 </div>
               </div>
               <div className="col d-flex justify-content-center">
@@ -864,7 +1082,16 @@ const RaidBattle = () => {
                   <h6 className="text-center">
                     <b>Charged Moves</b>
                   </h6>
-                  <SelectMove clearData={clearData} result={resultCMove} move={cMove} setMovePokemon={setCMove} />
+                  <SelectMove
+                    pokemon={{
+                      num: id,
+                      forme: form?.form.form_name,
+                    }}
+                    clearData={clearData}
+                    move={cMove}
+                    setMovePokemon={setCMove}
+                    moveType={TypeMove.CHARGE}
+                  />
                 </div>
               </div>
             </div>
@@ -885,13 +1112,13 @@ const RaidBattle = () => {
             <div className="row align-items-center element-top" style={{ margin: 0 }}>
               <div className="col-6 d-flex justify-content-end">
                 <FormControlLabel
-                  control={<Checkbox checked={weatherBoss} onChange={(event, check) => setOptions({ ...options, weatherBoss: check })} />}
+                  control={<Checkbox checked={weatherBoss} onChange={(_, check) => setOptions({ ...options, weatherBoss: check })} />}
                   label="Boss Weather Boost"
                 />
               </div>
               <div className="col-6">
                 <FormControlLabel
-                  control={<Checkbox checked={released} onChange={(event, check) => setOptions({ ...options, released: check })} />}
+                  control={<Checkbox checked={released} onChange={(_, check) => setOptions({ ...options, released: check })} />}
                   label="Only Release in Pokémon GO"
                 />
               </div>
@@ -899,9 +1126,7 @@ const RaidBattle = () => {
             <div className="row align-items-center element-top" style={{ margin: 0 }}>
               <div className="col-6 d-flex justify-content-end" style={{ paddingRight: 0 }}>
                 <FormControlLabel
-                  control={
-                    <Switch checked={enableTimeAllow} onChange={(event, check) => setOptions({ ...options, enableTimeAllow: check })} />
-                  }
+                  control={<Switch checked={enableTimeAllow} onChange={(_, check) => setOptions({ ...options, enableTimeAllow: check })} />}
                   label="Time Allow"
                 />
               </div>
@@ -954,12 +1179,12 @@ const RaidBattle = () => {
           </div>
           <div className="top-raid-group">
             {result
-              .filter((obj: { pokemon: { num: any; name: string } }) => {
+              .filter((obj: { pokemon: { num: number; name: string } }) => {
                 if (!used.onlyReleasedGO) {
                   return true;
                 }
                 obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
-                const result = checkPokemonGO(obj.pokemon, data.details);
+                const result = checkPokemonGO(obj.pokemon, data?.details ?? []);
                 return result ? result.releasedGO : false;
               })
               .filter((obj: { pokemon: { name: string } }) => {
@@ -991,8 +1216,8 @@ const RaidBattle = () => {
                         className="pokemon-sprite-raid"
                         alt="img-pokemon"
                         src={
-                          findAssetForm(data.assets, value.pokemon.num, value.pokemon.name)
-                            ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon.num, value.pokemon.name))
+                          findAssetForm(data?.assets ?? [], value.pokemon.num, value.pokemon.name)
+                            ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], value.pokemon.num, value.pokemon.name))
                             : APIService.getPokeFullSprite(value.pokemon.num)
                         }
                       />
@@ -1027,6 +1252,7 @@ const RaidBattle = () => {
                       elite={value.elite.cmove}
                       shadow={value.mShadow}
                       purified={value.purified}
+                      special={value.special}
                     />
                   </div>
                 </div>
@@ -1034,10 +1260,6 @@ const RaidBattle = () => {
           </div>
           <div className="row" style={{ marginLeft: 0, marginRight: 0, marginBottom: 15 }}>
             <div className="col-lg-5 justify-content-center" style={{ marginBottom: 20 }}>
-              <h4>
-                {`Pokémon Battle Level: `}
-                {<span>{`${used.level} - ${used.iv.atk}/${used.iv.def}/${used.iv.sta}`}</span>}
-              </h4>
               {trainerBattle.map((trainer, index) => (
                 <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
                   <Badge
@@ -1058,7 +1280,10 @@ const RaidBattle = () => {
                     {trainer.pokemons.map((pokemon, index) => (
                       <div key={index} className="pokemon-battle">
                         {pokemon.dataTargetPokemon ? (
-                          <span>
+                          <span className="position-relative">
+                            {pokemon.dataTargetPokemon.stats?.isShadow && (
+                              <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                            )}
                             <img
                               className="pokemon-sprite-battle"
                               alt="img-pokemon"
@@ -1075,11 +1300,13 @@ const RaidBattle = () => {
                   </div>
                   <span className="d-flex ic-group">
                     <span
-                      className={'ic-copy text-white ' + (trainer.pokemons[0].dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
+                      className={
+                        'ic-copy text-white ' + (trainer.pokemons.at(0).dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')
+                      }
                       title="Copy"
                       style={{ marginRight: 5 }}
                       onClick={() => {
-                        if (trainer.pokemons[0].dataTargetPokemon) {
+                        if (trainer.pokemons.at(0).dataTargetPokemon) {
                           setCountTrainer(countTrainer + 1);
                           setTrainerBattle(
                             update(trainerBattle, {
@@ -1142,11 +1369,18 @@ const RaidBattle = () => {
                     #{id} {form ? splitAndCapitalize(form.form.name, '-', ' ') : name.toLowerCase()} Tier {tier}
                   </b>
                 </h3>
-                <TypeInfo arr={form.form.types.map((type: { type: { name: any } }) => type.type.name)} />
+                <TypeInfo arr={form.form.types.map((type: { type: { name: string } }) => type.type.name)} />
               </div>
               <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
                 <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite} />
-                <TypeBadge title="Charged Move" move={cMove} elite={cMove.elite} shadow={cMove.shadow} purified={cMove.purified} />
+                <TypeBadge
+                  title="Charged Move"
+                  move={cMove}
+                  elite={cMove.elite}
+                  shadow={cMove.shadow}
+                  purified={cMove.purified}
+                  special={cMove.special}
+                />
               </div>
               <hr />
               <div className="row" style={{ margin: 0 }}>
@@ -1251,27 +1485,29 @@ const RaidBattle = () => {
                                     index: React.Key
                                   ) => (
                                     <tr key={index}>
-                                      <td>#{data.trainerId + 1}</td>
+                                      <td>#{data?.trainerId + 1}</td>
                                       <td>
                                         <div className="d-flex align-items-center table-pokemon">
                                           <img
                                             className="pokemon-sprite-battle"
                                             height={36}
                                             alt="img-pokemon"
-                                            src={APIService.getPokeIconSprite(data.pokemon.sprite, true)}
+                                            src={APIService.getPokeIconSprite(data?.pokemon.sprite, true)}
                                           />
-                                          <span className="caption">{splitAndCapitalize(data.pokemon.name, '-', ' ')}</span>
+                                          <span className="caption">
+                                            {splitAndCapitalize(data?.pokemon.name.replaceAll('_', '-'), '-', ' ')}
+                                          </span>
                                         </div>
                                       </td>
-                                      <td>{data.dpsAtk.toFixed(2)}</td>
-                                      <td>{Math.floor(data.tdoAtk) === 0 ? '-' : data.tdoAtk.toFixed(2)}</td>
-                                      <td>{Math.floor(data.atkHpRemain) === 0 ? data.ttkDef.toFixed(2) : '-'}</td>
+                                      <td>{data?.dpsAtk.toFixed(2)}</td>
+                                      <td>{Math.floor(data?.tdoAtk) === 0 ? '-' : data?.tdoAtk.toFixed(2)}</td>
+                                      <td>{Math.floor(data?.atkHpRemain) === 0 ? data?.ttkDef.toFixed(2) : '-'}</td>
                                       <td>
                                         <b>
-                                          <span className={Math.floor(data.atkHpRemain) === 0 ? 'text-danger' : 'text-success'}>
-                                            {Math.max(0, Math.floor(data.atkHpRemain))}
+                                          <span className={Math.floor(data?.atkHpRemain) === 0 ? 'text-danger' : 'text-success'}>
+                                            {Math.max(0, Math.floor(data?.atkHpRemain))}
                                           </span>{' '}
-                                          / {Math.floor(data.hp)}
+                                          / {Math.floor(data?.hp)}
                                         </b>
                                       </td>
                                     </tr>
@@ -1317,7 +1553,7 @@ const RaidBattle = () => {
           </div>
         </div>
       )}
-      <Modal show={show} onHide={handleClose} centered={true}>
+      <Modal show={show && !showSettingPokemon.isShow} onHide={handleClose} centered={true}>
         <Modal.Header closeButton={true}>
           <Modal.Title>Trainer #{trainerBattleId !== null ? trainerBattleId + 1 : 0}</Modal.Title>
         </Modal.Header>
@@ -1325,7 +1561,7 @@ const RaidBattle = () => {
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>
             {trainerBattleId !== null && (
               <Fragment>
-                {pokemonBattle.map((pokemon: any, index: React.Key) => (
+                {pokemonBattle.map((pokemon: PokemonDataModel, index: React.Key) => (
                   <div className={'' + (index === 0 ? '' : 'element-top')} key={index}>
                     <PokemonRaid
                       controls={true}
@@ -1333,8 +1569,18 @@ const RaidBattle = () => {
                       pokemon={pokemon}
                       data={pokemonBattle}
                       setData={setPokemonBattle}
+                      defaultSetting={{
+                        level: filters.selected.level,
+                        isShadow: false,
+                        iv: {
+                          atk: filters.selected.iv.atk,
+                          def: filters.selected.iv.def,
+                          sta: filters.selected.iv.sta,
+                        },
+                      }}
                       onCopyPokemon={onCopyPokemon}
                       onRemovePokemon={onRemovePokemon}
+                      onOptionsPokemon={onOptionsPokemon}
                     />
                   </div>
                 ))}
@@ -1384,6 +1630,23 @@ const RaidBattle = () => {
           </Button>
           <Button variant="primary" onClick={handleSaveOption}>
             Save changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showSettingPokemon.isShow} onHide={handleCloseSettingPokemon} centered={true}>
+        <Modal.Header closeButton={true}>
+          <Modal.Title>Pokémon Settings</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalFormSetting()}</div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseSettingPokemon}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleSaveSettingPokemon}>
+            Save
           </Button>
         </Modal.Footer>
       </Modal>

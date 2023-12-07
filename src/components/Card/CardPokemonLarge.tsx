@@ -1,10 +1,20 @@
 import React, { Fragment } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { findAssetForm } from '../../util/Compute';
+import { StoreState } from '../../store/models/state.model';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 
-const CardPokemonLarge = (props: { value: any; id: number; name: string; elite?: any; shadow?: any; purified?: any }) => {
-  const assets = useSelector((state: RootStateOrAny) => state.store.data.assets);
+const CardPokemonLarge = (props: {
+  value?: PokemonDataModel;
+  id: number;
+  name: string;
+  elite?: boolean;
+  shadow?: boolean;
+  purified?: boolean;
+  special?: boolean;
+}) => {
+  const assets = useSelector((state: StoreState) => state.store?.data?.assets);
 
   return (
     <Fragment>
@@ -15,8 +25,8 @@ const CardPokemonLarge = (props: { value: any; id: number; name: string; elite?:
               className="pokemon-sprite-medium"
               alt="img-pokemon"
               src={
-                findAssetForm(assets, props.id, props.name)
-                  ? APIService.getPokemonModel(findAssetForm(assets, props.id, props.name))
+                findAssetForm(assets ?? [], props.id, props.name)
+                  ? APIService.getPokemonModel(findAssetForm(assets ?? [], props.id, props.name))
                   : APIService.getPokeFullSprite(props.id)
               }
             />
@@ -25,6 +35,7 @@ const CardPokemonLarge = (props: { value: any; id: number; name: string; elite?:
             <b>{props.name ?? props.value}</b> {props.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
             {props.shadow && <span className="type-icon-small ic shadow-ic">Shadow</span>}
             {props.purified && <span className="type-icon-small ic purified-ic">Purified</span>}
+            {props.special && <span className="type-icon-small ic special-ic">Special</span>}
           </div>
         </div>
       ) : (

@@ -1,10 +1,11 @@
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { sortStatsPokemon } from '../../util/Calculate';
 import { convertArrStats } from '../../util/Utils';
 
 export const LOAD_STATS = 'LOAD_STATS';
 export const RESET_STATS = 'RESET_STATS';
 
-export const loadStats = (pokemonData: any) => ({
+export const loadStats = (pokemonData: PokemonDataModel) => ({
   type: LOAD_STATS,
   payload: sortStatsPokemon(convertArrStats(pokemonData)),
 });

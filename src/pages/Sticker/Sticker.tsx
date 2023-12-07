@@ -4,59 +4,68 @@ import { splitAndCapitalize } from '../../util/Utils';
 
 import './Sticker.scss';
 import APIService from '../../services/API.service';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Form, OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../store/models/state.model';
 
 const Sticker = () => {
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
-  const [pokemonStickerFilter, setPokemonStickerFilter] = useState([]);
+  const [pokemonStickerFilter, setPokemonStickerFilter]: any = useState([]);
 
-  const pokeStickerList = useSelector((state: RootStateOrAny) => state.store.data.stickers);
+  const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);
 
-  const selectPokemon = useRef(
-    pokeStickerList
-      .reduce((prev: any, curr: any) => {
-        if (curr.pokemonName && !prev.map((obj: any) => obj.name).includes(curr.pokemonName)) {
-          prev.push({
-            id: curr.pokemonId,
-            name: curr.pokemonName,
-          });
-        }
-        return prev;
-      }, [])
-      .sort((a: any, b: any) => a.id - b.id)
-  );
+  const [selectPokemon, setSelectPokemon]: [any[], any] = useState([]);
 
   useEffect(() => {
     document.title = 'Stickers List';
   }, []);
 
   useEffect(() => {
-    setPokemonStickerFilter(
-      pokeStickerList
-        .filter((item: any) => {
-          if (!shopType) {
-            return true;
-          } else if (shopType === 2) {
-            return !item.shop;
-          }
-          return item.shop;
-        })
-        .filter((item: any) => {
-          if (!id) {
-            return true;
-          } else if (id === -1) {
-            return !item.pokemonId;
-          }
-          return item.pokemonId === id;
-        })
-    );
-  }, [id, shopType]);
+    if (pokeStickerList.length > 0) {
+      setSelectPokemon(
+        pokeStickerList
+          .reduce((prev: any, curr: any) => {
+            if (curr.pokemonName && !prev.map((obj: { name: string }) => obj.name).includes(curr.pokemonName)) {
+              prev.push({
+                id: curr.pokemonId,
+                name: curr.pokemonName,
+              });
+            }
+            return prev;
+          }, [])
+          .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
+      );
+    }
+  }, [pokeStickerList]);
+
+  useEffect(() => {
+    if (pokeStickerList.length > 0) {
+      setPokemonStickerFilter(
+        pokeStickerList
+          ?.filter((item) => {
+            if (!shopType) {
+              return true;
+            } else if (shopType === 2) {
+              return !item.shop;
+            }
+            return item.shop;
+          })
+          .filter((item) => {
+            if (!id) {
+              return true;
+            } else if (id === -1) {
+              return !item.pokemonId;
+            }
+            return item.pokemonId === id;
+          })
+      );
+    }
+  }, [id, shopType, pokeStickerList]);
 
   return (
     <div className="container" style={{ padding: 15 }}>
@@ -69,7 +78,7 @@ const Sticker = () => {
         <Form.Select className="form-control input-search" value={id} onChange={(e) => setId(parseInt(e.target.value))}>
           <option value={0}>All</option>
           <option value={-1}>None</option>
-          {selectPokemon.current.map((value: { id: number; name: string }, index: React.Key) => (
+          {selectPokemon.map((value, index: React.Key) => (
             <option key={index} value={value.id}>{`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}</option>
           ))}
         </Form.Select>
@@ -92,7 +101,10 @@ const Sticker = () => {
           ) : (
             <Fragment>
               {pokemonStickerFilter.map(
-                (value: { shop: any; pack: any[]; pokemonId: any; pokemonName: any; stickerUrl: any; id: string }, index: React.Key) => (
+                (
+                  value: { shop: boolean; pack: string[]; pokemonId: number; pokemonName: string; stickerUrl: string; id: string },
+                  index: React.Key
+                ) => (
                   <OverlayTrigger
                     key={index}
                     placement="auto"

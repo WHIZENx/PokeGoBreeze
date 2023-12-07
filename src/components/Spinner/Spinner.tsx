@@ -1,10 +1,12 @@
 import React, { Fragment } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import loading from '../../assets/loading.png';
 import './Spinner.scss';
+import { DeviceState, SpinnerState } from '../../store/models/state.model';
 
 const Spinner = () => {
-  const spinner = useSelector((state: RootStateOrAny) => state.spinner);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const device = useSelector((state: DeviceState) => state.device);
 
   return (
     <Fragment>
@@ -30,6 +32,7 @@ const Spinner = () => {
                       >
                         Retry Again
                       </p>
+                      {device.isMobile && <p className="text-danger">{spinner.error.msg}</p>}
                     </Fragment>
                   ) : (
                     <Fragment>

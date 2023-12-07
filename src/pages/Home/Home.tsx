@@ -11,7 +11,9 @@ import './Home.scss';
 import { Link } from 'react-router-dom';
 
 import pokemonData from '../../data/pokemon.json';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../store/models/state.model';
+import { MAX_IV } from '../../util/Constants';
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,51 +59,32 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 const Home = () => {
-  const typesData = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
+  const typesData = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
   const types = Object.keys(typesData);
 
   const tableScrollID = useRef(1);
   const dataList = useRef(
     Object.values(pokemonData)
-      .filter((pokemon: any) => pokemon.num > 0)
-      .map(
-        (item: {
-          baseStats: {
-            hp: number;
-            atk: number;
-            def: number;
-            spa: number;
-            spd: number;
-            spe: number;
-          };
-          forme: string | null;
-          slug: string;
-          num: any;
-          name: any;
-          types: any;
-          color: string;
-          sprite: string;
-          baseSpecies: any;
-        }) => {
-          const stats = calculateStatsByTag(item, item.baseStats, item.slug);
-          return {
-            id: item.num,
-            name: item.name,
-            forme: item.forme,
-            types: item.types,
-            color: item.color.toLowerCase(),
-            sprite: item.sprite.toLowerCase(),
-            baseSpecies: item.baseSpecies,
-            baseStats: item.baseStats,
-            atk: stats.atk,
-            def: stats.def,
-            sta: stats.sta,
-            minCP: calculateCP(stats.atk, stats.def, stats.sta, 1),
-            maxCP_40: calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 40),
-            maxCP_50: calculateCP(stats.atk + 15, stats.def + 15, stats.sta + 15, 50),
-          };
-        }
-      )
+      .filter((pokemon) => pokemon.num > 0)
+      .map((item) => {
+        const stats = calculateStatsByTag(item, item.baseStats, item.slug);
+        return {
+          id: item.num,
+          name: item.name,
+          forme: item.forme,
+          types: item.types,
+          color: item.color.toLowerCase(),
+          sprite: item.sprite.toLowerCase(),
+          baseSpecies: item.baseSpecies,
+          baseStats: item.baseStats,
+          atk: stats.atk,
+          def: stats.def,
+          sta: stats?.sta ?? 0,
+          minCP: calculateCP(stats.atk, stats.def, stats?.sta ?? 0, 1),
+          maxCP_40: calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, 40),
+          maxCP_50: calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, 50),
+        };
+      })
       .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
   );
   const dataListFilter: any = useRef(null);
@@ -118,9 +101,9 @@ const Home = () => {
 
   useEffect(() => {
     tableScrollID.current = 1;
-    const result = dataList.current.filter((item: any) => {
+    const result = dataList.current.filter((item) => {
       const boolFilterType =
-        item.types.map((item: any) => selectTypes.includes(item.toUpperCase())).filter((bool: boolean) => bool === true).length ===
+        item.types.map((item) => selectTypes.includes(item?.toUpperCase())).filter((bool: boolean) => bool === true).length ===
         selectTypes.length;
       const boolFilterPoke =
         searchTerm === '' || item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm);
@@ -130,7 +113,7 @@ const Home = () => {
     dataListFilter.current = result;
     setListOfPokemon(result.slice(0, 20));
 
-    const onScroll = (e: { target: { documentElement: { scrollTop: any; offsetHeight: any } } }) => {
+    const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
       const scrollTop = e.target.documentElement.scrollTop;
       const fullHeight = e.target.documentElement.offsetHeight;
       const windowHeight = window.innerHeight;
@@ -146,7 +129,7 @@ const Home = () => {
     return () => window.removeEventListener('scroll', onScroll as any);
   }, [searchTerm, searchMaxCP, selectTypes]);
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
+  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop >= fullHeight * tableScrollID.current * 0.8) {

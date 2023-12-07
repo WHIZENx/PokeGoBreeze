@@ -4,6 +4,7 @@ import searching from './searching.reducer';
 import options from './options.reducer';
 import stats from './stats.reducer';
 import theme from './theme.reducer';
+import device from './device.reducer';
 
 const rootReducer = {
   spinner,
@@ -11,6 +12,7 @@ const rootReducer = {
   searching,
   options,
   stats,
+  device,
   theme,
 };
 

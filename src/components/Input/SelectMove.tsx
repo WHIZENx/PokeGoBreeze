@@ -3,15 +3,17 @@ import CardMoveSmall from '../Card/CardMoveSmall';
 
 import './Select.scss';
 import CardMove from '../Card/CardMove';
-import { RootStateOrAny, useSelector } from 'react-redux';
-import { TypeMove } from '../../enums/type-move.enum';
+import { useSelector } from 'react-redux';
+import { TypeMove } from '../../enums/move.enum';
+import { StoreState } from '../../store/models/state.model';
+import { SelectMoveModel } from './models/select-move.model';
 
-const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, result, selected, disable }: any) => {
-  const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
-  const [resultMove, setResultMove]: any = useState(null);
+const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, selected, disable }: any) => {
+  const combat = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
+  const [resultMove, setResultMove]: [SelectMoveModel[], any] = useState([]);
   const [showMove, setShowMove] = useState(false);
 
-  const changeMove = (value: any) => {
+  const changeMove = (value: SelectMoveModel) => {
     setShowMove(false);
     if (setMovePokemon) {
       setMovePokemon(value);
@@ -22,94 +24,84 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
   };
 
   const findMove = useCallback(
-    (id: any, form: string, type: string, selected = false) => {
-      const resultFirst = data.filter((item: { id: any }) => item.id === id);
-      form = form ? form.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() : '';
-      const result = resultFirst.find(
-        (item: { name: string; baseSpecies: string }) => item.name.replace(item.baseSpecies + '_', '') === form
-      );
-      const simpleMove: any[] = [];
-      if (resultFirst.length === 1 || result == null) {
-        if (resultFirst.length === 0) {
-          return setResultMove([]);
+    (id: number, form: string, type: string, selected = false) => {
+      if (combat.length > 0) {
+        const resultFirst = combat.filter((item) => item.id === id);
+
+        form = form ? form.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() : '';
+        const result = resultFirst.find((item) => item.name.replace(item.baseSpecies + (form === '' ? '' : '_'), '') === form);
+        const simpleMove: SelectMoveModel[] = [];
+        if (resultFirst.length === 1 || result == null) {
+          if (resultFirst.length === 0) {
+            return setResultMove([]);
+          }
+          if (type === TypeMove.FAST) {
+            resultFirst.at(0)?.quickMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            });
+            resultFirst.at(0)?.eliteQuickMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            });
+          } else {
+            resultFirst.at(0)?.cinematicMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            });
+            resultFirst.at(0)?.eliteCinematicMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            });
+            resultFirst.at(0)?.shadowMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
+            });
+            resultFirst.at(0)?.purifiedMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+            });
+            resultFirst.at(0)?.specialMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+            });
+          }
+          if (setMovePokemon && (!selected || !move) && !move) {
+            setMovePokemon(simpleMove.at(0));
+          }
+          return setResultMove(simpleMove);
         }
         if (type === TypeMove.FAST) {
-          resultFirst[0].quickMoves.forEach((value: any) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+          result.quickMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
           });
-          resultFirst[0].eliteQuickMoves.forEach((value: any) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+          result.eliteQuickMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
           });
         } else {
-          resultFirst[0].cinematicMoves.forEach((value: any) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
+          result.cinematicMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
           });
-          resultFirst[0].eliteCinematicMoves.forEach((value: any) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
+          result.eliteCinematicMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
           });
-          resultFirst[0].shadowMoves.forEach((value: any) => {
-            simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
+          result.shadowMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
           });
-          resultFirst[0].purifiedMoves.forEach((value: any) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
+          result.purifiedMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+          });
+          result.specialMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
           });
         }
-        if (setMovePokemon && !selected && !move) {
-          setMovePokemon(simpleMove[0]);
+        if (setMovePokemon && (!selected || !move) && !move) {
+          setMovePokemon(simpleMove.at(0));
         }
         return setResultMove(simpleMove);
       }
-      if (type === TypeMove.FAST) {
-        result.quickMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
-        });
-        result.eliteQuickMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
-        });
-      } else {
-        result.cinematicMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
-        });
-        result.eliteCinematicMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
-        });
-        result.shadowMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
-        });
-        result.purifiedMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
-        });
-      }
-      if (setMovePokemon && !selected && !move) {
-        setMovePokemon(simpleMove[0]);
-      }
-      return setResultMove(simpleMove);
     },
-    [setMovePokemon, data]
+    [setMovePokemon, combat, move]
   );
 
   useEffect(() => {
-    if (pokemon && move) {
-      findMove(pokemon.num, pokemon.forme, moveType);
+    if (pokemon?.num && moveType) {
+      findMove(pokemon.num, pokemon?.forme ?? '', moveType, selected);
     }
-  }, []);
-
-  useEffect(() => {
-    if (result !== '' && move !== '') {
-      if (result) {
-        setResultMove(result);
-      } else {
-        if (pokemon && !move) {
-          findMove(pokemon.num, pokemon.forme, moveType);
-        }
-        if (!pokemon) {
-          setResultMove(null);
-        } else if (selected) {
-          findMove(pokemon.num, pokemon.forme, moveType, selected);
-        }
-      }
-    }
-  }, [findMove, pokemon, moveType, move, result, selected, setMovePokemon]);
+  }, [pokemon?.num, pokemon?.forme, moveType, selected]);
 
   const smallInput = () => {
     return (
@@ -120,23 +112,21 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
         }
         style={{ padding: 0, borderRadius: 0 }}
       >
-        {resultMove && resultMove.length === 0 && (
-          <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves Unavailable</span>
-        )}
-        {resultMove && resultMove.length > 0 && (
+        {resultMove?.length === 0 && <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>}
+        {resultMove?.length > 0 && (
           <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
             <CardMoveSmall
               value={move === '' ? null : move}
               show={pokemon ? true : false}
               disable={disable}
-              select={resultMove && resultMove.length > 1}
+              select={resultMove?.length > 1}
             />
             {showMove && resultMove && (
               <div className="result-move-select">
                 <div>
                   {resultMove
-                    .filter((value: { name: any }) => value.name !== move.name)
-                    .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
+                    .filter((value) => value?.name !== move?.name)
+                    .map((value, index) => (
                       <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
                         <CardMoveSmall value={value} />
                       </div>
@@ -164,8 +154,8 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
           <div className="result-move-select-default">
             <div>
               {resultMove
-                .filter((value: { name: any }) => value.name !== move.name)
-                .map((value: { name: string; elite: any; shadow: any; purified: any }, index: React.Key) => (
+                .filter((value) => value.name !== move.name)
+                .map((value, index) => (
                   <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
                     <CardMove value={value} />
                   </div>

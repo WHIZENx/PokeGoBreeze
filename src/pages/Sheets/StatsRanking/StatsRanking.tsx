@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize, convertName, capitalize, convertFormName } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -12,11 +12,13 @@ import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
+import { StatsState, StoreState } from '../../../store/models/state.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const columnPokemon: any = [
   {
     name: '',
-    selector: (row: { num: any; forme: string; name: string }) => (
+    selector: (row: { num: number; forme: string; name: string }) => (
       <Link
         to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
@@ -28,17 +30,17 @@ const columnPokemon: any = [
   },
   {
     name: 'Ranking',
-    selector: (row: { rank: any }) => row.rank,
+    selector: (row: { rank: number }) => row.rank,
     width: '80px',
   },
   {
     name: 'ID',
-    selector: (row: { num: any }) => row.num,
+    selector: (row: { num: number }) => row.num,
     width: '80px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: { num: any; forme: string; name: string; sprite: string; baseSpecies: string }) => (
+    selector: (row: { num: number; forme: string; name: string; sprite: string; baseSpecies: string }) => (
       <>
         <img
           height={48}
@@ -50,15 +52,15 @@ const columnPokemon: any = [
             e.target.src = APIService.getPokeIconSprite(row.baseSpecies);
           }}
         />
-        {splitAndCapitalize(row.name, '-', ' ')}
+        {splitAndCapitalize(row.name?.replaceAll('_', '-'), '-', ' ')}
       </>
     ),
     minWidth: '200px',
   },
   {
     name: 'Type(s)',
-    selector: (row: { types: any[] }) =>
-      row.types.map((value: any, index: React.Key) => (
+    selector: (row: { types: string[] }) =>
+      row.types.map((value: string, index: React.Key) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -108,43 +110,41 @@ const customStyles = {
 const StatsRanking = () => {
   const conditionalRowStyles = [
     {
-      when: (row: { slug: string }) => row.slug === select?.slug,
+      when: (row: { name: string; slug: string }) => row.slug === select?.slug,
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
 
-  const stats = useSelector((state: RootStateOrAny) => state.stats);
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const stats = useSelector((state: StatsState) => state.stats);
+  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemonData ?? []);
   const [search, setSearch] = useState('');
 
-  const mappingData = (pokemon: any[]) => {
-    return pokemon.map(
-      (data: { baseStats: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }; slug: string | null }) => {
-        const statsTag = calculateStatsByTag(data, data.baseStats, data.slug);
-        return {
-          ...data,
-          atk: {
-            attack: statsTag.atk,
-            rank: stats.attack.ranking.find((stat: { attack: number }) => stat.attack === statsTag.atk).rank,
-          },
-          def: {
-            defense: statsTag.def,
-            rank: stats.defense.ranking.find((stat: { defense: number }) => stat.defense === statsTag.def).rank,
-          },
-          sta: {
-            stamina: statsTag.sta,
-            rank: stats.stamina.ranking.find((stat: { stamina: number }) => stat.stamina === statsTag.sta).rank,
-          },
-          statProd: {
-            prod: statsTag.atk * statsTag.def * statsTag.sta,
-            rank: stats.statProd.ranking.find((stat: { prod: number }) => stat.prod === statsTag.atk * statsTag.def * statsTag.sta).rank,
-          },
-        };
-      }
-    );
+  const mappingData = (pokemon: PokemonDataModel[]) => {
+    return pokemon.map((data) => {
+      const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
+      return {
+        ...data,
+        atk: {
+          attack: statsTag.atk,
+          rank: stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank,
+        },
+        def: {
+          defense: statsTag.def,
+          rank: stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank,
+        },
+        sta: {
+          stamina: statsTag.sta,
+          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank,
+        },
+        statProd: {
+          prod: statsTag.atk * statsTag.def * (statsTag?.sta ?? 0),
+          rank: stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * (statsTag?.sta ?? 0))?.rank,
+        },
+      };
+    });
   };
 
-  const sortRanking = (pokemon: any[], id: number) => {
+  const sortRanking = (pokemon: any[], id: string | number | undefined) => {
     let sortBy: string[] = [];
     if (id === 6) {
       sortBy = ['atk', 'attack'];
@@ -166,10 +166,10 @@ const StatsRanking = () => {
   };
 
   const [sortId, setSortId] = useState(9);
-  const pokemonList = useRef(sortRanking(mappingData(Object.values(pokemonData).filter((pokemon: any) => pokemon.num > 0)), sortId));
-  const [pokemonFilter, setPokemonFilter] = useState(pokemonList.current);
+  const [pokemonList, setPokemonList]: [PokemonDataModel[], any] = useState([]);
+  const [pokemonFilter, setPokemonFilter]: [any[], any] = useState([]);
 
-  const [select, setSelect]: any = useState(pokemonList.current[0]);
+  const [select, setSelect]: any = useState(null);
 
   const [filters, setFilters] = useState({ match: false });
   const { match } = filters;
@@ -179,20 +179,36 @@ const StatsRanking = () => {
   }, []);
 
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      setPokemonFilter(
-        pokemonList.current.filter(
-          (pokemon: { num: number; name: string }) =>
-            search === '' ||
-            (match
-              ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
-              : pokemon.num.toString().includes(search) ||
-                splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
-        )
-      );
-    }, 100);
-    return () => clearTimeout(timeOutId);
-  }, [search, match]);
+    if (pokemonData.length > 0 && pokemonList.length === 0) {
+      const pokemon = sortRanking(mappingData(pokemonData.filter((pokemon) => pokemon.num > 0)), sortId);
+      setPokemonList(pokemon);
+      setPokemonFilter(pokemon);
+    }
+  }, [pokemonList, pokemonData]);
+
+  useEffect(() => {
+    if (!select && pokemonList.length > 0) {
+      setSelect(pokemonList.at(0));
+    }
+  }, [select, pokemonList]);
+
+  useEffect(() => {
+    if (pokemonList.length > 0) {
+      const timeOutId = setTimeout(() => {
+        setPokemonFilter(
+          pokemonList.filter(
+            (pokemon) =>
+              search === '' ||
+              (match
+                ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
+                : pokemon.num.toString().includes(search) ||
+                  splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
+          )
+        );
+      }, 100);
+      return () => clearTimeout(timeOutId);
+    }
+  }, [search, match, pokemonList]);
 
   return (
     <div className="element-bottom position-relative poke-container container">
@@ -203,7 +219,7 @@ const StatsRanking = () => {
               className="pokemon-main-sprite"
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
-              src={APIService.getPokeFullSprite(select.num, splitAndCapitalize(select.forme, '-', '-'))}
+              src={APIService.getPokeFullSprite(select?.num, splitAndCapitalize(select?.forme, '-', '-'))}
             />
           </div>
         </div>
@@ -218,7 +234,7 @@ const StatsRanking = () => {
                   </td>
                   <td colSpan={2}>
                     <h5 className="d-flex">
-                      <b>#{select.num}</b>
+                      <b>{select && `#${select?.num}`}</b>
                     </h5>
                   </td>
                 </tr>
@@ -229,7 +245,7 @@ const StatsRanking = () => {
                   <td colSpan={2}>
                     <h5 className="d-flex">
                       <b>
-                        {splitAndCapitalize(convertName(select.name.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
+                        {splitAndCapitalize(convertName(select?.name.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
                       </b>
                     </h5>
                   </td>
@@ -240,7 +256,7 @@ const StatsRanking = () => {
                   </td>
                   <td colSpan={2}>
                     <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                      {select.gen === 0 ? (
+                      {!select || select?.gen === 0 ? (
                         <b>Unknown</b>
                       ) : (
                         <>
@@ -255,7 +271,7 @@ const StatsRanking = () => {
                     <h5 className="d-flex">Region</h5>
                   </td>
                   <td colSpan={2}>
-                    <h5 className="d-flex">{splitAndCapitalize(select.region, '-', ' ')}</h5>
+                    <h5 className="d-flex">{splitAndCapitalize(select?.region, '-', ' ')}</h5>
                   </td>
                 </tr>
                 <tr>
@@ -263,7 +279,7 @@ const StatsRanking = () => {
                     <h5 className="d-flex">Version</h5>
                   </td>
                   <td colSpan={2}>
-                    <h5 className="d-flex">{select.version && splitAndCapitalize(select.version.replace(' Go', ' GO'), '-', ' ')}</h5>
+                    <h5 className="d-flex">{select?.version && splitAndCapitalize(select?.version.replace(' Go', ' GO'), '-', ' ')}</h5>
                   </td>
                 </tr>
                 <tr>
@@ -277,7 +293,7 @@ const StatsRanking = () => {
                           <h6>Weight:</h6>
                         </div>
                         <div className="d-inline-block">
-                          <h6>{select.weightkg} kg</h6>
+                          <h6>{select?.weightkg} kg</h6>
                         </div>
                       </div>
                     </div>
@@ -287,7 +303,7 @@ const StatsRanking = () => {
                           <h6>Height:</h6>
                         </div>
                         <div className="d-inline-block">
-                          <h6>{select.heightm} m</h6>
+                          <h6>{select?.heightm} m</h6>
                         </div>
                       </div>
                     </div>
@@ -309,10 +325,10 @@ const StatsRanking = () => {
           </div>
         </div>
       </div>
-      <Stats statATK={select.atk} statDEF={select.def} statSTA={select.sta} statProd={select.statProd} pokemonStats={stats} />
+      <Stats statATK={select?.atk} statDEF={select?.def} statSTA={select?.sta} statProd={select?.statProd} pokemonStats={stats} />
       <div className="d-flex" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
-          <span className="input-group-text">Find Pokemon</span>
+          <span className="input-group-text">Find Pokémon</span>
           <input
             type="text"
             className="form-control input-search"
@@ -322,7 +338,7 @@ const StatsRanking = () => {
           />
         </div>
         <FormControlLabel
-          control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
+          control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
           label="Match Pokémon"
         />
       </div>
@@ -333,15 +349,15 @@ const StatsRanking = () => {
         defaultSortFieldId={9}
         defaultSortAsc={false}
         highlightOnHover={true}
-        onRowClicked={(row: any) => {
-          if (select.name !== row.name) {
+        onRowClicked={(row) => {
+          if (select?.name !== row.name) {
             setSelect(row);
           }
         }}
-        onSort={(rows: any) => {
+        onSort={(rows) => {
           if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonList.current, rows.id));
-            setSortId(rows.id);
+            setPokemonFilter(sortRanking(pokemonList, rows.id));
+            setSortId(parseInt(rows.id?.toString() ?? ''));
           }
         }}
         conditionalRowStyles={conditionalRowStyles}

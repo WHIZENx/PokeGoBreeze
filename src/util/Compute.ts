@@ -1,5 +1,7 @@
-import { Candy } from '../core/models/candy';
+import { Asset } from '../core/models/asset.model';
+import { Candy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
+import { FORM_GALARIAN, FORM_NORMAL, FORM_STANDARD } from './Constants';
 import { convertName, getStyleRuleValue } from './Utils';
 
 export const priorityBadge = (priority: number) => {
@@ -49,7 +51,7 @@ export const rankIconCenterName = (rank: number) => {
   }
 };
 
-export const raidEgg = (tier: number, mega: any, primal: any, ultra?: boolean) => {
+export const raidEgg = (tier: number, mega: boolean, primal: boolean, ultra?: boolean) => {
   if (tier === 1) {
     return APIService.getRaidSprite('raid_egg_0_icon');
   } else if (tier === 3) {
@@ -75,88 +77,97 @@ export const raidEgg = (tier: number, mega: any, primal: any, ultra?: boolean) =
 };
 
 export const computeCandyBgColor = (candyData: Candy[], id: number) => {
-  let data: any = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData?.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) {
-    data = candyData.find((item) => item.familyId === 0);
+    data = candyData?.find((item) => item.familyId === 0);
   }
-  return `rgb(${Math.round(255 * data?.secondaryColor.r) || 0}, ${Math.round(255 * data?.secondaryColor.g) || 0}, ${
-    Math.round(255 * data?.secondaryColor.b) || 0
+  return `rgb(${Math.round(255 * (data?.secondaryColor.r ?? 0)) || 0}, ${Math.round(255 * (data?.secondaryColor.g ?? 0)) || 0}, ${
+    Math.round(255 * (data?.secondaryColor.b ?? 0)) || 0
   }, ${data?.secondaryColor.a || 1})`;
 };
 
 export const computeCandyColor = (candyData: Candy[], id: number) => {
-  let data: any = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData?.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) {
-    data = candyData.find((item: any) => item.familyId === 0);
+    data = candyData?.find((item) => item.familyId === 0);
   }
-  return `rgb(${Math.round(255 * data?.primaryColor.r) || 0}, ${Math.round(255 * data?.primaryColor.g) || 0}, ${
-    Math.round(255 * data?.primaryColor.b) || 0
+  return `rgb(${Math.round(255 * (data?.primaryColor.r ?? 0)) || 0}, ${Math.round(255 * (data?.primaryColor.g ?? 0)) || 0}, ${
+    Math.round(255 * (data?.primaryColor.b ?? 0)) || 0
   }, ${data?.primaryColor.a || 1})`;
 };
 
-export const computeBgType = (types: string[] | string, shadow = false, purified = false, opacity = 1, styleSheet?: any) => {
+export const computeBgType = (
+  types: string[] | string | undefined,
+  shadow = false,
+  purified = false,
+  opacity = 1,
+  styleSheet?: any,
+  defaultColor?: string | null
+) => {
+  if (defaultColor) {
+    return `linear-gradient(to bottom right, ${defaultColor}, ${defaultColor})`;
+  }
   const colorsPalette: any[] = [];
   if (typeof types === 'string') {
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
-    return color.split(')')[0] + `, ${opacity ?? 1})`;
+    return color?.split(')').at(0) + `, ${opacity ?? 1})`;
   } else {
-    types.forEach((type: string) => {
+    types?.forEach((type: string) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
-      colorsPalette.push(color.split(')')[0] + `, ${opacity ?? 1})`);
+      colorsPalette.push(color?.split(')').at(0) + `, ${opacity ?? 1})`);
     });
   }
   if (shadow) {
-    return `linear-gradient(to bottom right, ${colorsPalette[0]}, rgb(202, 156, 236), ${colorsPalette[1] ?? colorsPalette[0]})`;
+    return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, rgb(202, 156, 236), ${colorsPalette.at(1) ?? colorsPalette.at(0)})`;
   }
   if (purified) {
-    return `linear-gradient(to bottom right, ${colorsPalette[0]}, white, ${colorsPalette[1] ?? colorsPalette[0]})`;
+    return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, white, ${colorsPalette.at(1) ?? colorsPalette.at(0)})`;
   }
-  return `linear-gradient(to bottom right, ${colorsPalette[0]}, ${colorsPalette[1] ?? colorsPalette[0]})`;
+  return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, ${colorsPalette.at(1) ?? colorsPalette.at(0)})`;
 };
 
-export const queryAssetForm = (pokemonAssets: any[], id: number, name: string) => {
-  if (name.split('-')[1] === 'A') {
+export const queryAssetForm = (pokemonAssets: Asset[], id: number | undefined, name: string | undefined) => {
+  if (name?.split('-').at(1) === 'A') {
     name = name.replace('-A', '-Armor');
   }
-  const pokemon = pokemonAssets.find((item: { id: any }) => item.id === id);
+  const pokemon = pokemonAssets?.find((item) => item.id === id);
   if (!pokemon) {
     return null;
   }
-  const standard = pokemon.image.filter((item: { form: string | string[] }) => item.form.includes('STANDARD'));
+  const standard = pokemon.image.filter((item) => item.form?.toUpperCase().includes(FORM_STANDARD));
   name = convertName(name);
 
   if (pokemon.name === name || standard.length > 0) {
-    const image = pokemon.image.find((item: { form: string }) => item.form === 'NORMAL');
+    const image = pokemon.image.find((item) => item.form?.toUpperCase() === FORM_NORMAL);
     if (image) {
       return image;
     }
     if (standard.length > 0) {
-      if (name.includes('GALARIAN')) {
+      if (name.includes(FORM_GALARIAN)) {
         if (name.includes('ZEN')) {
-          return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN_ZEN'));
+          return pokemon.image.find((item) => item.form.includes(`${FORM_GALARIAN}_ZEN`));
         }
-        return pokemon.image.find((item: { form: string | string[] }) => item.form.includes('GALARIAN'));
+        return pokemon.image.find((item) => item.form.includes(FORM_GALARIAN));
       } else if (name.includes('ZEN')) {
-        return pokemon.image.find((item: { form: string | string[] }) => !item.form.includes('GALARIAN') && item.form.includes('ZEN'))
-          .default;
+        return pokemon.image.find((item) => !item.form.includes(FORM_GALARIAN) && item.form.includes('ZEN'));
       } else {
-        return pokemon.image.find((item: { form: string }) => item.form === 'STANDARD');
+        return pokemon.image.find((item) => item.form?.toUpperCase() === FORM_STANDARD);
       }
     }
     try {
-      return pokemon.image[0];
+      return pokemon.image.at(0);
     } catch {
       return null;
     }
   }
   try {
-    return pokemon.image.find((item: { form: any }) => name.replaceAll(pokemon.name + '_', '') === item.form);
+    return pokemon.image.find((item) => name?.replaceAll(pokemon.name + '_', '') === item.form);
   } catch {
     return null;
   }
 };
 
-export const findAssetForm = (pokemonAssets: any[], id: number, name: string) => {
+export const findAssetForm = (pokemonAssets: Asset[], id: number | undefined, name: string | undefined) => {
   const form = queryAssetForm(pokemonAssets, id, name);
   if (form) {
     return form.default;
@@ -164,7 +175,7 @@ export const findAssetForm = (pokemonAssets: any[], id: number, name: string) =>
   return null;
 };
 
-export const findAssetFormShiny = (pokemonAssets: any[], id: number, name: string) => {
+export const findAssetFormShiny = (pokemonAssets: Asset[], id: number, name: string) => {
   const form = queryAssetForm(pokemonAssets, id, name);
   if (form) {
     return form.shiny;
@@ -172,6 +183,6 @@ export const findAssetFormShiny = (pokemonAssets: any[], id: number, name: strin
   return null;
 };
 
-export const findStabType = (types: any[], findType: string) => {
-  return types.find((type: string) => type.toLowerCase() === findType.toLowerCase()) ? true : false;
+export const findStabType = (types: string[], findType: string) => {
+  return types.some((type) => type.toLowerCase() === findType.toLowerCase());
 };

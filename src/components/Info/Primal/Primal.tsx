@@ -1,19 +1,21 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
 
 import '../Mega/Mega.scss';
+import { StoreState } from '../../../store/models/state.model';
+import { FORM_PRIMAL } from '../../../util/Constants';
 
-const Primal = (props: { formList: any; id: number }) => {
-  const evoData = useSelector((state: RootStateOrAny) => state.store.data.evolution);
-  const [arrEvoList, setArrEvoList] = useState([]);
+const Primal = (props: { formList: any[]; id: number }) => {
+  const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
+  const [arrEvoList, setArrEvoList]: any = useState([]);
 
   useEffect(() => {
     setArrEvoList(
       props.formList
-        .filter((item: { form: { form_name: string | string[] } }[]) => item[0].form.form_name.includes('primal'))
-        .map((item: { form: any }[]) => item[0].form)
+        .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL))
+        .map((item: { form: string }[]) => item.at(0)?.form)
     );
   }, [props.formList]);
 
@@ -24,8 +26,8 @@ const Primal = (props: { formList: any; id: number }) => {
       .join('_');
     try {
       return evoData
-        .find((item: { temp_evo: any[] }) => item.temp_evo.find((value: { tempEvolutionName: any }) => value.tempEvolutionName === name))
-        .temp_evo.find((item: { tempEvolutionName: any }) => item.tempEvolutionName === name);
+        ?.find((item) => item.temp_evo.find((value) => value.tempEvolutionName === name))
+        ?.temp_evo.find((item) => item.tempEvolutionName === name);
     } catch (error) {
       return {
         firstTempEvolution: 'Unavailable',
@@ -41,7 +43,7 @@ const Primal = (props: { formList: any; id: number }) => {
       </h4>
       <div className="mega-container scroll-evolution">
         <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
-          {arrEvoList.map((value: any, evo) => (
+          {arrEvoList.map((value: { name: string; sprites: { front_default: string } }, evo: React.Key) => (
             <li key={evo} className="img-form-gender-group li-evo" style={{ width: 'fit-content', height: 'fit-content' }}>
               <img
                 id="img-pokemon"
@@ -69,7 +71,7 @@ const Primal = (props: { formList: any; id: number }) => {
                     props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
                   )}
                 />
-                <b>x{getQuestEvo(value.name).firstTempEvolution}</b>
+                <b>x{getQuestEvo(value.name)?.firstTempEvolution}</b>
               </span>
               <span className="caption">
                 Primal evolution:{' '}
@@ -81,7 +83,7 @@ const Primal = (props: { formList: any; id: number }) => {
                     props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
                   )}
                 />
-                <b>x{getQuestEvo(value.name).tempEvolution}</b>
+                <b>x{getQuestEvo(value.name)?.tempEvolution}</b>
               </span>
             </li>
           ))}

@@ -1,18 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Bar: any = styled.div`
+const Bar = styled.div`
   width: 100%;
-  height: ${(props: any) => props.height}px;
-  background: ${(props: any) => props.bgColor};
+  height: ${(props: { height: number; bgColor: string }) => props.height}px;
+  background: ${(props: { bgColor: string }) => props.bgColor};
   position: relative;
   border-radius: 3px;
 `;
 
-const Fill: any = styled.div`
+const Fill = styled.div`
   position: absolute;
-  height: ${(props: any) => props.height}px;
-  background: ${(props: any) => props.color};
+  height: ${(props: { height: number; color: string }) => props.height}px;
+  background: ${(props: { color: string }) => props.color};
   border-radius: 3px;
 `;
 

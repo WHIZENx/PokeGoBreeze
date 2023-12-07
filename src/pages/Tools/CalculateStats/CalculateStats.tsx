@@ -14,22 +14,24 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
 import Find from '../../../components/Select/Find/Find';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
+import { StoreState, SearchingState } from '../../../store/models/state.model';
+import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 
 const Calculate = () => {
-  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? undefined);
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
 
-  const [searchCP, setSearchCP]: any = useState('');
+  const [searchCP, setSearchCP] = useState('');
 
-  const [ATKIv, setATKIv]: any = useState(0);
-  const [DEFIv, setDEFIv]: any = useState(0);
-  const [STAIv, setSTAIv]: any = useState(0);
+  const [ATKIv, setATKIv] = useState(0);
+  const [DEFIv, setDEFIv] = useState(0);
+  const [STAIv, setSTAIv] = useState(0);
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -101,20 +103,17 @@ const Calculate = () => {
   }, []);
 
   const onCalculateStatsPoke = useCallback(
-    (e: any) => {
+    (e: { preventDefault: () => void }) => {
       e.preventDefault();
       calculateStatsPoke();
     },
     [calculateStatsPoke]
   );
 
-  const onHandleLevel = useCallback(
-    (e: any, v: any) => {
-      setStatLevel(v);
-      setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, v, typePoke));
-    },
-    [globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]
-  );
+  const onHandleLevel = useCallback(() => {
+    setStatLevel(statLevel);
+    setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, statLevel, typePoke));
+  }, [globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
 
   return (
     <Fragment>
@@ -163,13 +162,13 @@ const Calculate = () => {
               <PokeGoSlider
                 value={ATKIv}
                 aria-label="ATK marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e: any, v: any) => setATKIv(v)}
+                onChange={(_, v: any) => setATKIv(v)}
               />
               <div className="d-flex justify-content-between">
                 <b>DEF</b>
@@ -178,13 +177,13 @@ const Calculate = () => {
               <PokeGoSlider
                 value={DEFIv}
                 aria-label="DEF marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e: any, v: any) => setDEFIv(v)}
+                onChange={(_, v: any) => setDEFIv(v)}
               />
               <div className="d-flex justify-content-between">
                 <b>STA</b>
@@ -193,13 +192,13 @@ const Calculate = () => {
               <PokeGoSlider
                 value={STAIv}
                 aria-label="STA marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e: any, v: any) => setSTAIv(v)}
+                onChange={(_, v: any) => setSTAIv(v)}
               />
             </Box>
           </div>
@@ -257,11 +256,11 @@ const Calculate = () => {
               <LevelSlider
                 aria-label="Level"
                 value={statLevel}
-                defaultValue={1}
+                defaultValue={MIN_LEVEL}
                 valueLabelDisplay="off"
                 step={0.5}
-                min={1}
-                max={typePoke === 'buddy' ? 51 : 50}
+                min={MIN_LEVEL}
+                max={typePoke === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={pokeStats ? false : true}
                 onChange={(pokeStats ? onHandleLevel : null) as any}

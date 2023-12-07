@@ -62194,10 +62194,10 @@
     "region": "galar",
     "version": "sword-shield"
   },
-  "toxtricitygmax": {
+  "toxtricityampedgmax": {
     "num": 849,
-    "name": "Toxtricity-Gmax",
-    "alias": "toxtricitygmax",
+    "name": "Toxtricity-Amped-Gmax",
+    "alias": "toxtricityampedgmax",
     "slug": "toxtricity-gmax",
     "sprite": "toxtricity-gmax",
     "types": [
@@ -62234,8 +62234,8 @@
     "prevo": null,
     "canGigantamax": null,
     "baseSpecies": "Toxtricity",
-    "forme": "Gmax",
-    "changesFrom": "Toxtricity",
+    "forme": "Amped-Gmax",
+    "changesFrom": "Toxtricity-Amped-Gmax",
     "cannotDynamax": true,
     "releasedGO": false,
     "isTransferable": true,
@@ -66407,10 +66407,10 @@
     "region": "galar",
     "version": "sword-shield"
   },
-  "urshifugmax": {
+  "urshifusinglestrikegmax": {
     "num": 892,
-    "name": "Urshifu-Gmax",
-    "alias": "urshifugmax",
+    "name": "Urshifu-Single-Strike-Gmax",
+    "alias": "urshifusinglestrikegmax",
     "slug": "urshifu-gmax",
     "sprite": "urshifu-gmax",
     "types": [
@@ -66447,8 +66447,8 @@
     "prevo": null,
     "canGigantamax": null,
     "baseSpecies": "Urshifu",
-    "forme": "Gmax",
-    "changesFrom": "Urshifu",
+    "forme": "Single-Strike-Gmax",
+    "changesFrom": "Urshifu-Single-Strike",
     "cannotDynamax": true,
     "releasedGO": false,
     "isTransferable": true,

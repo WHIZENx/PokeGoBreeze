@@ -1,19 +1,19 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const Bar: any = styled.div`
+const Bar = styled.div`
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props: { height: number }) => props.height}px;
   background: #00000024;
   border: 2px ridge lightgray;
   position: relative;
 `;
 
-const Fill: any = styled.div`
+const Fill = styled.div`
   position: absolute;
-  width: ${(props: any) => (props.hp * 100) / props.maxHp}%;
-  height: ${(props: any) => props.height - 4}px;
-  background: ${(props: any) => props.color};
+  width: ${(props: { hp: number; maxHp: number; height: number; color: string }) => (props.hp * 100) / props.maxHp}%;
+  height: ${(props: { height: number }) => props.height - 4}px;
+  background: ${(props: { color: string }) => props.color};
   transition: 0.1s;
 `;
 
@@ -21,12 +21,12 @@ const anim = keyframes`
     to { visibility: hidden; }
 `;
 
-const FillDmg: any = styled.div`
+const FillDmg = styled.div`
   position: absolute;
-  width: ${(props: any) => (props.dmg * 100) / props.maxHp}%;
-  height: ${(props: any) => props.height - 4}px;
-  background: ${(props: any) => props.color};
-  left: ${(props: any) => (props.hp * 100) / props.maxHp}%;
+  width: ${(props: { hp: number; maxHp: number; height: number; color: string; dmg: number }) => (props.dmg * 100) / props.maxHp}%;
+  height: ${(props: { height: number }) => props.height - 4}px;
+  background: ${(props: { color: string }) => props.color};
+  left: ${(props: { hp: number; maxHp: number }) => (props.hp * 100) / props.maxHp}%;
   animation: 1s ${anim};
   animation-fill-mode: forwards;
 `;

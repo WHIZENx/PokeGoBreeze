@@ -1,19 +1,20 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import TypeEffective from '../Effective/TypeEffective';
 import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
 import TypeInfo from '../Sprites/Type/Type';
 
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../store/models/state.model';
 
-const Info = (props: { data: { types: any }; currForm: { form: { id: any; types: any[] } } }) => {
-  const typeEffective = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
-  const weatherEffective = useSelector((state: RootStateOrAny) => state.store.data.weatherBoost);
+const Info = (props: { data: { types: string[] }; currForm: { form: { id: number; types: { type: { name: string } }[] } } }) => {
+  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
+  const weatherEffective = useSelector((state: StoreState) => state.store.data?.weatherBoost ?? {});
 
-  const getWeatherEffective = (types: any[]) => {
+  const getWeatherEffective = (types: { type: { name: string } }[]) => {
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: any) => {
-      types?.forEach((type: { type: { name: string } }) => {
-        if (value.includes(type.type.name.toUpperCase()) && !data.includes(key)) {
+      types?.forEach((type) => {
+        if (value.includes(type.type.name?.toUpperCase()) && !data.includes(key)) {
           data.push(key);
         }
       });
@@ -21,7 +22,7 @@ const Info = (props: { data: { types: any }; currForm: { form: { id: any; types:
     return data;
   };
 
-  const getTypeEffective = (types: any[]) => {
+  const getTypeEffective = (types: { type: { name: string } }[]) => {
     const data: any = {
       very_weak: [],
       weak: [],
@@ -32,8 +33,8 @@ const Info = (props: { data: { types: any }; currForm: { form: { id: any; types:
     };
     Object.entries(typeEffective).forEach(([key, value]: any) => {
       let valueEffective = 1;
-      types?.forEach((type: { type: { name: string } }) => {
-        valueEffective *= value[type.type.name.toUpperCase()];
+      types?.forEach((type) => {
+        valueEffective *= value[type.type.name?.toUpperCase()];
       });
       if (valueEffective >= 2.56) {
         data.very_weak.push(key);
@@ -55,20 +56,17 @@ const Info = (props: { data: { types: any }; currForm: { form: { id: any; types:
   };
 
   return (
-    <Fragment>
+    <div style={{ marginBottom: 15 }}>
       <h4 className="element-top info-title">
         <b>Information</b>
       </h4>
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo
-        arr={props.currForm ? props.currForm.form.types.map((ele: { type: { name: any } }) => ele.type.name) : []}
-        style={{ marginLeft: 15 }}
-      />
+      <TypeInfo arr={props.currForm ? props.currForm.form.types.map((ele) => ele.type.name) : []} style={{ marginLeft: 15 }} />
       <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm ? props.currForm.form.types : [])} />
       <TypeEffective typeEffective={getTypeEffective(props.currForm ? props.currForm.form.types : [])} />
-    </Fragment>
+    </div>
   );
 };
 

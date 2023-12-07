@@ -1,3 +1,4 @@
+import { ToolSearching } from '../../core/models/searching.model';
 import { SearchingModel } from '../models/searching.model';
 
 export const SET_POKEMON_MAIN_SEARCH = 'SET_POKEMON_MAIN_SEARCH';
@@ -15,7 +16,7 @@ export const resetSearchMainPage = () => ({
   type: RESET_POKEMON_MAIN_SEARCH,
 });
 
-export const setSearchToolPage = (payload: SearchingModel) => ({
+export const setSearchToolPage = (payload: ToolSearching) => ({
   type: SET_POKEMON_TOOL_SEARCH,
   payload,
 });

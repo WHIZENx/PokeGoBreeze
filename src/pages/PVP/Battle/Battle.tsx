@@ -6,7 +6,7 @@ import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/Calculate';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from '../../../util/Constants';
+import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from '../../../util/Constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -28,7 +28,7 @@ import hp_logo from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useNavigate, useParams } from 'react-router-dom';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -36,16 +36,20 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
+import { StoreState } from '../../../store/models/state.model';
+import { RankingsPVP } from '../../../core/models/pvp.model';
+import { Combat } from '../../../core/models/combat.model';
+import { PokemonBattle, PokemonBattleData } from '../models/battle.model';
 
 const Battle = () => {
   const dispatch = useDispatch();
-  const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
+  const dataStore = useSelector((state: StoreState) => state.store.data);
   const params = useParams();
   const navigate = useNavigate();
 
   const { enqueueSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
-  const [data, setData] = useState(null);
+  const [data, setData]: any = useState(null);
   const [options, setOptions] = useState({
     showTap: false,
     timelineType: 1,
@@ -59,8 +63,8 @@ const Battle = () => {
   const timelineNormalContainer: any = useRef();
   const playLine: any = useRef();
 
-  let timelineInterval: any;
-  let turnInterval: any;
+  let timelineInterval: NodeJS.Timeout;
+  let turnInterval: NodeJS.Timeout;
 
   const [pokemonCurr, setPokemonCurr]: any = useState({
     pokemonData: null,
@@ -96,11 +100,11 @@ const Battle = () => {
   const State = (
     timer: number,
     type: string | null,
-    color: null,
-    size: null,
-    tap: null,
-    block: null,
-    energy: any,
+    color: string | null,
+    size: number | null,
+    tap: boolean,
+    block: number,
+    energy: number,
     hp: number,
     move = null,
     immune = null
@@ -120,35 +124,7 @@ const Battle = () => {
     };
   };
 
-  const calculateMoveDmgActual = (
-    poke: {
-      shadow: boolean;
-      hp?: any;
-      stats: any;
-      currentStats: any;
-      pokemon: any;
-      fmove?: any;
-      cmove?: any;
-      cmoveSec?: any;
-      energy?: any;
-      block?: any;
-      turn?: number;
-    },
-    pokeObj: {
-      shadow: boolean;
-      hp?: any;
-      stats: any;
-      currentStats: any;
-      pokemon: any;
-      fmove?: any;
-      cmove?: any;
-      cmoveSec?: any;
-      energy?: any;
-      block?: any;
-      turn?: number;
-    },
-    move: { pvp_power: number; type: string }
-  ) => {
+  const calculateMoveDmgActual = (poke: PokemonBattleData, pokeObj: PokemonBattleData, move: { pvp_power: number; type: string }) => {
     const atkPoke = calculateStatsBattle(poke.stats.atk, poke.currentStats.IV.atk, poke.currentStats.level, true);
     const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.currentStats.IV.def, pokeObj.currentStats.level, true);
     poke.shadow = poke.shadow ?? false;
@@ -156,25 +132,14 @@ const Battle = () => {
     return (
       (atkPoke *
         move.pvp_power *
-        (poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
-        (poke.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1) *
-        getTypeEffective(dataStore.typeEff, move.type, pokeObj.pokemon.types)) /
-      (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))
+        (poke.pokemon.types.includes(move.type) ? STAB_MULTIPLY(dataStore?.options) : 1) *
+        (poke.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
+        getTypeEffective(dataStore?.typeEff, move.type, pokeObj.pokemon.types)) /
+      (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))
     );
   };
 
-  const Pokemon = (poke: {
-    disableCMoveSec: any;
-    disableCMovePri: any;
-    shadow: any;
-    pokemonData: any;
-    fMove: any;
-    cMovePri: any;
-    cMoveSec: any;
-    timeline?: any[];
-    energy: any;
-    block: any;
-  }) => {
+  const Pokemon = (poke: PokemonBattle) => {
     return {
       hp: poke.pokemonData.currentStats.stats.statsSTA,
       stats: poke.pokemonData.stats,
@@ -225,37 +190,37 @@ const Battle = () => {
     }
 
     const timelinePri: {
-      buff: any;
-      timer: any;
-      type: any;
-      move: any;
-      color: any;
-      size: any;
-      tap: any;
-      block: any;
-      energy: any;
+      timer: number;
+      type: string | null;
+      move: null;
+      color: string | null;
+      size: number;
+      tap: boolean;
+      block: number;
+      energy: number;
       hp: number;
-      dmgImmune: any;
+      dmgImmune: boolean;
+      buff: { target: string; type: string; power: number }[] | null;
     }[] = [];
     const timelineSec: {
-      buff: any;
-      timer: any;
-      type: any;
-      move: any;
-      color: any;
-      size: any;
-      tap: any;
-      block: any;
-      energy: any;
+      timer: number;
+      type: string | null;
+      move: null;
+      color: string | null;
+      size: number;
+      tap: boolean;
+      block: number;
+      energy: number;
       hp: number;
-      dmgImmune: any;
+      dmgImmune: boolean;
+      buff: { target: string; type: string; power: number }[] | null;
     }[] = [];
 
-    timelinePri.push(State(0, 'W', null, null, null, player1.block, player1.energy, player1.hp));
-    timelinePri.push(State(1, 'W', null, null, null, player1.block, player1.energy, player1.hp));
+    timelinePri.push(State(0, 'W', null, null, false, player1.block, player1.energy, player1.hp));
+    timelinePri.push(State(1, 'W', null, null, false, player1.block, player1.energy, player1.hp));
 
-    timelineSec.push(State(0, 'W', null, null, null, player2.block, player2.energy, player2.hp));
-    timelineSec.push(State(1, 'W', null, null, null, player2.block, player2.energy, player2.hp));
+    timelineSec.push(State(0, 'W', null, null, false, player2.block, player2.energy, player2.hp));
+    timelineSec.push(State(1, 'W', null, null, false, player2.block, player2.energy, player2.hp));
 
     let timer = 1;
     let tapPri: boolean,
@@ -273,8 +238,8 @@ const Battle = () => {
     let chargeType: number;
     timelineInterval = setInterval(() => {
       timer += 1;
-      timelinePri.push(State(timer, null, null, null, null, player1.block, player1.energy, player1.hp));
-      timelineSec.push(State(timer, null, null, null, null, player2.block, player2.energy, player2.hp));
+      timelinePri.push(State(timer, null, null, null, false, player1.block, player1.energy, player1.hp));
+      timelineSec.push(State(timer, null, null, null, false, player2.block, player2.energy, player2.hp));
       if (!chargedPri && !chargedSec) {
         if (
           (!player1.disableCMovePri || !player1.disableCMoveSec) &&
@@ -288,7 +253,7 @@ const Battle = () => {
             timelinePri[timer] = {
               ...timelinePri[timer],
               type: 'P',
-              color: player1.cmove.type.toLowerCase(),
+              color: player1.cmove.type?.toLowerCase(),
               size: 12,
               move: player1.cmove,
             };
@@ -323,7 +288,7 @@ const Battle = () => {
             timelineSec[timer] = {
               ...timelineSec[timer],
               type: 'P',
-              color: player2.cmove.type.toLowerCase(),
+              color: player2.cmove.type?.toLowerCase(),
               size: 12,
               move: player2.cmove,
             };
@@ -507,11 +472,11 @@ const Battle = () => {
               player2.block -= 1;
             }
             const moveType = chargeType === 1 ? player1.cmove : player1.cmoveSec;
-            const arrBufAtk: any[] = [],
-              arrBufTarget: any[] = [];
+            const arrBufAtk: { target: string; type: string; power: number }[] | null = [],
+              arrBufTarget: { target: string; type: string; power: number }[] | null = [];
             const randInt = parseFloat(Math.random().toFixed(3));
-            if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
-              moveType.buffs.forEach((value: { target: string; type: string; power: any }) => {
+            if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs.at(0).buffChance) {
+              moveType.buffs.forEach((value: { target: string; type: string; power: number }) => {
                 if (value.target === 'target') {
                   player2 = {
                     ...player2,
@@ -561,11 +526,11 @@ const Battle = () => {
               player1.block -= 1;
             }
             const moveType = chargeType === 1 ? player2.cmove : player2.cmoveSec;
-            const arrBufAtk: any[] = [],
-              arrBufTarget: any[] = [];
+            const arrBufAtk: { target: string; type: string; power: number }[] = [],
+              arrBufTarget: { target: string; type: string; power: number }[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
-            if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs[0].buffChance) {
-              moveType.buffs.forEach((value: { target: string; type: string; power: any }) => {
+            if (moveType.buffs.length > 0 && randInt > 0 && randInt <= moveType.buffs.at(0).buffChance) {
+              moveType.buffs.forEach((value: { target: string; type: string; power: number }) => {
                 if (value.target === 'target') {
                   player1 = {
                     ...player1,
@@ -631,25 +596,25 @@ const Battle = () => {
         clearInterval(timelineInterval);
         clearInterval(turnInterval);
         if (player1.hp <= 0) {
-          timelinePri.push(State(timer, 'X', null, null, null, null, player1.energy, player1.hp));
+          timelinePri.push(State(timer, 'X', null, null, false, 0, player1.energy, player1.hp));
           if (player2.hp <= 0) {
-            timelineSec.push(State(timer, 'X', null, null, null, null, player2.energy, player2.hp));
+            timelineSec.push(State(timer, 'X', null, null, false, 0, player2.energy, player2.hp));
           } else {
             if (timelinePri.length === timelineSec.length) {
-              timelineSec[timelineSec.length - 1] = State(timer, 'Q', null, null, null, null, player2.energy, player2.hp);
+              timelineSec[timelineSec.length - 1] = State(timer, 'Q', null, null, false, 0, player2.energy, player2.hp);
             } else {
-              timelineSec.push(State(timer, 'Q', null, null, null, null, player2.energy, player2.hp));
+              timelineSec.push(State(timer, 'Q', null, null, false, 0, player2.energy, player2.hp));
             }
           }
         } else if (player2.hp <= 0) {
-          timelineSec.push(State(timer, 'X', null, null, null, null, player2.energy, player2.hp));
+          timelineSec.push(State(timer, 'X', null, null, false, 0, player2.energy, player2.hp));
           if (player1.hp <= 0) {
-            timelinePri.push(State(timer, 'X', null, null, null, null, player1.energy, player1.hp));
+            timelinePri.push(State(timer, 'X', null, null, false, 0, player1.energy, player1.hp));
           } else {
             if (timelinePri.length === timelineSec.length) {
-              timelinePri[timelinePri.length - 1] = State(timer, 'Q', null, null, null, null, player1.energy, player1.hp);
+              timelinePri[timelinePri.length - 1] = State(timer, 'Q', null, null, false, 0, player1.energy, player1.hp);
             } else {
-              timelinePri.push(State(timer, 'Q', null, null, null, null, player1.energy, player1.hp));
+              timelinePri.push(State(timer, 'Q', null, null, false, 0, player1.energy, player1.hp));
             }
           }
         }
@@ -695,10 +660,10 @@ const Battle = () => {
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();
     const fetchPokemon = async () => {
+      dispatch(showSpinner());
       try {
-        dispatch(showSpinner());
         clearData();
-        let file = (
+        const file: RankingsPVP[] = (
           await axios.getFetchUrl(axios.getRankingFile('all', parseInt(league), 'overall'), {
             cancelToken: source.token,
           })
@@ -713,16 +678,22 @@ const Battle = () => {
             : 'Master League'
         }`;
 
-        if (dataStore) {
-          file = file
-            .filter(
-              (pokemon: { speciesId: string | string[] }) => !pokemon.speciesId.includes('shadow') && !pokemon.speciesId.includes('_xs')
-            )
-            .map((item: { speciesId: string; speciesName: string }) => {
-              const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-              const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: { slug: string } | any) => pokemon.slug === name);
-              const id = pokemon.num;
-              const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+        setData(
+          file
+            .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
+            .map((item) => {
+              const name = convertNameRankingToOri(item.speciesId.replace('_shadow', ''), item.speciesName);
+              let pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
+
+              if (!pokemon) {
+                pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
+                if (!pokemon) {
+                  return null;
+                }
+              }
+
+              const id = pokemon.num ?? 0;
+              const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
 
               const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -734,10 +705,10 @@ const Battle = () => {
                 form,
                 stats,
               };
-            });
-          setData(file);
-          dispatch(hideSpinner());
-        }
+            })
+            .filter((pokemon) => pokemon)
+        );
+        dispatch(hideSpinner());
       } catch (e: any) {
         source.cancel();
         dispatch(
@@ -749,9 +720,9 @@ const Battle = () => {
       }
     };
     fetchPokemon();
-  }, [dispatch, league, clearData, dataStore]);
+  }, [dispatch, league, clearData]);
 
-  const clearDataPokemonCurr = (removeCMoveSec: any) => {
+  const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj({ ...pokemonObj, timeline: [] });
     setPlayTimeline({
       pokemonCurr: { hp: 0, energyPri: null, energySec: null },
@@ -775,7 +746,7 @@ const Battle = () => {
     }
   };
 
-  const clearDataPokemonObj = (removeCMoveSec: any) => {
+  const clearDataPokemonObj = (removeCMoveSec: boolean) => {
     setPokemonCurr({ ...pokemonCurr, timeline: [] });
     setPlayTimeline({
       pokemonCurr: { hp: 0, energyPri: null, energySec: null },
@@ -808,7 +779,7 @@ const Battle = () => {
   const arrBound: any = useRef([]);
   const arrStore: any = useRef([]);
 
-  const getTranslation = (elem: any) => {
+  const getTranslation = (elem: HTMLElement) => {
     return elem ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
   };
 
@@ -1030,13 +1001,13 @@ const Battle = () => {
     }, 100);
   };
 
-  const findBuff = (move: { buffs: any[] }) => {
-    if (move.buffs.length === 0) {
+  const findBuff = (move: Combat | undefined) => {
+    if (move?.buffs.length === 0) {
       return;
     }
     return (
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
-        {move.buffs.map((value: { type: string; power: number; buffChance: number }, index: React.Key) => (
+        {move?.buffs.map((value, index: React.Key) => (
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
             <img width={15} height={15} alt="img-atk" src={value.type === 'atk' ? atk_logo : def_logo} />
             <div className="position-absolute icon-buff">
@@ -1061,14 +1032,14 @@ const Battle = () => {
                 {value.power}
               </span>
             </div>
-            <b style={{ fontSize: 12 }}>{value.buffChance * 100}%</b>
+            <b style={{ fontSize: 12 }}>{(value.buffChance ?? 0) * 100}%</b>
           </div>
         ))}
       </div>
     );
   };
 
-  const calculateStatPokemon = (e: any, type: string, pokemon: any, setPokemon: any) => {
+  const calculateStatPokemon = (e: { preventDefault: () => void }, type: string, pokemon: PokemonBattle, setPokemon: any) => {
     e.preventDefault();
     const level = parseInt((document.getElementById('level' + capitalize(type)) as HTMLInputElement).value);
     const atk = parseInt((document.getElementById('atkIV' + capitalize(type)) as HTMLInputElement).value);
@@ -1092,13 +1063,13 @@ const Battle = () => {
     if (!stats) {
       const statsBattle = calculateStatsByTag(
         pokemon.pokemonData.pokemon,
-        pokemon.pokemonData.pokemon.baseStats,
-        pokemon.pokemonData.pokemon.slug
+        pokemon.pokemonData.pokemon?.baseStats,
+        pokemon.pokemonData.pokemon?.slug
       );
 
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
-      const statsSTA = calculateStatsBattle(statsBattle.sta, sta, level);
+      const statsSTA = calculateStatsBattle(statsBattle?.sta ?? 0, sta, level);
       stats = {
         IV: { atk, def, sta },
         CP: cp,
@@ -1118,7 +1089,7 @@ const Battle = () => {
     });
   };
 
-  const onSetStats = (type: string, pokemon: any, setPokemon: any, isRandom: boolean) => {
+  const onSetStats = (type: string, pokemon: PokemonBattle, setPokemon: any, isRandom: boolean) => {
     let stats: { level: string; IV: { atk: string; def: string; sta: string } };
     if (isRandom) {
       stats = pokemon.pokemonData.allStats[Math.floor(Math.random() * pokemon.pokemonData.allStats.length)];
@@ -1141,7 +1112,7 @@ const Battle = () => {
     });
   };
 
-  const renderInfoPokemon = (type: string, pokemon: any, setPokemon: any) => {
+  const renderInfoPokemon = (type: string, pokemon: PokemonBattle, setPokemon: any) => {
     return (
       <Accordion defaultActiveKey={[]} alwaysOpen={true}>
         <Accordion.Item eventKey="0">
@@ -1162,7 +1133,7 @@ const Battle = () => {
               </div>
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
-              <Link to={`/pvp/${params.cp}/overall/${pokemon.pokemonData.speciesId.replaceAll('_', '-')}`}>
+              <Link to={`/pvp/${params.cp}/overall/${pokemon.pokemonData.speciesId?.replaceAll('_', '-')}`}>
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
               </Link>
               <b>{`#${pokemon.pokemonData.id} ${splitAndCapitalize(pokemon.pokemonData.name, '-', ' ')}`}</b>
@@ -1180,13 +1151,13 @@ const Battle = () => {
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
             Attack:{' '}
             <b>
-              {Math.floor(pokemon.pokemonData.currentStats.stats.statsATK * (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) : 1))}
+              {Math.floor(pokemon.pokemonData.currentStats.stats.statsATK * (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1))}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
             Defense:{' '}
             <b>
-              {Math.floor(pokemon.pokemonData.currentStats.stats.statsDEF * (pokemon.shadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))}
+              {Math.floor(pokemon.pokemonData.currentStats.stats.statsDEF * (pokemon.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
@@ -1198,7 +1169,7 @@ const Battle = () => {
                 pokemon.pokemonData.currentStats.stats.statsATK *
                   pokemon.pokemonData.currentStats.stats.statsDEF *
                   pokemon.pokemonData.currentStats.stats.statsSTA *
-                  (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore.options) * SHADOW_DEF_BONUS(dataStore.options) : 1)
+                  (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) * SHADOW_DEF_BONUS(dataStore?.options) : 1)
               )}
             </b>
             <br />
@@ -1215,8 +1186,8 @@ const Battle = () => {
                   id={'level' + capitalize(type)}
                   type="number"
                   step={0.5}
-                  min={1}
-                  max={51}
+                  min={MIN_LEVEL}
+                  max={MAX_LEVEL}
                 />
               </div>
               <div className="input-group">
@@ -1227,8 +1198,8 @@ const Battle = () => {
                   id={'atkIV' + capitalize(type)}
                   type="number"
                   step={1}
-                  min={0}
-                  max={15}
+                  min={MIN_IV}
+                  max={MAX_IV}
                 />
               </div>
               <div className="input-group">
@@ -1239,8 +1210,8 @@ const Battle = () => {
                   id={'defIV' + capitalize(type)}
                   type="number"
                   step={1}
-                  min={0}
-                  max={15}
+                  min={MIN_IV}
+                  max={MAX_IV}
                 />
               </div>
               <div className="input-group">
@@ -1251,8 +1222,8 @@ const Battle = () => {
                   id={'hpIV' + capitalize(type)}
                   type="number"
                   step={1}
-                  min={0}
-                  max={15}
+                  min={MIN_IV}
+                  max={MAX_IV}
                 />
               </div>
               <div className="w-100 element-top">
@@ -1276,14 +1247,15 @@ const Battle = () => {
               find={true}
               title="Fast Move"
               move={pokemon.fMove}
-              elite={pokemon.pokemonData.combatPoke.eliteQuickMoves.includes(pokemon.fMove.name)}
+              elite={pokemon.pokemonData.combatPoke?.eliteQuickMoves.includes(pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
                 find={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes(pokemon.cMovePri.name)}
+                elite={pokemon.pokemonData.combatPoke?.eliteCinematicMoves.includes(pokemon.cMovePri?.name)}
+                special={pokemon.pokemonData.combatPoke?.specialMoves.includes(pokemon.cMovePri?.name)}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1293,9 +1265,10 @@ const Battle = () => {
                   find={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={pokemon.pokemonData.combatPoke.eliteCinematicMoves.includes(pokemon.cMoveSec.name)}
+                  elite={pokemon.pokemonData.combatPoke?.eliteCinematicMoves.includes((pokemon.cMoveSec as Combat)?.name)}
+                  special={pokemon.pokemonData.combatPoke?.specialMoves.includes(pokemon.cMovePri?.name)}
                 />
-                {findBuff(pokemon.cMoveSec)}
+                {findBuff(pokemon.cMoveSec as Combat)}
               </div>
             )}
           </Accordion.Body>
@@ -1304,7 +1277,22 @@ const Battle = () => {
     );
   };
 
-  const renderPokemonInfo = (type: string, pokemon: any, setPokemon: any, clearDataPokemon: any) => {
+  const renderPokemonInfo = (
+    type: string,
+    pokemon: {
+      pokemonData: any;
+      energy?: number;
+      block?: number;
+      shadow: boolean;
+      cMovePri: any;
+      disableCMovePri?: any;
+      cMoveSec: any;
+      disableCMoveSec?: any;
+      fMove?: Combat | undefined;
+    },
+    setPokemon: any,
+    clearDataPokemon: any
+  ) => {
     return (
       <Fragment>
         <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
@@ -1348,21 +1336,6 @@ const Battle = () => {
                 <option value={1}>1</option>
                 <option value={2}>2</option>
               </Form.Select>
-            </div>
-            <div className="border-input" style={{ padding: '0 8px' }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={pokemon.shadow ?? false}
-                    onChange={(event, check) => setPokemon({ ...pokemon, timeline: [], shadow: check })}
-                  />
-                }
-                label={
-                  <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> Shadow
-                  </span>
-                }
-              />
             </div>
             {pokemon && (
               <div className="w-100 bg-ref-pokemon">
@@ -1521,7 +1494,7 @@ const Battle = () => {
                 )}
                 <div className="d-flex justify-content-center">
                   <FormControlLabel
-                    control={<Checkbox checked={showTap} onChange={(event, check) => setOptions({ ...options, showTap: check })} />}
+                    control={<Checkbox checked={showTap} onChange={(_, check) => setOptions({ ...options, showTap: check })} />}
                     label="Show Tap Move"
                   />
                   <RadioGroup

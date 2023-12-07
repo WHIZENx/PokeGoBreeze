@@ -2,9 +2,16 @@ import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 
-const Gender = (props: { sex: string; ratio?: { M: any; F: any }; default_m?: any; default_f?: any; shiny_m?: any; shiny_f?: any }) => {
+const Gender = (props: {
+  sex: string;
+  ratio?: { M: number; F: number };
+  default_m?: string;
+  default_f?: string;
+  shiny_m?: string;
+  shiny_f?: string;
+}) => {
   const theme = useTheme();
-  const calculateRatio = (sex: string, ratio: { M: any; F: any }) => {
+  const calculateRatio = (sex: string, ratio: { M: number; F: number }) => {
     const maleRatio = ratio.M;
     const femaleRatio = ratio.F;
     return sex.toLowerCase() === 'male' ? maleRatio * 100 : femaleRatio * 100;

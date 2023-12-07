@@ -6,14 +6,14 @@ import { capitalize } from '../../../util/Utils';
 import './Type.scss';
 
 const TypeInfo = (props: {
-  arr: any;
-  block?: any;
-  shadow?: any;
+  arr: string[] | undefined;
+  block?: boolean;
+  shadow?: boolean;
   style?: React.CSSProperties | undefined;
   text?: string;
-  hideText?: any;
+  hideText?: boolean;
   height?: string | number | undefined;
-  color?: any;
+  color?: string;
 }) => {
   if (!props.arr || props.arr.length === 0) {
     return <></>;
@@ -25,7 +25,7 @@ const TypeInfo = (props: {
     <div className={(props.block ? '' : 'element-top') + (props.shadow ? ' filter-shadow' : '')} style={props.style}>
       {props.text && <p>{props.text}</p>}
       <div className="d-inline-flex flex-wrap type-list align-items-center">
-        {props.arr.map((value: string, index: React.Key) => (
+        {props.arr?.map((value: string, index: React.Key) => (
           <div className="text-center d-flex" key={index}>
             {props.hideText ? (
               <img

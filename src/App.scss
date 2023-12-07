@@ -1,10 +1,47 @@
 .navbar {
-  z-index: 6;
+  z-index: 8;
 }
 
 .container-fluid {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.caption {
+  font-size: 12px;
+  color: gray;
+  display: block;
+  text-decoration: none !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.loading {
+  animation: loading-spin 1s linear infinite;
+}
+
+@keyframes loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.loading-spin-table {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 8px 8px 0 rgb(0 0 0 / 20%);
 }
 
 .link-url {
@@ -103,6 +140,23 @@ img.badge-type-sprit {
   width: 100%;
   height: 20px;
   object-fit: contain;
+}
+
+.shadow-icon {
+  position: absolute;
+  bottom: 0;
+}
+
+.purified-icon {
+  position: absolute;
+  bottom: 0;
+}
+
+.type-select-bg {
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  column-gap: 5px;
 }
 
 .text-timestamp {
@@ -234,6 +288,17 @@ ul {
   cursor: not-allowed !important;
 }
 
+.ic {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px !important;
+  font-weight: bold !important;
+  text-shadow: none !important;
+  text-align: center;
+  color: black !important;
+  width: fit-content !important;
+}
+
 .shadow-ic { background-color: #c184ec; }
 .bug { background-color: #9cb820; }
 .dark { background-color: #504843; }
@@ -242,6 +307,7 @@ ul {
 .electric,
 .elite-ic,
 .score-ic { background-color: #f8d030; }
+
 .fighting { background-color: #c03028; }
 .fire { background-color: #f08030; }
 .flying { background-color: #9096f0; }
@@ -298,6 +364,8 @@ ul {
 .steel-bg { background: #6d8f9c; }
 .water-bg { background: #6890f0; }
 .black-bg { background: black; }
+
+.special-ic { background: linear-gradient(to right bottom, #825af0, #9ba0f0); }
 
 // Theme styles
 .btn-dark {

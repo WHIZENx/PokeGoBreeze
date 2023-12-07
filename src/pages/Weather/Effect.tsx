@@ -2,9 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import { capitalize } from '../../util/Utils';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { TypeEff } from '../../core/models/typeEff.model';
 
-const Effect = (prop: any) => {
-  const [types, setTypes]: any = useState([]);
+const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) => {
+  const [types, setTypes]: [string[], any] = useState([]);
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');
   const [currentTypeSec, setCurrentTypeSec] = useState('');
@@ -33,13 +35,13 @@ const Effect = (prop: any) => {
     getWeatherEffective();
   }, [currentTypePri, currentTypeSec, getWeatherEffective, prop.types]);
 
-  const changeTypePri = (value: any) => {
+  const changeTypePri = (value: string) => {
     setShowTypePri(false);
     setCurrentTypePri(value);
     getWeatherEffective();
   };
 
-  const changeTypeSec = (value: any) => {
+  const changeTypeSec = (value: string) => {
     setShowTypeSec(false);
     setCurrentTypeSec(value);
     getWeatherEffective();
@@ -74,7 +76,7 @@ const Effect = (prop: any) => {
               {showTypePri && (
                 <div className="result-type result-type-weather">
                   <ul>
-                    {types.map((value: any, index: React.Key) => (
+                    {types.map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypePri(value)}>
                         <CardType value={capitalize(value)} />
                       </li>
@@ -117,7 +119,7 @@ const Effect = (prop: any) => {
               {showTypeSec && (
                 <div className="result-type result-type-weather">
                   <ul>
-                    {types.map((value: any, index: React.Key) => (
+                    {types.map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
                         <CardType value={capitalize(value)} />
                       </li>

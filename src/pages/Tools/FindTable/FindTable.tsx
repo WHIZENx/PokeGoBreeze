@@ -10,36 +10,37 @@ import '../../../components/Select/Find/Form.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Select/Find/Find';
+import { MAX_IV, MIN_IV } from '../../../util/Constants';
 
 const columnsIV: any = [
   {
     name: 'Level',
-    selector: (row: { level: any }) => row.level,
+    selector: (row: { level: number }) => row.level,
     sortable: true,
   },
   {
     name: 'ATK',
-    selector: (row: { atk: any }) => row.atk,
+    selector: (row: { atk: number }) => row.atk,
     sortable: true,
   },
   {
     name: 'DEF',
-    selector: (row: { def: any }) => row.def,
+    selector: (row: { def: number }) => row.def,
     sortable: true,
   },
   {
     name: 'STA',
-    selector: (row: { sta: any }) => row.sta,
+    selector: (row: { sta: number }) => row.sta,
     sortable: true,
   },
   {
     name: 'HP',
-    selector: (row: { hp: any }) => row.hp,
+    selector: (row: { hp: number }) => row.hp,
     sortable: true,
   },
   {
     name: 'Percent',
-    selector: (row: { percent: any }) => row.percent,
+    selector: (row: { percent: number }) => row.percent,
     sortable: true,
   },
 ];
@@ -47,17 +48,17 @@ const columnsIV: any = [
 const columnsCP: any = [
   {
     name: 'Level',
-    selector: (row: { level: any }) => row.level,
+    selector: (row: { level: number }) => row.level,
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row: { cp: any }) => row.cp,
+    selector: (row: { cp: number }) => row.cp,
     sortable: true,
   },
   {
     name: 'HP',
-    selector: (row: { hp: any }) => row.hp,
+    selector: (row: { hp: number }) => row.hp,
     sortable: true,
   },
 ];
@@ -92,11 +93,11 @@ const conditionalRowStyles = [
 const FindTable = () => {
   const [name, setName] = useState('Bulbasaur');
 
-  const [searchCP, setSearchCP]: any = useState('');
+  const [searchCP, setSearchCP] = useState('');
 
-  const [searchATKIv, setSearchATKIv]: any = useState(0);
-  const [searchDEFIv, setSearchDEFIv]: any = useState(0);
-  const [searchSTAIv, setSearchSTAIv]: any = useState(0);
+  const [searchATKIv, setSearchATKIv] = useState(0);
+  const [searchDEFIv, setSearchDEFIv] = useState(0);
+  const [searchSTAIv, setSearchSTAIv] = useState(0);
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -137,7 +138,14 @@ const FindTable = () => {
   }, []);
 
   const findStatsCP = useCallback(() => {
-    if (searchATKIv < 0 || searchATKIv > 15 || searchDEFIv < 0 || searchDEFIv > 15 || searchSTAIv < 0 || searchSTAIv > 15) {
+    if (
+      searchATKIv < MIN_IV ||
+      searchATKIv > MAX_IV ||
+      searchDEFIv < MIN_IV ||
+      searchDEFIv > MAX_IV ||
+      searchSTAIv < MIN_IV ||
+      searchSTAIv > MAX_IV
+    ) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
@@ -277,17 +285,17 @@ const FindTable = () => {
     const columns = [
       {
         name: 'Level',
-        selector: (row: { level: any }) => row.level,
+        selector: (row: { level: number }) => row.level,
         sortable: true,
       },
       {
         name: 'MIN CP',
-        selector: (row: { minCP: any }) => row.minCP,
+        selector: (row: { minCP: number }) => row.minCP,
         sortable: true,
       },
       {
         name: 'MAX CP',
-        selector: (row: { maxCP: any }) => row.maxCP,
+        selector: (row: { maxCP: number }) => row.maxCP,
         sortable: true,
       },
     ];
@@ -296,7 +304,7 @@ const FindTable = () => {
       return {
         level: item.level,
         minCP: calculateCP(statATK, statDEF, statSTA, item.level),
-        maxCP: calculateCP(statATK + 15, statDEF + 15, statSTA + 15, item.level),
+        maxCP: calculateCP(statATK + MAX_IV, statDEF + MAX_IV, statSTA + MAX_IV, item.level),
       };
     });
 
@@ -367,13 +375,13 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchATKIv}
                 aria-label="ATK marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e: any, v: any) => setSearchATKIv(v)}
+                onChange={(_, v: any) => setSearchATKIv(v as number)}
               />
               <div className="d-flex justify-content-between">
                 <b>DEF</b>
@@ -382,13 +390,13 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchDEFIv}
                 aria-label="DEF marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e, v) => setSearchDEFIv(v)}
+                onChange={(_, v) => setSearchDEFIv(v as number)}
               />
               <div className="d-flex justify-content-between">
                 <b>STA</b>
@@ -397,13 +405,13 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchSTAIv}
                 aria-label="STA marks"
-                defaultValue={0}
-                min={0}
-                max={15}
+                defaultValue={MIN_IV}
+                min={MIN_IV}
+                max={MAX_IV}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(e, v) => setSearchSTAIv(v)}
+                onChange={(_, v) => setSearchSTAIv(v as number)}
               />
             </Box>
           </div>

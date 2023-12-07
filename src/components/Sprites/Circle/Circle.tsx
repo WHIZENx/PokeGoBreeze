@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Fill: any = styled.div`
-  border: ${(props: any) => props.line}px solid ${(props: any) => props.color};
+const Fill = styled.div`
+  border: ${(props: { line: number; size: number; color: string }) => props.line}px solid ${(props: { color: string }) => props.color};
   border-radius: 50%;
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
+  width: ${(props: { size: number }) => props.size}px;
+  height: ${(props: { size: number }) => props.size}px;
   transition: 0.1s;
 `;
 

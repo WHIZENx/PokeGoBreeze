@@ -1,8 +1,9 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import './Hexagon.scss';
+import { StatsModel } from '../../../core/models/stats.model';
 
-const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: any; borderSize: any }) => {
+const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; animation: number; borderSize: number }) => {
   const canvasHex: any = useRef();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
@@ -15,12 +16,12 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
     return Point(x, y);
   }, []);
 
-  const Point = (x: any, y: any) => {
+  const Point = (x: number, y: number) => {
     return { x, y };
   };
 
   const drawLineHex = useCallback(
-    (ctx: CanvasRenderingContext2D, center: any, percentage: any, color: any, fill: any) => {
+    (ctx: CanvasRenderingContext2D, center: { x: number; y: number }, percentage: number, color: string, fill: boolean) => {
       const start = getHexConnerCord(center, percentage, 0);
       ctx.beginPath();
       ctx.moveTo(start.x, start.y);
@@ -44,8 +45,8 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
   const drawStatsHex = useCallback(
     (
       ctx: CanvasRenderingContext2D,
-      center: any,
-      stat: { switching: any; charger: any; closer: any; cons: any; atk: any; lead: any },
+      center: { x: number; y: number },
+      stat: { switching: number; charger: number; closer: number; cons: number; atk: number; lead: number },
       hexSize: number
     ) => {
       const stats: any = {
@@ -84,7 +85,7 @@ const Hexagon = (props: { defaultStats?: any; stats: any; size: any; animation: 
   };
 
   const drawHexagon = useCallback(
-    (stats: any) => {
+    (stats: { switching: number; charger: number; closer: number; cons: number; atk: number; lead: number }) => {
       const hexBorderSize: number = props.size ?? 0;
       const hexSize: number = hexBorderSize / 2;
 

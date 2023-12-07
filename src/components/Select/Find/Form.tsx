@@ -10,36 +10,43 @@ import { FormControlLabel, Radio } from '@mui/material';
 import { getFormsGO } from '../../../core/forms';
 import { useDispatch } from 'react-redux';
 import { setSearchToolPage } from '../../../store/actions/searching.action';
+import { Action } from 'history';
+import { StatsModel } from '../../../core/models/stats.model';
+import { ToolSearching } from '../../../core/models/searching.model';
+import { PokemonDataModel, PokemonNameModel } from '../../../core/models/pokemon.model';
+import { CancelTokenSource } from 'axios';
+import { ReduxRouterState } from '@lagunovsky/redux-react-router';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
 
 const Form = (props: {
-  router: any;
-  searching: any;
-  raid?: any;
-  tier?: any;
-  id?: any;
+  router: ReduxRouterState;
+  searching: ToolSearching | null;
+  raid?: boolean | undefined;
+  tier?: number;
+  id?: number;
   onClearStats?: any;
   // eslint-disable-next-line no-unused-vars
   setTier?: (arg0: any) => void;
   onSetPrev?: () => void;
   onSetNext?: () => void;
   name: string;
-  hide?: any;
+  hide?: boolean;
   // eslint-disable-next-line no-unused-vars
   setRaid?: (arg0: boolean) => void;
-  form?: any;
+  form?: string | null;
   setForm?: any;
   setFormOrigin?: any;
-  stats: any;
+  stats: StatsModel;
   onHandleSetStats?: any;
-  data: any;
+  data: PokemonDataModel[];
   setUrlEvo: any;
   objective?: boolean;
-  pokemonName: any;
+  pokemonName: PokemonNameModel[];
 }) => {
   const dispatch = useDispatch();
 
-  const [pokeData, setPokeData] = useState([]);
-  const [formList, setFormList] = useState([]);
+  const [pokeData, setPokeData]: any = useState([]);
+  const [formList, setFormList]: any = useState([]);
 
   const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
   const [tier, setTier] = useState(props.tier ?? 1);
@@ -53,113 +60,97 @@ const Form = (props: {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const fetchMap = useCallback(
-    async (
-      data: { varieties: any[]; name: string; id: number },
-      // eslint-disable-next-line no-unused-vars
-      axios: { getFetchUrl: (arg0: any, arg1: { cancelToken: any }) => any },
-      source: { token: any }
-    ) => {
-      setFormList([]);
-      setPokeData([]);
-      // eslint-disable-next-line no-unused-vars
-      const dataPokeList: any | ((prevState: any[]) => any[]) = [];
-      // eslint-disable-next-line no-unused-vars
-      let dataFromList: any | ((prevState: any[]) => any[]) = [];
-      await Promise.all(
-        data.varieties.map(async (value: { pokemon: { url: any } }) => {
-          const pokeInfo = await axios.getFetchUrl(value.pokemon.url, {
-            cancelToken: source.token,
-          });
-          const pokeForm = await Promise.all(
-            pokeInfo.data.forms.map(async (item: { url: any }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
-          );
-          dataPokeList.push(pokeInfo.data);
-          dataFromList.push(pokeForm);
-        })
-      );
-      const goForm = getFormsGO(data.id).map(() => {
-        return {};
-      });
-      if (goForm.length > 0) {
-        dataPokeList.push(...goForm);
-        data.varieties.push(...goForm);
-      }
-      setPokeData(dataPokeList);
-      let modify = false;
-      dataFromList = dataFromList.map((value: string | any[]) => {
-        if (value.length === 0) {
-          modify = true;
-          return dataFromList.find((item: string | any[]) => item.length === dataFromList.length);
-        }
-        return value;
-      });
-      if (modify) {
-        dataFromList = dataFromList.map((value: { [x: string]: any }, index: string | number) => {
-          return [value[index]];
+  const fetchMap = useCallback(async (data: { varieties: any[]; name: string; id: number }, axios: any, source: CancelTokenSource) => {
+    setFormList([]);
+    setPokeData([]);
+    const dataPokeList = [];
+    let dataFromList: any[] = [];
+    await Promise.all(
+      data.varieties.map(async (value: { pokemon: { url: string } }) => {
+        const pokeInfo = await axios.getFetchUrl(value.pokemon.url, {
+          cancelToken: source.token,
         });
-      }
-      dataFromList = dataFromList
-        .map(
-          (item: {
-            map: (
-              // eslint-disable-next-line no-unused-vars
-              arg0: (item: { pokemon: { name: string | any[] } }) => {
-                form: { pokemon: { name: string | any[] } };
-                name: any;
-                default_name: any;
-              }
-            ) => { form: { id: number } | { id: number } }[];
-          }) => {
-            return item
-              .map((item: { pokemon: { name: string | any[] } }) => ({
-                form: item,
-                name: data.varieties.find((v: { pokemon: { name: any } }) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
-                default_name: data.name,
-              }))
-              .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
-          }
-        )
-        .sort((a: { form: { id: number } }[], b: { form: { id: number } }[]) => a[0].form.id - b[0].form.id);
-      if (data.id === 150) {
-        dataFromList.push(getFormsGO(data.id));
-      }
-      setFormList(dataFromList);
-      const formDefault = dataFromList.map((item: any[]) => {
-        return item.find((item: { form: { is_default: any } }) => item.form.is_default);
-      });
-      const isDefault = formDefault.find((item: { form: { id: any } }) => item.form.id === data.id);
-      if (props.searching) {
-        const form = formDefault.find(
-          (item: { form: { form_name: any } }) =>
-            item.form.form_name === (props.objective ? (props.searching.obj ? props.searching.obj.form : '') : props.searching.form)
+        const pokeForm = await Promise.all(
+          pokeInfo.data.forms.map(async (item: { url: string }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
         );
-        setCurrForm(form ?? isDefault ?? formDefault[0]);
-        setPokeID(data.id);
-      } else if (isDefault) {
-        setCurrForm(isDefault);
-        setPokeID(isDefault.form.id);
-      } else {
-        setCurrForm(formDefault[0]);
-        setPokeID(formDefault[0].form.id);
+        dataPokeList.push(pokeInfo.data);
+        dataFromList.push(pokeForm);
+      })
+    );
+    const goForm = getFormsGO(data.id).map(() => {
+      return {};
+    });
+    if (goForm.length > 0) {
+      dataPokeList.push(...goForm);
+      data.varieties.push(...goForm);
+    }
+    setPokeData(dataPokeList);
+    let modify = false;
+    dataFromList = dataFromList.map((value: PokemonFormModify[]) => {
+      if (value.length === 0) {
+        modify = true;
+        return dataFromList.find((item: PokemonFormModify[]) => item.length === dataFromList.length);
       }
-      const currentId: any = getPokemonById(Object.values(props.pokemonName), data.id);
-      setDataStorePokemon({
-        prev: getPokemonByIndex(Object.values(props.pokemonName), currentId.index - 1),
-        current: currentId,
-        next: getPokemonByIndex(Object.values(props.pokemonName), currentId.index + 1),
+      return value;
+    });
+    if (modify) {
+      dataFromList = dataFromList.map((value: { [x: string]: any }, index: string | number) => {
+        return [value[index]];
       });
-    },
-    []
-  );
+    }
+    dataFromList = dataFromList
+      .map((item) => {
+        return item
+          .map((item: { pokemon: { name: string } }) => ({
+            form: item,
+            name: data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
+            default_name: data.name,
+          }))
+          .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
+      })
+      .sort((a: { form: { id: number } }[], b: { form: { id: number } }[]) => a[0].form.id - b[0].form.id);
+    if (data.id === 150) {
+      dataFromList.push(getFormsGO(data.id));
+    }
+    setFormList(dataFromList);
+    const formDefault = dataFromList.map((item: any[]) => {
+      return item.find((item: PokemonFormModify) => item.form.is_default);
+    });
+    const isDefault = formDefault.find((item: PokemonFormModify) => item.form.id === data.id);
+    if (props.searching) {
+      const form = formDefault.find(
+        (item: PokemonFormModify) =>
+          item.form.form_name === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
+      );
+      setCurrForm(form ?? isDefault ?? formDefault.at(0));
+      setPokeID(data.id);
+    } else if (isDefault) {
+      setCurrForm(isDefault);
+      setPokeID(isDefault.form.id);
+    } else {
+      setCurrForm(formDefault.at(0));
+      setPokeID(formDefault.at(0).form.id);
+    }
+    const currentId = getPokemonById(props.pokemonName, data.id);
+    if (currentId) {
+      setDataStorePokemon({
+        prev: getPokemonByIndex(props.pokemonName, currentId.index - 1),
+        current: currentId,
+        next: getPokemonByIndex(props.pokemonName, currentId.index + 1),
+      });
+    }
+  }, []);
 
   const queryPokemon = useCallback(
-    (id: string, axios: any, source: { token: any; cancel: () => void }) => {
+    (id: string, axios: any, source: CancelTokenSource) => {
+      if (!id) {
+        return;
+      }
       axios
         .getPokeSpices(id, {
           cancelToken: source.token,
         })
-        .then((res: any) => {
+        .then((res: { data: { varieties: string[]; name: string; id: number } }) => {
           fetchMap(res.data, axios, source);
           setData(res.data);
         })
@@ -175,17 +166,17 @@ const Form = (props: {
     const axios = APIService;
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();
-    queryPokemon(props.id, axios, source);
+    queryPokemon(props.id?.toString() ?? '', axios, source);
   }, [props.id, queryPokemon]);
 
   useEffect(() => {
-    if (currForm || (!props.searching && props.router.action === 'PUSH')) {
+    if (currForm || (!props.searching && props.router.action === Action.Push)) {
       dispatch(
         props.objective
           ? setSearchToolPage({
-              ...props.searching,
+              ...(props.searching as ToolSearching),
               obj: {
-                id: props.id,
+                id: props.id ?? 0,
                 name: currForm?.default_name,
                 form: currForm?.form.form_name,
                 fullName: currForm?.form.name,
@@ -194,7 +185,7 @@ const Form = (props: {
             })
           : setSearchToolPage({
               ...props.searching,
-              id: props.id,
+              id: props.id ?? 0,
               name: currForm?.default_name,
               form: currForm?.form.form_name,
               fullName: currForm?.form.name,
@@ -209,15 +200,15 @@ const Form = (props: {
 
   const changeForm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const findForm = formList
-      .map((item: any) => item.find((item: { form: { name: any } }) => item.form.name === e.currentTarget.value))
-      .find((item) => item);
+      .map((item: { form: { name: string } }[]) => item.find((item) => item.form.name === e.currentTarget.value))
+      .find((item: any) => item);
     setCurrForm(findForm);
     if (props.onClearStats) {
       props.onClearStats();
     }
   };
 
-  const onSetTier = (tier: any) => {
+  const onSetTier = (tier: number) => {
     if (props.setTier) {
       props.setTier(tier);
     }
@@ -231,8 +222,10 @@ const Form = (props: {
           <div
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              props.onSetPrev?.();
               setCurrForm(null);
+              props.setForm?.(null);
+              props.setFormOrigin?.(null);
+              props.onSetPrev?.();
             }}
           >
             <div>
@@ -252,7 +245,7 @@ const Form = (props: {
         alt="img-full-pokemon"
         src={
           props.form
-            ? APIService.getPokeFullSprite(props.id, splitAndCapitalize(convertFormNameImg(props.id, props.form), '-', '-'))
+            ? APIService.getPokeFullSprite(props.id, splitAndCapitalize(convertFormNameImg(props.id ?? 0, props.form), '-', '-'))
             : APIService.getPokeFullSprite(props.id)
         }
       />
@@ -261,8 +254,10 @@ const Form = (props: {
           <div
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              props.onSetNext?.();
               setCurrForm(null);
+              props.setForm?.(null);
+              props.setFormOrigin?.(null);
+              props.onSetNext?.();
             }}
           >
             <div>
@@ -278,7 +273,7 @@ const Form = (props: {
       </div>
       <div className="element-top" style={{ height: 64 }}>
         {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length && (
-          <TypeInfo arr={currForm.form.types.map((type: { type: { name: any } }) => type.type.name)} />
+          <TypeInfo arr={currForm.form.types.map((type: { type: { name: string } }) => type.type.name)} />
         )}
       </div>
       <h4>
@@ -289,66 +284,58 @@ const Form = (props: {
       <div className="scroll-card">
         {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length ? (
           <Fragment>
-            {formList.map((value: any, index) => (
+            {formList.map((value: PokemonFormModify[], index: React.Key) => (
               <Fragment key={index}>
-                {value.map(
-                  (
-                    value: {
-                      form: { name: string; id: any; form_name: string };
-                      default_name: string;
-                    },
-                    index: React.Key
-                  ) => (
-                    <button
-                      value={value.form.name}
-                      key={index}
-                      className={'btn btn-form' + (value.form.id === currForm.form.id ? ' form-selected' : '')}
-                      onClick={(e) => changeForm(e)}
-                    >
-                      <img
-                        width={64}
-                        height={64}
-                        onError={(e: any) => {
-                          e.onerror = null;
-                          APIService.getFetchUrl(e.target.currentSrc)
-                            .then(() => {
-                              e.target.src = APIService.getPokeIconSprite(value.default_name);
-                            })
-                            .catch(() => {
-                              e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
-                            });
-                        }}
-                        alt="img-icon-form"
-                        src={
-                          value.form.name.includes('-totem') ||
-                          value.form.name.includes('-hisui') ||
-                          value.form.name.includes('power-construct') ||
-                          value.form.name.includes('own-tempo') ||
-                          value.form.name.includes('-meteor') ||
-                          value.form.name === 'mewtwo-armor' ||
-                          value.form.name === 'arceus-unknown' ||
-                          value.form.name === 'dialga-origin' ||
-                          value.form.name === 'palkia-origin' ||
-                          value.form.name === 'mothim-sandy' ||
-                          value.form.name === 'mothim-trash' ||
-                          value.form.name === 'basculin-white-striped' ||
-                          value.form.name === 'greninja-battle-bond' ||
-                          value.form.name === 'urshifu-rapid-strike' ||
-                          (pokeID && pokeID >= 899)
-                            ? APIService.getPokeIconSprite('unknown-pokemon')
-                            : APIService.getPokeIconSprite(value.form.name)
-                        }
-                      />
-                      <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                      {value.form.id === pokeID && (
-                        <b>
-                          <small>(Default)</small>
-                        </b>
-                      )}
-                      {!value.form.id && <small className="text-danger">* Only in GO</small>}
-                    </button>
-                  )
-                )}
+                {value.map((value, index: React.Key) => (
+                  <button
+                    value={value.form.name}
+                    key={index}
+                    className={'btn btn-form' + (value.form.id === currForm.form.id ? ' form-selected' : '')}
+                    onClick={(e) => changeForm(e)}
+                  >
+                    <img
+                      width={64}
+                      height={64}
+                      onError={(e: any) => {
+                        e.onerror = null;
+                        APIService.getFetchUrl(e.target.currentSrc)
+                          .then(() => {
+                            e.target.src = APIService.getPokeIconSprite(value.default_name);
+                          })
+                          .catch(() => {
+                            e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                          });
+                      }}
+                      alt="img-icon-form"
+                      src={
+                        value.form.name.includes('-totem') ||
+                        value.form.name.includes('-hisui') ||
+                        value.form.name.includes('power-construct') ||
+                        value.form.name.includes('own-tempo') ||
+                        value.form.name.includes('-meteor') ||
+                        value.form.name === 'mewtwo-armor' ||
+                        value.form.name === 'arceus-unknown' ||
+                        value.form.name === 'dialga-origin' ||
+                        value.form.name === 'palkia-origin' ||
+                        value.form.name === 'mothim-sandy' ||
+                        value.form.name === 'mothim-trash' ||
+                        value.form.name === 'basculin-white-striped' ||
+                        value.form.name === 'greninja-battle-bond' ||
+                        value.form.name === 'urshifu-rapid-strike' ||
+                        (pokeID && pokeID >= 899)
+                          ? APIService.getPokeIconSprite('unknown-pokemon')
+                          : APIService.getPokeIconSprite(value.form.name)
+                      }
+                    />
+                    <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
+                    {value.form.id === pokeID && (
+                      <b>
+                        <small>(Default)</small>
+                      </b>
+                    )}
+                    {!value.form.id && <small className="text-danger">* Only in GO</small>}
+                  </button>
+                ))}
               </Fragment>
             ))}
           </Fragment>

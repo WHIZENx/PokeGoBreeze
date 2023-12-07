@@ -4,16 +4,15 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
 
 import './Stats.scss';
+import { StatsModel } from '../../../core/models/stats.model';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../../store/models/state.model';
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 
 const Stats = (props: {
-  pokemonStats: {
-    [x: string]: {
-      max_stats: number;
-      max_rank: number;
-      ranking: any[];
-    };
-  };
-  stats?: { stats: any };
+  isShadow?: boolean;
+  pokemonStats: StatsModel;
+  stats?: { stats: StatsModel };
   statATK?: {
     attack: number;
     rank: number;
@@ -31,6 +30,7 @@ const Stats = (props: {
     rank: number;
   };
 }) => {
+  const data = useSelector((state: StoreState) => state.store.data);
   const theme = useTheme();
   const [isAvailable, setIsAvailable]: any = useState({
     attackRank: null,
@@ -40,6 +40,12 @@ const Stats = (props: {
   });
 
   const [currentStats, setCurrentStats] = useState({
+    stats: {
+      atk: 0,
+      def: 0,
+      sta: 0,
+      prod: 0,
+    },
     atk: 0,
     def: 0,
     sta: 0,
@@ -47,55 +53,63 @@ const Stats = (props: {
   });
 
   useEffect(() => {
+    const atk = setShadowStats(
+      props.stats || props.statATK ? (props.statATK ? props.statATK?.attack : calBaseATK(props.stats?.stats, true)) : 0,
+      'atk'
+    );
+    const def = setShadowStats(
+      props.stats || props.statDEF ? (props.statDEF ? props.statDEF?.defense : calBaseDEF(props.stats?.stats, true)) : 0,
+      'def'
+    );
+    const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA?.stamina : calBaseSTA(props.stats?.stats, true)) : 0;
+    const prod = setShadowStats(
+      props.stats || props.statProd
+        ? props.statProd
+          ? props.statProd.prod
+          : calBaseATK(props.stats?.stats, true) * calBaseDEF(props.stats?.stats, true) * calBaseSTA(props.stats?.stats, true)
+        : 0
+    );
     setIsAvailable(
       checkRankAllAvailable(props.pokemonStats, {
-        atk: props.stats || props.statATK ? (props.statATK ? props.statATK.attack : calBaseATK(props.stats?.stats, true)) : 0,
-        def: props.stats || props.statDEF ? (props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats?.stats, true)) : 0,
-        sta: props.stats || props.statSTA ? (props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats?.stats, true)) : 0,
-        prod:
-          props.stats || props.statProd
-            ? props.statProd
-              ? props.statProd.prod
-              : calBaseATK(props.stats?.stats, true) * calBaseDEF(props.stats?.stats, true) * calBaseSTA(props.stats?.stats, true)
-            : 0,
+        atk,
+        def,
+        sta,
+        prod,
       })
     );
     setCurrentStats({
-      atk:
-        props.stats || props.statATK
-          ? props.statATK
-            ? (props.statATK.attack * 100) / props.pokemonStats.attack.max_stats
-            : (calBaseATK(props.stats?.stats, true) * 100) / props.pokemonStats.attack.max_stats
-          : 0,
-      def:
-        props.stats || props.statDEF
-          ? props.statDEF
-            ? (props.statDEF.defense * 100) / props.pokemonStats.defense.max_stats
-            : (calBaseDEF(props.stats?.stats, true) * 100) / props.pokemonStats.defense.max_stats
-          : 0,
-      sta:
-        props.stats || props.statSTA
-          ? props.statSTA
-            ? (props.statSTA.stamina * 100) / props.pokemonStats.stamina.max_stats
-            : (calBaseSTA(props.stats?.stats, true) * 100) / props.pokemonStats.stamina.max_stats
-          : 0,
-      prod:
-        props.stats || props.statProd
-          ? props.statProd
-            ? (props.statProd.prod * 100) / props.pokemonStats.statProd.max_stats
-            : (calBaseATK(props.stats?.stats, true) * calBaseDEF(props.stats?.stats, true) * calBaseSTA(props.stats?.stats, true) * 100) /
-              props.pokemonStats.statProd.max_stats
-          : 0,
+      stats: {
+        atk,
+        def,
+        sta,
+        prod,
+      },
+      atk: (atk * 100) / props.pokemonStats?.attack.max_stats,
+      def: (def * 100) / props.pokemonStats?.defense.max_stats,
+      sta: (sta * 100) / props.pokemonStats?.stamina.max_stats,
+      prod: (prod * 100) / props.pokemonStats?.statProd.max_stats,
     });
-  }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd]);
+  }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.isShadow]);
+
+  const setShadowStats = (stats: number, type?: string) => {
+    if (props.isShadow) {
+      return Math.round(
+        stats *
+          (type === 'atk'
+            ? SHADOW_ATK_BONUS(data?.options)
+            : type === 'def'
+            ? SHADOW_DEF_BONUS(data?.options)
+            : SHADOW_ATK_BONUS(data?.options) * SHADOW_DEF_BONUS(data?.options))
+      );
+    }
+    return stats;
+  };
 
   return (
     <div className="element-top" style={{ color: (theme.palette as any).constant.text }}>
       <div className="progress position-relative">
         <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-          <span>
-            ATK {props.stats || props.statATK ? (props.statATK ? props.statATK.attack : calBaseATK(props.stats?.stats, true)) : 0}
-          </span>
+          <span>ATK {currentStats.stats.atk}</span>
         </div>
         <div
           className="progress-bar bg-danger"
@@ -109,16 +123,14 @@ const Stats = (props: {
         />
         <div className="box-text rank-text justify-content-end d-flex position-absolute">
           <span>
-            Rank: {props.statATK ? props.statATK.rank : isAvailable.attackRank ? isAvailable.attackRank : 'Unavailable'} /{' '}
-            {props.pokemonStats.attack.max_rank}
+            Rank: {isAvailable.attackRank ? isAvailable.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'} /{' '}
+            {props.pokemonStats?.attack.max_rank}
           </span>
         </div>
       </div>
       <div className="progress position-relative">
         <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-          <span>
-            DEF {props.stats || props.statDEF ? (props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats?.stats, true)) : 0}
-          </span>
+          <span>DEF {currentStats.stats.def}</span>
         </div>
         <div
           className="progress-bar bg-success"
@@ -132,16 +144,14 @@ const Stats = (props: {
         />
         <div className="box-text rank-text justify-content-end d-flex position-absolute">
           <span>
-            Rank: {props.statDEF ? props.statDEF.rank : isAvailable.defenseRank ? isAvailable.defenseRank : 'Unavailable'} /{' '}
-            {props.pokemonStats.defense.max_rank}
+            Rank: {isAvailable.defenseRank ? isAvailable.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'} /{' '}
+            {props.pokemonStats?.defense.max_rank}
           </span>
         </div>
       </div>
       <div className="progress position-relative">
         <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-          <span>
-            STA {props.stats || props.statSTA ? (props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats?.stats, true)) : 0}
-          </span>
+          <span>STA {currentStats.stats.sta}</span>
         </div>
         <div
           className="progress-bar bg-info"
@@ -155,24 +165,14 @@ const Stats = (props: {
         />
         <div className="box-text rank-text justify-content-end d-flex position-absolute">
           <span>
-            Rank: {props.statSTA ? props.statSTA.rank : isAvailable.staminaRank ? isAvailable.staminaRank : 'Unavailable'} /{' '}
-            {props.pokemonStats.stamina.max_rank}
+            Rank: {isAvailable.staminaRank ? isAvailable.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'} /{' '}
+            {props.pokemonStats?.stamina.max_rank}
           </span>
         </div>
       </div>
       <div className="progress position-relative">
         <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-          <span>
-            Stat Prod{' '}
-            {(
-              (props.stats || props.statProd
-                ? props.statProd
-                  ? props.statProd.prod
-                  : calBaseATK(props.stats?.stats, true) * calBaseDEF(props.stats?.stats, true) * calBaseSTA(props.stats?.stats, true)
-                : 0) / Math.pow(10, 6)
-            ).toFixed(2)}{' '}
-            MM
-          </span>
+          <span>Stat Prod {(currentStats.stats.prod / Math.pow(10, 6)).toFixed(2)} MM</span>
         </div>
         <div
           className="progress-bar bg-warning"
@@ -186,8 +186,8 @@ const Stats = (props: {
         />
         <div className="box-text rank-text justify-content-end d-flex position-absolute">
           <span>
-            Rank: {props.statProd ? props.statProd.rank : isAvailable.statProdRank ? isAvailable.statProdRank : 'Unavailable'} /{' '}
-            {props.pokemonStats.statProd.max_rank}
+            Rank: {isAvailable.statProdRank ? isAvailable.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'} /{' '}
+            {props.pokemonStats?.statProd.max_rank}
           </span>
         </div>
       </div>

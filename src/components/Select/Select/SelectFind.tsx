@@ -1,8 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { convertNameRanking, splitAndCapitalize } from '../../../util/Utils';
 import CardPokemonLarge from '../../Card/CardPokemonLarge';
+import { StoreState } from '../../../store/models/state.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const SelectFind = (props: {
   data: any[];
@@ -18,25 +20,26 @@ const SelectFind = (props: {
   // eslint-disable-next-line no-unused-vars
   setName: (arg0: string) => void;
   // eslint-disable-next-line no-unused-vars
-  setId: (arg0: null) => void;
+  setId: (arg0: number | null | undefined) => void;
 }) => {
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
 
-  const [currentPokemon, setCurrentPokemon]: any = useState(null);
+  const [currentPokemon, setCurrentPokemon]: [PokemonDataModel | undefined, Dispatch<SetStateAction<PokemonDataModel | undefined>>] =
+    useState();
   const [showPokemon, setShowPokemon] = useState(false);
 
   const [search, setSearch] = useState('');
 
   const result = useRef(
-    Object.values(pokemonData).filter((pokemon: any) =>
-      props.data ? props.data.map((item: { speciesId: any }) => item.speciesId).includes(convertNameRanking(pokemon.slug)) : true
+    pokemonData.filter((pokemon) =>
+      props.data ? props.data.map((item) => item.speciesId).includes(convertNameRanking(pokemon.slug)) : true
     )
   );
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
+  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 0.3 >= fullHeight * (startIndex + 1)) {
@@ -44,10 +47,10 @@ const SelectFind = (props: {
     }
   };
 
-  const changePokemon = (pokemon: any) => {
+  const changePokemon = (pokemon: PokemonDataModel | undefined) => {
     setCurrentPokemon(pokemon);
     setShowPokemon(false);
-    const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+    const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
     if (props.clearData) {
       props.clearData();
     }
@@ -58,21 +61,21 @@ const SelectFind = (props: {
       props.setStatDEF(stats.def);
     }
     if (props.setStatSTA) {
-      props.setStatSTA(stats.sta);
+      props.setStatSTA(stats?.sta ?? 0);
     }
     if (props.setForm) {
       props.setForm(pokemon);
     }
     if (props.setName) {
-      props.setName(splitAndCapitalize(pokemon.name, '-', ' '));
+      props.setName(splitAndCapitalize(pokemon?.name, '-', ' '));
     }
     if (props.setId) {
-      props.setId(pokemon.num);
+      props.setId(pokemon?.num);
     }
   };
 
   const removePokemon = () => {
-    setCurrentPokemon(null);
+    setCurrentPokemon(undefined);
     setShowPokemon(false);
     if (props.clearData) {
       props.clearData();
@@ -116,8 +119,8 @@ const SelectFind = (props: {
       >
         <div className="card-select">
           <CardPokemonLarge
-            id={currentPokemon && currentPokemon.num}
-            name={currentPokemon && splitAndCapitalize(currentPokemon.name, '-', ' ')}
+            id={currentPokemon?.num ?? 0}
+            name={splitAndCapitalize(currentPokemon?.name, '-', ' ') ?? ''}
             value={currentPokemon}
           />
           {currentPokemon && (
@@ -129,12 +132,12 @@ const SelectFind = (props: {
             <div>
               {result.current
                 .filter(
-                  (pokemon: any) =>
+                  (pokemon) =>
                     splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
                     pokemon.num.toString().includes(search)
                 )
                 .slice(0, firstInit + eachCounter * startIndex)
-                .map((pokemon: any, index) => (
+                .map((pokemon, index) => (
                   <div className="container card-pokemon" key={index} onMouseDown={() => changePokemon(pokemon)}>
                     <CardPokemonLarge id={pokemon.num} name={splitAndCapitalize(pokemon.name, '-', ' ')} value={pokemon} />
                   </div>

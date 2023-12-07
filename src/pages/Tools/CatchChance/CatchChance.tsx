@@ -1,6 +1,6 @@
 import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { Fragment, useEffect, useState } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Select/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
@@ -28,10 +28,11 @@ import {
 import { convertName, LevelSlider, splitAndCapitalize } from '../../../util/Utils';
 
 import './CatchChance.scss';
+import { StoreState, SearchingState } from '../../../store/models/state.model';
 
 const CatchChance = () => {
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemon);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const CIRCLE_DISTANCE = 200;
 
@@ -145,7 +146,7 @@ const CatchChance = () => {
       throwType.forEach((type) => {
         const multiplier =
           ball.threshold *
-          ((type.threshold[0] + type.threshold[1]) / 2) *
+          (((type.threshold.at(0) ?? 0) + type.threshold[1]) / 2) *
           medalChance *
           (curveBall ? CURVE_INC_CHANCE : 1) *
           (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
@@ -166,8 +167,8 @@ const CatchChance = () => {
     });
   };
 
-  const findCatchCapture = (id: number, form: any) => {
-    const pokemon = pokemonData.find((data: { id: number; name: any }) => data.id === id && data.name === convertName(form.form.name));
+  const findCatchCapture = (id: number, form: { form: { name: string } }) => {
+    const pokemon = pokemonData.find((data) => data.id === id && data.name === convertName(form.form.name));
     if (!pokemon) {
       return setEncounter(false);
     }
@@ -198,7 +199,7 @@ const CatchChance = () => {
     }
   };
 
-  const onSetForm = (form: any) => {
+  const onSetForm = (form: string) => {
     setForm(form);
   };
 
@@ -222,11 +223,11 @@ const CatchChance = () => {
     });
   };
 
-  const onHandleLevel = (e: any, v: any) => {
+  const onHandleLevel = (_: any, v: number) => {
     setLevel(v);
   };
 
-  const onHandleRadius = (e: any, v: any) => {
+  const onHandleRadius = (_: any, v: number) => {
     setRadius(v);
   };
 
@@ -250,7 +251,7 @@ const CatchChance = () => {
     }
   };
 
-  const titleThrowModel = (title: string, type: string, threshold: any) => {
+  const titleThrowModel = (title: string, type: string, threshold: number[]) => {
     return {
       title,
       type,
@@ -271,7 +272,7 @@ const CatchChance = () => {
   const calculateProb = (disable = false, threshold = 1) => {
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
-    const pokeball: any = Object.entries(pokeballType).find((item, index) => index === ballType);
+    const pokeball: any = Object.entries(pokeballType).find((_, index) => index === ballType);
     const multiplier =
       pokeball[1].threshold *
       threshold *
@@ -288,7 +289,7 @@ const CatchChance = () => {
   const calculateAdvance = () => {
     const threshold = normalThrow ? 1 : 1 + (100 - radius) / 100;
     const result = calculateProb(false, threshold);
-    const pokeball: any = Object.entries(pokeballType).find((item, index) => index === ballType);
+    const pokeball: any = Object.entries(pokeballType).find((_, index) => index === ballType);
     setDataAdv({
       result,
       ballName: pokeball[1].name,
@@ -333,14 +334,14 @@ const CatchChance = () => {
               )}
               <div className="d-flex flex-wrap justify-content-center w-100 element-top" style={{ gap: 10 }}>
                 <FormControlLabel
-                  control={<Checkbox checked={curveBall} onChange={(event, check) => setOptions({ ...options, curveBall: check })} />}
+                  control={<Checkbox checked={curveBall} onChange={(_, check) => setOptions({ ...options, curveBall: check })} />}
                   label="Curve Ball"
                 />
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={razzBerry}
-                      onChange={(event, check) =>
+                      onChange={(_, check) =>
                         setOptions({
                           ...options,
                           razzBerry: check,
@@ -360,7 +361,7 @@ const CatchChance = () => {
                   control={
                     <Checkbox
                       checked={goldenRazzBerry}
-                      onChange={(event, check) =>
+                      onChange={(_, check) =>
                         setOptions({
                           ...options,
                           goldenRazzBerry: check,
@@ -380,7 +381,7 @@ const CatchChance = () => {
                   control={
                     <Checkbox
                       checked={silverPinaps}
-                      onChange={(event, check) =>
+                      onChange={(_, check) =>
                         setOptions({
                           ...options,
                           silverPinaps: check,
@@ -403,7 +404,7 @@ const CatchChance = () => {
                   className="w-75"
                   style={{ maxWidth: 400 }}
                   value={level}
-                  defaultValue={1}
+                  defaultValue={MIN_LEVEL}
                   valueLabelDisplay="off"
                   marks={[
                     {
@@ -412,7 +413,7 @@ const CatchChance = () => {
                     },
                   ]}
                   step={0.5}
-                  min={1}
+                  min={MIN_LEVEL}
                   max={MAX_LEVEL - 1}
                   disabled={data ? false : true}
                   onChange={(data ? onHandleLevel : null) as any}
@@ -423,7 +424,7 @@ const CatchChance = () => {
                   <div className="w-25 text-center d-inline-block">
                     <h1>FLEE</h1>
                     <hr className="w-100" />
-                    <h5>{data?.baseFleeRate * 100}%</h5>
+                    <h5>{Math.round(data?.baseFleeRate * 100)}%</h5>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
@@ -443,20 +444,22 @@ const CatchChance = () => {
                     <h1>Attack</h1>
                     <hr className="w-100" />
                     <h5>
-                      {(data?.obShadowFormAttackProbability && shadow ? data?.obShadowFormAttackProbability : data?.attackProbability) *
-                        100}
-                      %
+                      {data &&
+                        `${
+                          (data.obShadowFormAttackProbability && shadow ? data.obShadowFormAttackProbability : data.attackProbability) * 100
+                        }%`}
                     </h5>
-                    <p>Time: {data?.attackTimerS / 10} sec</p>
+                    <p>{data && `Time: ${data.attackTimerS / 10} sec`}</p>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
                   <h1>Dodge</h1>
                   <hr className="w-100" />
                   <h5>
-                    {(data?.obShadowFormDodgeProbability && shadow ? data?.obShadowFormDodgeProbability : data?.dodgeProbability) * 100}%
+                    {data &&
+                      `${(data.obShadowFormDodgeProbability && shadow ? data.obShadowFormDodgeProbability : data.dodgeProbability) * 100}%`}
                   </h5>
-                  <p>Time: {data?.dodgeDurationS / 10} sec</p>
+                  <p>{data && `Time: ${data.dodgeDurationS / 10} sec`}</p>
                 </div>
               </div>
             </div>
@@ -467,7 +470,7 @@ const CatchChance = () => {
                 control={
                   <Checkbox
                     checked={shadow}
-                    onChange={(event, check) => {
+                    onChange={(_, check) => {
                       setOptions({ ...options, shadow: check });
                     }}
                   />
@@ -485,7 +488,7 @@ const CatchChance = () => {
               control={
                 <Checkbox
                   checked={advance}
-                  onChange={(event, check) => {
+                  onChange={(_, check) => {
                     setOptions({ ...options, advance: check });
                     if (check) {
                       calculateAdvance();
@@ -515,10 +518,7 @@ const CatchChance = () => {
                 </FormControl>
                 <FormControlLabel
                   control={
-                    <Checkbox
-                      checked={normalThrow}
-                      onChange={(event, check) => setAdvanceOption({ ...advanceOption, normalThrow: check })}
-                    />
+                    <Checkbox checked={normalThrow} onChange={(_, check) => setAdvanceOption({ ...advanceOption, normalThrow: check })} />
                   }
                   label="Normal Throw "
                 />

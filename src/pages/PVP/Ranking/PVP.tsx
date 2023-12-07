@@ -12,7 +12,7 @@ import { computeBgType, findAssetForm } from '../../../util/Compute';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -20,23 +20,41 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
+import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
+import { useLocalStorage } from 'usehooks-ts';
+import { scoreType } from '../../../util/Constants';
+import { Action } from 'history';
+import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
+import { RankingsPVP } from '../../../core/models/pvp.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
-  const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
+  const navigate = useNavigate();
+  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
+  const router = useSelector((state: RouterState) => state.router);
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
+    'timestamp',
+    JSON.stringify({
+      gamemaster: null,
+      pvp: null,
+    })
+  );
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
   const params: any = useParams();
 
-  const [rankingData, setRankingData]: any = useState(null);
+  const [rankingData, setRankingData]: any = useState([]);
   const [storeStats, setStoreStats]: any = useState(null);
+  const [onLoadData, setOnLoadData] = useState(false);
   const sortedBy = useRef('score');
   const [sorted, setSorted]: any = useState(1);
 
   const styleSheet: any = useRef(null);
 
   const [search, setSearch] = useState('');
-  const statsRanking = useSelector((state: RootStateOrAny) => state.stats);
+  const statsRanking = useSelector((state: StatsState) => state.stats);
 
   const LeaveToggle = ({ eventKey }: any) => {
     const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
@@ -51,16 +69,25 @@ const RankingPVP = () => {
   };
 
   useEffect(() => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
+    if (!pvp) {
+      loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
+    }
+  }, [pvp]);
+
+  useEffect(() => {
+    if (dataStore?.combat?.every((combat) => !combat.archetype)) {
+      loadPVPMoves(dispatch);
+    }
+  }, [dataStore?.combat]);
+
+  useEffect(() => {
     const fetchPokemon = async () => {
       dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
-        let file = (
-          await axios.getFetchUrl(axios.getRankingFile(params.serie, cp, params.type), {
-            cancelToken: source.token,
+        let file: RankingsPVP[] = (
+          await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type), {
+            cancelToken: APIService.getAxios().CancelToken.source().token,
           })
         ).data;
         if (params.serie === 'all') {
@@ -81,22 +108,27 @@ const RankingPVP = () => {
           }
                     ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
         }
-        file = file.map((item: { speciesId: string; speciesName: string; moveset: string[] }) => {
+        file = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon: any = Object.values(dataStore.pokemonData).find((pokemon: any) => pokemon.slug === name);
-          const id = pokemon.num;
-          const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.name);
+          let pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
 
-          const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-
-          if (!styleSheet.current) {
-            styleSheet.current = getStyleSheet(`.${pokemon.types[0].toLowerCase()}`);
+          if (!pokemon) {
+            pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
           }
 
-          let fmoveData = item.moveset[0],
-            cMoveDataPri = item.moveset[1],
-            cMoveDataSec = item.moveset[2];
-          if (fmoveData.includes('HIDDEN_POWER')) {
+          const id = pokemon?.num;
+          const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
+
+          const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+
+          if (!styleSheet.current) {
+            styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
+          }
+
+          let fmoveData = item.moveset.at(0),
+            cMoveDataPri = item.moveset.at(1),
+            cMoveDataSec = item.moveset.at(2);
+          if (fmoveData?.includes('HIDDEN_POWER')) {
             fmoveData = 'HIDDEN_POWER';
           }
           if (cMoveDataPri === 'FUTURE_SIGHT') {
@@ -112,28 +144,26 @@ const RankingPVP = () => {
             cMoveDataSec = 'TECHNO_BLAST_WATER';
           }
 
-          let fmove = dataStore.combat.find((item: { name: any }) => item.name === fmoveData);
-          const cmovePri = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataPri);
+          let fmove: any = dataStore?.combat?.find((item: { name: string }) => item.name === fmoveData);
+          const cmovePri = dataStore?.combat?.find((item: { name: string }) => item.name === cMoveDataPri);
           let cmoveSec;
           if (cMoveDataSec) {
-            cmoveSec = dataStore.combat.find((item: { name: any }) => item.name === cMoveDataSec);
+            cmoveSec = dataStore?.combat?.find((item: { name: string }) => item.name === cMoveDataSec);
           }
 
-          if (item.moveset[0].includes('HIDDEN_POWER')) {
-            fmove = { ...fmove, type: item.moveset[0].split('_')[2] };
+          if (item.moveset.at(0)?.includes('HIDDEN_POWER')) {
+            fmove = { ...fmove, type: item.moveset.at(0)?.split('_').at(2) };
           }
 
-          let combatPoke = dataStore.pokemonCombat.filter(
-            (item: { id: number; baseSpecies: string }) =>
-              item.id === pokemon.num &&
-              item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+          let combatPoke: any = dataStore?.pokemonCombat?.filter(
+            (item) => item.id === pokemon?.num && item.baseSpecies === convertName(pokemon?.baseSpecies ?? pokemon?.name)
           );
-          const result = combatPoke.find((item: { name: string }) => item.name === convertName(pokemon.name));
+          const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
           if (!result) {
             if (combatPoke) {
-              combatPoke = combatPoke[0];
+              combatPoke = combatPoke.at(0);
             } else {
-              combatPoke = combatPoke.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon.name));
+              combatPoke = combatPoke?.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon?.name));
             }
           } else {
             combatPoke = result;
@@ -146,23 +176,23 @@ const RankingPVP = () => {
             form,
             pokemon,
             stats,
-            atk: statsRanking.attack.ranking.find((i: { attack: number }) => i.attack === stats.atk),
-            def: statsRanking.defense.ranking.find((i: { defense: number }) => i.defense === stats.def),
-            sta: statsRanking.stamina.ranking.find((i: { stamina: number }) => i.stamina === stats.sta),
-            prod: statsRanking.statProd.ranking.find((i: { prod: number }) => i.prod === stats.atk * stats.def * stats.sta),
+            atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
+            def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
+            sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
+            prod: statsRanking.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
             fmove,
             cmovePri,
             cmoveSec,
             combatPoke,
             shadow: item.speciesName.includes('(Shadow)'),
-            purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec)),
+            purified: combatPoke?.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke?.purifiedMoves.includes(cMoveDataSec)),
           };
         });
         setRankingData(file);
         setStoreStats(file.map(() => false));
         dispatch(hideSpinner());
       } catch (e: any) {
-        source.cancel();
+        APIService.getAxios().CancelToken.source().cancel();
         dispatch(
           showSpinner({
             error: true,
@@ -171,15 +201,44 @@ const RankingPVP = () => {
         );
       }
     };
-    fetchPokemon();
-  }, [dispatch, params.serie, params.cp, params.type, dataStore]);
+    if (
+      statsRanking &&
+      dataStore?.pokemonCombat &&
+      dataStore?.combat &&
+      dataStore?.pokemonData?.length > 0 &&
+      dataStore?.assets &&
+      !onLoadData
+    ) {
+      setOnLoadData(true);
+      if (router.action === Action.Push) {
+        router.action = null as any;
+        setTimeout(() => fetchPokemon(), 100);
+      } else if (rankingData.length === 0 && pvp) {
+        fetchPokemon();
+      }
+    }
+  }, [
+    dispatch,
+    params.serie,
+    params.cp,
+    params.type,
+    rankingData,
+    pvp,
+    router.action,
+    onLoadData,
+    statsRanking,
+    dataStore?.pokemonCombat,
+    dataStore?.combat,
+    dataStore?.pokemonData,
+    dataStore?.assets,
+  ]);
 
   const renderItem = (data: any, key: string) => {
     return (
       <Accordion.Item eventKey={key}>
         <Accordion.Header
           onClick={() => {
-            if (!storeStats[key]) {
+            if (storeStats && !storeStats[key]) {
               setStoreStats(update(storeStats, { [key]: { $set: true } }));
             }
           }}
@@ -210,10 +269,10 @@ const RankingPVP = () => {
         <Accordion.Body
           style={{
             padding: 0,
-            backgroundImage: computeBgType(data.pokemon.types, data.shadow, data.purified, 0.8, styleSheet.current),
+            backgroundImage: computeBgType(data?.pokemon?.types, data?.shadow, data?.purified, 0.8, styleSheet.current),
           }}
         >
-          {storeStats[key] && (
+          {storeStats && storeStats[key] && (
             <Fragment>
               <div className="pokemon-ranking-body ranking-body">
                 <div className="w-100 ranking-info element-top">
@@ -246,6 +305,7 @@ const RankingPVP = () => {
                       elite={data.combatPoke.eliteCinematicMoves.includes(data.cmovePri.name)}
                       shadow={data.combatPoke.shadowMoves.includes(data.cmovePri.name)}
                       purified={data.combatPoke.purifiedMoves.includes(data.cmovePri.name)}
+                      special={data.combatPoke.specialMoves.includes(data.cMovePri?.name)}
                     />
                     {data.cmoveSec && (
                       <TypeBadge
@@ -257,11 +317,12 @@ const RankingPVP = () => {
                         elite={data.combatPoke.eliteCinematicMoves.includes(data.cmoveSec.name)}
                         shadow={data.combatPoke.shadowMoves.includes(data.cmoveSec.name)}
                         purified={data.combatPoke.purifiedMoves.includes(data.cmoveSec.name)}
+                        special={data.combatPoke.specialMoves.includes(data.cMovePri?.name)}
                       />
                     )}
                   </div>
                   <hr />
-                  {Keys(dataStore.assets, Object.values(dataStore.pokemonData), data, params.cp, params.type)}
+                  {Keys(dataStore?.assets ?? [], dataStore?.pokemonData ?? [], data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />
@@ -271,7 +332,7 @@ const RankingPVP = () => {
                   <hr />
                   {TypeEffective(data.pokemon.types)}
                 </div>
-                <div className="container">{MoveSet(data.moves, data.combatPoke, dataStore.combat)}</div>
+                <div className="container">{MoveSet(data.moves, data.combatPoke, dataStore?.combat ?? [])}</div>
               </div>
               <LeaveToggle eventKey={key} />
             </Fragment>
@@ -283,10 +344,10 @@ const RankingPVP = () => {
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
-    const league = dataStore.pvp.rankings.find((item: { id: any; cp: number[] }) => item.id === params.serie && item.cp.includes(cp));
+    const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
-        {league && (
+        {league ? (
           <div className="d-flex flex-wrap align-items-center element-top" style={{ columnGap: 10 }}>
             <img
               alt="img-league"
@@ -306,7 +367,7 @@ const RankingPVP = () => {
             />
             <h2>
               <b>
-                {league.name === 'All'
+                {league?.name === 'All'
                   ? cp === 500
                     ? 'Little Cup'
                     : cp === 1500
@@ -314,9 +375,13 @@ const RankingPVP = () => {
                     : cp === 2500
                     ? 'Ultra league'
                     : 'Master league'
-                  : league.name}
+                  : league?.name}
               </b>
             </h2>
+          </div>
+        ) : (
+          <div className="ph-item element-top">
+            <div className="ph-picture" style={{ width: '40%', height: 64, paddingLeft: 0, paddingRight: 0, marginBottom: 0 }} />
           </div>
         )}
       </Fragment>
@@ -325,98 +390,64 @@ const RankingPVP = () => {
 
   return (
     <Fragment>
-      {rankingData && storeStats && (
-        <div className="container pvp-container element-bottom">
-          {renderLeague()}
-          <hr />
-          <div className="element-top ranking-link-group">
+      <div className="container pvp-container element-bottom">
+        {renderLeague()}
+        <hr />
+        <div className="element-top ranking-link-group">
+          {scoreType.map((type, index) => (
             <Button
-              className={params.type.toLowerCase() === 'overall' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/overall`}
+              key={index}
+              className={params.type.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+              onClick={() => navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`)}
             >
-              Overall
+              {type}
             </Button>
-            <Button
-              className={params.type.toLowerCase() === 'leads' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/leads`}
-            >
-              Leads
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'closers' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/closers`}
-            >
-              Closers
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'switches' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/switches`}
-            >
-              Switches
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'chargers' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/chargers`}
-            >
-              Chargers
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'attackers' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/attackers`}
-            >
-              Attackers
-            </Button>
-            <Button
-              className={params.type.toLowerCase() === 'consistency' ? ' active' : ''}
-              href={`pvp/rankings/${params.serie}/${params.cp}/consistency`}
-            >
-              Consistency
-            </Button>
-          </div>
-          <div className="input-group border-input">
-            <input
-              type="text"
-              className="form-control input-search"
-              placeholder="Enter Name or ID"
-              value={search}
-              onInput={(e: any) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="ranking-container">
-            <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
-              <div />
-              <div className="d-flex" style={{ marginRight: 15 }}>
-                <div
-                  className="text-center"
-                  style={{ width: 'max-content' }}
-                  onClick={() => {
-                    setSorted(!sorted);
-                  }}
-                >
-                  <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
-                    Score
-                    {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
-                  </span>
-                </div>
+          ))}
+        </div>
+        <div className="input-group border-input">
+          <input
+            type="text"
+            className="form-control input-search"
+            placeholder="Enter Name or ID"
+            defaultValue={search}
+            onKeyUp={(e: any) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="ranking-container">
+          <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
+            <div />
+            <div className="d-flex" style={{ marginRight: 15 }}>
+              <div
+                className="text-center"
+                style={{ width: 'max-content' }}
+                onClick={() => {
+                  setSorted(!sorted);
+                }}
+              >
+                <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
+                  Score
+                  {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+                </span>
               </div>
             </div>
-            <Accordion alwaysOpen={true}>
-              {rankingData
-                .filter((pokemon: { speciesId: string; speciesName: string }) =>
+          </div>
+          <Accordion alwaysOpen={true}>
+            {rankingData
+              .filter(
+                (pokemon: { speciesId: string; speciesName: string; id: number }) =>
                   splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), '-', ' ')
                     .toLowerCase()
-                    .includes(search.toLowerCase())
-                )
-                .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
-                  sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]
-                )
-                .map((value: any, index: string) => (
-                  <Fragment key={index}>{renderItem(value, index)}</Fragment>
-                ))}
-            </Accordion>
-          </div>
+                    .includes(search.toLowerCase()) || pokemon.id.toString().includes(search)
+              )
+              .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
+                sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]
+              )
+              .map((value: any, index: string) => (
+                <Fragment key={index}>{renderItem(value, index)}</Fragment>
+              ))}
+          </Accordion>
         </div>
-      )}
+      </div>
     </Fragment>
   );
 };

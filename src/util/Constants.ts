@@ -1,5 +1,13 @@
+import { Options } from '../core/models/options.model';
 import { getOption } from '../core/options';
 import APIService from '../services/API.service';
+
+// KeyCode
+export const KEY_ENTER = 13;
+export const KEY_LEFT = 37;
+export const KEY_UP = 38;
+export const KEY_RIGHT = 39;
+export const KEY_DOWN = 40;
 
 export const SYNC_MSG = 'Waiting to sync current data';
 
@@ -54,6 +62,42 @@ export const RAID_BOSS_TIER: any = {
   },
 };
 
+export const DEFAULT_TYPES = [
+  'BUG',
+  'DARK',
+  'DRAGON',
+  'ELECTRIC',
+  'FAIRY',
+  'FIGHTING',
+  'FIRE',
+  'FLYING',
+  'GHOST',
+  'GRASS',
+  'GROUND',
+  'ICE',
+  'NORMAL',
+  'POISON',
+  'PSYCHIC',
+  'ROCK',
+  'STEEL',
+  'WATER',
+];
+
+export const FORM_NORMAL = 'NORMAL';
+export const FORM_STANDARD = 'STANDARD';
+export const FORM_INCARNATE = 'INCARNATE';
+export const FORM_HERO = 'HERO';
+export const FORM_MEGA = 'MEGA';
+export const FORM_GMAX = 'GMAX';
+export const FORM_PRIMAL = 'PRIMAL';
+export const FORM_ALOLA = 'ALOLA';
+export const FORM_HISUIAN = 'HISUIAN';
+export const FORM_GALARIAN = 'GALARIAN';
+
+export const TYPE_LEGENDARY = 'LEGENDARY';
+export const TYPE_MYTHIC = 'MYTHIC';
+export const TYPE_ULTRA_BEAST = 'ULTRA_BEAST';
+
 export const DEFAULT_POKEMON_DEF_OBJ = 160;
 export const DEFAULT_POKEMON_SHADOW = false;
 export const DEFAULT_TRAINER_FRIEND = false;
@@ -88,22 +132,22 @@ export const MAX_LEVEL = 51;
 export const MIN_IV = 0;
 export const MAX_IV = 15;
 
-export const STAB_MULTIPLY = (options: any) => {
-  return getOption(options, ['battle_options', 'stab']);
+export const STAB_MULTIPLY = (options: Options | undefined) => {
+  return getOption(options, ['battle_options', 'stab']) ?? 1;
 };
-export const MULTIPLY_LEVEL_FRIENDSHIP = (options: any, level: number = DEFAULT_POKEMON_FRIEND_LEVEL) => {
-  return getOption(options, ['trainer_friendship', level.toString(), 'atk_bonus']);
+export const MULTIPLY_LEVEL_FRIENDSHIP = (options: Options | undefined, level = DEFAULT_POKEMON_FRIEND_LEVEL) => {
+  return getOption(options, ['trainer_friendship', level.toString(), 'atk_bonus']) ?? 1;
 };
-export const MULTIPLY_THROW_CHARGE = (options: any, type: string) => {
-  return getOption(options, ['throw_charge', type]);
+export const MULTIPLY_THROW_CHARGE = (options: Options | undefined, type: string) => {
+  return getOption(options, ['throw_charge', type]) ?? 1;
 };
 
 /* Shadow exclusive bonus for Pokémon in battle */
-export const SHADOW_ATK_BONUS = (options: any) => {
-  return getOption(options, ['combat_options', 'shadow_bonus', 'atk']);
+export const SHADOW_ATK_BONUS = (options: Options | undefined) => {
+  return getOption(options, ['combat_options', 'shadow_bonus', 'atk']) ?? 1;
 };
-export const SHADOW_DEF_BONUS = (options: any) => {
-  return getOption(options, ['combat_options', 'shadow_bonus', 'def']);
+export const SHADOW_DEF_BONUS = (options: Options | undefined) => {
+  return getOption(options, ['combat_options', 'shadow_bonus', 'def']) ?? 1;
 };
 
 export const genList: any = {
@@ -115,6 +159,7 @@ export const genList: any = {
   6: [650, 721],
   7: [722, 809],
   8: [810, 905],
+  9: [906, 1008],
 };
 
 export const regionList: any = {
@@ -131,7 +176,8 @@ export const regionList: any = {
   10: 'Paldea',
 };
 
-export const versionList: any = [
+export const versionList: string[] = [
+  'Pokémon GO',
   'Black 2 White 2',
   'Black White',
   'Diamond Pearl',
@@ -149,6 +195,7 @@ export const versionList: any = [
   'Sword Shield',
   'Ultra Sun Ultra Moon',
   'X Y',
+  'Scarlet Violet',
 ];
 
 export const typeCostPowerUp = (type: string) => {
@@ -225,7 +272,11 @@ export const genRoman = (gen: number) => {
       return 'VII';
     case 8:
       return 'VIII';
+    case 9:
+      return 'IX';
     default:
       return '';
   }
 };
+
+export const scoreType = ['Overall', 'Leads', 'Closers', 'Switches', 'Chargers', 'Attackers', 'Consistency'];

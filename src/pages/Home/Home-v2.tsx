@@ -1,15 +1,27 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import React, { useState, useRef, useEffect, Fragment, Dispatch, SetStateAction } from 'react';
+import { useSelector } from 'react-redux';
 import loadingImg from '../../assets/loading.png';
 
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { calculateStatsByTag } from '../../util/Calculate';
-import { convertFormNameImg, mappingReleasedGO, splitAndCapitalize } from '../../util/Utils';
+import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
-import { genList, regionList, TRANSITION_TIME, versionList } from '../../util/Constants';
+import {
+  DEFAULT_TYPES,
+  FORM_GMAX,
+  FORM_MEGA,
+  FORM_PRIMAL,
+  genList,
+  regionList,
+  TRANSITION_TIME,
+  TYPE_LEGENDARY,
+  TYPE_MYTHIC,
+  TYPE_ULTRA_BEAST,
+  versionList,
+} from '../../util/Constants';
 import {
   Checkbox,
   FormControl,
@@ -23,6 +35,8 @@ import {
   Switch,
   useTheme,
 } from '@mui/material';
+import { StoreState, StatsState } from '../../store/models/state.model';
+import { PokemonHomeModel } from '../../core/models/pokemon-home.model';
 
 const VersionProps = {
   PaperProps: {
@@ -34,50 +48,14 @@ const VersionProps = {
 
 const Home = () => {
   const theme = useTheme();
-  const icon = useSelector((state: RootStateOrAny) => state.store.icon);
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
-  const stats = useSelector((state: RootStateOrAny) => state.stats);
-  const types = Object.keys(data.typeEff);
-  const dataList = useRef(
-    mappingReleasedGO(data.pokemonData, data.details)
-      .map((item) => {
-        const stats = calculateStatsByTag(item, item.baseStats, item.slug);
-        const assetForm = queryAssetForm(data.assets, item.num, item.name);
-        return {
-          id: item.num,
-          name: item.name,
-          forme: item.forme,
-          types: item.types,
-          color: item.color.toLowerCase(),
-          sprite: item.sprite.toLowerCase(),
-          baseSpecies: item.baseSpecies,
-          baseStats: item.baseStats,
-          gen: item.gen,
-          region: item.region,
-          version: versionList.indexOf(splitAndCapitalize(item.version, '-', ' ')),
-          goStats: {
-            atk: stats.atk,
-            def: stats.def,
-            sta: stats.sta,
-          },
-          class: item?.pokemonClass,
-          releasedGO: item.releasedGO,
-          image: {
-            default:
-              assetForm && assetForm.default
-                ? APIService.getPokemonModel(assetForm.default)
-                : APIService.getPokeFullSprite(
-                    item.num,
-                    splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase()), '-', '-')
-                  ),
-            shiny: assetForm && assetForm.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
-          },
-        };
-      })
-      .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
-  );
-  const [selectTypes, setSelectTypes]: any = useState([]);
-  const [listOfPokemon, setListOfPokemon]: any = useState([]);
+  const icon = useSelector((state: StoreState) => state.store.icon);
+  const data = useSelector((state: StoreState) => state.store.data);
+  const stats = useSelector((state: StatsState) => state.stats);
+
+  const [types, setTypes]: [string[], Dispatch<SetStateAction<string[]>>] = useState(DEFAULT_TYPES);
+  const [dataList, setDataList]: [PokemonHomeModel[], any] = useState([]);
+  const [selectTypes, setSelectTypes]: [string[], any] = useState([]);
+  const [listOfPokemon, setListOfPokemon]: [PokemonHomeModel[], any] = useState([]);
   const [result, setResult]: any = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -88,15 +66,16 @@ const Home = () => {
     releasedGO: false,
     allShiny: false,
     gen: Object.values(genList).map((_, index) => index),
-    version: versionList.map((_: any, index: any) => index),
+    version: versionList.map((_, index) => index),
     mega: false,
     gmax: false,
+    primal: false,
     legendary: false,
     mythic: false,
     ultrabeast: false,
   });
 
-  const { match, releasedGO, allShiny, gen, version, mega, gmax, legendary, mythic, ultrabeast } = filters;
+  const { match, releasedGO, allShiny, gen, version, mega, gmax, primal, legendary, mythic, ultrabeast } = filters;
 
   const [btnSelected, setBtnSelected] = useState({
     gen: true,
@@ -116,33 +95,52 @@ const Home = () => {
   };
 
   useEffect(() => {
+    if (data?.typeEff) {
+      setTypes(Object.keys(data?.typeEff));
+    }
+  }, [data?.typeEff]);
+
+  useEffect(() => {
+    setDataList(
+      data?.released
+        ?.map((item) => {
+          const stats = calculateStatsByTag(item, item?.baseStats, item?.slug);
+          const assetForm = queryAssetForm(data?.assets ?? [], item?.num, item?.name);
+          return new PokemonHomeModel(item, assetForm, versionList, stats);
+        })
+        .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0))
+    );
+  }, [data?.released]);
+
+  useEffect(() => {
     document.title = 'Home';
   }, []);
 
   useEffect(() => {
-    if (dataList.current) {
+    if (dataList) {
       setLoading(true);
       const timeOutId = setTimeout(
         () => {
-          const result = dataList.current.filter((item: any) => {
+          const result = dataList?.filter((item) => {
             const boolFilterType =
               selectTypes.length === 0 ||
-              (item.types.every((item: any) => selectTypes.includes(item.toUpperCase())) && item.types.length === selectTypes.length);
+              (item.types?.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
             const boolFilterPoke =
               searchTerm === '' ||
               (match
-                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id.toString() === searchTerm
+                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id?.toString() === searchTerm
                 : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  item.id.toString().includes(searchTerm));
+                  item.id?.toString().includes(searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = mega ? item.forme?.includes('Mega') : true;
-            const boolGmax = gmax ? item.forme === 'Gmax' : true;
-            const boolLegend = legendary ? item.class === 'LEGENDARY' : true;
-            const boolMythic = mythic ? item.class === 'MYTHIC' : true;
-            const boolUltra = ultrabeast ? item.class === 'ULTRA_BEAST' : true;
+            const boolMega = mega ? item.forme?.toUpperCase().includes(FORM_MEGA) : true;
+            const boolGmax = gmax ? item.forme?.toUpperCase().includes(FORM_GMAX) : true;
+            const boolPrimal = primal ? item.forme?.toUpperCase().includes(FORM_PRIMAL) : true;
+            const boolLegend = legendary ? item.class === TYPE_LEGENDARY : true;
+            const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
+            const boolUltra = ultrabeast ? item.class === TYPE_ULTRA_BEAST : true;
 
-            const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
-            const findVersion = item.version === -1 ? true : version.includes(item.version);
+            const findGen = item.gen === 0 ? true : gen.includes((item.gen ?? 0) - 1);
+            const findVersion = item.version === -1 ? true : version.includes(item?.version);
             return (
               boolFilterType &&
               boolFilterPoke &&
@@ -151,6 +149,7 @@ const Home = () => {
               findVersion &&
               boolMega &&
               boolGmax &&
+              boolPrimal &&
               boolLegend &&
               boolMythic &&
               boolUltra
@@ -158,17 +157,17 @@ const Home = () => {
           });
           scrollID.current = 0;
           setResult(result);
-          setListOfPokemon(result.slice(0, subItem));
+          setListOfPokemon(result?.slice(0, subItem));
           setLoading(false);
         },
-        document.title === 'Home' ? 100 : listOfPokemon.length
+        listOfPokemon > result ? listOfPokemon : result.length
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [searchTerm, selectTypes, match, releasedGO, mega, gmax, legendary, mythic, ultrabeast, gen, version]);
+  }, [dataList, searchTerm, selectTypes, match, releasedGO, mega, gmax, primal, legendary, mythic, ultrabeast, gen, version]);
 
   useEffect(() => {
-    const onScroll = (e: { target: { documentElement: { scrollTop: any; offsetHeight: any } } }) => {
+    const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
       const scrollTop = e.target.documentElement.scrollTop;
       const fullHeight = e.target.documentElement.offsetHeight;
       if (scrollTop * 1.5 >= fullHeight * (scrollID.current + 1)) {
@@ -213,7 +212,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        gen: versionList.map((value: any, index: any) => index),
+        gen: versionList.map((_, index: number) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -235,7 +234,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        version: versionList.map((value: any, index: any) => index),
+        version: versionList.map((_, index: number) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -278,17 +277,17 @@ const Home = () => {
                     style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
                     className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
                     placeholder="Enter Name or ID"
-                    value={searchTerm}
-                    onInput={(e: any) => setSearchTerm(e.target.value)}
+                    defaultValue={searchTerm}
+                    onKeyUp={(e: any) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <div className="d-flex flex-wrap" style={{ paddingLeft: 8, paddingRight: 8 }}>
                   <FormControlLabel
-                    control={<Checkbox checked={match} onChange={(event, check) => setFilters({ ...filters, match: check })} />}
+                    control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
                     label="Match Pokémon"
                   />
                   <FormControlLabel
-                    control={<Switch checked={releasedGO} onChange={(event, check) => setFilters({ ...filters, releasedGO: check })} />}
+                    control={<Switch checked={releasedGO} onChange={(_, check) => setFilters({ ...filters, releasedGO: check })} />}
                     label={
                       <span className="d-flex align-items-center">
                         Released in GO
@@ -306,7 +305,7 @@ const Home = () => {
                 </div>
                 <div className="d-flex" style={{ paddingLeft: 8, paddingRight: 8 }}>
                   <FormControlLabel
-                    control={<Switch checked={allShiny} onChange={(event, check) => setFilters({ ...filters, allShiny: check })} />}
+                    control={<Switch checked={allShiny} onChange={(_, check) => setFilters({ ...filters, allShiny: check })} />}
                     label={
                       <span className="d-flex align-items-center">
                         Show All Shiny Pokémon (Only Possible)
@@ -332,7 +331,7 @@ const Home = () => {
                       value={gen}
                       onChange={handleChangeGen}
                       input={<OutlinedInput label="Generation(s)" />}
-                      renderValue={(selected: any) => 'Gen ' + selected.map((item: number) => (item + 1).toString()).join(', Gen ')}
+                      renderValue={(selected) => 'Gen ' + selected.map((item: number) => (item + 1).toString()).join(', Gen ')}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
                         <ListItemText
@@ -343,7 +342,7 @@ const Home = () => {
                           }
                         />
                       </MenuItem>
-                      {Object.values(genList).map((value: any, index) => (
+                      {Object.values(genList).map((_, index) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={gen.includes(index)} />
                           <ListItemText primary={`Generation ${index + 1} (${regionList[index + 1]})`} />
@@ -358,7 +357,7 @@ const Home = () => {
                       value={version}
                       onChange={handleChangeVersion}
                       input={<OutlinedInput label="Version(s)" />}
-                      renderValue={(selected: any) => selected.map((item: number) => versionList[item]).join(', ')}
+                      renderValue={(selected) => selected.map((item: number) => versionList[item]).join(', ')}
                       MenuProps={VersionProps}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
@@ -370,7 +369,7 @@ const Home = () => {
                           }
                         />
                       </MenuItem>
-                      {versionList.map((value: string, index: React.Key) => (
+                      {versionList.map((value: string, index: number) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={version.includes(index)} />
                           <ListItemText primary={value} />
@@ -385,7 +384,14 @@ const Home = () => {
                     control={
                       <Checkbox
                         checked={mega}
-                        onChange={(_, check) => setFilters({ ...filters, mega: check, gmax: check ? false : filters.gmax })}
+                        onChange={(_, check) =>
+                          setFilters({
+                            ...filters,
+                            mega: check,
+                            gmax: check ? false : filters.gmax,
+                            primal: check ? false : filters.primal,
+                          })
+                        }
                       />
                     }
                     label="Mega"
@@ -394,10 +400,28 @@ const Home = () => {
                     control={
                       <Checkbox
                         checked={gmax}
-                        onChange={(_, check) => setFilters({ ...filters, gmax: check, mega: check ? false : filters.mega })}
+                        onChange={(_, check) =>
+                          setFilters({
+                            ...filters,
+                            gmax: check,
+                            mega: check ? false : filters.mega,
+                            primal: check ? false : filters.primal,
+                          })
+                        }
                       />
                     }
                     label="Gmax"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={primal}
+                        onChange={(_, check) =>
+                          setFilters({ ...filters, primal: check, mega: check ? false : filters.mega, gmax: check ? false : filters.gmax })
+                        }
+                      />
+                    }
+                    label="Primal"
                   />
                   <FormControlLabel
                     control={
@@ -466,18 +490,18 @@ const Home = () => {
       <div className="text-center bg-white">
         <div className="loading-group-spin-table" style={{ display: !loading ? 'none' : 'block' }} />
         <ul className="d-grid pokemon-content">
-          {listOfPokemon.map((row: any, index: React.Key) => (
+          {listOfPokemon.map((row, index) => (
             <CardPokemonInfo
               key={index}
               name={row.name}
-              forme={row.forme}
+              forme={row.forme ?? ''}
               defaultImg={allShiny}
               image={row.image}
               id={row.id}
               types={row.types}
               pokemonStat={row.goStats}
               stats={stats}
-              icon={icon}
+              icon={icon ?? ''}
               releasedGO={row.releasedGO}
             />
           ))}

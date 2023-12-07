@@ -4,14 +4,17 @@ import APIService from '../../../services/API.service';
 import { convertName, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
-import { calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
+import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
+import { StoreState } from '../../../store/models/state.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { MAX_IV, MAX_LEVEL } from '../../../util/Constants';
 
 const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
-  const combat = useSelector((state: RootStateOrAny) => state.store.data.combat);
-  const pokemonCombat = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
+  const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
+  const pokemonCombat = useSelector((state: StoreState) => state.store?.data?.pokemonCombat ?? []);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -27,20 +30,20 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
   const [pokemonIcon, setPokemonIcon]: any = useState(null);
   const [score, setScore]: any = useState(null);
 
-  const selectPokemon = (value: any) => {
+  const selectPokemon = (value: { pokemon: PokemonDataModel | undefined; score: number; moveset?: any; speciesId: string }) => {
     clearData();
     let [fMove, cMovePri, cMoveSec] = value.moveset;
-    setSearch(splitAndCapitalize(value.pokemon.name, '-', ' '));
-    setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
+    setSearch(splitAndCapitalize(value.pokemon?.name, '-', ' '));
+    setPokemonIcon(APIService.getPokeIconSprite(value.pokemon?.sprite ?? ''));
     setPokemon(value);
 
     if (fMove.includes('HIDDEN_POWER')) {
       fMove = 'HIDDEN_POWER';
     }
 
-    let fmove = combat.find((item: { name: any }) => item.name === fMove);
-    if (value.moveset[0].includes('HIDDEN_POWER')) {
-      fmove = { ...fmove, type: value.moveset[0].split('_')[2] };
+    let fmove: any = combat.find((item) => item.name === fMove);
+    if (value.moveset.at(0).includes('HIDDEN_POWER')) {
+      fmove = { ...fmove, type: value.moveset.at(0).split('_').at(2) };
     }
     setFMove(fmove);
 
@@ -50,7 +53,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     if (cMovePri === 'TECHNO_BLAST_DOUSE') {
       cMovePri = 'TECHNO_BLAST_WATER';
     }
-    cMovePri = combat.find((item: { name: any }) => item.name === cMovePri);
+    cMovePri = combat.find((item) => item.name === cMovePri);
     setCMovePri(cMovePri);
 
     if (cMoveSec === 'FUTURE_SIGHT') {
@@ -59,25 +62,38 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     if (cMoveSec === 'TECHNO_BLAST_DOUSE') {
       cMoveSec = 'TECHNO_BLAST_WATER';
     }
-    cMoveSec = combat.find((item: { name: any }) => item.name === cMoveSec);
+    cMoveSec = combat.find((item) => item.name === cMoveSec);
     setCMoveSec(cMoveSec);
 
-    const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
-    const minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
-    const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, league);
+    const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
+    let minCP = league === 500 ? 0 : league === 1500 ? 500 : league === 2500 ? 1500 : 2500;
+    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
 
-    let combatPoke = pokemonCombat.filter(
-      (item: { id: any; baseSpecies: string }) =>
-        item.id === value.pokemon.num &&
-        item.baseSpecies === (value.pokemon.baseSpecies ? convertName(value.pokemon.baseSpecies) : convertName(value.pokemon.name))
+    if (maxPokeCP < minCP) {
+      if (maxPokeCP <= 500) {
+        minCP = 0;
+      } else if (maxPokeCP <= 1500) {
+        minCP = 500;
+      } else if (maxPokeCP <= 2500) {
+        minCP = 1500;
+      } else {
+        minCP = 2500;
+      }
+    }
+    const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, league);
+
+    let combatPoke: any = pokemonCombat.filter(
+      (item) =>
+        item.id === value.pokemon?.num &&
+        item.baseSpecies === (value.pokemon?.baseSpecies ? convertName(value.pokemon?.baseSpecies) : convertName(value.pokemon?.name))
     );
 
-    const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.pokemon.name));
+    const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.pokemon?.name));
     if (!result) {
       if (combatPoke) {
-        combatPoke = combatPoke[0];
+        combatPoke = combatPoke.at(0);
       } else {
-        combatPoke = combatPoke.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon.name));
+        combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon?.name));
       }
     } else {
       combatPoke = result;
@@ -101,10 +117,11 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
         cMovePri: new Audio(APIService.getSoundMove(cMovePri.sound)),
         cMoveSec: new Audio(APIService.getSoundMove(cMoveSec.sound)),
       },
+      shadow: value.speciesId.includes('_shadow'),
     });
   };
 
-  const selectFMove = (value: any) => {
+  const selectFMove = (value: { sound: string }) => {
     clearData();
     setFMove(value);
     setPokemonBattle({
@@ -115,7 +132,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     setShowFMove(false);
   };
 
-  const selectCMovePri = (value: any) => {
+  const selectCMovePri = (value: { sound: string }) => {
     clearData();
     setCMovePri(value);
     setPokemonBattle({
@@ -126,7 +143,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     setShowCMovePri(false);
   };
 
-  const selectCMoveSec = (value: any) => {
+  const selectCMoveSec = (value: { sound: string }) => {
     clearData();
     setCMoveSec(value);
     setPokemonBattle({
@@ -166,8 +183,13 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     <Fragment>
       <h5>Pokémon</h5>
       <div className="border-box-battle position-relative">
-        {(score || pokemonIcon) && (
+        {(score || pokemonIcon || pokemon) && (
           <span className="pokemon-select-right">
+            {pokemon.speciesId.includes('_shadow') && (
+              <span style={{ marginRight: 5 }} className="type-icon-small ic shadow-ic">
+                Shadow
+              </span>
+            )}
             {score && (
               <span style={{ marginRight: 5 }} className="type-icon-small ic elite-ic">
                 {score}
@@ -200,9 +222,9 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
             .filter((pokemon: { pokemon: { name: string } }) =>
               splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase())
             )
-            .map((value: { pokemon: { sprite: string; name: string }; score: number }, index: React.Key) => (
+            .map((value: { pokemon: PokemonDataModel; score: number; speciesId: string }, index: React.Key) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
-                <CardPokemon value={value.pokemon} score={value.score} />
+                <CardPokemon value={value.pokemon} score={value.score} isShadow={value.speciesId.includes('_shadow')} />
               </div>
             ))}
         </div>
@@ -218,19 +240,19 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
             <div className="result-move-select">
               <div>
                 {data
-                  .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
+                  .find((value: { speciesId: string }) => value.speciesId === pokemon.speciesId)
                   .moves.fastMoves.map((value: { moveId: string }) => {
                     let move = value.moveId;
                     if (move.includes('HIDDEN_POWER')) {
                       move = 'HIDDEN_POWER';
                     }
-                    let fmove = combat.find((item: { name: any }) => item.name === move);
+                    let fmove: any = combat.find((item: { name: string }) => item.name === move);
                     if (value.moveId.includes('HIDDEN_POWER')) {
-                      fmove = { ...fmove, type: value.moveId.split('_')[2] };
+                      fmove = { ...fmove, type: value.moveId.split('_').at(2) };
                     }
                     return fmove;
                   })
-                  .filter((value: { name: any }) => value.name !== fMove.name)
+                  .filter((value: { name: string }) => value.name !== fMove.name)
                   .map((value: any, index: React.Key) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
                       <CardMoveSmall value={value} />
@@ -245,7 +267,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
         <Checkbox
           checked={!pokemonBattle.disableCMovePri}
-          onChange={(event, check) => {
+          onChange={(_, check) => {
             clearData();
             setPokemonBattle({ ...pokemonBattle, disableCMovePri: !check });
           }}
@@ -280,8 +302,8 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
               <div className="result-move-select">
                 <div>
                   {data
-                    .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
-                    .moves.chargedMoves.map((value: { moveId: any }) => {
+                    .find((value: { speciesId: number }) => value.speciesId === pokemon.speciesId)
+                    .moves.chargedMoves.map((value: { moveId: string }) => {
                       let move = value.moveId;
                       if (move === 'FUTURE_SIGHT') {
                         move = 'FUTURESIGHT';
@@ -289,9 +311,9 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                       if (move === 'TECHNO_BLAST_DOUSE') {
                         move = 'TECHNO_BLAST_WATER';
                       }
-                      return combat.find((item: { name: any }) => item.name === move);
+                      return combat.find((item) => item.name === move);
                     })
-                    .filter((value: { name: any }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
+                    .filter((value: { name: string }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
                     .map((value: any, index: React.Key) => (
                       <div
                         className={'card-move ' + (pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
@@ -315,7 +337,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
         <Checkbox
           checked={!pokemonBattle.disableCMoveSec}
-          onChange={(event, check) => {
+          onChange={(_, check) => {
             clearData();
             setPokemonBattle({ ...pokemonBattle, disableCMoveSec: !check });
           }}
@@ -344,7 +366,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
               value={cMoveSec}
               empty={cMoveSec === ''}
               show={pokemon ? true : false}
-              clearData={pokemonBattle.disableCMovePri ? false : removeChargeMoveSec}
+              clearData={pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
               disable={pokemonBattle.disableCMoveSec}
               select={data && data.length > 1}
             />
@@ -352,8 +374,8 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
               <div className="result-move-select">
                 <div>
                   {data
-                    .find((value: { speciesId: any }) => value.speciesId === pokemon.speciesId)
-                    .moves.chargedMoves.map((value: { moveId: any }) => {
+                    .find((value: { speciesId: number }) => value.speciesId === pokemon.speciesId)
+                    .moves.chargedMoves.map((value: { moveId: string }) => {
                       let move = value.moveId;
                       if (move === 'FUTURE_SIGHT') {
                         move = 'FUTURESIGHT';
@@ -361,9 +383,9 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                       if (move === 'TECHNO_BLAST_DOUSE') {
                         move = 'TECHNO_BLAST_WATER';
                       }
-                      return combat.find((item: { name: any }) => item.name === move);
+                      return combat.find((item) => item.name === move);
                     })
-                    .filter((value: { name: any }) => (cMoveSec === '' || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
+                    .filter((value: { name: string }) => (cMoveSec === '' || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
                     .map((value: any, index: React.Key) => (
                       <div
                         className="card-move"

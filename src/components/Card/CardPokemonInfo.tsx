@@ -7,16 +7,17 @@ import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
+import { StatsModel } from '../../core/models/stats.model';
 
 const CardPokemonInfo = (props: {
-  image: any;
+  image: { shiny: string | undefined | null; default: string | undefined | null };
   id: number;
   name: string;
   forme: string;
   defaultImg: boolean;
   types: string[];
-  pokemonStat: any;
-  stats: any;
+  pokemonStat: { atk: number; def: number; sta: number };
+  stats: StatsModel;
   icon: string;
   releasedGO: boolean;
 }) => {
@@ -93,14 +94,14 @@ const CardPokemonInfo = (props: {
               ref={imageRef}
               className="pokemon-sprite-large"
               alt="pokemon-img"
-              src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default}
+              src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default ?? ''}
             />
           </span>
         </div>
         <TypeInfo arr={props.types} hideText={true} height={24} />
         <b>
           <span style={{ fontSize: 14 }} className="text-info text-center caption text-black">{`#${props.id} ${splitAndCapitalize(
-            props.name,
+            props.name.replaceAll('_', '-'),
             '-',
             ' '
           )}`}</span>

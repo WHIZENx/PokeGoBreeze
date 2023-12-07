@@ -1,10 +1,13 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 import Form from './Form';
 
-import { RootStateOrAny, useSelector } from 'react-redux';
-import { RouterState } from '../../..';
+import { useSelector } from 'react-redux';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
+import { RouterState, SearchingState, StatsState, StoreState } from '../../../store/models/state.model';
+import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.model';
+
+import loading from '../../../assets/loading.png';
 
 const Find = (props: {
   // eslint-disable-next-line no-unused-vars
@@ -19,12 +22,12 @@ const Find = (props: {
   // eslint-disable-next-line no-unused-vars
   setStatSTA?: (arg0: any) => void;
   hide?: boolean;
-  raid?: any;
+  raid?: boolean;
   setRaid?: any;
-  tier?: any;
+  tier?: number;
   setTier?: any;
   setForm?: any;
-  urlEvo?: any;
+  urlEvo?: { url: string | null };
   setUrlEvo?: any;
   title?: string;
   swap?: boolean;
@@ -35,34 +38,41 @@ const Find = (props: {
   const eachCounter = 10;
   const cardHeight = 65;
 
-  const stats = useSelector((state: RootStateOrAny) => state.stats);
+  const stats = useSelector((state: StatsState) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
-  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
+  const pokemonName = useSelector((state: StoreState) => state.store.data?.pokemonName ?? []);
 
-  const [id, setId] = useState(searching ? (props.objective ? (searching.obj ? searching.obj.id : 1) : searching.id) : 1);
+  const [id, setId] = useState(
+    searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
+  );
   const [form, setForm] = useState(null);
 
-  const pokemonList = useRef(
-    Object.values(pokemonName)
-      .filter((item: any) => item.id > 0)
-      .map((item: any) => {
-        return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
-      })
-  );
+  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
+  const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
 
   useEffect(() => {
-    const results = pokemonList.current.filter(
-      (item: any) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
-    );
-    setPokemonListFilter(results);
-  }, [searchTerm]);
+    if (pokemonName.length > 0) {
+      setPokemonList(pokemonName.filter((item) => item.id > 0).map((item) => new PokemonSearchingModel(item)));
+    }
+  }, [pokemonName]);
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
+  useEffect(() => {
+    if (pokemonList.length > 0) {
+      const timeOutId = setTimeout(() => {
+        const results = pokemonList.filter(
+          (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+        );
+        setPokemonListFilter(results);
+      });
+      return () => clearTimeout(timeOutId);
+    }
+  }, [pokemonList, searchTerm]);
+
+  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
@@ -70,14 +80,14 @@ const Find = (props: {
     }
   };
 
-  const getInfoPoke = (value: any) => {
-    const currentId: any = getPokemonById(Object.values(pokemonName), value.id);
+  const getInfoPoke = (value: PokemonSearchingModel) => {
+    const currentId = getPokemonById(pokemonName, value.id);
     setId(value.id);
     setForm(null);
     if (props.setId) {
       props.setId(value.id);
     }
-    if (props.setName) {
+    if (props.setName && currentId) {
       props.setName(currentId.name);
     }
     if (props.clearStats) {
@@ -85,7 +95,7 @@ const Find = (props: {
     }
   };
 
-  const handleSetStats = (type: string, value: any) => {
+  const handleSetStats = (type: string, value: number) => {
     if (type === 'atk' && props.setStatATK) {
       props.setStatATK(value);
     } else if (type === 'def' && props.setStatDEF) {
@@ -97,17 +107,21 @@ const Find = (props: {
 
   const decId = () => {
     setTimeout(() => {
-      const currentId: any = getPokemonById(Object.values(pokemonName), id);
-      const prev = getPokemonByIndex(Object.values(pokemonName), currentId.index - 1);
-      setId(prev.id);
-      if (props.setId) {
-        props.setId(prev.id);
-      }
-      if (props.setName) {
-        props.setName(prev.name);
-      }
-      if (props.clearStats) {
-        props.clearStats();
+      const currentId = getPokemonById(pokemonName, id);
+      if (currentId) {
+        const prev = getPokemonByIndex(pokemonName, currentId.index - 1);
+        if (prev) {
+          setId(prev.id);
+          if (props.setId) {
+            props.setId(prev.id);
+          }
+          if (props.setName) {
+            props.setName(prev.name);
+          }
+          if (props.clearStats) {
+            props.clearStats();
+          }
+        }
       }
     }, 300);
     if (props.clearStats) {
@@ -117,17 +131,21 @@ const Find = (props: {
 
   const incId = () => {
     setTimeout(() => {
-      const currentId: any = getPokemonById(Object.values(pokemonName), id);
-      const next = getPokemonByIndex(Object.values(pokemonName), currentId.index + 1);
-      setId(next.id);
-      if (props.setId) {
-        props.setId(next.id);
-      }
-      if (props.setName) {
-        props.setName(next.name);
-      }
-      if (props.clearStats) {
-        props.clearStats();
+      const currentId = getPokemonById(pokemonName, id);
+      if (currentId) {
+        const next = getPokemonByIndex(pokemonName, currentId.index + 1);
+        if (next) {
+          setId(next.id);
+          if (props.setId) {
+            props.setId(next.id);
+          }
+          if (props.setName) {
+            props.setName(next.name);
+          }
+          if (props.clearStats) {
+            props.clearStats();
+          }
+        }
       }
     }, 300);
     if (props.clearStats) {
@@ -151,13 +169,13 @@ const Find = (props: {
             aria-label="search"
             aria-describedby="input-search"
             placeholder="Enter Name or ID"
-            value={searchTerm}
-            onInput={(e: any) => setSearchTerm(e.target.value)}
+            defaultValue={searchTerm}
+            onKeyUp={(e: any) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
           <Fragment>
-            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value: any, index: React.Key) => (
+            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
               <div
                 className={'container card-pokemon ' + (value.id === id ? 'selected' : '')}
                 key={index}
@@ -194,7 +212,7 @@ const Find = (props: {
     return (
       <div className="col d-flex justify-content-center text-center">
         <div>
-          {pokemonList.current?.length > 0 && (
+          {pokemonList.length > 0 && (
             <Fragment>
               <Form
                 router={router}
@@ -208,7 +226,7 @@ const Find = (props: {
                 setForm={props.setForm}
                 setFormOrigin={setForm}
                 id={id}
-                name={pokemonList.current.find((item: any) => item.id === id)?.name}
+                name={pokemonList.find((item) => item.id === id)?.name ?? ''}
                 data={pokemonData}
                 stats={stats}
                 onHandleSetStats={handleSetStats}
@@ -231,19 +249,39 @@ const Find = (props: {
       <h1 id="main" className="text-center" style={{ marginBottom: 15 }}>
         {props.title ? props.title : 'Pokémon GO Tools'}
       </h1>
-      <div className="row search-container">
-        {props.swap ? (
-          <Fragment>
-            {showPokemon()}
-            {searchPokemon()}
-          </Fragment>
-        ) : (
-          <Fragment>
-            {searchPokemon()}
-            {showPokemon()}
-          </Fragment>
-        )}
-      </div>
+      {pokemonList.length > 0 ? (
+        <div className="row search-container">
+          {props.swap ? (
+            <Fragment>
+              {showPokemon()}
+              {searchPokemon()}
+            </Fragment>
+          ) : (
+            <Fragment>
+              {searchPokemon()}
+              {showPokemon()}
+            </Fragment>
+          )}
+        </div>
+      ) : (
+        <div className="ph-item d-flex justify-content-center w-100">
+          <div
+            className="ph-picture d-flex align-item-center justify-content-center position-relative w-50"
+            style={{ height: 600, backgroundColor: '#f8f8f8' }}
+          >
+            <div className="loading-group vertical-center">
+              <img className="loading" width={40} height={40} alt="img-pokemon" src={loading} />
+              <span className="caption text-black" style={{ fontSize: 18 }}>
+                <b>
+                  Loading<span id="p1">.</span>
+                  <span id="p2">.</span>
+                  <span id="p3">.</span>
+                </b>
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

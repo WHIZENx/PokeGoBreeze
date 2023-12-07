@@ -1,28 +1,32 @@
 import CardPokemon from '../Card/CardPokemon';
 import CloseIcon from '@mui/icons-material/Close';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import './Select.scss';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
-import { useSelector, RootStateOrAny } from 'react-redux';
-import { TypeMove } from '../../enums/type-move.enum';
+import { useSelector } from 'react-redux';
+import { TypeMove } from '../../enums/move.enum';
+import { StoreState } from '../../store/models/state.model';
+import { PokemonDataModel, PokemonDataStats } from '../../core/models/pokemon.model';
+import { SelectMoveModel } from './models/select-move.model';
 
 const SelectPokemon = (props: {
-  pokemon?: any;
+  pokemon?: PokemonDataModel;
   // eslint-disable-next-line no-unused-vars
   setCurrentPokemon: (arg0: any) => void;
-  selected: any;
+  selected: boolean;
   // eslint-disable-next-line no-unused-vars
   setFMovePokemon: (arg0: any) => void;
   // eslint-disable-next-line no-unused-vars
   setCMovePokemon: (arg0: any) => void;
   clearData?: () => void;
   disable?: boolean;
+  defaultSetting?: PokemonDataStats;
 }) => {
-  const data = useSelector((state: RootStateOrAny) => state.store.data.pokemonCombat);
-  const pokemonData = useSelector((state: RootStateOrAny) => state.store.data.pokemonData);
+  const combat = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -32,7 +36,7 @@ const SelectPokemon = (props: {
   const [showPokemon, setShowPokemon] = useState(false);
   const [search, setSearch] = useState(props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : '');
 
-  const listenScrollEvent = (ele: any) => {
+  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 0.8 >= fullHeight * (startIndex + 1)) {
@@ -40,22 +44,25 @@ const SelectPokemon = (props: {
     }
   };
 
-  const changePokemon = (value: any) => {
+  const changePokemon = (value: PokemonDataModel) => {
     setShowPokemon(false);
     const name = splitAndCapitalize(value.name, '-', ' ');
     const iconName =
-      pokemonIcon && pokemonIcon.split('/')[9] ? splitAndCapitalize(pokemonIcon.split('/')[9].replace('.png', ''), '-', ' ') : '';
+      pokemonIcon && pokemonIcon.split('/').at(9) ? splitAndCapitalize(pokemonIcon.split('/').at(9)?.replace('.png', ''), '-', ' ') : '';
     if (iconName !== name) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
       setSearch(name);
+      if (!props.pokemon?.stats && props.defaultSetting) {
+        value.stats = props.defaultSetting;
+      }
       if (props.setCurrentPokemon) {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme, TypeMove.FAST) : null);
+        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme ?? '', TypeMove.FAST) : null);
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme, TypeMove.CHARGE) : null);
+        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme ?? '', TypeMove.CHARGE) : null);
       }
       if (props.clearData) {
         props.clearData();
@@ -80,64 +87,74 @@ const SelectPokemon = (props: {
     }
   };
 
-  const findMove = (id: any, form: string, type: string) => {
-    const resultFirst = data.filter((item: { id: any }) => item.id === id);
-    form = form ? form.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() : '';
-    const result = resultFirst.find(
-      (item: { name: string; baseSpecies: string }) => item.name.replace(item.baseSpecies + '_', '') === form
-    );
-    const simpleMove: any[] = [];
-    if (resultFirst.length === 1 || result == null) {
-      if (type === TypeMove.FAST) {
-        resultFirst[0].quickMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
-        });
-        resultFirst[0].eliteQuickMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
-        });
-      } else {
-        resultFirst[0].cinematicMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
-        });
-        resultFirst[0].eliteCinematicMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
-        });
-        resultFirst[0].shadowMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
-        });
-        resultFirst[0].purifiedMoves.forEach((value: any) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
-        });
+  const findMove = useCallback(
+    (id: number, form: string, type: string) => {
+      if (combat.length > 0) {
+        const resultFirst = combat.filter((item) => item.id === id);
+        form = form ? form.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() : '';
+        const result = resultFirst.find((item) => item.name.replace(item.baseSpecies + '_', '') === form);
+        const simpleMove: SelectMoveModel[] = [];
+        if (resultFirst.length === 1 || result == null) {
+          if (type === TypeMove.FAST) {
+            resultFirst.at(0)?.quickMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            });
+            resultFirst.at(0)?.eliteQuickMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            });
+          } else {
+            resultFirst.at(0)?.cinematicMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            });
+            resultFirst.at(0)?.eliteCinematicMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            });
+            resultFirst.at(0)?.shadowMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
+            });
+            resultFirst.at(0)?.purifiedMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+            });
+            resultFirst.at(0)?.specialMoves.forEach((value) => {
+              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+            });
+          }
+          return simpleMove.at(0);
+        }
+        if (type === TypeMove.FAST) {
+          result.quickMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+          });
+          result.eliteQuickMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+          });
+        } else {
+          result.cinematicMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+          });
+          result.eliteCinematicMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+          });
+          result.shadowMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
+          });
+          result.purifiedMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+          });
+          result.specialMoves.forEach((value) => {
+            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+          });
+        }
+        return simpleMove.at(0);
       }
-      return simpleMove[0];
-    }
-    if (type === TypeMove.FAST) {
-      result.quickMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
-      });
-      result.eliteQuickMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
-      });
-    } else {
-      result.cinematicMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false });
-      });
-      result.eliteCinematicMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: true, shadow: false, purified: false });
-      });
-      result.shadowMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: false, shadow: true, purified: false });
-      });
-      result.purifiedMoves.forEach((value: any) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: true });
-      });
-    }
-    return simpleMove[0];
-  };
+      return;
+    },
+    [combat]
+  );
 
   useEffect(() => {
     setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : null);
-    setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : '');
+    setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
   }, [props.pokemon]);
 
   return (
@@ -168,15 +185,15 @@ const SelectPokemon = (props: {
         </div>
         <div className="result-pokemon" onScroll={(e) => listenScrollEvent(e)} style={{ display: showPokemon ? 'block' : 'none' }}>
           <div>
-            {Object.values(pokemonData)
+            {pokemonData
               .filter(
-                (item: any) =>
+                (item) =>
                   item.num > 0 &&
                   (splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
                     item.num.toString().includes(search))
               )
               .slice(0, firstInit + eachCounter * startIndex)
-              .map((value: any, index) => (
+              .map((value, index) => (
                 <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
                   <CardPokemon value={value} />
                 </div>

@@ -1,7 +1,11 @@
-import { HIDE_SPINNER, SHOW_SPINNER, SHOW_SPINNER_MSG } from '../actions/spinner.action';
+import { HIDE_SPINNER, SET_BAR, SET_PERCENT, SHOW_SPINNER, SHOW_SPINNER_MSG } from '../actions/spinner.action';
 
-interface SpinnerModel {
+export interface SpinnerModel {
   loading: boolean;
+  bar: {
+    show: boolean;
+    percent: number;
+  };
   message: string | null;
   error: ErrorModel | null;
 }
@@ -13,6 +17,10 @@ interface ErrorModel {
 
 const initialize: SpinnerModel = {
   loading: false,
+  bar: {
+    show: false,
+    percent: 0,
+  },
   message: null,
   error: null,
 };
@@ -37,6 +45,22 @@ const SpinnerReducer = (state: SpinnerModel = initialize, action: any) => {
         ...state,
         message: null,
         loading: false || (state.error ? true : false),
+      };
+    case SET_BAR:
+      return {
+        ...state,
+        bar: {
+          ...state.bar,
+          show: action.payload,
+        },
+      };
+    case SET_PERCENT:
+      return {
+        ...state,
+        bar: {
+          ...state.bar,
+          percent: action.payload,
+        },
       };
     default:
       return state;

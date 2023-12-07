@@ -3,8 +3,8 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, LevelRating } from '../../../util/Utils';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { capitalize, getDataWithKey, LevelRating } from '../../../util/Utils';
+import { FORM_MEGA, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 
 import './Damage.scss';
@@ -19,7 +19,9 @@ import StatsTable from './StatsDamageTable';
 
 import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/Compute';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { TrainerFriendship } from '../../../core/models/options.model';
 
 const labels: any = {
   0: {
@@ -41,9 +43,9 @@ const labels: any = {
 };
 
 const Damage = () => {
-  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
-  const typeEff = useSelector((state: RootStateOrAny) => state.store.data.typeEff);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
+  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff ?? {});
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
@@ -101,15 +103,15 @@ const Damage = () => {
 
   useEffect(() => {
     if (statATK !== 0) {
-      setStatLvATK(calculateStatsBattle(statATK, 15, statLevel, false, statType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1));
+      setStatLvATK(calculateStatsBattle(statATK, MAX_IV, statLevel, false, statType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1));
     }
     if (statDEFObj !== 0) {
       setStatLvDEFObj(
-        calculateStatsBattle(statDEFObj, 15, statLevelObj, false, statTypeObj === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
+        calculateStatsBattle(statDEFObj, MAX_IV, statLevelObj, false, statTypeObj === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
       );
     }
     if (statSTAObj !== 0) {
-      setStatLvSTAObj(calculateStatsBattle(statSTAObj, 15, statLevelObj));
+      setStatLvSTAObj(calculateStatsBattle(statSTAObj, MAX_IV, statLevelObj));
     }
   }, [globalOptions, statATK, statLevel, statType, statATKObj, statDEF, statDEFObj, statLevelObj, statSTA, statSTAObj, statTypeObj]);
 
@@ -144,11 +146,11 @@ const Damage = () => {
     });
   };
 
-  const onSetForm = (form: any) => {
+  const onSetForm = (form: string) => {
     setForm(form);
   };
 
-  const onSetFormObj = (form: any) => {
+  const onSetFormObj = (form: string) => {
     setFormObj(form);
   };
 
@@ -158,12 +160,12 @@ const Damage = () => {
       if (move) {
         const eff = {
           stab: findStabType(
-            form.form.types.map((item: { type: { name: any } }) => item.type.name),
+            form.form.types.map((item: { type: { name: string } }) => item.type.name),
             move.type
           ),
           wb: battleState.weather,
           dodge: battleState.dodge,
-          mega: form.form.pokemon.forme && form.form.pokemon.forme.toLowerCase().includes('mega') ? true : false,
+          mega: form.form.pokemon.forme && form.form.pokemon.forme?.toUpperCase().includes(FORM_MEGA) ? true : false,
           trainer: battleState.trainer,
           flevel: enableFriend ? battleState.flevel : 0,
           clevel: battleState.clevel,
@@ -204,7 +206,7 @@ const Damage = () => {
     ]
   );
 
-  const handleCheckbox = (event: { target: { name: any; checked: any } }) => {
+  const handleCheckbox = (event: { target: { name: string; checked: boolean } }) => {
     setBattleState({
       ...battleState,
       [event.target.name]: event.target.checked,
@@ -269,11 +271,11 @@ const Damage = () => {
                 <div className="row text-center" style={{ width: 520 }}>
                   <div className="col">
                     <h5 className="text-success">- Current Pokémon Type -</h5>
-                    {form && <TypeInfo arr={form.form.types.map((ele: { type: { name: any } }) => ele.type.name)} />}
+                    {form && <TypeInfo arr={form.form.types.map((ele: { type: { name: string } }) => ele.type.name)} />}
                   </div>
                   <div className="col">
                     <h5 className="text-danger">- Object Pokémon Type -</h5>
-                    {formObj && <TypeInfo arr={formObj.form.types.map((ele: { type: { name: any } }) => ele.type.name)} />}
+                    {formObj && <TypeInfo arr={formObj.form.types.map((ele: { type: { name: string } }) => ele.type.name)} />}
                   </div>
                 </div>
               </div>
@@ -295,7 +297,7 @@ const Damage = () => {
                       - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
                     </p>
                     {findStabType(
-                      form.form.types.map((item: { type: { name: any } }) => item.type.name),
+                      form.form.types.map((item: { type: { name: string } }) => item.type.name),
                       move.type
                     )}
                     <p>
@@ -303,7 +305,7 @@ const Damage = () => {
                       <b>
                         {move.pve_power}
                         {findStabType(
-                          form.form.types.map((item: { type: { name: any } }) => item.type.name),
+                          form.form.types.map((item: { type: { name: string } }) => item.type.name),
                           move.type
                         ) && <span className={'caption-small text-success'}> (x1.2)</span>}
                       </b>
@@ -323,7 +325,7 @@ const Damage = () => {
                     <FormControlLabel
                       control={
                         <Switch
-                          onChange={(event, check) => {
+                          onChange={(_, check) => {
                             setEnableFriend(check);
                             setBattleState({
                               ...battleState,
@@ -351,7 +353,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{globalOptions.trainer_friendship[battleState.flevel].atk_bonus.toFixed(2)}
+                      x{(getDataWithKey(globalOptions?.trainer_friendship, battleState.flevel) as TrainerFriendship).atk_bonus?.toFixed(2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
@@ -368,7 +370,7 @@ const Damage = () => {
                           });
                         }}
                       >
-                        {Object.entries(globalOptions.throw_charge).map(([type, value]: any, index) => (
+                        {Object.entries(globalOptions?.throw_charge ?? {}).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={`caption-small dropdown-caption ${labels[index].style}`}>x{value}</span>

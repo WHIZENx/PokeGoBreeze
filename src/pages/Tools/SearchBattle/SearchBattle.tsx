@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { convertFormName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormName, splitAndCapitalize } from '../../../util/Utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -15,30 +15,33 @@ import { useSnackbar } from 'notistack';
 
 import { Link } from 'react-router-dom';
 import { marks, PokeGoSlider } from '../../../util/Utils';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
+import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN } from '../../../util/Constants';
+import { EvolutionModel } from '../../../core/models/evolution.model';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
-  const dataStore = useSelector((state: RootStateOrAny) => state.store.data);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.toolSearching);
+  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: any = useState(null);
   const [maxCP, setMaxCP] = useState(0);
 
-  const [searchCP, setSearchCP]: any = useState('');
+  const [searchCP, setSearchCP] = useState('');
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [ATKIv, setATKIv]: any = useState(0);
-  const [DEFIv, setDEFIv]: any = useState(0);
-  const [STAIv, setSTAIv]: any = useState(0);
+  const [ATKIv, setATKIv] = useState(0);
+  const [DEFIv, setDEFIv] = useState(0);
+  const [STAIv, setSTAIv] = useState(0);
 
   const [evoChain, setEvoChain]: any = useState([]);
   const [bestInLeague, setBestInLeague]: any = useState([]);
@@ -55,81 +58,79 @@ const FindBattle = () => {
   };
 
   const currEvoChain = useCallback(
-    (currId: any, form: string, arr: any): void => {
-      if (form === 'GALARIAN') {
+    (currId: number[] | undefined, form: string, arr: any): void => {
+      if (form === FORM_GALARIAN) {
         form = 'GALAR';
       }
-      if (currId.length === 0) {
+      if (currId?.length === 0) {
         return arr;
       }
       let curr;
       if (form === '') {
-        curr = dataStore.evolution.find((item: { id: any; form: any }) => currId.includes(item.id) && form === item.form);
+        curr = dataStore?.evolution?.find((item) => currId?.includes(item.id) && form === item.form);
       } else {
-        curr = dataStore.evolution.find((item: { id: any; form: string | any[] }) => currId.includes(item.id) && item.form.includes(form));
+        curr = dataStore?.evolution?.find((item) => currId?.includes(item.id) && item.form.includes(form));
       }
-      if (!arr.map((i: { id: any }) => i.id).includes(curr.id)) {
+      if (!arr.map((i: { id: number }) => i.id).includes(curr?.id ?? 0)) {
         arr.push({ ...curr, form });
       }
       return currEvoChain(
-        curr.evo_list.map((i: { evo_to_id: any }) => i.evo_to_id),
+        curr?.evo_list.map((i) => i.evo_to_id),
         form,
         arr
       );
     },
-    [dataStore.evolution]
+    [dataStore?.evolution]
   );
 
   const prevEvoChain = useCallback(
-    (obj: { id: any; evo_list: any[] }, defaultForm: any, arr: any[]): any => {
-      if (!arr.map((i: { id: any }) => i.id).includes(obj.id)) {
+    (obj: EvolutionModel, defaultForm: string, arr: any[]): any => {
+      if (!arr.map((i: { id: number }) => i.id).includes(obj.id)) {
         arr.push({ ...obj, form: defaultForm });
       }
-      obj.evo_list.forEach((i: { evo_to_id: any; evo_to_form: any }) => {
+      obj.evo_list.forEach((i) => {
         currEvoChain([i.evo_to_id], i.evo_to_form, arr);
       });
-      const curr = dataStore.evolution.filter((item: { evo_list: any[] }) =>
-        item.evo_list.find((i: { evo_to_id: any; evo_to_form: any }) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
+      const curr = dataStore?.evolution?.filter((item) =>
+        item.evo_list.find((i) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
       );
-      if (curr.length === 0) {
+      if (curr?.length === 0) {
         return arr;
-      } else if (curr.length === 1) {
+      } else if (curr?.length === 1) {
         return prevEvoChain(curr[0], defaultForm, arr);
       } else {
-        return curr.map((item: any) => prevEvoChain(item, defaultForm, arr));
+        return curr?.map((item) => prevEvoChain(item, defaultForm, arr));
       }
     },
-    [currEvoChain, dataStore.evolution]
+    [currEvoChain, dataStore?.evolution]
   );
 
   const getEvoChain = useCallback(
-    (id: any) => {
-      const isForm = form.form.form_name.toUpperCase();
-      let curr = dataStore.evolution.filter((item: { evo_list: any[] }) =>
-        item.evo_list.find((i: { evo_to_id: any; evo_to_form: any }) => id === i.evo_to_id && isForm === i.evo_to_form)
-      );
-      if (curr.length === 0) {
+    (id: number) => {
+      const isForm = form.form.form_name?.toUpperCase();
+      let curr = dataStore?.evolution?.filter((item) => item.evo_list.find((i) => id === i.evo_to_id && isForm === i.evo_to_form));
+      if (curr?.length === 0) {
         if (isForm === '') {
-          curr = dataStore.evolution.filter((item: { id: any; form: any }) => id === item.id && isForm === item.form);
+          curr = dataStore?.evolution?.filter((item) => id === item.id && isForm === item.form);
         } else {
-          curr = dataStore.evolution.filter((item: { id: any; form: string | any[] }) => id === item.id && item.form.includes(isForm));
+          curr = dataStore?.evolution?.filter((item) => id === item.id && item.form.includes(isForm));
         }
       }
-      if (curr.length === 0) {
-        curr = dataStore.evolution.filter((item: { id: any; form: string }) => id === item.id && item.form === '');
+      if (curr?.length === 0) {
+        curr = dataStore?.evolution?.filter((item) => id === item.id && item.form === '');
       }
-      return curr.map((item: any) => prevEvoChain(item, isForm, []));
+      return curr?.map((item) => prevEvoChain(item, isForm, []));
     },
-    [prevEvoChain, form, dataStore.evolution]
+    [prevEvoChain, form, dataStore?.evolution]
   );
 
   const searchStatsPoke = useCallback(
-    (level: any) => {
+    (level: number) => {
       const arr: (() => any[]) | any[][] = [];
-      getEvoChain(id).forEach((item: any[]) => {
-        const tempArr: { battleLeague: any; maxCP: any; form: any; id: number; name: string }[] = [];
+      getEvoChain(id)?.forEach((item: any[]) => {
+        const tempArr: { battleLeague: string; maxCP: number; form: any; id: number; name: string }[] = [];
         item.forEach((value: { form: string; id: number; name: string }) => {
-          const data = queryStatesEvoChain(dataStore.options, dataStore.pokemonData, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemonData ?? [], value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
             setMaxCP(data.maxCP);
           }
@@ -186,7 +187,7 @@ const FindBattle = () => {
       setBestInLeague(bestLeague.sort((a, b) => a.maxCP - b.maxCP));
       dispatch(hideSpinner());
     },
-    [dispatch, dataStore.options, ATKIv, DEFIv, STAIv, getEvoChain, id]
+    [dispatch, dataStore?.options, ATKIv, DEFIv, STAIv, getEvoChain, id]
   );
 
   const onSearchStatsPoke = useCallback(
@@ -229,30 +230,28 @@ const FindBattle = () => {
     document.title = 'Search Battle Leagues Stats - Tool';
   }, []);
 
-  const getImageList = (id: any) => {
-    const isForm = form.form.form_name === '' ? 'NORMAL' : form.form.form_name.replaceAll('-', '_').toUpperCase();
-    let img = dataStore.assets
-      .find((item: { id: any }) => item.id === id)
-      .image.find((item: { form: string | any[] }) => item.form.includes(isForm));
+  const getImageList = (id: number) => {
+    const isForm = form.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form.form.form_name.replaceAll('-', '_').toUpperCase();
+    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form.includes(isForm));
     if (!img) {
-      img = dataStore.assets.find((item: { id: any }) => item.id === id).image[0];
+      img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
     }
     try {
-      return img.default;
+      return img?.default;
     } catch {
       return null;
     }
   };
 
-  const getCandyEvo = (item: any[], evoId: number, candy: number): any => {
+  const getCandyEvo = (item: EvolutionModel[], evoId: number, candy: number): number => {
     if (evoId === id) {
       return candy;
     }
-    const data = item.find((i: { evo_list: any[] }) => i.evo_list.find((e: { evo_to_id: any }) => e.evo_to_id === evoId));
+    const data = item.find((i) => i.evo_list.find((e) => e.evo_to_id === evoId));
     if (!data) {
       return candy;
     }
-    const prevEvo = data.evo_list.find((e: { evo_to_id: any }) => e.evo_to_id === evoId);
+    const prevEvo = data.evo_list.find((e) => e.evo_to_id === evoId);
     if (!prevEvo) {
       return candy;
     }
@@ -322,13 +321,13 @@ const FindBattle = () => {
             <PokeGoSlider
               value={ATKIv}
               aria-label="ATK marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setATKIv(v)}
+              onChange={(_, v: any) => setATKIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -337,13 +336,13 @@ const FindBattle = () => {
             <PokeGoSlider
               value={DEFIv}
               aria-label="DEF marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setDEFIv(v)}
+              onChange={(_, v: any) => setDEFIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -352,13 +351,13 @@ const FindBattle = () => {
             <PokeGoSlider
               value={STAIv}
               aria-label="STA marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setSTAIv(v)}
+              onChange={(_, v: any) => setSTAIv(v)}
             />
           </Box>
         </div>
@@ -400,7 +399,7 @@ const FindBattle = () => {
                           height={102}
                           src={
                             getImageList(value.id)
-                              ? APIService.getPokemonModel(getImageList(value.id))
+                              ? APIService.getPokemonModel(getImageList(value.id) ?? null)
                               : APIService.getPokeFullSprite(value.id)
                           }
                         />
@@ -442,7 +441,7 @@ const FindBattle = () => {
             {evoChain.map((value: any[], index: React.Key) => (
               <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
-                  {!value[0].form ? 'Normal' : splitAndCapitalize(value[0].form, '-', ' ')}
+                  {!value.at(0).form?.toUpperCase() ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0).form, '-', ' ')}
                   {' Form'}
                 </div>
                 <Accordion.Item eventKey={'0'}>
@@ -464,7 +463,7 @@ const FindBattle = () => {
                                   height={100}
                                   src={
                                     getImageList(item.id)
-                                      ? APIService.getPokemonModel(getImageList(item.id))
+                                      ? APIService.getPokemonModel(getImageList(item.id) ?? null)
                                       : APIService.getPokeFullSprite(item.id)
                                   }
                                 />

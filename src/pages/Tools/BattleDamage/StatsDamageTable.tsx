@@ -1,5 +1,5 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 import { LevelSlider, TypeRadioGroup } from '../../../util/Utils';
 import { calculateStatsBattle } from '../../../util/Calculate';
@@ -9,30 +9,31 @@ import APIService from '../../../services/API.service';
 import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
-import { RootStateOrAny, useSelector } from 'react-redux';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { useSelector } from 'react-redux';
+import { MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { StoreState } from '../../../store/models/state.model';
 
 const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA }: any) => {
-  const globalOptions = useSelector((state: RootStateOrAny) => state.store.data.options);
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
 
-  const [currStatLevel, setCurrStatLevel]: any = useState(1);
-  const [currStatType, setCurrStatType]: any = useState(null);
+  const [currStatLevel, setCurrStatLevel] = useState(1);
+  const [currStatType, setCurrStatType]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
 
   const onHandleLevel = useCallback(
-    (e: any, v: any) => {
+    (_: any, v: any) => {
       setStatLevel(v);
       if (setStatLvATK) {
         setStatLvATK(
-          calculateStatsBattle(statATK, 15, currStatLevel, false, currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1)
+          calculateStatsBattle(statATK, MAX_IV, currStatLevel, false, currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1)
         );
       }
       if (setStatLvDEF) {
         setStatLvDEF(
-          calculateStatsBattle(statDEF, 15, currStatLevel, false, currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
+          calculateStatsBattle(statDEF, MAX_IV, currStatLevel, false, currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
         );
       }
       if (setStatLvSTA) {
-        setStatLvSTA(calculateStatsBattle(statSTA, 15, currStatLevel));
+        setStatLvSTA(calculateStatsBattle(statSTA, MAX_IV, currStatLevel));
       }
       setCurrStatLevel(v);
     },
@@ -40,7 +41,7 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
   );
 
   const onHandleType = useCallback(
-    (v: any) => {
+    (v: string) => {
       setStatType(v);
       setCurrStatType(v);
       setStatLevel(1);
@@ -90,11 +91,11 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
             <LevelSlider
               aria-label="Level"
               value={currStatLevel}
-              defaultValue={1}
+              defaultValue={MIN_LEVEL}
               valueLabelDisplay="off"
               step={0.5}
-              min={1}
-              max={currStatType === 'buddy' ? 51 : 50}
+              min={MIN_LEVEL}
+              max={currStatType === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
               onChange={onHandleLevel}
             />
           </Box>
@@ -114,7 +115,13 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
                   ATK
                 </td>
                 <td className="text-center">
-                  {calculateStatsBattle(statATK, 15, currStatLevel, true, currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1)}
+                  {calculateStatsBattle(
+                    statATK,
+                    MAX_IV,
+                    currStatLevel,
+                    true,
+                    currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1
+                  )}
                 </td>
               </tr>
               <tr>
@@ -123,7 +130,13 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
                   DEF
                 </td>
                 <td className="text-center">
-                  {calculateStatsBattle(statDEF, 15, currStatLevel, true, currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)}
+                  {calculateStatsBattle(
+                    statDEF,
+                    MAX_IV,
+                    currStatLevel,
+                    true,
+                    currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1
+                  )}
                 </td>
               </tr>
               <tr>
@@ -131,7 +144,7 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
                   <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
                   HP
                 </td>
-                <td className="text-center">{calculateStatsBattle(statSTA, 15, currStatLevel, true)}</td>
+                <td className="text-center">{calculateStatsBattle(statSTA, MAX_IV, currStatLevel, true)}</td>
               </tr>
             </tbody>
           </table>

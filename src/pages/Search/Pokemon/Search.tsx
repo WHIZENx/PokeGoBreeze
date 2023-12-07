@@ -1,55 +1,65 @@
-import React, { useState, useEffect, useRef, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
+
+import '../../Tools/CalculateStats/CalculateStats.scss';
 
 import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
-import { useSelector, RootStateOrAny } from 'react-redux';
-import { RouterState } from '../../..';
+import { useSelector } from 'react-redux';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
 import { useTheme } from '@mui/material';
+import { Action } from 'history';
+import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
+import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
+import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.model';
 
 const Search = () => {
   const theme = useTheme();
   const router = useSelector((state: RouterState) => state.router);
-  const searching = useSelector((state: RootStateOrAny) => state.searching.mainSearching);
-  const pokemonName = useSelector((state: RootStateOrAny) => state.store.data.pokemonName);
+  const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
+  const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemonName ?? []);
 
   const [first, setFirst] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
 
-  const [id, setId]: any = useState(router.action === 'POP' && searching ? searching.id : 1);
-  const [selectId, setSelectId]: any = useState(router.action === 'POP' && searching ? searching.id : 1);
+  const [id, setId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
+  const [selectId, setSelectId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
 
-  const pokemonList = useRef(
-    Object.values(pokemonName)
-      .filter((item: any) => item.id > 0)
-      .map((item: any) => {
-        return { id: item.id, name: item.name, sprites: APIService.getPokeSprite(item.id) };
-      })
-  );
-  const [pokemonListFilter, setPokemonListFilter]: any = useState([]);
+  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
+  const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
+
+  useEffect(() => {
+    if (pokemonName.length > 0) {
+      setPokemonList(pokemonName.filter((item) => item.id > 0).map((item) => new PokemonSearchingModel(item)));
+    }
+  }, [pokemonName]);
 
   useEffect(() => {
     document.title = 'Pokémon - Search';
   }, []);
 
   useEffect(() => {
-    const results = pokemonList.current.filter(
-      (item: any) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
-    );
-    setPokemonListFilter(results);
-  }, [searchTerm]);
+    if (pokemonList.length > 0) {
+      const timeOutId = setTimeout(() => {
+        const results = pokemonList.filter(
+          (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+        );
+        setPokemonListFilter(results);
+      });
+      return () => clearTimeout(timeOutId);
+    }
+  }, [pokemonList, searchTerm]);
 
   useEffect(() => {
     setSelectId(id);
   }, [id]);
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: any; offsetHeight: any } }) => {
+  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
@@ -57,7 +67,7 @@ const Search = () => {
     }
   };
 
-  const getInfoPoke = (value: any) => {
+  const getInfoPoke = (value: { id: number }) => {
     setShowResult(false);
     setId(value.id);
     if (first) {
@@ -70,29 +80,37 @@ const Search = () => {
   };
 
   const decId = () => {
-    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
-    setId(getPokemonByIndex(Object.values(pokemonName), currentId.index - 1).id);
+    const currentId = getPokemonById(pokemonName, selectId);
+    if (currentId) {
+      setId(getPokemonByIndex(pokemonName, currentId.index - 1)?.id ?? 0);
+    }
   };
 
   const incId = () => {
-    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
-    setId(getPokemonByIndex(Object.values(pokemonName), currentId.index + 1).id);
+    const currentId = getPokemonById(pokemonName, selectId);
+    if (currentId) {
+      setId(getPokemonByIndex(pokemonName, currentId.index + 1)?.id ?? 0);
+    }
   };
 
-  const onChangeSelect = (event: any) => {
-    const currentId: any = getPokemonById(Object.values(pokemonName), selectId);
-    const result: any = {
-      prev: getPokemonByIndex(Object.values(pokemonName), currentId.index - 1),
-      current: currentId,
-      next: getPokemonByIndex(Object.values(pokemonName), currentId.index + 1),
-    };
-    if (event.keyCode === 13) {
-      setShowResult(false);
-      setId(selectId);
-    } else if (result.prev && event.keyCode === 38) {
-      setSelectId(result.prev.id);
-    } else if (result.next && event.keyCode === 40) {
-      setSelectId(result.next.id);
+  const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
+    const currentId = getPokemonById(pokemonName, selectId);
+    if (currentId) {
+      const result = {
+        prev: getPokemonByIndex(pokemonName, currentId.index - 1),
+        current: currentId,
+        next: getPokemonByIndex(pokemonName, currentId.index + 1),
+      };
+      if (event.keyCode === KEY_ENTER) {
+        setShowResult(false);
+        setId(selectId);
+      } else if (result.prev && event.keyCode === KEY_UP) {
+        setSelectId(result.prev.id);
+      } else if (result.next && event.keyCode === KEY_DOWN) {
+        setSelectId(result.next.id);
+      } else {
+        setSearchTerm(search);
+      }
     }
   };
 
@@ -111,11 +129,10 @@ const Search = () => {
             className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
             style={{ backgroundColor: (theme.palette.background as any).input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
-            value={searchTerm}
-            onInput={(e: any) => setSearchTerm(e.target.value)}
+            defaultValue={searchTerm}
             onFocus={() => setShowResult(true)}
             onBlur={() => setShowResult(false)}
-            onKeyUp={(e) => onChangeSelect(e)}
+            onKeyUp={(e: any) => onChangeSelect(e, e.target.value)}
           />
         </div>
         <div className="result" style={{ display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>
@@ -149,7 +166,7 @@ const Search = () => {
           </Fragment>
         </div>
         <Pokemon
-          id={id}
+          id={id?.toString()}
           onSetIDPoke={setIDPoke}
           onIncId={incId}
           onDecId={decId}

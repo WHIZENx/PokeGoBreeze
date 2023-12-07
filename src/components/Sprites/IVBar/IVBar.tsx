@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './IVBar.scss';
 
-const IVbar = (props: { iv: number; style: React.CSSProperties | undefined; title: string }) => {
+const IVbar = (props: { iv: number; style: React.CSSProperties; title: string }) => {
   const [ivWidthFirst, setIvWidthFirst] = useState(0);
   const [ivWidthSec, setIvWidthSec] = useState(0);
   const [ivWidthThird, setIvWidthThird] = useState(0);

@@ -3,10 +3,11 @@ import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
+import { TypeEff } from '../../core/models/typeEff.model';
 
-const Attacker = (prop: { types: any }) => {
+const Attacker = (prop: { types: TypeEff | any }) => {
   const theme = useTheme();
-  const [types, setTypes]: any = useState(null);
+  const [types, setTypes]: [string[], any] = useState([]);
 
   const [currentType, setCurrentType] = useState('BUG');
   const [showType, setShowType] = useState(false);
@@ -22,7 +23,7 @@ const Attacker = (prop: { types: any }) => {
       resist: [],
       neutral: [],
     };
-    Object.entries(prop.types[currentType]).forEach(([key, value]) => {
+    Object.entries(prop.types[currentType] ?? []).forEach(([key, value]) => {
       if (value === 1.6) {
         data.weak.push(key);
       } else if (value === 1) {
@@ -42,7 +43,7 @@ const Attacker = (prop: { types: any }) => {
     getTypeEffective();
   }, [currentType, getTypeEffective, prop.types]);
 
-  const changeType = (value: any) => {
+  const changeType = (value: string) => {
     setShowType(false);
     setCurrentType(value);
     getTypeEffective();
@@ -64,7 +65,7 @@ const Attacker = (prop: { types: any }) => {
           {showType && (
             <div className="result-type">
               <ul>
-                {types.map((value: any, index: React.Key) => (
+                {types.map((value, index) => (
                   <li
                     className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
                     style={{ backgroundColor: theme.palette.background.default }}

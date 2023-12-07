@@ -122,7 +122,7 @@
   overflow-x: auto;
 }
 
-.ranking-link-group a {
+.ranking-link-group button {
   border-radius: 0 !important;
   border-left: 1px solid black;
   border-top: 2px solid black;
@@ -133,15 +133,15 @@
   border-bottom: none;
 }
 
-.ranking-link-group a.active {
+.ranking-link-group button.active {
   font-weight: bolder;
 }
 
-.ranking-link-group a:first-of-type {
+.ranking-link-group button:first-of-type {
   border-left: 2px solid black;
 }
 
-.ranking-link-group a:last-of-type {
+.ranking-link-group button:last-of-type {
   border-right: 2px solid black;
 }
 

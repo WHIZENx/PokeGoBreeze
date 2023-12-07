@@ -5,7 +5,11 @@ import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 
-export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false) => {
+export const TimeLineVertical = (
+  pokemonCurr: { timeline: any[] | { [x: string]: { type: string } } },
+  pokemonObj: { timeline: any[] | { [x: string]: { type: string } } },
+  hide = false
+) => {
   const renderMoveBadgeBorder = (move: { type: string; name: string }, border: boolean, shadow = false) => {
     if (!move) {
       return;
@@ -30,10 +34,10 @@ export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false
     );
   };
 
-  const renderTimeline = (pokeCurr: { timeline: any[] }, pokeObj: { timeline: { [x: string]: { type: string } } }, end = false) => {
+  const renderTimeline = (pokeCurr: { timeline: any }, pokeObj: { timeline: any }, end = false) => {
     return (
       <Fragment>
-        {pokeCurr.timeline.map((value: any, index: any) => (
+        {pokeCurr.timeline.map((value: any, index: number) => (
           <Fragment key={index}>
             {pokeObj.timeline[index] && pokeObj.timeline[index].type === 'C' && (
               <Fragment>
@@ -156,8 +160,8 @@ export const TimeLineVertical = (pokemonCurr: any, pokemonObj: any, hide = false
 };
 
 export const TimeLine = (
-  pokemonCurr: any,
-  pokemonObj: any,
+  pokemonCurr: { timeline: any[] | { [x: string]: { type: string } } },
+  pokemonObj: { timeline: any[] | { [x: string]: { type: string } } },
   elem: React.LegacyRef<HTMLDivElement> | undefined,
   // eslint-disable-next-line no-unused-vars
   scroll: { (e: { currentTarget: { scrollLeft: number } }): void; bind?: any },
@@ -168,15 +172,15 @@ export const TimeLine = (
     (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }): void;
     bind?: any;
   },
-  showTap: any,
+  showTap: boolean,
   hide = false
 ) => {
-  const renderTimeline = (poke: { timeline: any[] }, pokeObj: { timeline: { [x: string]: { type: string } } }, border = false) => {
+  const renderTimeline = (poke: { timeline: any }, pokeObj: { timeline: any }, border = false) => {
     return (
       <Fragment>
         <div className="element-top" style={{ height: 12 }}>
           <div className="d-flex" style={{ columnGap: 10, width: 'max-content' }}>
-            {poke.timeline.map((value: { size: any; tap: any; dmgImmune: any; type: string; buff: any[] }, index: React.Key) => (
+            {poke.timeline.map((value: { size: number; tap: boolean; dmgImmune: number; type: string; buff: any[] }, index: React.Key) => (
               <span className="position-relative" key={index} style={{ width: value.size }}>
                 {value.tap && (
                   <div
@@ -194,7 +198,7 @@ export const TimeLine = (
                       <div className="position-absolute icon-buff-timeline">
                         {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                            {b.type.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                            {b.type?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
                         ))}
                       </div>
@@ -204,7 +208,7 @@ export const TimeLine = (
                           <div className="position-absolute icon-buff-timeline">
                             {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {b.type.toUpperCase()} {b.power}
+                                {b.type?.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>
@@ -227,7 +231,7 @@ export const TimeLine = (
             borderBottom: border ? '1px solid lightgray' : 'none',
           }}
         >
-          {poke.timeline.map((value: { type: string; size: any; color: any }, index: any) => (
+          {poke.timeline.map((value: { type: string; size: number | string; color: string }, index: string | undefined) => (
             <Fragment key={index}>
               {value.type === 'B' && <HexagonIcon id={index} sx={{ color: 'purple', fontSize: value.size }} />}
               {value.type === 'F' && <div id={index} className={`fast-attack ${value.color} ${value.color}-border`} />}
@@ -279,8 +283,8 @@ export const TimeLine = (
 };
 
 export const TimeLineFit = (
-  pokemonCurr: any,
-  pokemonObj: any,
+  pokemonCurr: { timeline: any[] | { [x: string]: { type: string } } },
+  pokemonObj: { timeline: any[] | { [x: string]: { type: string } } },
   timeline: React.LegacyRef<HTMLDivElement> | undefined,
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: {
@@ -295,12 +299,12 @@ export const TimeLineFit = (
     return `${(index * 100) / (length - 2)}%`;
   };
 
-  const renderTimelineFit = (poke: { timeline: any[] }, pokeObj: { timeline: { [x: string]: { type: string } } }) => {
+  const renderTimelineFit = (poke: { timeline: any }, pokeObj: { timeline: any }) => {
     return (
       <Fragment>
         <div className="element-top" style={{ height: 12 }}>
           <div className="position-relative timeline-fit-container">
-            {poke.timeline.map((value: { tap: any; size: any; dmgImmune: any; type: string; buff: any[] }, index: number) => (
+            {poke.timeline.map((value: { tap: boolean; size: number; dmgImmune: number; type: string; buff: any[] }, index: number) => (
               <Fragment key={index}>
                 {value.tap && (
                   <div
@@ -323,7 +327,7 @@ export const TimeLineFit = (
                       >
                         {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                            {b.type.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                            {b.type?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
                         ))}
                       </div>
@@ -339,7 +343,7 @@ export const TimeLineFit = (
                           >
                             {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {b.type.toUpperCase()} {b.power}
+                                {b.type?.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>
@@ -362,7 +366,7 @@ export const TimeLineFit = (
           </div>
         </div>
         <div className="position-relative timeline-fit-container" style={{ height: 30 }}>
-          {poke.timeline.map((value: { type: string; size: any; color: any }, index: any) => (
+          {poke.timeline.map((value: { type: string; size: number; color: string }, index: any) => (
             <Fragment key={index}>
               {value.type === 'B' && (
                 <div id={index} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>

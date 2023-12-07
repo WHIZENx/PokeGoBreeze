@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import CardWeather from '../../components/Card/CardWeather';
 import WeatherEffective from '../../components/Effective/WeatherEffective';
 import { splitAndCapitalize } from '../../util/Utils';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
-const Affect = (prop: { weathers: any }) => {
-  const [weathers, setWeathers]: any = useState([]);
+const Affect = (prop: { weathers: WeatherBoost | any }) => {
+  const [weathers, setWeathers]: [string[], any] = useState([]);
 
   const [currentWeather, setCurrentWeather] = useState('CLEAR');
   const [showWeather, setShowWeather] = useState(false);
@@ -12,7 +13,7 @@ const Affect = (prop: { weathers: any }) => {
   const [weatherEffective, setWeatherEffective] = useState([]);
 
   const getWeatherEffective = useCallback(() => {
-    setWeatherEffective(Object.values(prop.weathers[currentWeather]));
+    setWeatherEffective(Object.values(prop.weathers[currentWeather] ?? []));
   }, [currentWeather, prop.weathers]);
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const Affect = (prop: { weathers: any }) => {
           {showWeather && (
             <div className="result-weather">
               <ul>
-                {weathers.map((value: string, index: React.Key) => (
+                {weathers.map((value, index) => (
                   <li className="container card-pokemon" key={index} onMouseDown={() => changeWeather(value)}>
                     <CardWeather value={splitAndCapitalize(value, '_', ' ')} />
                   </li>

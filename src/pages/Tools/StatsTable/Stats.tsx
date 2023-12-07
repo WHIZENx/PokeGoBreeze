@@ -8,36 +8,37 @@ import { calStatsProd } from '../../../util/Calculate';
 import APIService from '../../../services/API.service';
 
 import Find from '../../../components/Select/Find/Find';
+import { MIN_IV, MAX_IV } from '../../../util/Constants';
 
 export const columnsStats: any = [
   {
     name: 'Rank',
-    selector: (row: { rank: any }) => row.rank,
+    selector: (row: { rank: number }) => row.rank,
     sortable: true,
   },
   {
     name: 'Level',
-    selector: (row: { level: any }) => row.level,
+    selector: (row: { level: number }) => row.level,
     sortable: true,
   },
   {
     name: 'IV ATK',
-    selector: (row: { IV: { atk: any } }) => row.IV.atk,
+    selector: (row: { IV: { atk: number } }) => row.IV.atk,
     sortable: true,
   },
   {
     name: 'IV DEF',
-    selector: (row: { IV: { def: any } }) => row.IV.def,
+    selector: (row: { IV: { def: number } }) => row.IV.def,
     sortable: true,
   },
   {
     name: 'IV STA',
-    selector: (row: { IV: { sta: any } }) => row.IV.sta,
+    selector: (row: { IV: { sta: number } }) => row.IV.sta,
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row: { CP: any }) => row.CP,
+    selector: (row: { CP: number }) => row.CP,
     sortable: true,
   },
   {
@@ -57,16 +58,16 @@ const StatsTable = () => {
 
   const [searchCP, setSearchCP] = useState('');
 
-  const [ATKIv, setATKIv]: any = useState(0);
-  const [DEFIv, setDEFIv]: any = useState(0);
-  const [STAIv, setSTAIv]: any = useState(0);
+  const [ATKIv, setATKIv] = useState(0);
+  const [DEFIv, setDEFIv] = useState(0);
+  const [STAIv, setSTAIv] = useState(0);
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
   const currStatBattle: any = useRef([]);
-  const [battleLeague, setBattleLeague]: any = useState(500);
+  const [battleLeague, setBattleLeague] = useState(500);
 
   const [statsBattle, setStatsBattle]: any = useState([]);
 
@@ -149,9 +150,9 @@ const StatsTable = () => {
           <span className="text-danger">CP below 2500</span>
         </button>
         <button
-          className={'btn btn-form' + (battleLeague === null ? ' form-selected' : '')}
+          className={'btn btn-form' + (battleLeague === 0 ? ' form-selected' : '')}
           style={{ height: 200 }}
-          onClick={() => setBattleLeague(null)}
+          onClick={() => setBattleLeague(0)}
         >
           <img alt="img-league" width={128} height={128} src={APIService.getPokeLeague('master_league')} />
           <div>
@@ -190,13 +191,13 @@ const StatsTable = () => {
             <PokeGoSlider
               value={ATKIv}
               aria-label="ATK marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setATKIv(v)}
+              onChange={(_, v: any) => setATKIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -205,13 +206,13 @@ const StatsTable = () => {
             <PokeGoSlider
               value={DEFIv}
               aria-label="DEF marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setDEFIv(v)}
+              onChange={(_, v: any) => setDEFIv(v)}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -220,13 +221,13 @@ const StatsTable = () => {
             <PokeGoSlider
               value={STAIv}
               aria-label="STA marks"
-              defaultValue={0}
-              min={0}
-              max={15}
+              defaultValue={MIN_IV}
+              min={MIN_IV}
+              max={MAX_IV}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(e: any, v: any) => setSTAIv(v)}
+              onChange={(_, v: any) => setSTAIv(v)}
             />
           </Box>
         </div>

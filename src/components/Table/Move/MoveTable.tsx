@@ -5,16 +5,28 @@ import { rankMove } from '../../../util/Calculate';
 import './MoveTable.scss';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { RootStateOrAny, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Tab, Tabs } from 'react-bootstrap';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
+import { StoreState } from '../../../store/models/state.model';
+import { Combat, CombatPokemon } from '../../../core/models/combat.model';
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FormModel } from '../../../core/models/API/form.model';
 
-const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any; form: any; id?: number; maxHeight?: number | string }) => {
+const TableMove = (props: {
+  data: any;
+  statATK: number;
+  statDEF: number;
+  statSTA: number;
+  form: FormModel;
+  id?: number;
+  maxHeight?: number | string;
+}) => {
   const theme = useTheme();
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const data = useSelector((state: StoreState) => state.store.data);
   const [move, setMove]: any = useState({ data: [] });
   const [moveOrigin, setMoveOrigin]: any = useState(null);
 
@@ -33,59 +45,72 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     },
   });
 
-  const filterMoveType = (combat: any) => {
+  const filterMoveType = (combat: CombatPokemon | undefined) => {
     if (!combat) {
       return setMoveOrigin(null);
     }
     return setMoveOrigin({
-      fastMoves: combat.quickMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
-      chargedMoves: combat.cinematicMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
-      eliteFastMoves: combat.eliteQuickMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
-      eliteChargedMoves: combat.eliteCinematicMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
-      purifiedMoves: combat.purifiedMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
-      shadowMoves: combat.shadowMoves.map((move: any) => data.combat.find((item: { name: any }) => item.name === move)),
+      fastMoves: combat.quickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      chargedMoves: combat.cinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      eliteFastMoves: combat.eliteQuickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      eliteChargedMoves: combat.eliteCinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      purifiedMoves: props.form?.is_shadow ? [] : combat.purifiedMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      shadowMoves: props.form?.is_purified ? [] : combat.shadowMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      specialMoves: combat.specialMoves.map((move) => data?.combat?.find((item) => item.name === move)),
     });
   };
 
   const findMove = useCallback(() => {
-    const combatPoke = data.pokemonCombat.filter((item: { id: number; name: string }) =>
-      props.form?.id
-        ? item.id === parseInt(props.data.species.url.split('/')[6])
-        : item.name ===
-          (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
-    );
-    if (combatPoke?.length === 1) {
-      filterMoveType(combatPoke[0]);
-      return setMove(setRankMove(combatPoke[0]));
-    } else if (combatPoke?.length === 0 && props.id) {
-      const combatPoke = data.pokemonCombat.filter(
-        (item: { id: number; name: string; baseSpecies: string }) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
-      );
-      filterMoveType(combatPoke[0]);
-      return setMove(setRankMove(combatPoke[0]));
-    }
+    const combatPoke = data?.pokemonCombat
+      ?.filter((item) =>
+        props.form?.id || props.form?.is_shadow || props.form?.is_purified
+          ? item.id === parseInt(props.data?.species.url.split('/').at(6))
+          : item.name ===
+            (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
+      )
+      .map((c) => {
+        return {
+          ...c,
+          purifiedMoves: props.form?.is_shadow ? [] : c.purifiedMoves,
+          shadowMoves: props.form?.is_purified ? [] : c.shadowMoves,
+        };
+      });
+    if (combatPoke) {
+      if (combatPoke.length === 1) {
+        filterMoveType(combatPoke.at(0));
+        return setMove(setRankMove(combatPoke[0]));
+      } else if (combatPoke.length === 0 && props.id) {
+        const combatPoke: CombatPokemon[] | undefined = data?.pokemonCombat?.filter(
+          (item) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
+        );
+        filterMoveType(combatPoke?.at(0));
+        return setMove(setRankMove(combatPoke?.at(0)));
+      }
 
-    const result = combatPoke.find((item: { name: string }) => props.form && item.name === convertName(props.form?.name ?? props.form));
-    if (result === undefined) {
-      filterMoveType(combatPoke.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies));
-      setMove(setRankMove(combatPoke[0]));
-    } else {
-      filterMoveType(result);
-      setMove(setRankMove(result));
+      const result = combatPoke.find(
+        (item) => props.form && item.name === convertName(props.form?.name.replace('-shadow', '').replace('-purified', '') ?? props.form)
+      );
+      if (result === undefined) {
+        filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
+        setMove(setRankMove(combatPoke[0]));
+      } else {
+        filterMoveType(result);
+        setMove(setRankMove(result));
+      }
     }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
-  const setRankMove = (result: any) => {
+  const setRankMove = (result: CombatPokemon | undefined) => {
     return rankMove(
-      data.options,
-      data.typeEff,
-      data.weatherBoost,
-      data.combat,
+      data?.options,
+      data?.typeEff,
+      data?.weatherBoost,
+      data?.combat ?? [],
       result,
-      props.statATK,
-      props.statDEF,
+      props.statATK * (props.form?.is_shadow ? SHADOW_ATK_BONUS(data?.options) : 1),
+      props.statDEF * (props.form?.is_shadow ? SHADOW_DEF_BONUS(data?.options) : 1),
       props.statSTA,
-      props.data.types.map((item: any) => capitalize(item?.type?.name ?? item))
+      props.data?.types.map((item: { type: { name: string } }) => capitalize(item?.type?.name ?? item))
     );
   };
 
@@ -95,7 +120,15 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     }
   }, [findMove, props.form]);
 
-  const renderBestMovesetTable = (value: any, max: number, type: string) => {
+  const renderBestMovesetTable = (
+    value: {
+      fmove: { id: string; type: string; name: string; elite: boolean };
+      cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
+      eDPS: { [x: string]: number };
+    },
+    max: number,
+    type: string
+  ) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
@@ -135,6 +168,11 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                   <span>Purified</span>
                 </span>
               )}
+              {value.cmove.special && (
+                <span className="type-icon-small ic special-ic">
+                  <span>Special</span>
+                </span>
+              )}
             </span>
           </Link>
         </td>
@@ -145,10 +183,10 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
     );
   };
 
-  const renderMoveSetTable = (data: any) => {
+  const renderMoveSetTable = (data: Combat[]) => {
     return (
       <Fragment>
-        {data.map((value: any, index: React.Key) => (
+        {data?.map((value, index) => (
           <tr key={index}>
             <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
               <Link to={'../move/' + value.id} className="d-block">
@@ -170,6 +208,11 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                   {value.purified && (
                     <span className="type-icon-small ic purified-ic">
                       <span>Purified</span>
+                    </span>
+                  )}
+                  {value.special && (
+                    <span className="type-icon-small ic special-ic">
+                      <span>Special</span>
                     </span>
                   )}
                 </span>
@@ -219,7 +262,12 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               <tbody>
                 {moveOrigin &&
                   renderMoveSetTable(
-                    moveOrigin.chargedMoves.concat(moveOrigin.eliteChargedMoves, moveOrigin.purifiedMoves, moveOrigin.shadowMoves)
+                    moveOrigin.chargedMoves.concat(
+                      moveOrigin.eliteChargedMoves,
+                      moveOrigin.purifiedMoves,
+                      moveOrigin.shadowMoves,
+                      moveOrigin.specialMoves
+                    )
                   )}
               </tbody>
             </table>
@@ -246,7 +294,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                     </span>
                   </th>
                   <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('offensive', 'charged')}>
-                    Charge
+                    Charged
                     <span style={{ opacity: stateSorted.offensive.sortBy === 'charged' ? 1 : 0.3 }}>
                       {stateSorted.offensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
@@ -261,7 +309,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               </thead>
               <tbody>
                 {[...move.data]
-                  .sort((a: any, b: any) => {
+                  .sort((a, b) => {
                     const sortedBy = stateSorted.offensive.sortBy;
                     if (sortedBy === 'eff') {
                       return stateSorted.offensive.eff ? b.eDPS.offensive - a.eDPS.offensive : a.eDPS.offensive - b.eDPS.offensive;
@@ -274,7 +322,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                       return 0;
                     }
                   })
-                  .map((value: any, index: React.Key) => (
+                  .map((value, index: React.Key) => (
                     <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff, 'offensive')}</Fragment>
                   ))}
               </tbody>
@@ -298,7 +346,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                     </span>
                   </th>
                   <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('defensive', 'charged')}>
-                    Charge
+                    Charged
                     <span style={{ opacity: stateSorted.defensive.sortBy === 'charged' ? 1 : 0.3 }}>
                       {stateSorted.defensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
@@ -313,7 +361,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
               </thead>
               <tbody>
                 {[...move.data]
-                  .sort((a: any, b: any) => {
+                  .sort((a, b) => {
                     const sortedBy = stateSorted.defensive.sortBy;
                     if (sortedBy === 'eff') {
                       return stateSorted.defensive.eff ? b.eDPS.defensive - a.eDPS.defensive : a.eDPS.defensive - b.eDPS.defensive;
@@ -326,7 +374,7 @@ const TableMove = (props: { data: any; statATK: any; statDEF: any; statSTA: any;
                       return 0;
                     }
                   })
-                  .map((value: any, index: React.Key) => (
+                  .map((value, index: React.Key) => (
                     <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef, 'defensive')}</Fragment>
                   ))}
               </tbody>

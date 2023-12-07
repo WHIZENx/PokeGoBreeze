@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 
-const CardType = (props: { value?: any; name?: any; elite?: any; shadow?: any; purified?: any }) => {
+const CardType = (props: { value?: string; name?: string; elite?: boolean; shadow?: boolean; purified?: boolean; special?: boolean }) => {
   return (
     <Fragment>
       {props.value ? (
@@ -10,6 +10,7 @@ const CardType = (props: { value?: any; name?: any; elite?: any; shadow?: any; p
           <b>{props.name ?? props.value}</b> {props.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
           {props.shadow && <span className="type-icon-small ic shadow-ic">Shadow</span>}
           {props.purified && <span className="type-icon-small ic purified-ic">Purified</span>}
+          {props.special && <span className="type-icon-small ic special-ic">Special</span>}
         </Fragment>
       ) : (
         <Fragment>

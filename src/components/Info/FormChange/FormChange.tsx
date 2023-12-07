@@ -1,30 +1,25 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
 import { splitAndCapitalize } from '../../../util/Utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
+import { StoreState } from '../../../store/models/state.model';
+import { PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 
 const FromChange = ({ details, defaultName }: any) => {
   const theme = useTheme();
-  const data = useSelector((state: RootStateOrAny) => state.store.data);
+  const data = useSelector((state: StoreState) => state.store.data);
 
-  const [pokeAssets, setPokeAssets]: any = useState([]);
+  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], any] = useState([]);
 
   const getImageList = useCallback(
-    (id: any) => {
-      const model = data.assets.find((item: { id: any }) => item.id === id);
-      return model
-        ? Array.from(new Set(model.image.map((item: { form: any }) => item.form))).map((value) => {
-            return {
-              form: value,
-              image: model.image.filter((item: { form: any }) => value === item.form),
-            };
-          })
-        : [];
+    (id: number) => {
+      const model = data?.assets?.find((item) => item.id === id);
+      return model ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model.image)) : [];
     },
-    [data.assets]
+    [data?.assets]
   );
 
   useEffect(() => {
@@ -47,7 +42,7 @@ const FromChange = ({ details, defaultName }: any) => {
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
                   src={APIService.getPokemonModel(
-                    pokeAssets.find((pokemon: { form: string }) => pokemon.form === details.form)?.image[0].default
+                    pokeAssets?.find((pokemon) => pokemon.form === details.form)?.image?.at(0)?.default ?? ''
                   )}
                 />
               </div>
@@ -57,7 +52,7 @@ const FromChange = ({ details, defaultName }: any) => {
             </div>
           </div>
           <div className="d-flex flex-column align-items-center justify-content-center w-50" style={{ rowGap: 15 }}>
-            {details.formChange.map((value: any, index: React.Key) => (
+            {details.formChange.map((value: { availableForm: string[] }, index: React.Key) => (
               <Fragment key={index}>
                 {value.availableForm.map((name: string, index: React.Key) => (
                   <div key={index} className="d-flex flex-column align-items-center justify-content-center" id={`form-${index}`}>
@@ -66,8 +61,11 @@ const FromChange = ({ details, defaultName }: any) => {
                         className="pokemon-sprite-large"
                         alt="pokemon-model"
                         src={APIService.getPokemonModel(
-                          pokeAssets.find((pokemon: { form: string }) => pokemon.form === name.replace(`${defaultName.toUpperCase()}_`, ''))
-                            ?.image[0].default
+                          pokeAssets
+                            ?.find(
+                              (pokemon) => pokemon.form === name.replace('_COMPLETE', '').replace(`${defaultName?.toUpperCase()}_`, '')
+                            )
+                            ?.image.at(0)?.default ?? ''
                         )}
                       />
                     </div>
@@ -79,9 +77,9 @@ const FromChange = ({ details, defaultName }: any) => {
               </Fragment>
             ))}
           </div>
-          {details.formChange.map((value: any, index: React.Key) => (
+          {details.formChange.map((value: { availableForm: string[]; candyCost: string; stardustCost: string }, index: React.Key) => (
             <Fragment key={index}>
-              {value.availableForm.map((_: any, index: React.Key) => (
+              {value.availableForm.map((_: string, index: React.Key) => (
                 <Xarrow
                   labels={{
                     end: (
