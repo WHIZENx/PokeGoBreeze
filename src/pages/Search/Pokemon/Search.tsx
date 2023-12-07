@@ -25,7 +25,7 @@ const Search = () => {
   const eachCounter = 10;
 
   const [id, setId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
-  const [selectId, setSelectId]: any = useState(router.action === Action.Pop && searching ? searching.id : 1);
+  const [selectId, setSelectId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);

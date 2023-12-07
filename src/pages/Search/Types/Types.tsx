@@ -146,11 +146,11 @@ const SearchTypes = () => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const [typeList, setTypeList]: any = useState([]);
+  const [typeList, setTypeList]: [string[], any] = useState([]);
 
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const [currentType, setCurrentType]: any = useState(null);
+  const [currentType, setCurrentType]: [string | undefined, any] = useState();
   const [result, setResult]: any = useState({
     pokemonList: [],
     fastMove: [],

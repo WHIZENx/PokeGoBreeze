@@ -1,42 +1,21 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useLocalStorage } from 'usehooks-ts';
 
 import logo from '../assets/pokedex.png';
 import { getTime } from '../util/Utils';
 
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-
 import './Navbar.scss';
-import { Box, IconButton, LinearProgress } from '@mui/material';
-import { loadThemeData } from '../store/actions/theme.action';
+import { Box, LinearProgress } from '@mui/material';
 import { SpinnerState, StoreState } from '../store/models/state.model';
 
-const NavbarComponent = ({ mode, toggleColorMode }: any) => {
-  const dispatch = useDispatch();
-
+const NavbarComponent = () => {
   const dataStore = useSelector((state: StoreState) => state.store);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
 
   const [version] = useLocalStorage('version', '');
-
-  const [isDelay, setIsDelay] = useState(false);
-
-  const onChangeTheme = () => {
-    if (!isDelay) {
-      setIsDelay(true);
-      setStateTheme(mode === 'light' ? 'dark' : 'light');
-      dispatch(loadThemeData(mode === 'light' ? 'dark' : 'light'));
-      setTimeout(() => {
-        setIsDelay(false);
-        toggleColorMode();
-      }, 500);
-    }
-  };
 
   return (
     <Fragment>
@@ -131,7 +110,7 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
               </span>
             </Navbar.Text>
           )}
-          <IconButton
+          {/* <IconButton
             className={stateTheme + '-mode'}
             onClick={onChangeTheme}
             style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
@@ -142,7 +121,7 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
             ) : (
               <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
             )}
-          </IconButton>
+          </IconButton> */}
         </Navbar.Collapse>
       </Navbar>
       {spinner.bar.show && (

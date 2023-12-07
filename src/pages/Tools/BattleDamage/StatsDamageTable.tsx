@@ -1,5 +1,5 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 import { LevelSlider, TypeRadioGroup } from '../../../util/Utils';
 import { calculateStatsBattle } from '../../../util/Calculate';
@@ -17,7 +17,7 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
-  const [currStatType, setCurrStatType]: any = useState(null);
+  const [currStatType, setCurrStatType]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
 
   const onHandleLevel = useCallback(
     (_: any, v: any) => {
