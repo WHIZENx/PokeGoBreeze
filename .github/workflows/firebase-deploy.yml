@@ -4,6 +4,7 @@ on:
     branches: [main]
 env:
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
+  REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
