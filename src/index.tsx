@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Analytics } from '@vercel/analytics/react';
 import './index.scss';
 
 import { Provider } from 'react-redux';
@@ -12,8 +13,6 @@ import { ReduxRouterSelector, ReduxRouter } from '@lagunovsky/redux-react-router
 import configureStore, { history } from './store';
 import Main from './App';
 import { RouterState } from './store/models/state.model';
-
-import { Analytics } from '@vercel/analytics/react';
 
 if (module.hot) {
   module.hot.accept();

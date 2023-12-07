@@ -514,14 +514,14 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
       count += shiny ? 2 : 1;
     }
 
-    formSet = imgs.filter(
+    formSet = imgs?.filter(
       (img: string | string[]) =>
         !img.includes(`Addressable Assets/`) &&
         (img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}_51`) ||
           img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}_52`))
     );
     if (!mega) {
-      for (let index = 0; index < formSet.length; index += 2) {
+      for (let index = 0; index < formSet?.length; index += 2) {
         result.image.push({
           gender: 3,
           pokemonId: result.id,
@@ -537,7 +537,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
       (img: string | string[]) =>
         !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_pm${result.id?.toString().padStart(4, '0')}`)
     );
-    for (let index = 0; index < formSet.length; index += 2) {
+    for (let index = 0; index < formSet?.length; index += 2) {
       const subForm = formSet[index].replace('_shiny', '').split('_');
       const form = subForm[subForm.length - 1].toUpperCase();
       if (!formList.includes(form)) {
@@ -553,7 +553,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
     }
 
     if (result.image.length === 0) {
-      formSet = imgs.filter(
+      formSet = imgs?.filter(
         (img: string | string[]) =>
           !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}`)
       );
@@ -590,7 +590,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
       };
     });
 
-    soundForm = sounds.filter(
+    soundForm = sounds?.filter(
       (sound: string | string[]) =>
         !sound.includes(`Addressable Assets/`) &&
         (sound.includes(`pv${result.id?.toString().padStart(3, '0')}_51`) ||
