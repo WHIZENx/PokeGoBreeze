@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './index.scss';
 
 import { Provider } from 'react-redux';
@@ -37,6 +38,7 @@ ReactDOM.render(
       </SnackbarProvider>
     </Provider>
     <Analytics />
+    <SpeedInsights />
   </React.StrictMode>,
   document.getElementById('root')
 );
