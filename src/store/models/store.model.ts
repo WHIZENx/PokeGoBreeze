@@ -9,8 +9,8 @@ import { Options } from '../../core/models/options.model';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../../core/models/pokemon.model';
 import { PVPDataModel } from '../../core/models/pvp.model';
 import { SearchingOptionsModel } from '../../core/models/searching.model';
-import { Sticker } from '../../core/models/sticker.model';
-import { TypeEff } from '../../core/models/typeEff.model';
+import { StickerModel } from '../../core/models/sticker.model';
+import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 export interface StoreModel {
@@ -30,7 +30,7 @@ export interface DataModel {
   pokemonName: PokemonNameModel[];
   candy: Candy[];
   evolution: EvolutionModel[];
-  stickers: Sticker[];
+  stickers: StickerModel[];
   assets: Asset[];
   combat: Combat[];
   pokemonCombat: CombatPokemon[];

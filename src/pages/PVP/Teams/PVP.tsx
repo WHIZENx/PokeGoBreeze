@@ -26,7 +26,7 @@ import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
-import { TeamsPVP } from '../../../core/models/pvp.model';
+import { Performers, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 
 const TeamPVP = () => {
@@ -54,7 +54,7 @@ const TeamPVP = () => {
 
   const styleSheet: any = useRef(null);
 
-  const mappingPokemonData = (data: any) => {
+  const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
     const pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
@@ -67,49 +67,46 @@ const TeamPVP = () => {
       styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
     }
 
-    let combatPoke: any = dataStore?.pokemonCombat?.filter(
+    const pokemonCombatResult = dataStore?.pokemonCombat?.filter(
       (item) =>
         item.id === pokemon?.num &&
         item.baseSpecies === (pokemon?.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
     );
 
-    const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
-    if (!result) {
-      if (combatPoke) {
-        combatPoke = combatPoke.at(0);
-      } else {
-        combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(pokemon?.name));
-      }
+    const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon?.name));
+    let combatPoke: CombatPokemon | undefined;
+    if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
+      combatPoke = pokemonCombatResult.at(0);
     } else {
       combatPoke = result;
     }
 
-    let fmove: Combat | undefined, cmovePri: Combat | undefined, cmoveSec: Combat | undefined, cmove;
+    let fmove: Combat | undefined, cmovePri: Combat | undefined, cmoveSec: Combat | undefined;
+    let fMoveText: string, cMove: string, cMovePriText: string, cMoveSecText: string;
     if (moveSet.includes('+')) {
-      [fmove, cmove] = moveSet.split('+');
-      [cmovePri, cmoveSec] = cmove.split('/');
+      [fMoveText, cMove] = moveSet.split('+');
+      [cMovePriText, cMoveSecText] = cMove.split('/');
     } else {
-      [fmove, cmovePri, cmoveSec] = moveSet.split('/');
+      [fMoveText, cMovePriText, cMoveSecText] = moveSet.split('/');
     }
 
-    const combatTemp = combatPoke as CombatPokemon;
-    const fastMoveSet = combatTemp.quickMoves.concat(combatTemp.eliteQuickMoves);
-    const chargedMoveSet = combatTemp.cinematicMoves.concat(
-      combatTemp.eliteCinematicMoves,
-      combatTemp.shadowMoves,
-      combatTemp.purifiedMoves,
-      combatTemp.specialMoves
+    const fastMoveSet = combatPoke?.quickMoves.concat(combatPoke?.eliteQuickMoves);
+    const chargedMoveSet = combatPoke?.cinematicMoves.concat(
+      combatPoke?.eliteCinematicMoves,
+      combatPoke?.shadowMoves,
+      combatPoke?.purifiedMoves,
+      combatPoke?.specialMoves
     );
-    fmove = dataStore?.combat?.find((item) => item.name === findMoveTeam(fmove, fastMoveSet));
-    cmovePri = dataStore?.combat?.find((item) => item.name === findMoveTeam(cmovePri, chargedMoveSet));
-    if (cmoveSec) {
-      cmoveSec = dataStore?.combat?.find((item) => item.name === findMoveTeam(cmoveSec, chargedMoveSet));
+    fmove = dataStore?.combat?.find((item) => item.name === findMoveTeam(fMoveText, fastMoveSet ?? []));
+    cmovePri = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMovePriText, chargedMoveSet ?? []));
+    if (cMoveSecText) {
+      cmoveSec = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMoveSecText, chargedMoveSet ?? []));
     }
 
     return {
       id,
       name,
-      speciesId,
+      speciesId: parseInt(speciesId),
       pokemonData: pokemon,
       form,
       stats,
@@ -122,7 +119,7 @@ const TeamPVP = () => {
       combatPoke,
       shadow: speciesId.includes('shadow'),
       purified:
-        (cmovePri && combatPoke.purifiedMoves.includes(cmovePri.name)) || (cmoveSec && combatPoke.purifiedMoves.includes(cmoveSec.name)),
+        (cmovePri && combatPoke?.purifiedMoves.includes(cmovePri.name)) || (cmoveSec && combatPoke?.purifiedMoves.includes(cmoveSec.name)),
     };
   };
 
@@ -337,7 +334,7 @@ const TeamPVP = () => {
           .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
             sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy]
           )
-          .map((value: any, index: React.Key) => (
+          .map((value: Performers, index: React.Key) => (
             <div
               className="d-flex align-items-center card-ranking"
               key={index}
@@ -346,7 +343,7 @@ const TeamPVP = () => {
                 backgroundImage: computeBgType(value?.pokemonData?.types, value?.shadow, value?.purified, 1, styleSheet.current),
               }}
             >
-              <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll('_', '-')}`}>
+              <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
               </Link>
               <div className="d-flex justify-content-center">
@@ -364,7 +361,7 @@ const TeamPVP = () => {
                 <div>
                   <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
                     <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
-                    <TypeInfo hideText={true} block={true} shadow={true} height={20} color={'white'} arr={value.pokemonData.types} />
+                    <TypeInfo hideText={true} block={true} shadow={true} height={20} color={'white'} arr={value.pokemonData?.types} />
                   </div>
                   <div className="d-flex" style={{ columnGap: 10 }}>
                     <TypeBadge
@@ -373,7 +370,7 @@ const TeamPVP = () => {
                       title="Fast Move"
                       color={'white'}
                       move={value.fmove}
-                      elite={value.combatPoke.eliteQuickMoves.includes(value.fmove.name)}
+                      elite={value.combatPoke?.eliteQuickMoves.includes(value.fmove?.name ?? '')}
                     />
                     <TypeBadge
                       grow={true}
@@ -381,10 +378,10 @@ const TeamPVP = () => {
                       title="Primary Charged Move"
                       color={'white'}
                       move={value.cmovePri}
-                      elite={value.combatPoke.eliteCinematicMoves.includes(value.cmovePri?.name)}
-                      shadow={value.combatPoke.shadowMoves.includes(value.cmovePri?.name)}
-                      purified={value.combatPoke.purifiedMoves.includes(value.cmovePri?.name)}
-                      special={value.combatPoke.specialMoves.includes(value.cmovePri?.name)}
+                      elite={value.combatPoke?.eliteCinematicMoves.includes(value.cmovePri?.name ?? '')}
+                      shadow={value.combatPoke?.shadowMoves.includes(value.cmovePri?.name ?? '')}
+                      purified={value.combatPoke?.purifiedMoves.includes(value.cmovePri?.name ?? '')}
+                      special={value.combatPoke?.specialMoves.includes(value.cmovePri?.name ?? '')}
                     />
                     {value.cmoveSec && (
                       <TypeBadge
@@ -393,10 +390,10 @@ const TeamPVP = () => {
                         title="Secondary Charged Move"
                         color={'white'}
                         move={value.cmoveSec}
-                        elite={value.combatPoke.eliteCinematicMoves.includes(value.cmoveSec?.name)}
-                        shadow={value.combatPoke.shadowMoves.includes(value.cmoveSec?.name)}
-                        purified={value.combatPoke.purifiedMoves.includes(value.cmoveSec?.name)}
-                        special={value.combatPoke.specialMoves.includes(value.cmoveSec?.name)}
+                        elite={value.combatPoke?.eliteCinematicMoves.includes(value.cmoveSec?.name)}
+                        shadow={value.combatPoke?.shadowMoves.includes(value.cmoveSec?.name)}
+                        purified={value.combatPoke?.purifiedMoves.includes(value.cmoveSec?.name)}
+                        special={value.combatPoke?.specialMoves.includes(value.cmoveSec?.name)}
                       />
                     )}
                   </div>
@@ -546,7 +543,7 @@ const TeamPVP = () => {
                             backgroundImage: computeBgType(value?.pokemonData?.types, value?.shadow, value?.purified),
                           }}
                         >
-                          <Link to={`/pvp/${params.cp}/overall/${value.speciesId.replaceAll('_', '-')}`}>
+                          <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
                             <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
                           </Link>
                           <div className="d-flex justify-content-center">

@@ -6,9 +6,10 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
+import { SelectMoveModel } from '../Input/models/select-move.model';
 
 const CardMoveSmall = (props: {
-  value: { name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
+  value: SelectMoveModel;
   empty?: boolean;
   disable?: boolean;
   show?: boolean;

@@ -5,6 +5,7 @@ import { capitalize } from '../../util/Utils';
 
 import './TypeEffectiveSelect.scss';
 import { StoreState } from '../../store/models/state.model';
+import { TypeEffChart } from '../../core/models/type-eff.model';
 
 const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: string[] }) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
@@ -38,14 +39,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
   };
 
   const getTypeEffect = (effect: number, types: string[]) => {
-    let data: {
-      very_weak?: string[];
-      weak?: string[];
-      neutral?: string[];
-      super_resist?: string[];
-      very_resist?: string[];
-      resist?: string[];
-    };
+    let data: TypeEffChart;
     if (effect === 0) {
       data = {
         weak: [],
@@ -53,7 +47,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       };
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
-        types?.forEach((type: string) => {
+        types?.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective >= 2.56) {
@@ -75,7 +69,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       };
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
-        types?.forEach((type: string) => {
+        types?.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective === 1) {
@@ -95,7 +89,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       };
       Object.entries(typeEffective).forEach(([key, value]: any) => {
         let valueEffective = 1;
-        types?.forEach((type: string) => {
+        types?.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective <= 0.3) {

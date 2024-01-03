@@ -20,3 +20,12 @@ export interface TypeEff {
   DARK: TypeMultiply;
   FAIRY: TypeMultiply;
 }
+
+export interface TypeEffChart {
+  very_weak?: string[];
+  weak?: string[];
+  super_resist?: string[];
+  very_resist?: string[];
+  resist?: string[];
+  neutral?: string[];
+}

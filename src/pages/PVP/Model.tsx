@@ -27,16 +27,17 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import CandyXL from '../../components/Sprites/Candy/CandyXL';
-import { StatsModel } from '../../core/models/stats.model';
+import { StatsModel, StatsPokemon } from '../../core/models/stats.model';
 import { Asset } from '../../core/models/asset.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { Combat } from '../../core/models/combat.model';
 import { MAX_IV, MAX_LEVEL } from '../../util/Constants';
+import { PokemonVersus } from '../../core/models/pvp.model';
 
 export const Keys = (
   assets: Asset[],
   pokemonData: PokemonDataModel[],
-  data: { matchups: any[]; counters: any[] },
+  data: { matchups: PokemonVersus[]; counters: PokemonVersus[] },
   cp: string | undefined,
   type: string | undefined
 ) => {
@@ -100,8 +101,8 @@ export const Keys = (
           </div>
         </div>
         {data?.matchups
-          .sort((a: { rating: number }, b: { rating: number }) => b.rating - a.rating)
-          .map((matchup, index: React.Key) => (
+          .sort((a, b) => b.rating - a.rating)
+          .map((matchup, index) => (
             <Fragment key={index}>{renderItemList(matchup, 0)}</Fragment>
           ))}
       </div>
@@ -113,8 +114,8 @@ export const Keys = (
           </div>
         </div>
         {data?.counters
-          .sort((a: { rating: number }, b: { rating: number }) => a.rating - b.rating)
-          .map((counter, index: React.Key) => (
+          .sort((a, b) => a.rating - b.rating)
+          .map((counter, index) => (
             <Fragment key={index}>{renderItemList(counter, 1)}</Fragment>
           ))}
       </div>
@@ -129,13 +130,13 @@ export const OverAllStats = (
     def: { defense: number; rank: number } | undefined;
     sta: { stamina: number; rank: number } | undefined;
     prod: { prod: number; rank: number } | undefined;
-    stats: { atk: number; def: number; sta: number };
+    stats: StatsPokemon;
     id: number;
   },
   statsRanking: StatsModel,
   cp: number | string
 ) => {
-  const calculateStatsTopRank = (stats: { atk: number; def: number; sta: number }) => {
+  const calculateStatsTopRank = (stats: StatsPokemon) => {
     const maxCP = parseInt(cp.toString());
 
     if (maxCP === 10000) {
@@ -168,7 +169,7 @@ export const OverAllStats = (
     }
   };
 
-  const renderTopStats = (stats: { atk: number; def: number; sta: number }, id: number) => {
+  const renderTopStats = (stats: StatsPokemon, id: number) => {
     const maxCP = parseInt(cp.toString());
     const currStats: any = calculateStatsTopRank(stats);
     return (
@@ -275,7 +276,7 @@ export const TypeEffective = (types: string[]) => {
 };
 
 export const MoveSet = (
-  moves: { fastMoves: { uses: number }[]; chargedMoves: { moveId: string; uses: number }[] },
+  moves: { fastMoves: { moveId: string; uses: number }[]; chargedMoves: { moveId: string; uses: number }[] },
   combatList: { eliteQuickMoves: string[]; eliteCinematicMoves: string[]; specialMoves: string[] },
   combatData: Combat[]
 ) => {
@@ -427,14 +428,14 @@ export const MoveSet = (
         <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {moves?.fastMoves
-            .map((move: { uses: number }) => {
+            .map((move) => {
               if (!move.uses) {
                 move.uses = 0;
               }
               return move;
             })
-            .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)
-            .map((value: any, index: React.Key) => (
+            .sort((a, b) => b.uses - a.uses)
+            .map((value, index) => (
               <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
             ))}
         </div>
@@ -443,7 +444,7 @@ export const MoveSet = (
         <div className="moves-title">Charged Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {moves?.chargedMoves
-            .map((move: { moveId: string; uses: number }) => {
+            .map((move) => {
               if (move.moveId === 'FUTURE_SIGHT') {
                 move.moveId = 'FUTURESIGHT';
               }
@@ -455,8 +456,8 @@ export const MoveSet = (
               }
               return move;
             })
-            .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)
-            .map((value: { moveId: string; uses: number }, index: React.Key) => (
+            .sort((a, b) => b.uses - a.uses)
+            .map((value, index) => (
               <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
             ))}
         </div>

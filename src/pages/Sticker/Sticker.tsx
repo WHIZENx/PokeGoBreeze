@@ -11,11 +11,12 @@ import { Form, OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
+import { StickerModel } from '../../core/models/sticker.model';
 
 const Sticker = () => {
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
-  const [pokemonStickerFilter, setPokemonStickerFilter]: any = useState([]);
+  const [pokemonStickerFilter, setPokemonStickerFilter]: [StickerModel[], any] = useState([]);
 
   const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);
 
@@ -29,7 +30,7 @@ const Sticker = () => {
     if (pokeStickerList.length > 0) {
       setSelectPokemon(
         pokeStickerList
-          .reduce((prev: any, curr: any) => {
+          .reduce((prev: any, curr: StickerModel) => {
             if (curr.pokemonName && !prev.map((obj: { name: string }) => obj.name).includes(curr.pokemonName)) {
               prev.push({
                 id: curr.pokemonId,
@@ -78,7 +79,7 @@ const Sticker = () => {
         <Form.Select className="form-control input-search" value={id} onChange={(e) => setId(parseInt(e.target.value))}>
           <option value={0}>All</option>
           <option value={-1}>None</option>
-          {selectPokemon.map((value, index: React.Key) => (
+          {selectPokemon.map((value, index) => (
             <option key={index} value={value.id}>{`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}</option>
           ))}
         </Form.Select>
@@ -100,46 +101,41 @@ const Sticker = () => {
             <p>No sticker was found.</p>
           ) : (
             <Fragment>
-              {pokemonStickerFilter.map(
-                (
-                  value: { shop: boolean; pack: string[]; pokemonId: number; pokemonName: string; stickerUrl: string; id: string },
-                  index: React.Key
-                ) => (
-                  <OverlayTrigger
-                    key={index}
-                    placement="auto"
-                    overlay={
-                      <PopoverConfig id={`popover-sticker-${index}`}>
-                        {value.shop ? <span>Available in shop sell pack: {value.pack.join(', ')}</span> : <span>Unavailable in shop</span>}
-                      </PopoverConfig>
-                    }
-                  >
-                    <div className="sticker-detail position-relative">
-                      <Badge
-                        color="primary"
-                        overlap="circular"
-                        badgeContent={value.pokemonId ? splitAndCapitalize(value.pokemonName, '_', ' ') : null}
-                      >
-                        <img
-                          height={64}
-                          alt="img-sticker"
-                          src={value.stickerUrl ?? APIService.getSticker(value.id.toLowerCase())}
-                          onError={(e: any) => {
-                            e.onerror = null;
-                            e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
-                          }}
-                        />
-                      </Badge>
-                      {value.shop && (
-                        <span className="icon-shop">
-                          <ShoppingCartIcon fontSize="small" sx={{ color: 'white' }} />
-                        </span>
-                      )}
-                      <span className="caption">{splitAndCapitalize(value.id.toLowerCase(), '_', ' ')}</span>
-                    </div>
-                  </OverlayTrigger>
-                )
-              )}
+              {pokemonStickerFilter.map((value, index) => (
+                <OverlayTrigger
+                  key={index}
+                  placement="auto"
+                  overlay={
+                    <PopoverConfig id={`popover-sticker-${index}`}>
+                      {value.shop ? <span>Available in shop sell pack: {value.pack.join(', ')}</span> : <span>Unavailable in shop</span>}
+                    </PopoverConfig>
+                  }
+                >
+                  <div className="sticker-detail position-relative">
+                    <Badge
+                      color="primary"
+                      overlap="circular"
+                      badgeContent={value.pokemonId ? splitAndCapitalize(value.pokemonName, '_', ' ') : null}
+                    >
+                      <img
+                        height={64}
+                        alt="img-sticker"
+                        src={value.stickerUrl ?? APIService.getSticker(value.id.toLowerCase())}
+                        onError={(e: any) => {
+                          e.onerror = null;
+                          e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                        }}
+                      />
+                    </Badge>
+                    {value.shop && (
+                      <span className="icon-shop">
+                        <ShoppingCartIcon fontSize="small" sx={{ color: 'white' }} />
+                      </span>
+                    )}
+                    <span className="caption">{splitAndCapitalize(value.id.toLowerCase(), '_', ' ')}</span>
+                  </div>
+                </OverlayTrigger>
+              ))}
             </Fragment>
           )}
         </div>

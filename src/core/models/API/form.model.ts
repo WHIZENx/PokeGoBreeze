@@ -106,3 +106,43 @@ export class PokemonFormModifyModel {
     };
   }
 }
+
+// tslint:disable-next-line:max-classes-per-file
+export class FormModel {
+  // tslint:disable-next-line:variable-name
+  form_name: string;
+  // tslint:disable-next-line:variable-name
+  form_names: string[];
+  // tslint:disable-next-line:variable-name
+  form_order: number;
+  id: number | null;
+  // tslint:disable-next-line:variable-name
+  is_battle_only: boolean;
+  // tslint:disable-next-line:variable-name
+  is_default: boolean;
+  // tslint:disable-next-line:variable-name
+  is_mega: boolean;
+  // tslint:disable-next-line:variable-name
+  is_shadow: boolean;
+  // tslint:disable-next-line:variable-name
+  is_purified: boolean;
+  name: string;
+  // tslint:disable-next-line:variable-name
+  version_group: { name: string };
+  types: TypeModify[] | Type[];
+
+  constructor(data: PokemonForm) {
+    this.form_name = data.form_name;
+    this.form_names = data.form_names;
+    this.form_order = data.form_order;
+    this.id = data.id;
+    this.is_battle_only = data.is_battle_only;
+    this.is_default = data.is_default;
+    this.is_mega = data.is_mega;
+    this.is_shadow = false;
+    this.is_purified = false;
+    this.name = data.name;
+    this.version_group = data.version_group;
+    this.types = data.types;
+  }
+}

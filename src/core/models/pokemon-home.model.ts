@@ -2,6 +2,7 @@ import APIService from '../../services/API.service';
 import { convertFormNameImg, splitAndCapitalize } from '../../util/Utils';
 import { Image } from './asset.model';
 import { PokemonDataModel } from './pokemon.model';
+import { StatsPokemon } from './stats.model';
 
 export interface PokemonHomeModel {
   id: number;
@@ -11,29 +12,14 @@ export interface PokemonHomeModel {
   color: string;
   sprite: string;
   baseSpecies: string | null;
-  baseStats: {
-    hp?: number;
-    atk: number;
-    def: number;
-    sta?: number;
-    spa?: number;
-    spd?: number;
-    spe?: number;
-  };
+  baseStats: StatsPokemon;
   gen: number;
   region: string | null;
   version: number;
-  goStats: {
-    atk: number;
-    def: number;
-    sta: number;
-  };
+  goStats: StatsPokemon;
   class: string | null;
   releasedGO: boolean;
-  image: {
-    default: string | null;
-    shiny: string | null;
-  };
+  image: Image;
 }
 
 export class PokemonHomeModel {
@@ -44,44 +30,16 @@ export class PokemonHomeModel {
   color!: string;
   sprite!: string;
   baseSpecies!: string | null;
-  baseStats!: {
-    hp?: number;
-    atk: number;
-    def: number;
-    sta?: number;
-    spa?: number;
-    spd?: number;
-    spe?: number;
-  };
+  baseStats!: StatsPokemon;
   gen!: number;
   region!: string | null;
   version!: number;
-  goStats!: {
-    atk: number;
-    def: number;
-    sta: number;
-  };
+  goStats!: StatsPokemon;
   class!: string | null;
   releasedGO!: boolean;
-  image!: {
-    default: string | null;
-    shiny: string | null;
-  };
+  image!: Image;
 
-  constructor(
-    item: PokemonDataModel,
-    assetForm: Image | null | undefined,
-    versionList: string[],
-    stats: {
-      hp?: number | undefined;
-      atk: number;
-      def: number;
-      sta?: number | undefined;
-      spa?: number | undefined;
-      spd?: number | undefined;
-      spe?: number | undefined;
-    }
-  ) {
+  constructor(item: PokemonDataModel, assetForm: Image | null | undefined, versionList: string[], stats: StatsPokemon) {
     this.id = item?.num;
     this.name = item?.name;
     this.forme = assetForm?.default ? item?.forme : convertFormNameImg(item?.num ?? 0, item?.forme?.toLowerCase() ?? '');

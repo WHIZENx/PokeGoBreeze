@@ -1,15 +1,12 @@
 import { capitalize, checkMoveSetAvailable } from '../../util/Utils';
 import { Combat } from './combat.model';
 import { genList } from '../../util/Constants';
+import { StatsPokemon } from './stats.model';
 
 export interface PokemonDataStats {
   level: number;
   isShadow: boolean;
-  iv: {
-    atk: number;
-    def: number;
-    sta: number;
-  };
+  iv: StatsPokemon;
 }
 
 interface EvolutionBranch {
@@ -126,15 +123,7 @@ export interface PokemonDataModel {
     M: number;
     F: number;
   };
-  baseStats: {
-    hp?: number;
-    atk: number;
-    def: number;
-    sta?: number;
-    spa?: number;
-    spd?: number;
-    spe?: number;
-  };
+  baseStats: StatsPokemon;
   heightm: number;
   weightkg: number;
   color: string;
@@ -215,15 +204,7 @@ export class PokemonDataModel {
     M: number;
     F: number;
   };
-  baseStats!: {
-    hp?: number;
-    atk: number;
-    def: number;
-    sta?: number;
-    spa?: number;
-    spd?: number;
-    spe?: number;
-  };
+  baseStats!: StatsPokemon;
   heightm!: number;
   weightkg!: number;
   color!: string;

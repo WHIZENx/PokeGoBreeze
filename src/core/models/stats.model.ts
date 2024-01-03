@@ -28,3 +28,13 @@ export interface StatsModel {
     max_stats: number;
   };
 }
+
+export interface StatsPokemon {
+  hp?: number;
+  atk: number;
+  def: number;
+  sta?: number;
+  spa?: number;
+  spd?: number;
+  spe?: number;
+}

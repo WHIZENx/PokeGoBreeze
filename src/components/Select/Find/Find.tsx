@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import Form from './Form';
+import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
 import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
@@ -213,31 +213,29 @@ const Find = (props: {
       <div className="col d-flex justify-content-center text-center">
         <div>
           {pokemonList.length > 0 && (
-            <Fragment>
-              <Form
-                router={router}
-                searching={searching}
-                hide={props.hide}
-                raid={props.raid}
-                setRaid={props.setRaid}
-                tier={props.tier}
-                setTier={props.setTier}
-                form={form}
-                setForm={props.setForm}
-                setFormOrigin={setForm}
-                id={id}
-                name={pokemonList.find((item) => item.id === id)?.name ?? ''}
-                data={pokemonData}
-                stats={stats}
-                onHandleSetStats={handleSetStats}
-                onClearStats={props.clearStats}
-                onSetPrev={decId}
-                onSetNext={incId}
-                setUrlEvo={props.setUrlEvo}
-                objective={props.objective}
-                pokemonName={pokemonName}
-              />
-            </Fragment>
+            <FormSelect
+              router={router}
+              searching={searching}
+              hide={props.hide}
+              raid={props.raid}
+              setRaid={props.setRaid}
+              tier={props.tier}
+              setTier={props.setTier}
+              form={form}
+              setForm={props.setForm}
+              setFormOrigin={setForm}
+              id={id}
+              name={pokemonList.find((item) => item.id === id)?.name ?? ''}
+              data={pokemonData}
+              stats={stats}
+              onHandleSetStats={handleSetStats}
+              onClearStats={props.clearStats}
+              onSetPrev={decId}
+              onSetNext={incId}
+              setUrlEvo={props.setUrlEvo}
+              objective={props.objective}
+              pokemonName={pokemonName}
+            />
           )}
         </div>
       </div>

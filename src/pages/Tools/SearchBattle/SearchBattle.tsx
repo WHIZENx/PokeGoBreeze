@@ -232,7 +232,7 @@ const FindBattle = () => {
 
   const getImageList = (id: number) => {
     const isForm = form.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form.form.form_name.replaceAll('-', '_').toUpperCase();
-    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form.includes(isForm));
+    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form?.includes(isForm));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
     }

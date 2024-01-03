@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Dispatch, Fragment, SetStateAction, useCallback, useEffect, useState } from 'react';
 import APIService from '../../services/API.service';
 
 import './Pokemon.scss';
@@ -15,7 +15,7 @@ import { FORM_NORMAL, KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constan
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import Form from '../../components/Info/Form/Form-v2';
+import Form from '../../components/Info/Form/Form';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
@@ -32,7 +32,7 @@ import { RouterState, SpinnerState, StatsState, StoreState } from '../../store/m
 import { SearchingModel } from '../../store/models/searching.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
-import { PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
+import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
 import { CancelTokenSource } from 'axios';
 
 const Pokemon = (props: {
@@ -61,7 +61,8 @@ const Pokemon = (props: {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [pokeData, setPokeData]: any = useState([]);
-  const [formList, setFormList]: any = useState([]);
+  const [formList, setFormList]: [PokemonFormModify[][] | undefined, Dispatch<SetStateAction<PokemonFormModify[][] | undefined>>] =
+    useState();
 
   const [reForm, setReForm] = useState(false);
 
@@ -100,18 +101,18 @@ const Pokemon = (props: {
   const fetchMap = useCallback(
     async (data: Species, axios: any, source: CancelTokenSource) => {
       const dataPokeList: PokemonInfo[] = [];
-      let dataFromList: any[] = [];
+      const dataFormList: PokemonForm[][] = [];
       await Promise.all(
         data?.varieties.map(async (value) => {
           const pokeInfo: PokemonInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
-          const pokeForm = await Promise.all(
+          const pokeForm: PokemonForm[] = await Promise.all(
             pokeInfo.forms.map(async (item) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
           );
           dataPokeList.push({
             ...pokeInfo,
             is_include_shadow: checkPokemonIncludeShadowForm(dataStore?.pokemon ?? [], pokeInfo.name),
           });
-          dataFromList.push(pokeForm);
+          dataFormList.push(pokeForm);
         })
       );
 
@@ -130,39 +131,45 @@ const Pokemon = (props: {
 
       setPokeData(dataPokeList);
       let modify = false;
-      dataFromList = dataFromList?.map((value) => {
+      let formListModify = dataFormList?.map((value) => {
         if (value.length === 0) {
           modify = true;
-          return dataFromList.find((item) => item.length === dataFromList.length);
+          return dataFormList.find((item) => item.length === dataFormList.length);
         }
         return value;
       });
 
       if (modify) {
-        dataFromList = dataFromList.map((value, index) => {
-          return [value[index]];
-        });
+        formListModify = formListModify
+          .filter((value) => value)
+          .map((value, index) => {
+            return value ? [value[index]] : [];
+          });
       }
 
-      dataFromList = dataFromList
+      const formListResult: PokemonFormModify[][] = formListModify
         .map((item) => {
           return item
-            .map((item: { pokemon: { name: string } }) => ({
-              form: item,
-              name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name,
-              default_name: data?.name,
-            }))
-            .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
+            ? item
+                .map((item) => ({
+                  form: new FormModel(item),
+                  name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                  default_name: data?.name,
+                  default_id: data.id,
+                }))
+                .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
+            : [];
         })
-        .sort((a, b) => a.at(0).form.id - b.at(0).form.id);
+        .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
 
-      if (data?.id === 150) {
-        dataFromList.push(getFormsGO(data?.id));
+      const goForm = getFormsGO(data.id);
+      if (goForm.length > 0) {
+        formListResult.push(goForm);
       }
 
-      if (dataFromList.filter((form) => form.find((pokemon: PokemonFormModify) => pokemon.form.form_name === 'gmax')).length > 1) {
-        dataFromList.forEach((form) => {
-          form.forEach((pokemon: PokemonFormModify) => {
+      if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name === 'gmax')).length > 1) {
+        formListResult.forEach((form) => {
+          form.forEach((pokemon) => {
             if (pokemon.form.form_name === 'gmax') {
               pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
             }
@@ -207,21 +214,23 @@ const Pokemon = (props: {
             p.types ?? [],
             -2 * (index + 1)
           );
-          dataFromList.push([pokemonShadowModify, pokemonPurifiedModify]);
+          formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
         });
       }
 
-      setFormList(dataFromList);
-      let defaultFrom, isDefaultForm: { form: PokemonForm; default_name: string; name: string }, defaultData: PokemonInfo | undefined;
+      setFormList(formListResult);
+      let defaultFrom: (PokemonFormModify | undefined)[] | undefined,
+        isDefaultForm: PokemonFormModify | undefined,
+        defaultData: PokemonInfo | undefined;
       let formParams = searchParams.get('form');
 
       if (formParams) {
         if (data?.id === 555 && formParams === 'galar') {
           formParams += '-standard';
         }
-        defaultFrom = dataFromList.find((value) =>
+        defaultFrom = formListResult.find((value) =>
           value.find(
-            (item: PokemonFormModify) =>
+            (item) =>
               item.form.form_name === formParams?.toLowerCase() || item.form.name === item.default_name + '-' + formParams?.toLowerCase()
           )
         );
@@ -229,38 +238,38 @@ const Pokemon = (props: {
         if (defaultFrom) {
           isDefaultForm = defaultFrom.at(0);
           if (
-            isDefaultForm.form.form_name !== formParams.toLowerCase() &&
-            isDefaultForm.form.name !== isDefaultForm.default_name + '-' + formParams.toLowerCase()
+            isDefaultForm?.form.form_name !== formParams.toLowerCase() &&
+            isDefaultForm?.form.name !== isDefaultForm?.default_name + '-' + formParams.toLowerCase()
           ) {
-            isDefaultForm = defaultFrom.find((value: PokemonFormModify) => value.form.form_name === formParams?.toLowerCase());
+            isDefaultForm = defaultFrom.find((value) => value?.form.form_name === formParams?.toLowerCase());
           }
         } else {
-          defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
-          isDefaultForm = defaultFrom.find((item) => item.form.id === data?.id);
+          defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
+          isDefaultForm = defaultFrom?.find((item) => item?.form.id === data?.id);
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
       } else if (router.action === Action.Pop && props.searching) {
-        defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
-        isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching?.form);
+        defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
+        isDefaultForm = defaultFrom?.find((item) => item?.form.form_name === props.searching?.form);
       } else {
-        defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
-        isDefaultForm = defaultFrom.find((item) => item.form.id === data?.id);
+        defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
+        isDefaultForm = defaultFrom?.find((item) => item?.form.id === data?.id);
       }
       defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.form.name);
       if (!defaultData) {
         defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.name);
       }
       setWH((prevWH: any) => ({ ...prevWH, weight: defaultData?.weight, height: defaultData?.height }));
-      setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom.at(0)).form.version_group.name, '-', ' '));
+      setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom.at(0) ?? null)?.form.version_group.name, '-', ' '));
       if (!params.id) {
         setRegion(regionList[parseInt(data?.generation.url.split('/').at(6) ?? '')]);
       }
       const nameInfo =
         router.action === Action.Pop && props.searching
           ? props.searching.fullName
-          : splitAndCapitalize(formParams ? isDefaultForm.form.name : data?.name, '-', ' ');
-      const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data?.id, isDefaultForm.form.form_name), '-', '-') : null;
+          : splitAndCapitalize(formParams ? isDefaultForm?.form.name : data?.name, '-', ' ');
+      const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data?.id, isDefaultForm?.form.form_name ?? ''), '-', '-') : null;
       setFormName(nameInfo);
       setReleased(checkReleased(data?.id, nameInfo ?? '', isDefaultForm?.form?.is_default));
       setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
@@ -294,7 +303,7 @@ const Pokemon = (props: {
           .getPokeSpices(id, {
             cancelToken: source.token,
           })
-          .then((res: { data: any }) => {
+          .then((res: { data: Species }) => {
             fetchMap(res.data, axios, source);
             setData(res.data);
           })
@@ -357,7 +366,7 @@ const Pokemon = (props: {
   };
 
   const getCostModifier = (id: number) => {
-    return dataStore?.evolution?.find((item: { id: number }) => item.id === id);
+    return dataStore?.evolution?.find((item) => item.id === id);
   };
 
   const getPokemonDetails = (id: number, form: string | null, isDefault = false) => {
@@ -365,20 +374,17 @@ const Pokemon = (props: {
 
     if (form) {
       pokemonForm = dataStore?.details?.find(
-        (item: { id: number; name: string }) =>
-          item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
+        (item) => item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
       );
 
       if (isDefault && !pokemonForm) {
-        pokemonForm = dataStore?.details?.find(
-          (item: { id: number; form: string }) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL
-        );
+        pokemonForm = dataStore?.details?.find((item) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       }
     }
 
     if (!form && defaultForm) {
       pokemonForm = dataStore?.details?.find(
-        (item: { id: number; form: string }) => item.id === id && item.form === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
+        (item) => item.id === id && item.form === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
       );
     }
 

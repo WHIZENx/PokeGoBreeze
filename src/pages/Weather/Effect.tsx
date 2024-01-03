@@ -3,7 +3,7 @@ import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import { capitalize } from '../../util/Utils';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { TypeEff } from '../../core/models/typeEff.model';
+import { TypeEff } from '../../core/models/type-eff.model';
 
 const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) => {
   const [types, setTypes]: [string[], any] = useState([]);

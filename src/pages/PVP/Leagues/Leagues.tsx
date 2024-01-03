@@ -24,7 +24,7 @@ const Leagues = () => {
 
   const [leagues, setLeagues]: [League[], any] = useState([]);
   const [openedLeague, setOpenedLeague]: [League[], any] = useState([]);
-  const [leagueFilter, setLeagueFilter]: any = useState([]);
+  const [leagueFilter, setLeagueFilter]: [League[], any] = useState([]);
   const [search, setSearch] = useState('');
   const [rank, setRank] = useState(1);
   const [setting, setSetting]: any = useState(null);
@@ -74,7 +74,7 @@ const Leagues = () => {
       const leagues = dataStore?.leagues?.data ?? [];
       setLeagues(leagues);
       setOpenedLeague(leagues.filter((league) => dataStore?.leagues?.allowLeagues.includes(league.id ?? '')));
-      setSetting(dataStore?.leagues?.season.settings.find((data: { rankLevel: number }) => data.rankLevel === rank + 1));
+      setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === rank + 1));
     }
   }, [dataStore?.leagues]);
 
@@ -253,7 +253,7 @@ const Leagues = () => {
               {league.conditions.banned.length !== 0 && (
                 <li style={{ fontWeight: 500 }}>
                   <h6 className="title-leagues text-danger">Ban List</h6>
-                  {league.conditions.banned.map((item, index: React.Key) => (
+                  {league.conditions.banned.map((item, index) => (
                     <Link
                       className="img-link text-center"
                       key={index}
@@ -313,16 +313,14 @@ const Leagues = () => {
             onChange={(e) => {
               setRank(parseInt(e.target.value));
               if (parseInt(e.target.value) < 24) {
-                setSetting(
-                  dataStore?.leagues?.season.settings.find((data: { rankLevel: number }) => data.rankLevel === parseInt(e.target.value) + 1)
-                );
+                setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === parseInt(e.target.value) + 1));
               }
             }}
             defaultValue={rank}
           >
-            {Object.keys(dataStore?.leagues?.season.rewards.rank ?? []).map((value: any, index: number) => (
+            {Object.keys(dataStore?.leagues?.season.rewards.rank ?? []).map((value, index) => (
               <option key={index} value={value}>
-                Rank {value} {value > 20 && `( ${rankName(parseInt(value))} )`}
+                Rank {value} {parseInt(value) > 20 && `( ${rankName(parseInt(value))} )`}
               </option>
             ))}
           </Form.Select>
@@ -365,7 +363,7 @@ const Leagues = () => {
                   <span className="caption text-black">Premium</span>
                 </Badge>
               </div>
-              {dataStore?.leagues?.season.rewards.rank[rank].free.map((value, index: number) => (
+              {dataStore?.leagues?.season.rewards.rank[rank].free.map((value, index) => (
                 <Fragment key={index}>
                   <div className="group-rank-league text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
@@ -611,7 +609,7 @@ const Leagues = () => {
           Opened Leagues
         </span>
       </div>
-      <Accordion alwaysOpen={true}>{openedLeague.map((value: League, index: any) => showAccording(value, index, true))}</Accordion>
+      <Accordion alwaysOpen={true}>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 
       <div className="w-25 input-group border-input element-top" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find League</span>
@@ -623,7 +621,7 @@ const Leagues = () => {
           onKeyUp={(e: any) => setSearch(e.target.value)}
         />
       </div>
-      <Accordion alwaysOpen={true}>{leagueFilter?.map((value: League, index: any) => showAccording(value, index))}</Accordion>
+      <Accordion alwaysOpen={true}>{leagueFilter.map((value, index) => showAccording(value, index))}</Accordion>
 
       {showData && (
         <Modal size="lg" show={show} onHide={handleClose} centered={true}>

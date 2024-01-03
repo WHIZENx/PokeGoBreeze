@@ -137,7 +137,7 @@ const Search = () => {
         </div>
         <div className="result" style={{ display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>
           <Fragment>
-            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value: any, index: React.Key) => (
+            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
               <div
                 className={
                   'container card-pokemon' +

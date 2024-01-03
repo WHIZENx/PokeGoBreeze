@@ -5,6 +5,7 @@ import TypeInfo from '../Sprites/Type/Type';
 
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
+import { TypeEffChart } from '../../core/models/type-eff.model';
 
 const Info = (props: { data: { types: string[] }; currForm: { form: { id: number; types: { type: { name: string } }[] } } }) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
@@ -23,7 +24,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
   };
 
   const getTypeEffective = (types: { type: { name: string } }[]) => {
-    const data: any = {
+    const data: TypeEffChart = {
       very_weak: [],
       weak: [],
       super_resist: [],
@@ -37,19 +38,19 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
         valueEffective *= value[type.type.name?.toUpperCase()];
       });
       if (valueEffective >= 2.56) {
-        data.very_weak.push(key);
+        data.very_weak?.push(key);
       } else if (valueEffective >= 1.6) {
-        data.weak.push(key);
+        data.weak?.push(key);
       } else if (valueEffective === 1) {
-        data.neutral.push(key);
+        data.neutral?.push(key);
       } else if (valueEffective >= 0.625) {
-        data.resist.push(key);
+        data.resist?.push(key);
       } else if (valueEffective >= 0.39) {
-        data.very_resist.push(key);
+        data.very_resist?.push(key);
       } else if (valueEffective >= 0.2) {
-        data.super_resist.push(key);
+        data.super_resist?.push(key);
       } else {
-        data.neutral.push(key);
+        data.neutral?.push(key);
       }
     });
     return data;

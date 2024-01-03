@@ -2,7 +2,7 @@ import { Asset, AssetDataModel } from './models/asset.model';
 import { CombatDataModel, CombatPokemon, CombatPokemonDataModel } from './models/combat.model';
 import { EvolutionDataModel } from './models/evolution.model';
 import { LeagueDataModel, LeagueOptionsDataModel, LeagueRewardDataModel, LeagueRewardPokemonDataModel } from './models/league.model';
-import { Sticker, StickerDataModel } from './models/sticker.model';
+import { StickerModel, StickerDataModel } from './models/sticker.model';
 import { Details, DetailsPokemonModel } from './models/details.model';
 
 import pokemonData from '../data/pokemon.json';
@@ -11,7 +11,7 @@ import { TypeSet } from './models/type.model';
 import { Candy, CandyDataModel, CandyModel } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonEncounter, PokemonModel } from './models/pokemon.model';
-import { TypeEff } from './models/typeEff.model';
+import { TypeEff } from './models/type-eff.model';
 import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
 import { APIUrl } from '../services/constants';
 
@@ -445,7 +445,7 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
 };
 
 export const optionSticker = (data: any[], pokemon: PokemonModel[]) => {
-  const stickers: Sticker[] = [];
+  const stickers: StickerModel[] = [];
   data.forEach((item: { templateId: string | string[]; data: { iapItemDisplay?: any; stickerMetadata?: any } }) => {
     if (item.templateId.includes('STICKER_')) {
       if (Object.keys(item.data).includes('iapItemDisplay')) {
@@ -532,7 +532,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
       }
     }
 
-    const formList = result.image.map((img) => img.form.replaceAll('_', ''));
+    const formList = result.image.map((img) => img.form?.replaceAll('_', ''));
     formSet = imgs.filter(
       (img: string | string[]) =>
         !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_pm${result.id?.toString().padStart(4, '0')}`)

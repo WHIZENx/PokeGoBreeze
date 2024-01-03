@@ -15,6 +15,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { FormModel } from '../../../core/models/API/form.model';
+import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 
 const TableMove = (props: {
   data: any;
@@ -27,7 +28,7 @@ const TableMove = (props: {
 }) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
-  const [move, setMove]: any = useState({ data: [] });
+  const [move, setMove]: [PokemonQueryRankMove, any] = useState({ data: [] as PokemonQueryMove[] });
   const [moveOrigin, setMoveOrigin]: any = useState(null);
 
   const [stateSorted, setStateSorted]: any = useState({
@@ -120,15 +121,7 @@ const TableMove = (props: {
     }
   }, [findMove, props.form]);
 
-  const renderBestMovesetTable = (
-    value: {
-      fmove: { id: string; type: string; name: string; elite: boolean };
-      cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
-      eDPS: { [x: string]: number };
-    },
-    max: number,
-    type: string
-  ) => {
+  const renderBestMovesetTable = (value: PokemonQueryMove, max: number, type: string) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
@@ -177,7 +170,7 @@ const TableMove = (props: {
           </Link>
         </td>
         <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-          {Math.round((value.eDPS[type] * 100) / max)}
+          {Math.round(((type === 'offensive' ? value.eDPS.offensive : value.eDPS.defensive) * 100) / max)}
         </td>
       </tr>
     );
@@ -323,7 +316,7 @@ const TableMove = (props: {
                     }
                   })
                   .map((value, index: React.Key) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff, 'offensive')}</Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff ?? 0, 'offensive')}</Fragment>
                   ))}
               </tbody>
             </table>
@@ -375,7 +368,7 @@ const TableMove = (props: {
                     }
                   })
                   .map((value, index: React.Key) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef, 'defensive')}</Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef ?? 0, 'defensive')}</Fragment>
                   ))}
               </tbody>
             </table>

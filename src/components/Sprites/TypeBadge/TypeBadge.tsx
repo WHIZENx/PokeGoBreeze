@@ -9,7 +9,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
 
 const TypeBadge = (props: {
-  move: Combat | undefined;
+  move: Combat | undefined | null;
   find?: boolean;
   grow?: boolean;
   style?: React.CSSProperties | undefined;

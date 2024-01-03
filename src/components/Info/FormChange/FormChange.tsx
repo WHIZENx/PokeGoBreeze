@@ -17,7 +17,9 @@ const FromChange = ({ details, defaultName }: any) => {
   const getImageList = useCallback(
     (id: number) => {
       const model = data?.assets?.find((item) => item.id === id);
-      return model ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model.image)) : [];
+      return model
+        ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
+        : [];
     },
     [data?.assets]
   );

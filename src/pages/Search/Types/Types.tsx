@@ -219,7 +219,7 @@ const SearchTypes = () => {
                 <ul>
                   {Object.keys(data?.typeEff ?? {})
                     .filter((value) => value !== currentType)
-                    .map((value, index: React.Key) => (
+                    .map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                         <CardType value={capitalize(value)} />
                       </li>

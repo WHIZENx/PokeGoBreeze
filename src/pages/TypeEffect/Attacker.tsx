@@ -3,7 +3,7 @@ import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
-import { TypeEff } from '../../core/models/typeEff.model';
+import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 
 const Attacker = (prop: { types: TypeEff | any }) => {
   const theme = useTheme();
@@ -12,11 +12,10 @@ const Attacker = (prop: { types: TypeEff | any }) => {
   const [currentType, setCurrentType] = useState('BUG');
   const [showType, setShowType] = useState(false);
 
-  const [typeEffective, setTypeEffective]: any = useState(null);
+  const [typeEffective, setTypeEffective]: [TypeEffChart | null, any] = useState(null);
 
   const getTypeEffective = useCallback(() => {
-    const data: any = {
-      very_weak: [],
+    const data: TypeEffChart = {
       weak: [],
       super_resist: [],
       very_resist: [],
@@ -25,13 +24,13 @@ const Attacker = (prop: { types: TypeEff | any }) => {
     };
     Object.entries(prop.types[currentType] ?? []).forEach(([key, value]) => {
       if (value === 1.6) {
-        data.weak.push(key);
+        data.weak?.push(key);
       } else if (value === 1) {
-        data.neutral.push(key);
+        data.neutral?.push(key);
       } else if (value === 0.625) {
-        data.resist.push(key);
+        data.resist?.push(key);
       } else {
-        data.very_resist.push(key);
+        data.very_resist?.push(key);
       }
     });
     setTypeEffective(data);

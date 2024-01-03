@@ -302,7 +302,7 @@ export const getStyleSheet = (selector: string) => {
   return null;
 };
 
-export const getStyleRuleValue = (style: string, selector: string, sheet?: any) => {
+export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet) => {
   const sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
     sheet = sheets[i];
@@ -310,7 +310,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: any) 
       continue;
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
-      const rule = sheet.cssRules[j];
+      const rule = sheet.cssRules[j] as any;
       if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
         return rule.style[style];
       }
@@ -319,8 +319,8 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: any) 
   return null;
 };
 
-export const findMoveTeam = (move: any, moveSet: string[]) => {
-  move = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
+export const findMoveTeam = (move: string, moveSet: string[]) => {
+  const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
     if (value === 'FUTURESIGHT') {
       value = 'FUTURE_SIGHT';
@@ -332,10 +332,10 @@ export const findMoveTeam = (move: any, moveSet: string[]) => {
       value = 'TECHNO_BLAST_WATER';
     }
     const m = value.split('_');
-    if (m.length === move.length) {
+    if (m.length === result?.length) {
       let count = 0;
-      for (let i = 0; i < move.length; i++) {
-        if (capitalize(m[i].toLowerCase()).includes(move[i])) {
+      for (let i = 0; i < result.length; i++) {
+        if (capitalize(m[i].toLowerCase()).includes(result[i])) {
           count++;
         }
       }
@@ -349,10 +349,10 @@ export const findMoveTeam = (move: any, moveSet: string[]) => {
   }
   for (const value of moveSet) {
     const m = value.split('_');
-    if (m.length === move.length) {
+    if (m.length === result?.length) {
       let count = 0;
-      for (let i = 0; i < move.length; i++) {
-        if (m[i].at(0) === move[i].at(0)) {
+      for (let i = 0; i < result.length; i++) {
+        if (m[i].at(0) === result[i].at(0)) {
           count++;
         }
       }
@@ -364,7 +364,7 @@ export const findMoveTeam = (move: any, moveSet: string[]) => {
   return null;
 };
 
-const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: string; id: number }) => {
+const convertPokemonGO = (item: PokemonDataModel, pokemon: Details) => {
   if (item.name.toLowerCase().includes('_mega')) {
     return pokemon.id === item.num && pokemon.name === item.name?.toUpperCase().replaceAll('-', '_');
   } else {
@@ -378,8 +378,8 @@ const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: 
   }
 };
 
-export const checkPokemonGO = (item: { num: number; name: string }, details: Details[]) => {
-  return details.find((pokemon: { name: string; id: number }) => {
+export const checkPokemonGO = (item: PokemonDataModel, details: Details[]) => {
+  return details.find((pokemon) => {
     return convertPokemonGO(item, pokemon) ? true : false;
   });
 };

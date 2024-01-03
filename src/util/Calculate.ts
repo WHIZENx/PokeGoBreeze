@@ -2,7 +2,8 @@ import { findStatsPokeGO } from '../core/forms';
 import { Combat, CombatPokemon } from '../core/models/combat.model';
 import { Options } from '../core/models/options.model';
 import { PokemonDataModel } from '../core/models/pokemon.model';
-import { TypeEff } from '../core/models/typeEff.model';
+import { StatsPokemon } from '../core/models/stats.model';
+import { TypeEff } from '../core/models/type-eff.model';
 import { WeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
 import { TypeMove } from '../enums/move.enum';
@@ -36,6 +37,7 @@ import {
   convertNameRankingToForm,
   checkMoveSetAvailable,
 } from './Utils';
+import { PokemonQueryMove, PokemonTopMove } from './models/pokemon-top-move.model';
 
 const weatherMultiple = (globalOptions: Options | undefined, weatherBoost: any, weather: string, type: string) => {
   return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: string) => item === type?.toUpperCase().replaceAll(' ', '_'))
@@ -598,8 +600,8 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
 };
 
 export const calculateStatsByTag = (
-  pokemon: PokemonDataModel | undefined,
-  baseStats: { hp?: number; atk: number; def: number; sta?: number; spa?: number; spd?: number; spe?: number } | undefined,
+  pokemon: PokemonDataModel | undefined | null,
+  baseStats: StatsPokemon | undefined,
   tag: string | null | undefined
 ) => {
   let atk = 0,
@@ -819,7 +821,7 @@ export const calculateAvgDPS = (
   return Math.max(FDPS, DPS);
 };
 
-export const calculateTDO = (globalOptions: Options | undefined, Def: number, HP: number, dps: number, shadow: any = null) => {
+export const calculateTDO = (globalOptions: Options | undefined, Def: number, HP: number, dps: number, shadow = false) => {
   const ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
   let y;
@@ -1068,32 +1070,22 @@ export const queryTopMove = (
   pokemonCombatList: CombatPokemon[],
   move: Combat | undefined
 ) => {
-  const dataPri: {
-    num: number;
-    forme: string | null;
-    name: string;
-    baseSpecies: string | null;
-    sprite: string;
-    releasedGO: boolean;
-    isElite: boolean;
-    isSpecial: boolean;
-    dps: number;
-    tdo: number;
-  }[] = [];
+  const dataPri: PokemonTopMove[] = [];
   pokemonList?.forEach((value: PokemonDataModel) => {
     if (move?.track === 281) {
       move.name = 'HIDDEN_POWER';
     }
-    let combatPoke: any = pokemonCombatList.filter(
+    const pokemonCombatResult = pokemonCombatList.filter(
       (item) => item.id === value.num && item.baseSpecies === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
     );
-    const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.name));
-    if (result === undefined) {
-      combatPoke = combatPoke.at(0);
+    const result = pokemonCombatResult.find((item) => item.name === convertName(value.name));
+    let combatPoke: CombatPokemon | undefined;
+    if (!result) {
+      combatPoke = pokemonCombatResult.at(0);
     } else {
       combatPoke = result;
     }
-    if (combatPoke !== undefined) {
+    if (combatPoke) {
       let pokemonList;
       let isElite = false;
       let isSpecial = true;
@@ -1162,7 +1154,7 @@ const queryMove = (
   typeEff: TypeEff | undefined,
   weatherBoost: WeatherBoost | undefined,
   combat: Combat[],
-  dataList: any[],
+  dataList: PokemonQueryMove[],
   vf: string,
   atk: number,
   def: number,
@@ -1246,7 +1238,7 @@ export const rankMove = (
   if (!move) {
     return { data: [] };
   }
-  const dataPri: any[] = [];
+  const dataPri: PokemonQueryMove[] = [];
   move.quickMoves.forEach((vf) => {
     queryMove(
       globalOptions,
@@ -1577,9 +1569,7 @@ const queryMoveCounter = (
   dataList: any[],
   combat: Combat[],
   pokemon: PokemonDataModel,
-  stats:
-    | { hp?: number; atk: number; def: number; sta?: number | undefined; spa?: number; spd?: number; spe?: number }
-    | { atk: number; def: number; sta: number },
+  stats: StatsPokemon,
   def: number,
   types: string | string[],
   vf: string,

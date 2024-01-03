@@ -47,7 +47,7 @@ import { setDPSSheetPage } from '../../../store/actions/options.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/move.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
@@ -460,15 +460,16 @@ const DpsTdo = () => {
   const calculateDPSTable = () => {
     const dataList: any[] = [];
     (data?.pokemonData ?? []).forEach((pokemon) => {
-      let combatPoke: any = data?.pokemonCombat?.filter(
+      const pokemonCombatResult = data?.pokemonCombat?.filter(
         (item) =>
           item.id === pokemon.num &&
           item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
       );
 
-      const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
-      if (!result) {
-        combatPoke = combatPoke?.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies);
+      const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon.name));
+      let combatPoke: CombatPokemon | undefined;
+      if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
+        combatPoke = pokemonCombatResult.find((item) => item.name === item.baseSpecies);
       } else {
         combatPoke = result;
       }

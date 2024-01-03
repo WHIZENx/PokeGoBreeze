@@ -176,7 +176,7 @@ export const regionList: any = {
   10: 'Paldea',
 };
 
-export const versionList: string[] = [
+export const versionList = [
   'Pokémon GO',
   'Black 2 White 2',
   'Black White',

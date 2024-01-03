@@ -110,7 +110,7 @@ const PVPHome = () => {
             })
           }
         >
-          {pvp?.rankings.map((value, index: React.Key) => (
+          {pvp?.rankings.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>

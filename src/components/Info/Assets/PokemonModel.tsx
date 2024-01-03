@@ -27,7 +27,9 @@ const PokemonModel = (props: { id: number; name: string }) => {
       const model: Asset = sound.current;
       const detail = data?.details?.find((item) => item.id === id);
       gender.current = detail?.gender;
-      return model ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model.image)) : [];
+      return model
+        ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
+        : [];
     },
     [data?.assets]
   );

@@ -11,6 +11,7 @@ import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { MAX_IV, MAX_LEVEL } from '../../../util/Constants';
+import { CombatPokemon } from '../../../core/models/combat.model';
 
 const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
   const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
@@ -82,19 +83,16 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     }
     const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, league);
 
-    let combatPoke: any = pokemonCombat.filter(
+    const pokemonCombatResult = pokemonCombat.filter(
       (item) =>
         item.id === value.pokemon?.num &&
         item.baseSpecies === (value.pokemon?.baseSpecies ? convertName(value.pokemon?.baseSpecies) : convertName(value.pokemon?.name))
     );
 
-    const result = combatPoke.find((item: { name: string }) => item.name === convertName(value.pokemon?.name));
-    if (!result) {
-      if (combatPoke) {
-        combatPoke = combatPoke.at(0);
-      } else {
-        combatPoke = combatPoke?.find((item: { baseSpecies: string }) => item.baseSpecies === convertName(value.pokemon?.name));
-      }
+    const result = pokemonCombatResult.find((item) => item.name === convertName(value.pokemon?.name));
+    let combatPoke: CombatPokemon | undefined;
+    if (!result && pokemonCombatResult.length > 0) {
+      combatPoke = pokemonCombatResult.at(0);
     } else {
       combatPoke = result;
     }

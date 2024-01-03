@@ -28,6 +28,7 @@ import { scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
+import { CombatPokemon } from '../../../core/models/combat.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -155,16 +156,13 @@ const RankingPVP = () => {
             fmove = { ...fmove, type: item.moveset.at(0)?.split('_').at(2) };
           }
 
-          let combatPoke: any = dataStore?.pokemonCombat?.filter(
+          const pokemonCombatResult = dataStore?.pokemonCombat?.filter(
             (item) => item.id === pokemon?.num && item.baseSpecies === convertName(pokemon?.baseSpecies ?? pokemon?.name)
           );
-          const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
-          if (!result) {
-            if (combatPoke) {
-              combatPoke = combatPoke.at(0);
-            } else {
-              combatPoke = combatPoke?.find((item: { BASE_SPECIES: string }) => item.BASE_SPECIES === convertName(pokemon?.name));
-            }
+          const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon?.name));
+          let combatPoke: CombatPokemon | undefined;
+          if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
+            combatPoke = pokemonCombatResult.at(0);
           } else {
             combatPoke = result;
           }
@@ -185,7 +183,9 @@ const RankingPVP = () => {
             cmoveSec,
             combatPoke,
             shadow: item.speciesName.includes('(Shadow)'),
-            purified: combatPoke?.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke?.purifiedMoves.includes(cMoveDataSec)),
+            purified:
+              combatPoke?.purifiedMoves.includes(cmovePri?.name ?? '') ||
+              (cMoveDataSec && combatPoke?.purifiedMoves.includes(cMoveDataSec)),
           };
         });
         setRankingData(file);

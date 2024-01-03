@@ -452,14 +452,15 @@ const RaidBattle = () => {
     let dataList: any[] | (() => any[]) = [];
     (data?.pokemonData ?? []).forEach((pokemon) => {
       if (pokemon.forme?.toUpperCase() !== FORM_GMAX) {
-        let combatPoke: any = data?.pokemonCombat?.filter(
+        const pokemonCombatResult = data?.pokemonCombat?.filter(
           (item) =>
             item.id === pokemon.num &&
             item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
         );
-        const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
-        if (!result) {
-          combatPoke = combatPoke.at(0);
+        const result = pokemonCombatResult?.find((item: { name: string }) => item.name === convertName(pokemon.name));
+        let combatPoke: CombatPokemon | undefined;
+        if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
+          combatPoke = pokemonCombatResult.at(0);
         } else {
           combatPoke = result;
         }
@@ -518,7 +519,7 @@ const RaidBattle = () => {
       const statsAttacker = {
         atk: calculateStatsBattle(stats.atk, statsGO.iv.atk * (statsGO.isShadow ? SHADOW_ATK_BONUS(data?.options) : 1), statsGO.level),
         def: calculateStatsBattle(stats.def, statsGO.iv.def * (statsGO.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1), statsGO.level),
-        hp: calculateStatsBattle(stats?.sta ?? 0, statsGO.iv.sta, statsGO.level),
+        hp: calculateStatsBattle(stats?.sta ?? 0, statsGO.iv.sta ?? 0, statsGO.level),
         fmove,
         cmove,
         types: pokemon.dataTargetPokemon.types,
@@ -1179,7 +1180,7 @@ const RaidBattle = () => {
           </div>
           <div className="top-raid-group">
             {result
-              .filter((obj: { pokemon: { num: number; name: string } }) => {
+              .filter((obj: { pokemon: PokemonDataModel }) => {
                 if (!used.onlyReleasedGO) {
                   return true;
                 }

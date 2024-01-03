@@ -1,7 +1,7 @@
 export interface Image {
-  gender: number;
+  gender?: number;
   pokemonId?: number;
-  form: string;
+  form?: string;
   default: string;
   shiny: string | null;
 }

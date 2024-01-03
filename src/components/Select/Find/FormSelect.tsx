@@ -16,9 +16,11 @@ import { ToolSearching } from '../../../core/models/searching.model';
 import { PokemonDataModel, PokemonNameModel } from '../../../core/models/pokemon.model';
 import { CancelTokenSource } from 'axios';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { FormModel, PokemonForm, PokemonFormModify } from '../../../core/models/API/form.model';
+import { Species } from '../../../core/models/API/species.model';
+import { PokemonInfo } from '../../../core/models/API/info.model';
 
-const Form = (props: {
+const FormSelect = (props: {
   router: ReduxRouterState;
   searching: ToolSearching | null;
   raid?: boolean | undefined;
@@ -45,8 +47,8 @@ const Form = (props: {
 }) => {
   const dispatch = useDispatch();
 
-  const [pokeData, setPokeData]: any = useState([]);
-  const [formList, setFormList]: any = useState([]);
+  const [pokeData, setPokeData]: [PokemonInfo[], any] = useState([]);
+  const [formList, setFormList]: [PokemonFormModify[][], any] = useState([]);
 
   const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
   const [tier, setTier] = useState(props.tier ?? 1);
@@ -60,67 +62,79 @@ const Form = (props: {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const fetchMap = useCallback(async (data: { varieties: any[]; name: string; id: number }, axios: any, source: CancelTokenSource) => {
+  const fetchMap = async (data: Species, axios: any, source: CancelTokenSource) => {
     setFormList([]);
     setPokeData([]);
-    const dataPokeList = [];
-    let dataFromList: any[] = [];
+    const dataPokeList: PokemonInfo[] = [];
+    const dataFormList: PokemonForm[][] = [];
     await Promise.all(
-      data.varieties.map(async (value: { pokemon: { url: string } }) => {
-        const pokeInfo = await axios.getFetchUrl(value.pokemon.url, {
-          cancelToken: source.token,
-        });
-        const pokeForm = await Promise.all(
-          pokeInfo.data.forms.map(async (item: { url: string }) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
+      data.varieties.map(async (value) => {
+        const pokeInfo: PokemonInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
+        const pokeForm: PokemonForm[] = await Promise.all(
+          pokeInfo.forms.map(async (item) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
         );
-        dataPokeList.push(pokeInfo.data);
-        dataFromList.push(pokeForm);
+        dataPokeList.push(pokeInfo);
+        dataFormList.push(pokeForm);
       })
     );
-    const goForm = getFormsGO(data.id).map(() => {
-      return {};
-    });
-    if (goForm.length > 0) {
-      dataPokeList.push(...goForm);
-      data.varieties.push(...goForm);
-    }
+
     setPokeData(dataPokeList);
     let modify = false;
-    dataFromList = dataFromList.map((value: PokemonFormModify[]) => {
+    let formListModify = dataFormList?.map((value) => {
       if (value.length === 0) {
         modify = true;
-        return dataFromList.find((item: PokemonFormModify[]) => item.length === dataFromList.length);
+        return dataFormList.find((item) => item.length === dataFormList.length);
       }
       return value;
     });
+
     if (modify) {
-      dataFromList = dataFromList.map((value: { [x: string]: any }, index: string | number) => {
-        return [value[index]];
-      });
+      formListModify = formListModify
+        .filter((value) => value)
+        .map((value, index) => {
+          return value ? [value[index]] : [];
+        });
     }
-    dataFromList = dataFromList
+
+    const formListResult: PokemonFormModify[][] = formListModify
       .map((item) => {
         return item
-          .map((item: { pokemon: { name: string } }) => ({
-            form: item,
-            name: data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name)).pokemon.name,
-            default_name: data.name,
-          }))
-          .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
+          ? item
+              .map((item) => ({
+                form: new FormModel(item),
+                name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                default_name: data?.name,
+                default_id: data.id,
+              }))
+              .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
+          : [];
       })
-      .sort((a: { form: { id: number } }[], b: { form: { id: number } }[]) => a[0].form.id - b[0].form.id);
-    if (data.id === 150) {
-      dataFromList.push(getFormsGO(data.id));
+      .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
+
+    const goForm = getFormsGO(data.id);
+    if (goForm.length > 0) {
+      formListResult.push(goForm);
     }
-    setFormList(dataFromList);
-    const formDefault = dataFromList.map((item: any[]) => {
-      return item.find((item: PokemonFormModify) => item.form.is_default);
+
+    if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name === 'gmax')).length > 1) {
+      formListResult.forEach((form) => {
+        form.forEach((pokemon) => {
+          if (pokemon.form.form_name === 'gmax') {
+            pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
+          }
+        });
+      });
+    }
+
+    setFormList(formListResult);
+    const formDefault = formListResult.map((item) => {
+      return item.find((item) => item.form.is_default);
     });
-    const isDefault = formDefault.find((item: PokemonFormModify) => item.form.id === data.id);
+    const isDefault = formDefault.find((item) => item?.form.id === data.id);
     if (props.searching) {
       const form = formDefault.find(
-        (item: PokemonFormModify) =>
-          item.form.form_name === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
+        (item) =>
+          item?.form.form_name === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
       );
       setCurrForm(form ?? isDefault ?? formDefault.at(0));
       setPokeID(data.id);
@@ -129,7 +143,7 @@ const Form = (props: {
       setPokeID(isDefault.form.id);
     } else {
       setCurrForm(formDefault.at(0));
-      setPokeID(formDefault.at(0).form.id);
+      setPokeID(formDefault.at(0)?.form.id);
     }
     const currentId = getPokemonById(props.pokemonName, data.id);
     if (currentId) {
@@ -139,7 +153,7 @@ const Form = (props: {
         next: getPokemonByIndex(props.pokemonName, currentId.index + 1),
       });
     }
-  }, []);
+  };
 
   const queryPokemon = useCallback(
     (id: string, axios: any, source: CancelTokenSource) => {
@@ -150,7 +164,7 @@ const Form = (props: {
         .getPokeSpices(id, {
           cancelToken: source.token,
         })
-        .then((res: { data: { varieties: string[]; name: string; id: number } }) => {
+        .then((res: { data: Species }) => {
           fetchMap(res.data, axios, source);
           setData(res.data);
         })
@@ -159,7 +173,7 @@ const Form = (props: {
           source.cancel();
         });
     },
-    [enqueueSnackbar, fetchMap]
+    [enqueueSnackbar]
   );
 
   useEffect(() => {
@@ -199,9 +213,7 @@ const Form = (props: {
   }, [currForm]);
 
   const changeForm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const findForm = formList
-      .map((item: { form: { name: string } }[]) => item.find((item) => item.form.name === e.currentTarget.value))
-      .find((item: any) => item);
+    const findForm = formList.map((item) => item.find((item) => item.form.name === e.currentTarget.value)).find((item: any) => item);
     setCurrForm(findForm);
     if (props.onClearStats) {
       props.onClearStats();
@@ -282,11 +294,11 @@ const Form = (props: {
         </b>
       </h4>
       <div className="scroll-card">
-        {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length ? (
+        {currForm && pokeID && pokeData.length > 0 && formList.length > 0 ? (
           <Fragment>
-            {formList.map((value: PokemonFormModify[], index: React.Key) => (
+            {formList.map((value, index) => (
               <Fragment key={index}>
-                {value.map((value, index: React.Key) => (
+                {value.map((value, index) => (
                   <button
                     value={value.form.name}
                     key={index}
@@ -412,4 +424,4 @@ const Form = (props: {
   );
 };
 
-export default Form;
+export default FormSelect;

@@ -1,4 +1,4 @@
-export interface Sticker {
+export interface StickerModel {
   id: string;
   maxCount: number;
   stickerUrl: string | null;

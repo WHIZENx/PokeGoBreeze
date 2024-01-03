@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { splitAndCapitalize } from '../../util/Utils';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 
-const CardPokemon = (props: { value: { sprite: string; name: string }; score?: number; isShadow?: boolean }) => {
+const CardPokemon = (props: { value: PokemonDataModel; score?: number; isShadow?: boolean }) => {
   return (
     <Fragment>
       {props.value && (
