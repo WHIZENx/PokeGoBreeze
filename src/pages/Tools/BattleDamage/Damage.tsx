@@ -22,6 +22,7 @@ import { findStabType } from '../../../util/Compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { TrainerFriendship } from '../../../core/models/options.model';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
 
 const labels: any = {
   0: {
@@ -49,7 +50,7 @@ const Damage = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
-  const [form, setForm]: any = useState(null);
+  const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
   const [move, setMove]: any = useState(null);
 
   const [statATK, setStatATK] = useState(0);
@@ -61,7 +62,7 @@ const Damage = () => {
   const [statLevel, setStatLevel] = useState(1);
   const [statType, setStatType] = useState('');
 
-  const [formObj, setFormObj]: any = useState(null);
+  const [formObj, setFormObj]: [PokemonFormModify | undefined, any] = useState();
 
   const [statATKObj, setStatATKObj] = useState(0);
   const [statDEFObj, setStatDEFObj] = useState(0);
@@ -159,17 +160,14 @@ const Damage = () => {
       e.preventDefault();
       if (move) {
         const eff = {
-          stab: findStabType(
-            form.form.types.map((item: { type: { name: string } }) => item.type.name),
-            move.type
-          ),
+          stab: findStabType(form?.form.types ?? [], move.type),
           wb: battleState.weather,
           dodge: battleState.dodge,
-          mega: form.form.pokemon.forme && form.form.pokemon.forme?.toUpperCase().includes(FORM_MEGA) ? true : false,
+          mega: form?.form.form_name?.toUpperCase().includes(FORM_MEGA) ?? false,
           trainer: battleState.trainer,
           flevel: enableFriend ? battleState.flevel : 0,
           clevel: battleState.clevel,
-          effective: getTypeEffective(typeEff, move.type, formObj.form.types),
+          effective: getTypeEffective(typeEff, move.type, formObj?.form.types),
         };
         setResult((r: any) => ({
           ...r,
@@ -271,11 +269,11 @@ const Damage = () => {
                 <div className="row text-center" style={{ width: 520 }}>
                   <div className="col">
                     <h5 className="text-success">- Current Pokémon Type -</h5>
-                    {form && <TypeInfo arr={form.form.types.map((ele: { type: { name: string } }) => ele.type.name)} />}
+                    {form && <TypeInfo arr={form.form.types} />}
                   </div>
                   <div className="col">
                     <h5 className="text-danger">- Object Pokémon Type -</h5>
-                    {formObj && <TypeInfo arr={formObj.form.types.map((ele: { type: { name: string } }) => ele.type.name)} />}
+                    {formObj && <TypeInfo arr={formObj.form.types} />}
                   </div>
                 </div>
               </div>
@@ -283,7 +281,7 @@ const Damage = () => {
                 text="Select Moves"
                 id={id}
                 selectDefault={true}
-                form={form ? form.form.pokemon.name : name.toLowerCase()}
+                form={form ? form.form.name : name.toLowerCase()}
                 setMove={setMove}
                 move={move}
               />
@@ -296,18 +294,12 @@ const Damage = () => {
                     <p>
                       - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
                     </p>
-                    {findStabType(
-                      form.form.types.map((item: { type: { name: string } }) => item.type.name),
-                      move.type
-                    )}
+                    {findStabType(form?.form.types ?? [], move.type)}
                     <p>
                       - Damage:{' '}
                       <b>
                         {move.pve_power}
-                        {findStabType(
-                          form.form.types.map((item: { type: { name: string } }) => item.type.name),
-                          move.type
-                        ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                        {findStabType(form?.form.types ?? [], move.type) && <span className={'caption-small text-success'}> (x1.2)</span>}
                       </b>
                     </p>
                   </div>

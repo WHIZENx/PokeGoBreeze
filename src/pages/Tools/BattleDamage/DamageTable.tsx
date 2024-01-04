@@ -10,6 +10,8 @@ import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { Combat } from '../../../core/models/combat.model';
 
 const eff: any = {
   0.244140625: {
@@ -40,16 +42,13 @@ const eff: any = {
 
 const DamageTable = (props: {
   result: {
-    objPoke: { form: { pokemon: { name: string } } };
+    objPoke: PokemonFormModify;
     type: string;
-    currPoke: { form: { pokemon: { name: string } } };
+    currPoke: PokemonFormModify;
     currLevel: number;
     typeObj: string;
     objLevel: number;
-    move: {
-      name: string;
-      pve_power: number;
-    };
+    move: Combat;
     battleState: {
       stab: boolean;
       wb: boolean;
@@ -87,7 +86,7 @@ const DamageTable = (props: {
                     {props.result.type === 'shadow' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
-                    {splitAndCapitalize(props.result.currPoke.form.pokemon.name, '-', ' ')}{' '}
+                    {splitAndCapitalize(props.result.currPoke.form.name, '-', ' ')}{' '}
                     <span className="d-inline-block caption">(LV. {props.result.currLevel})</span>
                   </Fragment>
                 ) : (
@@ -106,7 +105,7 @@ const DamageTable = (props: {
                     {props.result.typeObj === 'shadow' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
-                    {splitAndCapitalize(props.result.objPoke.form.pokemon.name, '-', ' ')}{' '}
+                    {splitAndCapitalize(props.result.objPoke.form.name, '-', ' ')}{' '}
                     <span className="d-inline-block caption">(LV. {props.result.objLevel})</span>
                   </Fragment>
                 ) : (

@@ -1,5 +1,16 @@
 import { Type } from './info.model';
 
+export interface PokemonSprit {
+  back_default: string;
+  back_female: string;
+  back_shiny: string;
+  back_shiny_female: string;
+  front_default: string;
+  front_female: string;
+  front_shiny: string;
+  front_shiny_female: string;
+}
+
 export interface PokemonForm {
   form_name: string;
   form_names: string[];
@@ -12,16 +23,7 @@ export interface PokemonForm {
   names: string[];
   order: number;
   pokemon: Path;
-  sprites: {
-    back_default: string;
-    back_female: string;
-    back_shiny: string;
-    back_shiny_female: string;
-    front_default: string;
-    front_female: string;
-    front_shiny: string;
-    front_shiny_female: string;
-  };
+  sprites: PokemonSprit;
   types: SlotType[];
   version_group: Path;
 }
@@ -52,7 +54,7 @@ export interface FormModel {
   is_purified: boolean;
   name: string;
   version_group: { name: string };
-  types: TypeModify[] | Type[];
+  types: string[];
 }
 
 export interface PokemonFormModify {
@@ -71,6 +73,7 @@ export class PokemonFormModifyModel {
   id?: number;
   name!: string;
   form!: FormModel;
+  sprites!: PokemonSprit;
 
   constructor(
     id: number,
@@ -85,6 +88,7 @@ export class PokemonFormModifyModel {
     fullFormName: string,
     version: string,
     types: TypeModify[] | Type[],
+    sprites: PokemonSprit | null = null,
     formId: number | null = null
   ) {
     this.default_id = id;
@@ -102,7 +106,8 @@ export class PokemonFormModifyModel {
       is_purified: isPurified,
       name: fullFormName,
       version_group: { name: version },
-      types,
+      types: types.map((t) => t.type.name),
+      sprites,
     };
   }
 }
@@ -129,7 +134,8 @@ export class FormModel {
   name: string;
   // tslint:disable-next-line:variable-name
   version_group: { name: string };
-  types: TypeModify[] | Type[];
+  types: string[];
+  sprites: PokemonSprit | null;
 
   constructor(data: PokemonForm) {
     this.form_name = data.form_name;
@@ -143,6 +149,7 @@ export class FormModel {
     this.is_purified = false;
     this.name = data.name;
     this.version_group = data.version_group;
-    this.types = data.types;
+    this.types = data.types.map((t) => t.type.name);
+    this.sprites = data.sprites;
   }
 }

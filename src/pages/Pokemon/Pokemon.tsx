@@ -197,6 +197,7 @@ const Pokemon = (props: {
             `${p.name}-shadow`,
             'Pokémon-GO',
             p.types ?? [],
+            null,
             -1 + -2 * index
           );
           const pokemonPurifiedModify = new PokemonFormModifyModel(
@@ -212,6 +213,7 @@ const Pokemon = (props: {
             `${p.name}-purified`,
             'Pokémon-GO',
             p.types ?? [],
+            null,
             -2 * (index + 1)
           );
           formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);

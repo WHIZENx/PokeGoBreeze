@@ -18,6 +18,7 @@ import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../../enums/move.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
 
 const CalculatePoint = () => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
@@ -26,7 +27,7 @@ const CalculatePoint = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
-  const [form, setForm]: any = useState(null);
+  const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
   const [move, setMove]: any = useState(null);
 
   const [statATK, setStatATK] = useState(0);
@@ -49,8 +50,8 @@ const CalculatePoint = () => {
 
   const [idDef, setIdDef] = useState(searching && searching.obj ? searching.obj.id : 1);
   const [nameDef, setNameDef] = useState('Bulbasaur');
-  const [formDef, setFormDef]: any = useState(null);
-  const [moveDef, setMoveDef]: any = useState(null);
+  const [formDef, setFormDef]: [PokemonFormModify | undefined, any] = useState();
+  const [moveDef, setMoveDef]: any = useState();
 
   const [fMove, setFMove]: any = useState(null);
   const [cMove, setCMove]: any = useState(null);
@@ -116,15 +117,8 @@ const CalculatePoint = () => {
           statDefDEF,
           !isRaid && pvpDmg ? move.pvp_power : move.pve_power,
           {
-            effective: getTypeEffective(
-              typeEff,
-              move.type,
-              formDef.form.types.map((item: { type: { name: string } }) => item.type.name)
-            ),
-            stab: findStabType(
-              form.form.types.map((item: { type: { name: string } }) => item.type.name),
-              move.type
-            ),
+            effective: getTypeEffective(typeEff, move.type, formDef?.form.types ?? []),
+            stab: findStabType(form?.form.types ?? [], move.type),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
           },
           false
@@ -156,15 +150,8 @@ const CalculatePoint = () => {
           calculateStatsBattle(statDEF, j, i, true),
           !isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power,
           {
-            effective: getTypeEffective(
-              typeEff,
-              moveDef.type,
-              form.form.types.map((item: { type: { name: string } }) => item.type.name)
-            ),
-            stab: findStabType(
-              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-              moveDef.type
-            ),
+            effective: getTypeEffective(typeEff, moveDef.type, form?.form.types ?? []),
+            stab: findStabType(formDef?.form.types ?? [], moveDef.type),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
           },
           false
@@ -222,15 +209,8 @@ const CalculatePoint = () => {
               calculateStatsBattle(statDEF, DEFIv, lv, true),
               !isRaid && pvpDmg ? cMove.pvp_power : cMove.pve_power,
               {
-                effective: getTypeEffective(
-                  typeEff,
-                  cMove.type,
-                  form.form.types.map((item: { type: { name: string } }) => item.type.name)
-                ),
-                stab: findStabType(
-                  formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                  cMove.type
-                ),
+                effective: getTypeEffective(typeEff, cMove.type, form?.form.types ?? []),
+                stab: findStabType(formDef?.form.types ?? [], cMove.type),
                 wb: (!pvpDmg || isRaid) && weatherBoosts,
               },
               false
@@ -241,15 +221,8 @@ const CalculatePoint = () => {
             calculateStatsBattle(statDEF, DEFIv, lv, true),
             !isRaid && pvpDmg ? fMove.pvp_power : fMove.pve_power,
             {
-              effective: getTypeEffective(
-                typeEff,
-                fMove.type,
-                form.form.types.map((item: { type: { name: string } }) => item.type.name)
-              ),
-              stab: findStabType(
-                formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                fMove.type
-              ),
+              effective: getTypeEffective(typeEff, fMove.type, form?.form.types ?? []),
+              stab: findStabType(formDef?.form.types ?? [], fMove.type),
               wb: (!pvpDmg || isRaid) && weatherBoosts,
             },
             false
@@ -289,7 +262,7 @@ const CalculatePoint = () => {
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(form.form.name, true)}
+                src={APIService.getPokeIconSprite(form?.form.name ?? '', true)}
                 onError={(e: any) => {
                   e.onerror = null;
                   e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
@@ -297,7 +270,7 @@ const CalculatePoint = () => {
               />
             </span>
           </Badge>
-          <span className="caption">{splitAndCapitalize(form.form.name, '-', ' ')}</span>
+          <span className="caption">{splitAndCapitalize(form?.form.name ?? '', '-', ' ')}</span>
           <span className="caption">
             <b>{pri === 'atk' ? 'Attacker' : 'Defender'}</b>
           </span>
@@ -309,7 +282,7 @@ const CalculatePoint = () => {
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(formDef.form.name, true)}
+                src={APIService.getPokeIconSprite(formDef?.form.name ?? '', true)}
                 onError={(e: any) => {
                   e.onerror = null;
                   e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
@@ -317,7 +290,7 @@ const CalculatePoint = () => {
               />
             </span>
           </Badge>
-          <span className="caption">{splitAndCapitalize(formDef.form.name, '-', ' ')}</span>
+          <span className="caption">{splitAndCapitalize(formDef?.form.name ?? '', '-', ' ')}</span>
           <span className="caption">
             <b>{sec === 'atk' ? 'Attacker' : 'Defender'}</b>
           </span>
@@ -384,7 +357,7 @@ const CalculatePoint = () => {
                     text="Select Moves"
                     id={id}
                     selectDefault={true}
-                    form={form ? form.form.pokemon.name : name.toLowerCase()}
+                    form={form ? form.form.name : name.toLowerCase()}
                     setMove={setMove}
                     move={move}
                     clearData={setResultBreakPointAtk}
@@ -423,18 +396,12 @@ const CalculatePoint = () => {
                       <p>
                         - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
                       </p>
-                      {findStabType(
-                        form.form.types.map((item: { type: { name: string } }) => item.type.name),
-                        move.type
-                      )}
+                      {findStabType(form?.form.types ?? [], move.type)}
                       <p>
                         - Damage:{' '}
                         <b>
                           {move.pve_power}
-                          {findStabType(
-                            form.form.types.map((item: { type: { name: string } }) => item.type.name),
-                            move.type
-                          ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                          {findStabType(form?.form.types ?? [], move.type) && <span className={'caption-small text-success'}> (x1.2)</span>}
                         </b>
                       </p>
                     </div>
@@ -516,7 +483,7 @@ const CalculatePoint = () => {
                     text="Select Moves"
                     id={idDef}
                     selectDefault={true}
-                    form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
+                    form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                     setMove={setMoveDef}
                     move={moveDef}
                     clearData={setResultBreakPointDef}
@@ -555,18 +522,14 @@ const CalculatePoint = () => {
                       <p>
                         - Move Type: <span className={'type-icon-small ' + moveDef.type.toLowerCase()}>{capitalize(moveDef.type)}</span>
                       </p>
-                      {findStabType(
-                        formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                        moveDef.type
-                      )}
+                      {findStabType(formDef?.form.types ?? [], moveDef.type)}
                       <p>
                         - Damage:{' '}
                         <b>
                           {moveDef.pve_power}
-                          {findStabType(
-                            formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                            moveDef.type
-                          ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                          {findStabType(formDef?.form.types ?? [], moveDef.type) && (
+                            <span className={'caption-small text-success'}> (x1.2)</span>
+                          )}
                         </b>
                       </p>
                     </div>
@@ -703,7 +666,7 @@ const CalculatePoint = () => {
                       text="Fast Moves"
                       id={idDef}
                       selectDefault={true}
-                      form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
+                      form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                       setMove={setFMove}
                       move={fMove}
                       type={TypeMove.FAST}
@@ -717,18 +680,14 @@ const CalculatePoint = () => {
                         <p>
                           - Move Type: <span className={'type-icon-small ' + fMove.type.toLowerCase()}>{capitalize(fMove.type)}</span>
                         </p>
-                        {findStabType(
-                          formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                          fMove.type
-                        )}
+                        {findStabType(formDef?.form.types ?? [], fMove.type)}
                         <p>
                           - Damage:{' '}
                           <b>
                             {fMove.pve_power}
-                            {findStabType(
-                              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                              fMove.type
-                            ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                            {findStabType(formDef?.form.types ?? [], fMove.type) && (
+                              <span className={'caption-small text-success'}> (x1.2)</span>
+                            )}
                           </b>
                         </p>
                       </div>
@@ -739,7 +698,7 @@ const CalculatePoint = () => {
                       text="Charged Moves"
                       id={idDef}
                       selectDefault={true}
-                      form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
+                      form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                       setMove={setCMove}
                       move={cMove}
                       type={TypeMove.CHARGE}
@@ -753,18 +712,14 @@ const CalculatePoint = () => {
                         <p>
                           - Move Type: <span className={'type-icon-small ' + cMove.type.toLowerCase()}>{capitalize(cMove.type)}</span>
                         </p>
-                        {findStabType(
-                          formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                          cMove.type
-                        )}
+                        {findStabType(formDef?.form.types ?? [], cMove.type)}
                         <p>
                           - Damage:{' '}
                           <b>
                             {cMove.pve_power}
-                            {findStabType(
-                              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                              cMove.type
-                            ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                            {findStabType(formDef?.form.types ?? [], cMove.type) && (
+                              <span className={'caption-small text-success'}> (x1.2)</span>
+                            )}
                           </b>
                         </p>
                       </div>

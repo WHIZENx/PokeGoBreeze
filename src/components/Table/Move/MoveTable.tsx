@@ -22,7 +22,7 @@ const TableMove = (props: {
   statATK: number;
   statDEF: number;
   statSTA: number;
-  form: FormModel;
+  form: FormModel | undefined;
   id?: number;
   maxHeight?: number | string;
 }) => {

@@ -100,7 +100,7 @@ const Form = ({
       });
   }, [formList, idDefault, paramForm]);
 
-  const [currForm, setCurrForm]: any = useState(null);
+  const [currForm, setCurrForm]: [PokemonFormModify | undefined, any] = useState();
   const defaultStats = { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 };
   const [dataPoke, setDataPoke] = useState({
     stats: { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 },

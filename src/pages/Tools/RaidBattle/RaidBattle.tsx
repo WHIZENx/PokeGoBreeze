@@ -53,6 +53,7 @@ import { PokemonDataModel, PokemonMoveData } from '../../../core/models/pokemon.
 import { CombatPokemon } from '../../../core/models/combat.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { TypeMove } from '../../../enums/move.enum';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
 
 const RaidBattle = () => {
   const dispatch = useDispatch();
@@ -62,7 +63,7 @@ const RaidBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('');
-  const [form, setForm]: any = useState(null);
+  const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
 
   const initialize = useRef(false);
 
@@ -357,8 +358,8 @@ const RaidBattle = () => {
     pokemonTarget: any
   ) => {
     movePoke.forEach((vc) => {
-      const fmove = data?.combat?.find((item: { name: string }) => item.name === vf);
-      const cmove = data?.combat?.find((item: { name: string }) => item.name === vc);
+      const fmove = data?.combat?.find((item) => item.name === vf);
+      const cmove = data?.combat?.find((item) => item.name === vc);
       if (fmove && cmove) {
         const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
         const statsAttackerTemp = {
@@ -367,7 +368,7 @@ const RaidBattle = () => {
           hp: calculateStatsBattle(stats?.sta ?? 0, used.iv.sta, used.level),
           fmove,
           cmove,
-          types: value?.types,
+          types: value?.types ?? [],
           shadow,
           WEATHER_BOOSTS: weatherCounter,
         };
@@ -377,7 +378,7 @@ const RaidBattle = () => {
           hp: statBossHP,
           fmove: data?.combat?.find((item) => item.name === fMove.name),
           cmove: data?.combat?.find((item) => item.name === cMove.name),
-          types: form.form.types.map((type: { type: { name: string } }) => type.type.name),
+          types: form?.form.types ?? [],
           WEATHER_BOOSTS: weatherBoss,
         };
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
@@ -532,7 +533,7 @@ const RaidBattle = () => {
         hp: Math.floor(HpRemain),
         fmove: data?.combat?.find((item) => item.name === fMove.name),
         cmove: data?.combat?.find((item) => item.name === cMove.name),
-        types: form.form.types.map((type: { type: { name: string } }) => type.type.name),
+        types: form?.form.types ?? [],
         WEATHER_BOOSTS: weatherBoss,
       };
 
@@ -1370,7 +1371,7 @@ const RaidBattle = () => {
                     #{id} {form ? splitAndCapitalize(form.form.name, '-', ' ') : name.toLowerCase()} Tier {tier}
                   </b>
                 </h3>
-                <TypeInfo arr={form.form.types.map((type: { type: { name: string } }) => type.type.name)} />
+                <TypeInfo arr={form?.form.types ?? []} />
               </div>
               <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
                 <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite} />

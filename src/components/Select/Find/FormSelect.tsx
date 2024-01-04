@@ -56,7 +56,7 @@ const FormSelect = (props: {
   const [data, setData]: any = useState(null);
   const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
 
-  const [currForm, setCurrForm]: any = useState(null);
+  const [currForm, setCurrForm]: [PokemonFormModify | undefined, any] = useState();
 
   const [pokeID, setPokeID]: any = useState(null);
 
@@ -285,7 +285,7 @@ const FormSelect = (props: {
       </div>
       <div className="element-top" style={{ height: 64 }}>
         {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length && (
-          <TypeInfo arr={currForm.form.types.map((type: { type: { name: string } }) => type.type.name)} />
+          <TypeInfo arr={currForm.form.types} />
         )}
       </div>
       <h4>

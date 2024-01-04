@@ -6,16 +6,17 @@ import TypeInfo from '../Sprites/Type/Type';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
+import { PokemonFormModify } from '../../core/models/API/form.model';
 
-const Info = (props: { data: { types: string[] }; currForm: { form: { id: number; types: { type: { name: string } }[] } } }) => {
+const Info = (props: { data: { types: string[] }; currForm: PokemonFormModify | undefined }) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
   const weatherEffective = useSelector((state: StoreState) => state.store.data?.weatherBoost ?? {});
 
-  const getWeatherEffective = (types: { type: { name: string } }[]) => {
+  const getWeatherEffective = (types: string[]) => {
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: any) => {
       types?.forEach((type) => {
-        if (value.includes(type.type.name?.toUpperCase()) && !data.includes(key)) {
+        if (value.includes(type?.toUpperCase()) && !data.includes(key)) {
           data.push(key);
         }
       });
@@ -23,7 +24,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
     return data;
   };
 
-  const getTypeEffective = (types: { type: { name: string } }[]) => {
+  const getTypeEffective = (types: string[]) => {
     const data: TypeEffChart = {
       very_weak: [],
       weak: [],
@@ -35,7 +36,7 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
     Object.entries(typeEffective).forEach(([key, value]: any) => {
       let valueEffective = 1;
       types?.forEach((type) => {
-        valueEffective *= value[type.type.name?.toUpperCase()];
+        valueEffective *= value[type?.toUpperCase()];
       });
       if (valueEffective >= 2.56) {
         data.very_weak?.push(key);
@@ -64,9 +65,9 @@ const Info = (props: { data: { types: string[] }; currForm: { form: { id: number
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={props.currForm ? props.currForm.form.types.map((ele) => ele.type.name) : []} style={{ marginLeft: 15 }} />
-      <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm ? props.currForm.form.types : [])} />
-      <TypeEffective typeEffective={getTypeEffective(props.currForm ? props.currForm.form.types : [])} />
+      <TypeInfo arr={props.currForm?.form.types ?? []} style={{ marginLeft: 15 }} />
+      <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm?.form.types ?? [])} />
+      <TypeEffective typeEffective={getTypeEffective(props.currForm?.form.types ?? [])} />
     </div>
   );
 };
