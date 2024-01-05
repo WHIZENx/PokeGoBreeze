@@ -29,6 +29,28 @@ interface EvolutionBranch {
   obEvolutionBranchRequiredMove?: string;
 }
 
+interface Encounter {
+  baseCaptureRate?: number;
+  baseFleeRate?: number;
+  collisionRadiusM: number;
+  collisionHeightM: number;
+  collisionHeadRadiusM: number;
+  movementType: string;
+  movementTimerS: number;
+  jumpTimeS: number;
+  attackTimerS: number;
+  attackProbability: number;
+  dodgeProbability: number;
+  dodgeDurationS: number;
+  dodgeDistance: number;
+  cameraDistance: number;
+  minPokemonActionFrequencyS: number;
+  maxPokemonActionFrequencyS: number;
+  obShadowFormBaseCaptureRate: number;
+  obShadowFormAttackProbability: number;
+  obShadowFormDodgeProbability: number;
+}
+
 export interface PokemonModel {
   obSpecialAttackMoves?: string[];
   eliteQuickMove?: string[];
@@ -48,27 +70,7 @@ export interface PokemonModel {
     cylinderHeightM: number;
     shoulderModeScale: number;
   };
-  encounter: {
-    baseCaptureRate?: number;
-    baseFleeRate?: number;
-    collisionRadiusM: number;
-    collisionHeightM: number;
-    collisionHeadRadiusM: number;
-    movementType: string;
-    movementTimerS: number;
-    jumpTimeS: number;
-    attackTimerS: number;
-    attackProbability: number;
-    dodgeProbability: number;
-    dodgeDurationS: number;
-    dodgeDistance: number;
-    cameraDistance: number;
-    minPokemonActionFrequencyS: number;
-    maxPokemonActionFrequencyS: number;
-    obShadowFormBaseCaptureRate: number;
-    obShadowFormAttackProbability: number;
-    obShadowFormDodgeProbability: number;
-  };
+  encounter: Encounter;
   stats: {
     baseStamina: number;
     baseAttack: number;

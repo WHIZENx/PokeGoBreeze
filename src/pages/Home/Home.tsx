@@ -56,7 +56,7 @@ const Home = () => {
   const [dataList, setDataList]: [PokemonHomeModel[], any] = useState([]);
   const [selectTypes, setSelectTypes]: [string[], any] = useState([]);
   const [listOfPokemon, setListOfPokemon]: [PokemonHomeModel[], any] = useState([]);
-  const [result, setResult]: any = useState([]);
+  const [result, setResult]: [PokemonHomeModel[], any] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollID = useRef(0);
@@ -160,7 +160,7 @@ const Home = () => {
           setListOfPokemon(result?.slice(0, subItem));
           setLoading(false);
         },
-        listOfPokemon > result ? listOfPokemon : result.length
+        listOfPokemon > result ? listOfPokemon.length : result.length
       );
       return () => clearTimeout(timeOutId);
     }

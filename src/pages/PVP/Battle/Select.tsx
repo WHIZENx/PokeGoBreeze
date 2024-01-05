@@ -12,6 +12,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { MAX_IV, MAX_LEVEL } from '../../../util/Constants';
 import { CombatPokemon } from '../../../core/models/combat.model';
+import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 
 const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }: any) => {
   const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
@@ -24,16 +25,16 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
   const [search, setSearch] = useState('');
 
   const [pokemon, setPokemon]: any = useState(null);
-  const [fMove, setFMove]: any = useState(null);
-  const [cMovePri, setCMovePri]: any = useState(null);
-  const [cMoveSec, setCMoveSec]: any = useState(null);
+  const [fMove, setFMove]: [SelectMoveModel | undefined, any] = useState();
+  const [cMovePri, setCMovePri]: [SelectMoveModel | undefined, any] = useState();
+  const [cMoveSec, setCMoveSec]: [SelectMoveModel | undefined, any] = useState();
 
-  const [pokemonIcon, setPokemonIcon]: any = useState(null);
-  const [score, setScore]: any = useState(null);
+  const [pokemonIcon, setPokemonIcon] = useState('');
+  const [score, setScore] = useState(0);
 
-  const selectPokemon = (value: { pokemon: PokemonDataModel | undefined; score: number; moveset?: any; speciesId: string }) => {
+  const selectPokemon = (value: { pokemon: PokemonDataModel | undefined; score: number; moveset?: string[]; speciesId: string }) => {
     clearData();
-    let [fMove, cMovePri, cMoveSec] = value.moveset;
+    let [fMove, cMovePri, cMoveSec] = value.moveset ?? [];
     setSearch(splitAndCapitalize(value.pokemon?.name, '-', ' '));
     setPokemonIcon(APIService.getPokeIconSprite(value.pokemon?.sprite ?? ''));
     setPokemon(value);
@@ -42,11 +43,11 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
       fMove = 'HIDDEN_POWER';
     }
 
-    let fmove: any = combat.find((item) => item.name === fMove);
-    if (value.moveset.at(0).includes('HIDDEN_POWER')) {
-      fmove = { ...fmove, type: value.moveset.at(0).split('_').at(2) };
+    const fMoveCombat = combat.find((item) => item.name === fMove);
+    if (fMoveCombat && value.moveset?.at(0)?.includes('HIDDEN_POWER')) {
+      fMoveCombat.type = value.moveset?.at(0)?.split('_').at(2) ?? '';
     }
-    setFMove(fmove);
+    setFMove(fMoveCombat);
 
     if (cMovePri === 'FUTURE_SIGHT') {
       cMovePri = 'FUTURESIGHT';
@@ -54,8 +55,8 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     if (cMovePri === 'TECHNO_BLAST_DOUSE') {
       cMovePri = 'TECHNO_BLAST_WATER';
     }
-    cMovePri = combat.find((item) => item.name === cMovePri);
-    setCMovePri(cMovePri);
+    const cMovePriCombat = combat.find((item) => item.name === cMovePri);
+    setCMovePri(cMovePriCombat);
 
     if (cMoveSec === 'FUTURE_SIGHT') {
       cMoveSec = 'FUTURESIGHT';
@@ -63,7 +64,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
     if (cMoveSec === 'TECHNO_BLAST_DOUSE') {
       cMoveSec = 'TECHNO_BLAST_WATER';
     }
-    cMoveSec = combat.find((item) => item.name === cMoveSec);
+    const cMoveSecCombat = combat.find((item) => item.name === cMoveSec);
     setCMoveSec(cMoveSec);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
@@ -107,13 +108,13 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
         currentStats: allStats[allStats.length - 1],
         bestStats: allStats[allStats.length - 1],
       },
-      fMove: fmove,
-      cMovePri,
-      cMoveSec,
+      fMove: fMoveCombat,
+      cMovePri: cMovePriCombat,
+      cMoveSec: cMoveSecCombat,
       audio: {
-        fMove: new Audio(APIService.getSoundMove(fmove.sound)),
-        cMovePri: new Audio(APIService.getSoundMove(cMovePri.sound)),
-        cMoveSec: new Audio(APIService.getSoundMove(cMoveSec.sound)),
+        fMove: new Audio(APIService.getSoundMove(fMoveCombat?.sound ?? '')),
+        cMovePri: new Audio(APIService.getSoundMove(cMovePriCombat?.sound ?? '')),
+        cMoveSec: new Audio(APIService.getSoundMove(cMoveSecCombat?.sound ?? '')),
       },
       shadow: value.speciesId.includes('_shadow'),
     });
@@ -154,13 +155,13 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
 
   const removePokemon = useCallback(() => {
     clearData();
-    setPokemonIcon(null);
+    setPokemonIcon('');
     setPokemon(null);
     setSearch('');
     setFMove(null);
     setCMovePri(null);
     setCMoveSec(null);
-    setScore(null);
+    setScore(0);
   }, [clearData]);
 
   const removeChargeMoveSec = () => {
@@ -250,7 +251,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                     }
                     return fmove;
                   })
-                  .filter((value: { name: string }) => value.name !== fMove.name)
+                  .filter((value: { name: string }) => value.name !== fMove?.name)
                   .map((value: any, index: React.Key) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
                       <CardMoveSmall value={value} />
@@ -311,7 +312,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                       }
                       return combat.find((item) => item.name === move);
                     })
-                    .filter((value: { name: string }) => value.name !== cMovePri.name && value.name !== cMoveSec.name)
+                    .filter((value: { name: string }) => value.name !== cMovePri?.name && value.name !== cMoveSec?.name)
                     .map((value: any, index: React.Key) => (
                       <div
                         className={'card-move ' + (pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
@@ -362,7 +363,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
           >
             <CardMoveSmall
               value={cMoveSec}
-              empty={cMoveSec === ''}
+              empty={!cMoveSec ? true : false}
               show={pokemon ? true : false}
               clearData={pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
               disable={pokemonBattle.disableCMoveSec}
@@ -383,7 +384,7 @@ const SelectPoke = ({ data, league, pokemonBattle, setPokemonBattle, clearData }
                       }
                       return combat.find((item) => item.name === move);
                     })
-                    .filter((value: { name: string }) => (cMoveSec === '' || value.name !== cMoveSec.name) && value.name !== cMovePri.name)
+                    .filter((value: { name: string }) => (!cMoveSec || value.name !== cMoveSec?.name) && value.name !== cMovePri?.name)
                     .map((value: any, index: React.Key) => (
                       <div
                         className="card-move"

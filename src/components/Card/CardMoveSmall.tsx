@@ -9,7 +9,7 @@ import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from '../Input/models/select-move.model';
 
 const CardMoveSmall = (props: {
-  value: SelectMoveModel;
+  value: SelectMoveModel | undefined;
   empty?: boolean;
   disable?: boolean;
   show?: boolean;
@@ -34,7 +34,7 @@ const CardMoveSmall = (props: {
                 height={18}
                 alt="type-logo"
                 style={{ marginRight: 10 }}
-                src={APIService.getTypeSprite(props.value ? capitalize(combat.find((item) => item.name === props.value.name)?.type) : '')}
+                src={APIService.getTypeSprite(props.value ? capitalize(combat.find((item) => item.name === props.value?.name)?.type) : '')}
               />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
               <span className="d-flex">

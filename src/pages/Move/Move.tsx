@@ -92,7 +92,7 @@ const Move = (props: { id?: number }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getWeatherEffective = (type: string) => {
-    const result = Object.entries(data?.weatherBoost ?? {})?.find(([, value]: any) => {
+    const result = Object.entries(data?.weatherBoost ?? {})?.find(([, value]) => {
       return value.includes(type?.toUpperCase());
     });
     return result && result.at(0);

@@ -34,6 +34,7 @@ import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
 import { CancelTokenSource } from 'axios';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 
 const Pokemon = (props: {
   prevRouter?: any;
@@ -60,24 +61,24 @@ const Pokemon = (props: {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [pokeData, setPokeData]: any = useState([]);
+  const [pokeData, setPokeData]: [PokemonInfo[], any] = useState([]);
   const [formList, setFormList]: [PokemonFormModify[][] | undefined, Dispatch<SetStateAction<PokemonFormModify[][] | undefined>>] =
     useState();
 
   const [reForm, setReForm] = useState(false);
 
-  const [data, setData]: any = useState(null);
+  const [data, setData]: [Species | undefined, any] = useState();
   const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
-  const [pokeRatio, setPokeRatio]: any = useState(null);
+  const [pokeRatio, setPokeRatio]: [PokemonDataModel | undefined, any] = useState();
 
-  const [version, setVersion]: any = useState(null);
-  const [region, setRegion] = useState(null);
-  const [WH, setWH]: any = useState({ weight: 0, height: 0 });
-  const [formName, setFormName]: any = useState(null);
-  const [form, setForm]: any = useState(null);
+  const [version, setVersion] = useState('');
+  const [region, setRegion] = useState('');
+  const [WH, setWH] = useState({ weight: 0, height: 0 });
+  const [formName, setFormName]: [string | undefined, any] = useState();
+  const [form, setForm]: [string | undefined, any] = useState();
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
-  const [defaultForm, setDefaultForm]: any = useState(true);
+  const [defaultForm, setDefaultForm]: [PokemonFormModify | undefined, any] = useState();
 
   const [costModifier, setCostModifier]: any = useState({
     purified: {
@@ -641,7 +642,7 @@ const Pokemon = (props: {
                       <td colSpan={2}>
                         {data && (
                           <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                            <b>{data.generation.name.split('-').at(1).toUpperCase()}</b>{' '}
+                            <b>{data?.generation.name.split('-').at(1)?.toUpperCase()}</b>{' '}
                             <span className="text-gen">({getNumGen(data.generation.url)})</span>
                           </h5>
                         )}
@@ -771,9 +772,9 @@ const Pokemon = (props: {
                     : ''
                   : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
               }
-              pokemonDetail={getPokemonDetails(data?.id, null)}
+              pokemonDetail={getPokemonDetails(data?.id ?? 0, null)}
             />
-            <PokemonModel id={data?.id} name={data?.name} />
+            <PokemonModel id={data?.id ?? 0} name={data?.name ?? ''} />
           </div>
         </Fragment>
       )}

@@ -22,6 +22,7 @@ import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN } from '../../../util/Constants';
 import { EvolutionModel } from '../../../core/models/evolution.model';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ const FindBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
-  const [form, setForm]: any = useState(null);
+  const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
   const [maxCP, setMaxCP] = useState(0);
 
   const [searchCP, setSearchCP] = useState('');
@@ -107,7 +108,7 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const isForm = form.form.form_name?.toUpperCase();
+      const isForm = form?.form.form_name?.toUpperCase() ?? '';
       let curr = dataStore?.evolution?.filter((item) => item.evo_list.find((i) => id === i.evo_to_id && isForm === i.evo_to_form));
       if (curr?.length === 0) {
         if (isForm === '') {
@@ -216,7 +217,7 @@ const FindBattle = () => {
           ' found in ' +
           name +
           ' ' +
-          splitAndCapitalize(form.form.form_name, '-', ' '),
+          splitAndCapitalize(form?.form.form_name, '-', ' '),
         { variant: 'success' }
       );
       setTimeout(() => {
@@ -231,8 +232,8 @@ const FindBattle = () => {
   }, []);
 
   const getImageList = (id: number) => {
-    const isForm = form.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form.form.form_name.replaceAll('-', '_').toUpperCase();
-    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form?.includes(isForm));
+    const isForm = form?.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form?.form.form_name.replaceAll('-', '_').toUpperCase();
+    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form?.includes(isForm ?? ''));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
     }
@@ -405,7 +406,7 @@ const FindBattle = () => {
                         />
                         <span className="caption text-black border-best-poke best-name">
                           <b>
-                            #{value.id} {splitAndCapitalize(value.name, '_', ' ')} {splitAndCapitalize(form.form.form_name, '-', ' ')}
+                            #{value.id} {splitAndCapitalize(value.name, '_', ' ')} {splitAndCapitalize(form?.form.form_name, '-', ' ')}
                           </b>
                         </span>
                       </div>
@@ -471,7 +472,7 @@ const FindBattle = () => {
                               <div>
                                 <b>
                                   #{item.id} {splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}{' '}
-                                  {splitAndCapitalize(form.form.form_name, '-', ' ')}
+                                  {splitAndCapitalize(form?.form.form_name, '-', ' ')}
                                 </b>
                               </div>
                             </Link>

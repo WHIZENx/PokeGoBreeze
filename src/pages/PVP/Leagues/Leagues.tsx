@@ -16,7 +16,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
-import { League } from '../../../core/models/league.model';
+import { League, PokemonRewardSetLeague } from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/Constants';
 
 const Leagues = () => {
@@ -110,10 +110,10 @@ const Leagues = () => {
     if (type === 'pokemon') {
       const result: any[] = [];
       setShow(true);
-      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? []).forEach((value: any) => {
+      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? {}).forEach((value: any) => {
         if (value.rank <= rank) {
           result.push(
-            ...value[track.toLowerCase()].map((item: { guaranteedLimited: boolean }) => {
+            ...value[track.toLowerCase()].map((item: PokemonRewardSetLeague) => {
               if (item.guaranteedLimited) {
                 return {
                   ...item,

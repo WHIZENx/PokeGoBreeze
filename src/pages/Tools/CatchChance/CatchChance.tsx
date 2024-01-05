@@ -29,6 +29,7 @@ import { convertName, LevelSlider, splitAndCapitalize } from '../../../util/Util
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
 
 const CatchChance = () => {
   const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
@@ -37,15 +38,15 @@ const CatchChance = () => {
   const CIRCLE_DISTANCE = 200;
 
   const [id, setId] = useState(searching ? searching.id : 1);
-  const [form, setForm]: any = useState(null);
+  const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [data, setData]: any = useState(null);
-  const [dataAdv, setDataAdv]: any = useState(null);
-  const [medal, setMedal]: any = useState(null);
+  const [data, setData]: any = useState();
+  const [dataAdv, setDataAdv]: any = useState();
+  const [medal, setMedal]: any = useState();
   const [level, setLevel] = useState(MIN_LEVEL);
   const [radius, setRadius] = useState(100);
   const [throwTitle, setThrowTitle]: any = useState({
@@ -141,25 +142,27 @@ const CatchChance = () => {
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
 
-    pokeballType.forEach((ball) => {
-      result[ball.name.toLowerCase().replace(' ball', '')] = {};
-      throwType.forEach((type) => {
-        const multiplier =
-          ball.threshold *
-          (((type.threshold.at(0) ?? 0) + type.threshold[1]) / 2) *
-          medalChance *
-          (curveBall ? CURVE_INC_CHANCE : 1) *
-          (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-          (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
-          (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
-        const prob = calculateCatchChance(
-          data?.obShadowFormBaseCaptureRate && options.shadow ? data?.obShadowFormBaseCaptureRate : data?.baseCaptureRate,
-          level,
-          multiplier
-        );
-        result[ball.name.toLowerCase().replace(' ball', '')][type.name.toLowerCase().replace(' throw', '')] = Math.min(prob * 100, 100);
+    if (data) {
+      pokeballType.forEach((ball) => {
+        result[ball.name.toLowerCase().replace(' ball', '')] = {};
+        throwType.forEach((type) => {
+          const multiplier =
+            ball.threshold *
+            (((type.threshold.at(0) ?? 0) + type.threshold[1]) / 2) *
+            medalChance *
+            (curveBall ? CURVE_INC_CHANCE : 1) *
+            (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
+            (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
+            (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
+          const prob = calculateCatchChance(
+            data.obShadowFormBaseCaptureRate && options.shadow ? data.obShadowFormBaseCaptureRate : data.baseCaptureRate ?? 0,
+            level,
+            multiplier
+          );
+          result[ball.name.toLowerCase().replace(' ball', '')][type.name.toLowerCase().replace(' throw', '')] = Math.min(prob * 100, 100);
+        });
       });
-    });
+    }
 
     setData({
       ...data,
@@ -167,7 +170,7 @@ const CatchChance = () => {
     });
   };
 
-  const findCatchCapture = (id: number, form: { form: { name: string } }) => {
+  const findCatchCapture = (id: number, form: PokemonFormModify) => {
     const pokemon = pokemonData.find((data) => data.id === id && data.name === convertName(form.form.name));
     if (!pokemon) {
       return setEncounter(false);
@@ -281,7 +284,7 @@ const CatchChance = () => {
       (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
       (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
       (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
-    const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
+    const prob = calculateCatchChance(data?.baseCaptureRate ?? 0, level, multiplier);
     const result = Math.min(prob * 100, 100);
     return result;
   };
@@ -322,7 +325,7 @@ const CatchChance = () => {
           {!encounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
-                <b>{splitAndCapitalize(convertName(form.form.name), '_', ' ')}</b> cannot be encountered.
+                <b>{splitAndCapitalize(convertName(form?.form.name), '_', ' ')}</b> cannot be encountered.
               </h5>
             </div>
           )}
@@ -591,7 +594,7 @@ const CatchChance = () => {
                 <tbody>
                   <tr className="text-center">
                     <td>Normal Throw</td>
-                    {Object.entries(data.result)
+                    {Object.entries(data?.result ?? {})
                       .reduce((p: number[], c: any) => [...p, c[1].normal], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -601,7 +604,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Nice Throw</td>
-                    {Object.entries(data.result)
+                    {Object.entries(data?.result ?? {})
                       .reduce((p: number[], c: any) => [...p, c[1].nice], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -611,7 +614,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Great Throw</td>
-                    {Object.entries(data.result)
+                    {Object.entries(data?.result ?? {})
                       .reduce((p: number[], c: any) => [...p, c[1].great], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -621,7 +624,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Excellent Throw</td>
-                    {Object.entries(data.result)
+                    {Object.entries(data?.result ?? {})
                       .reduce((p: number[], c: any) => [...p, c[1].excellent], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>

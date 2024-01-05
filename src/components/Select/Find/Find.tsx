@@ -47,7 +47,7 @@ const Find = (props: {
   const [id, setId] = useState(
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
   );
-  const [form, setForm] = useState(null);
+  const [form, setForm]: [string | undefined, any] = useState();
 
   const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
 

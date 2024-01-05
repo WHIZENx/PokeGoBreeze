@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { TrainerFriendship } from '../../../core/models/options.model';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { Combat } from '../../../core/models/combat.model';
 
 const labels: any = {
   0: {
@@ -51,7 +52,7 @@ const Damage = () => {
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
-  const [move, setMove]: any = useState(null);
+  const [move, setMove]: [Combat | undefined, any] = useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -147,11 +148,11 @@ const Damage = () => {
     });
   };
 
-  const onSetForm = (form: string) => {
+  const onSetForm = (form: PokemonFormModify) => {
     setForm(form);
   };
 
-  const onSetFormObj = (form: string) => {
+  const onSetFormObj = (form: PokemonFormModify) => {
     setFormObj(form);
   };
 
@@ -160,14 +161,14 @@ const Damage = () => {
       e.preventDefault();
       if (move) {
         const eff = {
-          stab: findStabType(form?.form.types ?? [], move.type),
+          stab: findStabType(form?.form.types ?? [], move.type ?? ''),
           wb: battleState.weather,
           dodge: battleState.dodge,
           mega: form?.form.form_name?.toUpperCase().includes(FORM_MEGA) ?? false,
           trainer: battleState.trainer,
           flevel: enableFriend ? battleState.flevel : 0,
           clevel: battleState.clevel,
-          effective: getTypeEffective(typeEff, move.type, formObj?.form.types),
+          effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types),
         };
         setResult((r: any) => ({
           ...r,
@@ -292,14 +293,16 @@ const Damage = () => {
                       - Move Ability Type: <b>{capitalize(move.type_move)}</b>
                     </p>
                     <p>
-                      - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
+                      - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
                     </p>
-                    {findStabType(form?.form.types ?? [], move.type)}
+                    {findStabType(form?.form.types ?? [], move.type ?? '')}
                     <p>
                       - Damage:{' '}
                       <b>
                         {move.pve_power}
-                        {findStabType(form?.form.types ?? [], move.type) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                        {findStabType(form?.form.types ?? [], move.type ?? '') && (
+                          <span className={'caption-small text-success'}> (x1.2)</span>
+                        )}
                       </b>
                     </p>
                   </div>

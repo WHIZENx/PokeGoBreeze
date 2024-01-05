@@ -300,7 +300,7 @@ export const TimeLineFit = (
     }): void;
     bind?: any;
   },
-  showTap: any,
+  showTap: boolean,
   hide = false
 ) => {
   const calculateFitPoint = (length: number, index: number) => {

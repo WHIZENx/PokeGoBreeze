@@ -107,7 +107,7 @@ const Form = ({
     species: { url: '' },
     types: [],
   });
-  const [pokeID, setPokeID]: any = useState(null);
+  const [pokeID, setPokeID] = useState(0);
   const [statATK, setStatATK]: any = useState(null);
   const [statDEF, setStatDEF]: any = useState(null);
   const [statSTA, setStatSTA]: any = useState(null);

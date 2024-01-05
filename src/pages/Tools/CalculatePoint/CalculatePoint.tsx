@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../../enums/move.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { Combat } from '../../../core/models/combat.model';
 
 const CalculatePoint = () => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
@@ -28,14 +29,14 @@ const CalculatePoint = () => {
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
   const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
-  const [move, setMove]: any = useState(null);
+  const [move, setMove]: [Combat | undefined, any] = useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [DEFIv, setDEFIv]: any = useState(0);
-  const [STAIv, setSTAIv]: any = useState(0);
+  const [DEFIv, setDEFIv] = useState(0);
+  const [STAIv, setSTAIv] = useState(0);
 
   const [weatherBoosts, setWeatherBoosts] = useState(false);
   const [pvpDmg, setPvpDmg] = useState(false);
@@ -51,7 +52,7 @@ const CalculatePoint = () => {
   const [idDef, setIdDef] = useState(searching && searching.obj ? searching.obj.id : 1);
   const [nameDef, setNameDef] = useState('Bulbasaur');
   const [formDef, setFormDef]: [PokemonFormModify | undefined, any] = useState();
-  const [moveDef, setMoveDef]: any = useState();
+  const [moveDef, setMoveDef]: [Combat | undefined, any] = useState();
 
   const [fMove, setFMove]: any = useState(null);
   const [cMove, setCMove]: any = useState(null);
@@ -95,11 +96,11 @@ const CalculatePoint = () => {
     }
   };
 
-  const onSetForm = (form: React.SetStateAction<null>) => {
+  const onSetForm = (form: PokemonFormModify) => {
     setForm(form);
   };
 
-  const onSetFormDef = (form: React.SetStateAction<null>) => {
+  const onSetFormDef = (form: PokemonFormModify) => {
     setFormDef(form);
   };
 
@@ -115,10 +116,10 @@ const CalculatePoint = () => {
           globalOptions,
           calculateStatsBattle(statATK, j, i, true),
           statDefDEF,
-          !isRaid && pvpDmg ? move.pvp_power : move.pve_power,
+          move ? (!isRaid && pvpDmg ? move.pvp_power : move.pve_power) : 0,
           {
-            effective: getTypeEffective(typeEff, move.type, formDef?.form.types ?? []),
-            stab: findStabType(form?.form.types ?? [], move.type),
+            effective: getTypeEffective(typeEff, move?.type ?? '', formDef?.form.types ?? []),
+            stab: findStabType(form?.form.types ?? [], move?.type ?? ''),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
           },
           false
@@ -148,10 +149,10 @@ const CalculatePoint = () => {
           globalOptions,
           statDefATK,
           calculateStatsBattle(statDEF, j, i, true),
-          !isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power,
+          moveDef ? (!isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power) : 0,
           {
-            effective: getTypeEffective(typeEff, moveDef.type, form?.form.types ?? []),
-            stab: findStabType(formDef?.form.types ?? [], moveDef.type),
+            effective: getTypeEffective(typeEff, moveDef?.type ?? '', form?.form.types ?? []),
+            stab: findStabType(formDef?.form.types ?? [], moveDef?.type ?? ''),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
           },
           false
@@ -394,14 +395,16 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(move.type_move)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
+                        - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
                       </p>
-                      {findStabType(form?.form.types ?? [], move.type)}
+                      {findStabType(form?.form.types ?? [], move.type ?? '')}
                       <p>
                         - Damage:{' '}
                         <b>
                           {move.pve_power}
-                          {findStabType(form?.form.types ?? [], move.type) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                          {findStabType(form?.form.types ?? [], move.type ?? '') && (
+                            <span className={'caption-small text-success'}> (x1.2)</span>
+                          )}
                         </b>
                       </p>
                     </div>
@@ -520,14 +523,14 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(moveDef.type_move)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={'type-icon-small ' + moveDef.type.toLowerCase()}>{capitalize(moveDef.type)}</span>
+                        - Move Type: <span className={'type-icon-small ' + moveDef.type?.toLowerCase()}>{capitalize(moveDef.type)}</span>
                       </p>
-                      {findStabType(formDef?.form.types ?? [], moveDef.type)}
+                      {findStabType(formDef?.form.types ?? [], moveDef?.type ?? '')}
                       <p>
                         - Damage:{' '}
                         <b>
                           {moveDef.pve_power}
-                          {findStabType(formDef?.form.types ?? [], moveDef.type) && (
+                          {findStabType(formDef?.form.types ?? [], moveDef?.type ?? '') && (
                             <span className={'caption-small text-success'}> (x1.2)</span>
                           )}
                         </b>
@@ -767,7 +770,7 @@ const CalculatePoint = () => {
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}
-                      onChange={(_, v) => setDEFIv(v)}
+                      onChange={(_, v) => setDEFIv(v as number)}
                     />
                     <div className="d-flex justify-content-between">
                       <b>STA</b>
@@ -782,7 +785,7 @@ const CalculatePoint = () => {
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}
-                      onChange={(_, v) => setSTAIv(v)}
+                      onChange={(_, v) => setSTAIv(v as number)}
                     />
                   </div>
                   <button

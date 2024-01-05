@@ -50,7 +50,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { PokemonDataModel, PokemonMoveData } from '../../../core/models/pokemon.model';
-import { CombatPokemon } from '../../../core/models/combat.model';
+import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { TypeMove } from '../../../enums/move.enum';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
@@ -76,11 +76,11 @@ const RaidBattle = () => {
 
   const [tier, setTier] = useState(1);
 
-  const [fMove, setFMove]: any = useState(null);
-  const [cMove, setCMove]: any = useState(null);
+  const [fMove, setFMove]: [Combat | undefined, any] = useState();
+  const [cMove, setCMove]: [Combat | undefined, any] = useState();
 
-  const [resultFMove, setResultFMove]: any = useState(null);
-  const [resultCMove, setResultCMove]: any = useState(null);
+  const [resultFMove, setResultFMove]: [Combat | undefined, any] = useState();
+  const [resultCMove, setResultCMove]: [Combat | undefined, any] = useState();
 
   const [options, setOptions] = useState({
     weatherBoss: false,
@@ -253,11 +253,11 @@ const RaidBattle = () => {
     setResultRaid(null);
   };
 
-  const onSetForm = (form: React.SetStateAction<null>) => {
+  const onSetForm = (form: PokemonFormModify) => {
     setForm(form);
   };
 
-  const onCopyPokemon = (index: string | number) => {
+  const onCopyPokemon = (index: number) => {
     setPokemonBattle(update(pokemonBattle, { $push: [pokemonBattle[index]] }));
   };
 
@@ -281,12 +281,13 @@ const RaidBattle = () => {
       let simpleMove: SelectMoveModel[] = [];
       if (resultFirst && (resultFirst.length === 1 || result == null)) {
         if (resultFirst.length === 0) {
-          setFMove('');
-          setResultFMove('');
-          setCMove('');
-          return setResultCMove('');
+          setFMove(null);
+          setResultFMove(null);
+          setCMove(null);
+          setResultCMove(null);
+          return;
         }
-        let simpleMove: any[] = [];
+        let simpleMove: SelectMoveModel[] = [];
         resultFirst.at(0)?.quickMoves.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
@@ -376,8 +377,8 @@ const RaidBattle = () => {
           atk: statBossATK,
           def: statBossDEF,
           hp: statBossHP,
-          fmove: data?.combat?.find((item) => item.name === fMove.name),
-          cmove: data?.combat?.find((item) => item.name === cMove.name),
+          fmove: data?.combat?.find((item) => item.name === fMove?.name),
+          cmove: data?.combat?.find((item) => item.name === cMove?.name),
           types: form?.form.types ?? [],
           WEATHER_BOOSTS: weatherBoss,
         };
@@ -531,8 +532,8 @@ const RaidBattle = () => {
         atk: statBossATK,
         def: statBossDEF,
         hp: Math.floor(HpRemain),
-        fmove: data?.combat?.find((item) => item.name === fMove.name),
-        cmove: data?.combat?.find((item) => item.name === cMove.name),
+        fmove: data?.combat?.find((item) => item.name === fMove?.name),
+        cmove: data?.combat?.find((item) => item.name === cMove?.name),
         types: form?.form.types ?? [],
         WEATHER_BOOSTS: weatherBoss,
       };
@@ -1054,7 +1055,7 @@ const RaidBattle = () => {
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
           <div className="element-top position-relative">
-            {(resultFMove === '' || resultCMove === '') && (
+            {(!resultFMove || !resultCMove) && (
               <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>
@@ -1145,7 +1146,7 @@ const RaidBattle = () => {
                 />
               </div>
             </div>
-            {resultFMove !== '' && resultCMove !== '' && (
+            {resultFMove && resultCMove && (
               <div className="text-center element-top">
                 <button className="btn btn-primary w-50" onClick={() => handleCalculate()}>
                   Search
@@ -1374,14 +1375,14 @@ const RaidBattle = () => {
                 <TypeInfo arr={form?.form.types ?? []} />
               </div>
               <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
-                <TypeBadge title="Fast Move" move={fMove} elite={fMove.elite} />
+                <TypeBadge title="Fast Move" move={fMove} elite={fMove?.elite} />
                 <TypeBadge
                   title="Charged Move"
                   move={cMove}
-                  elite={cMove.elite}
-                  shadow={cMove.shadow}
-                  purified={cMove.purified}
-                  special={cMove.special}
+                  elite={cMove?.elite}
+                  shadow={cMove?.shadow}
+                  purified={cMove?.purified}
+                  special={cMove?.special}
                 />
               </div>
               <hr />

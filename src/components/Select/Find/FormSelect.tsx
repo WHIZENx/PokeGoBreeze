@@ -53,12 +53,12 @@ const FormSelect = (props: {
   const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
   const [tier, setTier] = useState(props.tier ?? 1);
 
-  const [data, setData]: any = useState(null);
+  const [data, setData]: [Species | undefined, any] = useState();
   const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
 
   const [currForm, setCurrForm]: [PokemonFormModify | undefined, any] = useState();
 
-  const [pokeID, setPokeID]: any = useState(null);
+  const [pokeID, setPokeID] = useState(0);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -140,10 +140,10 @@ const FormSelect = (props: {
       setPokeID(data.id);
     } else if (isDefault) {
       setCurrForm(isDefault);
-      setPokeID(isDefault.form.id);
+      setPokeID(isDefault.form.id ?? 0);
     } else {
       setCurrForm(formDefault.at(0));
-      setPokeID(formDefault.at(0)?.form.id);
+      setPokeID(formDefault.at(0)?.form.id ?? 0);
     }
     const currentId = getPokemonById(props.pokemonName, data.id);
     if (currentId) {
@@ -284,7 +284,7 @@ const FormSelect = (props: {
         )}
       </div>
       <div className="element-top" style={{ height: 64 }}>
-        {currForm && pokeID && pokeData.length === data.varieties.length && formList.length === data.varieties.length && (
+        {currForm && pokeID && pokeData.length === data?.varieties.length && formList.length === data.varieties.length && (
           <TypeInfo arr={currForm.form.types} />
         )}
       </div>
