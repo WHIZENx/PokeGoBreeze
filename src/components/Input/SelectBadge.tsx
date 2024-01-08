@@ -3,15 +3,16 @@ import APIService from '../../services/API.service';
 import { priorityBadge } from '../../util/Compute';
 import { capitalize } from '../../util/Utils';
 
-const SelectBadge = ({ type, priority, setPriority }: any) => {
+// eslint-disable-next-line no-unused-vars
+const SelectBadge = (props: { type: string; priority: number; setPriority: (priority: number) => void }) => {
   const Badge = (text: string, type: string, priorityNumber: number) => {
     const spiritBadge = priorityBadge(priorityNumber);
 
     return (
       <div className="text-center">
         <div
-          className={'position-relative frame-badge' + (priority === priorityNumber ? ' frame-badge-select' : '')}
-          onClick={() => setPriority(priorityNumber)}
+          className={'position-relative frame-badge' + (props.priority === priorityNumber ? ' frame-badge-select' : '')}
+          onClick={() => props.setPriority(priorityNumber)}
         >
           <span style={{ width: 40 }}>
             <img alt="frame-type" className={'frame-type-sprit' + (priorityNumber === 4 ? ' filter-platinum' : '')} src={spiritBadge} />
@@ -30,16 +31,16 @@ const SelectBadge = ({ type, priority, setPriority }: any) => {
   return (
     <div className="w-100 element-top">
       <div className="d-flex justify-content-center align-items-center">
-        <div className={'type-icon-small ' + type.toLowerCase()} style={{ width: 'max-content' }}>
-          {capitalize(type)} Badge
+        <div className={'type-icon-small ' + props.type.toLowerCase()} style={{ width: 'max-content' }}>
+          {capitalize(props.type)} Badge
         </div>
       </div>
       <div className="d-flex flex-wrap justify-content-center align-items-center element-top" style={{ gap: 10 }}>
-        {Badge('None', type, 0)}
-        {Badge('Bronze', type, 1)}
-        {Badge('Silver', type, 2)}
-        {Badge('Gold', type, 3)}
-        {Badge('Platinum', type, 4)}
+        {Badge('None', props.type, 0)}
+        {Badge('Bronze', props.type, 1)}
+        {Badge('Silver', props.type, 2)}
+        {Badge('Gold', props.type, 3)}
+        {Badge('Platinum', props.type, 4)}
       </div>
     </div>
   );

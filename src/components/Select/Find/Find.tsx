@@ -10,22 +10,17 @@ import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.mo
 import loading from '../../../assets/loading.png';
 
 const Find = (props: {
-  // eslint-disable-next-line no-unused-vars
-  setId?: (arg0: number) => void;
-  // eslint-disable-next-line no-unused-vars
-  setName?: (arg0: any) => void;
+  setId?: React.Dispatch<React.SetStateAction<number>>;
+  setName?: React.Dispatch<React.SetStateAction<string>>;
   clearStats?: any;
-  // eslint-disable-next-line no-unused-vars
-  setStatATK?: (arg0: any) => void;
-  // eslint-disable-next-line no-unused-vars
-  setStatDEF?: (arg0: any) => void;
-  // eslint-disable-next-line no-unused-vars
-  setStatSTA?: (arg0: any) => void;
+  setStatATK?: React.Dispatch<React.SetStateAction<number>>;
+  setStatDEF?: React.Dispatch<React.SetStateAction<number>>;
+  setStatSTA?: React.Dispatch<React.SetStateAction<number>>;
   hide?: boolean;
   raid?: boolean;
-  setRaid?: any;
+  setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   tier?: number;
-  setTier?: any;
+  setTier?: React.Dispatch<React.SetStateAction<number>>;
   setForm?: any;
   urlEvo?: { url: string | null };
   setUrlEvo?: any;

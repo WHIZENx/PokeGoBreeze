@@ -12,6 +12,7 @@ import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { FORM_GALARIAN, FORM_STANDARD, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { CounterModel } from './models/counter.model';
+import { FormModel, PokemonFormModify } from '../../../core/models/API/form.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -76,7 +77,13 @@ const customStyles: TableStyles = {
   },
 };
 
-const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
+const Counter = (props: {
+  def: number;
+  form: FormModel | undefined;
+  currForm: PokemonFormModify | undefined;
+  pokeID: number;
+  isShadow: boolean | undefined;
+}) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -225,7 +232,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
   );
 
   useEffect(() => {
-    if ((currForm || currForm === undefined) && pokeID && form) {
+    if ((props.currForm || props.currForm === undefined) && props.pokeID && props.form) {
       loadMetaData();
     } else if (counterList.length > 0) {
       setCounterList([]);
@@ -234,7 +241,7 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
       clearTimeout(timeOutId);
       controller.abort();
     };
-  }, [pokeID, currForm, isShadow]);
+  }, [props.pokeID, props.currForm, props.isShadow]);
 
   const calculateCounter = () => {
     return new Promise((resolve, reject) => {
@@ -245,8 +252,8 @@ const Counter = ({ def, form, currForm, pokeID, isShadow }: any) => {
             data?.released ?? [],
             data?.typeEff,
             data?.weatherBoost,
-            def * (isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
-            form.types,
+            props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
+            props.form?.types ?? [],
             data?.combat ?? [],
             data?.pokemonCombat ?? []
           )

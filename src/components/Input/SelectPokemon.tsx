@@ -14,13 +14,10 @@ import { SelectMoveModel } from './models/select-move.model';
 
 const SelectPokemon = (props: {
   pokemon?: PokemonDataModel;
-  // eslint-disable-next-line no-unused-vars
-  setCurrentPokemon: (arg0: any) => void;
+  setCurrentPokemon: React.Dispatch<React.SetStateAction<PokemonDataModel | undefined>>;
   selected: boolean;
-  // eslint-disable-next-line no-unused-vars
-  setFMovePokemon: (arg0: any) => void;
-  // eslint-disable-next-line no-unused-vars
-  setCMovePokemon: (arg0: any) => void;
+  setFMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
+  setCMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
   clearData?: () => void;
   disable?: boolean;
   defaultSetting?: PokemonDataStats;
@@ -59,10 +56,10 @@ const SelectPokemon = (props: {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme ?? '', TypeMove.FAST) : null);
+        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme ?? '', TypeMove.FAST) : undefined);
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme ?? '', TypeMove.CHARGE) : null);
+        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme ?? '', TypeMove.CHARGE) : undefined);
       }
       if (props.clearData) {
         props.clearData();
@@ -74,13 +71,13 @@ const SelectPokemon = (props: {
     setPokemonIcon(null);
     setSearch('');
     if (props.setCurrentPokemon) {
-      props.setCurrentPokemon(null);
+      props.setCurrentPokemon(undefined);
     }
     if (props.setFMovePokemon) {
-      props.setFMovePokemon(null);
+      props.setFMovePokemon(undefined);
     }
     if (props.setCMovePokemon) {
-      props.setCMovePokemon(null);
+      props.setCMovePokemon(undefined);
     }
     if (props.clearData) {
       props.clearData();

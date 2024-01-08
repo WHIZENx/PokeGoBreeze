@@ -27,19 +27,18 @@ const FormSelect = (props: {
   tier?: number;
   id?: number;
   onClearStats?: any;
-  // eslint-disable-next-line no-unused-vars
-  setTier?: (arg0: any) => void;
+  setTier?: React.Dispatch<React.SetStateAction<number>>;
   onSetPrev?: () => void;
   onSetNext?: () => void;
   name: string;
   hide?: boolean;
-  // eslint-disable-next-line no-unused-vars
-  setRaid?: (arg0: boolean) => void;
+  setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   form?: string | null;
   setForm?: any;
   setFormOrigin?: any;
   stats: StatsModel;
-  onHandleSetStats?: any;
+  // eslint-disable-next-line no-unused-vars
+  onHandleSetStats?: (type: string, value: number) => void;
   data: PokemonDataModel[];
   setUrlEvo: any;
   objective?: boolean;

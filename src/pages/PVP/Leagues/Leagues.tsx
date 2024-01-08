@@ -138,9 +138,9 @@ const Leagues = () => {
     setShowData(null);
   };
 
-  const showAccording = (league: League, index: any, isOpened = false) => {
+  const showAccording = (league: League, index: number, isOpened = false) => {
     return (
-      <Accordion.Item key={index} eventKey={index}>
+      <Accordion.Item key={index} eventKey={index.toString()}>
         <Accordion.Header className={isOpened ? 'league-opened' : ''}>
           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
             <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />

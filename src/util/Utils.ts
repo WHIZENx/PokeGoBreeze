@@ -637,11 +637,11 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | CombatPokemon | un
   const eliteCinematicMoves = (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as CombatPokemon).eliteCinematicMoves ?? [];
   const specialMoves = (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as CombatPokemon).specialMoves ?? [];
   const allMoves = pokemon.quickMoves
-    .concat(pokemon.cinematicMoves)
-    .concat(eliteQuickMoves)
-    .concat(eliteCinematicMoves)
-    .concat(specialMoves);
-  if (allMoves.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
+    ?.concat(pokemon.cinematicMoves)
+    ?.concat(eliteQuickMoves)
+    ?.concat(eliteCinematicMoves)
+    ?.concat(specialMoves);
+  if (allMoves?.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
     return false;
   }
   return true;

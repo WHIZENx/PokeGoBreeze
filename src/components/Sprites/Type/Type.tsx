@@ -25,7 +25,7 @@ const TypeInfo = (props: {
     <div className={(props.block ? '' : 'element-top') + (props.shadow ? ' filter-shadow' : '')} style={props.style}>
       {props.text && <p>{props.text}</p>}
       <div className="d-inline-flex flex-wrap type-list align-items-center">
-        {props.arr?.map((value: string, index: React.Key) => (
+        {props.arr?.map((value, index) => (
           <div className="text-center d-flex" key={index}>
             {props.hideText ? (
               <img

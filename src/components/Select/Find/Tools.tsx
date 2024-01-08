@@ -13,11 +13,29 @@ import sta_logo from '../../../assets/stamina.png';
 import { capitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { PokemonInfo } from '../../../core/models/API/info.model';
+import { StatsModel, StatsPokemon } from '../../../core/models/stats.model';
 
-const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, onClearStats, raid, tier, setTier, hide }: any) => {
+const Tools = (props: {
+  id: number | undefined;
+  currForm: PokemonFormModify | undefined;
+  formList: PokemonFormModify[][];
+  dataPoke: PokemonInfo[];
+  stats: StatsModel;
+  setForm: any;
+  // eslint-disable-next-line no-unused-vars
+  onSetStats: ((type: string, value: number) => void) | undefined;
+  onClearStats: any;
+  raid: boolean;
+  tier: number;
+  // eslint-disable-next-line no-unused-vars
+  setTier: (tier: number) => void;
+  hide: boolean | undefined;
+}) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
-  const [currDataPoke, setCurrDataPoke]: any = useState(null);
-  const [currTier, setCurrTier] = useState(tier);
+  const [currDataPoke, setCurrDataPoke]: [StatsPokemon | undefined, any] = useState();
+  const [currTier, setCurrTier] = useState(props.tier);
 
   const [statATK, setStatATK]: any = useState(null);
   const [statDEF, setStatDEF]: any = useState(null);
@@ -35,87 +53,87 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
     (stats: any[], id: number) => {
       const filterId = stats.filter((item: { id: number }) => item.id === id);
       const filterForm = stats.find(
-        (item: { id: number; form: string }) => item.id === id && item.form !== 'a' && filterFormName(currForm.form.form_name, item.form)
+        (item: { id: number; form: string }) =>
+          item.id === id && item.form !== 'a' && filterFormName(props.currForm?.form.form_name ?? '', item.form)
       );
-      if (filterId.length === 1 && formList.length === 1 && !filterForm) {
+      if (filterId.length === 1 && props.formList.length === 1 && !filterForm) {
         return filterId.at(0);
-      } else if (filterId.length === formList.length && !filterForm) {
+      } else if (filterId.length === props.formList.length && !filterForm) {
         return stats.find((item: { id: number; form: string }) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       } else {
         return filterForm;
       }
     },
-    [currForm, filterFormName, formList.length]
+    [props.currForm, filterFormName, props.formList.length]
   );
 
   useEffect(() => {
-    if (parseInt(tier) > 5 && currForm && !currForm.form.form_name?.toUpperCase().includes(FORM_MEGA)) {
+    if (parseInt(props.tier.toString()) > 5 && !props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA)) {
       setCurrTier(5);
-      if (setTier) {
-        setTier(5);
+      if (props.setTier) {
+        props.setTier(5);
       }
     } else if (
-      parseInt(tier) === 5 &&
-      currForm &&
-      currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
-      pokemonData.find((item) => item.num === id)?.pokemonClass
+      parseInt(props.tier.toString()) === 5 &&
+      props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
+      pokemonData.find((item) => item.num === props.id)?.pokemonClass
     ) {
       setCurrTier(6);
-      if (setTier) {
-        setTier(6);
+      if (props.setTier) {
+        props.setTier(6);
       }
     }
-  }, [currForm, id, setTier, tier]);
+  }, [props.currForm, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
-    if (currForm && dataPoke) {
-      const formATK = filterFormList(stats.attack.ranking, id);
-      const formDEF = filterFormList(stats.defense.ranking, id);
-      const formSTA = filterFormList(stats.stamina.ranking, id);
-      const formProd = filterFormList(stats.statProd.ranking, id);
+    if (props.currForm && props.dataPoke) {
+      const formATK = filterFormList(props.stats.attack.ranking, props.id ?? 0);
+      const formDEF = filterFormList(props.stats.defense.ranking, props.id ?? 0);
+      const formSTA = filterFormList(props.stats.stamina.ranking, props.id ?? 0);
+      const formProd = filterFormList(props.stats.statProd.ranking, props.id ?? 0);
 
-      setStatATK(raid && tier && !hide ? { attack: calculateRaidStat(formATK?.attack, tier) } : formATK);
-      setStatDEF(raid && tier && !hide ? { defense: calculateRaidStat(formDEF?.defense, tier) } : formDEF);
-      setStatSTA(raid && tier && !hide ? { stamina: RAID_BOSS_TIER[tier]?.sta } : formSTA);
-      setStatProd(raid && tier && !hide ? null : formProd);
-      setCurrDataPoke(dataPoke.find((item: { id: number }) => item.id === id));
+      setStatATK(props.raid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack, props.tier) } : formATK);
+      setStatDEF(props.raid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense, props.tier) } : formDEF);
+      setStatSTA(props.raid && props.tier && !props.hide ? { stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA);
+      setStatProd(props.raid && props.tier && !props.hide ? null : formProd);
+      setCurrDataPoke(props.dataPoke.find((item) => item.id === props.id));
 
-      if (formATK && formDEF && formSTA) {
-        onSetStats('atk', raid && tier && !hide ? calculateRaidStat(formATK.attack, tier) : formATK.attack);
-        onSetStats('def', raid && tier && !hide ? calculateRaidStat(formDEF.defense, tier) : formDEF.defense);
-        onSetStats('sta', raid && tier && !hide ? RAID_BOSS_TIER[tier].sta : formSTA.stamina);
-        if (setForm) {
-          setForm(currForm);
+      if (props.onSetStats && formATK && formDEF && formSTA) {
+        props.onSetStats('atk', props.raid && props.tier && !props.hide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack);
+        props.onSetStats('def', props.raid && props.tier && !props.hide ? calculateRaidStat(formDEF.defense, props.tier) : formDEF.defense);
+        props.onSetStats('sta', props.raid && props.tier && !props.hide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
+        if (props.setForm) {
+          props.setForm(props.currForm);
         }
       }
     }
   }, [
     filterFormList,
-    currForm,
-    dataPoke,
-    id,
-    setForm,
-    stats.attack.ranking,
-    stats.defense.ranking,
-    stats.stamina.ranking,
-    raid,
-    tier,
-    hide,
+    props.currForm,
+    props.dataPoke,
+    props.id,
+    props.setForm,
+    props.stats.attack.ranking,
+    props.stats.defense.ranking,
+    props.stats.stamina.ranking,
+    props.raid,
+    props.tier,
+    props.hide,
   ]);
 
   return (
     <Fragment>
-      {raid ? (
+      {props.raid ? (
         <div className="element-top" style={{ marginBottom: 15 }}>
           <Form.Select
             className="w-100"
             onChange={(e) => {
-              setCurrTier(e.target.value);
-              if (setTier) {
-                setTier(e.target.value);
+              setCurrTier(parseInt(e.target.value));
+              if (props.setTier) {
+                props.setTier(parseInt(e.target.value));
               }
-              if (onClearStats) {
-                onClearStats(true);
+              if (props.onClearStats) {
+                props.onClearStats(true);
               }
             }}
             value={currTier}
@@ -123,15 +141,15 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
             <optgroup label="Normal Tiers">
               <option value={1}>Tier 1</option>
               <option value={3}>Tier 3</option>
-              {currForm && !currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) && <option value={5}>Tier 5</option>}
+              {!props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) && <option value={5}>Tier 5</option>}
             </optgroup>
             <optgroup label="Legacy Tiers">
               <option value={2}>Tier 2</option>
               <option value={4}>Tier 4</option>
             </optgroup>
-            {currForm && currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) && (
+            {props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) && (
               <Fragment>
-                {pokemonData.find((item) => item.num === id)?.pokemonClass ? (
+                {pokemonData.find((item) => item.num === props.id)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">
                     <option value={6}>Tier Mega</option>
                   </optgroup>
@@ -170,20 +188,20 @@ const Tools = ({ id, currForm, formList, dataPoke, stats, setForm, onSetStats, o
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={sta_logo} />
                   STA
                 </td>
-                <td className="text-center">{statSTA ? Math.floor(statSTA.stamina / RAID_BOSS_TIER[tier].CPm) : 0}</td>
+                <td className="text-center">{statSTA ? Math.floor(statSTA.stamina / RAID_BOSS_TIER[props.tier].CPm) : 0}</td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
                   HP
                 </td>
-                <td className="text-center">{RAID_BOSS_TIER[tier].sta}</td>
+                <td className="text-center">{RAID_BOSS_TIER[props.tier].sta}</td>
               </tr>
             </tbody>
           </table>
         </div>
       ) : (
-        <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} statProd={statProd} pokemonStats={stats} stats={currDataPoke} />
+        <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} statProd={statProd} pokemonStats={props.stats} stats={currDataPoke} />
       )}
     </Fragment>
   );

@@ -1,9 +1,9 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import './Hexagon.scss';
-import { StatsModel } from '../../../core/models/stats.model';
+import { HexagonStats } from '../../../core/models/stats.model';
 
-const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; animation: number; borderSize: number }) => {
+const Hexagon = (props: { defaultStats?: HexagonStats; stats: HexagonStats; size: number; animation: number; borderSize: number }) => {
   const canvasHex: any = useRef();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
@@ -43,12 +43,7 @@ const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; a
   );
 
   const drawStatsHex = useCallback(
-    (
-      ctx: CanvasRenderingContext2D,
-      center: { x: number; y: number },
-      stat: { switching: number; charger: number; closer: number; cons: number; atk: number; lead: number },
-      hexSize: number
-    ) => {
+    (ctx: CanvasRenderingContext2D, center: { x: number; y: number }, stat: HexagonStats, hexSize: number) => {
       const stats: any = {
         '0': ((stat.switching || 0) * hexSize) / 100,
         '1': ((stat.charger || 0) * hexSize) / 100,
@@ -85,7 +80,7 @@ const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; a
   };
 
   const drawHexagon = useCallback(
-    (stats: { switching: number; charger: number; closer: number; cons: number; atk: number; lead: number }) => {
+    (stats: HexagonStats) => {
       const hexBorderSize: number = props.size ?? 0;
       const hexSize: number = hexBorderSize / 2;
 
@@ -144,7 +139,7 @@ const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; a
       animateId.current = null;
     }
 
-    let initStats = {
+    let initStats: HexagonStats = {
       lead: 0,
       atk: 0,
       cons: 0,

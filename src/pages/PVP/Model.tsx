@@ -30,14 +30,15 @@ import CandyXL from '../../components/Sprites/Candy/CandyXL';
 import { StatsModel, StatsPokemon } from '../../core/models/stats.model';
 import { Asset } from '../../core/models/asset.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
-import { Combat } from '../../core/models/combat.model';
+import { Combat, CombatPokemon } from '../../core/models/combat.model';
 import { MAX_IV, MAX_LEVEL } from '../../util/Constants';
-import { PokemonVersus } from '../../core/models/pvp.model';
+import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
+import { PokemonBattleRanking } from './models/battle.model';
 
 export const Keys = (
   assets: Asset[],
   pokemonData: PokemonDataModel[],
-  data: { matchups: PokemonVersus[]; counters: PokemonVersus[] },
+  data: RankingsPVP | undefined,
   cp: string | undefined,
   type: string | undefined
 ) => {
@@ -123,32 +124,20 @@ export const Keys = (
   );
 };
 
-export const OverAllStats = (
-  data: {
-    scores: number[];
-    atk: { attack: number; rank: number } | undefined;
-    def: { defense: number; rank: number } | undefined;
-    sta: { stamina: number; rank: number } | undefined;
-    prod: { prod: number; rank: number } | undefined;
-    stats: StatsPokemon;
-    id: number;
-  },
-  statsRanking: StatsModel,
-  cp: number | string
-) => {
-  const calculateStatsTopRank = (stats: StatsPokemon) => {
+export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRanking: StatsModel, cp: number | string) => {
+  const calculateStatsTopRank = (stats: StatsPokemon | undefined) => {
     const maxCP = parseInt(cp.toString());
 
     if (maxCP === 10000) {
-      const cp = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
-      const buddyCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      const cp = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
+      const buddyCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
       const result: any = {};
       result[MAX_LEVEL - 1] = { cp: isNaN(cp) ? 0 : cp };
       result[MAX_LEVEL] = { cp: isNaN(buddyCP) ? 0 : buddyCP };
       return result;
     } else {
       let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-      let maxPokeCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      let maxPokeCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
       if (isNaN(maxPokeCP)) {
         maxPokeCP = 0;
       }
@@ -164,12 +153,12 @@ export const OverAllStats = (
           minCP = 2500;
         }
       }
-      const allStats = calStatsProd(stats?.atk, stats?.def, stats?.sta ?? 0, minCP, maxCP);
+      const allStats = calStatsProd(stats?.atk ?? 0, stats?.def ?? 0, stats?.sta ?? 0, minCP, maxCP);
       return allStats[allStats.length - 1];
     }
   };
 
-  const renderTopStats = (stats: StatsPokemon, id: number) => {
+  const renderTopStats = (stats: StatsPokemon | undefined, id: number) => {
     const maxCP = parseInt(cp.toString());
     const currStats: any = calculateStatsTopRank(stats);
     return (
@@ -209,7 +198,7 @@ export const OverAllStats = (
               borderSize={320}
               size={180}
               stats={{
-                lead: data?.scores.at(0),
+                lead: data?.scores.at(0) ?? 0,
                 atk: data?.scores[4],
                 cons: data?.scores[5],
                 closer: data?.scores[1],
@@ -231,7 +220,7 @@ export const OverAllStats = (
           <h5>
             <b>Top Rank League</b>
           </h5>
-          {renderTopStats(data?.stats, data?.id)}
+          {renderTopStats(data?.stats, data?.id ?? 0)}
         </div>
       </div>
     </div>
@@ -276,8 +265,13 @@ export const TypeEffective = (types: string[]) => {
 };
 
 export const MoveSet = (
-  moves: { fastMoves: { moveId: string; uses: number }[]; chargedMoves: { moveId: string; uses: number }[] },
-  combatList: { eliteQuickMoves: string[]; eliteCinematicMoves: string[]; specialMoves: string[] },
+  moves:
+    | {
+        chargedMoves: PokemonRankingMove[];
+        fastMoves: PokemonRankingMove[];
+      }
+    | undefined,
+  combatList: CombatPokemon | undefined,
   combatData: Combat[]
 ) => {
   const findArchetype = (archetype: string | string[]) => {
@@ -331,13 +325,13 @@ export const MoveSet = (
 
     let elite = false;
     let special = false;
-    if (combatList.eliteQuickMoves.includes(name)) {
+    if (combatList?.eliteQuickMoves.includes(name)) {
       elite = true;
     }
-    if (combatList.eliteCinematicMoves.includes(name)) {
+    if (combatList?.eliteCinematicMoves.includes(name)) {
       elite = true;
     }
-    if (combatList.specialMoves.includes(name)) {
+    if (combatList?.specialMoves.includes(name)) {
       special = true;
     }
 
@@ -434,9 +428,9 @@ export const MoveSet = (
               }
               return move;
             })
-            .sort((a, b) => b.uses - a.uses)
+            .sort((a, b) => (b.uses ?? 0) - (a.uses ?? 0))
             .map((value, index) => (
-              <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
+              <Fragment key={index}>{findMove(value.moveId, value.uses ?? 0)}</Fragment>
             ))}
         </div>
       </div>
@@ -456,9 +450,9 @@ export const MoveSet = (
               }
               return move;
             })
-            .sort((a, b) => b.uses - a.uses)
+            .sort((a, b) => (b.uses ?? 0) - (a.uses ?? 0))
             .map((value, index) => (
-              <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
+              <Fragment key={index}>{findMove(value.moveId, value.uses ?? 0)}</Fragment>
             ))}
         </div>
       </div>

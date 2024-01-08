@@ -34,7 +34,7 @@ import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
 import { CancelTokenSource } from 'axios';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { PokemonGenderRatio } from '../../core/models/pokemon.model';
 
 const Pokemon = (props: {
   prevRouter?: any;
@@ -69,13 +69,13 @@ const Pokemon = (props: {
 
   const [data, setData]: [Species | undefined, any] = useState();
   const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
-  const [pokeRatio, setPokeRatio]: [PokemonDataModel | undefined, any] = useState();
+  const [pokeRatio, setPokeRatio]: [PokemonGenderRatio | undefined, any] = useState();
 
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
   const [WH, setWH] = useState({ weight: 0, height: 0 });
-  const [formName, setFormName]: [string | undefined, any] = useState();
-  const [form, setForm]: [string | undefined, any] = useState();
+  const [formName, setFormName]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
+  const [form, setForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
   const [defaultForm, setDefaultForm]: [PokemonFormModify | undefined, any] = useState();
@@ -197,7 +197,7 @@ const Pokemon = (props: {
             false,
             `${p.name}-shadow`,
             'Pokémon-GO',
-            p.types ?? [],
+            p.types.map((item) => item.type.name) ?? [],
             null,
             -1 + -2 * index
           );
@@ -213,7 +213,7 @@ const Pokemon = (props: {
             true,
             `${p.name}-purified`,
             'Pokémon-GO',
-            p.types ?? [],
+            p.types.map((item) => item.type.name) ?? [],
             null,
             -2 * (index + 1)
           );
@@ -275,7 +275,7 @@ const Pokemon = (props: {
       const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data?.id, isDefaultForm?.form.form_name ?? ''), '-', '-') : null;
       setFormName(nameInfo);
       setReleased(checkReleased(data?.id, nameInfo ?? '', isDefaultForm?.form?.is_default));
-      setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
+      setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo ?? undefined);
       setDefaultForm(isDefaultForm);
       if (params.id) {
         document.title = `#${data?.id} - ${nameInfo}`;
@@ -300,7 +300,7 @@ const Pokemon = (props: {
           dispatch(showSpinner());
         }
         if (data?.id !== parseInt(id.toString())) {
-          setForm(null);
+          setForm(undefined);
         }
         axios
           .getPokeSpices(id, {
@@ -416,7 +416,7 @@ const Pokemon = (props: {
                     <Link
                       onClick={() => {
                         setReForm(false);
-                        setForm(null);
+                        setForm(undefined);
                       }}
                       className="d-flex justify-content-start align-items-center"
                       to={'/pokemon/' + dataStorePokemon?.prev?.id}
@@ -453,7 +453,7 @@ const Pokemon = (props: {
                     <Link
                       onClick={() => {
                         setReForm(false);
-                        setForm(null);
+                        setForm(undefined);
                       }}
                       className="d-flex justify-content-end align-items-center"
                       to={'/pokemon/' + dataStorePokemon?.next?.id}
@@ -490,11 +490,11 @@ const Pokemon = (props: {
                       className="d-flex justify-content-start align-items-center"
                       onClick={() => {
                         if (router?.action === 'POP') {
-                          setFormName(null);
+                          setFormName(undefined);
                           router.action = null as any;
                         }
                         props.onDecId();
-                        setForm(null);
+                        setForm(undefined);
                         if (props.first && props.setFirst) {
                           props.setFirst(false);
                         }
@@ -533,11 +533,11 @@ const Pokemon = (props: {
                       className="d-flex justify-content-end align-items-center"
                       onClick={() => {
                         if (router?.action === 'POP') {
-                          setFormName(null);
+                          setFormName(undefined);
                           router.action = null as any;
                         }
                         props.onIncId();
-                        setForm(null);
+                        setForm(undefined);
                         if (props.first && props.setFirst) {
                           props.setFirst(false);
                         }
@@ -577,7 +577,7 @@ const Pokemon = (props: {
               {!released && formName && (
                 <Alert variant="danger">
                   <h5 className="text-danger" style={{ margin: 0 }}>
-                    * <b>{splitAndCapitalize(convertName(formName.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}</b>{' '}
+                    * <b>{splitAndCapitalize(convertName(formName?.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}</b>{' '}
                     not released in Pokémon GO
                     <img
                       width={50}

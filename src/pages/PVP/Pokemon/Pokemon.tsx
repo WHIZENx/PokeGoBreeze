@@ -21,6 +21,7 @@ import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { CombatPokemon } from '../../../core/models/combat.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
+import { PokemonBattleRanking } from '../models/battle.model';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -38,8 +39,8 @@ const PokemonPVP = () => {
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
 
-  const [rankingPoke, setRankingPoke]: any = useState(null);
-  const statsRanking = useSelector((state: StatsState) => state.stats ?? undefined);
+  const [rankingPoke, setRankingPoke]: [PokemonBattleRanking | undefined, any] = useState();
+  const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
   useEffect(() => {
@@ -93,15 +94,15 @@ const PokemonPVP = () => {
         cMoveDataSec = 'TECHNO_BLAST_WATER';
       }
 
-      let fmove: any = dataStore?.combat?.find((item) => item.name === fmoveData);
+      let fmove = dataStore?.combat?.find((item) => item.name === fmoveData);
       const cmovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
       let cmoveSec;
       if (cMoveDataSec) {
         cmoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
       }
 
-      if (data?.moveset.at(0)?.includes('HIDDEN_POWER')) {
-        fmove = { ...fmove, type: data.moveset.at(0)?.split('_').at(2) };
+      if (fmove && data?.moveset.at(0)?.includes('HIDDEN_POWER')) {
+        fmove = { ...fmove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
       }
 
       const pokemonCombatResult = dataStore?.pokemonCombat?.filter(
@@ -302,7 +303,7 @@ const PokemonPVP = () => {
                         </b>
                       )}
                     </h3>
-                    <TypeInfo shadow={true} block={true} color={'white'} arr={rankingPoke?.pokemon.types} />
+                    <TypeInfo shadow={true} block={true} color={'white'} arr={rankingPoke?.pokemon?.types} />
                   </div>
                   <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
                     Recommend Moveset in PVP
@@ -314,7 +315,7 @@ const PokemonPVP = () => {
                       title="Fast Move"
                       color={'white'}
                       move={rankingPoke?.fmove}
-                      elite={rankingPoke?.combatPoke.eliteQuickMoves.includes(rankingPoke?.fmove.name)}
+                      elite={rankingPoke?.combatPoke?.eliteQuickMoves.includes(rankingPoke?.fmove?.name ?? '')}
                     />
                     <TypeBadge
                       grow={true}
@@ -322,10 +323,10 @@ const PokemonPVP = () => {
                       title="Primary Charged Move"
                       color={'white'}
                       move={rankingPoke?.cmovePri}
-                      elite={rankingPoke?.combatPoke.eliteCinematicMoves.includes(rankingPoke?.cmovePri.name)}
-                      shadow={rankingPoke?.combatPoke.shadowMoves.includes(rankingPoke?.cmovePri.name)}
-                      purified={rankingPoke?.combatPoke.purifiedMoves.includes(rankingPoke?.cmovePri.name)}
-                      special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cMovePri?.name)}
+                      elite={rankingPoke?.combatPoke?.eliteCinematicMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      shadow={rankingPoke?.combatPoke?.shadowMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      purified={rankingPoke?.combatPoke?.purifiedMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
                     />
                     {rankingPoke?.cmoveSec && (
                       <TypeBadge
@@ -334,9 +335,9 @@ const PokemonPVP = () => {
                         title="Secondary Charged Move"
                         color={'white'}
                         move={rankingPoke?.cmoveSec}
-                        elite={rankingPoke?.combatPoke.eliteCinematicMoves.includes(rankingPoke?.cmoveSec.name)}
-                        shadow={rankingPoke?.combatPoke.shadowMoves.includes(rankingPoke?.cmoveSec.name)}
-                        purified={rankingPoke?.combatPoke.purifiedMoves.includes(rankingPoke?.cmoveSec.name)}
+                        elite={rankingPoke?.combatPoke?.eliteCinematicMoves.includes(rankingPoke?.cmoveSec.name)}
+                        shadow={rankingPoke?.combatPoke?.shadowMoves.includes(rankingPoke?.cmoveSec.name)}
+                        purified={rankingPoke?.combatPoke?.purifiedMoves.includes(rankingPoke?.cmoveSec.name)}
                         special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cmoveSec?.name)}
                       />
                     )}
@@ -352,9 +353,9 @@ const PokemonPVP = () => {
             <div className="stats-container">{OverAllStats(rankingPoke, statsRanking, params.cp)}</div>
             <div className="container">
               <hr />
-              {TypeEffective(rankingPoke?.pokemon.types)}
+              {TypeEffective(rankingPoke?.pokemon?.types ?? [])}
             </div>
-            <div className="container">{MoveSet(rankingPoke?.data.moves, rankingPoke?.combatPoke, dataStore?.combat ?? [])}</div>
+            <div className="container">{MoveSet(rankingPoke?.data?.moves, rankingPoke?.combatPoke, dataStore?.combat ?? [])}</div>
           </div>
         </div>
       )}

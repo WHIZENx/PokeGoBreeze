@@ -27,3 +27,13 @@ export interface PokemonQueryRankMove {
   maxOff?: number;
   maxDef?: number;
 }
+
+export interface PokemonQueryCounter {
+  pokemon_id: number;
+  pokemon_name: string;
+  pokemon_forme: string | null;
+  releasedGO: boolean;
+  dps: number;
+  fmove: Combat;
+  cmove: Combat;
+}

@@ -49,6 +49,7 @@ import { TypeMove } from '../../../enums/move.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 
 const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
   const a = rowA.pokemon.name.toLowerCase();
@@ -236,11 +237,20 @@ const DpsTdo = () => {
 
   const [dpsTable, setDpsTable]: any = useState([]);
   const [dataFilter, setDataFilter]: any = useState([]);
-  const [searchTerm, setSearchTerm]: any = useState(optionStore?.dpsSheet?.searchTerm ?? '');
+  const [searchTerm, setSearchTerm] = useState(optionStore?.dpsSheet?.searchTerm ?? '');
 
-  const [dataTargetPokemon, setDataTargetPokemon]: any = useState(optionStore?.dpsSheet?.dataTargetPokemon);
-  const [fmoveTargetPokemon, setFmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.fmoveTargetPokemon);
-  const [cmoveTargetPokemon, setCmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.cmoveTargetPokemon);
+  const [dataTargetPokemon, setDataTargetPokemon]: [
+    PokemonDataModel | undefined,
+    React.Dispatch<React.SetStateAction<PokemonDataModel | undefined>>
+  ] = useState(optionStore?.dpsSheet?.dataTargetPokemon);
+  const [fmoveTargetPokemon, setFmoveTargetPokemon]: [
+    SelectMoveModel | undefined,
+    React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>
+  ] = useState(optionStore?.dpsSheet?.fmoveTargetPokemon);
+  const [cmoveTargetPokemon, setCmoveTargetPokemon]: [
+    SelectMoveModel | undefined,
+    React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>
+  ] = useState(optionStore?.dpsSheet?.cmoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1

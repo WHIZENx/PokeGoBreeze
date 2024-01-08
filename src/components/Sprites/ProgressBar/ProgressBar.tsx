@@ -16,10 +16,17 @@ const Fill = styled.div`
   border-radius: 3px;
 `;
 
-const ProgressBar = ({ height, value, maxValue, bgColor, color, style }: any) => {
+const ProgressBar = (props: {
+  height: number;
+  value: number | undefined;
+  maxValue: number;
+  bgColor: string;
+  color: string;
+  style?: React.CSSProperties;
+}) => {
   return (
-    <Bar style={style} height={height} bgColor={bgColor}>
-      <Fill style={{ width: `${(Math.max(1, value) * 100) / maxValue}%` }} height={height} color={color} />
+    <Bar style={props.style} height={props.height} bgColor={props.bgColor}>
+      <Fill style={{ width: `${(Math.max(1, props.value ?? 0) * 100) / props.maxValue}%` }} height={props.height} color={props.color} />
     </Bar>
   );
 };

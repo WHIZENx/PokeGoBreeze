@@ -16,7 +16,11 @@ export interface Details {
   pokemonClass: string | null;
   disableTransferToPokemonHome: boolean | null;
   isBaby: boolean;
-  formChange?: object | null;
+  formChange?: {
+    availableForm: string[];
+    candyCost: string;
+    stardustCost: string;
+  }[];
 }
 
 export class DetailsPokemonModel {
@@ -31,7 +35,11 @@ export class DetailsPokemonModel {
   pokemonClass!: string | null;
   disableTransferToPokemonHome!: boolean | null;
   isBaby!: boolean;
-  formChange?: object | null;
+  formChange?: {
+    availableForm: string[];
+    candyCost: string;
+    stardustCost: string;
+  }[];
 
   constructor() {
     this.id = 0;
@@ -39,7 +47,7 @@ export class DetailsPokemonModel {
     this.form = '';
     this.disableTransferToPokemonHome = false;
     this.isTransferable = false;
-    this.formChange = null;
+    this.formChange = [];
     this.pokemonClass = null;
     this.isTradable = false;
     this.releasedGO = false;

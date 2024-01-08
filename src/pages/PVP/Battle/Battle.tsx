@@ -42,6 +42,13 @@ import { Buff, Combat } from '../../../core/models/combat.model';
 import { PokemonBattle, PokemonBattleData, Timeline } from '../models/battle.model';
 import { StatsPokemon } from '../../../core/models/stats.model';
 
+interface OptionsBattle {
+  showTap: boolean;
+  timelineType: number;
+  duration: number;
+  league: number;
+}
+
 const Battle = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
@@ -57,7 +64,7 @@ const Battle = () => {
     duration: 1,
     league: params.cp ? parseInt(params.cp) : 500,
   });
-  const { showTap, timelineType, duration, league }: any = options;
+  const { showTap, timelineType, duration, league }: OptionsBattle = options;
 
   const timelineFit: any = useRef();
   const timelineNormal: any = useRef();

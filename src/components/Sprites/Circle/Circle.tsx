@@ -9,8 +9,8 @@ const Fill = styled.div`
   transition: 0.1s;
 `;
 
-const Circle = ({ line, color, size }: any) => {
-  return <Fill line={line} color={color} size={size} />;
+const Circle = (props: { line: number; size: number; color: string }) => {
+  return <Fill line={props.line} color={props.color} size={props.size} />;
 };
 
 export default Circle;

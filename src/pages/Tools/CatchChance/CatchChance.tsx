@@ -45,11 +45,18 @@ const CatchChance = () => {
   const [statSTA, setStatSTA] = useState(0);
 
   const [data, setData]: any = useState();
-  const [dataAdv, setDataAdv]: any = useState();
-  const [medal, setMedal]: any = useState();
+  const [dataAdv, setDataAdv] = useState({
+    result: 0,
+    ballName: '',
+    throwType: '',
+  });
+  const [medal, setMedal] = useState({
+    typePri: { priority: 0, type: '' },
+    typeSec: { priority: 0, type: '' },
+  });
   const [level, setLevel] = useState(MIN_LEVEL);
   const [radius, setRadius] = useState(100);
-  const [throwTitle, setThrowTitle]: any = useState({
+  const [throwTitle, setThrowTitle] = useState({
     title: 'Nice!',
     type: 'Nice Throw',
     threshold: NICE_THROW_INC_CHANCE,

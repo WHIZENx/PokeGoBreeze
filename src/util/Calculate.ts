@@ -1,3 +1,4 @@
+import { CounterModel } from '../components/Table/Counter/models/counter.model';
 import { findStatsPokeGO } from '../core/forms';
 import { Combat, CombatPokemon } from '../core/models/combat.model';
 import { Options } from '../core/models/options.model';
@@ -37,7 +38,7 @@ import {
   convertNameRankingToForm,
   checkMoveSetAvailable,
 } from './Utils';
-import { PokemonQueryMove, PokemonTopMove } from './models/pokemon-top-move.model';
+import { PokemonQueryCounter, PokemonQueryMove, PokemonTopMove } from './models/pokemon-top-move.model';
 
 const weatherMultiple = (globalOptions: Options | undefined, weatherBoost: any, weather: string, type: string) => {
   return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: string) => item === type?.toUpperCase().replaceAll(' ', '_'))
@@ -1566,7 +1567,7 @@ const queryMoveCounter = (
   globalOptions: Options | undefined,
   typeEff: TypeEff | undefined,
   weatherBoost: WeatherBoost | undefined,
-  dataList: any[],
+  dataList: PokemonQueryCounter[],
   combat: Combat[],
   pokemon: PokemonDataModel,
   stats: StatsPokemon,
@@ -1620,9 +1621,9 @@ const queryMoveCounter = (
   });
 };
 
-const sortCounterDPS = (data: any[]) => {
-  data = data.sort((a: { dps: number }, b: { dps: number }) => b.dps - a.dps);
-  return data.map((item) => ({ ...item, ratio: (item.dps * 100) / data.at(0).dps }));
+const sortCounterDPS = (data: PokemonQueryCounter[]) => {
+  data = data.sort((a, b) => b.dps - a.dps);
+  return data.map((item) => ({ ...item, ratio: (item.dps * 100) / (data.at(0)?.dps ?? 0) })) as CounterModel[];
 };
 
 export const counterPokemon = (
@@ -1635,7 +1636,7 @@ export const counterPokemon = (
   combat: Combat[],
   combatList: CombatPokemon[]
 ) => {
-  const dataList: any[] = [];
+  const dataList: PokemonQueryCounter[] = [];
   combatList.forEach((value) => {
     if (checkMoveSetAvailable(value) && !value.name.includes('_FEMALE')) {
       const pokemon = pokemonList.find((item) => {

@@ -13,41 +13,67 @@ import { useSelector } from 'react-redux';
 import { MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { StoreState } from '../../../store/models/state.model';
 
-const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setStatLvATK, setStatLvDEF, setStatLvSTA }: any) => {
+const StatsTable = (props: {
+  setStatType?: React.Dispatch<React.SetStateAction<string>>;
+  setStatLevel?: React.Dispatch<React.SetStateAction<number>>;
+  statATK: number;
+  statDEF: number;
+  statSTA: number;
+  setStatLvATK?: React.Dispatch<React.SetStateAction<number>>;
+  setStatLvDEF?: React.Dispatch<React.SetStateAction<number>>;
+  setStatLvSTA?: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
 
   const onHandleLevel = useCallback(
-    (_: any, v: any) => {
-      setStatLevel(v);
-      if (setStatLvATK) {
-        setStatLvATK(
-          calculateStatsBattle(statATK, MAX_IV, currStatLevel, false, currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1)
+    (_: Event, v: number | number[]) => {
+      if (props.setStatLevel) {
+        props.setStatLevel(v as number);
+      }
+      if (props.setStatLvATK) {
+        props.setStatLvATK(
+          calculateStatsBattle(props.statATK, MAX_IV, currStatLevel, false, currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1)
         );
       }
-      if (setStatLvDEF) {
-        setStatLvDEF(
-          calculateStatsBattle(statDEF, MAX_IV, currStatLevel, false, currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
+      if (props.setStatLvDEF) {
+        props.setStatLvDEF(
+          calculateStatsBattle(props.statDEF, MAX_IV, currStatLevel, false, currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
         );
       }
-      if (setStatLvSTA) {
-        setStatLvSTA(calculateStatsBattle(statSTA, MAX_IV, currStatLevel));
+      if (props.setStatLvSTA) {
+        props.setStatLvSTA(calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel));
       }
-      setCurrStatLevel(v);
+      setCurrStatLevel(v as number);
     },
-    [globalOptions, setStatLevel, setStatLvATK, setStatLvDEF, setStatLvSTA, statATK, statDEF, statSTA, currStatType, currStatLevel]
+    [
+      globalOptions,
+      props.setStatLevel,
+      props.setStatLvATK,
+      props.setStatLvDEF,
+      props.setStatLvSTA,
+      props.statATK,
+      props.statDEF,
+      props.statSTA,
+      currStatType,
+      currStatLevel,
+    ]
   );
 
   const onHandleType = useCallback(
     (v: string) => {
-      setStatType(v);
+      if (props.setStatLevel) {
+        props.setStatLevel(parseInt(v));
+      }
       setCurrStatType(v);
-      setStatLevel(1);
+      if (props.setStatLevel) {
+        props.setStatLevel(1);
+      }
       setCurrStatLevel(1);
     },
-    [setStatType, setStatLevel]
+    [props.setStatType, props.setStatLevel]
   );
 
   return (
@@ -116,7 +142,7 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
                 </td>
                 <td className="text-center">
                   {calculateStatsBattle(
-                    statATK,
+                    props.statATK,
                     MAX_IV,
                     currStatLevel,
                     true,
@@ -131,7 +157,7 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
                 </td>
                 <td className="text-center">
                   {calculateStatsBattle(
-                    statDEF,
+                    props.statDEF,
                     MAX_IV,
                     currStatLevel,
                     true,
@@ -144,7 +170,7 @@ const StatsTable = ({ setStatType, setStatLevel, statATK, statDEF, statSTA, setS
                   <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
                   HP
                 </td>
-                <td className="text-center">{calculateStatsBattle(statSTA, MAX_IV, currStatLevel, true)}</td>
+                <td className="text-center">{calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel, true)}</td>
               </tr>
             </tbody>
           </table>

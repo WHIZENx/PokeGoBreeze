@@ -1,3 +1,4 @@
+import { PokemonTeamData } from '../../pages/PVP/models/battle.model';
 import { Combat, CombatPokemon } from './combat.model';
 import { PokemonDataModel } from './pokemon.model';
 import { StatsPokemon } from './stats.model';
@@ -7,7 +8,7 @@ export interface PVPDataModel {
   trains: PVPInfo[];
 }
 
-interface PVPInfo {
+export interface PVPInfo {
   id: string;
   name: string;
   cp: number[];
@@ -53,6 +54,8 @@ interface Teams {
   games: number;
   team: string;
   teamScore: number;
+  teamData: PokemonTeamData[];
+  teamsTotalGames: number;
 }
 
 export interface RankingsPVP {
@@ -76,7 +79,7 @@ export interface PokemonVersus {
   rating: number;
 }
 
-interface PokemonRankingMove {
+export interface PokemonRankingMove {
   moveId: string;
   uses: number | null;
 }
@@ -106,4 +109,6 @@ export interface BattlePokemonData {
   pokemon: PokemonDataModel;
   id: number;
   form: string | null;
+  shadow?: boolean;
+  purified?: boolean;
 }

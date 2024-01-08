@@ -7,9 +7,10 @@ import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
+import { SelectMoveModel } from '../../Input/models/select-move.model';
 
 const TypeBadge = (props: {
-  move: Combat | undefined | null;
+  move: SelectMoveModel | Combat | null | undefined;
   find?: boolean;
   grow?: boolean;
   style?: React.CSSProperties | undefined;

@@ -49,7 +49,7 @@ import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { PokemonDataModel, PokemonMoveData } from '../../../core/models/pokemon.model';
+import { PokemonDataModel, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { TypeMove } from '../../../enums/move.enum';
@@ -221,21 +221,24 @@ const RaidBattle = () => {
     handleCloseSettingPokemon();
   };
 
-  const initDataPoke: any = {
-    dataTargetPokemon: null,
-    fmoveTargetPokemon: null,
-    cmoveTargetPokemon: null,
+  const initDataPoke: PokemonRaidModel = {
+    dataTargetPokemon: undefined,
+    fmoveTargetPokemon: undefined,
+    cmoveTargetPokemon: undefined,
   };
   const initTrainer = {
-    pokemons: [initDataPoke],
+    pokemons: [initDataPoke] as PokemonRaidModel[],
     trainerId: 1,
   };
 
   const [trainerBattle, setTrainerBattle] = useState([initTrainer]);
 
-  const [trainerBattleId, setTrainerBattleId]: any = useState(null);
-  const [pokemonBattle, setPokemonBattle]: any = useState([]);
-  const [tempPokemonBattle, setTempPokemonBattle]: any = useState([]);
+  const [trainerBattleId, setTrainerBattleId] = useState(0);
+  const [pokemonBattle, setPokemonBattle]: [PokemonRaidModel[], React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>] = useState(
+    [] as PokemonRaidModel[]
+  );
+  const [tempPokemonBattle, setTempPokemonBattle]: [PokemonRaidModel[], React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>] =
+    useState([] as PokemonRaidModel[]);
   const [countTrainer, setCountTrainer] = useState(1);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -503,28 +506,20 @@ const RaidBattle = () => {
     calculateTopBattle(false);
   };
 
-  const calculateDPSBattle = (
-    pokemon: {
-      fmoveTargetPokemon?: { name: string };
-      cmoveTargetPokemon?: { name: string };
-      dataTargetPokemon: PokemonDataModel;
-    },
-    HpRemain: number,
-    timer: number
-  ) => {
+  const calculateDPSBattle = (pokemon: PokemonRaidModel, HpRemain: number, timer: number) => {
     const fmove = data?.combat?.find((item) => item.name === pokemon.fmoveTargetPokemon?.name);
     const cmove = data?.combat?.find((item) => item.name === pokemon.cmoveTargetPokemon?.name);
 
     if (fmove && cmove) {
-      const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon.baseStats, pokemon.dataTargetPokemon.slug);
-      const statsGO = pokemon.dataTargetPokemon.stats ?? used;
+      const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
+      const statsGO = pokemon.dataTargetPokemon?.stats ?? used;
       const statsAttacker = {
         atk: calculateStatsBattle(stats.atk, statsGO.iv.atk * (statsGO.isShadow ? SHADOW_ATK_BONUS(data?.options) : 1), statsGO.level),
         def: calculateStatsBattle(stats.def, statsGO.iv.def * (statsGO.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1), statsGO.level),
         hp: calculateStatsBattle(stats?.sta ?? 0, statsGO.iv.sta ?? 0, statsGO.level),
         fmove,
         cmove,
-        types: pokemon.dataTargetPokemon.types,
+        types: pokemon.dataTargetPokemon?.types ?? [],
         shadow: false,
         WEATHER_BOOSTS: weatherCounter,
       };
@@ -624,8 +619,8 @@ const RaidBattle = () => {
         (pokemon: {
           dataTargetPokemon: PokemonDataModel;
           trainerId?: number;
-          fmoveTargetPokemon?: { name: string };
-          cmoveTargetPokemon?: { name: string };
+          fmoveTargetPokemon?: SelectMoveModel;
+          cmoveTargetPokemon?: SelectMoveModel;
         }) => {
           if (pokemon.dataTargetPokemon) {
             const stat = calculateDPSBattle(pokemon, dataList.summary.bossHp, timer);
@@ -1069,10 +1064,7 @@ const RaidBattle = () => {
                     <b>Fast Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={{
-                      num: id,
-                      forme: form?.form.form_name,
-                    }}
+                    pokemon={new PokemonDataModel(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
                     clearData={clearData}
                     move={fMove}
                     setMovePokemon={setFMove}
@@ -1086,10 +1078,7 @@ const RaidBattle = () => {
                     <b>Charged Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={{
-                      num: id,
-                      forme: form?.form.form_name,
-                    }}
+                    pokemon={new PokemonDataModel(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
                     clearData={clearData}
                     move={cMove}
                     setMovePokemon={setCMove}
@@ -1304,12 +1293,12 @@ const RaidBattle = () => {
                   <span className="d-flex ic-group">
                     <span
                       className={
-                        'ic-copy text-white ' + (trainer.pokemons.at(0).dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')
+                        'ic-copy text-white ' + (trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')
                       }
                       title="Copy"
                       style={{ marginRight: 5 }}
                       onClick={() => {
-                        if (trainer.pokemons.at(0).dataTargetPokemon) {
+                        if (trainer.pokemons.at(0)?.dataTargetPokemon) {
                           setCountTrainer(countTrainer + 1);
                           setTrainerBattle(
                             update(trainerBattle, {
@@ -1564,7 +1553,7 @@ const RaidBattle = () => {
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>
             {trainerBattleId !== null && (
               <Fragment>
-                {pokemonBattle.map((pokemon: PokemonDataModel, index: React.Key) => (
+                {pokemonBattle.map((pokemon, index) => (
                   <div className={'' + (index === 0 ? '' : 'element-top')} key={index}>
                     <PokemonRaid
                       controls={true}

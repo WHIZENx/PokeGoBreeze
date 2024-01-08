@@ -14,11 +14,11 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
-import { FormModel } from '../../../core/models/API/form.model';
+import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
 import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 
 const TableMove = (props: {
-  data: any;
+  data: PokemonDataForm;
   statATK: number;
   statDEF: number;
   statSTA: number;
@@ -65,7 +65,7 @@ const TableMove = (props: {
     const combatPoke = data?.pokemonCombat
       ?.filter((item) =>
         props.form?.id || props.form?.is_shadow || props.form?.is_purified
-          ? item.id === parseInt(props.data?.species.url.split('/').at(6))
+          ? item.id === parseInt(props.data?.url?.split('/').at(6) ?? '0')
           : item.name ===
             (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
       )
@@ -111,7 +111,7 @@ const TableMove = (props: {
       props.statATK * (props.form?.is_shadow ? SHADOW_ATK_BONUS(data?.options) : 1),
       props.statDEF * (props.form?.is_shadow ? SHADOW_DEF_BONUS(data?.options) : 1),
       props.statSTA,
-      props.data?.types.map((item: { type: { name: string } }) => capitalize(item?.type?.name ?? item))
+      props.data?.types.map((type) => capitalize(type))
     );
   };
 

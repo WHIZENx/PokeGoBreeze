@@ -167,7 +167,7 @@ const StatsRanking = () => {
 
   const [sortId, setSortId] = useState(9);
   const [pokemonList, setPokemonList]: [PokemonDataModel[], any] = useState([]);
-  const [pokemonFilter, setPokemonFilter]: [any[], any] = useState([]);
+  const [pokemonFilter, setPokemonFilter]: [PokemonDataModel[], any] = useState([]);
 
   const [select, setSelect]: any = useState(null);
 

@@ -22,12 +22,12 @@ const Fill: any = styled.div`
   mask: url(${bgCandyXL}) center/contain;
 `;
 
-const CandyXL = ({ id, style, size }: any) => {
+const CandyXL = (props: { id: number | undefined; style?: React.CSSProperties; size?: number }) => {
   const candy = useSelector((state: StoreState) => state.store.data?.candy);
   return (
-    <div className="position-relative d-inline-block" style={style}>
-      <Background id={id} candy={candy} size={size} />
-      <Fill id={id} candy={candy} size={size} />
+    <div className="position-relative d-inline-block" style={props.style}>
+      <Background id={props.id} candy={candy} size={props.size} />
+      <Fill id={props.id} candy={candy} size={props.size} />
     </div>
   );
 };

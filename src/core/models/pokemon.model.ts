@@ -2,6 +2,7 @@ import { capitalize, checkMoveSetAvailable } from '../../util/Utils';
 import { Combat } from './combat.model';
 import { genList } from '../../util/Constants';
 import { StatsPokemon } from './stats.model';
+import { SelectMoveModel } from '../../components/Input/models/select-move.model';
 
 export interface PokemonDataStats {
   level: number;
@@ -114,6 +115,11 @@ export interface PokemonModel {
   name: string;
 }
 
+export interface PokemonGenderRatio {
+  M: number;
+  F: number;
+}
+
 export interface PokemonDataModel {
   num: number;
   name: string;
@@ -121,10 +127,7 @@ export interface PokemonDataModel {
   slug: string;
   sprite: string;
   types: string[];
-  genderRatio: {
-    M: number;
-    F: number;
-  };
+  genderRatio: PokemonGenderRatio;
   baseStats: StatsPokemon;
   heightm: number;
   weightkg: number;
@@ -195,6 +198,12 @@ export interface PokemonEncounter {
   basefleerate: number;
 }
 
+export interface PokemonRaidModel {
+  dataTargetPokemon?: PokemonDataModel;
+  fmoveTargetPokemon?: SelectMoveModel;
+  cmoveTargetPokemon?: SelectMoveModel;
+}
+
 export class PokemonDataModel {
   num!: number;
   name!: string;
@@ -262,14 +271,14 @@ export class PokemonDataModel {
     };
     this.baseStatsGO = true;
     this.baseStats = {
-      atk: pokemon.stats.baseAttack,
-      def: pokemon.stats.baseDefense,
-      sta: pokemon.stats.baseStamina,
+      atk: pokemon.stats?.baseAttack,
+      def: pokemon.stats?.baseDefense,
+      sta: pokemon.stats?.baseStamina,
     };
     this.heightm = pokemon.pokedexHeightM;
     this.weightkg = pokemon.pokedexWeightKg;
     this.color = 'None';
-    this.evos = pokemon.evolutionIds ? pokemon.evolutionIds.map((name: string) => capitalize(name)) : [];
+    this.evos = pokemon.evolutionIds ? pokemon.evolutionIds.map((name) => capitalize(name)) : [];
     this.baseForme = null;
     this.prevo = capitalize(pokemon.parentPokemonId ?? '');
     this.isForceReleasedGO = checkMoveSetAvailable(pokemon);
@@ -288,5 +297,16 @@ export class PokemonDataModel {
       this.name.indexOf('_') > -1
         ? this.name.slice(this.name.indexOf('_') + 1).replaceAll('_', '-') + (this.num === 931 ? '-plumage' : '')
         : null;
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonModel {
+  id!: number;
+  name!: string;
+
+  constructor(id: number, name: string | undefined) {
+    this.id = id;
+    this.name = name ?? '';
   }
 }

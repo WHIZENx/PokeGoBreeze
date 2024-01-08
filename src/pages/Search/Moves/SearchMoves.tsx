@@ -10,15 +10,15 @@ import { TypeMove } from '../../../enums/move.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
 
-const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
+const nameSort = (rowA: Combat, rowB: Combat) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
   const b = rowB.name.toLowerCase().replaceAll(' plus', '+');
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const moveSort = (rowA: { type: string }, rowB: { type: string }) => {
-  const a = rowA.type.toLowerCase();
-  const b = rowB.type.toLowerCase();
+const moveSort = (rowA: Combat, rowB: Combat) => {
+  const a = rowA.type?.toLowerCase() ?? '';
+  const b = rowB.type?.toLowerCase() ?? '';
   return a === b ? 0 : a > b ? 1 : -1;
 };
 

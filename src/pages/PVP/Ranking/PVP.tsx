@@ -29,6 +29,7 @@ import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { CombatPokemon } from '../../../core/models/combat.model';
+import { PokemonBattleRanking } from '../models/battle.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -46,11 +47,11 @@ const RankingPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
   const params: any = useParams();
 
-  const [rankingData, setRankingData]: any = useState([]);
-  const [storeStats, setStoreStats]: any = useState(null);
+  const [rankingData, setRankingData]: [PokemonBattleRanking[], any] = useState([] as PokemonBattleRanking[]);
+  const [storeStats, setStoreStats]: [boolean[] | undefined, any] = useState();
   const [onLoadData, setOnLoadData] = useState(false);
   const sortedBy = useRef('score');
-  const [sorted, setSorted]: any = useState(1);
+  const [sorted, setSorted] = useState(1);
 
   const styleSheet: any = useRef(null);
 
@@ -86,7 +87,7 @@ const RankingPVP = () => {
       dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
-        let file: RankingsPVP[] = (
+        const file: RankingsPVP[] = (
           await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type), {
             cancelToken: APIService.getAxios().CancelToken.source().token,
           })
@@ -109,7 +110,7 @@ const RankingPVP = () => {
           }
                     ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
         }
-        file = file.map((item) => {
+        const filePVP = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
           let pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
 
@@ -145,15 +146,15 @@ const RankingPVP = () => {
             cMoveDataSec = 'TECHNO_BLAST_WATER';
           }
 
-          let fmove: any = dataStore?.combat?.find((item: { name: string }) => item.name === fmoveData);
-          const cmovePri = dataStore?.combat?.find((item: { name: string }) => item.name === cMoveDataPri);
+          let fmove = dataStore?.combat?.find((item) => item.name === fmoveData);
+          const cmovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
           let cmoveSec;
           if (cMoveDataSec) {
-            cmoveSec = dataStore?.combat?.find((item: { name: string }) => item.name === cMoveDataSec);
+            cmoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
           }
 
-          if (item.moveset.at(0)?.includes('HIDDEN_POWER')) {
-            fmove = { ...fmove, type: item.moveset.at(0)?.split('_').at(2) };
+          if (fmove && item.moveset.at(0)?.includes('HIDDEN_POWER')) {
+            fmove = { ...fmove, type: item.moveset.at(0)?.split('_').at(2) ?? '' };
           }
 
           const pokemonCombatResult = dataStore?.pokemonCombat?.filter(
@@ -168,7 +169,8 @@ const RankingPVP = () => {
           }
 
           return {
-            ...item,
+            data: item,
+            score: item.score,
             id,
             name,
             form,
@@ -188,7 +190,7 @@ const RankingPVP = () => {
               (cMoveDataSec && combatPoke?.purifiedMoves.includes(cMoveDataSec)),
           };
         });
-        setRankingData(file);
+        setRankingData(filePVP);
         setStoreStats(file.map(() => false));
         dispatch(hideSpinner());
       } catch (e: any) {
@@ -233,9 +235,9 @@ const RankingPVP = () => {
     dataStore?.assets,
   ]);
 
-  const renderItem = (data: any, key: string) => {
+  const renderItem = (data: PokemonBattleRanking, key: number) => {
     return (
-      <Accordion.Item eventKey={key}>
+      <Accordion.Item eventKey={key.toString()}>
         <Accordion.Header
           onClick={() => {
             if (storeStats && !storeStats[key]) {
@@ -244,7 +246,7 @@ const RankingPVP = () => {
           }}
         >
           <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
-            <Link to={`/pvp/${params.cp}/overall/${data.speciesId.replaceAll('_', '-')}`}>
+            <Link to={`/pvp/${params.cp}/overall/${data.name.replaceAll('_', '-')}`}>
               <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
             </Link>
             <div className="d-flex justify-content-center">
@@ -282,7 +284,7 @@ const RankingPVP = () => {
                         #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
                       </b>
                     </h3>
-                    <TypeInfo shadow={true} block={true} color={'white'} arr={data.pokemon.types} />
+                    <TypeInfo shadow={true} block={true} color={'white'} arr={data.pokemon?.types} />
                   </div>
                   <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
                     Recommend Moveset in PVP
@@ -294,7 +296,7 @@ const RankingPVP = () => {
                       title="Fast Move"
                       color={'white'}
                       move={data.fmove}
-                      elite={data.combatPoke.cinematicMoves.includes(data.fmove.name)}
+                      elite={data.combatPoke?.cinematicMoves.includes(data.fmove?.name ?? '')}
                     />
                     <TypeBadge
                       grow={true}
@@ -302,10 +304,10 @@ const RankingPVP = () => {
                       title="Primary Charged Move"
                       color={'white'}
                       move={data.cmovePri}
-                      elite={data.combatPoke.eliteCinematicMoves.includes(data.cmovePri.name)}
-                      shadow={data.combatPoke.shadowMoves.includes(data.cmovePri.name)}
-                      purified={data.combatPoke.purifiedMoves.includes(data.cmovePri.name)}
-                      special={data.combatPoke.specialMoves.includes(data.cMovePri?.name)}
+                      elite={data.combatPoke?.eliteCinematicMoves.includes(data.cmovePri?.name ?? '')}
+                      shadow={data.combatPoke?.shadowMoves.includes(data.cmovePri?.name ?? '')}
+                      purified={data.combatPoke?.purifiedMoves.includes(data.cmovePri?.name ?? '')}
+                      special={data.combatPoke?.specialMoves.includes(data.cmovePri?.name ?? '')}
                     />
                     {data.cmoveSec && (
                       <TypeBadge
@@ -314,15 +316,15 @@ const RankingPVP = () => {
                         title="Secondary Charged Move"
                         color={'white'}
                         move={data.cmoveSec}
-                        elite={data.combatPoke.eliteCinematicMoves.includes(data.cmoveSec.name)}
-                        shadow={data.combatPoke.shadowMoves.includes(data.cmoveSec.name)}
-                        purified={data.combatPoke.purifiedMoves.includes(data.cmoveSec.name)}
-                        special={data.combatPoke.specialMoves.includes(data.cMovePri?.name)}
+                        elite={data.combatPoke?.eliteCinematicMoves.includes(data.cmoveSec.name)}
+                        shadow={data.combatPoke?.shadowMoves.includes(data.cmoveSec.name)}
+                        purified={data.combatPoke?.purifiedMoves.includes(data.cmoveSec.name)}
+                        special={data.combatPoke?.specialMoves.includes(data.cmoveSec?.name)}
                       />
                     )}
                   </div>
                   <hr />
-                  {Keys(dataStore?.assets ?? [], dataStore?.pokemonData ?? [], data, params.cp, params.type)}
+                  {Keys(dataStore?.assets ?? [], dataStore?.pokemonData ?? [], data?.data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />
@@ -330,9 +332,9 @@ const RankingPVP = () => {
                 <div className="stats-container">{OverAllStats(data, statsRanking, params.cp)}</div>
                 <div className="container">
                   <hr />
-                  {TypeEffective(data.pokemon.types)}
+                  {TypeEffective(data.pokemon?.types ?? [])}
                 </div>
-                <div className="container">{MoveSet(data.moves, data.combatPoke, dataStore?.combat ?? [])}</div>
+                <div className="container">{MoveSet(data?.data?.moves, data.combatPoke, dataStore?.combat ?? [])}</div>
               </div>
               <LeaveToggle eventKey={key} />
             </Fragment>
@@ -421,7 +423,7 @@ const RankingPVP = () => {
                 className="text-center"
                 style={{ width: 'max-content' }}
                 onClick={() => {
-                  setSorted(!sorted);
+                  setSorted(sorted ? 0 : 1);
                 }}
               >
                 <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
@@ -434,15 +436,12 @@ const RankingPVP = () => {
           <Accordion alwaysOpen={true}>
             {rankingData
               .filter(
-                (pokemon: { speciesId: string; speciesName: string; id: number }) =>
-                  splitAndCapitalize(convertNameRankingToOri(pokemon.speciesId, pokemon.speciesName), '-', ' ')
-                    .toLowerCase()
-                    .includes(search.toLowerCase()) || pokemon.id.toString().includes(search)
+                (pokemon) =>
+                  splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
+                  pokemon.id?.toString().includes(search)
               )
-              .sort((a: { [x: string]: number }, b: { [x: string]: number }) =>
-                sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]
-              )
-              .map((value: any, index: string) => (
+              .sort((a: any, b: any) => (sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]))
+              .map((value, index) => (
                 <Fragment key={index}>{renderItem(value, index)}</Fragment>
               ))}
           </Accordion>

@@ -1,11 +1,12 @@
+import { SelectMoveModel } from '../../components/Input/models/select-move.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 
 export interface OptionDPSModel {
   filters: OptionFiltersDPS;
   options: OptionOtherDPS;
   dataTargetPokemon?: PokemonDataModel;
-  fmoveTargetPokemon?: DPSPokemonMove;
-  cmoveTargetPokemon?: DPSPokemonMove;
+  fmoveTargetPokemon?: SelectMoveModel;
+  cmoveTargetPokemon?: SelectMoveModel;
   selectTypes: string[];
   searchTerm: string;
   defaultPage: number;
@@ -51,11 +52,4 @@ interface OptionOtherDPS {
   TRAINER_FRIEND: boolean;
   POKEMON_FRIEND_LEVEL: number;
   POKEMON_DEF_OBJ: number;
-}
-
-interface DPSPokemonMove {
-  name: string;
-  elite: boolean;
-  shadow: boolean;
-  purified: boolean;
 }

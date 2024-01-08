@@ -1061,7 +1061,7 @@ export const optionDetailsPokemon = (
       if (item.pokemonClass) {
         result.pokemonClass = item.pokemonClass.replace('POKEMON_CLASS_', '');
       }
-      result.formChange = item.formChange ?? null;
+      result.formChange = item.formChange ?? [];
 
       const form = assets?.find((asset) => asset.id === result.id)?.image.find((img) => img.form === result.form);
 

@@ -6,17 +6,15 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_MEGA } from '../../../util/Constants';
-import { PokemonSprit } from '../../../core/models/API/form.model';
+import { FormModel, PokemonFormModify } from '../../../core/models/API/form.model';
 
-const Mega = (props: { formList: any[]; id: number }) => {
+const Mega = (props: { formList: PokemonFormModify[][]; id: number }) => {
   const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
-  const [arrEvoList, setArrEvoList]: any = useState([]);
+  const [arrEvoList, setArrEvoList]: [FormModel[], any] = useState([]);
 
   useEffect(() => {
     setArrEvoList(
-      props.formList
-        .filter((item: { form: { form_name: string } }[]) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA))
-        .map((item: { form: string }[]) => item.at(0)?.form)
+      props.formList.filter((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)).map((item) => item.at(0)?.form)
     );
   }, [props.formList]);
 
@@ -44,7 +42,7 @@ const Mega = (props: { formList: any[]; id: number }) => {
       </h4>
       <div className="mega-container scroll-evolution">
         <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
-          {arrEvoList.map((value: { name: string; sprites: PokemonSprit }, evo: React.Key) => (
+          {arrEvoList.map((value, evo) => (
             <li key={evo} className="img-form-gender-group li-evo" style={{ width: 'fit-content', height: 'fit-content' }}>
               <img
                 id="img-pokemon"
@@ -53,7 +51,7 @@ const Mega = (props: { formList: any[]; id: number }) => {
                 src={APIService.getPokeGifSprite(value.name)}
                 onError={(e: any) => {
                   e.onerror = null;
-                  e.target.src = `${value.sprites.front_default}`;
+                  e.target.src = `${value.sprites?.front_default}`;
                 }}
               />
               <div id="id-pokemon" style={{ color: 'black' }}>

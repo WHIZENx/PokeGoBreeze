@@ -38,3 +38,12 @@ export interface StatsPokemon {
   spd?: number;
   spe?: number;
 }
+
+export interface HexagonStats {
+  lead: number;
+  atk: number;
+  cons: number;
+  closer: number;
+  charger: number;
+  switching: number;
+}

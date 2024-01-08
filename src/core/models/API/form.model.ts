@@ -1,4 +1,4 @@
-import { Type } from './info.model';
+import { StatsPokemon } from '../stats.model';
 
 export interface PokemonSprit {
   back_default: string;
@@ -38,10 +38,6 @@ interface SlotType {
   type: Path;
 }
 
-interface TypeModify {
-  type: { name: string };
-}
-
 export interface FormModel {
   form_name: string;
   form_names: string[];
@@ -63,6 +59,12 @@ export interface PokemonFormModify {
   id?: number;
   name: string;
   form: FormModel;
+}
+
+export interface PokemonDataForm {
+  stats: StatsPokemon;
+  url: string | undefined;
+  types: string[];
 }
 
 export class PokemonFormModifyModel {
@@ -87,7 +89,7 @@ export class PokemonFormModifyModel {
     isPurified: boolean,
     fullFormName: string,
     version: string,
-    types: TypeModify[] | Type[],
+    types: string[],
     sprites: PokemonSprit | null = null,
     formId: number | null = null
   ) {
@@ -106,7 +108,7 @@ export class PokemonFormModifyModel {
       is_purified: isPurified,
       name: fullFormName,
       version_group: { name: version },
-      types: types.map((t) => t.type.name),
+      types,
       sprites,
     };
   }

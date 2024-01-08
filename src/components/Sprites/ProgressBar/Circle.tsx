@@ -58,33 +58,46 @@ const IconFill = styled.div`
   transition: 0.1s;
 `;
 
-const CircleBar = ({ text, type, size, moveEnergy, energy, maxEnergy, disable }: any) => {
-  energy = Math.min(energy, maxEnergy);
-  const fillCount = Math.min(Math.ceil(maxEnergy / moveEnergy), 3);
+const CircleBar = (props: {
+  text: string;
+  type: string | null | undefined;
+  size: number;
+  moveEnergy: number;
+  energy: number;
+  maxEnergy: number;
+  disable: boolean | undefined;
+}) => {
+  props.energy = Math.min(props.energy, props.maxEnergy);
+  const fillCount = Math.min(Math.ceil(props.maxEnergy / props.moveEnergy), 3);
 
   return (
     <div
       className="d-flex flex-column align-items-center justify-content-between"
-      style={{ rowGap: 10, color: disable ? ' red' : 'black' }}
+      style={{ rowGap: 10, color: props.disable ? ' red' : 'black' }}
     >
-      {text && (
+      {props.text && (
         <span className="text-center">
-          <b>{text}</b>
+          <b>{props.text}</b>
         </span>
       )}
-      <Circle size={size}>
+      <Circle size={props.size}>
         {[...Array(fillCount).keys()].map((index) => (
           <Fill
             key={index}
-            className={type.toLowerCase()}
-            size={size - 5}
-            moveEnergy={moveEnergy}
-            energy={energy - moveEnergy * index}
+            className={props.type?.toLowerCase()}
+            size={props.size - 5}
+            moveEnergy={props.moveEnergy}
+            energy={props.energy - props.moveEnergy * index}
             brightness={1 - index * 0.1}
           />
         ))}
-        <Icon size={size - 5} url={APIService.getTypeIcon(type)} />
-        <IconFill size={size - 5} energy={energy} moveEnergy={moveEnergy} url={APIService.getTypeIcon(type)} />
+        <Icon size={props.size - 5} url={APIService.getTypeIcon(props.type ?? '')} />
+        <IconFill
+          size={props.size - 5}
+          energy={props.energy}
+          moveEnergy={props.moveEnergy}
+          url={APIService.getTypeIcon(props.type ?? '')}
+        />
       </Circle>
     </div>
   );

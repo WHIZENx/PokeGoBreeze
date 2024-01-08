@@ -1,5 +1,6 @@
 import { Buff, Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { RankingsPVP } from '../../../core/models/pvp.model';
 import { StatsPokemon } from '../../../core/models/stats.model';
 
 export interface PokemonBattleData {
@@ -36,6 +37,7 @@ export interface PokemonBattle {
   timeline?: Timeline[];
   energy?: number;
   block?: number;
+  audio?: any;
 }
 
 export interface Timeline {
@@ -68,4 +70,54 @@ export interface PokemonTeamData {
   combatPoke: CombatPokemon | undefined;
   shadow: boolean;
   purified: boolean | undefined;
+}
+
+export interface PokemonBattleRanking {
+  data: RankingsPVP | undefined;
+  id: number;
+  name: string;
+  pokemon: PokemonDataModel | undefined;
+  form: string;
+  stats: StatsPokemon;
+  atk:
+    | {
+        id: number;
+        form: string;
+        attack: number;
+        rank: number;
+      }
+    | undefined;
+  def:
+    | {
+        id: number;
+        form: string;
+        defense: number;
+        rank: number;
+      }
+    | undefined;
+  sta:
+    | {
+        id: number;
+        form: string;
+        stamina: number;
+        rank: number;
+      }
+    | undefined;
+  prod:
+    | {
+        id: number;
+        form: string;
+        prod: number;
+        rank: number;
+      }
+    | undefined;
+  scores: number[];
+  score?: number;
+  combatPoke: CombatPokemon | undefined;
+  fmove: Combat | undefined;
+  cmovePri: Combat | undefined;
+  cmoveSec: Combat | undefined;
+  bestStats: any;
+  shadow: boolean;
+  purified: boolean;
 }
