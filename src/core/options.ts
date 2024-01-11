@@ -644,7 +644,7 @@ export const optionCombat = (data: any[], types: TypeEff) => {
     });
 
   const moveSet = data
-    .filter((item: { templateId: string | string[] }) => item.templateId.includes('COMBAT_V'))
+    .filter((item: { templateId: string }) => item.templateId.startsWith('COMBAT_V'))
     .map(
       (item: {
         data: {
