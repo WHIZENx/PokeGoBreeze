@@ -67,7 +67,7 @@ const CircleBar = (props: {
   maxEnergy: number;
   disable: boolean | undefined;
 }) => {
-  props.energy = Math.min(props.energy, props.maxEnergy);
+  const energy = Math.min(props.energy, props.maxEnergy);
   const fillCount = Math.min(Math.ceil(props.maxEnergy / props.moveEnergy), 3);
 
   return (
@@ -87,17 +87,12 @@ const CircleBar = (props: {
             className={props.type?.toLowerCase()}
             size={props.size - 5}
             moveEnergy={props.moveEnergy}
-            energy={props.energy - props.moveEnergy * index}
+            energy={energy - props.moveEnergy * index}
             brightness={1 - index * 0.1}
           />
         ))}
         <Icon size={props.size - 5} url={APIService.getTypeIcon(props.type ?? '')} />
-        <IconFill
-          size={props.size - 5}
-          energy={props.energy}
-          moveEnergy={props.moveEnergy}
-          url={APIService.getTypeIcon(props.type ?? '')}
-        />
+        <IconFill size={props.size - 5} energy={energy} moveEnergy={props.moveEnergy} url={APIService.getTypeIcon(props.type ?? '')} />
       </Circle>
     </div>
   );

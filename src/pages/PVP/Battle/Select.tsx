@@ -73,7 +73,7 @@ const SelectPoke = (props: {
       cMoveSec = 'TECHNO_BLAST_WATER';
     }
     const cMoveSecCombat = combat.find((item) => item.name === cMoveSec);
-    setCMoveSec(cMoveSec);
+    setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
     let minCP = props.league === 500 ? 0 : props.league === 1500 ? 500 : props.league === 2500 ? 1500 : 2500;

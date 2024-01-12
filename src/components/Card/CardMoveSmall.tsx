@@ -37,7 +37,7 @@ const CardMoveSmall = (props: {
                 style={{ marginRight: 10 }}
                 src={APIService.getTypeSprite(props.value ? capitalize(combat.find((item) => item.name === props.value?.name)?.type) : '')}
               />
-              <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
+              <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name?.replaceAll('_PLUS', '+'), '_', ' ')}</span>
               <span className="d-flex">
                 {props.value.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
                 {props.value.shadow && <span className="type-icon-small ic shadow-ic">Shadow</span>}
