@@ -32,7 +32,6 @@ const SelectPokemon = (props: {
   const [pokemonIcon, setPokemonIcon] = useState(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
   const [showPokemon, setShowPokemon] = useState(false);
   const [search, setSearch] = useState(props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : '');
-  const [currentPokemon, setCurrentPokemon] = useState(props.pokemon);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -57,10 +56,10 @@ const SelectPokemon = (props: {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(currentPokemon ? findMove(value.num, value.forme ?? '', TypeMove.FAST) : undefined);
+        props.setFMovePokemon(findMove(value.num, value.forme ?? '', TypeMove.FAST));
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(currentPokemon ? findMove(value.num, value.forme ?? '', TypeMove.CHARGE) : undefined);
+        props.setCMovePokemon(findMove(value.num, value.forme ?? '', TypeMove.CHARGE));
       }
       if (props.clearData) {
         props.clearData();
@@ -153,9 +152,6 @@ const SelectPokemon = (props: {
   useEffect(() => {
     setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
     setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
-    if (props.pokemon) {
-      setCurrentPokemon(props.pokemon);
-    }
   }, [props.pokemon]);
 
   return (
