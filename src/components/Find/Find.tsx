@@ -13,7 +13,8 @@ import { PokemonFormModify } from '../../core/models/API/form.model';
 const Find = (props: {
   setId?: React.Dispatch<React.SetStateAction<number>>;
   setName?: React.Dispatch<React.SetStateAction<string>>;
-  clearStats?: any;
+  // eslint-disable-next-line no-unused-vars
+  clearStats?: (reset?: boolean) => void;
   setStatATK?: React.Dispatch<React.SetStateAction<number>>;
   setStatDEF?: React.Dispatch<React.SetStateAction<number>>;
   setStatSTA?: React.Dispatch<React.SetStateAction<number>>;
@@ -176,7 +177,7 @@ const Find = (props: {
             aria-describedby="input-search"
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}
-            onKeyUp={(e: any) => setSearchTerm(e.target.value)}
+            onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
           />
         </div>
         <div className="result tools" onScroll={listenScrollEvent.bind(this)}>

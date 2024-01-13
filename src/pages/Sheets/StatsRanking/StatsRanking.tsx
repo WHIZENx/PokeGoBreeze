@@ -342,7 +342,7 @@ const StatsRanking = () => {
             className="form-control input-search"
             placeholder="Enter Name or ID"
             value={search}
-            onInput={(e: any) => setSearch(e.target.value)}
+            onInput={(e) => setSearch(e.currentTarget.value)}
           />
         </div>
         <FormControlLabel

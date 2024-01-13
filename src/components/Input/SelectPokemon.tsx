@@ -29,9 +29,10 @@ const SelectPokemon = (props: {
   const firstInit = 20;
   const eachCounter = 10;
 
-  const [pokemonIcon, setPokemonIcon] = useState(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : null);
+  const [pokemonIcon, setPokemonIcon] = useState(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
   const [showPokemon, setShowPokemon] = useState(false);
   const [search, setSearch] = useState(props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : '');
+  const [currentPokemon, setCurrentPokemon] = useState(props.pokemon);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -49,17 +50,17 @@ const SelectPokemon = (props: {
     if (iconName !== name) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
       setSearch(name);
-      if (!props.pokemon?.stats && props.defaultSetting) {
+      if (props.defaultSetting) {
         value.stats = props.defaultSetting;
       }
       if (props.setCurrentPokemon) {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(props.pokemon ? findMove(value.num, value.forme ?? '', TypeMove.FAST) : undefined);
+        props.setFMovePokemon(currentPokemon ? findMove(value.num, value.forme ?? '', TypeMove.FAST) : undefined);
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(props.pokemon ? findMove(value.num, value.forme ?? '', TypeMove.CHARGE) : undefined);
+        props.setCMovePokemon(currentPokemon ? findMove(value.num, value.forme ?? '', TypeMove.CHARGE) : undefined);
       }
       if (props.clearData) {
         props.clearData();
@@ -68,7 +69,7 @@ const SelectPokemon = (props: {
   };
 
   const removePokemon = () => {
-    setPokemonIcon(null);
+    setPokemonIcon(undefined);
     setSearch('');
     if (props.setCurrentPokemon) {
       props.setCurrentPokemon(undefined);
@@ -150,8 +151,11 @@ const SelectPokemon = (props: {
   );
 
   useEffect(() => {
-    setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : null);
+    setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
     setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
+    if (props.pokemon) {
+      setCurrentPokemon(props.pokemon);
+    }
   }, [props.pokemon]);
 
   return (
@@ -172,7 +176,7 @@ const SelectPokemon = (props: {
             onBlur={() => setShowPokemon(false)}
             value={search}
             type="text"
-            onInput={(e: any) => setSearch(e.target.value)}
+            onInput={(e) => setSearch(e.currentTarget.value)}
             placeholder="Enter Name or ID"
             style={{
               background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',

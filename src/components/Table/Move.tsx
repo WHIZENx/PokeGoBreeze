@@ -13,7 +13,7 @@ const Move = (props: {
   form: string;
   move: Combat | undefined;
   // eslint-disable-next-line no-unused-vars
-  setMove: (move: Combat | undefined) => void;
+  setMove: (move: Combat | undefined) => void | React.Dispatch<React.SetStateAction<Combat | undefined>>;
   text: string;
   selectDefault: boolean;
   // eslint-disable-next-line no-unused-vars

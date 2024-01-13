@@ -131,7 +131,7 @@ const Battle = () => {
           (move?.pvp_power ?? 0) *
           (poke.pokemon?.types.includes(move?.type ?? '') ? STAB_MULTIPLY(dataStore?.options) : 1) *
           (poke.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
-          getTypeEffective(dataStore?.typeEff, move?.type ?? '', pokeObj.pokemon?.types)) /
+          getTypeEffective(dataStore?.typeEff, move?.type ?? '', pokeObj.pokemon?.types ?? [])) /
         (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))
       );
     }
@@ -1037,7 +1037,7 @@ const Battle = () => {
   };
 
   const calculateStatPokemon = (
-    e: { preventDefault: () => void },
+    e: React.FormEvent<HTMLFormElement>,
     type: string,
     pokemon: PokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>
@@ -1186,7 +1186,7 @@ const Battle = () => {
             </b>
             <br />
             <form
-              onSubmit={(e: any) => {
+              onSubmit={(e) => {
                 calculateStatPokemon(e, type, pokemon, setPokemon);
               }}
             >
@@ -1309,19 +1309,19 @@ const Battle = () => {
                 type="number"
                 min={0}
                 max={100}
-                onInput={(e: any) => {
+                onInput={(e) => {
                   if (type === 'pokemonCurr') {
                     setPlayTimeline({
                       ...playTimeline,
-                      pokemonCurr: { ...playTimeline.pokemonCurr, energy: e.target.value ? parseInt(e.target.value) : 0 },
+                      pokemonCurr: { ...playTimeline.pokemonCurr, energy: e.currentTarget.value ? parseInt(e.currentTarget.value) : 0 },
                     });
                   } else if (type === 'pokemonObj') {
                     setPlayTimeline({
                       ...playTimeline,
-                      pokemonObj: { ...playTimeline.pokemonObj, energy: e.target.value ? parseInt(e.target.value) : 0 },
+                      pokemonObj: { ...playTimeline.pokemonObj, energy: e.currentTarget.value ? parseInt(e.currentTarget.value) : 0 },
                     });
                   }
-                  setPokemon({ ...pokemon, timeline: [], energy: e.target.value ? parseInt(e.target.value) : 0 });
+                  setPokemon({ ...pokemon, timeline: [], energy: e.currentTarget.value ? parseInt(e.currentTarget.value) : 0 });
                 }}
               />
             </div>
@@ -1533,7 +1533,7 @@ const Battle = () => {
                       <InputLabel>Speed</InputLabel>
                       <Select
                         value={duration}
-                        onChange={(e: any) => setOptions({ ...options, duration: parseFloat(e.target.value) })}
+                        onChange={(e) => setOptions({ ...options, duration: parseFloat(e.target.value.toString()) })}
                         label="Speed"
                       >
                         <MenuItem value={0.5}>x0.5</MenuItem>

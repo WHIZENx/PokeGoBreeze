@@ -355,7 +355,7 @@ const FindTable = () => {
                 aria-label="cp"
                 aria-describedby="input-cp"
                 placeholder="Enter CP"
-                onInput={(e: any) => setSearchCP(e.target.value)}
+                onInput={(e) => setSearchCP(e.currentTarget.value)}
               />
             </div>
             <div className="btn-search d-flex justify-content-center text-center">

@@ -10,22 +10,14 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import update from 'immutability-helper';
 import { TypeMove } from '../../enums/move.enum';
 import APIService from '../../services/API.service';
-import { PokemonDataModel, PokemonRaidModel } from '../../core/models/pokemon.model';
+import { PokemonDataModel, PokemonDataStats, PokemonRaidModel } from '../../core/models/pokemon.model';
 
 const PokemonRaid = (props: {
   id: number;
   pokemon: PokemonRaidModel;
   data: PokemonRaidModel[];
   setData: React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>;
-  defaultSetting: {
-    level: number;
-    isShadow: boolean;
-    iv: {
-      atk: number;
-      def: number;
-      sta: number;
-    };
-  };
+  defaultSetting: PokemonDataStats;
   controls: boolean;
   // eslint-disable-next-line no-unused-vars
   onCopyPokemon: (index: number) => void;
@@ -33,7 +25,7 @@ const PokemonRaid = (props: {
   onRemovePokemon: (index: number) => void;
   // eslint-disable-next-line no-unused-vars
   onOptionsPokemon: (index: number, pokemon: PokemonDataModel) => void;
-  clearData?: any;
+  clearData?: () => void;
 }) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
   const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(props.pokemon.fmoveTargetPokemon);
@@ -93,10 +85,13 @@ const PokemonRaid = (props: {
               <ContentCopyIcon sx={{ fontSize: 16 }} />
             </span>
             <span
-              className={'ic-remove-small text-white ' + (props.id > 0 ? 'bg-danger' : 'click-none bg-secondary')}
+              className={
+                'ic-remove-small text-white ' +
+                (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon) ? 'bg-danger' : 'click-none bg-secondary')
+              }
               title="Remove"
               onClick={() => {
-                if (props.id > 0) {
+                if (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon)) {
                   setDataTargetPokemon(props.data[props.id + 1]?.dataTargetPokemon);
                   setFmoveTargetPokemon(props.data[props.id + 1]?.fmoveTargetPokemon);
                   setCmoveTargetPokemon(props.data[props.id + 1]?.cmoveTargetPokemon);

@@ -180,7 +180,7 @@ const StatsTable = () => {
                 aria-label="cp"
                 aria-describedby="input-cp"
                 placeholder="Enter CP"
-                onInput={(e: any) => setSearchCP(e.target.value)}
+                onInput={(e) => setSearchCP(e.currentTarget.value)}
               />
             </div>
           </Box>
@@ -200,7 +200,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v: any) => setATKIv(v)}
+              onChange={(_, v) => setATKIv(v as number)}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -215,7 +215,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v: any) => setDEFIv(v)}
+              onChange={(_, v) => setDEFIv(v as number)}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -230,7 +230,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v: any) => setSTAIv(v)}
+              onChange={(_, v) => setSTAIv(v as number)}
             />
           </Box>
         </div>

@@ -5,7 +5,7 @@ import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
 import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 
-const Defender = (prop: { types: TypeEff | any }) => {
+const Defender = (prop: { types: TypeEff | undefined }) => {
   const theme = useTheme();
   const [types, setTypes] = useState([] as string[]);
 
@@ -27,7 +27,7 @@ const Defender = (prop: { types: TypeEff | any }) => {
       resist: [],
       neutral: [],
     };
-    Object.entries(prop.types).forEach(([key, value]: any) => {
+    Object.entries(prop.types ?? {}).forEach(([key, value]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= currentTypeSec === '' ? 1 : value[currentTypeSec];
@@ -49,7 +49,7 @@ const Defender = (prop: { types: TypeEff | any }) => {
   }, [currentTypePri, currentTypeSec, prop.types]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types).filter((item) => item !== currentTypePri && item !== currentTypeSec);
+    const results = Object.keys(prop.types ?? {}).filter((item) => item !== currentTypePri && item !== currentTypeSec);
     setTypes(results);
     getTypeEffective();
   }, [currentTypePri, currentTypeSec, getTypeEffective, prop.types]);

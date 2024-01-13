@@ -185,23 +185,17 @@ const Home = () => {
     return () => window.removeEventListener('scroll', onScroll as any);
   }, [listOfPokemon]);
 
-  const handleChangeGen = (event: SelectChangeEvent<any>) => {
-    const {
-      target: { value },
-    } = event;
+  const handleChangeGen = (event: SelectChangeEvent<number[]>) => {
     setFilters({
       ...filters,
-      gen: (value as any).sort((a: number, b: number) => a - b),
+      gen: (event.target.value as number[]).sort((a, b) => a - b),
     });
   };
 
-  const handleChangeVersion = (event: SelectChangeEvent<any>) => {
-    const {
-      target: { value },
-    } = event;
+  const handleChangeVersion = (event: SelectChangeEvent<number[]>) => {
     setFilters({
       ...filters,
-      version: (value as any).sort((a: number, b: number) => a - b),
+      version: (event.target.value as number[]).sort((a, b) => a - b),
     });
   };
 
@@ -284,7 +278,7 @@ const Home = () => {
                     className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
-                    onKeyUp={(e: any) => setSearchTerm(e.target.value)}
+                    onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
                   />
                 </div>
                 <div className="d-flex flex-wrap" style={{ paddingLeft: 8, paddingRight: 8 }}>

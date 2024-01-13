@@ -113,7 +113,6 @@ const Leagues = () => {
   const [show, setShow] = useState(false);
 
   const handleShow = (type: string | boolean | undefined, track: string, step: number) => {
-    const data: any = {};
     if (type === 'pokemon') {
       const result: any[] = [];
       setShow(true);
@@ -132,12 +131,15 @@ const Leagues = () => {
           );
         }
       });
-      data.data = result.sort((a, b) => a.id - b.id);
-      data.step = step;
-      data.track = track.toLowerCase();
-      data.type = type;
+      setShowData({
+        data: result.sort((a, b) => a.id - b.id),
+        step,
+        track: track.toLowerCase(),
+        type,
+      });
+    } else {
+      setShowData(undefined);
     }
-    setShowData(data);
   };
 
   const handleClose = () => {
@@ -625,7 +627,7 @@ const Leagues = () => {
           className="form-control input-search"
           placeholder="Enter League Name"
           defaultValue={search}
-          onKeyUp={(e: any) => setSearch(e.target.value)}
+          onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>
       <Accordion alwaysOpen={true}>{leagueFilter.map((value, index) => showAccording(value, index))}</Accordion>

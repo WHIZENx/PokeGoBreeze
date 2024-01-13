@@ -13,7 +13,7 @@ import { Combat } from '../../core/models/combat.model';
 const SelectMove = (props: {
   move: SelectMoveModel | Combat | undefined;
   setMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
-  clearData?: any;
+  clearData?: () => void;
   pokemon: PokemonDataModel | undefined;
   moveType: string;
   inputType?: string;

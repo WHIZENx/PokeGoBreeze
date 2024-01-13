@@ -154,7 +154,7 @@ const Move = (props: { id?: number }) => {
             <Form.Select
               style={{ maxWidth: 250 }}
               className="element-top w-50"
-              onChange={(e: any) => {
+              onChange={(e) => {
                 searchParams.set('type', e.target.value.toLowerCase());
                 setSearchParams(searchParams);
                 setMove(data?.combat?.find((item) => item.track === move?.track && item.type === e.target.value?.toUpperCase()));

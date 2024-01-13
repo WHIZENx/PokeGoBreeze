@@ -57,12 +57,12 @@ import { PokemonQueryCounter, PokemonQueryMove, PokemonTopMove } from './models/
 import { ArrayStats } from './models/util.model';
 
 const weatherMultiple = (globalOptions: Options | undefined, weatherBoost: any, weather: string, type: string) => {
-  return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')].find((item: string) => item === type?.toUpperCase().replaceAll(' ', '_'))
+  return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')]?.find((item: string) => item === type?.toUpperCase().replaceAll(' ', '_'))
     ? STAB_MULTIPLY(globalOptions)
     : 1;
 };
 
-export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj: any) => {
+export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj: string[]) => {
   let valueEffective = 1;
   typesObj.forEach((type: any) => {
     try {
@@ -279,10 +279,7 @@ export const calculateDuelAbility = (dmgOutput: number, tanki: number) => {
 export const calculateCatchChance = (baseCaptureRate: number, level: number, multiplier: number) => {
   return (
     1 -
-    Math.pow(
-      Math.max(0, 1 - baseCaptureRate / (2 * (data as any).find((data: { level: number }) => data.level === level).multiplier)),
-      multiplier
-    )
+    Math.pow(Math.max(0, 1 - baseCaptureRate / (2 * ((data as CPM[])?.find((data) => data.level === level)?.multiplier ?? 0))), multiplier)
   );
 };
 
@@ -315,7 +312,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
               sta: k,
               level: l,
               percent: parseFloat((((i + j + k) * 100) / 45).toFixed(2)),
-              hp: Math.min(1, Math.floor((sta + k) * (data as any).find((item: { level: number }) => item.level === l).multiplier)),
+              hp: Math.min(1, Math.floor((sta + k) * ((data as CPM[]).find((item) => item.level === l)?.multiplier ?? 0))),
             });
           }
         }
@@ -342,7 +339,7 @@ export const predictCPList = (
     predictArr.push({
       level: i,
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i),
-      hp: Math.min(1, Math.floor((sta + IVsta) * (data as any).find((item: { level: number }) => item.level === i).multiplier)),
+      hp: Math.min(1, Math.floor((sta + IVsta) * ((data as CPM[]).find((item) => item.level === i)?.multiplier ?? 0))),
     });
   }
   return new PredictCPCalculate(IVatk, IVdef, IVsta, predictArr);
@@ -363,7 +360,7 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
 };
 
 export const calculateStatsBattle = (base: number, iv: number, level: number, floor = false, addition = false) => {
-  let result: number = (base + iv) * (data as any).find((item: { level: number }) => item.level === level).multiplier;
+  let result: number = (base + iv) * ((data as CPM[]).find((item) => item.level === level)?.multiplier ?? 0);
   if (addition) {
     result *= +addition;
   }
@@ -836,8 +833,8 @@ export const calculateBattleDPSDefender = (
     (FPowDef ?? 0) *
     FMultiDef *
     (Defender.shadow ? ShadowAtkBonus : 1) *
-    (typeof Defender.WEATHER_BOOSTS === 'string'
-      ? weatherMultiple(globalOptions, weatherBoost, Defender.WEATHER_BOOSTS, FTYPEDef)
+    (Defender.WEATHER_BOOSTS !== ''
+      ? weatherMultiple(globalOptions, weatherBoost, Defender.WEATHER_BOOSTS ?? '', FTYPEDef)
       : Defender.WEATHER_BOOSTS
       ? StabMultiply
       : 1);
@@ -846,9 +843,9 @@ export const calculateBattleDPSDefender = (
     (CPowDef ?? 0) *
     CMultiDef *
     (Defender.shadow ? ShadowAtkBonus : 1) *
-    (typeof Defender.WEATHER_BOOSTS === 'string'
-      ? weatherMultiple(globalOptions, weatherBoost, Defender.WEATHER_BOOSTS, CTYPEDef)
-      : Defender.WEATHER_BOOSTS
+    (Defender.WEATHER_BOOSTS !== ''
+      ? weatherMultiple(globalOptions, weatherBoost, Defender.WEATHER_BOOSTS ?? '', CTYPEDef)
+      : Boolean(Defender.WEATHER_BOOSTS)
       ? StabMultiply
       : 1);
 

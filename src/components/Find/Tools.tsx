@@ -27,7 +27,8 @@ const Tools = (props: {
   setForm: ((form: PokemonFormModify | undefined) => void) | undefined;
   // eslint-disable-next-line no-unused-vars
   onSetStats: ((type: string, value: number) => void) | undefined;
-  onClearStats: any;
+  // eslint-disable-next-line no-unused-vars
+  onClearStats: ((reset?: boolean) => void) | undefined;
   raid: boolean;
   tier: number;
   // eslint-disable-next-line no-unused-vars

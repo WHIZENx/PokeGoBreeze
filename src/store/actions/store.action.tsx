@@ -64,12 +64,12 @@ const options = {
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
   try {
     APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options).then((res: { data: { url: string }[] }) => {
-      APIService.getFetchUrl(res.data.at(0)?.url ?? '', options).then((file: { data: { files: { filename: string }[] | any[] } }) => {
+      APIService.getFetchUrl(res.data.at(0)?.url ?? '', options).then((file: { data: { files: { filename: string }[] } }) => {
         dispatch({
           type: LOAD_LOGO_POKEGO,
           payload: file.data.files
-            ?.find((item: { filename: string }) => item.filename.includes('Images/App Icons/'))
-            .filename.replace('Images/App Icons/', '')
+            ?.find((item) => item.filename.includes('Images/App Icons/'))
+            ?.filename.replace('Images/App Icons/', '')
             .replace('.png', ''),
         });
       });
@@ -402,7 +402,7 @@ export const loadPVP = (dispatch: Dispatch, setStateTimestamp: any, stateTimesta
           APIService.getFetchUrl(pvpRootPath?.url + '', options).then((pvpFolder: { data: { tree: { path: string; url: string }[] } }) => {
             const pvpFolderPath = pvpFolder.data.tree.find((item) => item.path === 'data');
 
-            APIService.getFetchUrl(pvpFolderPath?.url + '?recursive=1', options).then((pvp: { data: { tree: any[] } }) => {
+            APIService.getFetchUrl(pvpFolderPath?.url + '?recursive=1', options).then((pvp: { data: { tree: { path: string }[] } }) => {
               const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
               const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 

@@ -47,7 +47,7 @@ const labels: any = {
 
 const Damage = () => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
-  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff ?? {});
+  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
@@ -146,7 +146,7 @@ const Damage = () => {
           trainer: battleState.trainer,
           flevel: enableFriend ? battleState.flevel : 0,
           clevel: battleState.clevel,
-          effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types),
+          effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types ?? []),
         };
         setResult((r) => ({
           ...r,
@@ -311,13 +311,12 @@ const Damage = () => {
                     />
                     <LevelRating
                       disabled={!enableFriend}
-                      onChange={(e: any, value) => {
+                      onChange={(_, value) => {
                         setBattleState({
                           ...battleState,
-                          [e.target.name]: value,
+                          flevel: value ?? 0,
                         });
                       }}
-                      name="flevel"
                       defaultValue={0}
                       max={4}
                       size="large"

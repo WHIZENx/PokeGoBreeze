@@ -167,7 +167,7 @@ const Calculate = () => {
                   aria-label="cp"
                   aria-describedby="input-cp"
                   placeholder="Enter CP"
-                  onInput={(e: any) => setSearchCP(e.target.value)}
+                  onInput={(e) => setSearchCP(e.currentTarget.value)}
                 />
               </div>
             </Box>

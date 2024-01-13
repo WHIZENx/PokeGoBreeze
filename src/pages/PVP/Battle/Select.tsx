@@ -225,7 +225,7 @@ const SelectPoke = (props: {
           onClick={() => setShow(true)}
           onBlur={() => setShow(false)}
           type="text"
-          onInput={(e: any) => setSearch(e.target.value)}
+          onInput={(e) => setSearch(e.currentTarget.value)}
           placeholder="Enter Name"
           style={{
             background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',

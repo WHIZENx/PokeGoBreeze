@@ -371,7 +371,7 @@ const DpsTdo = () => {
           cmove,
           types: pokemon.types,
           shadow,
-          WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? false,
+          WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? '',
           POKEMON_FRIEND: options.TRAINER_FRIEND,
           POKEMON_FRIEND_LEVEL: options.POKEMON_FRIEND_LEVEL,
         };
@@ -386,7 +386,7 @@ const DpsTdo = () => {
             fmove: data?.combat?.find((item) => item.name === fmoveTargetPokemon.name),
             cmove: data?.combat?.find((item) => item.name === cmoveTargetPokemon.name),
             types: dataTargetPokemon.types,
-            WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? false,
+            WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? '',
           };
 
           if (!statsDefender) {
@@ -752,7 +752,7 @@ const DpsTdo = () => {
                     className="form-control input-search"
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
-                    onKeyUp={(e: any) => setSearchTerm(e.target.value)}
+                    onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
                   />
                 </div>
                 <div className="d-flex col-md-3">
@@ -1010,11 +1010,11 @@ const DpsTdo = () => {
                   min={0}
                   disabled={!enableDelay}
                   required={enableDelay}
-                  onInput={(e: any) =>
+                  onInput={(e) =>
                     setOptions({
                       ...options,
                       delay: {
-                        ftime: parseInt(e.target.value),
+                        ftime: parseInt(e.currentTarget.value),
                         ctime: options.delay?.ctime ?? 0,
                       },
                     })
@@ -1030,12 +1030,12 @@ const DpsTdo = () => {
                   min={0}
                   disabled={!enableDelay}
                   required={enableDelay}
-                  onInput={(e: any) =>
+                  onInput={(e) =>
                     setOptions({
                       ...options,
                       delay: {
                         ftime: options.delay?.ftime ?? 0,
-                        ctime: parseInt(e.target.value),
+                        ctime: parseInt(e.currentTarget.value),
                       },
                     })
                   }
@@ -1052,7 +1052,7 @@ const DpsTdo = () => {
                     min={MIN_IV}
                     max={MAX_IV}
                     required={true}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setFilters({
                         ...filters,
                         IV_ATK: e.target.value ? parseInt(e.target.value) : 0,
@@ -1070,7 +1070,7 @@ const DpsTdo = () => {
                     min={MIN_IV}
                     max={MAX_IV}
                     required={true}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setFilters({
                         ...filters,
                         IV_DEF: e.target.value ? parseInt(e.target.value) : 0,
@@ -1088,7 +1088,7 @@ const DpsTdo = () => {
                     min={MIN_IV}
                     max={MAX_IV}
                     required={true}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setFilters({
                         ...filters,
                         IV_HP: e.target.value ? parseInt(e.target.value) : 0,
@@ -1104,7 +1104,7 @@ const DpsTdo = () => {
                     style={{ borderRadius: 0 }}
                     className="form-control"
                     defaultValue={POKEMON_LEVEL}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setFilters({
                         ...filters,
                         POKEMON_LEVEL: e.target.value ? parseInt(e.target.value) : 0,
@@ -1128,10 +1128,10 @@ const DpsTdo = () => {
                     min={1}
                     disabled={dataTargetPokemon ? true : false}
                     required={true}
-                    onInput={(e: any) =>
+                    onInput={(e) =>
                       setOptions({
                         ...options,
-                        POKEMON_DEF_OBJ: e.target.value ? parseInt(e.target.value) : 0,
+                        POKEMON_DEF_OBJ: parseInt(e.currentTarget.value),
                       })
                     }
                     name="POKEMON_DEF_OBJ"
@@ -1143,14 +1143,14 @@ const DpsTdo = () => {
                     style={{ borderRadius: 0 }}
                     className="form-control"
                     defaultValue={String(WEATHER_BOOSTS)}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setOptions({
                         ...options,
-                        WEATHER_BOOSTS: e.target.value === 'true' ? true : e.target.value === 'false' ? false : e.target.value,
+                        WEATHER_BOOSTS: e.target.value,
                       })
                     }
                   >
-                    <option value="false">Extream</option>
+                    <option value="">Extream</option>
                     {Object.keys(data?.weatherBoost ?? {}).map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
@@ -1182,13 +1182,12 @@ const DpsTdo = () => {
                     />
                     <LevelRating
                       disabled={!TRAINER_FRIEND}
-                      onChange={(e: any, value) => {
+                      onChange={(_, value) => {
                         setOptions({
                           ...options,
-                          [e.target.name]: value,
+                          POKEMON_FRIEND_LEVEL: value ?? 0,
                         });
                       }}
-                      name="POKEMON_FRIEND_LEVEL"
                       defaultValue={0}
                       max={4}
                       size="large"

@@ -48,7 +48,7 @@ interface OptionFiltersDPS {
 export interface OptionOtherDPS {
   delay?: { ftime: number; ctime: number };
   specific?: { FDmgenemy: number; CDmgenemy: number };
-  WEATHER_BOOSTS?: boolean;
+  WEATHER_BOOSTS?: string;
   TRAINER_FRIEND?: boolean;
   POKEMON_FRIEND_LEVEL?: number;
   POKEMON_DEF_OBJ: number;

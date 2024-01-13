@@ -137,7 +137,7 @@ const Search = () => {
             defaultValue={searchTerm}
             onFocus={() => setShowResult(true)}
             onBlur={() => setShowResult(false)}
-            onKeyUp={(e: any) => onChangeSelect(e, e.target.value)}
+            onKeyUp={(e) => onChangeSelect(e, e.currentTarget.value)}
           />
         </div>
         <div className="result" style={{ display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>

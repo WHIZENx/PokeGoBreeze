@@ -104,28 +104,28 @@ const CalculatePoint = () => {
     document.title = 'Calculate Point Stats - Tools';
   }, []);
 
-  const clearData = (reset: boolean) => {
+  const clearData = (reset: boolean = true) => {
     clearDataAtk(reset);
     clearDataDef(reset);
     clearDataBulk(reset);
     initialize.current = false;
   };
 
-  const clearDataAtk = (reset?: boolean) => {
+  const clearDataAtk = (reset: boolean = true) => {
     setResultBreakPointAtk(undefined);
     if (!reset) {
       setMove(undefined);
     }
   };
 
-  const clearDataDef = (reset?: boolean) => {
+  const clearDataDef = (reset: boolean = true) => {
     setResultBreakPointDef(undefined);
     if (!reset) {
       setMoveDef(undefined);
     }
   };
 
-  const clearDataBulk = (reset?: boolean) => {
+  const clearDataBulk = (reset: boolean = true) => {
     setResultBulkPointDef(undefined);
     if (!reset) {
       setFMove(undefined);

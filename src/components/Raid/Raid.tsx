@@ -15,7 +15,7 @@ import { StoreState } from '../../store/models/state.model';
 import { PokemonFormModify } from '../../core/models/API/form.model';
 
 const Raid = (props: {
-  clearData?: any;
+  clearData?: () => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
   currForm: PokemonFormModify | undefined;
   id: number | undefined;

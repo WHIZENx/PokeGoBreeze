@@ -32,7 +32,8 @@ const FormSelect = (props: {
   raid?: boolean | undefined;
   tier?: number;
   id?: number;
-  onClearStats?: any;
+  // eslint-disable-next-line no-unused-vars
+  onClearStats?: ((reset?: boolean) => void) | undefined;
   setTier?: React.Dispatch<React.SetStateAction<number>>;
   onSetPrev?: () => void;
   onSetNext?: () => void;

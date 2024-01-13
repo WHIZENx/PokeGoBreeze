@@ -5,7 +5,7 @@ import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../.
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, useTheme } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/move.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
@@ -61,7 +61,7 @@ const columns: any = [
 const Search = () => {
   const theme = useTheme();
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
-  const types = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
+  const types = useSelector((state: StoreState) => state.store.data?.typeEff);
 
   const [filters, setFilters] = useState({
     fMoveType: 'all',
@@ -129,12 +129,12 @@ const Search = () => {
                           className="text-black"
                           value={fMoveType}
                           label="Type"
-                          onChange={(e: SelectChangeEvent) => setFilters({ ...filters, fMoveType: e.target.value })}
+                          onChange={(e) => setFilters({ ...filters, fMoveType: e.target.value })}
                         >
                           <MenuItem value="all" defaultChecked={true}>
                             All
                           </MenuItem>
-                          {Object.keys(types).map((value, index) => (
+                          {Object.keys(types ?? {}).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
                               {capitalize(value)}
                             </MenuItem>
@@ -148,7 +148,7 @@ const Search = () => {
                         variant="outlined"
                         placeholder="Enter Name or ID"
                         defaultValue={fMoveName}
-                        onKeyUp={(e: any) => setFilters({ ...filters, fMoveName: e.target.value })}
+                        onChange={(e) => setFilters({ ...filters, fMoveName: e.target.value })}
                         size="small"
                       />
                     </div>
@@ -187,10 +187,10 @@ const Search = () => {
                           className="text-black"
                           value={cMoveType}
                           label="Type"
-                          onChange={(e: SelectChangeEvent) => setFilters({ ...filters, cMoveType: e.target.value })}
+                          onChange={(e) => setFilters({ ...filters, cMoveType: e.target.value })}
                         >
                           <MenuItem value="all">All</MenuItem>
-                          {Object.keys(types).map((value, index) => (
+                          {Object.keys(types ?? {}).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
                               {capitalize(value)}
                             </MenuItem>
@@ -204,7 +204,7 @@ const Search = () => {
                         variant="outlined"
                         placeholder="Enter Name or ID"
                         defaultValue={cMoveName}
-                        onKeyUp={(e: any) => setFilters({ ...filters, cMoveName: e.target.value })}
+                        onChange={(e) => setFilters({ ...filters, cMoveName: e.target.value })}
                         size="small"
                       />
                     </div>

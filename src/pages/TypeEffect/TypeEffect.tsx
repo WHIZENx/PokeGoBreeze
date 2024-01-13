@@ -13,18 +13,18 @@ import { SpinnerState, StoreState } from '../../store/models/state.model';
 
 const TypeEffect = () => {
   const dispatch = useDispatch();
-  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
+  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const theme = useTheme();
 
   useEffect(() => {
-    if (Object.keys(typeEffective).length > 0 && spinner.loading) {
+    if (Object.keys(typeEffective ?? {}).length > 0 && spinner.loading) {
       dispatch(hideSpinner());
     }
   }, [typeEffective]);
 
   useEffect(() => {
-    if (Object.keys(typeEffective).length === 0) {
+    if (Object.keys(typeEffective ?? {}).length === 0) {
       dispatch(showSpinnerWithMsg(SYNC_MSG));
     }
     document.title = 'Type Effectiveness';

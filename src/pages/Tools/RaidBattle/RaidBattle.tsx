@@ -416,7 +416,7 @@ const RaidBattle = () => {
           cmove,
           types: value?.types ?? [],
           shadow,
-          WEATHER_BOOSTS: weatherCounter,
+          WEATHER_BOOSTS: String(weatherCounter),
         };
         let statsDefender = {
           atk: statBossATK,
@@ -425,7 +425,7 @@ const RaidBattle = () => {
           fmove: data?.combat?.find((item) => item.name === fMove?.name),
           cmove: data?.combat?.find((item) => item.name === cMove?.name),
           types: form?.form.types ?? [],
-          WEATHER_BOOSTS: weatherBoss,
+          WEATHER_BOOSTS: String(weatherBoss),
         };
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
         statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
@@ -563,7 +563,7 @@ const RaidBattle = () => {
         cmove,
         types: pokemon.dataTargetPokemon?.types ?? [],
         shadow: false,
-        WEATHER_BOOSTS: weatherCounter,
+        WEATHER_BOOSTS: String(weatherCounter),
       };
       const statsDefender = {
         atk: statBossATK,
@@ -572,7 +572,7 @@ const RaidBattle = () => {
         fmove: data?.combat?.find((item) => item.name === fMove?.name),
         cmove: data?.combat?.find((item) => item.name === cMove?.name),
         types: form?.form.types ?? [],
-        WEATHER_BOOSTS: weatherBoss,
+        WEATHER_BOOSTS: String(weatherBoss),
       };
 
       if (!statsDefender) {
@@ -776,7 +776,7 @@ const RaidBattle = () => {
           <Form.Select
             value={filters.selected.level}
             className="form-control"
-            onChange={(e: any) => setFilters({ ...filters, selected: { ...selected, level: parseFloat(e.target.value) } })}
+            onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: parseFloat(e.target.value) } })}
           >
             {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
               <option key={index} value={value}>
@@ -796,8 +796,8 @@ const RaidBattle = () => {
             required={true}
             className="form-control"
             placeholder="IV ATK"
-            onInput={(e: any) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: parseInt(e.target.value) } } })
+            onInput={(e) =>
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: parseInt(e.currentTarget.value) } } })
             }
           />
           <span className="input-group-text">DEF</span>
@@ -809,8 +809,8 @@ const RaidBattle = () => {
             required={true}
             className="form-control"
             placeholder="IV DEF"
-            onInput={(e: any) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: parseInt(e.target.value) } } })
+            onInput={(e) =>
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: parseInt(e.currentTarget.value) } } })
             }
           />
           <span className="input-group-text">STA</span>
@@ -822,8 +822,8 @@ const RaidBattle = () => {
             required={true}
             className="form-control"
             placeholder="IV STA"
-            onInput={(e: any) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: parseInt(e.target.value) } } })
+            onInput={(e) =>
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: parseInt(e.currentTarget.value) } } })
             }
           />
         </div>
@@ -882,7 +882,7 @@ const RaidBattle = () => {
             style={{ width: '40%' }}
             value={filters.selected.sortBy}
             className="form-control"
-            onChange={(e: any) => setFilters({ ...filters, selected: { ...selected, sortBy: parseInt(e.target.value) } })}
+            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: parseInt(e.target.value) } })}
           >
             <option value={0}>Damage Per Second</option>
             <option value={1}>Total Damage Output</option>
@@ -894,7 +894,7 @@ const RaidBattle = () => {
             style={{ width: '15%' }}
             value={filters.selected.sorted}
             className="form-control"
-            onChange={(e: any) => setFilters({ ...filters, selected: { ...selected, sorted: parseInt(e.target.value) } })}
+            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: parseInt(e.target.value) } })}
           >
             <option value={0}>Best</option>
             <option value={1}>Worst</option>
@@ -972,7 +972,7 @@ const RaidBattle = () => {
             <Form.Select
               value={pokemon.stats?.level}
               className="form-control"
-              onChange={(e: any) => {
+              onChange={(e) => {
                 if (showSettingPokemon.pokemon?.stats) {
                   setShowSettingPokemon({
                     ...showSettingPokemon,
@@ -1002,7 +1002,7 @@ const RaidBattle = () => {
               required={true}
               className="form-control"
               placeholder="IV ATK"
-              onInput={(e: any) => {
+              onInput={(e) => {
                 if (showSettingPokemon.pokemon?.stats) {
                   setShowSettingPokemon({
                     ...showSettingPokemon,
@@ -1010,7 +1010,7 @@ const RaidBattle = () => {
                       ...showSettingPokemon.pokemon,
                       stats: {
                         ...showSettingPokemon.pokemon.stats,
-                        iv: { ...showSettingPokemon.pokemon.stats.iv, atk: parseInt(e.target.value) },
+                        iv: { ...showSettingPokemon.pokemon.stats.iv, atk: parseInt(e.currentTarget.value) },
                       },
                     },
                   });
@@ -1026,7 +1026,7 @@ const RaidBattle = () => {
               required={true}
               className="form-control"
               placeholder="IV DEF"
-              onInput={(e: any) => {
+              onInput={(e) => {
                 if (showSettingPokemon.pokemon?.stats) {
                   setShowSettingPokemon({
                     ...showSettingPokemon,
@@ -1034,7 +1034,7 @@ const RaidBattle = () => {
                       ...showSettingPokemon.pokemon,
                       stats: {
                         ...showSettingPokemon.pokemon.stats,
-                        iv: { ...showSettingPokemon.pokemon.stats.iv, def: parseInt(e.target.value) },
+                        iv: { ...showSettingPokemon.pokemon.stats.iv, def: parseInt(e.currentTarget.value) },
                       },
                     },
                   });
@@ -1050,7 +1050,7 @@ const RaidBattle = () => {
               required={true}
               className="form-control"
               placeholder="IV STA"
-              onInput={(e: any) => {
+              onInput={(e) => {
                 if (showSettingPokemon.pokemon?.stats) {
                   setShowSettingPokemon({
                     ...showSettingPokemon,
@@ -1058,7 +1058,7 @@ const RaidBattle = () => {
                       ...showSettingPokemon.pokemon,
                       stats: {
                         ...showSettingPokemon.pokemon.stats,
-                        iv: { ...showSettingPokemon.pokemon.stats.iv, sta: parseInt(e.target.value) },
+                        iv: { ...showSettingPokemon.pokemon.stats.iv, sta: parseInt(e.currentTarget.value) },
                       },
                     },
                   });
@@ -1169,7 +1169,7 @@ const RaidBattle = () => {
                   aria-label="Battle Time"
                   min={0}
                   disabled={!enableTimeAllow}
-                  onInput={(e: any) => setTimeAllow(parseInt(e.target.value))}
+                  onInput={(e) => setTimeAllow(parseInt(e.currentTarget.value))}
                 />
               </div>
             </div>

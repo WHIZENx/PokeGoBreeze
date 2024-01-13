@@ -10,7 +10,7 @@ export interface BattleCalculate {
   cmove?: Combat;
   types: string[];
   shadow?: boolean;
-  WEATHER_BOOSTS?: boolean;
+  WEATHER_BOOSTS?: string;
   POKEMON_FRIEND?: boolean;
   POKEMON_FRIEND_LEVEL?: number;
   isDoubleCharge?: boolean;

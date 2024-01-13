@@ -271,7 +271,7 @@ const TeamPVP = () => {
           className="form-control input-search"
           placeholder="Enter Name or ID"
           defaultValue={search}
-          onKeyUp={(e: any) => setSearch(e.target.value)}
+          onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>
       <div className="ranking-container card-container">
