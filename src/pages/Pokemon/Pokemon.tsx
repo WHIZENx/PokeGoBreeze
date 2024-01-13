@@ -1,4 +1,4 @@
-import React, { Dispatch, Fragment, SetStateAction, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../services/API.service';
 
 import './Pokemon.scss';
@@ -34,18 +34,32 @@ import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
 import { CancelTokenSource } from 'axios';
-import { PokemonGenderRatio } from '../../core/models/pokemon.model';
+import { PokemonGenderRatio, PokemonNameModel } from '../../core/models/pokemon.model';
+import { ReduxRouterState } from '@lagunovsky/redux-react-router';
+import { PokemonTypeCost } from '../../core/models/evolution.model';
+
+interface OptionsPokemon {
+  prev: PokemonNameModel | undefined;
+  current: PokemonNameModel | undefined;
+  next: PokemonNameModel | undefined;
+}
+
+interface TypeCost {
+  purified: PokemonTypeCost;
+  thirdMove: PokemonTypeCost;
+}
 
 const Pokemon = (props: {
-  prevRouter?: any;
+  prevRouter?: ReduxRouterState;
   searching?: SearchingModel | null;
   id?: string;
-  onDecId?: any;
-  onIncId?: any;
+  onDecId?: () => void;
+  onIncId?: () => void;
   isSearch?: boolean;
-  onSetIDPoke?: any;
+  // eslint-disable-next-line no-unused-vars
+  onSetIDPoke?: (id: number) => void;
   first?: boolean;
-  setFirst?: any;
+  setFirst?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -61,15 +75,21 @@ const Pokemon = (props: {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [pokeData, setPokeData]: [PokemonInfo[], any] = useState([]);
-  const [formList, setFormList]: [PokemonFormModify[][] | undefined, Dispatch<SetStateAction<PokemonFormModify[][] | undefined>>] =
-    useState();
+  const [pokeData, setPokeData]: [PokemonInfo[], React.Dispatch<React.SetStateAction<PokemonInfo[]>>] = useState([] as PokemonInfo[]);
+  const [formList, setFormList]: [
+    PokemonFormModify[][] | undefined,
+    React.Dispatch<React.SetStateAction<PokemonFormModify[][] | undefined>>
+  ] = useState();
 
   const [reForm, setReForm] = useState(false);
 
-  const [data, setData]: [Species | undefined, any] = useState();
-  const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
-  const [pokeRatio, setPokeRatio]: [PokemonGenderRatio | undefined, any] = useState();
+  const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
+  const [dataStorePokemon, setDataStorePokemon]: [
+    OptionsPokemon | undefined,
+    React.Dispatch<React.SetStateAction<OptionsPokemon | undefined>>
+  ] = useState();
+  const [pokeRatio, setPokeRatio]: [PokemonGenderRatio | undefined, React.Dispatch<React.SetStateAction<PokemonGenderRatio | undefined>>] =
+    useState();
 
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
@@ -78,17 +98,14 @@ const Pokemon = (props: {
   const [form, setForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
-  const [defaultForm, setDefaultForm]: [PokemonFormModify | undefined, any] = useState();
+  const [defaultForm, setDefaultForm]: [
+    PokemonFormModify | undefined,
+    React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>
+  ] = useState();
 
-  const [costModifier, setCostModifier]: any = useState({
-    purified: {
-      candy: null,
-      stardust: null,
-    },
-    thirdMove: {
-      candy: null,
-      stardust: null,
-    },
+  const [costModifier, setCostModifier]: [TypeCost, React.Dispatch<React.SetStateAction<TypeCost>>] = useState({
+    purified: {},
+    thirdMove: {},
   });
 
   const [onChangeForm, setOnChangeForm] = useState(false);
@@ -100,7 +117,7 @@ const Pokemon = (props: {
   };
 
   const fetchMap = useCallback(
-    async (data: Species, axios: any, source: CancelTokenSource) => {
+    async (data: Species, axios: typeof APIService, source: CancelTokenSource) => {
       const dataPokeList: PokemonInfo[] = [];
       const dataFormList: PokemonForm[][] = [];
       await Promise.all(
@@ -121,12 +138,12 @@ const Pokemon = (props: {
       const costModifier = getCostModifier(data?.id);
       setCostModifier({
         purified: {
-          candy: costModifier?.purified.candy,
-          stardust: costModifier?.purified.stardust,
+          candy: costModifier?.purified?.candy,
+          stardust: costModifier?.purified?.stardust,
         },
         thirdMove: {
-          candy: costModifier?.thirdMove.candy,
-          stardust: costModifier?.thirdMove.stardust,
+          candy: costModifier?.thirdMove?.candy,
+          stardust: costModifier?.thirdMove?.stardust,
         },
       });
 
@@ -178,7 +195,7 @@ const Pokemon = (props: {
         });
       }
 
-      if (costModifier?.purified.candy && costModifier?.purified.stardust) {
+      if (costModifier?.purified?.candy && costModifier?.purified.stardust) {
         const pokemonDefault = dataPokeList.filter((p) => p.is_include_shadow);
         pokemonDefault.forEach((p, index) => {
           let form = '';
@@ -263,7 +280,7 @@ const Pokemon = (props: {
       if (!defaultData) {
         defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.name);
       }
-      setWH((prevWH: any) => ({ ...prevWH, weight: defaultData?.weight, height: defaultData?.height }));
+      setWH((prevWH) => ({ ...prevWH, weight: defaultData?.weight ?? 0, height: defaultData?.height ?? 0 }));
       setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom.at(0) ?? null)?.form.version_group.name, '-', ' '));
       if (!params.id) {
         setRegion(regionList[parseInt(data?.generation.url.split('/').at(6) ?? '')]);
@@ -294,7 +311,7 @@ const Pokemon = (props: {
   );
 
   const queryPokemon = useCallback(
-    (id: number | string | undefined, axios: any, source: CancelTokenSource) => {
+    (id: number | string | undefined, axios: typeof APIService, source: CancelTokenSource) => {
       if (id && dataStore?.pokemon && pokemonName.length > 0 && pokemonData.length > 0 && dataStore?.evolution && dataStore?.details) {
         if (!params.id || (params.id && data && parseInt(id.toString()) !== data?.id)) {
           dispatch(showSpinner());
@@ -303,7 +320,7 @@ const Pokemon = (props: {
           setForm(undefined);
         }
         axios
-          .getPokeSpices(id, {
+          .getPokeSpices(parseInt(id.toString()), {
             cancelToken: source.token,
           })
           .then((res: { data: Species }) => {
@@ -345,10 +362,10 @@ const Pokemon = (props: {
             };
             if (result.prev && event.keyCode === KEY_LEFT) {
               event.preventDefault();
-              params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId();
+              params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId?.();
             } else if (result.next && event.keyCode === KEY_RIGHT) {
               event.preventDefault();
-              params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId();
+              params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId?.();
             }
           }
         }
@@ -493,7 +510,7 @@ const Pokemon = (props: {
                           setFormName(undefined);
                           router.action = null as any;
                         }
-                        props.onDecId();
+                        props.onDecId?.();
                         setForm(undefined);
                         if (props.first && props.setFirst) {
                           props.setFirst(false);
@@ -536,7 +553,7 @@ const Pokemon = (props: {
                           setFormName(undefined);
                           router.action = null as any;
                         }
-                        props.onIncId();
+                        props.onIncId?.();
                         setForm(undefined);
                         if (props.first && props.setFirst) {
                           props.setFirst(false);

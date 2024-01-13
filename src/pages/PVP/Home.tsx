@@ -12,8 +12,8 @@ import { PVPInfo } from '../../core/models/pvp.model';
 
 // tslint:disable-next-line:class-name
 interface OptionsHome {
-  rank: PVPInfo | undefined;
-  team: PVPInfo | undefined;
+  rank?: PVPInfo | undefined;
+  team?: PVPInfo | undefined;
 }
 
 const PVPHome = () => {
@@ -29,10 +29,7 @@ const PVPHome = () => {
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
 
-  const [options, setOptions]: [OptionsHome, any] = useState({
-    rank: undefined,
-    team: undefined,
-  });
+  const [options, setOptions]: [OptionsHome, React.Dispatch<React.SetStateAction<OptionsHome>>] = useState({});
 
   const { rank, team } = options;
 

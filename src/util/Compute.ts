@@ -101,7 +101,7 @@ export const computeBgType = (
   shadow = false,
   purified = false,
   opacity = 1,
-  styleSheet?: CSSStyleSheet,
+  styleSheet?: CSSStyleSheet | null,
   defaultColor?: string | null
 ) => {
   if (defaultColor) {

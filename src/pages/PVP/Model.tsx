@@ -160,7 +160,7 @@ export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRankin
 
   const renderTopStats = (stats: StatsPokemon | undefined, id: number) => {
     const maxCP = parseInt(cp.toString());
-    const currStats: any = calculateStatsTopRank(stats);
+    const currStats = calculateStatsTopRank(stats);
     return (
       <ul className="element-top">
         <li className="element-top">
@@ -314,13 +314,13 @@ export const MoveSet = (
   };
 
   const findMove = (name: string, uses: number) => {
-    const oldName: string = name;
+    const oldName = name;
     if (name.includes('HIDDEN_POWER')) {
       name = 'HIDDEN_POWER';
     }
-    let move: any = combatData.find((move) => move.name === name);
-    if (oldName.includes('HIDDEN_POWER')) {
-      move = { ...move, type: oldName.split('_').at(2) };
+    let move = combatData.find((move) => move.name === name);
+    if (move && oldName.includes('HIDDEN_POWER')) {
+      move = { ...move, type: oldName.split('_').at(2) ?? '' };
     }
 
     let elite = false;
@@ -337,19 +337,19 @@ export const MoveSet = (
 
     return (
       <Link
-        to={`/move/${move.id}`}
+        to={`/move/${move?.id}`}
         className={
-          move.type.toLowerCase() + ' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
+          move?.type?.toLowerCase() + ' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
         }
       >
         <div className="d-flex" style={{ columnGap: 10 }}>
-          <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move.type)} />
+          <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move?.type ?? '')} />
           <span className="filter-shadow">
             {splitAndCapitalize(oldName, '_', ' ')} {(elite || special) && <b className="filter-shadow">*</b>}
           </span>
         </div>
         <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-          {move.archetype && findArchetype(move.archetype)}
+          {move?.archetype && findArchetype(move?.archetype)}
           <span className="ranking-score score-ic filter-shadow">{uses}</span>
         </div>
       </Link>

@@ -9,7 +9,7 @@ import { SelectMoveModel } from '../Input/models/select-move.model';
 const CardMove = (props: { value: SelectMoveModel | Combat | undefined }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [data, setData]: [Combat | undefined, any] = useState();
+  const [data, setData]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
 
   useEffect(() => {
     if (combat.length > 0 && props.value) {

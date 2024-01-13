@@ -63,7 +63,7 @@ export interface PokemonFormModify {
 
 export interface PokemonDataForm {
   stats: StatsPokemon;
-  url: string | undefined;
+  url?: string | undefined;
   types: string[];
 }
 

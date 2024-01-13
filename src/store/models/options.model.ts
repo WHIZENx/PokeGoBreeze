@@ -45,11 +45,16 @@ interface OptionFiltersDPS {
   POKEMON_LEVEL: number;
 }
 
-interface OptionOtherDPS {
-  delay: number | null;
-  specific: number | null;
-  WEATHER_BOOSTS: boolean;
-  TRAINER_FRIEND: boolean;
-  POKEMON_FRIEND_LEVEL: number;
+export interface OptionOtherDPS {
+  delay?: { ftime: number; ctime: number };
+  specific?: { FDmgenemy: number; CDmgenemy: number };
+  WEATHER_BOOSTS?: boolean;
+  TRAINER_FRIEND?: boolean;
+  POKEMON_FRIEND_LEVEL?: number;
   POKEMON_DEF_OBJ: number;
+  IV_ATK?: number;
+  IV_DEF?: number;
+  IV_HP?: number;
+  POKEMON_LEVEL?: number;
+  objTypes?: string[];
 }

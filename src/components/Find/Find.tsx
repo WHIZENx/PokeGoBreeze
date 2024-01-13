@@ -1,13 +1,14 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../services/API.service';
 import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
-import { RouterState, SearchingState, StatsState, StoreState } from '../../../store/models/state.model';
-import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.model';
+import { getPokemonById, getPokemonByIndex } from '../../util/Utils';
+import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
+import { PokemonSearchingModel } from '../../core/models/pokemon-searching.model';
 
-import loading from '../../../assets/loading.png';
+import loading from '../../assets/loading.png';
+import { PokemonFormModify } from '../../core/models/API/form.model';
 
 const Find = (props: {
   setId?: React.Dispatch<React.SetStateAction<number>>;
@@ -21,9 +22,14 @@ const Find = (props: {
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   tier?: number;
   setTier?: React.Dispatch<React.SetStateAction<number>>;
-  setForm?: any;
+  // eslint-disable-next-line no-unused-vars
+  setForm?: (form: PokemonFormModify | undefined) => void;
   urlEvo?: { url: string | null };
-  setUrlEvo?: any;
+  setUrlEvo?: React.Dispatch<
+    React.SetStateAction<{
+      url: string;
+    }>
+  >;
   title?: string;
   swap?: boolean;
   objective?: boolean;
@@ -42,12 +48,17 @@ const Find = (props: {
   const [id, setId] = useState(
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
   );
-  const [form, setForm]: [string | undefined, any] = useState();
+  const [form, setForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
 
-  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
+  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>] = useState(
+    [] as PokemonSearchingModel[]
+  );
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
+  const [pokemonListFilter, setPokemonListFilter]: [
+    PokemonSearchingModel[],
+    React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>
+  ] = useState([] as PokemonSearchingModel[]);
 
   useEffect(() => {
     if (pokemonName.length > 0) {
@@ -78,7 +89,7 @@ const Find = (props: {
   const getInfoPoke = (value: PokemonSearchingModel) => {
     const currentId = getPokemonById(pokemonName, value.id);
     setId(value.id);
-    setForm(null);
+    setForm(undefined);
     if (props.setId) {
       props.setId(value.id);
     }

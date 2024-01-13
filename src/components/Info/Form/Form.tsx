@@ -9,7 +9,7 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { capitalize, convertFormNameImg, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormNameImg, convertStatsEffort, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
 import {
   FORM_GMAX,
   FORM_HERO,
@@ -29,7 +29,7 @@ import { hideSpinner } from '../../../store/actions/spinner.action';
 import { setSearchMainPage } from '../../../store/actions/searching.action';
 import Primal from '../Primal/Primal';
 import FromChange from '../FormChange/FormChange';
-import { StatsModel, StatsPokemon } from '../../../core/models/stats.model';
+import { StatsAtk, StatsDef, StatsModel, StatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import { PokemonDataForm, PokemonFormModify } from '../../../core/models/API/form.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { PokemonInfo } from '../../../core/models/API/info.model';
@@ -64,7 +64,8 @@ const Form = (props: {
   ratio: PokemonGenderRatio | undefined;
   stats: StatsModel;
   species: Species | undefined;
-  onSetIDPoke: any;
+  // eslint-disable-next-line no-unused-vars
+  onSetIDPoke?: (id: number) => void;
   paramForm: string | undefined | null;
   pokemonDetail: Details | undefined;
 }) => {
@@ -114,18 +115,18 @@ const Form = (props: {
       });
   }, [props.formList, props.idDefault, props.paramForm]);
 
-  const [currForm, setCurrForm]: [PokemonFormModify | undefined, any] = useState();
+  const [currForm, setCurrForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] =
+    useState();
   const defaultStats: StatsPokemon = { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 };
-  const [dataPoke, setDataPoke]: [PokemonDataForm, any] = useState({
+  const [dataPoke, setDataPoke]: [PokemonDataForm, React.Dispatch<React.SetStateAction<PokemonDataForm>>] = useState({
     stats: defaultStats,
-    url: '',
-    types: [],
+    types: [] as string[],
   });
   const [pokeID, setPokeID] = useState(0);
-  const [statATK, setStatATK]: any = useState(null);
-  const [statDEF, setStatDEF]: any = useState(null);
-  const [statSTA, setStatSTA]: any = useState(null);
-  const [statProd, setStatProd]: any = useState(null);
+  const [statATK, setStatATK]: [StatsAtk | undefined, React.Dispatch<React.SetStateAction<StatsAtk | undefined>>] = useState();
+  const [statDEF, setStatDEF]: [StatsDef | undefined, React.Dispatch<React.SetStateAction<StatsDef | undefined>>] = useState();
+  const [statSTA, setStatSTA]: [StatsSta | undefined, React.Dispatch<React.SetStateAction<StatsSta | undefined>>] = useState();
+  const [statProd, setStatProd]: [StatsProd | undefined, React.Dispatch<React.SetStateAction<StatsProd | undefined>>] = useState();
 
   const filterFormName = useCallback((form: string, formStats: string) => {
     form =
@@ -140,7 +141,7 @@ const Form = (props: {
   }, []);
 
   const filterFormList = useCallback(
-    (formName: string, stats: { id: number; form: string }[], id: number, formLength: number) => {
+    (formName: string, stats: { id: number; form: string }[], id: number, formLength: number): any => {
       const firstFilter = stats?.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
       if (firstFilter) {
         return firstFilter;
@@ -175,7 +176,7 @@ const Form = (props: {
     if (findData && findForm) {
       const oriForm = findData;
       setDataPoke({
-        ...oriForm,
+        stats: convertStatsEffort(oriForm.stats),
         types: findForm.form.types,
         url: oriForm.species.url,
       });
@@ -183,14 +184,14 @@ const Form = (props: {
     } else if (findForm) {
       const oriForm = props.pokeData.at(0);
       setDataPoke({
-        ...oriForm,
+        stats: convertStatsEffort(oriForm?.stats),
         types: findForm.form.types,
         url: oriForm?.species.url,
       });
       props.setWH((prevWH) => ({ ...prevWH, weight: oriForm?.weight ?? 0, height: oriForm?.height ?? 0 }));
     } else if (findData) {
       setDataPoke({
-        ...findData,
+        stats: convertStatsEffort(findData.stats),
         types: findData.types.map((item) => item.type.name),
         url: findData.species.url,
       });
@@ -198,8 +199,8 @@ const Form = (props: {
     } else {
       const oriForm = props.pokeData.at(0);
       setDataPoke({
-        ...oriForm,
-        types: oriForm?.types.map((item) => item.type.name),
+        stats: convertStatsEffort(oriForm?.stats),
+        types: oriForm?.types.map((item) => item.type.name) ?? [],
         url: oriForm?.species.url,
       });
       props.setWH((prevWH) => ({
@@ -284,7 +285,7 @@ const Form = (props: {
         }
         if (data) {
           setDataPoke({
-            ...data,
+            stats: convertStatsEffort(data.stats),
             types: data.types.map((item) => item.type.name),
             url: data.species.url,
           });

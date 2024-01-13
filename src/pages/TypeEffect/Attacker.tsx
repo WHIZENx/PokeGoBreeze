@@ -7,12 +7,13 @@ import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 
 const Attacker = (prop: { types: TypeEff | any }) => {
   const theme = useTheme();
-  const [types, setTypes]: [string[], any] = useState([]);
+  const [types, setTypes] = useState([] as string[]);
 
   const [currentType, setCurrentType] = useState('BUG');
   const [showType, setShowType] = useState(false);
 
-  const [typeEffective, setTypeEffective]: [TypeEffChart | null, any] = useState(null);
+  const [typeEffective, setTypeEffective]: [TypeEffChart | undefined, React.Dispatch<React.SetStateAction<TypeEffChart | undefined>>] =
+    useState();
 
   const getTypeEffective = useCallback(() => {
     const data: TypeEffChart = {

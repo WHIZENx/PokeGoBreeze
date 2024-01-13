@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import Find from '../../../components/Select/Find/Find';
+import Find from '../../../components/Find/Find';
 
 import { Badge, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -23,6 +23,7 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN } from '../../../util/Constants';
 import { EvolutionModel } from '../../../core/models/evolution.model';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { BattleBaseStats, QueryStatesEvoChain } from '../../../util/models/calculate.model';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ const FindBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
-  const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
+  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
   const [maxCP, setMaxCP] = useState(0);
 
   const [searchCP, setSearchCP] = useState('');
@@ -44,8 +45,12 @@ const FindBattle = () => {
   const [DEFIv, setDEFIv] = useState(0);
   const [STAIv, setSTAIv] = useState(0);
 
-  const [evoChain, setEvoChain]: any = useState([]);
-  const [bestInLeague, setBestInLeague]: any = useState([]);
+  const [evoChain, setEvoChain]: [QueryStatesEvoChain[][], React.Dispatch<React.SetStateAction<QueryStatesEvoChain[][]>>] = useState(
+    [] as QueryStatesEvoChain[][]
+  );
+  const [bestInLeague, setBestInLeague]: [BattleBaseStats[], React.Dispatch<React.SetStateAction<BattleBaseStats[]>>] = useState(
+    [] as BattleBaseStats[]
+  );
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -59,7 +64,7 @@ const FindBattle = () => {
   };
 
   const currEvoChain = useCallback(
-    (currId: number[] | undefined, form: string, arr: any): void => {
+    (currId: number[] | undefined, form: string, arr: EvolutionModel[]) => {
       if (form === FORM_GALARIAN) {
         form = 'GALAR';
       }
@@ -72,10 +77,18 @@ const FindBattle = () => {
       } else {
         curr = dataStore?.evolution?.find((item) => currId?.includes(item.id) && item.form.includes(form));
       }
-      if (!arr.map((i: { id: number }) => i.id).includes(curr?.id ?? 0)) {
-        arr.push({ ...curr, form });
+      if (!arr.map((i) => i.id).includes(curr?.id ?? 0)) {
+        arr.push({
+          ...curr,
+          form,
+          id: curr?.id ?? 0,
+          name: curr?.name ?? '',
+          evo_list: curr?.evo_list ?? [],
+          temp_evo: curr?.temp_evo ?? [],
+          canPurified: curr?.canPurified ?? false,
+        });
       }
-      return currEvoChain(
+      currEvoChain(
         curr?.evo_list.map((i) => i.evo_to_id),
         form,
         arr
@@ -85,8 +98,8 @@ const FindBattle = () => {
   );
 
   const prevEvoChain = useCallback(
-    (obj: EvolutionModel, defaultForm: string, arr: any[]): any => {
-      if (!arr.map((i: { id: number }) => i.id).includes(obj.id)) {
+    (obj: EvolutionModel, defaultForm: string, arr: EvolutionModel[]) => {
+      if (!arr.map((i) => i.id).includes(obj.id)) {
         arr.push({ ...obj, form: defaultForm });
       }
       obj.evo_list.forEach((i) => {
@@ -95,13 +108,10 @@ const FindBattle = () => {
       const curr = dataStore?.evolution?.filter((item) =>
         item.evo_list.find((i) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
       );
-      if (curr?.length === 0) {
-        return arr;
-      } else if (curr?.length === 1) {
-        return prevEvoChain(curr[0], defaultForm, arr);
-      } else {
-        return curr?.map((item) => prevEvoChain(item, defaultForm, arr));
+      if ((curr?.length ?? 0) > 1) {
+        curr?.forEach((item) => prevEvoChain(item, defaultForm, arr));
       }
+      return arr;
     },
     [currEvoChain, dataStore?.evolution]
   );
@@ -127,10 +137,10 @@ const FindBattle = () => {
 
   const searchStatsPoke = useCallback(
     (level: number) => {
-      const arr: (() => any[]) | any[][] = [];
-      getEvoChain(id)?.forEach((item: any[]) => {
-        const tempArr: { battleLeague: string; maxCP: number; form: any; id: number; name: string }[] = [];
-        item.forEach((value: { form: string; id: number; name: string }) => {
+      const arr: QueryStatesEvoChain[][] = [];
+      getEvoChain(id)?.forEach((item) => {
+        const tempArr: QueryStatesEvoChain[] = [];
+        item.forEach((value) => {
           const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemonData ?? [], value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
             setMaxCP(data.maxCP);
@@ -140,53 +150,67 @@ const FindBattle = () => {
         arr.push(tempArr.sort((a, b) => a.maxCP - b.maxCP));
       });
       setEvoChain(arr);
-      let currBastStats: any;
-      const evoBaseStats: any[] = [];
+      let currBastStats: BattleBaseStats | undefined;
+      const evoBaseStats: BattleBaseStats[] = [];
       arr.forEach((item) => {
-        item.forEach((value: any) => {
+        item.forEach((value) => {
           if (value.id !== id) {
             evoBaseStats.push({
-              ...(Object.values(value.battleLeague).reduce((a: any, b: any) => (!a ? b : !b ? a : a.ratio > b.ratio ? a : b)) as any),
+              ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : (a.ratio ?? 0) > (b.ratio ?? 0) ? a : b)),
               id: value.id,
               name: value.name,
               form: value.form,
               maxCP: value.maxCP,
               league: Object.keys(value.battleLeague).reduce((a, b) =>
-                !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b
+                !value.battleLeague[a]
+                  ? b
+                  : !value.battleLeague[b]
+                  ? a
+                  : (value.battleLeague[a]?.ratio ?? 0) > (value.battleLeague[b]?.ratio ?? 0)
+                  ? a
+                  : b
               ),
             });
           } else {
             currBastStats = {
-              ...(Object.values(value.battleLeague).reduce((a: any, b: any) => (!a ? b : !b ? a : a.ratio > b.ratio ? a : b)) as any),
+              ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : (a.ratio ?? 0) > (b.ratio ?? 0) ? a : b)),
               id: value.id,
               name: value.name,
               form: value.form,
               maxCP: value.maxCP,
               league: Object.keys(value.battleLeague).reduce((a, b) =>
-                !value.battleLeague[a] ? b : !value.battleLeague[b] ? a : value.battleLeague[a].ratio > value.battleLeague[b].ratio ? a : b
+                !value.battleLeague[a]
+                  ? b
+                  : !value.battleLeague[b]
+                  ? a
+                  : (value.battleLeague[a]?.ratio ?? 0) > (value.battleLeague[b]?.ratio ?? 0)
+                  ? a
+                  : b
               ),
             };
           }
         });
       });
-      let bestLeague = evoBaseStats.filter((item) => item.ratio > currBastStats.ratio);
-      bestLeague = bestLeague.filter(
-        (item) =>
-          (item.league === 'master' && item.CP > 2500) ||
-          (item.league === 'ultra' && item.CP > 1500) ||
-          (item.league === 'great' && item.CP > 500)
-      );
-      if (bestLeague.length === 0) {
-        bestLeague = evoBaseStats.filter((item) => item.ratio > currBastStats.ratio);
+      if (currBastStats) {
+        let bestLeague = evoBaseStats.filter((item) => (item.ratio ?? 0) > (currBastStats?.ratio ?? 0));
+        bestLeague = bestLeague.filter(
+          (item) =>
+            (item.league === 'master' && (item.CP ?? 0) > 2500) ||
+            (item.league === 'ultra' && (item.CP ?? 0) > 1500) ||
+            (item.league === 'great' && (item.CP ?? 0) > 500)
+        );
+        if (bestLeague.length === 0) {
+          bestLeague = evoBaseStats.filter((item) => (item.ratio ?? 0) > (currBastStats?.ratio ?? 0));
+        }
+        if (bestLeague.length === 0) {
+          return setBestInLeague([currBastStats]);
+        }
+        if ((currBastStats.ratio ?? 0) >= 90) {
+          bestLeague.push(currBastStats);
+        }
+        setBestInLeague(bestLeague.sort((a, b) => a.maxCP - b.maxCP));
+        dispatch(hideSpinner());
       }
-      if (bestLeague.length === 0) {
-        return setBestInLeague([currBastStats]);
-      }
-      if (currBastStats.ratio >= 90) {
-        bestLeague.push(currBastStats);
-      }
-      setBestInLeague(bestLeague.sort((a, b) => a.maxCP - b.maxCP));
-      dispatch(hideSpinner());
     },
     [dispatch, dataStore?.options, ATKIv, DEFIv, STAIv, getEvoChain, id]
   );
@@ -373,76 +397,63 @@ const FindBattle = () => {
           <div className="text-center">
             <div>
               <h4 className="text-decoration-underline">Recommend Battle League</h4>
-              {bestInLeague.map(
-                (
-                  value: {
-                    id: number;
-                    form: string;
-                    name: string;
-                    ratio: number;
-                    league: string;
-                    CP: number;
-                    rank: number;
-                  },
-                  index: React.Key
-                ) => (
-                  <Link
-                    to={`/pokemon/${value.id}${value.form ? `?form=${convertFormName(value.id, value.form.toLowerCase())}` : ''}`}
-                    className="d-inline-block contain-poke-best-league border-best-poke"
-                    key={index}
-                    title={`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}
-                  >
-                    <div className="d-flex align-items-center h-100">
-                      <div className="border-best-poke h-100">
+              {bestInLeague.map((value, index) => (
+                <Link
+                  to={`/pokemon/${value.id}${value.form ? `?form=${convertFormName(value.id, value.form.toLowerCase())}` : ''}`}
+                  className="d-inline-block contain-poke-best-league border-best-poke"
+                  key={index}
+                  title={`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}
+                >
+                  <div className="d-flex align-items-center h-100">
+                    <div className="border-best-poke h-100">
+                      <img
+                        className="poke-best-league"
+                        alt="pokemon-model"
+                        height={102}
+                        src={
+                          getImageList(value.id)
+                            ? APIService.getPokemonModel(getImageList(value.id) ?? null)
+                            : APIService.getPokeFullSprite(value.id)
+                        }
+                      />
+                      <span className="caption text-black border-best-poke best-name">
+                        <b>
+                          #{value.id} {splitAndCapitalize(value.name, '_', ' ')} {splitAndCapitalize(form?.form.form_name, '-', ' ')}
+                        </b>
+                      </span>
+                    </div>
+                    <div className={'border-best-poke ' + getTextColorRatio(value.ratio ?? 0)}>
+                      <div className="best-poke-desc border-best-poke">
                         <img
-                          className="poke-best-league"
                           alt="pokemon-model"
-                          height={102}
+                          height={32}
                           src={
-                            getImageList(value.id)
-                              ? APIService.getPokemonModel(getImageList(value.id) ?? null)
-                              : APIService.getPokeFullSprite(value.id)
+                            value.league === 'little'
+                              ? APIService.getPokeOtherLeague('GBL_littlecup')
+                              : value.league === 'great'
+                              ? APIService.getPokeLeague('great_league')
+                              : value.league === 'ultra'
+                              ? APIService.getPokeLeague('ultra_league')
+                              : APIService.getPokeLeague('master_league')
                           }
                         />
-                        <span className="caption text-black border-best-poke best-name">
-                          <b>
-                            #{value.id} {splitAndCapitalize(value.name, '_', ' ')} {splitAndCapitalize(form?.form.form_name, '-', ' ')}
-                          </b>
-                        </span>
-                      </div>
-                      <div className={'border-best-poke ' + getTextColorRatio(value.ratio)}>
-                        <div className="best-poke-desc border-best-poke">
-                          <img
-                            alt="pokemon-model"
-                            height={32}
-                            src={
-                              value.league === 'little'
-                                ? APIService.getPokeOtherLeague('GBL_littlecup')
-                                : value.league === 'great'
-                                ? APIService.getPokeLeague('great_league')
-                                : value.league === 'ultra'
-                                ? APIService.getPokeLeague('ultra_league')
-                                : APIService.getPokeLeague('master_league')
-                            }
-                          />
-                          <div>
-                            <b>{value.ratio.toFixed(2)}</b>
-                          </div>
-                          <span className="caption">CP: {value.CP}</span>
+                        <div>
+                          <b>{value.ratio?.toFixed(2)}</b>
                         </div>
-                        <span className="caption text-black border-best-poke">
-                          <b>#{value.rank}</b>
-                        </span>
+                        <span className="caption">CP: {value.CP}</span>
                       </div>
+                      <span className="caption text-black border-best-poke">
+                        <b>#{value.rank}</b>
+                      </span>
                     </div>
-                  </Link>
-                )
-              )}
+                  </div>
+                </Link>
+              ))}
             </div>
-            {evoChain.map((value: any[], index: React.Key) => (
+            {evoChain.map((value, index) => (
               <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
-                  {!value.at(0).form?.toUpperCase() ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0).form, '-', ' ')}
+                  {!value.at(0)?.form?.toUpperCase() ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0)?.form, '-', ' ')}
                   {' Form'}
                 </div>
                 <Accordion.Item eventKey={'0'}>
@@ -452,7 +463,7 @@ const FindBattle = () => {
                   <Accordion.Body style={{ padding: 0 }}>
                     <div className="sub-body">
                       <div className="row justify-content-center league-info-content" style={{ margin: 0 }}>
-                        {value.map((item: any, index: number) => (
+                        {value.map((item, index) => (
                           <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{ padding: 0 }}>
                             <Link
                               to={`/pokemon/${item.id}${item.form ? `?form=${convertFormName(item.id, item.form.toLowerCase())}` : ''}`}
@@ -501,16 +512,16 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.little.ratio)}
+                                          className={getTextColorRatio(item.battleLeague.little.ratio ?? 0)}
                                         >
-                                          <b>{item.battleLeague.little.ratio.toFixed(2)}</b>
+                                          <b>{item.battleLeague.little.ratio?.toFixed(2)}</b>
                                         </span>
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center" style={{ marginRight: 5 }}>
-                                            {item.battleLeague.little.result_between_candy + getCandyEvo(value, item.id, 0)}
+                                            {(item.battleLeague.little.result_between_candy ?? 0) + getCandyEvo(value, item.id, 0)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
                                           </span>
                                           <CandyXL id={id} />
@@ -555,16 +566,16 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.great.ratio)}
+                                          className={getTextColorRatio(item.battleLeague.great.ratio ?? 0)}
                                         >
-                                          <b>{item.battleLeague.great.ratio.toFixed(2)}</b>
+                                          <b>{item.battleLeague.great.ratio?.toFixed(2)}</b>
                                         </span>
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {item.battleLeague.great.result_between_candy + getCandyEvo(value, item.id, 0)}
+                                            {(item.battleLeague.great.result_between_candy ?? 0) + getCandyEvo(value, item.id, 0)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
                                           </span>
                                           <CandyXL id={id} />
@@ -609,16 +620,16 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.ultra.ratio)}
+                                          className={getTextColorRatio(item.battleLeague.ultra.ratio ?? 0)}
                                         >
-                                          <b>{item.battleLeague.ultra.ratio.toFixed(2)}</b>
+                                          <b>{item.battleLeague.ultra.ratio?.toFixed(2)}</b>
                                         </span>
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {item.battleLeague.ultra.result_between_candy + getCandyEvo(value, item.id, 0)}
+                                            {(item.battleLeague.ultra.result_between_candy ?? 0) + getCandyEvo(value, item.id, 0)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
                                           </span>
                                           <CandyXL id={id} />
@@ -663,16 +674,16 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.master.ratio)}
+                                          className={getTextColorRatio(item.battleLeague.master.ratio ?? 0)}
                                         >
-                                          <b>{item.battleLeague.master.ratio.toFixed(2)}</b>
+                                          <b>{item.battleLeague.master.ratio?.toFixed(2)}</b>
                                         </span>
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {item.battleLeague.master.result_between_candy + getCandyEvo(value, item.id, 0)}
+                                            {(item.battleLeague.master.result_between_candy ?? 0) + getCandyEvo(value, item.id, 0)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
                                           </span>
                                           <CandyXL id={id} />

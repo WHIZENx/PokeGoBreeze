@@ -8,6 +8,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { hideSpinner, showSpinnerWithMsg } from '../../store/actions/spinner.action';
 import { StoreState, SpinnerState } from '../../store/models/state.model';
 import { SYNC_MSG } from '../../util/Constants';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { TypeEff } from '../../core/models/type-eff.model';
 
 const Weather = () => {
   const dispatch = useDispatch();
@@ -35,7 +37,7 @@ const Weather = () => {
       </div>
       <hr style={{ marginTop: 15, marginBottom: 15 }} />
       <div className="container w-75">
-        <Effect weathers={weatherBoosts} types={typeEffective} />
+        <Effect weathers={weatherBoosts as WeatherBoost} types={typeEffective as TypeEff} />
       </div>
     </div>
   );

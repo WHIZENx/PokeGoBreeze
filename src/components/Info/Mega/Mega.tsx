@@ -10,7 +10,10 @@ import { FormModel, PokemonFormModify } from '../../../core/models/API/form.mode
 
 const Mega = (props: { formList: PokemonFormModify[][]; id: number }) => {
   const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
-  const [arrEvoList, setArrEvoList]: [FormModel[], any] = useState([]);
+  const [arrEvoList, setArrEvoList]: [
+    (FormModel | undefined)[] | undefined,
+    React.Dispatch<React.SetStateAction<(FormModel | undefined)[]>>
+  ] = useState([] as (FormModel | undefined)[]);
 
   useEffect(() => {
     setArrEvoList(
@@ -48,25 +51,25 @@ const Mega = (props: { formList: PokemonFormModify[][]; id: number }) => {
                 id="img-pokemon"
                 height="96"
                 alt="img-pokemon"
-                src={APIService.getPokeGifSprite(value.name)}
+                src={APIService.getPokeGifSprite(value?.name ?? '')}
                 onError={(e: any) => {
                   e.onerror = null;
-                  e.target.src = `${value.sprites?.front_default}`;
+                  e.target.src = `${value?.sprites?.front_default}`;
                 }}
               />
               <div id="id-pokemon" style={{ color: 'black' }}>
                 <b>#{props.id}</b>
               </div>
               <div>
-                <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
+                <b className="link-title">{splitAndCapitalize(value?.name, '-', ' ')}</b>
               </div>
               <span className="caption">
                 First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.firstTempEvolution}` : 'Unavailable'}</b>
+                <b>{getQuestEvo(value?.name ?? '') ? `x${getQuestEvo(value?.name ?? '')?.firstTempEvolution}` : 'Unavailable'}</b>
               </span>
               <span className="caption">
                 Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.tempEvolution}` : 'Unavailable'}</b>
+                <b>{getQuestEvo(value?.name ?? '') ? `x${getQuestEvo(value?.name ?? '')?.tempEvolution}` : 'Unavailable'}</b>
               </span>
             </li>
           ))}

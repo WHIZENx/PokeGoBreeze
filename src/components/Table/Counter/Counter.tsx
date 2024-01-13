@@ -87,7 +87,9 @@ const Counter = (props: {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const [counterList, setCounterList]: [CounterModel[], any] = useState([]);
+  const [counterList, setCounterList]: [CounterModel[], React.Dispatch<React.SetStateAction<CounterModel[]>>] = useState(
+    [] as CounterModel[]
+  );
   const [frame, setFrame] = useState(false);
   const [releasedGO, setReleaseGO] = useState(true);
 

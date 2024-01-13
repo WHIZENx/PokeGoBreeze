@@ -6,41 +6,42 @@ import { calculateCP, predictCPList, predictStat } from '../../../util/Calculate
 import DataTable from 'react-data-table-component';
 import data from '../../../data/cp_multiplier.json';
 
-import '../../../components/Select/Find/FormSelect.scss';
+import '../../../components/Find/FormSelect.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
-import Find from '../../../components/Select/Find/Find';
+import Find from '../../../components/Find/Find';
 import { MAX_IV, MIN_IV } from '../../../util/Constants';
+import { PredictStatsModel, PredictStatsCalculate, PredictCPModel, PredictCPCalculate } from '../../../util/models/calculate.model';
 
 const columnsIV: any = [
   {
     name: 'Level',
-    selector: (row: { level: number }) => row.level,
+    selector: (row: PredictStatsModel) => row.level,
     sortable: true,
   },
   {
     name: 'ATK',
-    selector: (row: { atk: number }) => row.atk,
+    selector: (row: PredictStatsModel) => row.atk,
     sortable: true,
   },
   {
     name: 'DEF',
-    selector: (row: { def: number }) => row.def,
+    selector: (row: PredictStatsModel) => row.def,
     sortable: true,
   },
   {
     name: 'STA',
-    selector: (row: { sta: number }) => row.sta,
+    selector: (row: PredictStatsModel) => row.sta,
     sortable: true,
   },
   {
     name: 'HP',
-    selector: (row: { hp: number }) => row.hp,
+    selector: (row: PredictStatsModel) => row.hp,
     sortable: true,
   },
   {
     name: 'Percent',
-    selector: (row: { percent: number }) => row.percent,
+    selector: (row: PredictStatsModel) => row.percent,
     sortable: true,
   },
 ];
@@ -48,42 +49,42 @@ const columnsIV: any = [
 const columnsCP: any = [
   {
     name: 'Level',
-    selector: (row: { level: number }) => row.level,
+    selector: (row: PredictCPModel) => row.level,
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row: { cp: number }) => row.cp,
+    selector: (row: PredictCPModel) => row.CP,
     sortable: true,
   },
   {
     name: 'HP',
-    selector: (row: { hp: number }) => row.hp,
+    selector: (row: PredictCPModel) => row.hp,
     sortable: true,
   },
 ];
 
 const conditionalRowStyles = [
   {
-    when: (row: { percent: number }) => row.percent === 100,
+    when: (row: PredictStatsModel) => row.percent === 100,
     style: {
       backgroundColor: 'rgb(236, 200, 200)',
     },
   },
   {
-    when: (row: { percent: number }) => row.percent > 80 && row.percent < 100,
+    when: (row: PredictStatsModel) => row.percent > 80 && row.percent < 100,
     style: {
       backgroundColor: 'rgb(236, 200, 236)',
     },
   },
   {
-    when: (row: { percent: number }) => row.percent > 64 && row.percent <= 80,
+    when: (row: PredictStatsModel) => row.percent > 64 && row.percent <= 80,
     style: {
       backgroundColor: 'rgb(200, 236, 200)',
     },
   },
   {
-    when: (row: { percent: number }) => row.percent > 51 && row.percent <= 64,
+    when: (row: PredictStatsModel) => row.percent > 51 && row.percent <= 64,
     style: {
       backgroundColor: 'rgb(236, 236, 200)',
     },
@@ -103,8 +104,12 @@ const FindTable = () => {
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [preIvArr, setPreIvArr]: any = useState(null);
-  const [preCpArr, setPreCpArr]: any = useState(null);
+  const [preIvArr, setPreIvArr]: [
+    PredictStatsCalculate | undefined,
+    React.Dispatch<React.SetStateAction<PredictStatsCalculate | undefined>>
+  ] = useState();
+  const [preCpArr, setPreCpArr]: [PredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<PredictCPCalculate | undefined>>] =
+    useState();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -125,8 +130,8 @@ const FindTable = () => {
   );
 
   const clearArrStats = () => {
-    setPreIvArr(null);
-    setPreCpArr(null);
+    setPreIvArr(undefined);
+    setPreCpArr(undefined);
     setSearchCP('');
     setSearchATKIv(0);
     setSearchDEFIv(0);
@@ -161,19 +166,19 @@ const FindTable = () => {
   );
 
   const showResultTableIV = () => {
-    const avgPercent = (Object.values(preIvArr.result).reduce((a: any, b: any) => a + b.percent, 0) as any) / preIvArr.result.length;
-    const avgHP = (Object.values(preIvArr.result).reduce((a: any, b: any) => a + b.hp, 0) as any) / preIvArr.result.length;
-    const fourStar = preIvArr.result.filter((item: { percent: number }) => item.percent === 100).length;
-    const threeStar = preIvArr.result.filter((item: { percent: number }) => item.percent > 80 && item.percent < 100).length;
-    const twoStar = preIvArr.result.filter((item: { percent: number }) => item.percent > 64 && item.percent <= 80).length;
-    const oneStar = preIvArr.result.filter((item: { percent: number }) => item.percent > 51 && item.percent <= 64).length;
-    const zeroStar = preIvArr.result.filter((item: { percent: number }) => item.percent <= 51).length;
+    const avgPercent = Object.values(preIvArr?.result ?? {}).reduce((a, b) => a + b.percent, 0) / (preIvArr?.result.length ?? 1);
+    const avgHP = Object.values(preIvArr?.result ?? {}).reduce((a, b) => a + b.hp, 0) / (preIvArr?.result.length ?? 1);
+    const fourStar = preIvArr?.result.filter((item) => item.percent === 100).length;
+    const threeStar = preIvArr?.result.filter((item) => item.percent > 80 && item.percent < 100).length;
+    const twoStar = preIvArr?.result.filter((item) => item.percent > 64 && item.percent <= 80).length;
+    const oneStar = preIvArr?.result.filter((item) => item.percent > 51 && item.percent <= 64).length;
+    const zeroStar = preIvArr?.result.filter((item) => item.percent <= 51).length;
     return (
       <Fragment>
-        {preIvArr.result.length > 0 && (
+        {(preIvArr?.result.length ?? 0) > 0 && (
           <Fragment>
             <p className="element-top">
-              All of result: <b>{preIvArr.result.length}</b>
+              All of result: <b>{preIvArr?.result.length}</b>
             </p>
             <p className="element-top">
               Average of percent: <b>{parseFloat(avgPercent.toFixed(2))}</b>
@@ -189,7 +194,7 @@ const FindTable = () => {
                   <b>{fourStar}</b>
                 </div>
               </div>
-              <p>{((fourStar * 100) / preIvArr.result.length).toFixed(2)}%</p>
+              <p>{(((fourStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="three-star">
@@ -199,7 +204,7 @@ const FindTable = () => {
                   <b>{threeStar}</b>
                 </div>
               </div>
-              <p>{((threeStar * 100) / preIvArr.result.length).toFixed(2)}%</p>
+              <p>{(((threeStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="two-star">
@@ -209,7 +214,7 @@ const FindTable = () => {
                   <b>{twoStar}</b>
                 </div>
               </div>
-              <p>{((twoStar * 100) / preIvArr.result.length).toFixed(2)}%</p>
+              <p>{(((twoStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="one-star">
@@ -219,7 +224,7 @@ const FindTable = () => {
                   <b>{oneStar}</b>
                 </div>
               </div>
-              <p>{((oneStar * 100) / preIvArr.result.length).toFixed(2)}%</p>
+              <p>{(((oneStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="zero-star">
@@ -229,15 +234,15 @@ const FindTable = () => {
                   <b>{zeroStar}</b>
                 </div>
               </div>
-              <p>{((zeroStar * 100) / preIvArr.result.length).toFixed(2)}%</p>
+              <p>{(((zeroStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
             </div>
           </Fragment>
         )}
-        {preIvArr.result.length > 0 ? (
+        {(preIvArr?.result.length ?? 0) > 0 ? (
           <DataTable
-            title={'Levels/IV for CP: ' + preIvArr.cp}
+            title={'Levels/IV for CP: ' + preIvArr?.CP}
             columns={columnsIV}
-            data={preIvArr.result}
+            data={preIvArr?.result ?? []}
             pagination={true}
             defaultSortFieldId={6}
             defaultSortAsc={false}
@@ -246,7 +251,7 @@ const FindTable = () => {
           />
         ) : (
           <p className="element-top text-danger text-center">
-            At CP: <b>{preIvArr.cp}</b> impossible found in <b>{name}</b>
+            At CP: <b>{preIvArr?.CP}</b> impossible found in <b>{name}</b>
           </p>
         )}
       </Fragment>
@@ -254,11 +259,11 @@ const FindTable = () => {
   };
 
   const showResultTableCP = () => {
-    const avgCp = (Object.values(preCpArr.result).reduce((a: any, b: any) => a + b.cp, 0) as any) / preCpArr.result.length;
-    const avgHP = (Object.values(preCpArr.result).reduce((a: any, b: any) => a + b.hp, 0) as any) / preCpArr.result.length;
+    const avgCp = Object.values(preCpArr?.result ?? {}).reduce((a, b) => a + b.CP, 0) / (preCpArr?.result.length ?? 1);
+    const avgHP = Object.values(preCpArr?.result ?? {}).reduce((a, b) => a + b.hp, 0) / (preCpArr?.result.length ?? 1);
     return (
       <Fragment>
-        {preCpArr.result.length > 0 && (
+        {(preCpArr?.result.length ?? 0) > 0 && (
           <Fragment>
             <p className="element-top">
               Average of CP: <b>{Math.round(avgCp)}</b>
@@ -267,9 +272,9 @@ const FindTable = () => {
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <DataTable
-              title={'Levels/CP for IV: ' + preCpArr.IV.atk + '/' + preCpArr.IV.def + '/' + preCpArr.IV.sta}
+              title={'Levels/CP for IV: ' + preCpArr?.IV.atk + '/' + preCpArr?.IV.def + '/' + preCpArr?.IV.sta}
               columns={columnsCP}
-              data={preCpArr.result}
+              data={preCpArr?.result ?? []}
               pagination={true}
               defaultSortFieldId={1}
               highlightOnHover={true}
@@ -381,7 +386,7 @@ const FindTable = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_, v: any) => setSearchATKIv(v as number)}
+                onChange={(_, v) => setSearchATKIv(v as number)}
               />
               <div className="d-flex justify-content-between">
                 <b>DEF</b>

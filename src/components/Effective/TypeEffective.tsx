@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 import TypeInfo from '../Sprites/Type/Type';
 import { TypeEffChart } from '../../core/models/type-eff.model';
 
-const TypeEffective = (props: { typeEffective: TypeEffChart | null }) => {
+const TypeEffective = (props: { typeEffective: TypeEffChart | undefined }) => {
   if (!props.typeEffective) {
     return <></>;
   }

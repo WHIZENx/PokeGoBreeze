@@ -97,9 +97,9 @@ const PokemonRaid = (props: {
               title="Remove"
               onClick={() => {
                 if (props.id > 0) {
-                  setDataTargetPokemon(props.data[props.id + 1].dataTargetPokemon);
-                  setFmoveTargetPokemon(props.data[props.id + 1].fmoveTargetPokemon);
-                  setCmoveTargetPokemon(props.data[props.id + 1].cmoveTargetPokemon);
+                  setDataTargetPokemon(props.data[props.id + 1]?.dataTargetPokemon);
+                  setFmoveTargetPokemon(props.data[props.id + 1]?.fmoveTargetPokemon);
+                  setCmoveTargetPokemon(props.data[props.id + 1]?.cmoveTargetPokemon);
                   props.onRemovePokemon(props.id);
                 }
               }}

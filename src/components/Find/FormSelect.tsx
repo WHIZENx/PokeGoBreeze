@@ -1,24 +1,30 @@
 import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../services/API.service';
 import Tools from './Tools';
 
-import loading from '../../../assets/loading.png';
-import { convertFormNameImg, getPokemonById, getPokemonByIndex, splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
-import TypeInfo from '../../Sprites/Type/Type';
+import loading from '../../assets/loading.png';
+import { convertFormNameImg, getPokemonById, getPokemonByIndex, splitAndCapitalize, TypeRadioGroup } from '../../util/Utils';
+import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
-import { getFormsGO } from '../../../core/forms';
+import { getFormsGO } from '../../core/forms';
 import { useDispatch } from 'react-redux';
-import { setSearchToolPage } from '../../../store/actions/searching.action';
+import { setSearchToolPage } from '../../store/actions/searching.action';
 import { Action } from 'history';
-import { StatsModel } from '../../../core/models/stats.model';
-import { ToolSearching } from '../../../core/models/searching.model';
-import { PokemonDataModel, PokemonNameModel } from '../../../core/models/pokemon.model';
+import { StatsModel } from '../../core/models/stats.model';
+import { ToolSearching } from '../../core/models/searching.model';
+import { PokemonDataModel, PokemonNameModel } from '../../core/models/pokemon.model';
 import { CancelTokenSource } from 'axios';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import { FormModel, PokemonForm, PokemonFormModify } from '../../../core/models/API/form.model';
-import { Species } from '../../../core/models/API/species.model';
-import { PokemonInfo } from '../../../core/models/API/info.model';
+import { FormModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
+import { Species } from '../../core/models/API/species.model';
+import { PokemonInfo } from '../../core/models/API/info.model';
+
+interface OptionsPokemon {
+  prev: PokemonNameModel | undefined;
+  current: PokemonNameModel | undefined;
+  next: PokemonNameModel | undefined;
+}
 
 const FormSelect = (props: {
   router: ReduxRouterState;
@@ -34,34 +40,45 @@ const FormSelect = (props: {
   hide?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   form?: string | null;
-  setForm?: any;
-  setFormOrigin?: any;
+  // eslint-disable-next-line no-unused-vars
+  setForm?: (form: PokemonFormModify | undefined) => void;
+  setFormOrigin?: React.Dispatch<React.SetStateAction<string | undefined>>;
   stats: StatsModel;
   // eslint-disable-next-line no-unused-vars
   onHandleSetStats?: (type: string, value: number) => void;
   data: PokemonDataModel[];
-  setUrlEvo: any;
+  setUrlEvo?: React.Dispatch<
+    React.SetStateAction<{
+      url: string;
+    }>
+  >;
   objective?: boolean;
   pokemonName: PokemonNameModel[];
 }) => {
   const dispatch = useDispatch();
 
-  const [pokeData, setPokeData]: [PokemonInfo[], any] = useState([]);
-  const [formList, setFormList]: [PokemonFormModify[][], any] = useState([]);
+  const [pokeData, setPokeData]: [PokemonInfo[], React.Dispatch<React.SetStateAction<PokemonInfo[]>>] = useState([] as PokemonInfo[]);
+  const [formList, setFormList]: [PokemonFormModify[][], React.Dispatch<React.SetStateAction<PokemonFormModify[][]>>] = useState(
+    [] as PokemonFormModify[][]
+  );
 
   const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
   const [tier, setTier] = useState(props.tier ?? 1);
 
-  const [data, setData]: [Species | undefined, any] = useState();
-  const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
+  const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
+  const [dataStorePokemon, setDataStorePokemon]: [
+    OptionsPokemon | undefined,
+    React.Dispatch<React.SetStateAction<OptionsPokemon | undefined>>
+  ] = useState();
 
-  const [currForm, setCurrForm]: [PokemonFormModify | undefined, any] = useState();
+  const [currForm, setCurrForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] =
+    useState();
 
   const [pokeID, setPokeID] = useState(0);
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const fetchMap = async (data: Species, axios: any, source: CancelTokenSource) => {
+  const fetchMap = async (data: Species, axios: typeof APIService, source: CancelTokenSource) => {
     setFormList([]);
     setPokeData([]);
     const dataPokeList: PokemonInfo[] = [];
@@ -155,12 +172,12 @@ const FormSelect = (props: {
   };
 
   const queryPokemon = useCallback(
-    (id: string, axios: any, source: CancelTokenSource) => {
+    (id: string, axios: typeof APIService, source: CancelTokenSource) => {
       if (!id) {
         return;
       }
       axios
-        .getPokeSpices(id, {
+        .getPokeSpices(parseInt(id.toString()), {
           cancelToken: source.token,
         })
         .then((res: { data: Species }) => {
@@ -212,7 +229,7 @@ const FormSelect = (props: {
   }, [currForm]);
 
   const changeForm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const findForm = formList.map((item) => item.find((item) => item.form.name === e.currentTarget.value)).find((item: any) => item);
+    const findForm = formList.map((item) => item.find((item) => item.form.name === e.currentTarget.value)).find((item) => item);
     setCurrForm(findForm);
     if (props.onClearStats) {
       props.onClearStats();
@@ -233,9 +250,9 @@ const FormSelect = (props: {
           <div
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              setCurrForm(null);
-              props.setForm?.(null);
-              props.setFormOrigin?.(null);
+              setCurrForm(undefined);
+              props.setForm?.(undefined);
+              props.setFormOrigin?.(undefined);
               props.onSetPrev?.();
             }}
           >
@@ -265,9 +282,9 @@ const FormSelect = (props: {
           <div
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              setCurrForm(null);
-              props.setForm?.(null);
-              props.setFormOrigin?.(null);
+              setCurrForm(undefined);
+              props.setForm?.(undefined);
+              props.setFormOrigin?.(undefined);
               props.onSetNext?.();
             }}
           >

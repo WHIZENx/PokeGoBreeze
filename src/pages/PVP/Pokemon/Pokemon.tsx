@@ -39,7 +39,10 @@ const PokemonPVP = () => {
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
 
-  const [rankingPoke, setRankingPoke]: [PokemonBattleRanking | undefined, any] = useState();
+  const [rankingPoke, setRankingPoke]: [
+    PokemonBattleRanking | undefined,
+    React.Dispatch<React.SetStateAction<PokemonBattleRanking | undefined>>
+  ] = useState();
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
@@ -147,24 +150,26 @@ const PokemonPVP = () => {
 
       setRankingPoke({
         data,
-        id,
-        name,
+        id: id ?? 0,
+        name: name ?? '',
         pokemon,
-        form,
+        form: form ?? '',
         stats,
         atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
         def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
         sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
         prod: statsRanking.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
-        scores: data?.scores,
+        scores: data?.scores ?? [],
         combatPoke,
         fmove,
         cmovePri,
         cmoveSec,
         bestStats,
-        shadow: data?.speciesName.includes('(Shadow)'),
+        shadow: data?.speciesName.includes('(Shadow)') ?? false,
         purified:
-          combatPoke?.purifiedMoves.includes(cmovePri?.name ?? '') || (cMoveDataSec && combatPoke?.purifiedMoves.includes(cMoveDataSec)),
+          (combatPoke?.purifiedMoves.includes(cmovePri?.name ?? '') ||
+            (cMoveDataSec !== null && cMoveDataSec !== undefined && combatPoke?.purifiedMoves.includes(cMoveDataSec))) ??
+          false,
       });
       dispatch(hideSpinner());
     } catch (e: any) {

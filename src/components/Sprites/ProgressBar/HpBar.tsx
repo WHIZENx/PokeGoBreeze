@@ -12,8 +12,8 @@ const Bar = styled.div`
 const Fill = styled.div`
   position: absolute;
   width: ${(props: { hp: number; maxHp: number; height: number; color: string }) => (props.hp * 100) / props.maxHp}%;
-  height: ${(props: { height: number }) => props.height - 4}px;
-  background: ${(props: { color: string }) => props.color};
+  height: ${(props) => props.height - 4}px;
+  background: ${(props) => props.color};
   transition: 0.1s;
 `;
 
@@ -24,9 +24,9 @@ const anim = keyframes`
 const FillDmg = styled.div`
   position: absolute;
   width: ${(props: { hp: number; maxHp: number; height: number; color: string; dmg: number }) => (props.dmg * 100) / props.maxHp}%;
-  height: ${(props: { height: number }) => props.height - 4}px;
-  background: ${(props: { color: string }) => props.color};
-  left: ${(props: { hp: number; maxHp: number }) => (props.hp * 100) / props.maxHp}%;
+  height: ${(props) => props.height - 4}px;
+  background: ${(props) => props.color};
+  left: ${(props) => (props.hp * 100) / props.maxHp}%;
   animation: 1s ${anim};
   animation-fill-mode: forwards;
 `;

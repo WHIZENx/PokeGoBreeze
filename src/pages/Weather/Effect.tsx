@@ -5,8 +5,8 @@ import { capitalize } from '../../util/Utils';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 
-const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) => {
-  const [types, setTypes]: [string[], any] = useState([]);
+const Effect = (prop: { weathers: WeatherBoost | undefined; types: TypeEff | undefined }) => {
+  const [types, setTypes] = useState([] as string[]);
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');
   const [currentTypeSec, setCurrentTypeSec] = useState('');
@@ -14,11 +14,11 @@ const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) =>
   const [showTypePri, setShowTypePri] = useState(false);
   const [showTypeSec, setShowTypeSec] = useState(false);
 
-  const [weatherEffective, setWeatherEffective] = useState([]);
+  const [weatherEffective, setWeatherEffective] = useState([] as string[]);
 
   const getWeatherEffective = useCallback(() => {
-    const data: any = [];
-    Object.entries(prop.weathers).forEach(([key, value]: any) => {
+    const data: string[] = [];
+    Object.entries(prop.weathers ?? {}).forEach(([key, value]) => {
       if (value.includes(currentTypePri) && !data.includes(key)) {
         data.push(key);
       }
@@ -30,7 +30,7 @@ const Effect = (prop: { weathers: WeatherBoost | any; types: TypeEff | any }) =>
   }, [currentTypePri, currentTypeSec, prop.weathers]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types).filter((item) => item !== currentTypePri && item !== currentTypeSec);
+    const results = Object.keys(prop.types ?? {}).filter((item) => item !== currentTypePri && item !== currentTypeSec);
     setTypes(results);
     getWeatherEffective();
   }, [currentTypePri, currentTypeSec, getWeatherEffective, prop.types]);

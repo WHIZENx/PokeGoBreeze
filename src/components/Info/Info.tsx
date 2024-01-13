@@ -9,12 +9,12 @@ import { TypeEffChart } from '../../core/models/type-eff.model';
 import { PokemonDataForm, PokemonFormModify } from '../../core/models/API/form.model';
 
 const Info = (props: { data: PokemonDataForm; currForm: PokemonFormModify | undefined }) => {
-  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
-  const weatherEffective = useSelector((state: StoreState) => state.store.data?.weatherBoost ?? {});
+  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
+  const weatherEffective = useSelector((state: StoreState) => state.store.data?.weatherBoost);
 
   const getWeatherEffective = (types: string[]) => {
     const data: string[] = [];
-    Object.entries(weatherEffective).forEach(([key, value]: any) => {
+    Object.entries(weatherEffective ?? {}).forEach(([key, value]) => {
       types?.forEach((type) => {
         if (value.includes(type?.toUpperCase()) && !data.includes(key)) {
           data.push(key);
@@ -33,7 +33,7 @@ const Info = (props: { data: PokemonDataForm; currForm: PokemonFormModify | unde
       resist: [],
       neutral: [],
     };
-    Object.entries(typeEffective).forEach(([key, value]: any) => {
+    Object.entries(typeEffective ?? {}).forEach(([key, value]) => {
       let valueEffective = 1;
       types?.forEach((type) => {
         valueEffective *= value[type?.toUpperCase()];

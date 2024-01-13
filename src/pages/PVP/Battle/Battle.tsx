@@ -57,7 +57,9 @@ const Battle = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
-  const [data, setData]: [BattlePokemonData[], any] = useState([]);
+  const [data, setData]: [BattlePokemonData[], React.Dispatch<React.SetStateAction<BattlePokemonData[]>>] = useState(
+    [] as BattlePokemonData[]
+  );
   const [options, setOptions] = useState({
     showTap: false,
     timelineType: 1,
@@ -66,43 +68,29 @@ const Battle = () => {
   });
   const { showTap, timelineType, duration, league }: OptionsBattle = options;
 
-  const timelineFit: any = useRef();
-  const timelineNormal: any = useRef();
-  const timelineNormalContainer: any = useRef();
-  const playLine: any = useRef();
+  const timelineFit: React.MutableRefObject<Element | undefined> = useRef();
+  const timelineNormal: React.MutableRefObject<Element | undefined> = useRef();
+  const timelineNormalContainer: React.MutableRefObject<Element | undefined> = useRef();
+  const playLine: React.MutableRefObject<Element | undefined> = useRef();
 
   let timelineInterval: NodeJS.Timeout;
   let turnInterval: NodeJS.Timeout;
 
-  const [pokemonCurr, setPokemonCurr]: [PokemonBattle, any] = useState({
-    pokemonData: null,
-    fMove: null,
-    cMovePri: null,
-    cMoveSec: null,
+  const [pokemonCurr, setPokemonCurr]: [PokemonBattle, React.Dispatch<React.SetStateAction<PokemonBattle>>] = useState({
     timeline: [] as Timeline[],
     energy: 0,
     block: 2,
-    shadow: false,
-    disableCMovePri: false,
-    disableCMoveSec: false,
   });
 
-  const [pokemonObj, setPokemonObj]: [PokemonBattle, any] = useState({
-    pokemonData: null,
-    fMove: null,
-    cMovePri: null,
-    cMoveSec: null,
+  const [pokemonObj, setPokemonObj]: [PokemonBattle, React.Dispatch<React.SetStateAction<PokemonBattle>>] = useState({
     timeline: [] as Timeline[],
     energy: 0,
     block: 2,
-    shadow: false,
-    disableCMovePri: false,
-    disableCMoveSec: false,
   });
 
   const [playTimeline, setPlayTimeline]: any = useState({
-    pokemonCurr: { hp: 0, energyPri: null, energySec: null },
-    pokemonObj: { hp: 0, energyPri: null, energySec: null },
+    pokemonCurr: { hp: 0, energy: 0 },
+    pokemonObj: { hp: 0, energy: 0 },
   });
 
   const State = (
@@ -163,7 +151,7 @@ const Battle = () => {
       energy: poke.energy ?? 0,
       block: poke.block ?? 2,
       turn: Math.ceil((poke.fMove?.durationMs ?? 0) / 500),
-      shadow: poke.shadow,
+      shadow: poke.shadow ?? false,
       disableCMovePri: poke.disableCMovePri,
       disableCMoveSec: poke.disableCMoveSec,
     };
@@ -687,7 +675,7 @@ const Battle = () => {
                 stats,
               };
             })
-            .filter((pokemon) => pokemon)
+            .filter((pokemon) => pokemon) as BattlePokemonData[]
         );
         dispatch(hideSpinner());
       } catch (e: any) {
@@ -715,11 +703,11 @@ const Battle = () => {
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj({ ...pokemonObj, timeline: [] });
     setPlayTimeline({
-      pokemonCurr: { hp: 0, energyPri: null, energySec: null },
-      pokemonObj: { hp: 0, energyPri: null, energySec: null },
+      pokemonCurr: { hp: 0, energy: 0 },
+      pokemonObj: { hp: 0, energy: 0 },
     });
     if (removeCMoveSec) {
-      setPokemonCurr({ ...pokemonCurr, cMoveSec: '', timeline: [] });
+      setPokemonCurr({ ...pokemonCurr, cMoveSec: null, timeline: [] });
     } else {
       setPokemonCurr({
         ...pokemonCurr,
@@ -739,11 +727,11 @@ const Battle = () => {
   const clearDataPokemonObj = (removeCMoveSec: boolean) => {
     setPokemonCurr({ ...pokemonCurr, timeline: [] });
     setPlayTimeline({
-      pokemonCurr: { hp: 0, energyPri: null, energySec: null },
-      pokemonObj: { hp: 0, energyPri: null, energySec: null },
+      pokemonCurr: { hp: 0, energy: 0 },
+      pokemonObj: { hp: 0, energy: 0 },
     });
     if (removeCMoveSec) {
-      setPokemonObj({ ...pokemonObj, cMoveSec: '', timeline: [] });
+      setPokemonObj({ ...pokemonObj, cMoveSec: null, timeline: [] });
     } else {
       setPokemonObj({
         ...pokemonObj,
@@ -773,12 +761,16 @@ const Battle = () => {
     return elem ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
   };
 
-  const onPlayLineMove = (e: any) => {
+  const onPlayLineMove = (e: {
+    currentTarget: { getBoundingClientRect: () => { left: number } };
+    clientX: number;
+    changedTouches: { clientX: number }[];
+  }) => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
-    if (elem && x <= timelineNormal.current.clientWidth - 2) {
+    if (elem && x <= (timelineNormal.current?.clientWidth ?? 0) - 2) {
       elem.style.transform = 'translate(' + x + 'px, -50%)';
     }
     if (arrBound.current.length === 0 && pokemonCurr.timeline) {
@@ -788,7 +780,7 @@ const Battle = () => {
     }
     if (!xNormal.current) {
       const element: any = ReactDOM.findDOMNode(timelineNormalContainer.current);
-      const rect = element.getBoundingClientRect();
+      const rect = element?.getBoundingClientRect();
       xNormal.current = rect.left;
     }
     overlappingPos(arrBound.current, x + (xNormal.current ?? 0));
@@ -803,7 +795,7 @@ const Battle = () => {
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
-    if (elem && x <= timelineFit.current.clientWidth) {
+    if (elem && x <= (timelineFit.current?.clientWidth ?? 0)) {
       elem.style.transform = 'translate(' + x + 'px, -50%)';
     }
     if ((xFit.current !== e.currentTarget.clientWidth || arrStore.current.length === 0) && pokemonCurr.timeline) {
@@ -822,13 +814,17 @@ const Battle = () => {
     let xCurrent = 0;
     if (elem) {
       if (timelineType) {
-        xCurrent = elem.style.transform ? (getTranslation(elem) >= timelineNormal.current.clientWidth - 2 ? 0 : getTranslation(elem)) : 0;
-        timelineNormalContainer.current.scrollTo({
-          left: Math.max(0, xCurrent - timelineNormalContainer.current.clientWidth / 2),
+        xCurrent = elem.style.transform
+          ? getTranslation(elem) >= (timelineNormal.current?.clientWidth ?? 0) - 2
+            ? 0
+            : getTranslation(elem)
+          : 0;
+        timelineNormalContainer.current?.scrollTo({
+          left: Math.max(0, xCurrent - timelineNormalContainer.current?.clientWidth / 2),
         });
         if (!xNormal.current) {
           const element: any = ReactDOM.findDOMNode(timelineNormalContainer.current);
-          const rect = element.getBoundingClientRect();
+          const rect = element?.getBoundingClientRect();
           xNormal.current = rect.left;
         }
         if (arrBound.current.length === 0 && pokemonCurr.timeline) {
@@ -837,8 +833,12 @@ const Battle = () => {
           }
         }
       } else {
-        xCurrent = elem.style.transform ? (getTranslation(elem) >= timelineFit.current.clientWidth - 1 ? 0 : getTranslation(elem)) : 0;
-        xFit.current = timelineFit.current.clientWidth;
+        xCurrent = elem.style.transform
+          ? getTranslation(elem) >= (timelineFit.current?.clientWidth ?? 0) - 1
+            ? 0
+            : getTranslation(elem)
+          : 0;
+        xFit.current = timelineFit.current?.clientWidth ?? 0;
         if (arrStore.current.length === 0) {
           for (let i = 0; i < range; i++) {
             arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
@@ -853,12 +853,12 @@ const Battle = () => {
       if (timelineType) {
         const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
         const width = Math.min(
-          timelineNormal.current.clientWidth - 2,
-          xCurrent + durationFactor * (timelineNormal.current.clientWidth - 2)
+          (timelineNormal.current?.clientWidth ?? 0) - 2,
+          xCurrent + durationFactor * ((timelineNormal.current?.clientWidth ?? 0) - 2)
         );
-        if (width >= timelineNormal.current.clientWidth - 2) {
+        if (width >= (timelineNormal.current?.clientWidth ?? 0) - 2) {
           if (elem) {
-            elem.style.transform = 'translate(' + (timelineNormal.current.clientWidth - 2) + 'px, -50%)';
+            elem.style.transform = 'translate(' + ((timelineNormal.current?.clientWidth ?? 0) - 2) + 'px, -50%)';
           }
           return stopTimeLine();
         }
@@ -866,26 +866,29 @@ const Battle = () => {
           elem.style.transform = 'translate(' + width + 'px, -50%)';
           overlappingPos(arrBound.current, width + (xNormal.current ?? 0), true);
         }
-        if (Math.min(width, timelineNormalContainer.current.clientWidth / 2) === timelineNormalContainer.current.clientWidth / 2) {
-          timelineNormalContainer.current.scrollTo({
-            left: width - timelineNormalContainer.current.clientWidth / 2,
+        if (
+          Math.min(width, (timelineNormalContainer.current?.clientWidth ?? 0) / 2) ===
+          (timelineNormalContainer.current?.clientWidth ?? 0) / 2
+        ) {
+          timelineNormalContainer.current?.scrollTo({
+            left: width - timelineNormalContainer.current?.clientWidth / 2,
           });
         }
-        if (width < timelineNormal.current.clientWidth) {
+        if (width < (timelineNormal.current?.clientWidth ?? 0)) {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
         const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
-        const width = Math.min(timelineFit.current.clientWidth, xCurrent + durationFactor * timelineFit.current.clientWidth);
+        const width = Math.min(timelineFit.current?.clientWidth ?? 0, xCurrent + durationFactor * (timelineFit.current?.clientWidth ?? 0));
         if (elem) {
           elem.style.transform = 'translate(' + width + 'px, -50%)';
           overlappingPos(arrStore.current, elem.getBoundingClientRect().left, true);
         }
-        if (width < timelineFit.current.clientWidth) {
+        if (width < (timelineFit.current?.clientWidth ?? 0)) {
           timelinePlay.current = requestAnimationFrame(animate);
         } else {
           if (elem) {
-            elem.style.transform = 'translate(' + timelineFit.current.clientWidth + 'px, -50%)';
+            elem.style.transform = 'translate(' + timelineFit.current?.clientWidth + 'px, -50%)';
           }
           return stopTimeLine();
         }
@@ -972,13 +975,13 @@ const Battle = () => {
             arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / prevWidth) * timelineNormal.current.clientWidth - 2;
+        transform = (xCurrent / prevWidth) * (timelineNormal.current?.clientWidth ?? 0) - 2;
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = 'translate(' + Math.max(0, transform) + 'px, -50%)';
         }
-        timelineNormalContainer.current.scrollTo({
-          left: Math.min(transform, transform - timelineNormalContainer.current.clientWidth / 2),
+        timelineNormalContainer.current?.scrollTo({
+          left: Math.min(transform, transform - timelineNormalContainer.current?.clientWidth / 2),
         });
       } else {
         if (arrStore.current.length === 0 && pokemonCurr.timeline) {
@@ -986,7 +989,7 @@ const Battle = () => {
             arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / prevWidth) * timelineFit.current.clientWidth;
+        transform = (xCurrent / prevWidth) * (timelineFit.current?.clientWidth ?? 0);
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = 'translate(' + transform + 'px, -50%)';
@@ -1033,7 +1036,12 @@ const Battle = () => {
     );
   };
 
-  const calculateStatPokemon = (e: { preventDefault: () => void }, type: string, pokemon: PokemonBattle, setPokemon: any) => {
+  const calculateStatPokemon = (
+    e: { preventDefault: () => void },
+    type: string,
+    pokemon: PokemonBattle,
+    setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>
+  ) => {
     e.preventDefault();
     const level = parseInt((document.getElementById('level' + capitalize(type)) as HTMLInputElement).value);
     const atk = parseInt((document.getElementById('atkIV' + capitalize(type)) as HTMLInputElement).value);
@@ -1073,17 +1081,24 @@ const Battle = () => {
       };
     }
 
-    return setPokemon({
-      ...pokemon,
-      timeline: [],
-      pokemonData: {
-        ...pokemon.pokemonData,
-        currentStats: stats,
-      },
-    });
+    if (pokemon.pokemonData) {
+      setPokemon({
+        ...pokemon,
+        timeline: [],
+        pokemonData: {
+          ...pokemon.pokemonData,
+          currentStats: stats,
+        },
+      });
+    }
   };
 
-  const onSetStats = (type: string, pokemon: PokemonBattle, setPokemon: any, isRandom: boolean) => {
+  const onSetStats = (
+    type: string,
+    pokemon: PokemonBattle,
+    setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>,
+    isRandom: boolean
+  ) => {
     let stats: { level: string; IV: StatsPokemon };
     if (isRandom) {
       stats = pokemon.pokemonData?.allStats[Math.floor(Math.random() * pokemon.pokemonData?.allStats.length)];
@@ -1096,17 +1111,19 @@ const Battle = () => {
     (document.getElementById('defIV' + capitalize(type)) as HTMLInputElement).value = stats.IV.def.toString();
     (document.getElementById('hpIV' + capitalize(type)) as HTMLInputElement).value = stats.IV.sta?.toString() ?? '';
 
-    return setPokemon({
-      ...pokemon,
-      timeline: [],
-      pokemonData: {
-        ...pokemon.pokemonData,
-        currentStats: stats,
-      },
-    });
+    if (pokemon.pokemonData) {
+      setPokemon({
+        ...pokemon,
+        timeline: [],
+        pokemonData: {
+          ...pokemon.pokemonData,
+          currentStats: stats,
+        },
+      });
+    }
   };
 
-  const renderInfoPokemon = (type: string, pokemon: PokemonBattle, setPokemon: any) => {
+  const renderInfoPokemon = (type: string, pokemon: PokemonBattle, setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>) => {
     return (
       <Accordion defaultActiveKey={[]} alwaysOpen={true}>
         <Accordion.Item eventKey="0">
@@ -1272,7 +1289,13 @@ const Battle = () => {
     );
   };
 
-  const renderPokemonInfo = (type: string, pokemon: PokemonBattle, setPokemon: any, clearDataPokemon: any) => {
+  const renderPokemonInfo = (
+    type: string,
+    pokemon: PokemonBattle,
+    setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>,
+    // eslint-disable-next-line no-unused-vars
+    clearDataPokemon: (removeMove: boolean) => void
+  ) => {
     return (
       <Fragment>
         <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
@@ -1326,7 +1349,7 @@ const Battle = () => {
                     size={80}
                     maxEnergy={100}
                     moveEnergy={Math.abs(pokemon.cMovePri?.pvp_energy ?? 0)}
-                    energy={playTimeline[type].energy ?? pokemon.energy ?? 0}
+                    energy={playTimeline[type]?.energy ?? pokemon.energy ?? 0}
                     disable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
@@ -1336,7 +1359,7 @@ const Battle = () => {
                       size={80}
                       maxEnergy={100}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvp_energy)}
-                      energy={playTimeline[type].energy ?? pokemon.energy ?? 0}
+                      energy={playTimeline[type]?.energy ?? pokemon.energy ?? 0}
                       disable={pokemon.disableCMoveSec}
                     />
                   )}
@@ -1466,16 +1489,25 @@ const Battle = () => {
                       {TimeLine(
                         pokemonCurr,
                         pokemonObj,
-                        timelineNormalContainer,
+                        timelineNormalContainer as React.LegacyRef<HTMLDivElement>,
                         onScrollTimeline,
-                        timelineNormal,
-                        playLine,
+                        timelineNormal as React.LegacyRef<HTMLDivElement>,
+                        playLine as React.LegacyRef<HTMLDivElement>,
                         onPlayLineMove,
                         showTap
                       )}
                     </Fragment>
                   ) : (
-                    <Fragment>{TimeLineFit(pokemonCurr, pokemonObj, timelineFit, playLine, onPlayLineFitMove, showTap)}</Fragment>
+                    <Fragment>
+                      {TimeLineFit(
+                        pokemonCurr,
+                        pokemonObj,
+                        timelineFit as React.LegacyRef<HTMLDivElement>,
+                        playLine as React.LegacyRef<HTMLDivElement>,
+                        onPlayLineFitMove,
+                        showTap
+                      )}
+                    </Fragment>
                   )}
                   <div className="d-flex justify-content-center">
                     <FormControlLabel
@@ -1490,7 +1522,7 @@ const Battle = () => {
                       onChange={(e) =>
                         onChangeTimeline(
                           parseInt(e.target.value),
-                          timelineType ? timelineNormal.current.clientWidth : timelineFit.current.clientWidth
+                          (timelineType ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth) ?? 0
                         )
                       }
                     >
@@ -1501,7 +1533,7 @@ const Battle = () => {
                       <InputLabel>Speed</InputLabel>
                       <Select
                         value={duration}
-                        onChange={(event: any) => setOptions({ ...options, duration: parseFloat(event.target.value) })}
+                        onChange={(e: any) => setOptions({ ...options, duration: parseFloat(e.target.value) })}
                         label="Speed"
                       >
                         <MenuItem value={0.5}>x0.5</MenuItem>

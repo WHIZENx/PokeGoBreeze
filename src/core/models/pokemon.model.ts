@@ -30,7 +30,7 @@ interface EvolutionBranch {
   obEvolutionBranchRequiredMove?: string;
 }
 
-interface Encounter {
+export interface Encounter {
   baseCaptureRate?: number;
   baseFleeRate?: number;
   collisionRadiusM: number;
@@ -58,7 +58,7 @@ export interface PokemonModel {
   eliteCinematicMove?: string[];
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
-  pokemonClass: any;
+  pokemonClass: string | undefined;
   formChange: null;
   tempEvoOverrides: any;
   pokemonId: string;
@@ -172,23 +172,31 @@ export interface PokemonNameModel {
 }
 
 export interface PokemonMoveData {
-  pokemon: any;
+  pokemon: PokemonDataModel | undefined;
   fmove: Combat | undefined;
   cmove: Combat | undefined;
   dpsDef: number;
   dpsAtk: number;
   tdoAtk: number;
   tdoDef: number;
-  multiDpsTdo: number;
+  multiDpsTdo?: number;
   ttkAtk: number;
   ttkDef: number;
-  attackHpRemain: number;
-  defendHpRemain: number;
-  death: number;
-  shadow: boolean;
-  purified: boolean;
-  mShadow: boolean;
-  elite: { fmove: boolean; cmove: boolean };
+  attackHpRemain?: number;
+  defendHpRemain?: number;
+  death?: number;
+  shadow?: boolean;
+  purified?: boolean;
+  mShadow?: boolean;
+  elite?: { fmove: boolean; cmove: boolean };
+  trainerId?: number;
+  atk?: number;
+  def?: number;
+  hp?: number;
+  timer?: number;
+  defHpRemain?: number;
+  atkHpRemain?: number;
+  special?: boolean;
 }
 
 export interface PokemonEncounter {
@@ -202,6 +210,14 @@ export interface PokemonRaidModel {
   dataTargetPokemon?: PokemonDataModel;
   fmoveTargetPokemon?: SelectMoveModel;
   cmoveTargetPokemon?: SelectMoveModel;
+  trainerId?: number;
+  dpsAtk?: number;
+  hp?: number;
+  ttkDef?: number;
+  dpsDef?: number;
+  tdoAtk?: number;
+  tdoDef?: number;
+  attackHpRemain?: number;
 }
 
 export class PokemonDataModel {
@@ -286,7 +302,7 @@ export class PokemonDataModel {
     this.isTransferable = pokemon.isTransferable;
     this.isDeployable = pokemon.isDeployable;
     this.isTradable = pokemon.isTradable;
-    this.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '');
+    this.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '') ?? null;
     this.disableTransferToPokemonHome = pokemon.disableTransferToPokemonHome ?? false;
     this.isBaby = false;
     this.gen = gen;

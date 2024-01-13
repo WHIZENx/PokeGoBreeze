@@ -8,7 +8,7 @@ import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
 
 const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: string[] }) => {
-  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff ?? {});
+  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
 
   const renderEffective = (text: string, data: string[]) => {
     return (
@@ -45,7 +45,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
         weak: [],
         very_weak: [],
       };
-      Object.entries(typeEffective).forEach(([key, value]: any) => {
+      Object.entries(typeEffective ?? {}).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];
@@ -67,7 +67,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
       data = {
         neutral: [],
       };
-      Object.entries(typeEffective).forEach(([key, value]: any) => {
+      Object.entries(typeEffective ?? {}).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];
@@ -87,7 +87,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
         very_resist: [],
         super_resist: [],
       };
-      Object.entries(typeEffective).forEach(([key, value]: any) => {
+      Object.entries(typeEffective ?? {}).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];

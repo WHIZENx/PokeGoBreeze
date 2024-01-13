@@ -1,4 +1,4 @@
-interface EvoList {
+export interface EvoList {
   evo_to_form: string;
   evo_to_id: number;
   evo_to_name: string;
@@ -7,27 +7,28 @@ interface EvoList {
   quest: any;
 }
 
-interface TempEvo {
+export interface TempEvo {
   tempEvolutionName: string;
   firstTempEvolution: number;
   tempEvolution: number;
   requireMove: string | undefined;
 }
 
+export interface PokemonTypeCost {
+  stardust?: number;
+  candy?: number;
+}
+
 export interface EvolutionModel {
+  prev?: string | undefined;
   id: number;
   name: string;
   evo_list: EvoList[];
   temp_evo: TempEvo[];
-  purified: {
-    stardust?: number;
-    candy?: number;
-  };
-  thirdMove: {
-    stardust?: number;
-    candy?: number;
-  };
+  purified?: PokemonTypeCost;
+  thirdMove?: PokemonTypeCost;
   form: string;
+  canPurified?: boolean;
 }
 
 export class EvolutionDataModel {

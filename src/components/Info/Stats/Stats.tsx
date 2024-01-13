@@ -4,7 +4,7 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
 
 import './Stats.scss';
-import { StatsModel, StatsPokemon } from '../../../core/models/stats.model';
+import { StatsAtk, StatsDef, StatsModel, StatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
@@ -13,22 +13,10 @@ const Stats = (props: {
   isShadow?: boolean;
   pokemonStats: StatsModel;
   stats?: StatsPokemon;
-  statATK?: {
-    attack: number;
-    rank: number;
-  };
-  statDEF?: {
-    defense: number;
-    rank: number;
-  };
-  statSTA?: {
-    stamina: number;
-    rank: number;
-  };
-  statProd?: {
-    prod: number;
-    rank: number;
-  };
+  statATK?: StatsAtk;
+  statDEF?: StatsDef;
+  statSTA?: StatsSta;
+  statProd?: StatsProd;
 }) => {
   const data = useSelector((state: StoreState) => state.store.data);
   const theme = useTheme();

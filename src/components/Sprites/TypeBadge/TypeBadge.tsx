@@ -23,7 +23,7 @@ const TypeBadge = (props: {
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [move, setMove]: [Combat | undefined, any] = useState();
+  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
   useEffect(() => {
     if (props.move?.name && combat.length > 0) {
       setMove(combat.find((item) => item.name === props.move?.name));

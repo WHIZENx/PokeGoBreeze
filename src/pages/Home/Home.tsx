@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment, Dispatch, SetStateAction } from 'react';
+import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import loadingImg from '../../assets/loading.png';
 
@@ -52,11 +52,17 @@ const Home = () => {
   const data = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
 
-  const [types, setTypes]: [string[], Dispatch<SetStateAction<string[]>>] = useState(DEFAULT_TYPES);
-  const [dataList, setDataList]: [PokemonHomeModel[], any] = useState([]);
-  const [selectTypes, setSelectTypes]: [string[], any] = useState([]);
-  const [listOfPokemon, setListOfPokemon]: [PokemonHomeModel[], any] = useState([]);
-  const [result, setResult]: [PokemonHomeModel[], any] = useState([]);
+  const [types, setTypes] = useState(DEFAULT_TYPES);
+  const [dataList, setDataList]: [PokemonHomeModel[], React.Dispatch<React.SetStateAction<PokemonHomeModel[]>>] = useState(
+    [] as PokemonHomeModel[]
+  );
+  const [selectTypes, setSelectTypes] = useState([] as string[]);
+  const [listOfPokemon, setListOfPokemon]: [PokemonHomeModel[], React.Dispatch<React.SetStateAction<PokemonHomeModel[]>>] = useState(
+    [] as PokemonHomeModel[]
+  );
+  const [result, setResult]: [PokemonHomeModel[], React.Dispatch<React.SetStateAction<PokemonHomeModel[]>>] = useState(
+    [] as PokemonHomeModel[]
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollID = useRef(0);
@@ -108,7 +114,7 @@ const Home = () => {
           const assetForm = queryAssetForm(data?.assets ?? [], item?.num, item?.name);
           return new PokemonHomeModel(item, assetForm, versionList, stats);
         })
-        .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0))
+        .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0)) ?? []
     );
   }, [data?.released]);
 
@@ -172,7 +178,7 @@ const Home = () => {
       const fullHeight = e.target.documentElement.offsetHeight;
       if (scrollTop * 1.5 >= fullHeight * (scrollID.current + 1)) {
         scrollID.current += 1;
-        setListOfPokemon((oldArr: any) => [...oldArr, ...result.slice(scrollID.current * subItem, (scrollID.current + 1) * subItem)]);
+        setListOfPokemon((oldArr) => [...oldArr, ...result.slice(scrollID.current * subItem, (scrollID.current + 1) * subItem)]);
       }
     };
     window.addEventListener('scroll', onScroll as any);

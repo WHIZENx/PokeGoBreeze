@@ -16,19 +16,26 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
-import { League, PokemonRewardSetLeague } from '../../../core/models/league.model';
+import { League, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/Constants';
+
+interface LeagueData {
+  data: PokemonRewardSetLeague[];
+  step: number;
+  track: string;
+  type: string | boolean | undefined;
+}
 
 const Leagues = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
-  const [leagues, setLeagues]: [League[], any] = useState([]);
-  const [openedLeague, setOpenedLeague]: [League[], any] = useState([]);
-  const [leagueFilter, setLeagueFilter]: [League[], any] = useState([]);
+  const [leagues, setLeagues]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
+  const [openedLeague, setOpenedLeague]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
+  const [leagueFilter, setLeagueFilter]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
   const [search, setSearch] = useState('');
   const [rank, setRank] = useState(1);
-  const [setting, setSetting]: any = useState(null);
-  const [showData, setShowData]: any = useState(null);
+  const [setting, setSetting]: [SettingLeague | undefined, React.Dispatch<React.SetStateAction<SettingLeague | undefined>>] = useState();
+  const [showData, setShowData]: [LeagueData | undefined, React.Dispatch<React.SetStateAction<LeagueData | undefined>>] = useState();
 
   const getAssetPokeGo = (id: string, form: string) => {
     try {
@@ -135,7 +142,7 @@ const Leagues = () => {
 
   const handleClose = () => {
     setShow(false);
-    setShowData(null);
+    setShowData(undefined);
   };
 
   const showAccording = (league: League, index: number, isOpened = false) => {
@@ -668,8 +675,8 @@ const Leagues = () => {
           <Modal.Body className="text-center">
             <h5 style={{ textDecoration: 'underline' }}>Random Pokémon</h5>
             {showData.data
-              .filter((item: { guaranteedLimited: boolean }) => !item.guaranteedLimited)
-              .map((item: { id: string; name: string; form: string }, index: React.Key) => (
+              .filter((item) => !item.guaranteedLimited)
+              .map((item, index) => (
                 <Link
                   className="img-link text-center"
                   key={index}
@@ -681,21 +688,20 @@ const Leagues = () => {
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="img-pokemon"
-                        src={getAssetPokeGo(item.id, item.form)}
+                        src={getAssetPokeGo(item.id.toString(), item.form)}
                       />
                     </span>
                   </div>
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
                 </Link>
               ))}
-            {showData.data.filter((item: { guaranteedLimited: boolean; rank: number }) => item.guaranteedLimited && item.rank === rank)
-              .length > 0 && (
+            {showData.data.filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank).length > 0 && (
               <Fragment>
                 <hr />
                 <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>
                 {showData.data
-                  .filter((item: { guaranteedLimited: boolean; rank: number }) => item.guaranteedLimited && item.rank === rank)
-                  .map((item: { id: string; name: string; form: string }, index: React.Key) => (
+                  .filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank)
+                  .map((item, index) => (
                     <Link
                       className="img-link text-center"
                       key={index}
@@ -707,7 +713,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.form)}
+                            src={getAssetPokeGo(item.id.toString(), item.form)}
                           />
                         </span>
                       </div>

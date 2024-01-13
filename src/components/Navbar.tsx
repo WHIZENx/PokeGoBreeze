@@ -11,11 +11,11 @@ import logo from '../assets/pokedex.png';
 import { getTime } from '../util/Utils';
 
 import './Navbar.scss';
-import { Box, IconButton, LinearProgress } from '@mui/material';
+import { Box, IconButton, LinearProgress, PaletteMode } from '@mui/material';
 import { SpinnerState, StoreState } from '../store/models/state.model';
 import { loadThemeData } from '../store/actions/theme.action';
 
-const NavbarComponent = ({ mode, toggleColorMode }: any) => {
+const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void }) => {
   const dispatch = useDispatch();
 
   const dataStore = useSelector((state: StoreState) => state.store);
@@ -29,11 +29,11 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
   const onChangeTheme = () => {
     if (!isDelay) {
       setIsDelay(true);
-      setStateTheme(mode === 'light' ? 'dark' : 'light');
-      dispatch(loadThemeData(mode === 'light' ? 'dark' : 'light'));
+      setStateTheme(props.mode === 'light' ? 'dark' : 'light');
+      dispatch(loadThemeData(props.mode === 'light' ? 'dark' : 'light'));
       setTimeout(() => {
         setIsDelay(false);
-        toggleColorMode();
+        props.toggleColorMode();
       }, 500);
     }
   };
@@ -137,7 +137,7 @@ const NavbarComponent = ({ mode, toggleColorMode }: any) => {
             style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
             color="inherit"
           >
-            {mode === 'light' ? (
+            {props.mode === 'light' ? (
               <LightModeIcon fontSize="large" style={{ color: 'white' }} />
             ) : (
               <DarkModeIcon fontSize="large" style={{ color: 'white' }} />

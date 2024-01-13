@@ -29,14 +29,14 @@ export interface PokemonBattleData {
 export interface PokemonBattle {
   disableCMoveSec?: boolean;
   disableCMovePri?: boolean;
-  shadow: boolean;
-  pokemonData: PokemonBattleData | null;
+  shadow?: boolean;
+  pokemonData?: PokemonBattleData | null;
   fMove?: Combat | null;
   cMovePri?: Combat | null;
   cMoveSec?: Combat | null;
-  timeline?: Timeline[];
-  energy?: number;
-  block?: number;
+  timeline: Timeline[];
+  energy: number;
+  block: number;
   audio?: any;
 }
 

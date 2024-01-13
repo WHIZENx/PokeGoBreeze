@@ -13,7 +13,9 @@ const FromChange = (props: { details: Details | undefined; defaultName: string |
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
 
-  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], any] = useState([]);
+  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], React.Dispatch<React.SetStateAction<PokemonModelComponent[]>>] = useState(
+    [] as PokemonModelComponent[]
+  );
 
   const getImageList = useCallback(
     (id: number) => {

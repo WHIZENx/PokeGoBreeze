@@ -72,8 +72,8 @@ const Search = () => {
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
-  const [resultFMove, setResultFMove]: [Combat[], any] = useState([]);
-  const [resultCMove, setResultCMove]: [Combat[], any] = useState([]);
+  const [resultFMove, setResultFMove]: [Combat[], React.Dispatch<React.SetStateAction<Combat[]>>] = useState([] as Combat[]);
+  const [resultCMove, setResultCMove]: [Combat[], React.Dispatch<React.SetStateAction<Combat[]>>] = useState([] as Combat[]);
 
   useEffect(() => {
     document.title = 'Moves - Search';

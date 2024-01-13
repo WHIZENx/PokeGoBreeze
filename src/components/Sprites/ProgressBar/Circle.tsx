@@ -4,7 +4,7 @@ import APIService from '../../../services/API.service';
 
 const Circle = styled.div`
   width: ${(props: { size: number }) => props.size + 5}px;
-  height: ${(props: { size: number }) => props.size + 5}px;
+  height: ${(props) => props.size + 5}px;
   background: #0000003b;
   border-radius: 50%;
   border: 5px solid lightgray;
@@ -14,21 +14,21 @@ const Circle = styled.div`
 const Fill = styled.div`
   position: absolute;
   border-radius: 50%;
-  width: ${(props: { size: number }) => props.size}px;
-  height: ${(props: { size: number }) => props.size}px;
+  width: ${(props: { energy: number; moveEnergy: number; size: number; brightness: number }) => props.size}px;
+  height: ${(props) => props.size}px;
   clip: rect(
-    ${(props: { energy: number; moveEnergy: number; size: number }) => props.size - (props.energy * props.size) / props.moveEnergy}px,
-    ${(props: { size: number }) => props.size}px,
-    ${(props: { size: number }) => props.size}px,
+    ${(props) => props.size - (props.energy * props.size) / props.moveEnergy}px,
+    ${(props) => props.size}px,
+    ${(props) => props.size}px,
     0px
   );
-  filter: brightness(${(props: { energy: number; moveEnergy: number; size: number; brightness: number }) => props.brightness});
+  filter: brightness(${(props) => props.brightness});
   transition: 0.1s;
 `;
 
 const Icon = styled.div`
-  width: ${(props: { size: number }) => props.size / 2}px;
-  height: ${(props: { size: number }) => props.size / 2}px;
+  width: ${(props) => props.size / 2}px;
+  height: ${(props) => props.size / 2}px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -37,23 +37,23 @@ const Icon = styled.div`
   background: #ffffff75;
 `;
 
-const IconFill = styled.div`
+const IconFill: any = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  width: ${(props: { size: number }) => props.size / 2}px;
-  height: ${(props: { size: number }) => props.size / 2}px;
+  width: ${(props: { energy: number; moveEnergy: number; size: number; url: string }) => props.size / 2}px;
+  height: ${(props) => props.size / 2}px;
   transform: translate(-50%, -50%);
   clip: rect(
-    ${(props: { energy: number; moveEnergy: number; size: number }) =>
+    ${(props) =>
       props.size / 2 +
       (props.size - props.size / 2) / 2 -
       (props.energy * (props.size / 2 + (props.size - props.size / 2))) / props.moveEnergy}px,
-    ${(props: { size: number }) => props.size / 2}px,
-    ${(props: { size: number }) => props.size / 2}px,
+    ${(props) => props.size / 2}px,
+    ${(props) => props.size / 2}px,
     0px
   );
-  mask: url(${(props: { energy: number; moveEnergy: number; size: number; url: string }) => props.url}) center/contain;
+  mask: url(${(props) => props.url}) center/contain;
   background: white;
   transition: 0.1s;
 `;
@@ -67,7 +67,7 @@ const CircleBar = (props: {
   maxEnergy: number;
   disable: boolean | undefined;
 }) => {
-  props.energy = Math.min(props.energy, props.maxEnergy);
+  const energy = Math.min(props.energy, props.maxEnergy);
   const fillCount = Math.min(Math.ceil(props.maxEnergy / props.moveEnergy), 3);
 
   return (
@@ -87,17 +87,12 @@ const CircleBar = (props: {
             className={props.type?.toLowerCase()}
             size={props.size - 5}
             moveEnergy={props.moveEnergy}
-            energy={props.energy - props.moveEnergy * index}
+            energy={energy - props.moveEnergy * index}
             brightness={1 - index * 0.1}
           />
         ))}
         <Icon size={props.size - 5} url={APIService.getTypeIcon(props.type ?? '')} />
-        <IconFill
-          size={props.size - 5}
-          energy={props.energy}
-          moveEnergy={props.moveEnergy}
-          url={APIService.getTypeIcon(props.type ?? '')}
-        />
+        <IconFill size={props.size - 5} energy={energy} moveEnergy={props.moveEnergy} url={APIService.getTypeIcon(props.type ?? '')} />
       </Circle>
     </div>
   );

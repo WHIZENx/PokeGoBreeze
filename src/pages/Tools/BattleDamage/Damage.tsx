@@ -14,7 +14,7 @@ import DamageTable from './DamageTable';
 
 import atk_logo from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
-import Find from '../../../components/Select/Find/Find';
+import Find from '../../../components/Find/Find';
 import StatsTable from './StatsDamageTable';
 
 import Move from '../../../components/Table/Move';
@@ -24,6 +24,7 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { TrainerFriendship } from '../../../core/models/options.model';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { Combat } from '../../../core/models/combat.model';
+import { PokemonDmgOption } from '../../../core/models/damage.model';
 
 const labels: any = {
   0: {
@@ -51,8 +52,8 @@ const Damage = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
-  const [form, setForm]: [PokemonFormModify | undefined, any] = useState();
-  const [move, setMove]: [Combat | undefined, any] = useState();
+  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
+  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -63,7 +64,8 @@ const Damage = () => {
   const [statLevel, setStatLevel] = useState(1);
   const [statType, setStatType] = useState('');
 
-  const [formObj, setFormObj]: [PokemonFormModify | undefined, any] = useState();
+  const [formObj, setFormObj]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] =
+    useState();
 
   const [statATKObj, setStatATKObj] = useState(0);
   const [statDEFObj, setStatDEFObj] = useState(0);
@@ -84,15 +86,7 @@ const Damage = () => {
     clevel: 3,
   });
   const { weather, dodge, trainer } = battleState;
-  const [result, setResult]: any = useState({
-    battleState: null,
-    move: null,
-    damage: null,
-    hp: null,
-    currPoke: null,
-    objPoke: null,
-    type: null,
-    typeObj: null,
+  const [result, setResult]: [PokemonDmgOption, React.Dispatch<React.SetStateAction<PokemonDmgOption>>] = useState({
     currLevel: 1,
     objLevel: 1,
   });
@@ -119,40 +113,24 @@ const Damage = () => {
 
   const clearData = () => {
     setResult({
-      battleState: null,
-      move: null,
-      damage: null,
-      hp: null,
-      currPoke: null,
-      objPoke: null,
-      type: null,
-      typeObj: null,
       currLevel: 1,
       objLevel: 1,
     });
   };
 
   const clearMove = () => {
-    setMove(null);
+    setMove(undefined);
     setResult({
-      battleState: null,
-      move: null,
-      damage: null,
-      hp: null,
-      currPoke: null,
-      objPoke: null,
-      type: null,
-      typeObj: null,
       currLevel: 1,
       objLevel: 1,
     });
   };
 
-  const onSetForm = (form: PokemonFormModify) => {
+  const onSetForm = (form: PokemonFormModify | undefined) => {
     setForm(form);
   };
 
-  const onSetFormObj = (form: PokemonFormModify) => {
+  const onSetFormObj = (form: PokemonFormModify | undefined) => {
     setFormObj(form);
   };
 
@@ -170,7 +148,7 @@ const Damage = () => {
           clevel: battleState.clevel,
           effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types),
         };
-        setResult((r: any) => ({
+        setResult((r) => ({
           ...r,
           battleState: eff,
           move,
@@ -333,10 +311,10 @@ const Damage = () => {
                     />
                     <LevelRating
                       disabled={!enableFriend}
-                      onChange={(event: any, value) => {
+                      onChange={(e: any, value) => {
                         setBattleState({
                           ...battleState,
-                          [event.target.name]: value,
+                          [e.target.name]: value,
                         });
                       }}
                       name="flevel"

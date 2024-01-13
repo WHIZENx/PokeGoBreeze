@@ -44,6 +44,7 @@ export interface PokemonRewardSetLeague {
   id: number;
   name: string;
   form: string;
+  rank?: number;
 }
 
 interface RankRewardLeague {
@@ -58,9 +59,11 @@ export interface PokemonRewardLeague {
   premium: PokemonRewardSetLeague[];
 }
 
-interface SettingLeague {
+export interface SettingLeague {
   rankLevel: number;
   additionalTotalBattlesRequired?: number;
+  additionalWinsRequired: number;
+  minRatingRequired: number;
 }
 
 export interface LeagueData {

@@ -50,16 +50,16 @@ export const getDbPokemonEncounter = async () => {
   return await db.sql`SELECT * from tblPokemonEncounter`;
 };
 
-export const createDbPokemonEncounter = async (pokemon: any, index: any) => {
+export const createDbPokemonEncounter = async (pokemon: { name: string; baseCaptureRate: number; baseFleeRate: number }, index: number) => {
   return await db.sql`INSERT INTO tblPokemonEncounter(
     Id,
     Name,
     Basecapturerate,
     Basefleerate
   ) VALUES (
-    ${parseInt(index + 1)},
+    ${parseInt(index.toString() + 1)},
     ${pokemon.name},
-    ${parseFloat(pokemon.baseCaptureRate)},
-    ${parseFloat(pokemon.baseFleeRate)}
+    ${parseFloat(pokemon.baseCaptureRate.toString())},
+    ${parseFloat(pokemon.baseFleeRate.toString())}
   )`;
 };

@@ -11,20 +11,23 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Asset } from '../../../core/models/asset.model';
 import { PokemonModelComponent } from './models/pokemon-model.model';
+import { PokemonGender } from '../../../core/models/details.model';
 
 const PokemonModel = (props: { id: number; name: string }) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
 
-  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], any] = useState([]);
-  const gender: any = useRef(null);
-  const sound: any = useRef(null);
+  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], React.Dispatch<React.SetStateAction<PokemonModelComponent[]>>] = useState(
+    [] as PokemonModelComponent[]
+  );
+  const gender: React.MutableRefObject<PokemonGender | null | undefined> = useRef();
+  const sound: React.MutableRefObject<Asset | undefined> = useRef();
 
   const getImageList = useCallback(
     (id: number) => {
       sound.current = data?.assets?.find((item) => item.id === id);
-      const model: Asset = sound.current;
+      const model = sound.current;
       const detail = data?.details?.find((item) => item.id === id);
       gender.current = detail?.gender;
       return model
@@ -55,7 +58,7 @@ const PokemonModel = (props: { id: number; name: string }) => {
                       {value.gender === 3 ? (
                         <Fragment>
                           {gender.current.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }} />}
-                          {gender.current.FemalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
+                          {gender.current.femalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
                         </Fragment>
                       ) : (
                         <Fragment>

@@ -9,16 +9,17 @@ import * as CandyModel from '../../../core/models/candy.model';
 
 const Background: any = styled.div`
   display: inline-block;
-  background-color: ${(props: { candy: CandyModel.Candy[]; id: number }) => computeCandyBgColor(props.candy, props.id)};
+  background-color: ${(props: { candy: CandyModel.Candy[]; id: number | undefined }) => computeCandyBgColor(props.candy, props.id ?? 0)};
   border-radius: 50%;
   width: fit-content;
   height: fit-content;
 `;
 
 const Fill: any = styled.div`
-  background: ${(props: { candy: CandyModel.Candy[]; id: number; size: number }) => computeCandyColor(props.candy, props.id)};
-  width: ${(props: { size: number }) => props.size ?? 20}px;
-  height: ${(props: { size: number }) => props.size ?? 20}px;
+  background: ${(props: { candy: CandyModel.Candy[]; id: number | undefined; size: number }) =>
+    computeCandyColor(props.candy, props.id ?? 0)};
+  width: ${(props) => props.size ?? 20}px;
+  height: ${(props) => props.size ?? 20}px;
   mask: url(${bgCandy}) center/contain;
 `;
 

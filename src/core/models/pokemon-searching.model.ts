@@ -11,6 +11,7 @@ export class PokemonSearchingModel {
   id: number;
   name: string;
   sprites: string;
+
   constructor(item: PokemonNameModel) {
     this.id = item.id;
     this.name = item.name;

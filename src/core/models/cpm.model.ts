@@ -1,7 +1,7 @@
 export interface CPM {
   level: number;
   multiplier: number;
-  step: number;
+  step?: number;
 }
 
 export interface CPMData {

@@ -1,5 +1,5 @@
 import { useSnackbar } from 'notistack';
-import React, { Dispatch, Fragment, SetStateAction, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { Combat } from '../../core/models/combat.model';
 import { PokemonTopMove } from '../../util/models/pokemon-top-move.model';
 
-const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
+const nameSort = (rowA: PokemonTopMove, rowB: PokemonTopMove) => {
   const a = rowA.name.toLowerCase();
   const b = rowB.name.toLowerCase();
   return a === b ? 0 : a > b ? 1 : -1;
@@ -85,9 +85,11 @@ const Move = (props: { id?: number }) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [move, setMove]: [Combat | undefined, Dispatch<SetStateAction<Combat | undefined>>] = useState();
+  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
   const [releasedGO, setReleaseGO] = useState(true);
-  const [topList, setTopList]: [PokemonTopMove[], any] = useState([]);
+  const [topList, setTopList]: [PokemonTopMove[], React.Dispatch<React.SetStateAction<PokemonTopMove[]>>] = useState(
+    [] as PokemonTopMove[]
+  );
 
   const { enqueueSnackbar } = useSnackbar();
 

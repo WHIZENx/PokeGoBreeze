@@ -13,14 +13,23 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { StickerModel } from '../../core/models/sticker.model';
 
+interface PokemonStickerModel {
+  id?: number | null | undefined;
+  name: string;
+}
+
 const Sticker = () => {
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
-  const [pokemonStickerFilter, setPokemonStickerFilter]: [StickerModel[], any] = useState([]);
+  const [pokemonStickerFilter, setPokemonStickerFilter]: [StickerModel[], React.Dispatch<React.SetStateAction<StickerModel[]>>] = useState(
+    [] as StickerModel[]
+  );
 
   const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);
 
-  const [selectPokemon, setSelectPokemon]: [any[], any] = useState([]);
+  const [selectPokemon, setSelectPokemon]: [PokemonStickerModel[], React.Dispatch<React.SetStateAction<PokemonStickerModel[]>>] = useState(
+    [] as PokemonStickerModel[]
+  );
 
   useEffect(() => {
     document.title = 'Stickers List';
@@ -28,19 +37,18 @@ const Sticker = () => {
 
   useEffect(() => {
     if (pokeStickerList.length > 0) {
-      setSelectPokemon(
-        pokeStickerList
-          .reduce((prev: any, curr: StickerModel) => {
-            if (curr.pokemonName && !prev.map((obj: { name: string }) => obj.name).includes(curr.pokemonName)) {
-              prev.push({
-                id: curr.pokemonId,
-                name: curr.pokemonName,
-              });
-            }
-            return prev;
-          }, [])
-          .sort((a: { id: number }, b: { id: number }) => a.id - b.id)
-      );
+      const result = pokeStickerList
+        .reduce((prev: PokemonStickerModel[], curr) => {
+          if (curr.pokemonName && !prev.map((obj) => obj.name).includes(curr.pokemonName)) {
+            prev.push({
+              id: curr.pokemonId,
+              name: curr.pokemonName,
+            });
+          }
+          return prev;
+        }, [])
+        .sort((a, b) => (a?.id ?? 0) - (b?.id ?? 0));
+      setSelectPokemon(result);
     }
   }, [pokeStickerList]);
 
@@ -80,7 +88,7 @@ const Sticker = () => {
           <option value={0}>All</option>
           <option value={-1}>None</option>
           {selectPokemon.map((value, index) => (
-            <option key={index} value={value.id}>{`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}</option>
+            <option key={index} value={value.id ?? 0}>{`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}</option>
           ))}
         </Form.Select>
       </div>

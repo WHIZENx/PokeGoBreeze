@@ -1,4 +1,4 @@
-import React, { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 import { raidEgg } from '../../util/Compute';
@@ -29,8 +29,9 @@ const Raid = (props: {
   const theme = useTheme();
   const details = useSelector((state: StoreState) => state.store.data?.details ?? []);
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
-  const [tier, setTier]: [number, Dispatch<SetStateAction<number>>] = useState(1);
-  const [pokemonClass, setPokemonClass]: [string | null | undefined, Dispatch<SetStateAction<string | null | undefined>>] = useState();
+  const [tier, setTier]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(1);
+  const [pokemonClass, setPokemonClass]: [string | null | undefined, React.Dispatch<React.SetStateAction<string | null | undefined>>] =
+    useState();
 
   useEffect(() => {
     setPokemonClass(pokemonData.find((item) => item.num === props.id)?.pokemonClass);

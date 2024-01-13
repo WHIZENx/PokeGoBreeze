@@ -21,7 +21,9 @@ const SelectMove = (props: {
   disable?: boolean;
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
-  const [resultMove, setResultMove]: [SelectMoveModel[], any] = useState([]);
+  const [resultMove, setResultMove]: [SelectMoveModel[], React.Dispatch<React.SetStateAction<SelectMoveModel[]>>] = useState(
+    [] as SelectMoveModel[]
+  );
   const [showMove, setShowMove] = useState(false);
 
   const changeMove = (value: SelectMoveModel) => {

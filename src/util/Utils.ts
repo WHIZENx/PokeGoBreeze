@@ -1,11 +1,14 @@
 import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
-import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_INCARNATE, FORM_NORMAL, FORM_STANDARD, MAX_IV } from './Constants';
+import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_INCARNATE, FORM_MEGA, FORM_NORMAL, FORM_STANDARD, MAX_IV } from './Constants';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
 import { Details } from '../core/models/details.model';
-import { StatsModel } from '../core/models/stats.model';
+import { PokemonStatsRanking, StatsModel, StatsPokemon } from '../core/models/stats.model';
 import { CombatPokemon } from '../core/models/combat.model';
+import { Stats } from '../core/models/API/info.model';
+import { FormModel } from '../core/models/API/form.model';
+import { ArrayStats } from './models/util.model';
 
 export const marks = [...Array(MAX_IV + 1).keys()].map((n) => {
   return { value: n, label: n.toString() };
@@ -272,8 +275,8 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
 
 export const convertArrStats = (data: PokemonDataModel) => {
   return Object.values(data)
-    .filter((pokemon) => pokemon.num > 0)
-    .map((value) => {
+    .filter((pokemon: PokemonDataModel) => pokemon.num > 0)
+    .map((value: PokemonDataModel) => {
       const stats = calculateStatsByTag(value, value.baseStats, value.slug);
       return {
         id: value.num,
@@ -281,7 +284,7 @@ export const convertArrStats = (data: PokemonDataModel) => {
         base_stats: value.baseStats,
         baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats?.sta ?? 0 },
         baseStatsProd: stats.atk * stats.def * (stats?.sta ?? 0),
-      };
+      } as ArrayStats;
     });
 };
 
@@ -302,7 +305,7 @@ export const getStyleSheet = (selector: string) => {
   return null;
 };
 
-export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet) => {
+export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet | null) => {
   const sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
     sheet = sheets[i];
@@ -551,28 +554,9 @@ export const checkRankAllAvailable = (
   return data;
 };
 
-export const filterRank = (
-  pokemonStats: {
-    [x: string]: { max_rank: number; ranking: any[] };
-  },
-  type: string,
-  stats: number
-) => {
-  const checkRank = pokemonStats[type].ranking.find((item: { [x: string]: any }) => item[type] === stats);
-
-  if (checkRank) {
-    return pokemonStats[type].max_rank - checkRank.rank;
-  }
-  let avgRank = pokemonStats[type].max_rank - pokemonStats[type].ranking.find((item: { [x: string]: number }) => item[type] > stats).rank;
-  if (avgRank < 1) {
-    avgRank = 1;
-  }
-  return Math.min(avgRank, pokemonStats[type].max_rank);
-};
-
 export const calRank = (
   pokemonStats: {
-    [x: string]: { max_rank: number; ranking: any[] };
+    [x: string]: { max_rank: number };
   },
   type: string,
   rank: number
@@ -666,4 +650,49 @@ export const convertIdMove = (name: string) => {
 
 export const checkPokemonIncludeShadowForm = (pokemon: PokemonModel[], form: string) => {
   return pokemon.some((p) => splitAndCapitalize(form, '-', '_').toUpperCase() === p.name && p.shadow);
+};
+
+const convertNameEffort = (name: string) => {
+  switch (name) {
+    case 'attack':
+      return 'atk';
+    case 'defense':
+      return 'def';
+    case 'special-attack':
+      return 'spa';
+    case 'special-defense':
+      return 'spd';
+    case 'speed':
+      return 'spe';
+    default:
+      return '';
+  }
+};
+
+export const convertStatsEffort = (stats: Stats[] | undefined) => {
+  const result: any = { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 };
+
+  stats?.forEach((stat) => {
+    result[convertNameEffort(stat.stat.name)] = stat.base_stat;
+  });
+
+  return result as StatsPokemon;
+};
+
+export const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRanking): FormModel => {
+  return {
+    form_name: pokemon.forme ?? '',
+    form_names: [],
+    form_order: 0,
+    id: pokemon.num,
+    is_battle_only: false,
+    is_default: true,
+    is_mega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
+    name: pokemon.name,
+    sprites: null,
+    types: pokemon.types ?? [],
+    version_group: { name: pokemon.version ?? '' },
+    is_shadow: false,
+    is_purified: false,
+  };
 };

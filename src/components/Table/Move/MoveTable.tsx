@@ -16,9 +16,20 @@ import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
 import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
+import { PokemonStatsRanking } from '../../../core/models/stats.model';
+
+interface PokemonMoves {
+  fastMoves: (Combat | undefined)[];
+  chargedMoves: (Combat | undefined)[];
+  eliteFastMoves: (Combat | undefined)[];
+  eliteChargedMoves: (Combat | undefined)[];
+  purifiedMoves: (Combat | undefined)[];
+  shadowMoves: (Combat | undefined)[];
+  specialMoves: (Combat | undefined)[];
+}
 
 const TableMove = (props: {
-  data: PokemonDataForm;
+  data: PokemonDataForm | PokemonStatsRanking | undefined;
   statATK: number;
   statDEF: number;
   statSTA: number;
@@ -28,8 +39,11 @@ const TableMove = (props: {
 }) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
-  const [move, setMove]: [PokemonQueryRankMove, any] = useState({ data: [] as PokemonQueryMove[] });
-  const [moveOrigin, setMoveOrigin]: any = useState(null);
+  const [move, setMove]: [PokemonQueryRankMove, React.Dispatch<React.SetStateAction<PokemonQueryRankMove>>] = useState({
+    data: [] as PokemonQueryMove[],
+  });
+  const [moveOrigin, setMoveOrigin]: [PokemonMoves | undefined, React.Dispatch<React.SetStateAction<PokemonMoves | undefined>>] =
+    useState();
 
   const [stateSorted, setStateSorted]: any = useState({
     offensive: {
@@ -48,7 +62,7 @@ const TableMove = (props: {
 
   const filterMoveType = (combat: CombatPokemon | undefined) => {
     if (!combat) {
-      return setMoveOrigin(null);
+      return setMoveOrigin(undefined);
     }
     return setMoveOrigin({
       fastMoves: combat.quickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
@@ -111,7 +125,7 @@ const TableMove = (props: {
       props.statATK * (props.form?.is_shadow ? SHADOW_ATK_BONUS(data?.options) : 1),
       props.statDEF * (props.form?.is_shadow ? SHADOW_DEF_BONUS(data?.options) : 1),
       props.statSTA,
-      props.data?.types.map((type) => capitalize(type))
+      props.data?.types?.map((type) => capitalize(type)) ?? []
     );
   };
 
@@ -176,34 +190,34 @@ const TableMove = (props: {
     );
   };
 
-  const renderMoveSetTable = (data: Combat[]) => {
+  const renderMoveSetTable = (data: (Combat | undefined)[]) => {
     return (
       <Fragment>
         {data?.map((value, index) => (
           <tr key={index}>
             <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-              <Link to={'../move/' + value.id} className="d-block">
+              <Link to={'../move/' + value?.id} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type))} />
+                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value?.type))} />
                 </div>
-                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-                  {value.elite && (
+                  {value?.elite && (
                     <span className="type-icon-small ic elite-ic">
                       <span>Elite</span>
                     </span>
                   )}
-                  {value.shadow && (
+                  {value?.shadow && (
                     <span className="type-icon-small ic shadow-ic">
                       <span>Shadow</span>
                     </span>
                   )}
-                  {value.purified && (
+                  {value?.purified && (
                     <span className="type-icon-small ic purified-ic">
                       <span>Purified</span>
                     </span>
                   )}
-                  {value.special && (
+                  {value?.special && (
                     <span className="type-icon-small ic special-ic">
                       <span>Special</span>
                     </span>

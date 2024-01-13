@@ -30,8 +30,13 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
 
-  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
-  const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
+  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>] = useState(
+    [] as PokemonSearchingModel[]
+  );
+  const [pokemonListFilter, setPokemonListFilter]: [
+    PokemonSearchingModel[],
+    React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>
+  ] = useState([] as PokemonSearchingModel[]);
 
   useEffect(() => {
     if (pokemonName.length > 0) {

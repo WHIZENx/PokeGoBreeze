@@ -1,4 +1,4 @@
-interface Gender {
+export interface PokemonGender {
   malePercent?: number;
   femalePercent?: number;
   genderlessPercent?: number;
@@ -8,7 +8,7 @@ export interface Details {
   id: number;
   name: string;
   form: string;
-  gender: Gender | null;
+  gender: PokemonGender | null;
   releasedGO: boolean;
   isTransferable: boolean | null;
   isDeployable: boolean | null;
@@ -27,7 +27,7 @@ export class DetailsPokemonModel {
   id!: number;
   name!: string;
   form!: string;
-  gender!: Gender | null;
+  gender!: PokemonGender | null;
   releasedGO!: boolean;
   isTransferable!: boolean | null;
   isDeployable!: boolean | null;

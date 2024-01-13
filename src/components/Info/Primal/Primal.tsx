@@ -10,7 +10,10 @@ import { FormModel, PokemonFormModify } from '../../../core/models/API/form.mode
 
 const Primal = (props: { formList: PokemonFormModify[][]; id: number }) => {
   const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
-  const [arrEvoList, setArrEvoList]: [FormModel[], any] = useState([]);
+  const [arrEvoList, setArrEvoList]: [
+    (FormModel | undefined)[] | undefined,
+    React.Dispatch<React.SetStateAction<(FormModel | undefined)[]>>
+  ] = useState([] as (FormModel | undefined)[]);
 
   useEffect(() => {
     setArrEvoList(
@@ -48,17 +51,17 @@ const Primal = (props: { formList: PokemonFormModify[][]; id: number }) => {
                 id="img-pokemon"
                 height="96"
                 alt="img-pokemon"
-                src={APIService.getPokeGifSprite(value.name)}
+                src={APIService.getPokeGifSprite(value?.name ?? '')}
                 onError={(e: any) => {
                   e.onerror = null;
-                  e.target.src = `${value.sprites?.front_default}`;
+                  e.target.src = `${value?.sprites?.front_default}`;
                 }}
               />
               <div id="id-pokemon" style={{ color: 'black' }}>
                 <b>#{props.id}</b>
               </div>
               <div>
-                <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
+                <b className="link-title">{splitAndCapitalize(value?.name, '-', ' ')}</b>
               </div>
               <span className="caption">
                 First primal evolution:{' '}
@@ -70,7 +73,7 @@ const Primal = (props: { formList: PokemonFormModify[][]; id: number }) => {
                     props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
                   )}
                 />
-                <b>x{getQuestEvo(value.name)?.firstTempEvolution}</b>
+                <b>x{getQuestEvo(value?.name ?? '')?.firstTempEvolution}</b>
               </span>
               <span className="caption">
                 Primal evolution:{' '}
@@ -82,7 +85,7 @@ const Primal = (props: { formList: PokemonFormModify[][]; id: number }) => {
                     props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
                   )}
                 />
-                <b>x{getQuestEvo(value.name)?.tempEvolution}</b>
+                <b>x{getQuestEvo(value?.name ?? '')?.tempEvolution}</b>
               </span>
             </li>
           ))}

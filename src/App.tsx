@@ -45,6 +45,7 @@ import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
 import { TRANSITION_TIME } from './util/Constants';
 import { setDevice } from './store/actions/device.action';
+import { PaletteMode } from '@mui/material';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -137,8 +138,8 @@ function App() {
 }
 
 export default function Main() {
-  const [stateMode]: any = useLocalStorage('theme', 'light');
-  const [mode, setMode] = useState<'light' | 'dark'>(stateMode ?? 'light');
+  const [stateMode] = useLocalStorage('theme', 'light');
+  const [mode, setMode] = useState(stateMode ?? 'light');
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
@@ -148,7 +149,7 @@ export default function Main() {
     []
   );
 
-  const theme = useMemo(() => createTheme(getDesignThemes(mode)), [mode]);
+  const theme = useMemo(() => createTheme(getDesignThemes(mode as PaletteMode)), [mode]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>

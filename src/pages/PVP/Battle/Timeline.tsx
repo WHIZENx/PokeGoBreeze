@@ -167,7 +167,7 @@ export const TimeLine = (
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: {
     // eslint-disable-next-line no-unused-vars
-    (e: { currentTarget: { getBoundingClientRect: () => any }; clientX: number }): void;
+    (e: { currentTarget: { getBoundingClientRect: () => { left: number } }; clientX: number; changedTouches: { clientX: number }[] }): void;
     bind?: any;
   },
   showTap: boolean,

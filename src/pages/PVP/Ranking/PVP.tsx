@@ -47,13 +47,15 @@ const RankingPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
   const params: any = useParams();
 
-  const [rankingData, setRankingData]: [PokemonBattleRanking[], any] = useState([] as PokemonBattleRanking[]);
-  const [storeStats, setStoreStats]: [boolean[] | undefined, any] = useState();
+  const [rankingData, setRankingData]: [PokemonBattleRanking[], React.Dispatch<React.SetStateAction<PokemonBattleRanking[]>>] = useState(
+    [] as PokemonBattleRanking[]
+  );
+  const [storeStats, setStoreStats]: [boolean[] | undefined, React.Dispatch<React.SetStateAction<boolean[] | undefined>>] = useState();
   const [onLoadData, setOnLoadData] = useState(false);
   const sortedBy = useRef('score');
   const [sorted, setSorted] = useState(1);
 
-  const styleSheet: any = useRef(null);
+  const styleSheet: React.MutableRefObject<CSSStyleSheet | null> = useRef(null);
 
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
@@ -190,7 +192,7 @@ const RankingPVP = () => {
               (cMoveDataSec && combatPoke?.purifiedMoves.includes(cMoveDataSec)),
           };
         });
-        setRankingData(filePVP);
+        setRankingData(filePVP as PokemonBattleRanking[]);
         setStoreStats(file.map(() => false));
         dispatch(hideSpinner());
       } catch (e: any) {

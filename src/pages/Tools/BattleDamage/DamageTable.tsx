@@ -10,8 +10,7 @@ import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
-import { PokemonFormModify } from '../../../core/models/API/form.model';
-import { Combat } from '../../../core/models/combat.model';
+import { PokemonDmgOption } from '../../../core/models/damage.model';
 
 const eff: any = {
   0.244140625: {
@@ -40,28 +39,7 @@ const eff: any = {
   },
 };
 
-const DamageTable = (props: {
-  result: {
-    objPoke: PokemonFormModify;
-    type: string;
-    currPoke: PokemonFormModify;
-    currLevel: number;
-    typeObj: string;
-    objLevel: number;
-    move: Combat;
-    battleState: {
-      stab: boolean;
-      wb: boolean;
-      dodge: boolean;
-      trainer: boolean;
-      flevel: number;
-      clevel: string | number;
-      effective: string | number;
-    };
-    damage: number;
-    hp: number;
-  };
-}) => {
+const DamageTable = (props: { result: PokemonDmgOption }) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data?.options);
 
   return (
@@ -86,7 +64,7 @@ const DamageTable = (props: {
                     {props.result.type === 'shadow' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
-                    {splitAndCapitalize(props.result.currPoke.form.name, '-', ' ')}{' '}
+                    {splitAndCapitalize(props.result.currPoke?.form.name, '-', ' ')}{' '}
                     <span className="d-inline-block caption">(LV. {props.result.currLevel})</span>
                   </Fragment>
                 ) : (
@@ -216,9 +194,13 @@ const DamageTable = (props: {
               <td>
                 {props.result.damage ? (
                   <Fragment>
-                    {props.result.damage < props.result.move.pve_power ? (
+                    {props.result.damage < (props.result.move?.pve_power ?? 0) ? (
                       <b className="text-success">
-                        {(((props.result.move.pve_power - props.result.damage) * 100) / props.result.move.pve_power).toFixed(2)}%
+                        {(
+                          (((props.result.move?.pve_power ?? 0) - props.result.damage) * 100) /
+                          (props.result.move?.pve_power ?? 0)
+                        ).toFixed(2)}
+                        %
                       </b>
                     ) : (
                       <b className="text-danger">0</b>
@@ -237,8 +219,8 @@ const DamageTable = (props: {
               <td>
                 {props.result.hp ? (
                   <b>
-                    {Math.floor(props.result.hp - props.result.damage)}
-                    {Math.floor(props.result.hp - props.result.damage) > 0 ? (
+                    {Math.floor(props.result.hp - (props.result.damage ?? 0))}
+                    {Math.floor(props.result.hp - (props.result.damage ?? 0)) > 0 ? (
                       <span className="caption-small text-success"> (Alive)</span>
                     ) : (
                       <span className="caption-small text-danger"> (Dead)</span>
