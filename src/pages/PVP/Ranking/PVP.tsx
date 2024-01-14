@@ -174,6 +174,7 @@ const RankingPVP = () => {
             data: item,
             score: item.score,
             id,
+            speciesId: item.speciesId,
             name,
             form,
             pokemon,
@@ -248,7 +249,7 @@ const RankingPVP = () => {
           }}
         >
           <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
-            <Link to={`/pvp/${params.cp}/overall/${data.name.replaceAll('_', '-')}`}>
+            <Link to={`/pvp/${params.cp}/overall/${data.speciesId?.replaceAll('_', '-')}`}>
               <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
             </Link>
             <div className="d-flex justify-content-center">
@@ -265,7 +266,7 @@ const RankingPVP = () => {
             <div className="ranking-group w-100">
               <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
               <div style={{ marginRight: 15 }}>
-                <span className="ranking-score score-ic">{data.score}</span>
+                <span className="ranking-score score-ic">{data?.data?.score}</span>
               </div>
             </div>
           </div>

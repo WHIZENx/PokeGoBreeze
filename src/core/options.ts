@@ -26,71 +26,71 @@ export const getOption = (options: any, args: string[]) => {
   return options;
 };
 
-export const optionSettings = (data: any[]) => {
+export const optionSettings = (
+  data: {
+    templateId: string;
+    data: {
+      combatSettings: {
+        sameTypeAttackBonusMultiplier: number;
+        shadowPokemonAttackBonusMultiplier: number;
+        shadowPokemonDefenseBonusMultiplier: number;
+        chargeScoreBase: number;
+        chargeScoreNice: number;
+        chargeScoreGreat: number;
+        chargeScoreExcellent: number;
+      };
+      battleSettings: {
+        enemyAttackInterval: number;
+        sameTypeAttackBonusMultiplier: number;
+        shadowPokemonAttackBonusMultiplier: number;
+        shadowPokemonDefenseBonusMultiplier: number;
+      };
+      buddyLevelSettings: { minNonCumulativePointsRequired: number; unlockedTraits: number };
+      friendshipMilestoneSettings: { attackBonusPercentage: number; unlockedTrading: number };
+    };
+  }[]
+) => {
   const settings: any = {
-    combat_options: [],
-    battle_options: [],
+    combat_options: {},
+    battle_options: {},
     throw_charge: {},
     buddy_friendship: {},
     trainer_friendship: {},
   };
 
-  data.forEach(
-    (item: {
-      templateId: string;
-      data: {
-        combatSettings: {
-          sameTypeAttackBonusMultiplier: number;
-          shadowPokemonAttackBonusMultiplier: number;
-          shadowPokemonDefenseBonusMultiplier: number;
-          chargeScoreBase: number;
-          chargeScoreNice: number;
-          chargeScoreGreat: number;
-          chargeScoreExcellent: number;
-        };
-        battleSettings: {
-          enemyAttackInterval: number;
-          sameTypeAttackBonusMultiplier: number;
-          shadowPokemonAttackBonusMultiplier: number;
-          shadowPokemonDefenseBonusMultiplier: number;
-        };
-        buddyLevelSettings: { minNonCumulativePointsRequired: number; unlockedTraits: number };
-        friendshipMilestoneSettings: { attackBonusPercentage: number; unlockedTrading: number };
-      };
-    }) => {
-      if (item.templateId === 'COMBAT_SETTINGS') {
-        settings.combat_options = {};
-        settings.combat_options.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
-        settings.combat_options.shadow_bonus = {};
-        settings.combat_options.shadow_bonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
-        settings.combat_options.shadow_bonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
+  data.forEach((item) => {
+    if (item.templateId === 'COMBAT_SETTINGS') {
+      settings.combat_options = {};
+      settings.combat_options.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
+      settings.combat_options.shadow_bonus = {};
+      settings.combat_options.shadow_bonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
+      settings.combat_options.shadow_bonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
 
-        settings.throw_charge.normal = item.data.combatSettings.chargeScoreBase;
-        settings.throw_charge.nice = item.data.combatSettings.chargeScoreNice;
-        settings.throw_charge.great = item.data.combatSettings.chargeScoreGreat;
-        settings.throw_charge.excellent = item.data.combatSettings.chargeScoreExcellent;
-      } else if (item.templateId === 'BATTLE_SETTINGS') {
-        settings.battle_options = {};
-        settings.battle_options.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
-        settings.battle_options.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
-        settings.battle_options.shadow_bonus = {};
-        settings.battle_options.shadow_bonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
-        settings.battle_options.shadow_bonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
-      } else if (item.templateId.includes('BUDDY_LEVEL_')) {
-        const level = parseInt(item.templateId.replace('BUDDY_LEVEL_', ''));
-        settings.buddy_friendship[level] = {};
-        settings.buddy_friendship[level].level = level;
-        settings.buddy_friendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0;
-        settings.buddy_friendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
-      } else if (item.templateId.includes('FRIENDSHIP_LEVEL_')) {
-        const level = parseInt(item.templateId.replace('FRIENDSHIP_LEVEL_', ''));
-        settings.trainer_friendship[level] = {};
-        settings.trainer_friendship[level].level = level;
-        settings.trainer_friendship[level].atk_bonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
-        settings.trainer_friendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
-      }
+      settings.throw_charge.normal = item.data.combatSettings.chargeScoreBase;
+      settings.throw_charge.nice = item.data.combatSettings.chargeScoreNice;
+      settings.throw_charge.great = item.data.combatSettings.chargeScoreGreat;
+      settings.throw_charge.excellent = item.data.combatSettings.chargeScoreExcellent;
+    } else if (item.templateId === 'BATTLE_SETTINGS') {
+      settings.battle_options = {};
+      settings.battle_options.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
+      settings.battle_options.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
+      settings.battle_options.shadow_bonus = {};
+      settings.battle_options.shadow_bonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
+      settings.battle_options.shadow_bonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
+    } else if (item.templateId.includes('BUDDY_LEVEL_')) {
+      const level = parseInt(item.templateId.replace('BUDDY_LEVEL_', ''));
+      settings.buddy_friendship[level] = {};
+      settings.buddy_friendship[level].level = level;
+      settings.buddy_friendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0;
+      settings.buddy_friendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
+    } else if (item.templateId.includes('FRIENDSHIP_LEVEL_')) {
+      const level = parseInt(item.templateId.replace('FRIENDSHIP_LEVEL_', ''));
+      settings.trainer_friendship[level] = {};
+      settings.trainer_friendship[level].level = level;
+      settings.trainer_friendship[level].atk_bonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
+      settings.trainer_friendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
     }
-  );
+  });
   return settings;
 };
 
@@ -125,10 +125,7 @@ export const optionPokemonTypes = (data: PokemonModel[] | any[]) => {
     'FAIRY',
   ];
   data
-    .filter(
-      (item: { templateId: string; data: {} }) =>
-        item.templateId.includes('POKEMON_TYPE') && Object.keys(item.data).includes('typeEffective')
-    )
+    .filter((item) => item.templateId.includes('POKEMON_TYPE') && Object.keys(item.data).includes('typeEffective'))
     .forEach((item: { data: { typeEffective: { attackScalar: number[] } }; templateId: string }) => {
       const rootType = item.templateId.replace('POKEMON_TYPE_', '');
       types[rootType] = {} as TypeSet;
@@ -168,8 +165,8 @@ export const optionPokemonName = (details: Details[] | undefined) => {
   const pokemonDataId = [...new Set(Object.values(pokemonData).map((p) => p.num))];
   const result: any = {};
   pokemonDataId
-    .filter((id: number) => id > 0)
-    .forEach((id: number, index: number) => {
+    .filter((id) => id > 0)
+    .forEach((id, index) => {
       const pokemon = details?.find((p) => p.id === id && p.form?.toUpperCase() === FORM_NORMAL);
       if (pokemon) {
         result[pokemon.id.toString()] = {

@@ -187,7 +187,7 @@ export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRankin
 
   return (
     <div className="row w-100" style={{ margin: 0 }}>
-      {data?.scores && (
+      {data?.data?.scores && (
         <div className="col-lg-4 d-flex justify-content-center" style={{ padding: 10 }}>
           <div>
             <h5>
@@ -198,18 +198,18 @@ export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRankin
               borderSize={320}
               size={180}
               stats={{
-                lead: data?.scores.at(0) ?? 0,
-                atk: data?.scores[4],
-                cons: data?.scores[5],
-                closer: data?.scores[1],
-                charger: data?.scores[3],
-                switching: data?.scores[2],
+                lead: data?.data?.scores.at(0) ?? 0,
+                atk: data?.data?.scores[4],
+                cons: data?.data?.scores[5],
+                closer: data?.data?.scores[1],
+                charger: data?.data?.scores[3],
+                switching: data?.data?.scores[2],
               }}
             />
           </div>
         </div>
       )}
-      <div className={(data?.scores ? 'col-lg-8 ' : '') + 'container status-ranking'}>
+      <div className={(data?.data?.scores ? 'col-lg-8 ' : '') + 'container status-ranking'}>
         <div>
           <h5>
             <b>Overall Stats</b>

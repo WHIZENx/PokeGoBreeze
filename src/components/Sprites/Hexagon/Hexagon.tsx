@@ -52,7 +52,7 @@ const Hexagon = (props: { defaultStats?: HexagonStats; stats: HexagonStats; size
 
   const drawStatsHex = useCallback(
     (ctx: CanvasRenderingContext2D | null | undefined, center: { x: number; y: number }, stat: HexagonStats, hexSize: number) => {
-      const stats: any = {
+      const stats: { [x: string]: number } = {
         '0': ((stat.switching || 0) * hexSize) / 100,
         '1': ((stat.charger || 0) * hexSize) / 100,
         '2': ((stat.closer || 0) * hexSize) / 100,

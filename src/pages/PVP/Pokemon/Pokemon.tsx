@@ -68,7 +68,12 @@ const PokemonPVP = () => {
         ).data as RankingsPVP[]
       ).find((pokemon) => pokemon.speciesId === paramName);
 
-      const name = convertNameRankingToOri(data?.speciesId ?? '', data?.speciesName ?? '');
+      if (!data) {
+        setFound(false);
+        return;
+      }
+
+      const name = convertNameRankingToOri(data.speciesId, data.speciesName);
       const pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
       const id = pokemon?.num;
       const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
@@ -78,9 +83,9 @@ const PokemonPVP = () => {
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
-      let fmoveData = data?.moveset.at(0),
-        cMoveDataPri = data?.moveset[1],
-        cMoveDataSec = data?.moveset[2];
+      let fmoveData = data.moveset.at(0),
+        cMoveDataPri = data.moveset[1],
+        cMoveDataSec = data.moveset[2];
       if (fmoveData?.includes('HIDDEN_POWER')) {
         fmoveData = 'HIDDEN_POWER';
       }
@@ -104,7 +109,7 @@ const PokemonPVP = () => {
         cmoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
       }
 
-      if (fmove && data?.moveset.at(0)?.includes('HIDDEN_POWER')) {
+      if (fmove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
         fmove = { ...fmove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
       }
 
@@ -159,13 +164,12 @@ const PokemonPVP = () => {
         def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
         sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
         prod: statsRanking.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
-        scores: data?.scores ?? [],
         combatPoke,
         fmove,
         cmovePri,
         cmoveSec,
         bestStats,
-        shadow: data?.speciesName.includes('(Shadow)') ?? false,
+        shadow: data.speciesName.includes('(Shadow)') ?? false,
         purified:
           (combatPoke?.purifiedMoves.includes(cmovePri?.name ?? '') ||
             (cMoveDataSec !== null && cMoveDataSec !== undefined && combatPoke?.purifiedMoves.includes(cMoveDataSec))) ??

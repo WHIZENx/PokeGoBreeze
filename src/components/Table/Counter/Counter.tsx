@@ -134,7 +134,7 @@ const Counter = (props: {
     },
     {
       name: 'Fast',
-      selector: (row: { fmove: { id: string; name: string; type: string; elite: boolean } }) => (
+      selector: (row: CounterModel) => (
         <Link to={'../move/' + row.fmove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fmove.type))} />
@@ -155,9 +155,7 @@ const Counter = (props: {
     },
     {
       name: 'Charged',
-      selector: (row: {
-        cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
-      }) => (
+      selector: (row: CounterModel) => (
         <Link to={'../move/' + row.cmove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cmove.type))} />

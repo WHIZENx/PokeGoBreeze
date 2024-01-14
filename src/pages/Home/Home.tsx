@@ -331,7 +331,7 @@ const Home = () => {
                       value={gen}
                       onChange={handleChangeGen}
                       input={<OutlinedInput label="Generation(s)" />}
-                      renderValue={(selected) => 'Gen ' + selected.map((item: number) => (item + 1).toString()).join(', Gen ')}
+                      renderValue={(selected) => 'Gen ' + selected.map((item) => (item + 1).toString()).join(', Gen ')}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
                         <ListItemText

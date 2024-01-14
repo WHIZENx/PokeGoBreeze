@@ -24,7 +24,7 @@ export interface TeamsPVP {
 export interface Performers {
   id: number | undefined;
   name: string | undefined;
-  speciesId: number;
+  speciesId: string;
   pokemonData: PokemonDataModel | undefined;
   form: string | null;
   stats: StatsPokemon;
@@ -54,7 +54,7 @@ interface Teams {
   games: number;
   team: string;
   teamScore: number;
-  teamData: PokemonTeamData[];
+  teamsData: PokemonTeamData[];
   teamsTotalGames: number;
 }
 

@@ -106,7 +106,7 @@ const TeamPVP = () => {
     return {
       id,
       name,
-      speciesId: parseInt(speciesId),
+      speciesId,
       pokemonData: pokemon,
       form,
       stats,
@@ -179,7 +179,7 @@ const TeamPVP = () => {
           return {
             ...item,
             teamsTotalGames,
-            teamData: teamsData,
+            teamsData,
           };
         });
         setRankingData(file);
@@ -460,7 +460,7 @@ const TeamPVP = () => {
                 <Accordion.Header>
                   <div className="d-flex align-items-center w-100 justify-content-between" style={{ gap: 15 }}>
                     <div className="d-flex" style={{ gap: 15 }}>
-                      {value.teamData.map((value, index) => (
+                      {value.teamsData.map((value, index) => (
                         <div className="text-center" key={index}>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
@@ -496,7 +496,7 @@ const TeamPVP = () => {
                 </Accordion.Header>
                 <Accordion.Body style={{ padding: 0 }}>
                   <Fragment>
-                    {value.teamData.map((value, index) => (
+                    {value.teamsData.map((value, index) => (
                       <div
                         className="d-flex align-items-center"
                         key={index}

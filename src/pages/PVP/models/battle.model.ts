@@ -57,7 +57,7 @@ export interface Timeline {
 export interface PokemonTeamData {
   id: number | undefined;
   name: string | undefined;
-  speciesId: number;
+  speciesId: string;
   pokemonData: PokemonDataModel | undefined;
   form: string | null;
   stats: StatsPokemon;
@@ -76,6 +76,7 @@ export interface PokemonBattleRanking {
   data: RankingsPVP | undefined;
   id: number;
   name: string;
+  speciesId?: string;
   pokemon: PokemonDataModel | undefined;
   form: string;
   stats: StatsPokemon;
@@ -111,13 +112,11 @@ export interface PokemonBattleRanking {
         rank: number;
       }
     | undefined;
-  scores: number[];
-  score?: number;
   combatPoke: CombatPokemon | undefined;
   fmove: Combat | undefined;
   cmovePri: Combat | undefined;
   cmoveSec: Combat | undefined;
-  bestStats: any;
+  bestStats?: any;
   shadow: boolean;
   purified: boolean;
 }
