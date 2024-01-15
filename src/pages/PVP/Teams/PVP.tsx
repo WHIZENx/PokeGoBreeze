@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
@@ -165,25 +167,25 @@ const TeamPVP = () => {
         const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);
         const teamsTotalGames = file.teams.reduce((p, c) => p + c.games, 0);
 
-        file.performers = file.performers.map((item) => {
-          return {
-            ...item,
-            ...mappingPokemonData(item.pokemon),
-            performersTotalGames,
-          };
-        });
+        // file.performers = file.performers.map((item) => {
+        //   return {
+        //     ...item,
+        //     ...mappingPokemonData(item.pokemon),
+        //     performersTotalGames,
+        //   };
+        // });
 
-        file.teams = file.teams.map((item) => {
-          const teams = item.team.split('|');
-          const teamsData: PokemonTeamData[] = [];
-          teams.forEach((value) => teamsData.push(mappingPokemonData(value)));
-          return {
-            ...item,
-            teamsTotalGames,
-            teamsData,
-          };
-        });
-        setRankingData(file);
+        // file.teams = file.teams.map((item) => {
+        //   const teams = item.team.split('|');
+        //   const teamsData: PokemonTeamData[] = [];
+        //   teams.forEach((value) => teamsData.push(mappingPokemonData(value)));
+        //   return {
+        //     ...item,
+        //     teamsTotalGames,
+        //     teamsData,
+        //   };
+        // });
+        // setRankingData(file);
         dispatch(hideSpinner());
       } catch (e: any) {
         source.cancel();
