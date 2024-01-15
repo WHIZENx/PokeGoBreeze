@@ -164,16 +164,16 @@ const TeamPVP = () => {
                     ${splitAndCapitalize(params.serie, '-', ' ')}`;
         }
 
-        const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);
-        const teamsTotalGames = file.teams.reduce((p, c) => p + c.games, 0);
+        const performersTotalGames = file.performers?.reduce((p, c) => p + c.games, 0);
+        const teamsTotalGames = file.teams?.reduce((p, c) => p + c.games, 0);
 
-        // file.performers = file.performers.map((item) => {
-        //   return {
-        //     ...item,
-        //     ...mappingPokemonData(item.pokemon),
-        //     performersTotalGames,
-        //   };
-        // });
+        file.performers = file.performers?.map((item) => {
+          return {
+            ...item,
+            ...mappingPokemonData(item.pokemon),
+            performersTotalGames: performersTotalGames ?? 0,
+          };
+        });
 
         // file.teams = file.teams.map((item) => {
         //   const teams = item.team.split('|');
@@ -185,7 +185,7 @@ const TeamPVP = () => {
         //     teamsData,
         //   };
         // });
-        // setRankingData(file);
+        setRankingData(file);
         dispatch(hideSpinner());
       } catch (e: any) {
         source.cancel();
@@ -329,7 +329,7 @@ const TeamPVP = () => {
           </div>
         </div>
         {rankingData?.performers
-          .filter(
+          ?.filter(
             (pokemon) =>
               splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
               pokemon.id?.toString().includes(search)
@@ -344,7 +344,7 @@ const TeamPVP = () => {
                 backgroundImage: computeBgType(value?.pokemonData?.types, value?.shadow, value?.purified, 1, styleSheet.current),
               }}
             >
-              <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
+              <Link to={`/pvp/${params.cp}/overall/${value.speciesId?.toString().replaceAll('_', '-')}`}>
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
               </Link>
               <div className="d-flex justify-content-center">
@@ -457,13 +457,13 @@ const TeamPVP = () => {
         </div>
         <Accordion alwaysOpen={true}>
           {rankingData?.teams
-            .sort((a: any, b: any) => (sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy]))
+            ?.sort((a: any, b: any) => (sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy]))
             .map((value, index) => (
               <Accordion.Item key={index} eventKey={index.toString()}>
                 <Accordion.Header>
                   <div className="d-flex align-items-center w-100 justify-content-between" style={{ gap: 15 }}>
                     <div className="d-flex" style={{ gap: 15 }}>
-                      {value.teamsData.map((value, index) => (
+                      {value.teamsData?.map((value, index) => (
                         <div className="text-center" key={index}>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
@@ -499,7 +499,7 @@ const TeamPVP = () => {
                 </Accordion.Header>
                 <Accordion.Body style={{ padding: 0 }}>
                   <Fragment>
-                    {value.teamsData.map((value, index) => (
+                    {value.teamsData?.map((value, index) => (
                       <div
                         className="d-flex align-items-center"
                         key={index}
@@ -509,7 +509,7 @@ const TeamPVP = () => {
                           backgroundImage: computeBgType(value.pokemonData?.types, value.shadow, value.purified),
                         }}
                       >
-                        <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
+                        <Link to={`/pvp/${params.cp}/overall/${value.speciesId?.toString().replaceAll('_', '-')}`}>
                           <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
                         </Link>
                         <div className="d-flex justify-content-center">

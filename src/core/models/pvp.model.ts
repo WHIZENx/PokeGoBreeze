@@ -16,9 +16,9 @@ export interface PVPInfo {
 }
 
 export interface TeamsPVP {
-  performers: Performers[];
+  performers?: Performers[];
   properties: Properties;
-  teams: Teams[];
+  teams?: Teams[];
 }
 
 export interface Performers {
