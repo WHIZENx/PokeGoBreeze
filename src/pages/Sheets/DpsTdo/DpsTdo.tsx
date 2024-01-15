@@ -111,9 +111,9 @@ const columns: any = [
           alt="img-pokemon"
           style={{ marginRight: 10 }}
           src={APIService.getPokeIconSprite(row.pokemon?.sprite, true)}
-          onError={(e: any) => {
-            e.onerror = null;
-            e.target.src = APIService.getPokeIconSprite(row.pokemon?.baseSpecies ?? '');
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon?.baseSpecies ?? '');
           }}
         />
         {splitAndCapitalize(row.pokemon?.name, '-', ' ')}
@@ -355,7 +355,7 @@ const DpsTdo = () => {
     special: boolean,
     felite: boolean,
     celite: boolean,
-    specialMove: any = null
+    specialMove: string[] = []
   ) => {
     movePoke?.forEach((vc: string) => {
       const fmove = data?.combat?.find((item) => item.name === vf);
@@ -420,9 +420,9 @@ const DpsTdo = () => {
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           shadow,
-          purified: purified && specialMove != null && specialMove?.includes(statsAttacker.cmove?.name),
+          purified: purified && specialMove.length > 0 && specialMove?.includes(statsAttacker.cmove?.name ?? ''),
           special,
-          mShadow: shadow && specialMove != null && specialMove?.includes(statsAttacker.cmove?.name),
+          mShadow: shadow && specialMove.length > 0 && specialMove?.includes(statsAttacker.cmove?.name ?? ''),
           elite: {
             fmove: felite,
             cmove: celite,
@@ -712,7 +712,7 @@ const DpsTdo = () => {
     if (selectTypes.includes(value)) {
       return setSelectTypes([...selectTypes].filter((item) => item !== value));
     }
-    return setSelectTypes((oldArr: string[]) => [...oldArr, value]);
+    return setSelectTypes((oldArr) => [...oldArr, value]);
   };
 
   const onCalculateTable = (e: { preventDefault: () => void }) => {
@@ -728,7 +728,7 @@ const DpsTdo = () => {
       <div className="head-filter text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100" style={{ margin: 0 }}>
-          {types.map((item: string, index: React.Key) => (
+          {types.map((item, index) => (
             <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
               <button
                 value={item}

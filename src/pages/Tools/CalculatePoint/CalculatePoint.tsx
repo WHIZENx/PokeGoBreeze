@@ -299,9 +299,9 @@ const CalculatePoint = () => {
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
                 src={APIService.getPokeIconSprite(form?.form.name ?? '', true)}
-                onError={(e: any) => {
-                  e.onerror = null;
-                  e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                 }}
               />
             </span>
@@ -319,9 +319,9 @@ const CalculatePoint = () => {
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
                 src={APIService.getPokeIconSprite(formDef?.form.name ?? '', true)}
-                onError={(e: any) => {
-                  e.onerror = null;
-                  e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                 }}
               />
             </span>

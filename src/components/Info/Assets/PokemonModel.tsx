@@ -116,7 +116,7 @@ const PokemonModel = (props: { id: number; name: string }) => {
         <div className="text-danger">&emsp;Sound in Pokémon Go unavailable.</div>
       ) : (
         <ul style={{ margin: 0 }}>
-          {sound.current.sound.cry.map((value: { form: string; path: string }, index: React.Key) => (
+          {sound.current.sound.cry.map((value, index) => (
             <li key={index} style={{ listStyleType: 'disc' }}>
               <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
               <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100" controls={true} style={{ height: 30 }}>

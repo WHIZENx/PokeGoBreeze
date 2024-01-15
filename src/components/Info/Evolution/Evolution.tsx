@@ -13,7 +13,7 @@ import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import PetsIcon from '@mui/icons-material/Pets';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import Xarrow from 'react-xarrows';
+import Xarrow, { cAnchorEdge } from 'react-xarrows';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
@@ -234,7 +234,7 @@ const Evolution = (props: {
     );
     if (evoList) {
       if (result.length === 3) {
-        result[2].push(...evoList);
+        result.at(2)?.push(...evoList);
       } else {
         result.push(evoList);
       }
@@ -341,14 +341,14 @@ const Evolution = (props: {
               ? APIService.getPokeSprite(value.id)
               : APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')
           }
-          onError={(e: any) => {
-            e.onerror = null;
-            APIService.getFetchUrl(e.target.currentSrc)
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            APIService.getFetchUrl(e.currentTarget.currentSrc)
               .then(() => {
-                e.target.src = APIService.getPokeSprite(value.id);
+                e.currentTarget.src = APIService.getPokeSprite(value.id);
               })
               .catch(() => {
-                e.target.src = APIService.getPokeFullSprite(value.id);
+                e.currentTarget.src = APIService.getPokeFullSprite(value.id);
               });
           }}
         />
@@ -362,16 +362,16 @@ const Evolution = (props: {
     offsetY += value.baby ? 20 : 0;
     offsetY += arrEvoList.length === 1 ? 20 : 0;
 
-    const startAnchor: any =
-      index > 0
-        ? {
-            position: 'bottom',
-            offset: {
+    const startAnchor = {
+      position: index > 0 ? cAnchorEdge[4] : cAnchorEdge[2],
+      offset:
+        index > 0
+          ? {
               x: arrEvoList[Math.max(0, evo - 1)].length > 1 ? 40 : 0,
               y: arrEvoList[Math.max(0, evo - 1)].length > 1 ? offsetY + 82.33 : offsetY,
-            },
-          }
-        : { position: 'right', offset: { x: -8 } };
+            }
+          : { x: -8 },
+    };
     const data = getQuestEvo(parseInt(value.id.toString()), form?.toUpperCase());
     return (
       <Fragment>
@@ -471,15 +471,15 @@ const Evolution = (props: {
                             )}
                             {data?.quest.condition.desc === 'POKEMON_TYPE' && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
-                                {data?.quest.condition.pokemonType.map((value: string, index: React.Key) => (
+                                {data?.quest.condition.pokemonType.map((value: string, index: number) => (
                                   <img
                                     key={index}
                                     alt="img-stardust"
                                     height={20}
                                     src={APIService.getTypeSprite(value)}
-                                    onError={(e: any) => {
-                                      e.onerror = null;
-                                      e.target.src = APIService.getPokeSprite(0);
+                                    onError={(e) => {
+                                      e.currentTarget.onerror = null;
+                                      e.currentTarget.src = APIService.getPokeSprite(0);
                                     }}
                                   />
                                 ))}

@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
+import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import { BattleLeagueCalculate, BetweenLevelCalculate, StatsCalculate } from '../../../util/models/calculate.model';
 
 const Calculate = () => {
@@ -326,10 +326,10 @@ const Calculate = () => {
                                 {statData?.result_between_stadust}
                                 {statData?.type !== '' && (statData?.result_between_stadust_diff ?? 0) > 0 && (
                                   <Fragment>
-                                    {statData?.type === 'shadow' && (
+                                    {statData?.type?.toUpperCase() === FORM_SHADOW && (
                                       <span className="shadow-text"> (+{statData?.result_between_stadust_diff})</span>
                                     )}
-                                    {statData?.type === 'purified' && (
+                                    {statData?.type?.toUpperCase() === FORM_PURIFIED && (
                                       <span className="purified-text"> (-{statData?.result_between_stadust_diff})</span>
                                     )}
                                     {statData?.type === 'buddy' && (
@@ -362,10 +362,10 @@ const Calculate = () => {
                                 {statData?.result_between_candy}
                                 {statData?.type !== '' && (statData?.result_between_candy_diff ?? 0) > 0 && (
                                   <Fragment>
-                                    {statData?.type === 'shadow' && (
+                                    {statData?.type?.toUpperCase() === FORM_SHADOW && (
                                       <span className="shadow-text"> (+{statData?.result_between_candy_diff})</span>
                                     )}
-                                    {statData?.type === 'purified' && (
+                                    {statData?.type?.toUpperCase() === FORM_PURIFIED && (
                                       <span className="purified-text"> (-{statData?.result_between_candy_diff})</span>
                                     )}
                                     {statData?.type === 'buddy' && (
@@ -403,10 +403,10 @@ const Calculate = () => {
                                 {statData?.result_between_xl_candy}
                                 {statData?.type !== '' && (statData?.result_between_xl_candy_diff ?? 0) > 0 && (
                                   <Fragment>
-                                    {statData?.type === 'shadow' && (
+                                    {statData?.type?.toUpperCase() === FORM_SHADOW && (
                                       <span className="shadow-text"> (+{statData?.result_between_xl_candy_diff})</span>
                                     )}
-                                    {statData?.type === 'purified' && (
+                                    {statData?.type?.toUpperCase() === FORM_PURIFIED && (
                                       <span className="purified-text"> (-{statData?.result_between_xl_candy_diff})</span>
                                     )}
                                     {statData?.type === 'buddy' && (
@@ -435,7 +435,7 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.type !== 'shadow' ? (
+                            statData?.type?.toUpperCase() !== FORM_SHADOW ? (
                               calculateStatsBattle(statATK, pokeStats?.IV.atk ?? 0, statLevel, true)
                             ) : (
                               <Fragment>
@@ -460,7 +460,7 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.type !== 'shadow' ? (
+                            statData?.type?.toUpperCase() !== FORM_SHADOW ? (
                               calculateStatsBattle(statDEF, pokeStats?.IV.def ?? 0, statLevel, true)
                             ) : (
                               <Fragment>
@@ -587,7 +587,9 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
                           {dataLittleLeague && dataLittleLeague.elidge ? (
-                            <span className={statData?.type === 'shadow' ? 'text-success' : ''}>{dataLittleLeague.stats?.atk}</span>
+                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
+                              {dataLittleLeague.stats?.atk}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -595,7 +597,9 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
                           {dataLittleLeague && dataLittleLeague.elidge ? (
-                            <span className={statData?.type === 'shadow' ? 'text-danger' : ''}>{dataLittleLeague.stats?.def}</span>
+                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
+                              {dataLittleLeague.stats?.def}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -696,7 +700,9 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
                           {dataGreatLeague && dataGreatLeague.elidge ? (
-                            <span className={statData?.type === 'shadow' ? 'text-success' : ''}>{dataGreatLeague.stats?.atk}</span>
+                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
+                              {dataGreatLeague.stats?.atk}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -704,7 +710,9 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
                           {dataGreatLeague && dataGreatLeague.elidge ? (
-                            <span className={statData?.type === 'shadow' ? 'text-danger' : ''}>{dataGreatLeague.stats?.def}</span>
+                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
+                              {dataGreatLeague.stats?.def}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -805,7 +813,9 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
                           {dataUltraLeague && dataUltraLeague.elidge ? (
-                            <span className={statData?.type === 'shadow' ? 'text-success' : ''}>{dataUltraLeague.stats?.atk}</span>
+                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
+                              {dataUltraLeague.stats?.atk}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -813,7 +823,9 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
                           {dataUltraLeague && dataUltraLeague.elidge ? (
-                            <span className={statData?.type === 'shadow' ? 'text-danger' : ''}>{dataUltraLeague.stats?.def}</span>
+                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
+                              {dataUltraLeague.stats?.def}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -911,7 +923,9 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
                           {dataMasterLeague ? (
-                            <span className={statData?.type === 'shadow' ? 'text-success' : ''}>{dataMasterLeague.stats?.atk}</span>
+                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
+                              {dataMasterLeague.stats?.atk}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -919,7 +933,9 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
                           {dataMasterLeague ? (
-                            <span className={statData?.type === 'shadow' ? 'text-danger' : ''}>{dataMasterLeague.stats?.def}</span>
+                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
+                              {dataMasterLeague.stats?.def}
+                            </span>
                           ) : (
                             '-'
                           )}

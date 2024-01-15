@@ -34,9 +34,9 @@ const TypeInfo = (props: {
                 height={props.height}
                 alt="img-pokemon"
                 src={APIService.getTypeSprite(value)}
-                onError={(e: any) => {
-                  e.onerror = null;
-                  e.target.src = APIService.getPokeSprite(0);
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeSprite(0);
                 }}
               />
             ) : (

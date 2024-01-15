@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { HundoRate, marks, PokeGoSlider } from '../../../util/Utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/Calculate';
 
-import DataTable from 'react-data-table-component';
+import DataTable, { TableColumn } from 'react-data-table-component';
 import data from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
@@ -13,53 +13,53 @@ import Find from '../../../components/Find/Find';
 import { MAX_IV, MIN_IV } from '../../../util/Constants';
 import { PredictStatsModel, PredictStatsCalculate, PredictCPModel, PredictCPCalculate } from '../../../util/models/calculate.model';
 
-const columnsIV: any = [
+const columnsIV: TableColumn<PredictStatsModel>[] = [
   {
     name: 'Level',
-    selector: (row: PredictStatsModel) => row.level,
+    selector: (row) => row.level,
     sortable: true,
   },
   {
     name: 'ATK',
-    selector: (row: PredictStatsModel) => row.atk,
+    selector: (row) => row.atk,
     sortable: true,
   },
   {
     name: 'DEF',
-    selector: (row: PredictStatsModel) => row.def,
+    selector: (row) => row.def,
     sortable: true,
   },
   {
     name: 'STA',
-    selector: (row: PredictStatsModel) => row.sta,
+    selector: (row) => row.sta,
     sortable: true,
   },
   {
     name: 'HP',
-    selector: (row: PredictStatsModel) => row.hp,
+    selector: (row) => row.hp,
     sortable: true,
   },
   {
     name: 'Percent',
-    selector: (row: PredictStatsModel) => row.percent,
+    selector: (row) => row.percent,
     sortable: true,
   },
 ];
 
-const columnsCP: any = [
+const columnsCP: TableColumn<PredictCPModel>[] = [
   {
     name: 'Level',
-    selector: (row: PredictCPModel) => row.level,
+    selector: (row) => row.level,
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row: PredictCPModel) => row.CP,
+    selector: (row) => row.CP,
     sortable: true,
   },
   {
     name: 'HP',
-    selector: (row: PredictCPModel) => row.hp,
+    selector: (row) => row.hp,
     sortable: true,
   },
 ];

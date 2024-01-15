@@ -84,8 +84,8 @@ const PokemonPVP = () => {
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
       let fmoveData = data.moveset.at(0),
-        cMoveDataPri = data.moveset[1],
-        cMoveDataSec = data.moveset[2];
+        cMoveDataPri = data.moveset.at(1),
+        cMoveDataSec = data.moveset.at(2);
       if (fmoveData?.includes('HIDDEN_POWER')) {
         fmoveData = 'HIDDEN_POWER';
       }

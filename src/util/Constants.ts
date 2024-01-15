@@ -84,6 +84,8 @@ export const DEFAULT_TYPES = [
 ];
 
 export const FORM_NORMAL = 'NORMAL';
+export const FORM_SHADOW = 'SHADOW';
+export const FORM_PURIFIED = 'PURIFIED';
 export const FORM_STANDARD = 'STANDARD';
 export const FORM_INCARNATE = 'INCARNATE';
 export const FORM_HERO = 'HERO';

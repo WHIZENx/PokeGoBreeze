@@ -17,6 +17,8 @@ import {
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PRIMAL,
+  FORM_PURIFIED,
+  FORM_SHADOW,
   FORM_STANDARD,
   regionList,
 } from '../../../util/Constants';
@@ -82,12 +84,12 @@ const Form = (props: {
       .at(0);
   }, [props.formList]);
 
-  const findDefaultForm = useCallback(() => {
+  const findIsDefaultForm = useCallback(() => {
     return props.formList
       ?.map((item) => {
         return item.find((item) => item.form.is_default);
       })
-      .find((item) => item?.id === props.idDefault);
+      .some((item) => item?.id === props.idDefault);
   }, [props.formList, props.idDefault]);
 
   const findForm = useCallback(() => {
@@ -130,7 +132,7 @@ const Form = (props: {
 
   const filterFormName = useCallback((form: string, formStats: string) => {
     form =
-      form === '' || form?.toUpperCase() === FORM_STANDARD
+      form === '' || form?.toUpperCase() === FORM_STANDARD || form?.toUpperCase() === FORM_SHADOW || form?.toLowerCase() === FORM_PURIFIED
         ? 'Normal'
         : form?.toUpperCase().includes(FORM_MEGA)
         ? form.toLowerCase()
@@ -245,27 +247,16 @@ const Form = (props: {
   }, [pokeID, dispatch]);
 
   useEffect(() => {
-    if (currForm && currForm.form && pokeID) {
+    if (currForm && currForm.form && pokeID && props.stats) {
       setStatATK(filterFormList(currForm.form.form_name, props.stats?.attack.ranking, props.idDefault ?? 0, props.formList?.length ?? 0));
       setStatDEF(filterFormList(currForm.form.form_name, props.stats?.defense.ranking, props.idDefault ?? 0, props.formList?.length ?? 0));
       setStatSTA(filterFormList(currForm.form.form_name, props.stats?.stamina.ranking, props.idDefault ?? 0, props.formList?.length ?? 0));
       setStatProd(
         filterFormList(currForm.form.form_name, props.stats?.statProd.ranking, props.idDefault ?? 0, props.formList?.length ?? 0)
       );
-      setPokeID(findDefaultForm() ? currForm.form.id ?? 0 : findFirst()?.form.id ?? 0);
+      setPokeID(findIsDefaultForm() ? currForm.form.id ?? 0 : findFirst()?.form.id ?? 0);
     }
-  }, [
-    currForm,
-    pokeID,
-    filterFormList,
-    findDefaultForm,
-    findFirst,
-    props.idDefault,
-    props.stats?.attack.ranking,
-    props.stats?.defense.ranking,
-    props.stats?.stamina.ranking,
-    props.formList?.length,
-  ]);
+  }, [currForm, pokeID, filterFormList, findIsDefaultForm, findFirst, props.idDefault, props.stats, props.formList?.length]);
 
   useEffect(() => {
     if (
@@ -351,14 +342,14 @@ const Form = (props: {
                       )}
                       <img
                         className="pokemon-sprite-medium"
-                        onError={(e: any) => {
-                          e.onerror = null;
-                          APIService.getFetchUrl(e.target.currentSrc)
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          APIService.getFetchUrl(e.currentTarget.currentSrc)
                             .then(() => {
-                              e.target.src = APIService.getPokeIconSprite(value.default_name);
+                              e.currentTarget.src = APIService.getPokeIconSprite(value.default_name);
                             })
                             .catch(() => {
-                              e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                              e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                             });
                         }}
                         alt="img-icon-form"
@@ -452,8 +443,8 @@ const Form = (props: {
               <Raid
                 currForm={currForm}
                 id={props.idDefault}
-                statATK={statATK ? statATK.attack : calBaseATK(dataPoke ? dataPoke.stats : defaultStats, true)}
-                statDEF={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
+                statATK={statATK?.attack ?? calBaseATK(dataPoke ? dataPoke.stats : defaultStats, true)}
+                statDEF={statDEF?.defense ?? calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
               />
             </Fragment>
           )}
@@ -462,14 +453,14 @@ const Form = (props: {
           <TableMove
             data={dataPoke}
             form={currForm?.form}
-            statATK={statATK ? statATK.attack : calBaseATK(dataPoke ? dataPoke.stats : defaultStats, true)}
-            statDEF={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
-            statSTA={statSTA ? statSTA.stamina : calBaseSTA(dataPoke ? dataPoke.stats : defaultStats, true)}
+            statATK={statATK?.attack ?? calBaseATK(dataPoke ? dataPoke.stats : defaultStats, true)}
+            statDEF={statDEF?.defense ?? calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
+            statSTA={statSTA?.stamina ?? calBaseSTA(dataPoke ? dataPoke.stats : defaultStats, true)}
           />
           <Counter
             currForm={currForm}
             pokeID={pokeID}
-            def={statDEF ? statDEF.defense : calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
+            def={statDEF?.defense ?? calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             form={currForm?.form}
             isShadow={currForm?.form.is_shadow}
           />

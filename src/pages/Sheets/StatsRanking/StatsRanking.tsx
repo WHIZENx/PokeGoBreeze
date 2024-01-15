@@ -48,9 +48,9 @@ const columnPokemon: any = [
           alt="img-pokemon"
           style={{ marginRight: 10 }}
           src={APIService.getPokeIconSprite(row.sprite, true)}
-          onError={(e: any) => {
-            e.onerror = null;
-            e.target.src = APIService.getPokeIconSprite(row.baseSpecies);
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
           }}
         />
         {splitAndCapitalize(row.name?.replaceAll('_', '-'), '-', ' ')}

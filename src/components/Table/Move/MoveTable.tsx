@@ -93,7 +93,7 @@ const TableMove = (props: {
     if (combatPoke) {
       if (combatPoke.length === 1) {
         filterMoveType(combatPoke.at(0));
-        return setMove(setRankMove(combatPoke[0]));
+        return setMove(setRankMove(combatPoke.at(0)));
       } else if (combatPoke.length === 0 && props.id) {
         const combatPoke: CombatPokemon[] | undefined = data?.pokemonCombat?.filter(
           (item) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
@@ -107,7 +107,7 @@ const TableMove = (props: {
       );
       if (result === undefined) {
         filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
-        setMove(setRankMove(combatPoke[0]));
+        setMove(setRankMove(combatPoke.at(0)));
       } else {
         filterMoveType(result);
         setMove(setRankMove(result));
@@ -329,7 +329,7 @@ const TableMove = (props: {
                       return 0;
                     }
                   })
-                  .map((value, index: React.Key) => (
+                  .map((value, index) => (
                     <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff ?? 0, 'offensive')}</Fragment>
                   ))}
               </tbody>
@@ -381,7 +381,7 @@ const TableMove = (props: {
                       return 0;
                     }
                   })
-                  .map((value, index: React.Key) => (
+                  .map((value, index) => (
                     <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef ?? 0, 'defensive')}</Fragment>
                   ))}
               </tbody>

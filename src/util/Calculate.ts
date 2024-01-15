@@ -21,6 +21,7 @@ import {
   DEFAULT_TRAINER_FRIEND,
   DEFAULT_WEATHER_BOOSTS,
   FORM_MEGA,
+  FORM_SHADOW,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -122,7 +123,7 @@ export const calBaseDEF = (stats: any, nerf: boolean) => {
 export const calBaseSTA = (stats: any, nerf: boolean) => {
   const hp = stats.hp ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'hp').base_stat;
 
-  const baseSTA = Math.floor(hp * 1.75 + 50);
+  const baseSTA = hp > 0 ? Math.floor(hp * 1.75 + 50) : hp;
   if (!nerf) {
     return baseSTA;
   }
@@ -409,7 +410,7 @@ export const calculateBetweenLevel = (
     let atkStatDiff = 0;
     let defStatDiff = 0;
 
-    if (type === 'shadow') {
+    if (type.toUpperCase() === FORM_SHADOW) {
       atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, SHADOW_ATK_BONUS(globalOptions));
       defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, SHADOW_DEF_BONUS(globalOptions));
 
@@ -440,7 +441,7 @@ export const calculateBetweenLevel = (
       type,
     };
 
-    if (type === 'shadow') {
+    if (type.toUpperCase() === FORM_SHADOW) {
       dataList.atk_stat = atkStat;
       dataList.def_stat = defStat;
       dataList.atk_stat_diff = atkStatDiff;
@@ -491,11 +492,11 @@ export const calculateBattleLeague = (
     }
 
     const atkStat =
-      type === 'shadow'
+      type.toUpperCase() === FORM_SHADOW
         ? calculateStatsBattle(atk, IVatk, dataBattle.level, true, SHADOW_ATK_BONUS(globalOptions))
         : calculateStatsBattle(atk, IVatk, dataBattle.level, true);
     const defStat =
-      type === 'shadow'
+      type.toUpperCase() === FORM_SHADOW
         ? calculateStatsBattle(def, IVdef, dataBattle.level, true, SHADOW_DEF_BONUS(globalOptions))
         : calculateStatsBattle(def, IVdef, dataBattle.level, true);
 

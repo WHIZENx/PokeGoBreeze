@@ -52,9 +52,9 @@ const Primal = (props: { formList: PokemonFormModify[][]; id: number }) => {
                 height="96"
                 alt="img-pokemon"
                 src={APIService.getPokeGifSprite(value?.name ?? '')}
-                onError={(e: any) => {
-                  e.onerror = null;
-                  e.target.src = `${value?.sprites?.front_default}`;
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = `${value?.sprites?.front_default}`;
                 }}
               />
               <div id="id-pokemon" style={{ color: 'black' }}>

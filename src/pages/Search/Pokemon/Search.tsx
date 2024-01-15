@@ -160,9 +160,9 @@ const Search = () => {
                   className="img-search"
                   alt="img-pokemon"
                   src={value.sprites}
-                  onError={(e: any) => {
-                    e.onerror = null;
-                    e.target.src = APIService.getPokeSprite(0);
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = APIService.getPokeSprite(0);
                   }}
                 />
                 {value.name}

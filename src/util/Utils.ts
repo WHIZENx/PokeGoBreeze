@@ -273,10 +273,10 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
   return formOri.includes('(') && formOri.includes(')') && !invalidForm.includes(form) ? text.replaceAll(form.toLowerCase(), '') : text;
 };
 
-export const convertArrStats = (data: PokemonDataModel) => {
+export const convertArrStats = (data: { [x: string]: PokemonDataModel }) => {
   return Object.values(data)
-    .filter((pokemon: PokemonDataModel) => pokemon.num > 0)
-    .map((value: PokemonDataModel) => {
+    .filter((pokemon) => pokemon.num > 0)
+    .map((value) => {
       const stats = calculateStatsByTag(value, value.baseStats, value.slug);
       return {
         id: value.num,

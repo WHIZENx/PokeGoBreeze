@@ -329,7 +329,7 @@ export const loadAssets = async (
   data: any,
   pokemon: PokemonModel[],
   pokemonFamily: string[],
-  pokemonData: PokemonDataModel[],
+  pokemonData: { [x: string]: PokemonDataModel },
   formSpecial: string[],
   pokemonCombat: CombatPokemon[],
   noneForm: string[],

@@ -199,11 +199,11 @@ export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRankin
               size={180}
               stats={{
                 lead: data?.data?.scores.at(0) ?? 0,
-                atk: data?.data?.scores[4],
-                cons: data?.data?.scores[5],
-                closer: data?.data?.scores[1],
-                charger: data?.data?.scores[3],
-                switching: data?.data?.scores[2],
+                atk: data?.data?.scores.at(4) ?? 0,
+                cons: data?.data?.scores.at(5) ?? 0,
+                closer: data?.data?.scores.at(1) ?? 0,
+                charger: data?.data?.scores.at(3) ?? 0,
+                switching: data?.data?.scores.at(2) ?? 0,
               }}
             />
           </div>

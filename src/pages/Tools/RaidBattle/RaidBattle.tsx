@@ -920,9 +920,9 @@ const RaidBattle = () => {
               alt="img-pokemon"
               className="pokemon-sprite-large"
               src={APIService.getPokeIconSprite(pokemon.sprite)}
-              onError={(e: any) => {
-                e.onerror = null;
-                e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
               }}
             />
           </div>

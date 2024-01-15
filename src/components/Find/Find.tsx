@@ -195,14 +195,14 @@ const Find = (props: {
                   className="img-search"
                   alt="img-pokemon"
                   src={value.sprites}
-                  onError={(e: any) => {
-                    e.onerror = null;
-                    APIService.getFetchUrl(e.target.currentSrc)
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    APIService.getFetchUrl(e.currentTarget.currentSrc)
                       .then(() => {
-                        e.target.src = APIService.getPokeSprite(0);
+                        e.currentTarget.src = APIService.getPokeSprite(0);
                       })
                       .catch(() => {
-                        e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                        e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                       });
                   }}
                 />

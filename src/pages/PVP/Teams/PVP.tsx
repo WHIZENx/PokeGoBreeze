@@ -28,6 +28,7 @@ import { StatsState, StoreState } from '../../../store/models/state.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
+import { FORM_SHADOW } from '../../../util/Constants';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -117,7 +118,7 @@ const TeamPVP = () => {
       cmovePri,
       cmoveSec,
       combatPoke,
-      shadow: speciesId.includes('shadow'),
+      shadow: speciesId.toUpperCase().includes(FORM_SHADOW),
       purified:
         (cmovePri && combatPoke?.purifiedMoves.includes(cmovePri.name)) || (cmoveSec && combatPoke?.purifiedMoves.includes(cmoveSec.name)),
     };

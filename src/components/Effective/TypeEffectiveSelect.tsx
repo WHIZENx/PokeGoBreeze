@@ -19,7 +19,7 @@ const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: st
               <b className="text-shadow">x{text}</b>
             </h6>
             <div className="d-flex flex-wrap" style={{ gap: 5 }}>
-              {data.map((value: string, index: React.Key) => (
+              {data.map((value, index) => (
                 <span key={index} className={value.toLowerCase() + ' type-select-bg d-flex align-items-center filter-shadow'}>
                   <div style={{ display: 'contents', width: 16 }}>
                     <img

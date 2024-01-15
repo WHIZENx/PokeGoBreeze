@@ -14,9 +14,9 @@ const CardPokemon = (props: { value: PokemonDataModel; score?: number; isShadow?
               alt="pokemon-logo"
               style={{ marginRight: 10 }}
               src={APIService.getPokeIconSprite(props.value.sprite, true)}
-              onError={(e: any) => {
-                e.onerror = null;
-                e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
               }}
             />
             {props.isShadow && (

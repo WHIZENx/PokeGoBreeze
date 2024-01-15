@@ -325,14 +325,14 @@ const FormSelect = (props: {
                     <img
                       width={64}
                       height={64}
-                      onError={(e: any) => {
-                        e.onerror = null;
-                        APIService.getFetchUrl(e.target.currentSrc)
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        APIService.getFetchUrl(e.currentTarget.currentSrc)
                           .then(() => {
-                            e.target.src = APIService.getPokeIconSprite(value.default_name);
+                            e.currentTarget.src = APIService.getPokeIconSprite(value.default_name);
                           })
                           .catch(() => {
-                            e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                            e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                           });
                       }}
                       alt="img-icon-form"

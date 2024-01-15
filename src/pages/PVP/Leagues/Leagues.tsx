@@ -225,7 +225,7 @@ const Leagues = () => {
               {league.conditions.whiteList.length !== 0 && (
                 <li style={{ fontWeight: 500 }}>
                   <h6 className="title-leagues text-success">White List</h6>
-                  {league.conditions.whiteList.map((item, index: React.Key) => (
+                  {league.conditions.whiteList.map((item, index) => (
                     <Link
                       className="img-link text-center"
                       key={index}

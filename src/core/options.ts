@@ -60,7 +60,6 @@ export const optionSettings = (
 
   data.forEach((item) => {
     if (item.templateId === 'COMBAT_SETTINGS') {
-      settings.combat_options = {};
       settings.combat_options.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
       settings.combat_options.shadow_bonus = {};
       settings.combat_options.shadow_bonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
@@ -71,7 +70,6 @@ export const optionSettings = (
       settings.throw_charge.great = item.data.combatSettings.chargeScoreGreat;
       settings.throw_charge.excellent = item.data.combatSettings.chargeScoreExcellent;
     } else if (item.templateId === 'BATTLE_SETTINGS') {
-      settings.battle_options = {};
       settings.battle_options.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
       settings.battle_options.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
       settings.battle_options.shadow_bonus = {};
@@ -145,7 +143,7 @@ export const optionPokemonData = (data: PokemonModel[]) => {
       pokemon.forme = 'single-strike-gmax';
     }
   });
-  const result: any = pokemonData;
+  const result: { [x: string]: PokemonDataModel } = pokemonData;
   data.forEach((pokemon) => {
     if (!ids.includes(pokemon.id)) {
       const types = [];
@@ -200,13 +198,13 @@ export const optionPokemonWeather = (data: any[]) => {
   return weather;
 };
 
-export const optionPokemonSpawn = (data: any[]) => {
+export const optionPokemonSpawn = (data: { data: { genderSettings: { gender: any } }; templateId: string }[]) => {
   return data
     .filter((item) => item.templateId.includes('SPAWN') && Object.keys(item.data).includes('genderSettings'))
-    .map((item: { data: { genderSettings: { gender: any } }; templateId: string }) => {
+    .map((item) => {
       return {
-        id: parseInt(item.templateId.split('_')[1]?.replace('V', '') ?? ''),
-        name: item.templateId.split('POKEMON_')[1],
+        id: parseInt(item.templateId.split('_').at(1)?.replace('V', '') ?? ''),
+        name: item.templateId.split('POKEMON_').at(1),
         gender: item.data.genderSettings.gender,
       };
     });
@@ -400,10 +398,10 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
               dataEvo.quest.condition = {};
               dataEvo.quest.condition.desc = condition.type.replace('WITH_', '');
               if (condition.withPokemonType) {
-                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_')[2]);
+                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_').at(2));
               }
               if (condition.withThrowType) {
-                dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_')[2];
+                dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_').at(2);
               }
               // tslint:disable-next-line: no-empty
             } catch {} // eslint-disable-line no-empty
@@ -418,7 +416,7 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
           }
           if (evo.temporaryEvolution) {
             result.temp_evo.push({
-              tempEvolutionName: name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1],
+              tempEvolutionName: name + evo.temporaryEvolution.split('TEMP_EVOLUTION').at(1),
               firstTempEvolution: evo.temporaryEvolutionEnergyCost,
               tempEvolution: evo.temporaryEvolutionEnergyCostSubsequent,
               requireMove: evo.obEvolutionBranchRequiredMove,

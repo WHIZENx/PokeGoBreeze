@@ -11,6 +11,7 @@ import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDmgOption } from '../../../core/models/damage.model';
+import { FORM_SHADOW } from '../../../util/Constants';
 
 const eff: any = {
   0.244140625: {
@@ -61,7 +62,7 @@ const DamageTable = (props: { result: PokemonDmgOption }) => {
                     {props.result.type === 'buddy' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-buddy" src={APIService.getPokeBuddy()} />
                     )}
-                    {props.result.type === 'shadow' && (
+                    {props.result.type?.toUpperCase() === FORM_SHADOW && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
                     {splitAndCapitalize(props.result.currPoke?.form.name, '-', ' ')}{' '}
@@ -80,7 +81,7 @@ const DamageTable = (props: { result: PokemonDmgOption }) => {
                     {props.result.typeObj === 'buddy' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-buddy" src={APIService.getPokeBuddy()} />
                     )}
-                    {props.result.typeObj === 'shadow' && (
+                    {props.result.typeObj?.toUpperCase() === FORM_SHADOW && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
                     {splitAndCapitalize(props.result.objPoke.form.name, '-', ' ')}{' '}

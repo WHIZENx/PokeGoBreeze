@@ -349,7 +349,7 @@ export const TimeLineFit = (
                               top: 10,
                             }}
                           >
-                            {value.buff.map((b: { power: number; type: string }, i: React.Key) => (
+                            {value.buff.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                                 {b.type?.toUpperCase()} {b.power}
                               </span>

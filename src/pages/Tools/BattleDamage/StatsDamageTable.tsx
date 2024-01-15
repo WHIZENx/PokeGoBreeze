@@ -10,7 +10,7 @@ import atk_logo from '../../../assets/attack.png';
 import def_logo from '../../../assets/defense.png';
 import hp_logo from '../../../assets/hp.png';
 import { useSelector } from 'react-redux';
-import { MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { StoreState } from '../../../store/models/state.model';
 
 const StatsTable = (props: {
@@ -35,12 +35,24 @@ const StatsTable = (props: {
       }
       if (props.setStatLvATK) {
         props.setStatLvATK(
-          calculateStatsBattle(props.statATK, MAX_IV, currStatLevel, false, currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1)
+          calculateStatsBattle(
+            props.statATK,
+            MAX_IV,
+            currStatLevel,
+            false,
+            currStatType?.toUpperCase() === FORM_SHADOW ? SHADOW_ATK_BONUS(globalOptions) : 1
+          )
         );
       }
       if (props.setStatLvDEF) {
         props.setStatLvDEF(
-          calculateStatsBattle(props.statDEF, MAX_IV, currStatLevel, false, currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1)
+          calculateStatsBattle(
+            props.statDEF,
+            MAX_IV,
+            currStatLevel,
+            false,
+            currStatType?.toUpperCase() === FORM_SHADOW ? SHADOW_DEF_BONUS(globalOptions) : 1
+          )
         );
       }
       if (props.setStatLvSTA) {
@@ -146,7 +158,7 @@ const StatsTable = (props: {
                     MAX_IV,
                     currStatLevel,
                     true,
-                    currStatType === 'shadow' ? SHADOW_ATK_BONUS(globalOptions) : 1
+                    currStatType?.toUpperCase() === FORM_SHADOW ? SHADOW_ATK_BONUS(globalOptions) : 1
                   )}
                 </td>
               </tr>
@@ -161,7 +173,7 @@ const StatsTable = (props: {
                     MAX_IV,
                     currStatLevel,
                     true,
-                    currStatType === 'shadow' ? SHADOW_DEF_BONUS(globalOptions) : 1
+                    currStatType?.toUpperCase() === FORM_SHADOW ? SHADOW_DEF_BONUS(globalOptions) : 1
                   )}
                 </td>
               </tr>
