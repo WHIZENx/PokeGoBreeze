@@ -41,7 +41,7 @@ const TeamPVP = () => {
       pvp: null,
     })
   );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
   const params: any = useParams();
 
   const [rankingData, setRankingData]: [TeamsPVP | undefined, React.Dispatch<React.SetStateAction<TeamsPVP | undefined>>] = useState();

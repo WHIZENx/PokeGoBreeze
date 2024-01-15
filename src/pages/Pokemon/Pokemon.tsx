@@ -169,12 +169,15 @@ const Pokemon = (props: {
         .map((item) => {
           return item
             ? item
-                .map((item) => ({
-                  form: new FormModel(item),
-                  name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                  default_name: data?.name,
-                  default_id: data.id,
-                }))
+                .map(
+                  (item) =>
+                    ({
+                      form: new FormModel(item),
+                      name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                      default_name: data?.name,
+                      default_id: data.id,
+                    } as PokemonFormModify)
+                )
                 .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
             : [];
         })
@@ -323,11 +326,11 @@ const Pokemon = (props: {
           .getPokeSpices(parseInt(id.toString()), {
             cancelToken: source.token,
           })
-          .then((res: { data: Species }) => {
+          .then((res) => {
             fetchMap(res.data, axios, source);
             setData(res.data);
           })
-          .catch((e: { message: string }) => {
+          .catch((e: ErrorEvent) => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
             if (params.id) {
               document.title = `#${params.id} - Not Found`;

@@ -32,6 +32,7 @@ import { getDbPokemonEncounter } from '../../services/db.service';
 import { DbModel } from '../../core/models/API/db.model';
 import { setBar, setPercent, showSpinner } from './spinner.action';
 import { isMobile } from 'react-device-detect';
+import { SetValue } from '../models/state.model';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -92,14 +93,14 @@ export const loadCPM = (dispatch: Dispatch) => {
 
 export const loadTimestamp = async (
   dispatch: Dispatch,
-  stateTimestamp: any,
-  setStateTimestamp: any,
-  setStateImage: any,
-  setStateSound: any,
-  setStateCandy: any,
-  stateImage: any,
-  stateSound: any,
-  stateCandy: any
+  stateTimestamp: string,
+  setStateTimestamp: SetValue<string>,
+  setStateImage: SetValue<string>,
+  setStateSound: SetValue<string>,
+  setStateCandy: SetValue<string>,
+  stateImage: string,
+  stateSound: string,
+  stateCandy: string
 ) => {
   await Promise.all([
     APIService.getFetchUrl(APIUrl.TIMESTAMP, {
@@ -159,12 +160,12 @@ export const loadGameMaster = (
   imageRoot: { data: { commit: { tree: { url: string } } }[] },
   soundsRoot: { data: { commit: { tree: { url: string } } }[] },
   timestampLoaded: { images: boolean; sounds: boolean },
-  setStateImage: any,
-  setStateSound: any,
-  setStateCandy: any,
-  stateImage: any,
-  stateSound: any,
-  stateCandy: any
+  setStateImage: SetValue<string>,
+  setStateSound: SetValue<string>,
+  setStateCandy: SetValue<string>,
+  stateImage: string,
+  stateSound: string,
+  stateCandy: string
 ) => {
   APIService.getFetchUrl(APIUrl.GAMEMASTER, {
     cancelToken: APIService.getAxios().CancelToken.source().token,
@@ -333,8 +334,8 @@ export const loadAssets = async (
   formSpecial: string[],
   pokemonCombat: CombatPokemon[],
   noneForm: string[],
-  setStateImage: any,
-  setStateSound: any
+  setStateImage: SetValue<string>,
+  setStateSound: SetValue<string>
 ) => {
   await Promise.all([
     APIService.getFetchUrl(imageRoot.data.at(0)?.commit.tree.url ?? '', options),
@@ -384,7 +385,13 @@ export const loadAssets = async (
   });
 };
 
-export const loadPVP = (dispatch: Dispatch, setStateTimestamp: any, stateTimestamp: any, setStatePVP: any, statePVP: any) => {
+export const loadPVP = (
+  dispatch: Dispatch,
+  setStateTimestamp: SetValue<string>,
+  stateTimestamp: string,
+  setStatePVP: SetValue<string>,
+  statePVP: string
+) => {
   APIService.getFetchUrl(APIUrl.FETCH_PVP_DATA, options).then(
     (res: { data: { commit: { tree: { url: string }; committer: { date: Date } } }[] }) => {
       const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();

@@ -63,9 +63,9 @@ function App() {
       sounds: null,
     })
   );
-  const [stateCandy, setStateCandy] = useLocalStorage('candy', null);
-  const [stateImage, setStateImage] = useLocalStorage('assets', null);
-  const [stateSound, setStateSound] = useLocalStorage('sounds', null);
+  const [stateCandy, setStateCandy] = useLocalStorage('candy', '');
+  const [stateImage, setStateImage] = useLocalStorage('assets', '');
+  const [stateSound, setStateSound] = useLocalStorage('sounds', '');
   const [, setVersion] = useLocalStorage('version', '');
 
   const theme = useTheme();

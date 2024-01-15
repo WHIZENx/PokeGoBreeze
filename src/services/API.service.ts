@@ -1,6 +1,7 @@
 import axios, { AxiosStatic } from 'axios';
 import { APIUrl } from './constants';
 import { FORM_MEGA } from '../util/Constants';
+import { Species } from '../core/models/API/species.model';
 
 class APIService {
   date: Date;
@@ -25,7 +26,7 @@ class APIService {
   }
 
   getPokeSpices(value: number, options: any = null) {
-    return this.axios.get(this.getPokeAPI('pokemon-species', value), options);
+    return this.axios.get<Species>(this.getPokeAPI('pokemon-species', value), options);
   }
 
   getPokeForm(value: number, options: any = null) {

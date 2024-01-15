@@ -37,7 +37,7 @@ const PokemonPVP = () => {
       pvp: null,
     })
   );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
   const [rankingPoke, setRankingPoke]: [
     PokemonBattleRanking | undefined,

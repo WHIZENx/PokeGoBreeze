@@ -44,7 +44,7 @@ const RankingPVP = () => {
       pvp: null,
     })
   );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
   const params: any = useParams();
 
   const [rankingData, setRankingData]: [PokemonBattleRanking[], React.Dispatch<React.SetStateAction<PokemonBattleRanking[]>>] = useState(
