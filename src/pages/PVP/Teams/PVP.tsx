@@ -164,13 +164,13 @@ const TeamPVP = () => {
                     ${splitAndCapitalize(params.serie, '-', ' ')}`;
         }
 
-        const performersTotalGames = file.performers?.reduce((p, c) => p + c.games, 0);
+        const performersTotalGames = file.performers?.reduce((p, c) => p + (c.games ?? 0), 0);
         const teamsTotalGames = file.teams?.reduce((p, c) => p + c.games, 0);
 
         file.performers = file.performers?.map((item) => {
           return {
-            ...item,
-            // ...mappingPokemonData(item.pokemon),
+            // ...item,
+            ...mappingPokemonData(item.pokemon ?? ''),
             performersTotalGames: performersTotalGames ?? 0,
           };
         });
@@ -407,7 +407,7 @@ const TeamPVP = () => {
                     <span className="ranking-score score-ic">{value.individualScore}</span>
                   </div>
                   <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic">
-                    {((value.games * 100) / value.performersTotalGames).toFixed(2)}
+                    {(((value.games ?? 0) * 100) / (value.performersTotalGames ?? 0)).toFixed(2)}
                     <span className="caption text-black">
                       {value.games}/{value.performersTotalGames}
                     </span>

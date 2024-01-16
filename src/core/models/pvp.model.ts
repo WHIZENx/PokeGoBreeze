@@ -22,26 +22,26 @@ export interface TeamsPVP {
 }
 
 export interface Performers {
-  id: number | undefined;
-  name: string | undefined;
-  speciesId: string;
-  pokemonData: PokemonDataModel | undefined;
-  form: string | null;
-  stats: StatsPokemon;
-  atk: { id: number; form: string; attack: number; rank: number } | undefined;
-  def: { id: number; form: string; defense: number; rank: number } | undefined;
-  sta: { id: number; form: string; stamina: number; rank: number } | undefined;
-  fmove: Combat | undefined;
-  cmovePri: Combat | undefined;
-  cmoveSec: Combat | undefined;
-  combatPoke: CombatPokemon | undefined;
-  shadow: boolean;
-  purified: boolean | undefined;
-  games: number;
-  individualScore: number;
-  pokemon: string;
-  teamScore: number;
-  performersTotalGames: number;
+  id?: number | undefined;
+  name?: string | undefined;
+  speciesId?: string;
+  pokemonData?: PokemonDataModel | undefined;
+  form?: string | null;
+  stats?: StatsPokemon;
+  atk?: { id: number; form: string; attack: number; rank: number } | undefined;
+  def?: { id: number; form: string; defense: number; rank: number } | undefined;
+  sta?: { id: number; form: string; stamina: number; rank: number } | undefined;
+  fmove?: Combat | undefined;
+  cmovePri?: Combat | undefined;
+  cmoveSec?: Combat | undefined;
+  combatPoke?: CombatPokemon | undefined;
+  shadow?: boolean;
+  purified?: boolean | undefined;
+  games?: number;
+  individualScore?: number;
+  pokemon?: string;
+  teamScore?: number;
+  performersTotalGames?: number;
 }
 
 interface Properties {
