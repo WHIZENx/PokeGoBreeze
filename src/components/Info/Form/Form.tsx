@@ -9,19 +9,8 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { capitalize, convertFormNameImg, convertStatsEffort, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
-import {
-  FORM_GMAX,
-  FORM_HERO,
-  FORM_INCARNATE,
-  FORM_MEGA,
-  FORM_NORMAL,
-  FORM_PRIMAL,
-  FORM_PURIFIED,
-  FORM_SHADOW,
-  FORM_STANDARD,
-  regionList,
-} from '../../../util/Constants';
+import { convertFormNameImg, convertStatsEffort, filterFormName, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
+import { FORM_GMAX, FORM_INCARNATE, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD, regionList } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -130,36 +119,21 @@ const Form = (props: {
   const [statSTA, setStatSTA]: [StatsSta | undefined, React.Dispatch<React.SetStateAction<StatsSta | undefined>>] = useState();
   const [statProd, setStatProd]: [StatsProd | undefined, React.Dispatch<React.SetStateAction<StatsProd | undefined>>] = useState();
 
-  const filterFormName = useCallback((form: string, formStats: string) => {
-    form =
-      form === '' || form?.toUpperCase() === FORM_STANDARD || form?.toUpperCase() === FORM_SHADOW || form?.toUpperCase() === FORM_PURIFIED
-        ? 'Normal'
-        : form?.toUpperCase().includes(FORM_MEGA)
-        ? form.toLowerCase()
-        : capitalize(form);
-    formStats = formStats.toUpperCase().includes(FORM_MEGA) ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
-    formStats = formStats.toUpperCase() === FORM_HERO ? 'Normal' : formStats;
-    return form.toLowerCase().includes(formStats.toLowerCase());
-  }, []);
-
-  const filterFormList = useCallback(
-    (formName: string, stats: { id: number; form: string }[], id: number, formLength: number): any => {
-      const firstFilter = stats?.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
-      if (firstFilter) {
-        return firstFilter;
-      }
-      const filterId = stats?.filter((item) => item.id === id);
-      const filterForm = stats?.find((item) => item.id === id && filterFormName(formName, item.form));
-      if (filterId?.length === 1 && formLength === 1 && !filterForm) {
-        return filterId.at(0);
-      } else if (filterId?.length === formLength && !filterForm) {
-        return stats?.find((item) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
-      } else {
-        return filterForm;
-      }
-    },
-    [filterFormName]
-  );
+  const filterFormList = (formName: string, stats: { id: number; form: string }[], id: number, formLength: number): any => {
+    const firstFilter = stats?.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
+    if (firstFilter) {
+      return firstFilter;
+    }
+    const filterId = stats?.filter((item) => item.id === id);
+    const filterForm = stats?.find((item) => item.id === id && filterFormName(formName, item.form));
+    if (filterId?.length === 1 && formLength === 1 && !filterForm) {
+      return filterId.at(0);
+    } else if (filterId?.length === formLength && !filterForm) {
+      return stats?.find((item) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
+    } else {
+      return filterForm;
+    }
+  };
 
   const findFormData = (name: string) => {
     const findData = props.pokeData.find((item) => name === item.name);
@@ -256,7 +230,7 @@ const Form = (props: {
       );
       setPokeID(findIsDefaultForm() ? currForm.form.id ?? 0 : findFirst()?.form.id ?? 0);
     }
-  }, [currForm, pokeID, filterFormList, findIsDefaultForm, findFirst, props.idDefault, props.stats, props.formList?.length]);
+  }, [currForm, pokeID, findIsDefaultForm, findFirst, props.idDefault, props.stats, props.formList?.length]);
 
   useEffect(() => {
     if (

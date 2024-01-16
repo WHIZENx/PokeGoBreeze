@@ -10,7 +10,7 @@ import def_logo from '../../assets/defense.png';
 import hp_logo from '../../assets/hp.png';
 import sta_logo from '../../assets/stamina.png';
 
-import { capitalize, convertStatsEffort } from '../../util/Utils';
+import { convertStatsEffort, filterFormName } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { PokemonFormModify } from '../../core/models/API/form.model';
@@ -45,13 +45,6 @@ const Tools = (props: {
   const [statSTA, setStatSTA]: [StatsSta | undefined, React.Dispatch<React.SetStateAction<StatsSta | undefined>>] = useState();
   const [statProd, setStatProd]: [StatsProd | undefined, React.Dispatch<React.SetStateAction<StatsProd | undefined>>] = useState();
 
-  const filterFormName = useCallback((form: string, formStats: string) => {
-    form = form === '' ? 'Normal' : form?.toUpperCase().includes(FORM_MEGA) ? form.toLowerCase() : capitalize(form);
-    formStats = formStats.toUpperCase().includes(FORM_MEGA) ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
-    formStats = formStats === 'Hero' ? 'Normal' : formStats;
-    return form.toLowerCase().includes(formStats.toLowerCase());
-  }, []);
-
   const filterFormList = useCallback(
     (stats: { id: number; form: string }[], id: number): any => {
       const filterId = stats.filter((item) => item.id === id);
@@ -66,7 +59,7 @@ const Tools = (props: {
         return filterForm;
       }
     },
-    [props.currForm, filterFormName, props.formList.length]
+    [props.currForm, props.formList.length]
   );
 
   useEffect(() => {

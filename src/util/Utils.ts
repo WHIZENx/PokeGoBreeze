@@ -1,7 +1,19 @@
 import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
-import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_INCARNATE, FORM_MEGA, FORM_NORMAL, FORM_STANDARD, MAX_IV } from './Constants';
+import {
+  FORM_GALARIAN,
+  FORM_GMAX,
+  FORM_HERO,
+  FORM_HISUIAN,
+  FORM_INCARNATE,
+  FORM_MEGA,
+  FORM_NORMAL,
+  FORM_PURIFIED,
+  FORM_SHADOW,
+  FORM_STANDARD,
+  MAX_IV,
+} from './Constants';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
 import { Details } from '../core/models/details.model';
 import { PokemonStatsRanking, StatsModel, StatsPokemon } from '../core/models/stats.model';
@@ -691,4 +703,16 @@ export const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRan
     is_shadow: false,
     is_purified: false,
   };
+};
+
+export const filterFormName = (form: string, formStats: string) => {
+  form =
+    form === '' || form?.toUpperCase() === FORM_STANDARD || form?.toUpperCase() === FORM_SHADOW || form?.toUpperCase() === FORM_PURIFIED
+      ? 'Normal'
+      : form?.toUpperCase().includes(FORM_MEGA)
+      ? form.toLowerCase()
+      : capitalize(form);
+  formStats = formStats.toUpperCase().includes(FORM_MEGA) ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
+  formStats = formStats.toUpperCase() === FORM_HERO ? 'Normal' : formStats;
+  return form.toLowerCase().includes(formStats.toLowerCase());
 };
