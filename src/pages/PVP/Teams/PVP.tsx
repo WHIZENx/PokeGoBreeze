@@ -164,27 +164,27 @@ const TeamPVP = () => {
                     ${splitAndCapitalize(params.serie, '-', ' ')}`;
         }
 
-        const performersTotalGames = file.performers?.reduce((p, c) => p + (c.games ?? 0), 0);
-        const teamsTotalGames = file.teams?.reduce((p, c) => p + c.games, 0);
+        const performersTotalGames = file.performers?.reduce((p, c) => p + (c.games ?? 0), 0) ?? 0;
+        const teamsTotalGames = file.teams?.reduce((p, c) => p + c.games, 0) ?? 0;
 
-        file.performers = file.performers?.map((item) => {
-          return {
-            ...item,
-            ...mappingPokemonData(item.pokemon ?? ''),
-            // performersTotalGames: performersTotalGames ?? 0,
-          };
-        });
-
-        // file.teams = file.teams.map((item) => {
-        //   const teams = item.team.split('|');
-        //   const teamsData: PokemonTeamData[] = [];
-        //   teams.forEach((value) => teamsData.push(mappingPokemonData(value)));
+        // file.performers = file.performers?.map((item) => {
         //   return {
         //     ...item,
-        //     teamsTotalGames,
-        //     teamsData,
+        //     ...mappingPokemonData(item.pokemon ?? ''),
+        //     performersTotalGames,
         //   };
         // });
+
+        file.teams = file.teams?.map((item) => {
+          const teams = item.team.split('|');
+          const teamsData: PokemonTeamData[] = [];
+          teams.forEach((value) => teamsData.push(mappingPokemonData(value)));
+          return {
+            ...item,
+            teamsTotalGames,
+            teamsData,
+          };
+        });
         setRankingData(file);
         dispatch(hideSpinner());
       } catch (e: any) {
