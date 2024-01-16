@@ -6,6 +6,7 @@ import { SpinnerModel } from '../reducers/spinner.reducer';
 import { OptionsSheetModel } from '../../core/models/options-sheet.model';
 import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { DeviceModel } from '../reducers/device.reducer';
+import { Dispatch, SetStateAction } from 'react';
 
 const store = configureStore();
 
@@ -21,3 +22,5 @@ export type StoreState = AnyIfEmpty<{ store: StoreModel }>;
 export type ThemeState = AnyIfEmpty<{ theme: string }>;
 
 export type DeviceState = AnyIfEmpty<{ device: DeviceModel }>;
+
+export declare type SetValue<T> = Dispatch<SetStateAction<T>>;

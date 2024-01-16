@@ -10,27 +10,31 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import update from 'immutability-helper';
 import { TypeMove } from '../../enums/move.enum';
 import APIService from '../../services/API.service';
+import { PokemonDataModel, PokemonDataStats, PokemonRaidModel } from '../../core/models/pokemon.model';
 
-const PokemonRaid = ({
-  id,
-  pokemon,
-  data,
-  setData,
-  defaultSetting,
-  controls,
-  onCopyPokemon,
-  onRemovePokemon,
-  onOptionsPokemon,
-  clearData,
-}: any) => {
-  const [dataTargetPokemon, setDataTargetPokemon] = useState(pokemon.dataTargetPokemon);
-  const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(pokemon.fmoveTargetPokemon);
-  const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(pokemon.cmoveTargetPokemon);
+const PokemonRaid = (props: {
+  id: number;
+  pokemon: PokemonRaidModel;
+  data: PokemonRaidModel[];
+  setData: React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>;
+  defaultSetting: PokemonDataStats;
+  controls: boolean;
+  // eslint-disable-next-line no-unused-vars
+  onCopyPokemon: (index: number) => void;
+  // eslint-disable-next-line no-unused-vars
+  onRemovePokemon: (index: number) => void;
+  // eslint-disable-next-line no-unused-vars
+  onOptionsPokemon: (index: number, pokemon: PokemonDataModel) => void;
+  clearData?: () => void;
+}) => {
+  const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
+  const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(props.pokemon.fmoveTargetPokemon);
+  const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(props.pokemon.cmoveTargetPokemon);
 
   useEffect(() => {
-    setData(
-      update(data, {
-        [id]: {
+    props.setData(
+      update(props.data, {
+        [props.id]: {
           $merge: {
             dataTargetPokemon,
             fmoveTargetPokemon,
@@ -39,7 +43,7 @@ const PokemonRaid = ({
         },
       })
     );
-  }, [data, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon, id, setData]);
+  }, [props.data, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon, props.id, props.setData]);
 
   return (
     <div>
@@ -53,15 +57,15 @@ const PokemonRaid = ({
             </span>
           </div>
         )}
-        <Badge color="primary" overlap="circular" badgeContent={id + 1} /> <b style={{ marginLeft: 15 }}>Pokémon Battle</b>
-        {controls && (
+        <Badge color="primary" overlap="circular" badgeContent={props.id + 1} /> <b style={{ marginLeft: 15 }}>Pokémon Battle</b>
+        {props.controls && (
           <div className="d-flex ic-group-small">
             <span
               className={'ic-copy-small text-white ' + (dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
               title="Copy"
               onClick={() => {
                 if (dataTargetPokemon) {
-                  onOptionsPokemon(id, dataTargetPokemon);
+                  props.onOptionsPokemon(props.id, dataTargetPokemon);
                 }
               }}
               style={{ marginRight: 5 }}
@@ -73,7 +77,7 @@ const PokemonRaid = ({
               title="Copy"
               onClick={() => {
                 if (dataTargetPokemon) {
-                  onCopyPokemon(id);
+                  props.onCopyPokemon(props.id);
                 }
               }}
               style={{ marginRight: 5 }}
@@ -81,14 +85,17 @@ const PokemonRaid = ({
               <ContentCopyIcon sx={{ fontSize: 16 }} />
             </span>
             <span
-              className={'ic-remove-small text-white ' + (id > 0 ? 'bg-danger' : 'click-none bg-secondary')}
+              className={
+                'ic-remove-small text-white ' +
+                (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon) ? 'bg-danger' : 'click-none bg-secondary')
+              }
               title="Remove"
               onClick={() => {
-                if (id > 0) {
-                  setDataTargetPokemon(data[id + 1] ? data[id + 1].dataTargetPokemon : null);
-                  setFmoveTargetPokemon(data[id + 1] ? data[id + 1].fmoveTargetPokemon : null);
-                  setCmoveTargetPokemon(data[id + 1] ? data[id + 1].cmoveTargetPokemon : null);
-                  onRemovePokemon(id);
+                if (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon)) {
+                  setDataTargetPokemon(props.data[props.id + 1]?.dataTargetPokemon);
+                  setFmoveTargetPokemon(props.data[props.id + 1]?.fmoveTargetPokemon);
+                  setCmoveTargetPokemon(props.data[props.id + 1]?.cmoveTargetPokemon);
+                  props.onRemovePokemon(props.id);
                 }
               }}
             >
@@ -98,10 +105,10 @@ const PokemonRaid = ({
         )}
       </span>
       <SelectPokemon
-        clearData={clearData}
+        clearData={props.clearData}
         selected={true}
         pokemon={dataTargetPokemon}
-        defaultSetting={defaultSetting}
+        defaultSetting={props.defaultSetting}
         setCurrentPokemon={setDataTargetPokemon}
         setFMovePokemon={setFmoveTargetPokemon}
         setCMovePokemon={setCmoveTargetPokemon}
@@ -113,7 +120,7 @@ const PokemonRaid = ({
         <SelectMove
           selected={true}
           inputType={'small'}
-          clearData={clearData}
+          clearData={props.clearData}
           pokemon={dataTargetPokemon}
           move={fmoveTargetPokemon}
           setMovePokemon={setFmoveTargetPokemon}
@@ -134,7 +141,7 @@ const PokemonRaid = ({
         <SelectMove
           selected={true}
           inputType={'small'}
-          clearData={clearData}
+          clearData={props.clearData}
           pokemon={dataTargetPokemon}
           move={cmoveTargetPokemon}
           setMovePokemon={setCmoveTargetPokemon}

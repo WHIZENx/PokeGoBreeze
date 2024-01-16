@@ -4,15 +4,16 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { StoreState } from '../../store/models/state.model';
 import { Combat } from '../../core/models/combat.model';
+import { SelectMoveModel } from '../Input/models/select-move.model';
 
-const CardMove = (props: { value: { name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean } }) => {
+const CardMove = (props: { value: SelectMoveModel | Combat | undefined }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [data, setData]: [Combat | undefined, any] = useState();
+  const [data, setData]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
 
   useEffect(() => {
     if (combat.length > 0 && props.value) {
-      const move = combat.find((item) => item.name === props.value.name);
+      const move = combat.find((item) => item.name === props.value?.name);
       setData(move);
     }
   }, [combat, props.value]);

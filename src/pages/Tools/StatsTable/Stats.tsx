@@ -1,54 +1,55 @@
 import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import DataTable from 'react-data-table-component';
+import DataTable, { TableColumn } from 'react-data-table-component';
 
 import { marks, PokeGoSlider } from '../../../util/Utils';
 import { calStatsProd } from '../../../util/Calculate';
 
 import APIService from '../../../services/API.service';
 
-import Find from '../../../components/Select/Find/Find';
+import Find from '../../../components/Find/Find';
 import { MIN_IV, MAX_IV } from '../../../util/Constants';
+import { StatsProdCalculate } from '../../../util/models/calculate.model';
 
-export const columnsStats: any = [
+export const columnsStats: TableColumn<StatsProdCalculate>[] = [
   {
     name: 'Rank',
-    selector: (row: { rank: number }) => row.rank,
+    selector: (row) => row.rank ?? 0,
     sortable: true,
   },
   {
     name: 'Level',
-    selector: (row: { level: number }) => row.level,
+    selector: (row) => row.level,
     sortable: true,
   },
   {
     name: 'IV ATK',
-    selector: (row: { IV: { atk: number } }) => row.IV.atk,
+    selector: (row) => row.IV.atk,
     sortable: true,
   },
   {
     name: 'IV DEF',
-    selector: (row: { IV: { def: number } }) => row.IV.def,
+    selector: (row) => row.IV.def,
     sortable: true,
   },
   {
     name: 'IV STA',
-    selector: (row: { IV: { sta: number } }) => row.IV.sta,
+    selector: (row) => row.IV.sta,
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row: { CP: number }) => row.CP,
+    selector: (row) => row.CP,
     sortable: true,
   },
   {
     name: 'Stat Prod (*1000)',
-    selector: (row: { statsProds: number }) => parseFloat((row.statsProds / 1000).toFixed(2)),
+    selector: (row) => parseFloat((row.statsProds / 1000).toFixed(2)),
     sortable: true,
   },
   {
     name: 'Stat Prod (%)',
-    selector: (row: { ratio: number }) => parseFloat(row.ratio.toFixed(2)),
+    selector: (row) => parseFloat(row.ratio?.toFixed(2) ?? ''),
     sortable: true,
   },
 ];
@@ -66,10 +67,12 @@ const StatsTable = () => {
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const currStatBattle: any = useRef([]);
+  const currStatBattle: React.MutableRefObject<StatsProdCalculate[]> = useRef([]);
   const [battleLeague, setBattleLeague] = useState(500);
 
-  const [statsBattle, setStatsBattle]: any = useState([]);
+  const [statsBattle, setStatsBattle]: [StatsProdCalculate[], React.Dispatch<React.SetStateAction<StatsProdCalculate[]>>] = useState(
+    [] as StatsProdCalculate[]
+  );
 
   useEffect(() => {
     document.title = 'Stats Battle League - Tool';
@@ -177,7 +180,7 @@ const StatsTable = () => {
                 aria-label="cp"
                 aria-describedby="input-cp"
                 placeholder="Enter CP"
-                onInput={(e: any) => setSearchCP(e.target.value)}
+                onInput={(e) => setSearchCP(e.currentTarget.value)}
               />
             </div>
           </Box>
@@ -197,7 +200,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v: any) => setATKIv(v)}
+              onChange={(_, v) => setATKIv(v as number)}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -212,7 +215,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v: any) => setDEFIv(v)}
+              onChange={(_, v) => setDEFIv(v as number)}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -227,7 +230,7 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v: any) => setSTAIv(v)}
+              onChange={(_, v) => setSTAIv(v as number)}
             />
           </Box>
         </div>

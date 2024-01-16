@@ -1,10 +1,10 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import './Hexagon.scss';
-import { StatsModel } from '../../../core/models/stats.model';
+import { HexagonStats } from '../../../core/models/stats.model';
 
-const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; animation: number; borderSize: number }) => {
-  const canvasHex: any = useRef();
+const Hexagon = (props: { defaultStats?: HexagonStats; stats: HexagonStats; size: number; animation: number; borderSize: number }) => {
+  const canvasHex: React.MutableRefObject<HTMLCanvasElement | undefined> = useRef();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
 
@@ -21,35 +21,38 @@ const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; a
   };
 
   const drawLineHex = useCallback(
-    (ctx: CanvasRenderingContext2D, center: { x: number; y: number }, percentage: number, color: string, fill: boolean) => {
+    (
+      ctx: CanvasRenderingContext2D | null | undefined,
+      center: { x: number; y: number },
+      percentage: number,
+      color: string,
+      fill: boolean
+    ) => {
       const start = getHexConnerCord(center, percentage, 0);
-      ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
+      ctx?.beginPath();
+      ctx?.moveTo(start.x, start.y);
       for (let i = 1; i <= 6; i++) {
         const end = getHexConnerCord(center, percentage, i);
-        ctx.lineTo(end.x, end.y);
+        ctx?.lineTo(end.x, end.y);
       }
-      ctx.setLineDash([20, 15]);
-      if (fill) {
-        ctx.fillStyle = 'gray';
-        ctx.fill();
+      ctx?.setLineDash([20, 15]);
+      if (ctx) {
+        if (fill) {
+          ctx.fillStyle = 'gray';
+          ctx.fill();
+        }
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = color;
       }
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = color;
-      ctx.stroke();
-      ctx.closePath();
+      ctx?.stroke();
+      ctx?.closePath();
     },
     [getHexConnerCord]
   );
 
   const drawStatsHex = useCallback(
-    (
-      ctx: CanvasRenderingContext2D,
-      center: { x: number; y: number },
-      stat: { switching: number; charger: number; closer: number; cons: number; atk: number; lead: number },
-      hexSize: number
-    ) => {
-      const stats: any = {
+    (ctx: CanvasRenderingContext2D | null | undefined, center: { x: number; y: number }, stat: HexagonStats, hexSize: number) => {
+      const stats: { [x: string]: number } = {
         '0': ((stat.switching || 0) * hexSize) / 100,
         '1': ((stat.charger || 0) * hexSize) / 100,
         '2': ((stat.closer || 0) * hexSize) / 100,
@@ -58,20 +61,24 @@ const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; a
         '5': ((stat.lead || 0) * hexSize) / 100,
       };
       const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
-      ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
+      ctx?.beginPath();
+      ctx?.moveTo(start.x, start.y);
       for (let i = 1; i <= 6; i++) {
         const end = getHexConnerCord(center, Math.min(stats[i.toString()], 100), i);
-        ctx.lineTo(end.x, end.y);
+        ctx?.lineTo(end.x, end.y);
       }
-      ctx.setLineDash([]);
-      ctx.lineTo(start.x, start.y);
-      ctx.lineWidth = 3;
-      ctx.fillStyle = '#a3eca380';
-      ctx.fill();
-      ctx.strokeStyle = 'green';
-      ctx.stroke();
-      ctx.closePath();
+      ctx?.setLineDash([]);
+      ctx?.lineTo(start.x, start.y);
+      if (ctx) {
+        ctx.lineWidth = 3;
+        ctx.fillStyle = '#a3eca380';
+      }
+      ctx?.fill();
+      if (ctx) {
+        ctx.strokeStyle = 'green';
+      }
+      ctx?.stroke();
+      ctx?.closePath();
     },
     [getHexConnerCord]
   );
@@ -85,14 +92,14 @@ const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; a
   };
 
   const drawHexagon = useCallback(
-    (stats: { switching: number; charger: number; closer: number; cons: number; atk: number; lead: number }) => {
+    (stats: HexagonStats) => {
       const hexBorderSize: number = props.size ?? 0;
       const hexSize: number = hexBorderSize / 2;
 
-      const ctx = canvasHex.current.getContext('2d');
-      ctx.beginPath();
-      ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
-      ctx.closePath();
+      const ctx = canvasHex.current?.getContext('2d');
+      ctx?.beginPath();
+      ctx?.clearRect(0, 0, hexBorderSize, hexBorderSize);
+      ctx?.closePath();
       drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, hexSize, 'white', true);
       drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 25, 'lightgray', false);
       drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 50, 'lightgray', false);
@@ -131,20 +138,20 @@ const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; a
       return () => {
         if (animateId.current) {
           cancelAnimationFrame(animateId.current);
-          animateId.current = null;
+          animateId.current = undefined;
         }
       };
     }
   }, [drawHexagon, defaultStats, setDefaultStats, props.animation, props.stats]);
 
-  const animateId: any = useRef(null);
+  const animateId: React.MutableRefObject<number | undefined> = useRef();
   const onPlayAnimation = () => {
     if (animateId.current) {
       cancelAnimationFrame(animateId.current);
-      animateId.current = null;
+      animateId.current = undefined;
     }
 
-    let initStats = {
+    let initStats: HexagonStats = {
       lead: 0,
       atk: 0,
       cons: 0,
@@ -216,7 +223,12 @@ const Hexagon = (props: { defaultStats?: StatsModel; stats: any; size: number; a
           </div>
         </Fragment>
       )}
-      <canvas onClick={() => onPlayAnimation()} ref={canvasHex} width={props.size ?? 0} height={(props.size ?? 0) + 4} />
+      <canvas
+        onClick={() => onPlayAnimation()}
+        ref={canvasHex as React.LegacyRef<HTMLCanvasElement> | undefined}
+        width={props.size ?? 0}
+        height={(props.size ?? 0) + 4}
+      />
     </div>
   );
 };

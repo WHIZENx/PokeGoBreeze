@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import Find from '../../../components/Select/Find/Find';
+import Find from '../../../components/Find/Find';
 
 import { Tabs, Tab } from 'react-bootstrap';
 
@@ -18,6 +18,35 @@ import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../../enums/move.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { Combat } from '../../../core/models/combat.model';
+
+class ColorTone {
+  number!: number;
+  color!: string;
+
+  constructor(num: number, color: string) {
+    this.number = num;
+    this.color = color;
+  }
+}
+
+interface BreakPointAtk {
+  data: number[][];
+  colorTone: { [x: string]: ColorTone };
+}
+
+interface BreakPointDef {
+  dataDef: number[][];
+  dataSta: number[][];
+  colorToneDef: { [x: string]: ColorTone };
+  colorToneSta: { [x: string]: ColorTone };
+}
+
+interface BulkPointDef {
+  data: number[][];
+  maxLength: number;
+}
 
 const CalculatePoint = () => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
@@ -26,15 +55,15 @@ const CalculatePoint = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState('Bulbasaur');
-  const [form, setForm]: any = useState(null);
-  const [move, setMove]: any = useState(null);
+  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
+  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [DEFIv, setDEFIv]: any = useState(0);
-  const [STAIv, setSTAIv]: any = useState(0);
+  const [DEFIv, setDEFIv] = useState(0);
+  const [STAIv, setSTAIv] = useState(0);
 
   const [weatherBoosts, setWeatherBoosts] = useState(false);
   const [pvpDmg, setPvpDmg] = useState(false);
@@ -49,15 +78,25 @@ const CalculatePoint = () => {
 
   const [idDef, setIdDef] = useState(searching && searching.obj ? searching.obj.id : 1);
   const [nameDef, setNameDef] = useState('Bulbasaur');
-  const [formDef, setFormDef]: any = useState(null);
-  const [moveDef, setMoveDef]: any = useState(null);
+  const [formDef, setFormDef]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] =
+    useState();
+  const [moveDef, setMoveDef]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
 
-  const [fMove, setFMove]: any = useState(null);
-  const [cMove, setCMove]: any = useState(null);
+  const [fMove, setFMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [cMove, setCMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
 
-  const [resultBreakPointAtk, setResultBreakPointAtk]: any = useState(null);
-  const [resultBreakPointDef, setResultBreakPointDef]: any = useState(null);
-  const [resultBulkPointDef, setResultBulkPointDef]: any = useState(null);
+  const [resultBreakPointAtk, setResultBreakPointAtk]: [
+    BreakPointAtk | undefined,
+    React.Dispatch<React.SetStateAction<BreakPointAtk | undefined>>
+  ] = useState();
+  const [resultBreakPointDef, setResultBreakPointDef]: [
+    BreakPointDef | undefined,
+    React.Dispatch<React.SetStateAction<BreakPointDef | undefined>>
+  ] = useState();
+  const [resultBulkPointDef, setResultBulkPointDef]: [
+    BulkPointDef | undefined,
+    React.Dispatch<React.SetStateAction<BulkPointDef | undefined>>
+  ] = useState();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -65,45 +104,45 @@ const CalculatePoint = () => {
     document.title = 'Calculate Point Stats - Tools';
   }, []);
 
-  const clearData = (reset: boolean) => {
+  const clearData = (reset: boolean = true) => {
     clearDataAtk(reset);
     clearDataDef(reset);
     clearDataBulk(reset);
     initialize.current = false;
   };
 
-  const clearDataAtk = (reset: boolean) => {
-    setResultBreakPointAtk(null);
+  const clearDataAtk = (reset: boolean = true) => {
+    setResultBreakPointAtk(undefined);
     if (!reset) {
-      setMove(null);
+      setMove(undefined);
     }
   };
 
-  const clearDataDef = (reset: boolean) => {
-    setResultBreakPointDef(null);
+  const clearDataDef = (reset: boolean = true) => {
+    setResultBreakPointDef(undefined);
     if (!reset) {
-      setMoveDef(null);
+      setMoveDef(undefined);
     }
   };
 
-  const clearDataBulk = (reset: boolean) => {
-    setResultBulkPointDef(null);
+  const clearDataBulk = (reset: boolean = true) => {
+    setResultBulkPointDef(undefined);
     if (!reset) {
-      setFMove(null);
-      setCMove(null);
+      setFMove(undefined);
+      setCMove(undefined);
     }
   };
 
-  const onSetForm = (form: React.SetStateAction<null>) => {
+  const onSetForm = (form: PokemonFormModify | undefined) => {
     setForm(form);
   };
 
-  const onSetFormDef = (form: React.SetStateAction<null>) => {
+  const onSetFormDef = (form: PokemonFormModify | undefined) => {
     setFormDef(form);
   };
 
   const calculateBreakpointAtk = () => {
-    setResultBreakPointAtk(null);
+    setResultBreakPointAtk(undefined);
     const dataList: number[][] = [];
     const group = [];
     let lv = 0;
@@ -114,17 +153,10 @@ const CalculatePoint = () => {
           globalOptions,
           calculateStatsBattle(statATK, j, i, true),
           statDefDEF,
-          !isRaid && pvpDmg ? move.pvp_power : move.pve_power,
+          move ? (!isRaid && pvpDmg ? move.pvp_power : move.pve_power) : 0,
           {
-            effective: getTypeEffective(
-              typeEff,
-              move.type,
-              formDef.form.types.map((item: { type: { name: string } }) => item.type.name)
-            ),
-            stab: findStabType(
-              form.form.types.map((item: { type: { name: string } }) => item.type.name),
-              move.type
-            ),
+            effective: getTypeEffective(typeEff, move?.type ?? '', formDef?.form.types ?? []),
+            stab: findStabType(form?.form.types ?? [], move?.type ?? ''),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
           },
           false
@@ -140,7 +172,7 @@ const CalculatePoint = () => {
   };
 
   const calculateBreakpointDef = () => {
-    setResultBreakPointDef(null);
+    setResultBreakPointDef(undefined);
     const dataListDef: number[][] = [];
     const groupDef = [];
     const dataListSta: number[][] = [];
@@ -154,17 +186,10 @@ const CalculatePoint = () => {
           globalOptions,
           statDefATK,
           calculateStatsBattle(statDEF, j, i, true),
-          !isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power,
+          moveDef ? (!isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power) : 0,
           {
-            effective: getTypeEffective(
-              typeEff,
-              moveDef.type,
-              form.form.types.map((item: { type: { name: string } }) => item.type.name)
-            ),
-            stab: findStabType(
-              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-              moveDef.type
-            ),
+            effective: getTypeEffective(typeEff, moveDef?.type ?? '', form?.form.types ?? []),
+            stab: findStabType(formDef?.form.types ?? [], moveDef?.type ?? ''),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
           },
           false
@@ -189,16 +214,14 @@ const CalculatePoint = () => {
     enqueueSnackbar('Calculate breakpoint defender successfully!', { variant: 'success' });
   };
 
-  const computeColorTone = (data: any[]) => {
-    const colorTone: any = {};
+  const computeColorTone = (data: number[]) => {
+    const colorTone: { [x: string]: ColorTone } = {};
     let r = 50,
       g = 255,
       b = 100;
     const diff = Math.max(1, 20 - data.length / 2);
-    data.forEach((value: { toString: () => string | number }, index: number) => {
-      colorTone[value.toString()] = {};
-      colorTone[value.toString()].number = value;
-      colorTone[value.toString()].color = `rgb(${Math.max(0, r)}, ${Math.max(0, g)}, ${Math.max(0, b)})`;
+    data.forEach((value, index) => {
+      colorTone[value.toString()] = new ColorTone(value, `rgb(${Math.max(0, r)}, ${Math.max(0, g)}, ${Math.max(0, b)})`);
       g -= diff;
       if (index % 2 === 0) {
         b -= diff;
@@ -220,17 +243,10 @@ const CalculatePoint = () => {
               globalOptions,
               statDefATK,
               calculateStatsBattle(statDEF, DEFIv, lv, true),
-              !isRaid && pvpDmg ? cMove.pvp_power : cMove.pve_power,
+              (!isRaid && pvpDmg ? cMove?.pvp_power : cMove?.pve_power) ?? 0,
               {
-                effective: getTypeEffective(
-                  typeEff,
-                  cMove.type,
-                  form.form.types.map((item: { type: { name: string } }) => item.type.name)
-                ),
-                stab: findStabType(
-                  formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                  cMove.type
-                ),
+                effective: getTypeEffective(typeEff, cMove?.type ?? '', form?.form.types ?? []),
+                stab: findStabType(formDef?.form.types ?? [], cMove?.type ?? ''),
                 wb: (!pvpDmg || isRaid) && weatherBoosts,
               },
               false
@@ -239,17 +255,10 @@ const CalculatePoint = () => {
             globalOptions,
             statDefATK,
             calculateStatsBattle(statDEF, DEFIv, lv, true),
-            !isRaid && pvpDmg ? fMove.pvp_power : fMove.pve_power,
+            (!isRaid && pvpDmg ? fMove?.pvp_power : fMove?.pve_power) ?? 0,
             {
-              effective: getTypeEffective(
-                typeEff,
-                fMove.type,
-                form.form.types.map((item: { type: { name: string } }) => item.type.name)
-              ),
-              stab: findStabType(
-                formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                fMove.type
-              ),
+              effective: getTypeEffective(typeEff, fMove?.type ?? '', form?.form.types ?? []),
+              stab: findStabType(formDef?.form.types ?? [], fMove?.type ?? ''),
               wb: (!pvpDmg || isRaid) && weatherBoosts,
             },
             false
@@ -259,8 +268,8 @@ const CalculatePoint = () => {
   };
 
   const calculateBulkPointDef = () => {
-    setResultBulkPointDef(null);
-    let dataList: any[] = [];
+    setResultBulkPointDef(undefined);
+    let dataList: number[][] = [];
     let lv = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
       let count = 0;
@@ -289,15 +298,15 @@ const CalculatePoint = () => {
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(form.form.name, true)}
-                onError={(e: any) => {
-                  e.onerror = null;
-                  e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                src={APIService.getPokeIconSprite(form?.form.name ?? '', true)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                 }}
               />
             </span>
           </Badge>
-          <span className="caption">{splitAndCapitalize(form.form.name, '-', ' ')}</span>
+          <span className="caption">{splitAndCapitalize(form?.form.name ?? '', '-', ' ')}</span>
           <span className="caption">
             <b>{pri === 'atk' ? 'Attacker' : 'Defender'}</b>
           </span>
@@ -309,15 +318,15 @@ const CalculatePoint = () => {
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(formDef.form.name, true)}
-                onError={(e: any) => {
-                  e.onerror = null;
-                  e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                src={APIService.getPokeIconSprite(formDef?.form.name ?? '', true)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                 }}
               />
             </span>
           </Badge>
-          <span className="caption">{splitAndCapitalize(formDef.form.name, '-', ' ')}</span>
+          <span className="caption">{splitAndCapitalize(formDef?.form.name ?? '', '-', ' ')}</span>
           <span className="caption">
             <b>{sec === 'atk' ? 'Attacker' : 'Defender'}</b>
           </span>
@@ -327,7 +336,7 @@ const CalculatePoint = () => {
   };
 
   const getBorderSplit = (row: number, column: number) => {
-    const data = resultBulkPointDef?.data;
+    const data = resultBulkPointDef?.data ?? [];
     let classes = ' bg-zero';
     if (data[row][column - 1] > 0) {
       classes += ' bp-left-border';
@@ -384,17 +393,17 @@ const CalculatePoint = () => {
                     text="Select Moves"
                     id={id}
                     selectDefault={true}
-                    form={form ? form.form.pokemon.name : name.toLowerCase()}
+                    form={form ? form.form.name : name.toLowerCase()}
                     setMove={setMove}
                     move={move}
-                    clearData={setResultBreakPointAtk}
+                    clearData={clearDataAtk}
                   />
                   <FormControlLabel
                     control={
                       <Checkbox
                         checked={weatherBoosts}
                         onChange={(_, check) => {
-                          setResultBreakPointAtk(null);
+                          setResultBreakPointAtk(undefined);
                           setWeatherBoosts(check);
                         }}
                       />
@@ -407,7 +416,7 @@ const CalculatePoint = () => {
                       <Checkbox
                         checked={pvpDmg}
                         onChange={(_, check) => {
-                          setResultBreakPointAtk(null);
+                          setResultBreakPointAtk(undefined);
                           setPvpDmg(check);
                         }}
                       />
@@ -421,20 +430,16 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(move.type_move)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={'type-icon-small ' + move.type.toLowerCase()}>{capitalize(move.type)}</span>
+                        - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
                       </p>
-                      {findStabType(
-                        form.form.types.map((item: { type: { name: string } }) => item.type.name),
-                        move.type
-                      )}
+                      {findStabType(form?.form.types ?? [], move.type ?? '')}
                       <p>
                         - Damage:{' '}
                         <b>
                           {move.pve_power}
-                          {findStabType(
-                            form.form.types.map((item: { type: { name: string } }) => item.type.name),
-                            move.type
-                          ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                          {findStabType(form?.form.types ?? [], move.type ?? '') && (
+                            <span className={'caption-small text-success'}> (x1.2)</span>
+                          )}
                         </b>
                       </p>
                     </div>
@@ -485,11 +490,9 @@ const CalculatePoint = () => {
                                 style={{
                                   backgroundColor: resultBreakPointAtk
                                     ? `${
-                                        (
-                                          Object.values(resultBreakPointAtk.colorTone).find(
-                                            (item: any) => item.number === resultBreakPointAtk.data[i][index]
-                                          ) as any
-                                        ).color
+                                        Object.values(resultBreakPointAtk.colorTone).find(
+                                          (item) => item.number === resultBreakPointAtk.data[i][index]
+                                        )?.color
                                       }`
                                     : '',
                                 }}
@@ -516,17 +519,17 @@ const CalculatePoint = () => {
                     text="Select Moves"
                     id={idDef}
                     selectDefault={true}
-                    form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
+                    form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                     setMove={setMoveDef}
                     move={moveDef}
-                    clearData={setResultBreakPointDef}
+                    clearData={clearDataDef}
                   />
                   <FormControlLabel
                     control={
                       <Checkbox
                         checked={weatherBoosts}
                         onChange={(_, check) => {
-                          setResultBreakPointDef(null);
+                          setResultBreakPointDef(undefined);
                           setWeatherBoosts(check);
                         }}
                       />
@@ -539,7 +542,7 @@ const CalculatePoint = () => {
                       <Checkbox
                         checked={pvpDmg}
                         onChange={(_, check) => {
-                          setResultBreakPointDef(null);
+                          setResultBreakPointDef(undefined);
                           setPvpDmg(check);
                         }}
                       />
@@ -553,20 +556,16 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(moveDef.type_move)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={'type-icon-small ' + moveDef.type.toLowerCase()}>{capitalize(moveDef.type)}</span>
+                        - Move Type: <span className={'type-icon-small ' + moveDef.type?.toLowerCase()}>{capitalize(moveDef.type)}</span>
                       </p>
-                      {findStabType(
-                        formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                        moveDef.type
-                      )}
+                      {findStabType(formDef?.form.types ?? [], moveDef?.type ?? '')}
                       <p>
                         - Damage:{' '}
                         <b>
                           {moveDef.pve_power}
-                          {findStabType(
-                            formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                            moveDef.type
-                          ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                          {findStabType(formDef?.form.types ?? [], moveDef?.type ?? '') && (
+                            <span className={'caption-small text-success'}> (x1.2)</span>
+                          )}
                         </b>
                       </p>
                     </div>
@@ -617,11 +616,9 @@ const CalculatePoint = () => {
                                 style={{
                                   backgroundColor: resultBreakPointDef
                                     ? `${
-                                        (
-                                          Object.values(resultBreakPointDef.colorToneDef).find(
-                                            (item: any) => item.number === resultBreakPointDef.dataDef[i][index]
-                                          ) as any
-                                        ).color
+                                        Object.values(resultBreakPointDef.colorToneDef).find(
+                                          (item) => item.number === resultBreakPointDef.dataDef[i][index]
+                                        )?.color
                                       }`
                                     : '',
                                 }}
@@ -671,11 +668,9 @@ const CalculatePoint = () => {
                                 style={{
                                   backgroundColor: resultBreakPointDef
                                     ? `${
-                                        (
-                                          Object.values(resultBreakPointDef.colorToneSta).find(
-                                            (item: any) => item.number === resultBreakPointDef.dataSta[i][index]
-                                          ) as any
-                                        ).color
+                                        Object.values(resultBreakPointDef.colorToneSta).find(
+                                          (item) => item.number === resultBreakPointDef.dataSta[i][index]
+                                        )?.color
                                       }`
                                     : '',
                                 }}
@@ -703,11 +698,11 @@ const CalculatePoint = () => {
                       text="Fast Moves"
                       id={idDef}
                       selectDefault={true}
-                      form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
+                      form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                       setMove={setFMove}
                       move={fMove}
                       type={TypeMove.FAST}
-                      clearData={setResultBulkPointDef}
+                      clearData={clearDataBulk}
                     />
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -715,20 +710,16 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{capitalize(fMove.type_move)}</b>
                         </p>
                         <p>
-                          - Move Type: <span className={'type-icon-small ' + fMove.type.toLowerCase()}>{capitalize(fMove.type)}</span>
+                          - Move Type: <span className={'type-icon-small ' + fMove?.type?.toLowerCase()}>{capitalize(fMove.type)}</span>
                         </p>
-                        {findStabType(
-                          formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                          fMove.type
-                        )}
+                        {findStabType(formDef?.form.types ?? [], fMove?.type ?? '')}
                         <p>
                           - Damage:{' '}
                           <b>
                             {fMove.pve_power}
-                            {findStabType(
-                              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                              fMove.type
-                            ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                            {findStabType(formDef?.form.types ?? [], fMove?.type ?? '') && (
+                              <span className={'caption-small text-success'}> (x1.2)</span>
+                            )}
                           </b>
                         </p>
                       </div>
@@ -739,11 +730,11 @@ const CalculatePoint = () => {
                       text="Charged Moves"
                       id={idDef}
                       selectDefault={true}
-                      form={formDef ? formDef.form.pokemon.name : nameDef.toLowerCase()}
+                      form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                       setMove={setCMove}
                       move={cMove}
                       type={TypeMove.CHARGE}
-                      clearData={setResultBulkPointDef}
+                      clearData={clearDataBulk}
                     />
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -751,20 +742,16 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{capitalize(cMove.type_move)}</b>
                         </p>
                         <p>
-                          - Move Type: <span className={'type-icon-small ' + cMove.type.toLowerCase()}>{capitalize(cMove.type)}</span>
+                          - Move Type: <span className={'type-icon-small ' + cMove?.type?.toLowerCase()}>{capitalize(cMove.type)}</span>
                         </p>
-                        {findStabType(
-                          formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                          cMove.type
-                        )}
+                        {findStabType(formDef?.form.types ?? [], cMove?.type ?? '')}
                         <p>
                           - Damage:{' '}
                           <b>
                             {cMove.pve_power}
-                            {findStabType(
-                              formDef.form.types.map((item: { type: { name: string } }) => item.type.name),
-                              cMove.type
-                            ) && <span className={'caption-small text-success'}> (x1.2)</span>}
+                            {findStabType(formDef?.form.types ?? [], cMove?.type ?? '') && (
+                              <span className={'caption-small text-success'}> (x1.2)</span>
+                            )}
                           </b>
                         </p>
                       </div>
@@ -775,7 +762,7 @@ const CalculatePoint = () => {
                       <Checkbox
                         checked={weatherBoosts}
                         onChange={(_, check) => {
-                          setResultBulkPointDef(null);
+                          setResultBulkPointDef(undefined);
                           setWeatherBoosts(check);
                         }}
                       />
@@ -788,7 +775,7 @@ const CalculatePoint = () => {
                       <Checkbox
                         checked={pvpDmg}
                         onChange={(_, check) => {
-                          setResultBulkPointDef(null);
+                          setResultBulkPointDef(undefined);
                           setPvpDmg(check);
                         }}
                       />
@@ -812,7 +799,7 @@ const CalculatePoint = () => {
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}
-                      onChange={(_, v) => setDEFIv(v)}
+                      onChange={(_, v) => setDEFIv(v as number)}
                     />
                     <div className="d-flex justify-content-between">
                       <b>STA</b>
@@ -827,7 +814,7 @@ const CalculatePoint = () => {
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}
-                      onChange={(_, v) => setSTAIv(v)}
+                      onChange={(_, v) => setSTAIv(v as number)}
                     />
                   </div>
                   <button

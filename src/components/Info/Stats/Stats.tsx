@@ -4,7 +4,7 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
 
 import './Stats.scss';
-import { StatsModel } from '../../../core/models/stats.model';
+import { StatsAtk, StatsDef, StatsModel, StatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
@@ -12,31 +12,19 @@ import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 const Stats = (props: {
   isShadow?: boolean;
   pokemonStats: StatsModel;
-  stats?: { stats: StatsModel };
-  statATK?: {
-    attack: number;
-    rank: number;
-  };
-  statDEF?: {
-    defense: number;
-    rank: number;
-  };
-  statSTA?: {
-    stamina: number;
-    rank: number;
-  };
-  statProd?: {
-    prod: number;
-    rank: number;
-  };
+  stats?: StatsPokemon;
+  statATK?: StatsAtk;
+  statDEF?: StatsDef;
+  statSTA?: StatsSta;
+  statProd?: StatsProd;
 }) => {
   const data = useSelector((state: StoreState) => state.store.data);
   const theme = useTheme();
-  const [isAvailable, setIsAvailable]: any = useState({
-    attackRank: null,
-    defenseRank: null,
-    staminaRank: null,
-    statProdRank: null,
+  const [isAvailable, setIsAvailable] = useState({
+    attackRank: 0,
+    defenseRank: 0,
+    staminaRank: 0,
+    statProdRank: 0,
   });
 
   const [currentStats, setCurrentStats] = useState({
@@ -54,19 +42,19 @@ const Stats = (props: {
 
   useEffect(() => {
     const atk = setShadowStats(
-      props.stats || props.statATK ? (props.statATK ? props.statATK?.attack : calBaseATK(props.stats?.stats, true)) : 0,
+      props.stats || props.statATK ? (props.statATK ? props.statATK?.attack : calBaseATK(props.stats, true)) : 0,
       'atk'
     );
     const def = setShadowStats(
-      props.stats || props.statDEF ? (props.statDEF ? props.statDEF?.defense : calBaseDEF(props.stats?.stats, true)) : 0,
+      props.stats || props.statDEF ? (props.statDEF ? props.statDEF?.defense : calBaseDEF(props.stats, true)) : 0,
       'def'
     );
-    const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA?.stamina : calBaseSTA(props.stats?.stats, true)) : 0;
+    const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA?.stamina : calBaseSTA(props.stats, true)) : 0;
     const prod = setShadowStats(
       props.stats || props.statProd
         ? props.statProd
           ? props.statProd.prod
-          : calBaseATK(props.stats?.stats, true) * calBaseDEF(props.stats?.stats, true) * calBaseSTA(props.stats?.stats, true)
+          : calBaseATK(props.stats, true) * calBaseDEF(props.stats, true) * calBaseSTA(props.stats, true)
         : 0
     );
     setIsAvailable(

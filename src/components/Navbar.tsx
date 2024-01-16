@@ -110,18 +110,6 @@ const NavbarComponent = () => {
               </span>
             </Navbar.Text>
           )}
-          {/* <IconButton
-            className={stateTheme + '-mode'}
-            onClick={onChangeTheme}
-            style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
-            color="inherit"
-          >
-            {mode === 'light' ? (
-              <LightModeIcon fontSize="large" style={{ color: 'white' }} />
-            ) : (
-              <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
-            )}
-          </IconButton> */}
         </Navbar.Collapse>
       </Navbar>
       {spinner.bar.show && (

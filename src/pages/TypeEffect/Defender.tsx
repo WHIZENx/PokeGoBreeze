@@ -3,13 +3,14 @@ import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
-import { TypeEff } from '../../core/models/typeEff.model';
+import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 
-const Defender = (prop: { types: TypeEff | any }) => {
+const Defender = (prop: { types: TypeEff | undefined }) => {
   const theme = useTheme();
-  const [types, setTypes]: [string[], any] = useState([]);
+  const [types, setTypes] = useState([] as string[]);
 
-  const [typeEffective, setTypeEffective]: any = useState(null);
+  const [typeEffective, setTypeEffective]: [TypeEffChart | undefined, React.Dispatch<React.SetStateAction<TypeEffChart | undefined>>] =
+    useState();
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');
   const [currentTypeSec, setCurrentTypeSec] = useState('');
@@ -18,7 +19,7 @@ const Defender = (prop: { types: TypeEff | any }) => {
   const [showTypeSec, setShowTypeSec] = useState(false);
 
   const getTypeEffective = useCallback(() => {
-    const data: any = {
+    const data: TypeEffChart = {
       very_weak: [],
       weak: [],
       super_resist: [],
@@ -26,29 +27,29 @@ const Defender = (prop: { types: TypeEff | any }) => {
       resist: [],
       neutral: [],
     };
-    Object.entries(prop.types).forEach(([key, value]: any) => {
+    Object.entries(prop.types ?? {}).forEach(([key, value]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= currentTypeSec === '' ? 1 : value[currentTypeSec];
       if (valueEffective >= 2.56) {
-        data.very_weak.push(key);
+        data.very_weak?.push(key);
       } else if (valueEffective >= 1.6) {
-        data.weak.push(key);
+        data.weak?.push(key);
       } else if (valueEffective >= 1) {
-        data.neutral.push(key);
+        data.neutral?.push(key);
       } else if (valueEffective >= 0.625) {
-        data.resist.push(key);
+        data.resist?.push(key);
       } else if (valueEffective >= 0.39) {
-        data.very_resist.push(key);
+        data.very_resist?.push(key);
       } else {
-        data.super_resist.push(key);
+        data.super_resist?.push(key);
       }
     });
     setTypeEffective(data);
   }, [currentTypePri, currentTypeSec, prop.types]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types).filter((item) => item !== currentTypePri && item !== currentTypeSec);
+    const results = Object.keys(prop.types ?? {}).filter((item) => item !== currentTypePri && item !== currentTypeSec);
     setTypes(results);
     getTypeEffective();
   }, [currentTypePri, currentTypeSec, getTypeEffective, prop.types]);

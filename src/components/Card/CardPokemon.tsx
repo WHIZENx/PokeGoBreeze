@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { splitAndCapitalize } from '../../util/Utils';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 
-const CardPokemon = (props: { value: { sprite: string; name: string }; score?: number; isShadow?: boolean }) => {
+const CardPokemon = (props: { value: PokemonDataModel; score?: number; isShadow?: boolean }) => {
   return (
     <Fragment>
       {props.value && (
@@ -13,9 +14,9 @@ const CardPokemon = (props: { value: { sprite: string; name: string }; score?: n
               alt="pokemon-logo"
               style={{ marginRight: 10 }}
               src={APIService.getPokeIconSprite(props.value.sprite, true)}
-              onError={(e: any) => {
-                e.onerror = null;
-                e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
               }}
             />
             {props.isShadow && (

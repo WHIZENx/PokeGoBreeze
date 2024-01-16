@@ -16,19 +16,26 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
-import { League } from '../../../core/models/league.model';
+import { League, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/Constants';
+
+interface LeagueData {
+  data: PokemonRewardSetLeague[];
+  step: number;
+  track: string;
+  type: string | boolean | undefined;
+}
 
 const Leagues = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
-  const [leagues, setLeagues]: [League[], any] = useState([]);
-  const [openedLeague, setOpenedLeague]: [League[], any] = useState([]);
-  const [leagueFilter, setLeagueFilter]: any = useState([]);
+  const [leagues, setLeagues]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
+  const [openedLeague, setOpenedLeague]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
+  const [leagueFilter, setLeagueFilter]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
   const [search, setSearch] = useState('');
   const [rank, setRank] = useState(1);
-  const [setting, setSetting]: any = useState(null);
-  const [showData, setShowData]: any = useState(null);
+  const [setting, setSetting]: [SettingLeague | undefined, React.Dispatch<React.SetStateAction<SettingLeague | undefined>>] = useState();
+  const [showData, setShowData]: [LeagueData | undefined, React.Dispatch<React.SetStateAction<LeagueData | undefined>>] = useState();
 
   const getAssetPokeGo = (id: string, form: string) => {
     try {
@@ -74,7 +81,7 @@ const Leagues = () => {
       const leagues = dataStore?.leagues?.data ?? [];
       setLeagues(leagues);
       setOpenedLeague(leagues.filter((league) => dataStore?.leagues?.allowLeagues.includes(league.id ?? '')));
-      setSetting(dataStore?.leagues?.season.settings.find((data: { rankLevel: number }) => data.rankLevel === rank + 1));
+      setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === rank + 1));
     }
   }, [dataStore?.leagues]);
 
@@ -106,14 +113,13 @@ const Leagues = () => {
   const [show, setShow] = useState(false);
 
   const handleShow = (type: string | boolean | undefined, track: string, step: number) => {
-    const data: any = {};
     if (type === 'pokemon') {
       const result: any[] = [];
       setShow(true);
-      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? []).forEach((value: any) => {
+      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? {}).forEach((value: any) => {
         if (value.rank <= rank) {
           result.push(
-            ...value[track.toLowerCase()].map((item: { guaranteedLimited: boolean }) => {
+            ...value[track.toLowerCase()].map((item: PokemonRewardSetLeague) => {
               if (item.guaranteedLimited) {
                 return {
                   ...item,
@@ -125,22 +131,25 @@ const Leagues = () => {
           );
         }
       });
-      data.data = result.sort((a, b) => a.id - b.id);
-      data.step = step;
-      data.track = track.toLowerCase();
-      data.type = type;
+      setShowData({
+        data: result.sort((a, b) => a.id - b.id),
+        step,
+        track: track.toLowerCase(),
+        type,
+      });
+    } else {
+      setShowData(undefined);
     }
-    setShowData(data);
   };
 
   const handleClose = () => {
     setShow(false);
-    setShowData(null);
+    setShowData(undefined);
   };
 
-  const showAccording = (league: League, index: any, isOpened = false) => {
+  const showAccording = (league: League, index: number, isOpened = false) => {
     return (
-      <Accordion.Item key={index} eventKey={index}>
+      <Accordion.Item key={index} eventKey={index.toString()}>
         <Accordion.Header className={isOpened ? 'league-opened' : ''}>
           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
             <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />
@@ -216,7 +225,7 @@ const Leagues = () => {
               {league.conditions.whiteList.length !== 0 && (
                 <li style={{ fontWeight: 500 }}>
                   <h6 className="title-leagues text-success">White List</h6>
-                  {league.conditions.whiteList.map((item, index: React.Key) => (
+                  {league.conditions.whiteList.map((item, index) => (
                     <Link
                       className="img-link text-center"
                       key={index}
@@ -253,7 +262,7 @@ const Leagues = () => {
               {league.conditions.banned.length !== 0 && (
                 <li style={{ fontWeight: 500 }}>
                   <h6 className="title-leagues text-danger">Ban List</h6>
-                  {league.conditions.banned.map((item, index: React.Key) => (
+                  {league.conditions.banned.map((item, index) => (
                     <Link
                       className="img-link text-center"
                       key={index}
@@ -313,16 +322,14 @@ const Leagues = () => {
             onChange={(e) => {
               setRank(parseInt(e.target.value));
               if (parseInt(e.target.value) < 24) {
-                setSetting(
-                  dataStore?.leagues?.season.settings.find((data: { rankLevel: number }) => data.rankLevel === parseInt(e.target.value) + 1)
-                );
+                setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === parseInt(e.target.value) + 1));
               }
             }}
             defaultValue={rank}
           >
-            {Object.keys(dataStore?.leagues?.season.rewards.rank ?? []).map((value: any, index: number) => (
+            {Object.keys(dataStore?.leagues?.season.rewards.rank ?? []).map((value, index) => (
               <option key={index} value={value}>
-                Rank {value} {value > 20 && `( ${rankName(parseInt(value))} )`}
+                Rank {value} {parseInt(value) > 20 && `( ${rankName(parseInt(value))} )`}
               </option>
             ))}
           </Form.Select>
@@ -365,7 +372,7 @@ const Leagues = () => {
                   <span className="caption text-black">Premium</span>
                 </Badge>
               </div>
-              {dataStore?.leagues?.season.rewards.rank[rank].free.map((value, index: number) => (
+              {dataStore?.leagues?.season.rewards.rank[rank].free.map((value, index) => (
                 <Fragment key={index}>
                   <div className="group-rank-league text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
@@ -611,7 +618,7 @@ const Leagues = () => {
           Opened Leagues
         </span>
       </div>
-      <Accordion alwaysOpen={true}>{openedLeague.map((value: League, index: any) => showAccording(value, index, true))}</Accordion>
+      <Accordion alwaysOpen={true}>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 
       <div className="w-25 input-group border-input element-top" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find League</span>
@@ -620,10 +627,10 @@ const Leagues = () => {
           className="form-control input-search"
           placeholder="Enter League Name"
           defaultValue={search}
-          onKeyUp={(e: any) => setSearch(e.target.value)}
+          onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>
-      <Accordion alwaysOpen={true}>{leagueFilter?.map((value: League, index: any) => showAccording(value, index))}</Accordion>
+      <Accordion alwaysOpen={true}>{leagueFilter.map((value, index) => showAccording(value, index))}</Accordion>
 
       {showData && (
         <Modal size="lg" show={show} onHide={handleClose} centered={true}>
@@ -670,8 +677,8 @@ const Leagues = () => {
           <Modal.Body className="text-center">
             <h5 style={{ textDecoration: 'underline' }}>Random Pokémon</h5>
             {showData.data
-              .filter((item: { guaranteedLimited: boolean }) => !item.guaranteedLimited)
-              .map((item: { id: string; name: string; form: string }, index: React.Key) => (
+              .filter((item) => !item.guaranteedLimited)
+              .map((item, index) => (
                 <Link
                   className="img-link text-center"
                   key={index}
@@ -683,21 +690,20 @@ const Leagues = () => {
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="img-pokemon"
-                        src={getAssetPokeGo(item.id, item.form)}
+                        src={getAssetPokeGo(item.id.toString(), item.form)}
                       />
                     </span>
                   </div>
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
                 </Link>
               ))}
-            {showData.data.filter((item: { guaranteedLimited: boolean; rank: number }) => item.guaranteedLimited && item.rank === rank)
-              .length > 0 && (
+            {showData.data.filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank).length > 0 && (
               <Fragment>
                 <hr />
                 <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>
                 {showData.data
-                  .filter((item: { guaranteedLimited: boolean; rank: number }) => item.guaranteedLimited && item.rank === rank)
-                  .map((item: { id: string; name: string; form: string }, index: React.Key) => (
+                  .filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank)
+                  .map((item, index) => (
                     <Link
                       className="img-link text-center"
                       key={index}
@@ -709,7 +715,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.form)}
+                            src={getAssetPokeGo(item.id.toString(), item.form)}
                           />
                         </span>
                       </div>

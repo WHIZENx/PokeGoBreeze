@@ -1,11 +1,14 @@
 import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import { calculateStatsByTag } from './Calculate';
-import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_INCARNATE, FORM_NORMAL, FORM_STANDARD, MAX_IV } from './Constants';
+import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_INCARNATE, FORM_MEGA, FORM_NORMAL, FORM_STANDARD, MAX_IV } from './Constants';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
 import { Details } from '../core/models/details.model';
-import { StatsModel } from '../core/models/stats.model';
+import { PokemonStatsRanking, StatsModel, StatsPokemon } from '../core/models/stats.model';
 import { CombatPokemon } from '../core/models/combat.model';
+import { Stats } from '../core/models/API/info.model';
+import { FormModel } from '../core/models/API/form.model';
+import { ArrayStats } from './models/util.model';
 
 export const marks = [...Array(MAX_IV + 1).keys()].map((n) => {
   return { value: n, label: n.toString() };
@@ -270,7 +273,7 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
   return formOri.includes('(') && formOri.includes(')') && !invalidForm.includes(form) ? text.replaceAll(form.toLowerCase(), '') : text;
 };
 
-export const convertArrStats = (data: PokemonDataModel) => {
+export const convertArrStats = (data: { [x: string]: PokemonDataModel }) => {
   return Object.values(data)
     .filter((pokemon) => pokemon.num > 0)
     .map((value) => {
@@ -281,7 +284,7 @@ export const convertArrStats = (data: PokemonDataModel) => {
         base_stats: value.baseStats,
         baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats?.sta ?? 0 },
         baseStatsProd: stats.atk * stats.def * (stats?.sta ?? 0),
-      };
+      } as ArrayStats;
     });
 };
 
@@ -302,7 +305,7 @@ export const getStyleSheet = (selector: string) => {
   return null;
 };
 
-export const getStyleRuleValue = (style: string, selector: string, sheet?: any) => {
+export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet | null) => {
   const sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
     sheet = sheets[i];
@@ -310,7 +313,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: any) 
       continue;
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
-      const rule = sheet.cssRules[j];
+      const rule = sheet.cssRules[j] as any;
       if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
         return rule.style[style];
       }
@@ -319,8 +322,8 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: any) 
   return null;
 };
 
-export const findMoveTeam = (move: any, moveSet: string[]) => {
-  move = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
+export const findMoveTeam = (move: string, moveSet: string[]) => {
+  const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
     if (value === 'FUTURESIGHT') {
       value = 'FUTURE_SIGHT';
@@ -332,10 +335,10 @@ export const findMoveTeam = (move: any, moveSet: string[]) => {
       value = 'TECHNO_BLAST_WATER';
     }
     const m = value.split('_');
-    if (m.length === move.length) {
+    if (m.length === result?.length) {
       let count = 0;
-      for (let i = 0; i < move.length; i++) {
-        if (capitalize(m[i].toLowerCase()).includes(move[i])) {
+      for (let i = 0; i < result.length; i++) {
+        if (capitalize(m[i].toLowerCase()).includes(result[i])) {
           count++;
         }
       }
@@ -349,10 +352,10 @@ export const findMoveTeam = (move: any, moveSet: string[]) => {
   }
   for (const value of moveSet) {
     const m = value.split('_');
-    if (m.length === move.length) {
+    if (m.length === result?.length) {
       let count = 0;
-      for (let i = 0; i < move.length; i++) {
-        if (m[i].at(0) === move[i].at(0)) {
+      for (let i = 0; i < result.length; i++) {
+        if (m[i].at(0) === result[i].at(0)) {
           count++;
         }
       }
@@ -364,7 +367,7 @@ export const findMoveTeam = (move: any, moveSet: string[]) => {
   return null;
 };
 
-const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: string; id: number }) => {
+const convertPokemonGO = (item: PokemonDataModel, pokemon: Details) => {
   if (item.name.toLowerCase().includes('_mega')) {
     return pokemon.id === item.num && pokemon.name === item.name?.toUpperCase().replaceAll('-', '_');
   } else {
@@ -378,8 +381,8 @@ const convertPokemonGO = (item: { name: string; num: number }, pokemon: { name: 
   }
 };
 
-export const checkPokemonGO = (item: { num: number; name: string }, details: Details[]) => {
-  return details.find((pokemon: { name: string; id: number }) => {
+export const checkPokemonGO = (item: PokemonDataModel, details: Details[]) => {
+  return details.find((pokemon) => {
     return convertPokemonGO(item, pokemon) ? true : false;
   });
 };
@@ -551,28 +554,9 @@ export const checkRankAllAvailable = (
   return data;
 };
 
-export const filterRank = (
-  pokemonStats: {
-    [x: string]: { max_rank: number; ranking: any[] };
-  },
-  type: string,
-  stats: number
-) => {
-  const checkRank = pokemonStats[type].ranking.find((item: { [x: string]: any }) => item[type] === stats);
-
-  if (checkRank) {
-    return pokemonStats[type].max_rank - checkRank.rank;
-  }
-  let avgRank = pokemonStats[type].max_rank - pokemonStats[type].ranking.find((item: { [x: string]: number }) => item[type] > stats).rank;
-  if (avgRank < 1) {
-    avgRank = 1;
-  }
-  return Math.min(avgRank, pokemonStats[type].max_rank);
-};
-
 export const calRank = (
   pokemonStats: {
-    [x: string]: { max_rank: number; ranking: any[] };
+    [x: string]: { max_rank: number };
   },
   type: string,
   rank: number
@@ -636,12 +620,8 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | CombatPokemon | un
   const eliteQuickMoves = (pokemon as PokemonModel).eliteQuickMove ?? (pokemon as CombatPokemon).eliteQuickMoves ?? [];
   const eliteCinematicMoves = (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as CombatPokemon).eliteCinematicMoves ?? [];
   const specialMoves = (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as CombatPokemon).specialMoves ?? [];
-  const allMoves = pokemon.quickMoves
-    .concat(pokemon.cinematicMoves)
-    .concat(eliteQuickMoves)
-    .concat(eliteCinematicMoves)
-    .concat(specialMoves);
-  if (allMoves.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
+  const allMoves = pokemon.quickMoves?.concat(pokemon.cinematicMoves, eliteQuickMoves, eliteCinematicMoves, specialMoves);
+  if (allMoves?.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
     return false;
   }
   return true;
@@ -666,4 +646,49 @@ export const convertIdMove = (name: string) => {
 
 export const checkPokemonIncludeShadowForm = (pokemon: PokemonModel[], form: string) => {
   return pokemon.some((p) => splitAndCapitalize(form, '-', '_').toUpperCase() === p.name && p.shadow);
+};
+
+const convertNameEffort = (name: string) => {
+  switch (name) {
+    case 'attack':
+      return 'atk';
+    case 'defense':
+      return 'def';
+    case 'special-attack':
+      return 'spa';
+    case 'special-defense':
+      return 'spd';
+    case 'speed':
+      return 'spe';
+    default:
+      return '';
+  }
+};
+
+export const convertStatsEffort = (stats: Stats[] | undefined) => {
+  const result: any = { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 };
+
+  stats?.forEach((stat) => {
+    result[convertNameEffort(stat.stat.name)] = stat.base_stat;
+  });
+
+  return result as StatsPokemon;
+};
+
+export const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRanking): FormModel => {
+  return {
+    form_name: pokemon.forme ?? '',
+    form_names: [],
+    form_order: 0,
+    id: pokemon.num,
+    is_battle_only: false,
+    is_default: true,
+    is_mega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
+    name: pokemon.name,
+    sprites: null,
+    types: pokemon.types ?? [],
+    version_group: { name: pokemon.version ?? '' },
+    is_shadow: false,
+    is_purified: false,
+  };
 };

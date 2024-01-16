@@ -6,9 +6,11 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
+import { SelectMoveModel } from '../Input/models/select-move.model';
+import { Combat } from '../../core/models/combat.model';
 
 const CardMoveSmall = (props: {
-  value: { name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
+  value: SelectMoveModel | Combat | undefined;
   empty?: boolean;
   disable?: boolean;
   show?: boolean;
@@ -33,9 +35,9 @@ const CardMoveSmall = (props: {
                 height={18}
                 alt="type-logo"
                 style={{ marginRight: 10 }}
-                src={APIService.getTypeSprite(props.value ? capitalize(combat.find((item) => item.name === props.value.name)?.type) : '')}
+                src={APIService.getTypeSprite(props.value ? capitalize(combat.find((item) => item.name === props.value?.name)?.type) : '')}
               />
-              <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
+              <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name?.replaceAll('_PLUS', '+'), '_', ' ')}</span>
               <span className="d-flex">
                 {props.value.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
                 {props.value.shadow && <span className="type-icon-small ic shadow-ic">Shadow</span>}

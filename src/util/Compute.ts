@@ -101,13 +101,13 @@ export const computeBgType = (
   shadow = false,
   purified = false,
   opacity = 1,
-  styleSheet?: any,
+  styleSheet?: CSSStyleSheet | null,
   defaultColor?: string | null
 ) => {
   if (defaultColor) {
     return `linear-gradient(to bottom right, ${defaultColor}, ${defaultColor})`;
   }
-  const colorsPalette: any[] = [];
+  const colorsPalette: string[] = [];
   if (typeof types === 'string') {
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
     return color?.split(')').at(0) + `, ${opacity ?? 1})`;
@@ -145,11 +145,11 @@ export const queryAssetForm = (pokemonAssets: Asset[], id: number | undefined, n
     if (standard.length > 0) {
       if (name.includes(FORM_GALARIAN)) {
         if (name.includes('ZEN')) {
-          return pokemon.image.find((item) => item.form.includes(`${FORM_GALARIAN}_ZEN`));
+          return pokemon.image.find((item) => item.form?.includes(`${FORM_GALARIAN}_ZEN`));
         }
-        return pokemon.image.find((item) => item.form.includes(FORM_GALARIAN));
+        return pokemon.image.find((item) => item.form?.includes(FORM_GALARIAN));
       } else if (name.includes('ZEN')) {
-        return pokemon.image.find((item) => !item.form.includes(FORM_GALARIAN) && item.form.includes('ZEN'));
+        return pokemon.image.find((item) => !item.form?.includes(FORM_GALARIAN) && item.form?.includes('ZEN'));
       } else {
         return pokemon.image.find((item) => item.form?.toUpperCase() === FORM_STANDARD);
       }

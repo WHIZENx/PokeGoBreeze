@@ -225,7 +225,7 @@ interface LevelLearned {
   version_group: Path;
 }
 
-interface Stats {
+export interface Stats {
   base_stat: number;
   effort: number;
   stat: Path;

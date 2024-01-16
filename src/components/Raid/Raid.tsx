@@ -1,4 +1,4 @@
-import React, { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 import { raidEgg } from '../../util/Compute';
@@ -12,58 +12,71 @@ import sta_logo from '../../assets/stamina.png';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
+import { PokemonFormModify } from '../../core/models/API/form.model';
 
-const Raid = ({
-  clearData,
-  setTierBoss,
-  currForm,
-  id,
-  statATK,
-  statDEF,
-  setStatBossATK,
-  setStatBossDEF,
-  setStatBossHP,
-  setTimeAllow,
-}: any) => {
+const Raid = (props: {
+  clearData?: () => void;
+  setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
+  currForm: PokemonFormModify | undefined;
+  id: number | undefined;
+  statATK: number;
+  statDEF: number;
+  setStatBossATK?: React.Dispatch<React.SetStateAction<number>>;
+  setStatBossDEF?: React.Dispatch<React.SetStateAction<number>>;
+  setStatBossHP?: React.Dispatch<React.SetStateAction<number>>;
+  setTimeAllow?: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const theme = useTheme();
   const details = useSelector((state: StoreState) => state.store.data?.details ?? []);
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
-  const [tier, setTier]: [number, Dispatch<SetStateAction<number>>] = useState(1);
-  const [pokemonClass, setPokemonClass]: [string | null | undefined, Dispatch<SetStateAction<string | null | undefined>>] = useState();
+  const [tier, setTier]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(1);
+  const [pokemonClass, setPokemonClass]: [string | null | undefined, React.Dispatch<React.SetStateAction<string | null | undefined>>] =
+    useState();
 
   useEffect(() => {
-    setPokemonClass(pokemonData.find((item) => item.num === id)?.pokemonClass);
-  }, [id]);
+    setPokemonClass(pokemonData.find((item) => item.num === props.id)?.pokemonClass);
+  }, [props.id]);
 
   useEffect(() => {
-    const pokemonClass = pokemonData.find((item) => item.num === id)?.pokemonClass;
+    const pokemonClass = pokemonData.find((item) => item.num === props.id)?.pokemonClass;
     if (
       tier > 5 &&
-      currForm &&
-      !currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
-      currForm.form.form_name?.toUpperCase() !== FORM_PRIMAL
+      props.currForm &&
+      !props.currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
+      props.currForm.form.form_name?.toUpperCase() !== FORM_PRIMAL
     ) {
       setTier(5);
     } else if (
       tier === 5 &&
-      currForm &&
-      (currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) || currForm.form.form_name === 'primal') &&
+      props.currForm &&
+      (props.currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) || props.currForm.form.form_name === 'primal') &&
       pokemonClass
     ) {
       setTier(6);
     }
-    if (setTierBoss) {
-      setTierBoss(tier);
+    if (props.setTierBoss) {
+      props.setTierBoss(tier);
     }
-    if (setStatBossATK && setStatBossDEF && setStatBossHP) {
-      setStatBossATK(calculateRaidStat(statATK, tier));
-      setStatBossDEF(calculateRaidStat(statDEF, tier));
-      setStatBossHP(RAID_BOSS_TIER[tier].sta);
+    if (props.setStatBossATK && props.setStatBossDEF && props.setStatBossHP) {
+      props.setStatBossATK(calculateRaidStat(props.statATK, tier));
+      props.setStatBossDEF(calculateRaidStat(props.statDEF, tier));
+      props.setStatBossHP(RAID_BOSS_TIER[tier].sta);
     }
-    if (setTimeAllow) {
-      setTimeAllow(RAID_BOSS_TIER[tier].timer);
+    if (props.setTimeAllow) {
+      props.setTimeAllow(RAID_BOSS_TIER[tier].timer);
     }
-  }, [tier, currForm, id, setTierBoss, setStatBossATK, setStatBossDEF, setStatBossHP, statATK, statDEF, setTimeAllow]);
+  }, [
+    tier,
+    props.currForm,
+    props.id,
+    props.setTierBoss,
+    props.setStatBossATK,
+    props.setStatBossDEF,
+    props.setStatBossHP,
+    props.statATK,
+    props.statDEF,
+    props.setTimeAllow,
+  ]);
 
   return (
     <Fragment>
@@ -72,8 +85,8 @@ const Raid = ({
           className="w-50"
           onChange={(e) => {
             setTier(parseInt(e.target.value));
-            if (clearData) {
-              clearData();
+            if (props.clearData) {
+              props.clearData();
             }
           }}
           value={tier}
@@ -81,22 +94,23 @@ const Raid = ({
           <optgroup label="Normal Tiers">
             <option value={1}>Tier 1</option>
             <option value={3}>Tier 3</option>
-            {((currForm && !currForm.form.form_name?.toUpperCase().includes(FORM_MEGA)) || !pokemonClass) && (
-              <option value={5}>Tier 5</option>
-            )}
+            {(!props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) || !pokemonClass) && <option value={5}>Tier 5</option>}
           </optgroup>
           <optgroup label="Legacy Tiers">
             <option value={2}>Tier 2</option>
-            {((currForm && !currForm.form.form_name?.toUpperCase().includes(FORM_MEGA)) || pokemonClass) && (
-              <option value={4}>Tier 4</option>
-            )}
+            {(!props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) || pokemonClass) && <option value={4}>Tier 4</option>}
           </optgroup>
-          {currForm &&
-            (currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) || currForm.form.form_name?.toUpperCase() === FORM_PRIMAL) && (
+          {props.currForm &&
+            (props.currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) ||
+              props.currForm.form.form_name?.toUpperCase() === FORM_PRIMAL) && (
               <Fragment>
                 {pokemonClass ? (
-                  <optgroup label={'Legendary ' + (currForm.form.form_name?.toUpperCase() === FORM_PRIMAL ? 'Primal' : 'Mega') + ' Tier 6'}>
-                    <option value={6}>{'Tier ' + (currForm.form.form_name?.toUpperCase() === FORM_PRIMAL ? 'Primal' : 'Mega')}</option>
+                  <optgroup
+                    label={'Legendary ' + (props.currForm.form.form_name?.toUpperCase() === FORM_PRIMAL ? 'Primal' : 'Mega') + ' Tier 6'}
+                  >
+                    <option value={6}>
+                      {'Tier ' + (props.currForm.form.form_name?.toUpperCase() === FORM_PRIMAL ? 'Primal' : 'Mega')}
+                    </option>
                   </optgroup>
                 ) : (
                   <optgroup label="Mega Tier 4">
@@ -111,7 +125,7 @@ const Raid = ({
         <div className="col-4 text-center d-inline-block">
           <h1>CP</h1>
           <hr className="w-100" />
-          <h5>{calculateRaidCP(statATK, statDEF, tier)}</h5>
+          <h5>{calculateRaidCP(props.statATK, props.statDEF, tier)}</h5>
         </div>
         <div className="col-4 text-center d-inline-block">
           <h1>HP</h1>
@@ -131,9 +145,9 @@ const Raid = ({
             alt="img-raid-egg"
             src={raidEgg(
               tier,
-              currForm && currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) && !pokemonClass,
-              currForm && currForm.form.form_name?.toUpperCase() === FORM_PRIMAL && pokemonClass,
-              details.find((pokemon) => pokemon.id === id)?.pokemonClass === 'ULTRA_BEAST'
+              !pokemonClass && (props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) ?? false),
+              pokemonClass !== null && pokemonClass !== undefined && props.currForm?.form.form_name?.toUpperCase() === FORM_PRIMAL,
+              details.find((pokemon) => pokemon.id === props.id)?.pokemonClass === 'ULTRA_BEAST'
             )}
           />
         </div>
@@ -152,7 +166,7 @@ const Raid = ({
                   ATK
                 </td>
                 <td className="text-center" style={{ color: theme.palette.text.primary }}>
-                  {calculateRaidStat(statATK, tier)}
+                  {calculateRaidStat(props.statATK, tier)}
                 </td>
               </tr>
               <tr>
@@ -161,7 +175,7 @@ const Raid = ({
                   DEF
                 </td>
                 <td className="text-center" style={{ color: theme.palette.text.primary }}>
-                  {calculateRaidStat(statDEF, tier)}
+                  {calculateRaidStat(props.statDEF, tier)}
                 </td>
               </tr>
               <tr>

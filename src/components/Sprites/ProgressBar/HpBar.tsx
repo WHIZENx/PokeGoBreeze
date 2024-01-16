@@ -12,8 +12,8 @@ const Bar = styled.div`
 const Fill = styled.div`
   position: absolute;
   width: ${(props: { hp: number; maxHp: number; height: number; color: string }) => (props.hp * 100) / props.maxHp}%;
-  height: ${(props: { height: number }) => props.height - 4}px;
-  background: ${(props: { color: string }) => props.color};
+  height: ${(props) => props.height - 4}px;
+  background: ${(props) => props.color};
   transition: 0.1s;
 `;
 
@@ -24,28 +24,33 @@ const anim = keyframes`
 const FillDmg = styled.div`
   position: absolute;
   width: ${(props: { hp: number; maxHp: number; height: number; color: string; dmg: number }) => (props.dmg * 100) / props.maxHp}%;
-  height: ${(props: { height: number }) => props.height - 4}px;
-  background: ${(props: { color: string }) => props.color};
-  left: ${(props: { hp: number; maxHp: number }) => (props.hp * 100) / props.maxHp}%;
+  height: ${(props) => props.height - 4}px;
+  background: ${(props) => props.color};
+  left: ${(props) => (props.hp * 100) / props.maxHp}%;
   animation: 1s ${anim};
   animation-fill-mode: forwards;
 `;
 
-const HpBar = ({ text, height, hp, maxHp, dmg }: any) => {
+const HpBar = (props: { text: string; height: number; hp: number; maxHp: number; dmg?: number }) => {
   return (
     <div className="d-flex align-items-center w-100" style={{ columnGap: 5 }}>
-      {text && (
+      {props.text && (
         <span>
-          <b>{text}</b>
+          <b>{props.text}</b>
         </span>
       )}
-      <Bar height={height}>
-        <Fill height={height} hp={hp} maxHp={maxHp} color={hp / maxHp > 0.5 ? 'lightgreen' : hp / maxHp > 0.25 ? 'yellow' : 'red'} />
-        {dmg && <FillDmg height={height} hp={hp} maxHp={maxHp} color={'orange'} dmg={dmg} />}
+      <Bar height={props.height}>
+        <Fill
+          height={props.height}
+          hp={props.hp}
+          maxHp={props.maxHp}
+          color={props.hp / props.maxHp > 0.5 ? 'lightgreen' : props.hp / props.maxHp > 0.25 ? 'yellow' : 'red'}
+        />
+        {props.dmg && <FillDmg height={props.height} hp={props.hp} maxHp={props.maxHp} color={'orange'} dmg={props.dmg} />}
       </Bar>
       <span className="text-center" style={{ whiteSpace: 'nowrap', minWidth: 72, maxWidth: 72 }}>
         <b>
-          {hp} / {maxHp}
+          {props.hp} / {props.maxHp}
         </b>
       </span>
     </div>

@@ -1,5 +1,5 @@
 import { useSnackbar } from 'notistack';
-import React, { Dispatch, Fragment, SetStateAction, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
@@ -20,13 +20,13 @@ import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { Combat } from '../../core/models/combat.model';
+import { PokemonTopMove } from '../../util/models/pokemon-top-move.model';
 
-const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
+const nameSort = (rowA: PokemonTopMove, rowB: PokemonTopMove) => {
   const a = rowA.name.toLowerCase();
   const b = rowB.name.toLowerCase();
   return a === b ? 0 : a > b ? 1 : -1;
@@ -35,22 +35,22 @@ const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
 const columns: any = [
   {
     name: 'Id',
-    selector: (row: { num: number }) => row.num,
+    selector: (row: PokemonTopMove) => row.num,
     sortable: true,
     minWidth: '40px',
   },
   {
     name: 'Name',
-    selector: (row: PokemonDataModel) => (
+    selector: (row: PokemonTopMove) => (
       <Link to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}>
         <img
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
           src={APIService.getPokeIconSprite(row.sprite, true)}
-          onError={(e: any) => {
-            e.onerror = null;
-            e.target.src = APIService.getPokeIconSprite(row.baseSpecies ?? '');
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies ?? '');
           }}
         />
         {row.name}
@@ -62,18 +62,18 @@ const columns: any = [
   },
   {
     name: 'Elite',
-    selector: (row: { isElite: boolean }) => (row.isElite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
+    selector: (row: PokemonTopMove) => (row.isElite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
     width: '64px',
   },
   {
     name: 'DPS',
-    selector: (row: { dps: number }) => parseFloat(row.dps.toFixed(2)),
+    selector: (row: PokemonTopMove) => parseFloat(row.dps.toFixed(2)),
     sortable: true,
     minWidth: '90px',
   },
   {
     name: 'TDO',
-    selector: (row: { tdo: number }) => parseFloat(row.tdo.toFixed(2)),
+    selector: (row: PokemonTopMove) => parseFloat(row.tdo.toFixed(2)),
     sortable: true,
     minWidth: '90px',
   },
@@ -85,14 +85,16 @@ const Move = (props: { id?: number }) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [move, setMove]: [Combat | undefined, Dispatch<SetStateAction<Combat | undefined>>] = useState();
+  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
   const [releasedGO, setReleaseGO] = useState(true);
-  const [topList, setTopList]: any = useState([]);
+  const [topList, setTopList]: [PokemonTopMove[], React.Dispatch<React.SetStateAction<PokemonTopMove[]>>] = useState(
+    [] as PokemonTopMove[]
+  );
 
   const { enqueueSnackbar } = useSnackbar();
 
   const getWeatherEffective = (type: string) => {
-    const result = Object.entries(data?.weatherBoost ?? {})?.find(([, value]: any) => {
+    const result = Object.entries(data?.weatherBoost ?? {})?.find(([, value]) => {
       return value.includes(type?.toUpperCase());
     });
     return result && result.at(0);
@@ -152,7 +154,7 @@ const Move = (props: { id?: number }) => {
             <Form.Select
               style={{ maxWidth: 250 }}
               className="element-top w-50"
-              onChange={(e: any) => {
+              onChange={(e) => {
                 searchParams.set('type', e.target.value.toLowerCase());
                 setSearchParams(searchParams);
                 setMove(data?.combat?.find((item) => item.track === move?.track && item.type === e.target.value?.toUpperCase()));
@@ -161,7 +163,7 @@ const Move = (props: { id?: number }) => {
             >
               {Object.keys(data?.typeEff ?? {})
                 .filter((type) => type !== 'FAIRY')
-                .map((value: string, index: React.Key | number) => (
+                .map((value, index) => (
                   <option key={index} value={value}>
                     {capitalize(value)}
                   </option>
@@ -472,7 +474,7 @@ const Move = (props: { id?: number }) => {
                 <td className="table-top-of-move" colSpan={2} style={{ padding: 0 }}>
                   <DataTable
                     columns={columns}
-                    data={topList.filter((pokemon: { num: number; name: string }) => {
+                    data={topList.filter((pokemon) => {
                       if (!releasedGO) {
                         return true;
                       }

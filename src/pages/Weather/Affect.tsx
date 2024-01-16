@@ -5,7 +5,7 @@ import { splitAndCapitalize } from '../../util/Utils';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 const Affect = (prop: { weathers: WeatherBoost | any }) => {
-  const [weathers, setWeathers]: [string[], any] = useState([]);
+  const [weathers, setWeathers] = useState([] as string[]);
 
   const [currentWeather, setCurrentWeather] = useState('CLEAR');
   const [showWeather, setShowWeather] = useState(false);
@@ -13,7 +13,7 @@ const Affect = (prop: { weathers: WeatherBoost | any }) => {
   const [weatherEffective, setWeatherEffective] = useState([]);
 
   const getWeatherEffective = useCallback(() => {
-    setWeatherEffective(Object.values(prop.weathers[currentWeather] ?? []));
+    setWeatherEffective(Object.values(prop.weathers[currentWeather] ?? {}));
   }, [currentWeather, prop.weathers]);
 
   useEffect(() => {

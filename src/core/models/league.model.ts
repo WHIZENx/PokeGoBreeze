@@ -33,24 +33,18 @@ export interface LeagueReward {
   step: number;
 }
 
-export interface LeagueRewardPokemon {
-  guaranteedLimited: boolean;
-  id?: number | null;
-  name: string;
-  form: string;
-}
-
 interface RankRewardSetLeague {
   type: string | boolean;
   count: number;
   step: number;
 }
 
-interface PokemonRewardSetLeague {
+export interface PokemonRewardSetLeague {
   guaranteedLimited: boolean;
   id: number;
   name: string;
   form: string;
+  rank?: number;
 }
 
 interface RankRewardLeague {
@@ -59,15 +53,17 @@ interface RankRewardLeague {
   premium: RankRewardSetLeague[];
 }
 
-interface PokemonRewardLeague {
+export interface PokemonRewardLeague {
   rank: number;
   free: PokemonRewardSetLeague[];
   premium: PokemonRewardSetLeague[];
 }
 
-interface SettingLeague {
+export interface SettingLeague {
   rankLevel: number;
   additionalTotalBattlesRequired?: number;
+  additionalWinsRequired: number;
+  minRatingRequired: number;
 }
 
 export interface LeagueData {

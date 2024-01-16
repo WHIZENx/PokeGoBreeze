@@ -32,6 +32,7 @@ import { getDbPokemonEncounter } from '../../services/db.service';
 import { DbModel } from '../../core/models/API/db.model';
 import { setBar, setPercent, showSpinner } from './spinner.action';
 import { isMobile } from 'react-device-detect';
+import { SetValue } from '../models/state.model';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -64,12 +65,12 @@ const options = {
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
   try {
     APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options).then((res: { data: { url: string }[] }) => {
-      APIService.getFetchUrl(res.data.at(0)?.url ?? '', options).then((file: { data: { files: { filename: string }[] | any[] } }) => {
+      APIService.getFetchUrl(res.data.at(0)?.url ?? '', options).then((file: { data: { files: { filename: string }[] } }) => {
         dispatch({
           type: LOAD_LOGO_POKEGO,
           payload: file.data.files
-            ?.find((item: { filename: string }) => item.filename.includes('Images/App Icons/'))
-            .filename.replace('Images/App Icons/', '')
+            ?.find((item) => item.filename.includes('Images/App Icons/'))
+            ?.filename.replace('Images/App Icons/', '')
             .replace('.png', ''),
         });
       });
@@ -92,14 +93,14 @@ export const loadCPM = (dispatch: Dispatch) => {
 
 export const loadTimestamp = async (
   dispatch: Dispatch,
-  stateTimestamp: any,
-  setStateTimestamp: any,
-  setStateImage: any,
-  setStateSound: any,
-  setStateCandy: any,
-  stateImage: any,
-  stateSound: any,
-  stateCandy: any
+  stateTimestamp: string,
+  setStateTimestamp: SetValue<string>,
+  setStateImage: SetValue<string>,
+  setStateSound: SetValue<string>,
+  setStateCandy: SetValue<string>,
+  stateImage: string,
+  stateSound: string,
+  stateCandy: string
 ) => {
   await Promise.all([
     APIService.getFetchUrl(APIUrl.TIMESTAMP, {
@@ -159,12 +160,12 @@ export const loadGameMaster = (
   imageRoot: { data: { commit: { tree: { url: string } } }[] },
   soundsRoot: { data: { commit: { tree: { url: string } } }[] },
   timestampLoaded: { images: boolean; sounds: boolean },
-  setStateImage: any,
-  setStateSound: any,
-  setStateCandy: any,
-  stateImage: any,
-  stateSound: any,
-  stateCandy: any
+  setStateImage: SetValue<string>,
+  setStateSound: SetValue<string>,
+  setStateCandy: SetValue<string>,
+  stateImage: string,
+  stateSound: string,
+  stateCandy: string
 ) => {
   APIService.getFetchUrl(APIUrl.GAMEMASTER, {
     cancelToken: APIService.getAxios().CancelToken.source().token,
@@ -329,12 +330,12 @@ export const loadAssets = async (
   data: any,
   pokemon: PokemonModel[],
   pokemonFamily: string[],
-  pokemonData: PokemonDataModel[],
+  pokemonData: { [x: string]: PokemonDataModel },
   formSpecial: string[],
   pokemonCombat: CombatPokemon[],
   noneForm: string[],
-  setStateImage: any,
-  setStateSound: any
+  setStateImage: SetValue<string>,
+  setStateSound: SetValue<string>
 ) => {
   await Promise.all([
     APIService.getFetchUrl(imageRoot.data.at(0)?.commit.tree.url ?? '', options),
@@ -384,7 +385,13 @@ export const loadAssets = async (
   });
 };
 
-export const loadPVP = (dispatch: Dispatch, setStateTimestamp: any, stateTimestamp: any, setStatePVP: any, statePVP: any) => {
+export const loadPVP = (
+  dispatch: Dispatch,
+  setStateTimestamp: SetValue<string>,
+  stateTimestamp: string,
+  setStatePVP: SetValue<string>,
+  statePVP: string
+) => {
   APIService.getFetchUrl(APIUrl.FETCH_PVP_DATA, options).then(
     (res: { data: { commit: { tree: { url: string }; committer: { date: Date } } }[] }) => {
       const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();
@@ -402,7 +409,7 @@ export const loadPVP = (dispatch: Dispatch, setStateTimestamp: any, stateTimesta
           APIService.getFetchUrl(pvpRootPath?.url + '', options).then((pvpFolder: { data: { tree: { path: string; url: string }[] } }) => {
             const pvpFolderPath = pvpFolder.data.tree.find((item) => item.path === 'data');
 
-            APIService.getFetchUrl(pvpFolderPath?.url + '?recursive=1', options).then((pvp: { data: { tree: any[] } }) => {
+            APIService.getFetchUrl(pvpFolderPath?.url + '?recursive=1', options).then((pvp: { data: { tree: { path: string }[] } }) => {
               const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
               const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 

@@ -5,23 +5,28 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from '../Input/models/select-move.model';
+import { Combat } from '../../core/models/combat.model';
 
 const Move = (props: {
   type?: string;
   id: number;
   form: string;
-  move: string;
+  move: Combat | undefined;
   // eslint-disable-next-line no-unused-vars
-  setMove: (arg0: any) => void;
+  setMove: (move: Combat | undefined) => void | React.Dispatch<React.SetStateAction<Combat | undefined>>;
   text: string;
   selectDefault: boolean;
-  clearData?: () => void;
+  // eslint-disable-next-line no-unused-vars
+  clearData?: (option?: boolean) => void;
 }) => {
   const data = useSelector((state: StoreState) => state.store.data);
 
   const [countFM, setCountFM] = useState(0);
-  const [resultMove, setResultMove]: [SelectMoveModel[], any] = useState([]);
-  const [currentMove, setCurrentMove]: [SelectMoveModel | undefined, any] = useState();
+  const [resultMove, setResultMove]: [SelectMoveModel[], React.Dispatch<React.SetStateAction<SelectMoveModel[]>>] = useState(
+    [] as SelectMoveModel[]
+  );
+  const [currentMove, setCurrentMove]: [SelectMoveModel | undefined, React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>] =
+    useState();
   const [showMove, setShowMove] = useState(false);
 
   const findMoveData = useCallback(
@@ -39,7 +44,7 @@ const Move = (props: {
       const simpleMove: SelectMoveModel[] = [];
       if (resultFirst && (resultFirst.length === 1 || result == null)) {
         if (resultFirst?.length === 0) {
-          return setResultMove('');
+          return setResultMove(simpleMove);
         }
         if (props.type !== TypeMove.CHARGE) {
           resultFirst.at(0)?.quickMoves.forEach((value) => {

@@ -1,15 +1,15 @@
 import { CPMDataModel } from './models/cpm.model';
 
 export const calculateCPM = (baseCPM: number[], min: number, max: number) => {
-  const cpmList = [];
+  const cpmList: CPMDataModel[] = [];
   for (let i = min; i <= max; i += 1) {
     const result = new CPMDataModel();
     result.level = i;
     if (baseCPM[i]) {
       result.multiplier = baseCPM[i];
     } else {
-      const lvLow: any = Object.keys(baseCPM).find((key) => parseInt(key) <= i);
-      const lvHigh: any = Object.keys(baseCPM).find((key) => parseInt(key) >= i);
+      const lvLow = parseInt(Object.keys(baseCPM).find((key) => parseInt(key) <= i) ?? '0');
+      const lvHigh = parseInt(Object.keys(baseCPM).find((key) => parseInt(key) >= i) ?? '0');
       result.multiplier = Math.sqrt(
         ((Math.pow(baseCPM[lvHigh], 2) - Math.pow(baseCPM[lvLow], 2)) / (lvHigh - lvLow)) * (i - lvLow) + Math.pow(baseCPM[lvLow], 2)
       );

@@ -7,19 +7,32 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from './models/select-move.model';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { Combat } from '../../core/models/combat.model';
 
-const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputType, selected, disable }: any) => {
+const SelectMove = (props: {
+  move: SelectMoveModel | Combat | undefined;
+  setMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
+  clearData?: () => void;
+  pokemon: PokemonDataModel | undefined;
+  moveType: string;
+  inputType?: string;
+  selected?: boolean;
+  disable?: boolean;
+}) => {
   const combat = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
-  const [resultMove, setResultMove]: [SelectMoveModel[], any] = useState([]);
+  const [resultMove, setResultMove]: [SelectMoveModel[], React.Dispatch<React.SetStateAction<SelectMoveModel[]>>] = useState(
+    [] as SelectMoveModel[]
+  );
   const [showMove, setShowMove] = useState(false);
 
   const changeMove = (value: SelectMoveModel) => {
     setShowMove(false);
-    if (setMovePokemon) {
-      setMovePokemon(value);
+    if (props.setMovePokemon) {
+      props.setMovePokemon(value);
     }
-    if (clearData) {
-      clearData();
+    if (props.clearData) {
+      props.clearData();
     }
   };
 
@@ -59,8 +72,8 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
               simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
             });
           }
-          if (setMovePokemon && (!selected || !move) && !move) {
-            setMovePokemon(simpleMove.at(0));
+          if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
+            props.setMovePokemon(simpleMove.at(0));
           }
           return setResultMove(simpleMove);
         }
@@ -88,44 +101,39 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
           });
         }
-        if (setMovePokemon && (!selected || !move) && !move) {
-          setMovePokemon(simpleMove.at(0));
+        if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
+          props.setMovePokemon(simpleMove.at(0));
         }
         return setResultMove(simpleMove);
       }
     },
-    [setMovePokemon, combat, move]
+    [props.setMovePokemon, combat, props.move]
   );
 
   useEffect(() => {
-    if (pokemon?.num && moveType) {
-      findMove(pokemon.num, pokemon?.forme ?? '', moveType, selected);
+    if (props.pokemon?.num && props.moveType) {
+      findMove(props.pokemon.num, props.pokemon?.forme ?? '', props.moveType, props.selected);
     }
-  }, [pokemon?.num, pokemon?.forme, moveType, selected]);
+  }, [props.pokemon?.num, props.pokemon?.forme, props.moveType, props.selected]);
 
   const smallInput = () => {
     return (
       <div
         className={
           'position-relative d-flex align-items-center form-control ' +
-          (!disable && pokemon ? 'card-select-enabled' : 'card-select-disabled')
+          (!props.disable && props.pokemon ? 'card-select-enabled' : 'card-select-disabled')
         }
         style={{ padding: 0, borderRadius: 0 }}
       >
         {resultMove?.length === 0 && <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>}
         {resultMove?.length > 0 && (
           <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-            <CardMoveSmall
-              value={move === '' ? null : move}
-              show={pokemon ? true : false}
-              disable={disable}
-              select={resultMove?.length > 1}
-            />
+            <CardMoveSmall value={props.move} show={props.pokemon ? true : false} disable={props.disable} select={resultMove?.length > 1} />
             {showMove && resultMove && (
               <div className="result-move-select">
                 <div>
                   {resultMove
-                    .filter((value) => value?.name !== move?.name)
+                    .filter((value) => value?.name !== props.move?.name)
                     .map((value, index) => (
                       <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
                         <CardMoveSmall value={value} />
@@ -149,12 +157,12 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
         onClick={() => setShowMove(true)}
         onBlur={() => setShowMove(false)}
       >
-        <CardMove value={move} />
+        <CardMove value={props.move} />
         {showMove && (
           <div className="result-move-select-default">
             <div>
               {resultMove
-                .filter((value) => value.name !== move.name)
+                .filter((value) => value.name !== props.move?.name)
                 .map((value, index) => (
                   <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
                     <CardMove value={value} />
@@ -169,8 +177,8 @@ const SelectMove = ({ move, setMovePokemon, clearData, pokemon, moveType, inputT
 
   return (
     <Fragment>
-      {inputType === 'small' && <Fragment>{smallInput()}</Fragment>}
-      {!inputType && <Fragment>{defaultInput()}</Fragment>}
+      {props.inputType === 'small' && <Fragment>{smallInput()}</Fragment>}
+      {!props.inputType && <Fragment>{defaultInput()}</Fragment>}
     </Fragment>
   );
 };

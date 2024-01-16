@@ -9,25 +9,27 @@ import * as CandyModel from '../../../core/models/candy.model';
 
 const Background: any = styled.div`
   position: absolute;
-  background: ${(props: { candy: CandyModel.Candy[]; id: number }) => computeCandyBgColor(props.candy, props.id)};
+  background: ${(props: { candy: CandyModel.Candy[]; id: number | undefined; size: number }) =>
+    computeCandyBgColor(props.candy, props.id ?? 0)};
   clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
-  width: ${(props: any) => props.size ?? 30}px;
-  height: ${(props: any) => props.size ?? 30}px;
+  width: ${(props) => props.size ?? 30}px;
+  height: ${(props) => props.size ?? 30}px;
 `;
 
 const Fill: any = styled.div`
-  background: ${(props: { candy: CandyModel.Candy[]; id: number; size: number }) => computeCandyColor(props.candy, props.id)};
-  width: ${(props: { size: number }) => props.size ?? 30}px;
-  height: ${(props: { size: number }) => props.size ?? 30}px;
+  background: ${(props: { candy: CandyModel.Candy[]; id: number | undefined; size: number }) =>
+    computeCandyColor(props.candy, props.id ?? 0)};
+  width: ${(props) => props.size ?? 30}px;
+  height: ${(props) => props.size ?? 30}px;
   mask: url(${bgCandyXL}) center/contain;
 `;
 
-const CandyXL = ({ id, style, size }: any) => {
+const CandyXL = (props: { id: number | undefined; style?: React.CSSProperties; size?: number }) => {
   const candy = useSelector((state: StoreState) => state.store.data?.candy);
   return (
-    <div className="position-relative d-inline-block" style={style}>
-      <Background id={id} candy={candy} size={size} />
-      <Fill id={id} candy={candy} size={size} />
+    <div className="position-relative d-inline-block" style={props.style}>
+      <Background id={props.id} candy={candy} size={props.size} />
+      <Fill id={props.id} candy={candy} size={props.size} />
     </div>
   );
 };

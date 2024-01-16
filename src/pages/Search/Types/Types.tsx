@@ -14,44 +14,39 @@ import { TypeMove } from '../../../enums/move.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { DEFAULT_TYPES } from '../../../util/Constants';
+import { Combat } from '../../../core/models/combat.model';
 
-const nameSort = (rowA: { name: string }, rowB: { name: string }) => {
-  const a = rowA.name.toLowerCase();
-  const b = rowB.name.toLowerCase();
-  return a === b ? 0 : a > b ? 1 : -1;
-};
-
-const moveSort = (rowA: { name: string }, rowB: { name: string }) => {
-  const a = rowA.name.toLowerCase();
-  const b = rowB.name.toLowerCase();
-  return a === b ? 0 : a > b ? 1 : -1;
+const nameSort = (rowA: PokemonDataModel | Combat | undefined, rowB: PokemonDataModel | Combat | undefined) => {
+  const a = rowA?.name.toLowerCase();
+  const b = rowB?.name.toLowerCase();
+  return a === b ? 0 : (a ?? 0) > (b ?? 0) ? 1 : -1;
 };
 
 const columnPokemon: any = [
   {
     name: 'ID',
-    selector: (row: { num: number }) => row.num,
+    selector: (row: PokemonDataModel | undefined) => row?.num,
     sortable: true,
     width: '100px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: { num: number; forme: string; name: string; sprite: string; baseSpecies: string }) => (
+    selector: (row: PokemonDataModel | undefined) => (
       <Link
-        to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
-        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
+        to={`/pokemon/${row?.num}${row?.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
+        title={`#${row?.num} ${splitAndCapitalize(row?.name, '-', ' ')}`}
       >
         <img
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.sprite, true)}
-          onError={(e: any) => {
-            e.onerror = null;
-            e.target.src = APIService.getPokeIconSprite(row.baseSpecies);
+          src={APIService.getPokeIconSprite(row?.sprite ?? '', true)}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = APIService.getPokeIconSprite(row?.baseSpecies ?? '');
           }}
         />
-        {splitAndCapitalize(row.name, '-', ' ')}
+        {splitAndCapitalize(row?.name, '-', ' ')}
       </Link>
     ),
     sortable: true,
@@ -60,8 +55,8 @@ const columnPokemon: any = [
   },
   {
     name: 'Type(s)',
-    selector: (row: { types: string[] }) =>
-      row.types.map((value: string, index: React.Key) => (
+    selector: (row: PokemonDataModel | undefined) =>
+      row?.types.map((value, index) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -97,13 +92,13 @@ const columnPokemon: any = [
 const columnMove: any = [
   {
     name: 'ID',
-    selector: (row: { id: number }) => row.id,
+    selector: (row: Combat) => row.id,
     sortable: true,
     width: '100px',
   },
   {
     name: 'Move Name',
-    selector: (row: { id: string; name: string }) => (
+    selector: (row: Combat) => (
       <Link
         className="d-flex align-items-center"
         to={'/move/' + row.id}
@@ -114,29 +109,29 @@ const columnMove: any = [
     ),
     sortable: true,
     minWidth: '300px',
-    sortFunction: moveSort,
+    sortFunction: nameSort,
   },
   {
     name: 'Power PVE',
-    selector: (row: { pve_power: number }) => row.pve_power,
+    selector: (row: Combat) => row.pve_power,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Power PVP',
-    selector: (row: { pvp_power: number }) => row.pvp_power,
+    selector: (row: Combat) => row.pvp_power,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVE',
-    selector: (row: { pve_energy: number }) => `${row.pve_energy > 0 ? '+' : ''}${row.pve_energy}`,
+    selector: (row: Combat) => `${row.pve_energy > 0 ? '+' : ''}${row.pve_energy}`,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVP',
-    selector: (row: { pvp_energy: number }) => `${row.pvp_energy > 0 ? '+' : ''}${row.pvp_energy}`,
+    selector: (row: Combat) => `${row.pvp_energy > 0 ? '+' : ''}${row.pvp_energy}`,
     sortable: true,
     width: '120px',
   },
@@ -146,15 +141,15 @@ const SearchTypes = () => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const [typeList, setTypeList]: [string[], any] = useState([]);
+  const [typeList, setTypeList] = useState([] as string[]);
 
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const [currentType, setCurrentType]: [string | undefined, any] = useState();
-  const [result, setResult]: any = useState({
-    pokemonList: [],
-    fastMove: [],
-    chargedMove: [],
+  const [currentType, setCurrentType] = useState('');
+  const [result, setResult] = useState({
+    pokemonList: [] as PokemonDataModel[],
+    fastMove: [] as Combat[],
+    chargedMove: [] as Combat[],
   });
   const allData = {
     pokemon: (data?.released?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length ?? 1) - 1,
@@ -176,7 +171,7 @@ const SearchTypes = () => {
 
   useEffect(() => {
     if (typeList.length > 0 && !currentType) {
-      setCurrentType(typeList.at(0));
+      setCurrentType(typeList.at(0) ?? '');
     }
   }, [typeList, currentType]);
 
@@ -219,7 +214,7 @@ const SearchTypes = () => {
                 <ul>
                   {Object.keys(data?.typeEff ?? {})
                     .filter((value) => value !== currentType)
-                    .map((value, index: React.Key) => (
+                    .map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                         <CardType value={capitalize(value)} />
                       </li>

@@ -1,15 +1,13 @@
 import { capitalize, checkMoveSetAvailable } from '../../util/Utils';
 import { Combat } from './combat.model';
 import { genList } from '../../util/Constants';
+import { StatsPokemon } from './stats.model';
+import { SelectMoveModel } from '../../components/Input/models/select-move.model';
 
 export interface PokemonDataStats {
   level: number;
   isShadow: boolean;
-  iv: {
-    atk: number;
-    def: number;
-    sta: number;
-  };
+  iv: StatsPokemon;
 }
 
 interface EvolutionBranch {
@@ -32,13 +30,35 @@ interface EvolutionBranch {
   obEvolutionBranchRequiredMove?: string;
 }
 
+export interface Encounter {
+  baseCaptureRate?: number;
+  baseFleeRate?: number;
+  collisionRadiusM: number;
+  collisionHeightM: number;
+  collisionHeadRadiusM: number;
+  movementType: string;
+  movementTimerS: number;
+  jumpTimeS: number;
+  attackTimerS: number;
+  attackProbability: number;
+  dodgeProbability: number;
+  dodgeDurationS: number;
+  dodgeDistance: number;
+  cameraDistance: number;
+  minPokemonActionFrequencyS: number;
+  maxPokemonActionFrequencyS: number;
+  obShadowFormBaseCaptureRate: number;
+  obShadowFormAttackProbability: number;
+  obShadowFormDodgeProbability: number;
+}
+
 export interface PokemonModel {
   obSpecialAttackMoves?: string[];
   eliteQuickMove?: string[];
   eliteCinematicMove?: string[];
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
-  pokemonClass: any;
+  pokemonClass: string | undefined;
   formChange: null;
   tempEvoOverrides: any;
   pokemonId: string;
@@ -51,27 +71,7 @@ export interface PokemonModel {
     cylinderHeightM: number;
     shoulderModeScale: number;
   };
-  encounter: {
-    baseCaptureRate?: number;
-    baseFleeRate?: number;
-    collisionRadiusM: number;
-    collisionHeightM: number;
-    collisionHeadRadiusM: number;
-    movementType: string;
-    movementTimerS: number;
-    jumpTimeS: number;
-    attackTimerS: number;
-    attackProbability: number;
-    dodgeProbability: number;
-    dodgeDurationS: number;
-    dodgeDistance: number;
-    cameraDistance: number;
-    minPokemonActionFrequencyS: number;
-    maxPokemonActionFrequencyS: number;
-    obShadowFormBaseCaptureRate: number;
-    obShadowFormAttackProbability: number;
-    obShadowFormDodgeProbability: number;
-  };
+  encounter: Encounter;
   stats: {
     baseStamina: number;
     baseAttack: number;
@@ -115,6 +115,11 @@ export interface PokemonModel {
   name: string;
 }
 
+export interface PokemonGenderRatio {
+  M: number;
+  F: number;
+}
+
 export interface PokemonDataModel {
   num: number;
   name: string;
@@ -122,19 +127,8 @@ export interface PokemonDataModel {
   slug: string;
   sprite: string;
   types: string[];
-  genderRatio: {
-    M: number;
-    F: number;
-  };
-  baseStats: {
-    hp?: number;
-    atk: number;
-    def: number;
-    sta?: number;
-    spa?: number;
-    spd?: number;
-    spe?: number;
-  };
+  genderRatio: PokemonGenderRatio;
+  baseStats: StatsPokemon;
   heightm: number;
   weightkg: number;
   color: string;
@@ -178,23 +172,31 @@ export interface PokemonNameModel {
 }
 
 export interface PokemonMoveData {
-  pokemon: any;
+  pokemon: PokemonDataModel | undefined;
   fmove: Combat | undefined;
   cmove: Combat | undefined;
   dpsDef: number;
   dpsAtk: number;
   tdoAtk: number;
   tdoDef: number;
-  multiDpsTdo: number;
+  multiDpsTdo?: number;
   ttkAtk: number;
   ttkDef: number;
-  attackHpRemain: number;
-  defendHpRemain: number;
-  death: number;
-  shadow: boolean;
-  purified: boolean;
-  mShadow: boolean;
-  elite: { fmove: boolean; cmove: boolean };
+  attackHpRemain?: number;
+  defendHpRemain?: number;
+  death?: number;
+  shadow?: boolean;
+  purified?: boolean;
+  mShadow?: boolean;
+  elite?: { fmove: boolean; cmove: boolean };
+  trainerId?: number;
+  atk?: number;
+  def?: number;
+  hp?: number;
+  timer?: number;
+  defHpRemain?: number;
+  atkHpRemain?: number;
+  special?: boolean;
 }
 
 export interface PokemonEncounter {
@@ -202,6 +204,20 @@ export interface PokemonEncounter {
   name: string;
   basecapturerate: number;
   basefleerate: number;
+}
+
+export interface PokemonRaidModel {
+  dataTargetPokemon?: PokemonDataModel;
+  fmoveTargetPokemon?: SelectMoveModel;
+  cmoveTargetPokemon?: SelectMoveModel;
+  trainerId?: number;
+  dpsAtk?: number;
+  hp?: number;
+  ttkDef?: number;
+  dpsDef?: number;
+  tdoAtk?: number;
+  tdoDef?: number;
+  attackHpRemain?: number;
 }
 
 export class PokemonDataModel {
@@ -215,15 +231,7 @@ export class PokemonDataModel {
     M: number;
     F: number;
   };
-  baseStats!: {
-    hp?: number;
-    atk: number;
-    def: number;
-    sta?: number;
-    spa?: number;
-    spd?: number;
-    spe?: number;
-  };
+  baseStats!: StatsPokemon;
   heightm!: number;
   weightkg!: number;
   color!: string;
@@ -279,14 +287,14 @@ export class PokemonDataModel {
     };
     this.baseStatsGO = true;
     this.baseStats = {
-      atk: pokemon.stats.baseAttack,
-      def: pokemon.stats.baseDefense,
-      sta: pokemon.stats.baseStamina,
+      atk: pokemon.stats?.baseAttack,
+      def: pokemon.stats?.baseDefense,
+      sta: pokemon.stats?.baseStamina,
     };
     this.heightm = pokemon.pokedexHeightM;
     this.weightkg = pokemon.pokedexWeightKg;
     this.color = 'None';
-    this.evos = pokemon.evolutionIds ? pokemon.evolutionIds.map((name: string) => capitalize(name)) : [];
+    this.evos = pokemon.evolutionIds ? pokemon.evolutionIds.map((name) => capitalize(name)) : [];
     this.baseForme = null;
     this.prevo = capitalize(pokemon.parentPokemonId ?? '');
     this.isForceReleasedGO = checkMoveSetAvailable(pokemon);
@@ -294,7 +302,7 @@ export class PokemonDataModel {
     this.isTransferable = pokemon.isTransferable;
     this.isDeployable = pokemon.isDeployable;
     this.isTradable = pokemon.isTradable;
-    this.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '');
+    this.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '') ?? null;
     this.disableTransferToPokemonHome = pokemon.disableTransferToPokemonHome ?? false;
     this.isBaby = false;
     this.gen = gen;
@@ -305,5 +313,16 @@ export class PokemonDataModel {
       this.name.indexOf('_') > -1
         ? this.name.slice(this.name.indexOf('_') + 1).replaceAll('_', '-') + (this.num === 931 ? '-plumage' : '')
         : null;
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonModel {
+  id!: number;
+  name!: string;
+
+  constructor(id: number, name: string | undefined) {
+    this.id = id;
+    this.name = name ?? '';
   }
 }

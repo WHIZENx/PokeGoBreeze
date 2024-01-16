@@ -15,7 +15,7 @@ import { FORM_NORMAL, KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constan
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import Form from '../../components/Info/Form/Form-v2';
+import Form from '../../components/Info/Form/Form';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
@@ -32,19 +32,34 @@ import { RouterState, SpinnerState, StatsState, StoreState } from '../../store/m
 import { SearchingModel } from '../../store/models/searching.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
-import { PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
+import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
 import { CancelTokenSource } from 'axios';
+import { PokemonGenderRatio, PokemonNameModel } from '../../core/models/pokemon.model';
+import { ReduxRouterState } from '@lagunovsky/redux-react-router';
+import { PokemonTypeCost } from '../../core/models/evolution.model';
+
+interface OptionsPokemon {
+  prev: PokemonNameModel | undefined;
+  current: PokemonNameModel | undefined;
+  next: PokemonNameModel | undefined;
+}
+
+interface TypeCost {
+  purified: PokemonTypeCost;
+  thirdMove: PokemonTypeCost;
+}
 
 const Pokemon = (props: {
-  prevRouter?: any;
+  prevRouter?: ReduxRouterState;
   searching?: SearchingModel | null;
   id?: string;
-  onDecId?: any;
-  onIncId?: any;
+  onDecId?: () => void;
+  onIncId?: () => void;
   isSearch?: boolean;
-  onSetIDPoke?: any;
+  // eslint-disable-next-line no-unused-vars
+  onSetIDPoke?: (id: number) => void;
   first?: boolean;
-  setFirst?: any;
+  setFirst?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -60,33 +75,37 @@ const Pokemon = (props: {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [pokeData, setPokeData]: any = useState([]);
-  const [formList, setFormList]: any = useState([]);
+  const [pokeData, setPokeData]: [PokemonInfo[], React.Dispatch<React.SetStateAction<PokemonInfo[]>>] = useState([] as PokemonInfo[]);
+  const [formList, setFormList]: [
+    PokemonFormModify[][] | undefined,
+    React.Dispatch<React.SetStateAction<PokemonFormModify[][] | undefined>>
+  ] = useState();
 
   const [reForm, setReForm] = useState(false);
 
-  const [data, setData]: any = useState(null);
-  const [dataStorePokemon, setDataStorePokemon]: any = useState(null);
-  const [pokeRatio, setPokeRatio]: any = useState(null);
+  const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
+  const [dataStorePokemon, setDataStorePokemon]: [
+    OptionsPokemon | undefined,
+    React.Dispatch<React.SetStateAction<OptionsPokemon | undefined>>
+  ] = useState();
+  const [pokeRatio, setPokeRatio]: [PokemonGenderRatio | undefined, React.Dispatch<React.SetStateAction<PokemonGenderRatio | undefined>>] =
+    useState();
 
-  const [version, setVersion]: any = useState(null);
-  const [region, setRegion] = useState(null);
-  const [WH, setWH]: any = useState({ weight: 0, height: 0 });
-  const [formName, setFormName]: any = useState(null);
-  const [form, setForm]: any = useState(null);
+  const [version, setVersion] = useState('');
+  const [region, setRegion] = useState('');
+  const [WH, setWH] = useState({ weight: 0, height: 0 });
+  const [formName, setFormName]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
+  const [form, setForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
-  const [defaultForm, setDefaultForm]: any = useState(true);
+  const [defaultForm, setDefaultForm]: [
+    PokemonFormModify | undefined,
+    React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>
+  ] = useState();
 
-  const [costModifier, setCostModifier]: any = useState({
-    purified: {
-      candy: null,
-      stardust: null,
-    },
-    thirdMove: {
-      candy: null,
-      stardust: null,
-    },
+  const [costModifier, setCostModifier]: [TypeCost, React.Dispatch<React.SetStateAction<TypeCost>>] = useState({
+    purified: {},
+    thirdMove: {},
   });
 
   const [onChangeForm, setOnChangeForm] = useState(false);
@@ -98,20 +117,20 @@ const Pokemon = (props: {
   };
 
   const fetchMap = useCallback(
-    async (data: Species, axios: any, source: CancelTokenSource) => {
+    async (data: Species, axios: typeof APIService, source: CancelTokenSource) => {
       const dataPokeList: PokemonInfo[] = [];
-      let dataFromList: any[] = [];
+      const dataFormList: PokemonForm[][] = [];
       await Promise.all(
         data?.varieties.map(async (value) => {
           const pokeInfo: PokemonInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
-          const pokeForm = await Promise.all(
+          const pokeForm: PokemonForm[] = await Promise.all(
             pokeInfo.forms.map(async (item) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
           );
           dataPokeList.push({
             ...pokeInfo,
             is_include_shadow: checkPokemonIncludeShadowForm(dataStore?.pokemon ?? [], pokeInfo.name),
           });
-          dataFromList.push(pokeForm);
+          dataFormList.push(pokeForm);
         })
       );
 
@@ -119,50 +138,59 @@ const Pokemon = (props: {
       const costModifier = getCostModifier(data?.id);
       setCostModifier({
         purified: {
-          candy: costModifier?.purified.candy,
-          stardust: costModifier?.purified.stardust,
+          candy: costModifier?.purified?.candy,
+          stardust: costModifier?.purified?.stardust,
         },
         thirdMove: {
-          candy: costModifier?.thirdMove.candy,
-          stardust: costModifier?.thirdMove.stardust,
+          candy: costModifier?.thirdMove?.candy,
+          stardust: costModifier?.thirdMove?.stardust,
         },
       });
 
       setPokeData(dataPokeList);
       let modify = false;
-      dataFromList = dataFromList?.map((value) => {
+      let formListModify = dataFormList?.map((value) => {
         if (value.length === 0) {
           modify = true;
-          return dataFromList.find((item) => item.length === dataFromList.length);
+          return dataFormList.find((item) => item.length === dataFormList.length);
         }
         return value;
       });
 
       if (modify) {
-        dataFromList = dataFromList.map((value, index) => {
-          return [value[index]];
-        });
+        formListModify = formListModify
+          .filter((value) => value)
+          .map((value, index) => {
+            return value ? [value[index]] : [];
+          });
       }
 
-      dataFromList = dataFromList
+      const formListResult: PokemonFormModify[][] = formListModify
         .map((item) => {
           return item
-            .map((item: { pokemon: { name: string } }) => ({
-              form: item,
-              name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name,
-              default_name: data?.name,
-            }))
-            .sort((a: { form: { id: number } }, b: { form: { id: number } }) => a.form.id - b.form.id);
+            ? item
+                .map(
+                  (item) =>
+                    ({
+                      form: new FormModel(item),
+                      name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                      default_name: data?.name,
+                      default_id: data.id,
+                    } as PokemonFormModify)
+                )
+                .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
+            : [];
         })
-        .sort((a, b) => a.at(0).form.id - b.at(0).form.id);
+        .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
 
-      if (data?.id === 150) {
-        dataFromList.push(getFormsGO(data?.id));
+      const goForm = getFormsGO(data.id);
+      if (goForm.length > 0) {
+        formListResult.push(goForm);
       }
 
-      if (dataFromList.filter((form) => form.find((pokemon: PokemonFormModify) => pokemon.form.form_name === 'gmax')).length > 1) {
-        dataFromList.forEach((form) => {
-          form.forEach((pokemon: PokemonFormModify) => {
+      if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name === 'gmax')).length > 1) {
+        formListResult.forEach((form) => {
+          form.forEach((pokemon) => {
             if (pokemon.form.form_name === 'gmax') {
               pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
             }
@@ -170,7 +198,7 @@ const Pokemon = (props: {
         });
       }
 
-      if (costModifier?.purified.candy && costModifier?.purified.stardust) {
+      if (costModifier?.purified?.candy && costModifier?.purified.stardust) {
         const pokemonDefault = dataPokeList.filter((p) => p.is_include_shadow);
         pokemonDefault.forEach((p, index) => {
           let form = '';
@@ -189,7 +217,8 @@ const Pokemon = (props: {
             false,
             `${p.name}-shadow`,
             'Pokémon-GO',
-            p.types ?? [],
+            p.types.map((item) => item.type.name) ?? [],
+            null,
             -1 + -2 * index
           );
           const pokemonPurifiedModify = new PokemonFormModifyModel(
@@ -204,24 +233,27 @@ const Pokemon = (props: {
             true,
             `${p.name}-purified`,
             'Pokémon-GO',
-            p.types ?? [],
+            p.types.map((item) => item.type.name) ?? [],
+            null,
             -2 * (index + 1)
           );
-          dataFromList.push([pokemonShadowModify, pokemonPurifiedModify]);
+          formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
         });
       }
 
-      setFormList(dataFromList);
-      let defaultFrom, isDefaultForm: { form: PokemonForm; default_name: string; name: string }, defaultData: PokemonInfo | undefined;
+      setFormList(formListResult);
+      let defaultFrom: (PokemonFormModify | undefined)[] | undefined,
+        isDefaultForm: PokemonFormModify | undefined,
+        defaultData: PokemonInfo | undefined;
       let formParams = searchParams.get('form');
 
       if (formParams) {
         if (data?.id === 555 && formParams === 'galar') {
           formParams += '-standard';
         }
-        defaultFrom = dataFromList.find((value) =>
+        defaultFrom = formListResult.find((value) =>
           value.find(
-            (item: PokemonFormModify) =>
+            (item) =>
               item.form.form_name === formParams?.toLowerCase() || item.form.name === item.default_name + '-' + formParams?.toLowerCase()
           )
         );
@@ -229,41 +261,41 @@ const Pokemon = (props: {
         if (defaultFrom) {
           isDefaultForm = defaultFrom.at(0);
           if (
-            isDefaultForm.form.form_name !== formParams.toLowerCase() &&
-            isDefaultForm.form.name !== isDefaultForm.default_name + '-' + formParams.toLowerCase()
+            isDefaultForm?.form.form_name !== formParams.toLowerCase() &&
+            isDefaultForm?.form.name !== isDefaultForm?.default_name + '-' + formParams.toLowerCase()
           ) {
-            isDefaultForm = defaultFrom.find((value: PokemonFormModify) => value.form.form_name === formParams?.toLowerCase());
+            isDefaultForm = defaultFrom.find((value) => value?.form.form_name === formParams?.toLowerCase());
           }
         } else {
-          defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
-          isDefaultForm = defaultFrom.find((item) => item.form.id === data?.id);
+          defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
+          isDefaultForm = defaultFrom?.find((item) => item?.form.id === data?.id);
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
       } else if (router.action === Action.Pop && props.searching) {
-        defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
-        isDefaultForm = defaultFrom.find((item) => item.form.form_name === props.searching?.form);
+        defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
+        isDefaultForm = defaultFrom?.find((item) => item?.form.form_name === props.searching?.form);
       } else {
-        defaultFrom = dataFromList.map((value) => value.find((item: PokemonFormModify) => item.form.is_default));
-        isDefaultForm = defaultFrom.find((item) => item.form.id === data?.id);
+        defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
+        isDefaultForm = defaultFrom?.find((item) => item?.form.id === data?.id);
       }
       defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.form.name);
       if (!defaultData) {
         defaultData = dataPokeList.find((value) => value.name === isDefaultForm?.name);
       }
-      setWH((prevWH: any) => ({ ...prevWH, weight: defaultData?.weight, height: defaultData?.height }));
-      setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom.at(0)).form.version_group.name, '-', ' '));
+      setWH((prevWH) => ({ ...prevWH, weight: defaultData?.weight ?? 0, height: defaultData?.height ?? 0 }));
+      setVersion(splitAndCapitalize((isDefaultForm ?? defaultFrom.at(0) ?? null)?.form.version_group.name, '-', ' '));
       if (!params.id) {
         setRegion(regionList[parseInt(data?.generation.url.split('/').at(6) ?? '')]);
       }
       const nameInfo =
         router.action === Action.Pop && props.searching
           ? props.searching.fullName
-          : splitAndCapitalize(formParams ? isDefaultForm.form.name : data?.name, '-', ' ');
-      const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data?.id, isDefaultForm.form.form_name), '-', '-') : null;
+          : splitAndCapitalize(formParams ? isDefaultForm?.form.name : data?.name, '-', ' ');
+      const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data?.id, isDefaultForm?.form.form_name ?? ''), '-', '-') : null;
       setFormName(nameInfo);
       setReleased(checkReleased(data?.id, nameInfo ?? '', isDefaultForm?.form?.is_default));
-      setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
+      setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo ?? undefined);
       setDefaultForm(isDefaultForm);
       if (params.id) {
         document.title = `#${data?.id} - ${nameInfo}`;
@@ -282,23 +314,23 @@ const Pokemon = (props: {
   );
 
   const queryPokemon = useCallback(
-    (id: number | string | undefined, axios: any, source: CancelTokenSource) => {
+    (id: number | string | undefined, axios: typeof APIService, source: CancelTokenSource) => {
       if (id && dataStore?.pokemon && pokemonName.length > 0 && pokemonData.length > 0 && dataStore?.evolution && dataStore?.details) {
         if (!params.id || (params.id && data && parseInt(id.toString()) !== data?.id)) {
           dispatch(showSpinner());
         }
         if (data?.id !== parseInt(id.toString())) {
-          setForm(null);
+          setForm(undefined);
         }
         axios
-          .getPokeSpices(id, {
+          .getPokeSpices(parseInt(id.toString()), {
             cancelToken: source.token,
           })
-          .then((res: { data: any }) => {
+          .then((res) => {
             fetchMap(res.data, axios, source);
             setData(res.data);
           })
-          .catch((e: { message: string }) => {
+          .catch((e: ErrorEvent) => {
             enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
             if (params.id) {
               document.title = `#${params.id} - Not Found`;
@@ -333,10 +365,10 @@ const Pokemon = (props: {
             };
             if (result.prev && event.keyCode === KEY_LEFT) {
               event.preventDefault();
-              params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId();
+              params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId?.();
             } else if (result.next && event.keyCode === KEY_RIGHT) {
               event.preventDefault();
-              params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId();
+              params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId?.();
             }
           }
         }
@@ -357,7 +389,7 @@ const Pokemon = (props: {
   };
 
   const getCostModifier = (id: number) => {
-    return dataStore?.evolution?.find((item: { id: number }) => item.id === id);
+    return dataStore?.evolution?.find((item) => item.id === id);
   };
 
   const getPokemonDetails = (id: number, form: string | null, isDefault = false) => {
@@ -365,20 +397,17 @@ const Pokemon = (props: {
 
     if (form) {
       pokemonForm = dataStore?.details?.find(
-        (item: { id: number; name: string }) =>
-          item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
+        (item) => item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
       );
 
       if (isDefault && !pokemonForm) {
-        pokemonForm = dataStore?.details?.find(
-          (item: { id: number; form: string }) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL
-        );
+        pokemonForm = dataStore?.details?.find((item) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       }
     }
 
     if (!form && defaultForm) {
       pokemonForm = dataStore?.details?.find(
-        (item: { id: number; form: string }) => item.id === id && item.form === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
+        (item) => item.id === id && item.form === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
       );
     }
 
@@ -407,7 +436,7 @@ const Pokemon = (props: {
                     <Link
                       onClick={() => {
                         setReForm(false);
-                        setForm(null);
+                        setForm(undefined);
                       }}
                       className="d-flex justify-content-start align-items-center"
                       to={'/pokemon/' + dataStorePokemon?.prev?.id}
@@ -444,7 +473,7 @@ const Pokemon = (props: {
                     <Link
                       onClick={() => {
                         setReForm(false);
-                        setForm(null);
+                        setForm(undefined);
                       }}
                       className="d-flex justify-content-end align-items-center"
                       to={'/pokemon/' + dataStorePokemon?.next?.id}
@@ -481,11 +510,11 @@ const Pokemon = (props: {
                       className="d-flex justify-content-start align-items-center"
                       onClick={() => {
                         if (router?.action === 'POP') {
-                          setFormName(null);
+                          setFormName(undefined);
                           router.action = null as any;
                         }
-                        props.onDecId();
-                        setForm(null);
+                        props.onDecId?.();
+                        setForm(undefined);
                         if (props.first && props.setFirst) {
                           props.setFirst(false);
                         }
@@ -524,11 +553,11 @@ const Pokemon = (props: {
                       className="d-flex justify-content-end align-items-center"
                       onClick={() => {
                         if (router?.action === 'POP') {
-                          setFormName(null);
+                          setFormName(undefined);
                           router.action = null as any;
                         }
-                        props.onIncId();
-                        setForm(null);
+                        props.onIncId?.();
+                        setForm(undefined);
                         if (props.first && props.setFirst) {
                           props.setFirst(false);
                         }
@@ -568,7 +597,7 @@ const Pokemon = (props: {
               {!released && formName && (
                 <Alert variant="danger">
                   <h5 className="text-danger" style={{ margin: 0 }}>
-                    * <b>{splitAndCapitalize(convertName(formName.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}</b>{' '}
+                    * <b>{splitAndCapitalize(convertName(formName?.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}</b>{' '}
                     not released in Pokémon GO
                     <img
                       width={50}
@@ -633,7 +662,7 @@ const Pokemon = (props: {
                       <td colSpan={2}>
                         {data && (
                           <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                            <b>{data.generation.name.split('-').at(1).toUpperCase()}</b>{' '}
+                            <b>{data?.generation.name.split('-').at(1)?.toUpperCase()}</b>{' '}
                             <span className="text-gen">({getNumGen(data.generation.url)})</span>
                           </h5>
                         )}
@@ -763,9 +792,9 @@ const Pokemon = (props: {
                     : ''
                   : searchParams.get('form') && searchParams.get('form')?.toLowerCase()
               }
-              pokemonDetail={getPokemonDetails(data?.id, null)}
+              pokemonDetail={getPokemonDetails(data?.id ?? 0, null)}
             />
-            <PokemonModel id={data?.id} name={data?.name} />
+            <PokemonModel id={data?.id ?? 0} name={data?.name ?? ''} />
           </div>
         </Fragment>
       )}

@@ -47,42 +47,57 @@ import { setDPSSheetPage } from '../../../store/actions/options.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/move.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { OptionOtherDPS } from '../../../store/models/options.model';
+import { BattleCalculate } from '../../../util/models/calculate.model';
 
-const nameSort = (rowA: { pokemon: { name: string } }, rowB: { pokemon: { name: string } }) => {
+interface PokemonSheetData {
+  pokemon: PokemonDataModel;
+  fmove: Combat | undefined;
+  cmove: Combat | undefined;
+  dps: number;
+  tdo: number;
+  multiDpsTdo: number;
+  shadow: boolean;
+  purified: boolean;
+  special: boolean;
+  mShadow: boolean;
+  elite: { fmove: boolean; cmove: boolean };
+  cp: number;
+  isForceReleasedGO?: boolean;
+}
+
+const nameSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   const a = rowA.pokemon.name.toLowerCase();
   const b = rowB.pokemon.name.toLowerCase();
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const fMoveSort = (rowA: { fmove: { name: string } }, rowB: { fmove: { name: string } }) => {
-  const a = rowA.fmove.name.toLowerCase();
-  const b = rowB.fmove.name.toLowerCase();
-  return a === b ? 0 : a > b ? 1 : -1;
+const fMoveSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
+  const a = rowA.fmove?.name.toLowerCase();
+  const b = rowB.fmove?.name.toLowerCase();
+  return a === b ? 0 : (a ?? 0) > (b ?? 0) ? 1 : -1;
 };
 
-const cMoveSort = (rowA: { cmove: { name: string } }, rowB: { cmove: { name: string } }) => {
-  const a = rowA.cmove.name.toLowerCase().replaceAll(' plus', '+');
-  const b = rowB.cmove.name.toLowerCase().replaceAll(' plus', '+');
-  return a === b ? 0 : a > b ? 1 : -1;
+const cMoveSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
+  const a = rowA.cmove?.name.toLowerCase().replaceAll(' plus', '+');
+  const b = rowB.cmove?.name.toLowerCase().replaceAll(' plus', '+');
+  return a === b ? 0 : (a ?? 0) > (b ?? 0) ? 1 : -1;
 };
 
 const columns: any = [
   {
     name: 'ID',
-    selector: (row: { pokemon: { num: number } }) => row.pokemon?.num,
+    selector: (row: PokemonSheetData) => row.pokemon?.num,
     sortable: true,
     minWidth: '60px',
     maxWidth: '120px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: {
-      pokemon: { num: number; forme: string; name: string; sprite: string; baseSpecies: string };
-      shadow: boolean;
-      purified: boolean;
-    }) => (
+    selector: (row: PokemonSheetData) => (
       <Link
         to={`/pokemon/${row.pokemon?.num}${
           row.pokemon?.forme ? `?form=${convertFormName(row.pokemon?.num, row.pokemon?.forme.toLowerCase())}` : ''
@@ -96,9 +111,9 @@ const columns: any = [
           alt="img-pokemon"
           style={{ marginRight: 10 }}
           src={APIService.getPokeIconSprite(row.pokemon?.sprite, true)}
-          onError={(e: any) => {
-            e.onerror = null;
-            e.target.src = APIService.getPokeIconSprite(row.pokemon?.baseSpecies);
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon?.baseSpecies ?? '');
           }}
         />
         {splitAndCapitalize(row.pokemon?.name, '-', ' ')}
@@ -110,8 +125,8 @@ const columns: any = [
   },
   {
     name: 'Type(s)',
-    selector: (row: { pokemon: { types: string[] } }) =>
-      row.pokemon?.types.map((value: string, index: React.Key) => (
+    selector: (row: PokemonSheetData) =>
+      row.pokemon?.types.map((value, index) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -126,7 +141,7 @@ const columns: any = [
   },
   {
     name: 'Fast Move',
-    selector: (row: { fmove: { id: string; name: string; type: string }; elite: { fmove: Combat } }) => (
+    selector: (row: PokemonSheetData) => (
       <Link className="d-flex align-items-center" to={'/move/' + row.fmove?.id} title={`${splitAndCapitalize(row.fmove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
@@ -151,13 +166,7 @@ const columns: any = [
   },
   {
     name: 'Charged Move',
-    selector: (row: {
-      cmove: { id: string; name: string; type: string };
-      elite: { cmove: Combat };
-      mShadow: boolean;
-      purified: boolean;
-      special: boolean;
-    }) => (
+    selector: (row: PokemonSheetData) => (
       <Link
         className="d-flex align-items-center"
         to={'/move/' + row.cmove?.id}
@@ -201,25 +210,25 @@ const columns: any = [
   },
   {
     name: 'DPS',
-    selector: (row: { dps: number }) => (row.dps ? parseFloat(row.dps?.toFixed(3)) : ''),
+    selector: (row: PokemonSheetData) => (row.dps ? parseFloat(row.dps?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '80px',
   },
   {
     name: 'TDO',
-    selector: (row: { tdo: number }) => (row.tdo ? parseFloat(row.tdo?.toFixed(3)) : ''),
+    selector: (row: PokemonSheetData) => (row.tdo ? parseFloat(row.tdo?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '100px',
   },
   {
     name: 'DPS^3*TDO',
-    selector: (row: { multiDpsTdo: number }) => (row.multiDpsTdo ? parseFloat(row.multiDpsTdo?.toFixed(3)) : ''),
+    selector: (row: PokemonSheetData) => (row.multiDpsTdo ? parseFloat(row.multiDpsTdo?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '140px',
   },
   {
     name: 'CP',
-    selector: (row: { cp: number }) => row.cp ?? '',
+    selector: (row: PokemonSheetData) => row.cp ?? '',
     sortable: true,
     minWidth: '100px',
   },
@@ -232,15 +241,28 @@ const DpsTdo = () => {
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
   const router = useSelector((state: RouterState) => state.router);
 
-  const [types, setTypes]: any = useState(DEFAULT_TYPES);
+  const [types, setTypes] = useState(DEFAULT_TYPES);
 
-  const [dpsTable, setDpsTable]: any = useState([]);
-  const [dataFilter, setDataFilter]: any = useState([]);
-  const [searchTerm, setSearchTerm]: any = useState(optionStore?.dpsSheet?.searchTerm ?? '');
+  const [dpsTable, setDpsTable]: [PokemonSheetData[], React.Dispatch<React.SetStateAction<PokemonSheetData[]>>] = useState(
+    [] as PokemonSheetData[]
+  );
+  const [dataFilter, setDataFilter]: [PokemonSheetData[], React.Dispatch<React.SetStateAction<PokemonSheetData[]>>] = useState(
+    [] as PokemonSheetData[]
+  );
+  const [searchTerm, setSearchTerm] = useState(optionStore?.dpsSheet?.searchTerm ?? '');
 
-  const [dataTargetPokemon, setDataTargetPokemon]: any = useState(optionStore?.dpsSheet?.dataTargetPokemon);
-  const [fmoveTargetPokemon, setFmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.fmoveTargetPokemon);
-  const [cmoveTargetPokemon, setCmoveTargetPokemon]: any = useState(optionStore?.dpsSheet?.cmoveTargetPokemon);
+  const [dataTargetPokemon, setDataTargetPokemon]: [
+    PokemonDataModel | undefined,
+    React.Dispatch<React.SetStateAction<PokemonDataModel | undefined>>
+  ] = useState(optionStore?.dpsSheet?.dataTargetPokemon);
+  const [fmoveTargetPokemon, setFmoveTargetPokemon]: [
+    SelectMoveModel | undefined,
+    React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>
+  ] = useState(optionStore?.dpsSheet?.fmoveTargetPokemon);
+  const [cmoveTargetPokemon, setCmoveTargetPokemon]: [
+    SelectMoveModel | undefined,
+    React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>
+  ] = useState(optionStore?.dpsSheet?.cmoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
@@ -315,12 +337,7 @@ const DpsTdo = () => {
     POKEMON_LEVEL,
   } = filters;
 
-  const [options, setOptions]: any = useState({
-    delay: null,
-    specific: null,
-    WEATHER_BOOSTS: false,
-    TRAINER_FRIEND: false,
-    POKEMON_FRIEND_LEVEL: 0,
+  const [options, setOptions]: [OptionOtherDPS, React.Dispatch<React.SetStateAction<OptionOtherDPS>>] = useState({
     POKEMON_DEF_OBJ: DEFAULT_POKEMON_DEF_OBJ,
   });
   const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
@@ -329,20 +346,7 @@ const DpsTdo = () => {
   const [selectTypes, setSelectTypes] = useState(optionStore?.dpsSheet?.selectTypes ?? []);
 
   const addCPokeData = (
-    dataList: {
-      pokemon: PokemonDataModel;
-      fmove: Combat;
-      cmove: Combat;
-      dps: number;
-      tdo: number;
-      multiDpsTdo: number;
-      shadow: boolean;
-      purified: boolean;
-      special: boolean;
-      mShadow: boolean;
-      elite: { fmove: boolean; cmove: boolean };
-      cp: number;
-    }[],
+    dataList: PokemonSheetData[],
     movePoke: string[],
     pokemon: PokemonDataModel,
     vf: string,
@@ -351,7 +355,7 @@ const DpsTdo = () => {
     special: boolean,
     felite: boolean,
     celite: boolean,
-    specialMove: any = null
+    specialMove: string[] = []
   ) => {
     movePoke?.forEach((vc: string) => {
       const fmove = data?.combat?.find((item) => item.name === vf);
@@ -359,7 +363,7 @@ const DpsTdo = () => {
 
       if (fmove && cmove) {
         const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-        const statsAttacker = {
+        const statsAttacker: BattleCalculate = {
           atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
           def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
           hp: calculateStatsBattle(stats?.sta ?? 0, IV_HP, POKEMON_LEVEL),
@@ -367,7 +371,7 @@ const DpsTdo = () => {
           cmove,
           types: pokemon.types,
           shadow,
-          WEATHER_BOOSTS: options.WEATHER_BOOSTS,
+          WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? '',
           POKEMON_FRIEND: options.TRAINER_FRIEND,
           POKEMON_FRIEND_LEVEL: options.POKEMON_FRIEND_LEVEL,
         };
@@ -375,14 +379,14 @@ const DpsTdo = () => {
         let dps, tdo;
         if (dataTargetPokemon && fmoveTargetPokemon && cmoveTargetPokemon) {
           const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
-          const statsDefender = {
+          const statsDefender: BattleCalculate = {
             atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
             def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
             hp: calculateStatsBattle(statsDef?.sta ?? 0, IV_HP, POKEMON_LEVEL),
             fmove: data?.combat?.find((item) => item.name === fmoveTargetPokemon.name),
             cmove: data?.combat?.find((item) => item.name === cmoveTargetPokemon.name),
             types: dataTargetPokemon.types,
-            WEATHER_BOOSTS: options.WEATHER_BOOSTS,
+            WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? '',
           };
 
           if (!statsDefender) {
@@ -391,7 +395,7 @@ const DpsTdo = () => {
 
           const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
           dps = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
-          tdo = dps * TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
+          tdo = dps * TimeToKill(Math.floor(statsAttacker.hp ?? 0), dpsDef);
         } else {
           dps = calculateAvgDPS(
             data?.options,
@@ -399,14 +403,14 @@ const DpsTdo = () => {
             data?.weatherBoost,
             statsAttacker.fmove,
             statsAttacker.cmove,
-            statsAttacker.atk,
+            statsAttacker.atk ?? 0,
             statsAttacker.def,
-            statsAttacker.hp,
+            statsAttacker.hp ?? 0,
             statsAttacker.types,
             options,
             statsAttacker.shadow
           );
-          tdo = calculateTDO(data?.options, statsAttacker.def, statsAttacker.hp, dps, statsAttacker.shadow);
+          tdo = calculateTDO(data?.options, statsAttacker.def, statsAttacker.hp ?? 0, dps, statsAttacker.shadow);
         }
         dataList.push({
           pokemon,
@@ -416,9 +420,9 @@ const DpsTdo = () => {
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           shadow,
-          purified: purified && specialMove != null && specialMove?.includes(statsAttacker.cmove.name),
+          purified: purified && specialMove.length > 0 && specialMove?.includes(statsAttacker.cmove?.name ?? ''),
           special,
-          mShadow: shadow && specialMove != null && specialMove?.includes(statsAttacker.cmove.name),
+          mShadow: shadow && specialMove.length > 0 && specialMove?.includes(statsAttacker.cmove?.name ?? ''),
           elite: {
             fmove: felite,
             cmove: celite,
@@ -430,19 +434,13 @@ const DpsTdo = () => {
   };
 
   const addFPokeData = (
-    dataList: any[],
-    combat: {
-      cinematicMoves: string[];
-      shadowMoves: string[];
-      eliteCinematicMoves: string[];
-      purifiedMoves: string[];
-      specialMoves: string[];
-    },
-    movePoke: any[],
+    dataList: PokemonSheetData[],
+    combat: CombatPokemon,
+    movePoke: string[],
     pokemon: PokemonDataModel,
     felite: boolean
   ) => {
-    movePoke.forEach((vf: string) => {
+    movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, false, felite, false);
       if (!pokemon.forme || !pokemon.forme.toLowerCase().toUpperCase().includes(FORM_MEGA)) {
         if (combat.shadowMoves?.length > 0) {
@@ -458,17 +456,18 @@ const DpsTdo = () => {
   };
 
   const calculateDPSTable = () => {
-    const dataList: any[] = [];
+    const dataList: PokemonSheetData[] = [];
     (data?.pokemonData ?? []).forEach((pokemon) => {
-      let combatPoke: any = data?.pokemonCombat?.filter(
+      const pokemonCombatResult = data?.pokemonCombat?.filter(
         (item) =>
           item.id === pokemon.num &&
           item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
       );
 
-      const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon.name));
-      if (!result) {
-        combatPoke = combatPoke?.find((item: { name: string; baseSpecies: string }) => item.name === item.baseSpecies);
+      const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon.name));
+      let combatPoke: CombatPokemon | undefined;
+      if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
+        combatPoke = pokemonCombatResult.find((item) => item.name === item.baseSpecies);
       } else {
         combatPoke = result;
       }
@@ -483,128 +482,108 @@ const DpsTdo = () => {
     return dataList;
   };
 
-  const filterBestOptions = (result: any[], best: string | number) => {
-    best = best === 1 ? 'dps' : best === 2 ? 'tdo' : 'multiDpsTdo';
-    const group = result.reduce((result: { [x: string]: any[] }, obj: { pokemon: PokemonDataModel }) => {
+  const filterBestOptions = (result: PokemonSheetData[], best: number) => {
+    const bestType = best === 1 ? 'dps' : best === 2 ? 'tdo' : 'multiDpsTdo';
+    const group = result.reduce((result: { [x: string]: PokemonSheetData[] }, obj) => {
       (result[obj.pokemon.name] = result[obj.pokemon.name] || []).push(obj);
       return result;
     }, {});
-    return Object.values(group).map((pokemon: any) =>
-      pokemon.reduce((p: { [x: string]: number }, c: { [x: string]: number }) => (p[best] > c[best] ? p : c))
-    );
+    return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p[bestType] > c[bestType] ? p : c)));
   };
 
   const searchFilter = () => {
-    let result = dpsTable.filter(
-      (item: {
-        fmove: { type: string };
-        cmove: { type: string };
-        pokemon: PokemonDataModel;
-        shadow: boolean;
-        elite: { fmove: boolean; cmove: boolean };
-        isForceReleasedGO: boolean;
-      }) => {
-        const boolFilterType =
-          selectTypes.length === 0 ||
-          (selectTypes.includes(item.fmove?.type?.toUpperCase()) && selectTypes.includes(item.cmove?.type?.toUpperCase()));
-        const boolFilterPoke =
-          searchTerm === '' ||
-          (match
-            ? splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() ||
-              item.pokemon?.num.toString() === searchTerm
-            : splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-              item.pokemon?.num.toString().includes(searchTerm));
+    let result = dpsTable.filter((item) => {
+      const boolFilterType =
+        selectTypes.length === 0 ||
+        (selectTypes.includes(item.fmove?.type?.toUpperCase() ?? '') && selectTypes.includes(item.cmove?.type?.toUpperCase() ?? ''));
+      const boolFilterPoke =
+        searchTerm === '' ||
+        (match
+          ? splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() ||
+            item.pokemon?.num.toString() === searchTerm
+          : splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.pokemon?.num.toString().includes(searchTerm));
 
-        const boolShowShadow = !showShadow && item.shadow;
-        const boolShowElite = !showEliteMove && (item.elite?.fmove || item.elite?.cmove);
-        const boolShowMega = !showMega && item.pokemon?.forme?.toUpperCase().includes(FORM_MEGA);
-        const boolShowGmax = !showGmax && item.pokemon?.forme?.toUpperCase().includes(FORM_GMAX);
-        const boolShowPrimal = !showPrimal && item.pokemon?.forme?.toUpperCase().includes(FORM_PRIMAL);
-        const boolShowLegend = !showLegendary && item.pokemon?.pokemonClass === TYPE_LEGENDARY;
-        const boolShowMythic = !showMythic && item.pokemon?.pokemonClass === TYPE_MYTHIC;
-        const boolShowUltra = !showUltrabeast && item.pokemon?.pokemonClass === TYPE_ULTRA_BEAST;
+      const boolShowShadow = !showShadow && item.shadow;
+      const boolShowElite = !showEliteMove && (item.elite?.fmove || item.elite?.cmove);
+      const boolShowMega = !showMega && item.pokemon?.forme?.toUpperCase().includes(FORM_MEGA);
+      const boolShowGmax = !showGmax && item.pokemon?.forme?.toUpperCase().includes(FORM_GMAX);
+      const boolShowPrimal = !showPrimal && item.pokemon?.forme?.toUpperCase().includes(FORM_PRIMAL);
+      const boolShowLegend = !showLegendary && item.pokemon?.pokemonClass === TYPE_LEGENDARY;
+      const boolShowMythic = !showMythic && item.pokemon?.pokemonClass === TYPE_MYTHIC;
+      const boolShowUltra = !showUltrabeast && item.pokemon?.pokemonClass === TYPE_ULTRA_BEAST;
 
-        const boolOnlyShadow = enableShadow && item.shadow;
-        const boolOnlyElite = enableElite && (item.elite?.fmove || item.elite?.cmove);
-        const boolOnlyMega = enableMega && item.pokemon?.forme?.toUpperCase().includes(FORM_MEGA);
-        const boolOnlyGmax = enableGmax && item.pokemon?.forme?.toUpperCase().includes(FORM_GMAX);
-        const boolOnlyPrimal = enablePrimal && item.pokemon?.forme?.toUpperCase().includes(FORM_PRIMAL);
-        const boolOnlyLegend = enableLegendary && item.pokemon?.pokemonClass === TYPE_LEGENDARY;
-        const boolOnlyMythic = enableMythic && item.pokemon?.pokemonClass === TYPE_MYTHIC;
-        const boolOnlyUltra = enableUltrabeast && item.pokemon?.pokemonClass === TYPE_ULTRA_BEAST;
+      const boolOnlyShadow = enableShadow && item.shadow;
+      const boolOnlyElite = enableElite && (item.elite?.fmove || item.elite?.cmove);
+      const boolOnlyMega = enableMega && item.pokemon?.forme?.toUpperCase().includes(FORM_MEGA);
+      const boolOnlyGmax = enableGmax && item.pokemon?.forme?.toUpperCase().includes(FORM_GMAX);
+      const boolOnlyPrimal = enablePrimal && item.pokemon?.forme?.toUpperCase().includes(FORM_PRIMAL);
+      const boolOnlyLegend = enableLegendary && item.pokemon?.pokemonClass === TYPE_LEGENDARY;
+      const boolOnlyMythic = enableMythic && item.pokemon?.pokemonClass === TYPE_MYTHIC;
+      const boolOnlyUltra = enableUltrabeast && item.pokemon?.pokemonClass === TYPE_ULTRA_BEAST;
 
-        let boolReleaseGO = true;
-        if (releasedGO) {
-          const result = data?.details?.find((pokemon) => {
-            if (item.pokemon.name?.toLowerCase().includes('_mega')) {
-              return pokemon.id === item.pokemon?.num && pokemon.name === item.pokemon.name?.toUpperCase().replaceAll('-', '_');
-            } else {
-              return (
-                pokemon.id === item.pokemon.num &&
-                pokemon.name ===
-                  (pokemon.id === 555 && !item.pokemon.name?.toLowerCase().includes('zen')
-                    ? item.pokemon.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
-                    : convertName(item.pokemon.name ?? '')
-                        .replace('NIDORAN_F', 'NIDORAN_FEMALE')
-                        .replace('NIDORAN_M', 'NIDORAN_MALE'))
-              );
-            }
-          });
-          boolReleaseGO = item.isForceReleasedGO ?? (result ? result.releasedGO : false);
-        }
-        if (
-          enableShadow ||
-          enableElite ||
-          enableMega ||
-          enableGmax ||
-          enablePrimal ||
-          enableLegendary ||
-          enableMythic ||
-          enableUltrabeast
-        ) {
-          return (
-            boolFilterType &&
-            boolFilterPoke &&
-            boolReleaseGO &&
-            !(
-              boolShowShadow ||
-              boolShowElite ||
-              boolShowMega ||
-              boolShowGmax ||
-              boolShowPrimal ||
-              boolShowLegend ||
-              boolShowMythic ||
-              boolShowUltra
-            ) &&
-            boolReleaseGO &&
-            (boolOnlyShadow ||
-              boolOnlyElite ||
-              boolOnlyMega ||
-              boolOnlyGmax ||
-              boolOnlyPrimal ||
-              boolOnlyLegend ||
-              boolOnlyMythic ||
-              boolOnlyUltra)
-          );
-        } else {
-          return (
-            boolFilterType &&
-            boolFilterPoke &&
-            boolReleaseGO &&
-            !(
-              boolShowShadow ||
-              boolShowElite ||
-              boolShowMega ||
-              boolShowGmax ||
-              boolShowPrimal ||
-              boolShowLegend ||
-              boolShowMythic ||
-              boolShowUltra
-            )
-          );
-        }
+      let boolReleaseGO = true;
+      if (releasedGO) {
+        const result = data?.details?.find((pokemon) => {
+          if (item.pokemon.name?.toLowerCase().includes('_mega')) {
+            return pokemon.id === item.pokemon?.num && pokemon.name === item.pokemon.name?.toUpperCase().replaceAll('-', '_');
+          } else {
+            return (
+              pokemon.id === item.pokemon.num &&
+              pokemon.name ===
+                (pokemon.id === 555 && !item.pokemon.name?.toLowerCase().includes('zen')
+                  ? item.pokemon.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
+                  : convertName(item.pokemon.name ?? '')
+                      .replace('NIDORAN_F', 'NIDORAN_FEMALE')
+                      .replace('NIDORAN_M', 'NIDORAN_MALE'))
+            );
+          }
+        });
+        boolReleaseGO = item.isForceReleasedGO ?? (result ? result.releasedGO : false);
       }
-    );
+      if (enableShadow || enableElite || enableMega || enableGmax || enablePrimal || enableLegendary || enableMythic || enableUltrabeast) {
+        return (
+          boolFilterType &&
+          boolFilterPoke &&
+          boolReleaseGO &&
+          !(
+            boolShowShadow ||
+            boolShowElite ||
+            boolShowMega ||
+            boolShowGmax ||
+            boolShowPrimal ||
+            boolShowLegend ||
+            boolShowMythic ||
+            boolShowUltra
+          ) &&
+          boolReleaseGO &&
+          (boolOnlyShadow ||
+            boolOnlyElite ||
+            boolOnlyMega ||
+            boolOnlyGmax ||
+            boolOnlyPrimal ||
+            boolOnlyLegend ||
+            boolOnlyMythic ||
+            boolOnlyUltra)
+        );
+      } else {
+        return (
+          boolFilterType &&
+          boolFilterPoke &&
+          boolReleaseGO &&
+          !(
+            boolShowShadow ||
+            boolShowElite ||
+            boolShowMega ||
+            boolShowGmax ||
+            boolShowPrimal ||
+            boolShowLegend ||
+            boolShowMythic ||
+            boolShowUltra
+          )
+        );
+      }
+    });
     if (enableBest) {
       result = filterBestOptions(result, bestOf);
     }
@@ -733,7 +712,7 @@ const DpsTdo = () => {
     if (selectTypes.includes(value)) {
       return setSelectTypes([...selectTypes].filter((item) => item !== value));
     }
-    return setSelectTypes((oldArr: string[]) => [...oldArr, value]);
+    return setSelectTypes((oldArr) => [...oldArr, value]);
   };
 
   const onCalculateTable = (e: { preventDefault: () => void }) => {
@@ -749,7 +728,7 @@ const DpsTdo = () => {
       <div className="head-filter text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100" style={{ margin: 0 }}>
-          {types.map((item: string, index: React.Key) => (
+          {types.map((item, index) => (
             <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
               <button
                 value={item}
@@ -773,7 +752,7 @@ const DpsTdo = () => {
                     className="form-control input-search"
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
-                    onKeyUp={(e: any) => setSearchTerm(e.target.value)}
+                    onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
                   />
                 </div>
                 <div className="d-flex col-md-3">
@@ -1013,7 +992,7 @@ const DpsTdo = () => {
                         } else {
                           setOptions({
                             ...options,
-                            delay: null,
+                            delay: undefined,
                           });
                         }
                       }}
@@ -1031,12 +1010,12 @@ const DpsTdo = () => {
                   min={0}
                   disabled={!enableDelay}
                   required={enableDelay}
-                  onInput={(e: any) =>
+                  onInput={(e) =>
                     setOptions({
                       ...options,
                       delay: {
-                        ftime: parseInt(e.target.value),
-                        ctime: options.delay.ctime,
+                        ftime: parseInt(e.currentTarget.value),
+                        ctime: options.delay?.ctime ?? 0,
                       },
                     })
                   }
@@ -1051,12 +1030,12 @@ const DpsTdo = () => {
                   min={0}
                   disabled={!enableDelay}
                   required={enableDelay}
-                  onInput={(e: any) =>
+                  onInput={(e) =>
                     setOptions({
                       ...options,
                       delay: {
-                        ftime: options.delay.ftime,
-                        ctime: parseInt(e.target.value),
+                        ftime: options.delay?.ftime ?? 0,
+                        ctime: parseInt(e.currentTarget.value),
                       },
                     })
                   }
@@ -1073,7 +1052,7 @@ const DpsTdo = () => {
                     min={MIN_IV}
                     max={MAX_IV}
                     required={true}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setFilters({
                         ...filters,
                         IV_ATK: e.target.value ? parseInt(e.target.value) : 0,
@@ -1091,7 +1070,7 @@ const DpsTdo = () => {
                     min={MIN_IV}
                     max={MAX_IV}
                     required={true}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setFilters({
                         ...filters,
                         IV_DEF: e.target.value ? parseInt(e.target.value) : 0,
@@ -1109,7 +1088,7 @@ const DpsTdo = () => {
                     min={MIN_IV}
                     max={MAX_IV}
                     required={true}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setFilters({
                         ...filters,
                         IV_HP: e.target.value ? parseInt(e.target.value) : 0,
@@ -1125,7 +1104,7 @@ const DpsTdo = () => {
                     style={{ borderRadius: 0 }}
                     className="form-control"
                     defaultValue={POKEMON_LEVEL}
-                    onChange={(e: any) =>
+                    onChange={(e) =>
                       setFilters({
                         ...filters,
                         POKEMON_LEVEL: e.target.value ? parseInt(e.target.value) : 0,
@@ -1149,10 +1128,10 @@ const DpsTdo = () => {
                     min={1}
                     disabled={dataTargetPokemon ? true : false}
                     required={true}
-                    onInput={(e: any) =>
+                    onInput={(e) =>
                       setOptions({
                         ...options,
-                        POKEMON_DEF_OBJ: e.target.value ? parseInt(e.target.value) : 0,
+                        POKEMON_DEF_OBJ: parseInt(e.currentTarget.value),
                       })
                     }
                     name="POKEMON_DEF_OBJ"
@@ -1163,15 +1142,15 @@ const DpsTdo = () => {
                   <Form.Select
                     style={{ borderRadius: 0 }}
                     className="form-control"
-                    defaultValue={WEATHER_BOOSTS}
-                    onChange={(e: any) =>
+                    defaultValue={String(WEATHER_BOOSTS)}
+                    onChange={(e) =>
                       setOptions({
                         ...options,
-                        WEATHER_BOOSTS: e.target.value === 'true' ? true : e.target.value === 'false' ? false : e.target.value,
+                        WEATHER_BOOSTS: e.target.value,
                       })
                     }
                   >
-                    <option value="false">Extream</option>
+                    <option value="">Extream</option>
                     {Object.keys(data?.weatherBoost ?? {}).map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
@@ -1203,13 +1182,12 @@ const DpsTdo = () => {
                     />
                     <LevelRating
                       disabled={!TRAINER_FRIEND}
-                      onChange={(event: any, value) => {
+                      onChange={(_, value) => {
                         setOptions({
                           ...options,
-                          [event.target.name]: value,
+                          POKEMON_FRIEND_LEVEL: value ?? 0,
                         });
                       }}
-                      name="POKEMON_FRIEND_LEVEL"
                       defaultValue={0}
                       max={4}
                       size="large"

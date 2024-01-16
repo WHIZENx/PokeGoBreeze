@@ -1,17 +1,9 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import TypeInfo from '../Sprites/Type/Type';
+import { TypeEffChart } from '../../core/models/type-eff.model';
 
-const TypeEffective = (props: {
-  typeEffective: {
-    very_weak?: string[];
-    weak?: string[];
-    super_resist?: string[];
-    very_resist?: string[];
-    resist?: string[];
-    neutral?: string[];
-  };
-}) => {
+const TypeEffective = (props: { typeEffective: TypeEffChart | undefined }) => {
   if (!props.typeEffective) {
     return <></>;
   }

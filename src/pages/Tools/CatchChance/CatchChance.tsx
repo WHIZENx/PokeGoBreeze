@@ -2,7 +2,7 @@ import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, 
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
-import Find from '../../../components/Select/Find/Find';
+import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/API.service';
 import { calculateCatchChance, calculateCP } from '../../../util/Calculate';
@@ -29,6 +29,30 @@ import { convertName, LevelSlider, splitAndCapitalize } from '../../../util/Util
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
+import { PokemonFormModify } from '../../../core/models/API/form.model';
+
+interface PokemonCatchChance {
+  baseCaptureRate?: number;
+  baseFleeRate?: number;
+  collisionRadiusM?: number;
+  collisionHeightM?: number;
+  collisionHeadRadiusM?: number;
+  movementType?: string;
+  movementTimerS?: number;
+  jumpTimeS?: number;
+  attackTimerS?: number;
+  attackProbability?: number;
+  dodgeProbability?: number;
+  dodgeDurationS?: number;
+  dodgeDistance?: number;
+  cameraDistance?: number;
+  minPokemonActionFrequencyS?: number;
+  maxPokemonActionFrequencyS?: number;
+  obShadowFormBaseCaptureRate?: number;
+  obShadowFormAttackProbability?: number;
+  obShadowFormDodgeProbability?: number;
+  result?: { [x: string]: { [x: string]: number } };
+}
 
 const CatchChance = () => {
   const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
@@ -37,18 +61,26 @@ const CatchChance = () => {
   const CIRCLE_DISTANCE = 200;
 
   const [id, setId] = useState(searching ? searching.id : 1);
-  const [form, setForm]: any = useState(null);
+  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [data, setData]: any = useState(null);
-  const [dataAdv, setDataAdv]: any = useState(null);
-  const [medal, setMedal]: any = useState(null);
+  const [data, setData]: [PokemonCatchChance | undefined, React.Dispatch<React.SetStateAction<PokemonCatchChance | undefined>>] =
+    useState();
+  const [dataAdv, setDataAdv] = useState({
+    result: 0,
+    ballName: '',
+    throwType: '',
+  });
+  const [medal, setMedal] = useState({
+    typePri: { priority: 0, type: '' },
+    typeSec: { priority: 0, type: '' },
+  });
   const [level, setLevel] = useState(MIN_LEVEL);
   const [radius, setRadius] = useState(100);
-  const [throwTitle, setThrowTitle]: any = useState({
+  const [throwTitle, setThrowTitle] = useState({
     title: 'Nice!',
     type: 'Nice Throw',
     threshold: NICE_THROW_INC_CHANCE,
@@ -137,29 +169,31 @@ const CatchChance = () => {
   };
 
   const calculateCatch = () => {
-    const result: any = {};
+    const result: { [x: string]: { [x: string]: number } } = {};
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
 
-    pokeballType.forEach((ball) => {
-      result[ball.name.toLowerCase().replace(' ball', '')] = {};
-      throwType.forEach((type) => {
-        const multiplier =
-          ball.threshold *
-          (((type.threshold.at(0) ?? 0) + type.threshold[1]) / 2) *
-          medalChance *
-          (curveBall ? CURVE_INC_CHANCE : 1) *
-          (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-          (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
-          (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
-        const prob = calculateCatchChance(
-          data?.obShadowFormBaseCaptureRate && options.shadow ? data?.obShadowFormBaseCaptureRate : data?.baseCaptureRate,
-          level,
-          multiplier
-        );
-        result[ball.name.toLowerCase().replace(' ball', '')][type.name.toLowerCase().replace(' throw', '')] = Math.min(prob * 100, 100);
+    if (data) {
+      pokeballType.forEach((ball) => {
+        result[ball.name.toLowerCase().replace(' ball', '')] = {};
+        throwType.forEach((type) => {
+          const multiplier =
+            ball.threshold *
+            (((type.threshold.at(0) ?? 0) + (type.threshold.at(1) ?? 0)) / 2) *
+            medalChance *
+            (curveBall ? CURVE_INC_CHANCE : 1) *
+            (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
+            (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
+            (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
+          const prob = calculateCatchChance(
+            data.obShadowFormBaseCaptureRate && options.shadow ? data.obShadowFormBaseCaptureRate : data.baseCaptureRate ?? 0,
+            level,
+            multiplier
+          );
+          result[ball.name.toLowerCase().replace(' ball', '')][type.name.toLowerCase().replace(' throw', '')] = Math.min(prob * 100, 100);
+        });
       });
-    });
+    }
 
     setData({
       ...data,
@@ -167,16 +201,16 @@ const CatchChance = () => {
     });
   };
 
-  const findCatchCapture = (id: number, form: { form: { name: string } }) => {
+  const findCatchCapture = (id: number, form: PokemonFormModify) => {
     const pokemon = pokemonData.find((data) => data.id === id && data.name === convertName(form.form.name));
     if (!pokemon) {
       return setEncounter(false);
     }
     setEncounter(true);
     if (pokemon) {
-      let medalType: any = {
-        typePri: null,
-        typeSec: null,
+      let medalType = {
+        typePri: { priority: 0, type: '' },
+        typeSec: { priority: 0, type: '' },
       };
       medalType = {
         ...medalType,
@@ -199,7 +233,7 @@ const CatchChance = () => {
     }
   };
 
-  const onSetForm = (form: string) => {
+  const onSetForm = (form: PokemonFormModify | undefined) => {
     setForm(form);
   };
 
@@ -223,12 +257,16 @@ const CatchChance = () => {
     });
   };
 
-  const onHandleLevel = (_: any, v: number) => {
-    setLevel(v);
+  const onHandleLevel = (v: number) => {
+    if (data) {
+      setLevel(v);
+    }
   };
 
-  const onHandleRadius = (_: any, v: number) => {
-    setRadius(v);
+  const onHandleRadius = (v: number) => {
+    if (data) {
+      setRadius(v);
+    }
   };
 
   const handleChangeBallType = (event: SelectChangeEvent) => {
@@ -272,29 +310,34 @@ const CatchChance = () => {
   const calculateProb = (disable = false, threshold = 1) => {
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
-    const pokeball: any = Object.entries(pokeballType).find((_, index) => index === ballType);
-    const multiplier =
-      pokeball[1].threshold *
-      threshold *
-      medalChance *
-      (curveBall && !disable ? CURVE_INC_CHANCE : 1) *
-      (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-      (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
-      (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
-    const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
-    const result = Math.min(prob * 100, 100);
-    return result;
+    const pokeball = Object.entries(pokeballType).find((_, index) => index === ballType);
+    if (pokeball) {
+      const multiplier =
+        pokeball[1].threshold *
+        threshold *
+        medalChance *
+        (curveBall && !disable ? CURVE_INC_CHANCE : 1) *
+        (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
+        (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
+        (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
+      const prob = calculateCatchChance(data?.baseCaptureRate ?? 0, level, multiplier);
+      const result = Math.min(prob * 100, 100);
+      return result;
+    }
+    return 0;
   };
 
   const calculateAdvance = () => {
     const threshold = normalThrow ? 1 : 1 + (100 - radius) / 100;
     const result = calculateProb(false, threshold);
-    const pokeball: any = Object.entries(pokeballType).find((_, index) => index === ballType);
-    setDataAdv({
-      result,
-      ballName: pokeball[1].name,
-      throwType: normalThrow ? 'Normal Throw' : throwTitle.type,
-    });
+    const pokeball = Object.entries(pokeballType).find((_, index) => index === ballType);
+    if (pokeball) {
+      setDataAdv({
+        result,
+        ballName: pokeball[1].name,
+        throwType: normalThrow ? 'Normal Throw' : throwTitle.type,
+      });
+    }
   };
 
   const clearStats = () => {
@@ -322,7 +365,7 @@ const CatchChance = () => {
           {!encounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
-                <b>{splitAndCapitalize(convertName(form.form.name), '_', ' ')}</b> cannot be encountered.
+                <b>{splitAndCapitalize(convertName(form?.form.name), '_', ' ')}</b> cannot be encountered.
               </h5>
             </div>
           )}
@@ -416,7 +459,7 @@ const CatchChance = () => {
                   min={MIN_LEVEL}
                   max={MAX_LEVEL - 1}
                   disabled={data ? false : true}
-                  onChange={(data ? onHandleLevel : null) as any}
+                  onChange={(_, v) => onHandleLevel(v as number)}
                 />
               </div>
               <div className="d-flex w-100 element-top justify-content-center" style={{ gap: 20 }}>
@@ -446,10 +489,11 @@ const CatchChance = () => {
                     <h5>
                       {data &&
                         `${
-                          (data.obShadowFormAttackProbability && shadow ? data.obShadowFormAttackProbability : data.attackProbability) * 100
+                          ((data.obShadowFormAttackProbability && shadow ? data.obShadowFormAttackProbability : data.attackProbability) ??
+                            0) * 100
                         }%`}
                     </h5>
-                    <p>{data && `Time: ${data.attackTimerS / 10} sec`}</p>
+                    <p>{data && `Time: ${(data.attackTimerS ?? 0) / 10} sec`}</p>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
@@ -457,9 +501,12 @@ const CatchChance = () => {
                   <hr className="w-100" />
                   <h5>
                     {data &&
-                      `${(data.obShadowFormDodgeProbability && shadow ? data.obShadowFormDodgeProbability : data.dodgeProbability) * 100}%`}
+                      `${
+                        ((data.obShadowFormDodgeProbability && shadow ? data.obShadowFormDodgeProbability : data.dodgeProbability) ?? 0) *
+                        100
+                      }%`}
                   </h5>
-                  <p>{data && `Time: ${data.dodgeDurationS / 10} sec`}</p>
+                  <p>{data && `Time: ${(data.dodgeDurationS ?? 0) / 10} sec`}</p>
                 </div>
               </div>
             </div>
@@ -542,7 +589,7 @@ const CatchChance = () => {
                         max={100}
                         marks={false}
                         disabled={data ? false : true}
-                        onChange={(data ? onHandleRadius : null) as any}
+                        onChange={(_, v) => onHandleRadius(v as number)}
                       />
                     </div>
                     <div className="w-50 text-center d-inline-block" style={{ marginBottom: 15 }}>
@@ -591,8 +638,8 @@ const CatchChance = () => {
                 <tbody>
                   <tr className="text-center">
                     <td>Normal Throw</td>
-                    {Object.entries(data.result)
-                      .reduce((p: number[], c: any) => [...p, c[1].normal], [] as number[])
+                    {Object.entries(data?.result ?? {})
+                      .reduce((p, c) => [...p, c[1].normal], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
                           {Math.round(value)} %
@@ -601,8 +648,8 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Nice Throw</td>
-                    {Object.entries(data.result)
-                      .reduce((p: number[], c: any) => [...p, c[1].nice], [] as number[])
+                    {Object.entries(data?.result ?? {})
+                      .reduce((p, c) => [...p, c[1].nice], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
                           {Math.round(value)} %
@@ -611,8 +658,8 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Great Throw</td>
-                    {Object.entries(data.result)
-                      .reduce((p: number[], c: any) => [...p, c[1].great], [] as number[])
+                    {Object.entries(data?.result ?? {})
+                      .reduce((p, c) => [...p, c[1].great], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
                           {Math.round(value)} %
@@ -621,8 +668,8 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Excellent Throw</td>
-                    {Object.entries(data.result)
-                      .reduce((p: number[], c: any) => [...p, c[1].excellent], [] as number[])
+                    {Object.entries(data?.result ?? {})
+                      .reduce((p, c) => [...p, c[1].excellent], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
                           {Math.round(value)} %

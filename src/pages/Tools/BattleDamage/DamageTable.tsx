@@ -10,6 +10,8 @@ import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
+import { PokemonDmgOption } from '../../../core/models/damage.model';
+import { FORM_SHADOW } from '../../../util/Constants';
 
 const eff: any = {
   0.244140625: {
@@ -38,31 +40,7 @@ const eff: any = {
   },
 };
 
-const DamageTable = (props: {
-  result: {
-    objPoke: { form: { pokemon: { name: string } } };
-    type: string;
-    currPoke: { form: { pokemon: { name: string } } };
-    currLevel: number;
-    typeObj: string;
-    objLevel: number;
-    move: {
-      name: string;
-      pve_power: number;
-    };
-    battleState: {
-      stab: boolean;
-      wb: boolean;
-      dodge: boolean;
-      trainer: boolean;
-      flevel: number;
-      clevel: string | number;
-      effective: string | number;
-    };
-    damage: number;
-    hp: number;
-  };
-}) => {
+const DamageTable = (props: { result: PokemonDmgOption }) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data?.options);
 
   return (
@@ -84,10 +62,10 @@ const DamageTable = (props: {
                     {props.result.type === 'buddy' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-buddy" src={APIService.getPokeBuddy()} />
                     )}
-                    {props.result.type === 'shadow' && (
+                    {props.result.type?.toUpperCase() === FORM_SHADOW && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
-                    {splitAndCapitalize(props.result.currPoke.form.pokemon.name, '-', ' ')}{' '}
+                    {splitAndCapitalize(props.result.currPoke?.form.name, '-', ' ')}{' '}
                     <span className="d-inline-block caption">(LV. {props.result.currLevel})</span>
                   </Fragment>
                 ) : (
@@ -103,10 +81,10 @@ const DamageTable = (props: {
                     {props.result.typeObj === 'buddy' && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-buddy" src={APIService.getPokeBuddy()} />
                     )}
-                    {props.result.typeObj === 'shadow' && (
+                    {props.result.typeObj?.toUpperCase() === FORM_SHADOW && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
-                    {splitAndCapitalize(props.result.objPoke.form.pokemon.name, '-', ' ')}{' '}
+                    {splitAndCapitalize(props.result.objPoke.form.name, '-', ' ')}{' '}
                     <span className="d-inline-block caption">(LV. {props.result.objLevel})</span>
                   </Fragment>
                 ) : (
@@ -217,9 +195,13 @@ const DamageTable = (props: {
               <td>
                 {props.result.damage ? (
                   <Fragment>
-                    {props.result.damage < props.result.move.pve_power ? (
+                    {props.result.damage < (props.result.move?.pve_power ?? 0) ? (
                       <b className="text-success">
-                        {(((props.result.move.pve_power - props.result.damage) * 100) / props.result.move.pve_power).toFixed(2)}%
+                        {(
+                          (((props.result.move?.pve_power ?? 0) - props.result.damage) * 100) /
+                          (props.result.move?.pve_power ?? 0)
+                        ).toFixed(2)}
+                        %
                       </b>
                     ) : (
                       <b className="text-danger">0</b>
@@ -238,8 +220,8 @@ const DamageTable = (props: {
               <td>
                 {props.result.hp ? (
                   <b>
-                    {Math.floor(props.result.hp - props.result.damage)}
-                    {Math.floor(props.result.hp - props.result.damage) > 0 ? (
+                    {Math.floor(props.result.hp - (props.result.damage ?? 0))}
+                    {Math.floor(props.result.hp - (props.result.damage ?? 0)) > 0 ? (
                       <span className="caption-small text-success"> (Alive)</span>
                     ) : (
                       <span className="caption-small text-danger"> (Dead)</span>

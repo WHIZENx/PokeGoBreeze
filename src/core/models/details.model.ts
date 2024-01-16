@@ -1,4 +1,4 @@
-interface Gender {
+export interface PokemonGender {
   malePercent?: number;
   femalePercent?: number;
   genderlessPercent?: number;
@@ -8,7 +8,7 @@ export interface Details {
   id: number;
   name: string;
   form: string;
-  gender: Gender | null;
+  gender: PokemonGender | null;
   releasedGO: boolean;
   isTransferable: boolean | null;
   isDeployable: boolean | null;
@@ -16,14 +16,18 @@ export interface Details {
   pokemonClass: string | null;
   disableTransferToPokemonHome: boolean | null;
   isBaby: boolean;
-  formChange?: object | null;
+  formChange?: {
+    availableForm: string[];
+    candyCost: string;
+    stardustCost: string;
+  }[];
 }
 
 export class DetailsPokemonModel {
   id!: number;
   name!: string;
   form!: string;
-  gender!: Gender | null;
+  gender!: PokemonGender | null;
   releasedGO!: boolean;
   isTransferable!: boolean | null;
   isDeployable!: boolean | null;
@@ -31,7 +35,11 @@ export class DetailsPokemonModel {
   pokemonClass!: string | null;
   disableTransferToPokemonHome!: boolean | null;
   isBaby!: boolean;
-  formChange?: object | null;
+  formChange?: {
+    availableForm: string[];
+    candyCost: string;
+    stardustCost: string;
+  }[];
 
   constructor() {
     this.id = 0;
@@ -39,7 +47,7 @@ export class DetailsPokemonModel {
     this.form = '';
     this.disableTransferToPokemonHome = false;
     this.isTransferable = false;
-    this.formChange = null;
+    this.formChange = [];
     this.pokemonClass = null;
     this.isTradable = false;
     this.releasedGO = false;

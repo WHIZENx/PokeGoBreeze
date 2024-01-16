@@ -27,16 +27,18 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import CandyXL from '../../components/Sprites/Candy/CandyXL';
-import { StatsModel } from '../../core/models/stats.model';
+import { StatsModel, StatsPokemon } from '../../core/models/stats.model';
 import { Asset } from '../../core/models/asset.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
-import { Combat } from '../../core/models/combat.model';
+import { Combat, CombatPokemon } from '../../core/models/combat.model';
 import { MAX_IV, MAX_LEVEL } from '../../util/Constants';
+import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
+import { PokemonBattleRanking } from './models/battle.model';
 
 export const Keys = (
   assets: Asset[],
   pokemonData: PokemonDataModel[],
-  data: { matchups: any[]; counters: any[] },
+  data: RankingsPVP | undefined,
   cp: string | undefined,
   type: string | undefined
 ) => {
@@ -100,8 +102,8 @@ export const Keys = (
           </div>
         </div>
         {data?.matchups
-          .sort((a: { rating: number }, b: { rating: number }) => b.rating - a.rating)
-          .map((matchup, index: React.Key) => (
+          .sort((a, b) => b.rating - a.rating)
+          .map((matchup, index) => (
             <Fragment key={index}>{renderItemList(matchup, 0)}</Fragment>
           ))}
       </div>
@@ -113,8 +115,8 @@ export const Keys = (
           </div>
         </div>
         {data?.counters
-          .sort((a: { rating: number }, b: { rating: number }) => a.rating - b.rating)
-          .map((counter, index: React.Key) => (
+          .sort((a, b) => a.rating - b.rating)
+          .map((counter, index) => (
             <Fragment key={index}>{renderItemList(counter, 1)}</Fragment>
           ))}
       </div>
@@ -122,32 +124,20 @@ export const Keys = (
   );
 };
 
-export const OverAllStats = (
-  data: {
-    scores: number[];
-    atk: { attack: number; rank: number } | undefined;
-    def: { defense: number; rank: number } | undefined;
-    sta: { stamina: number; rank: number } | undefined;
-    prod: { prod: number; rank: number } | undefined;
-    stats: { atk: number; def: number; sta: number };
-    id: number;
-  },
-  statsRanking: StatsModel,
-  cp: number | string
-) => {
-  const calculateStatsTopRank = (stats: { atk: number; def: number; sta: number }) => {
+export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRanking: StatsModel, cp: number | string) => {
+  const calculateStatsTopRank = (stats: StatsPokemon | undefined) => {
     const maxCP = parseInt(cp.toString());
 
     if (maxCP === 10000) {
-      const cp = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
-      const buddyCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      const cp = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
+      const buddyCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
       const result: any = {};
       result[MAX_LEVEL - 1] = { cp: isNaN(cp) ? 0 : cp };
       result[MAX_LEVEL] = { cp: isNaN(buddyCP) ? 0 : buddyCP };
       return result;
     } else {
       let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-      let maxPokeCP = calculateCP(stats?.atk + MAX_IV, stats?.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+      let maxPokeCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
       if (isNaN(maxPokeCP)) {
         maxPokeCP = 0;
       }
@@ -163,14 +153,14 @@ export const OverAllStats = (
           minCP = 2500;
         }
       }
-      const allStats = calStatsProd(stats?.atk, stats?.def, stats?.sta ?? 0, minCP, maxCP);
+      const allStats = calStatsProd(stats?.atk ?? 0, stats?.def ?? 0, stats?.sta ?? 0, minCP, maxCP);
       return allStats[allStats.length - 1];
     }
   };
 
-  const renderTopStats = (stats: { atk: number; def: number; sta: number }, id: number) => {
+  const renderTopStats = (stats: StatsPokemon | undefined, id: number) => {
     const maxCP = parseInt(cp.toString());
-    const currStats: any = calculateStatsTopRank(stats);
+    const currStats = calculateStatsTopRank(stats);
     return (
       <ul className="element-top">
         <li className="element-top">
@@ -197,7 +187,7 @@ export const OverAllStats = (
 
   return (
     <div className="row w-100" style={{ margin: 0 }}>
-      {data?.scores && (
+      {data?.data?.scores && (
         <div className="col-lg-4 d-flex justify-content-center" style={{ padding: 10 }}>
           <div>
             <h5>
@@ -208,18 +198,18 @@ export const OverAllStats = (
               borderSize={320}
               size={180}
               stats={{
-                lead: data?.scores.at(0),
-                atk: data?.scores[4],
-                cons: data?.scores[5],
-                closer: data?.scores[1],
-                charger: data?.scores[3],
-                switching: data?.scores[2],
+                lead: data?.data?.scores.at(0) ?? 0,
+                atk: data?.data?.scores.at(4) ?? 0,
+                cons: data?.data?.scores.at(5) ?? 0,
+                closer: data?.data?.scores.at(1) ?? 0,
+                charger: data?.data?.scores.at(3) ?? 0,
+                switching: data?.data?.scores.at(2) ?? 0,
               }}
             />
           </div>
         </div>
       )}
-      <div className={(data?.scores ? 'col-lg-8 ' : '') + 'container status-ranking'}>
+      <div className={(data?.data?.scores ? 'col-lg-8 ' : '') + 'container status-ranking'}>
         <div>
           <h5>
             <b>Overall Stats</b>
@@ -230,7 +220,7 @@ export const OverAllStats = (
           <h5>
             <b>Top Rank League</b>
           </h5>
-          {renderTopStats(data?.stats, data?.id)}
+          {renderTopStats(data?.stats, data?.id ?? 0)}
         </div>
       </div>
     </div>
@@ -275,8 +265,13 @@ export const TypeEffective = (types: string[]) => {
 };
 
 export const MoveSet = (
-  moves: { fastMoves: { uses: number }[]; chargedMoves: { moveId: string; uses: number }[] },
-  combatList: { eliteQuickMoves: string[]; eliteCinematicMoves: string[]; specialMoves: string[] },
+  moves:
+    | {
+        chargedMoves: PokemonRankingMove[];
+        fastMoves: PokemonRankingMove[];
+      }
+    | undefined,
+  combatList: CombatPokemon | undefined,
   combatData: Combat[]
 ) => {
   const findArchetype = (archetype: string | string[]) => {
@@ -319,42 +314,42 @@ export const MoveSet = (
   };
 
   const findMove = (name: string, uses: number) => {
-    const oldName: string = name;
+    const oldName = name;
     if (name.includes('HIDDEN_POWER')) {
       name = 'HIDDEN_POWER';
     }
-    let move: any = combatData.find((move) => move.name === name);
-    if (oldName.includes('HIDDEN_POWER')) {
-      move = { ...move, type: oldName.split('_').at(2) };
+    let move = combatData.find((move) => move.name === name);
+    if (move && oldName.includes('HIDDEN_POWER')) {
+      move = { ...move, type: oldName.split('_').at(2) ?? '' };
     }
 
     let elite = false;
     let special = false;
-    if (combatList.eliteQuickMoves.includes(name)) {
+    if (combatList?.eliteQuickMoves.includes(name)) {
       elite = true;
     }
-    if (combatList.eliteCinematicMoves.includes(name)) {
+    if (combatList?.eliteCinematicMoves.includes(name)) {
       elite = true;
     }
-    if (combatList.specialMoves.includes(name)) {
+    if (combatList?.specialMoves.includes(name)) {
       special = true;
     }
 
     return (
       <Link
-        to={`/move/${move.id}`}
+        to={`/move/${move?.id}`}
         className={
-          move.type.toLowerCase() + ' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
+          move?.type?.toLowerCase() + ' filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
         }
       >
         <div className="d-flex" style={{ columnGap: 10 }}>
-          <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move.type)} />
+          <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move?.type ?? '')} />
           <span className="filter-shadow">
             {splitAndCapitalize(oldName, '_', ' ')} {(elite || special) && <b className="filter-shadow">*</b>}
           </span>
         </div>
         <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-          {move.archetype && findArchetype(move.archetype)}
+          {move?.archetype && findArchetype(move?.archetype)}
           <span className="ranking-score score-ic filter-shadow">{uses}</span>
         </div>
       </Link>
@@ -427,15 +422,15 @@ export const MoveSet = (
         <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {moves?.fastMoves
-            .map((move: { uses: number }) => {
+            .map((move) => {
               if (!move.uses) {
                 move.uses = 0;
               }
               return move;
             })
-            .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)
-            .map((value: any, index: React.Key) => (
-              <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
+            .sort((a, b) => (b.uses ?? 0) - (a.uses ?? 0))
+            .map((value, index) => (
+              <Fragment key={index}>{findMove(value.moveId, value.uses ?? 0)}</Fragment>
             ))}
         </div>
       </div>
@@ -443,7 +438,7 @@ export const MoveSet = (
         <div className="moves-title">Charged Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {moves?.chargedMoves
-            .map((move: { moveId: string; uses: number }) => {
+            .map((move) => {
               if (move.moveId === 'FUTURE_SIGHT') {
                 move.moveId = 'FUTURESIGHT';
               }
@@ -455,9 +450,9 @@ export const MoveSet = (
               }
               return move;
             })
-            .sort((a: { uses: number }, b: { uses: number }) => b.uses - a.uses)
-            .map((value: { moveId: string; uses: number }, index: React.Key) => (
-              <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
+            .sort((a, b) => (b.uses ?? 0) - (a.uses ?? 0))
+            .map((value, index) => (
+              <Fragment key={index}>{findMove(value.moveId, value.uses ?? 0)}</Fragment>
             ))}
         </div>
       </div>

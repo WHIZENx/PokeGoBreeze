@@ -2,7 +2,7 @@ import { Asset, AssetDataModel } from './models/asset.model';
 import { CombatDataModel, CombatPokemon, CombatPokemonDataModel } from './models/combat.model';
 import { EvolutionDataModel } from './models/evolution.model';
 import { LeagueDataModel, LeagueOptionsDataModel, LeagueRewardDataModel, LeagueRewardPokemonDataModel } from './models/league.model';
-import { Sticker, StickerDataModel } from './models/sticker.model';
+import { StickerModel, StickerDataModel } from './models/sticker.model';
 import { Details, DetailsPokemonModel } from './models/details.model';
 
 import pokemonData from '../data/pokemon.json';
@@ -11,7 +11,7 @@ import { TypeSet } from './models/type.model';
 import { Candy, CandyDataModel, CandyModel } from './models/candy.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonEncounter, PokemonModel } from './models/pokemon.model';
-import { TypeEff } from './models/typeEff.model';
+import { TypeEff } from './models/type-eff.model';
 import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
 import { APIUrl } from '../services/constants';
 
@@ -26,71 +26,69 @@ export const getOption = (options: any, args: string[]) => {
   return options;
 };
 
-export const optionSettings = (data: any[]) => {
+export const optionSettings = (
+  data: {
+    templateId: string;
+    data: {
+      combatSettings: {
+        sameTypeAttackBonusMultiplier: number;
+        shadowPokemonAttackBonusMultiplier: number;
+        shadowPokemonDefenseBonusMultiplier: number;
+        chargeScoreBase: number;
+        chargeScoreNice: number;
+        chargeScoreGreat: number;
+        chargeScoreExcellent: number;
+      };
+      battleSettings: {
+        enemyAttackInterval: number;
+        sameTypeAttackBonusMultiplier: number;
+        shadowPokemonAttackBonusMultiplier: number;
+        shadowPokemonDefenseBonusMultiplier: number;
+      };
+      buddyLevelSettings: { minNonCumulativePointsRequired: number; unlockedTraits: number };
+      friendshipMilestoneSettings: { attackBonusPercentage: number; unlockedTrading: number };
+    };
+  }[]
+) => {
   const settings: any = {
-    combat_options: [],
-    battle_options: [],
+    combat_options: {},
+    battle_options: {},
     throw_charge: {},
     buddy_friendship: {},
     trainer_friendship: {},
   };
 
-  data.forEach(
-    (item: {
-      templateId: string;
-      data: {
-        combatSettings: {
-          sameTypeAttackBonusMultiplier: number;
-          shadowPokemonAttackBonusMultiplier: number;
-          shadowPokemonDefenseBonusMultiplier: number;
-          chargeScoreBase: number;
-          chargeScoreNice: number;
-          chargeScoreGreat: number;
-          chargeScoreExcellent: number;
-        };
-        battleSettings: {
-          enemyAttackInterval: number;
-          sameTypeAttackBonusMultiplier: number;
-          shadowPokemonAttackBonusMultiplier: number;
-          shadowPokemonDefenseBonusMultiplier: number;
-        };
-        buddyLevelSettings: { minNonCumulativePointsRequired: number; unlockedTraits: number };
-        friendshipMilestoneSettings: { attackBonusPercentage: number; unlockedTrading: number };
-      };
-    }) => {
-      if (item.templateId === 'COMBAT_SETTINGS') {
-        settings.combat_options = {};
-        settings.combat_options.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
-        settings.combat_options.shadow_bonus = {};
-        settings.combat_options.shadow_bonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
-        settings.combat_options.shadow_bonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
+  data.forEach((item) => {
+    if (item.templateId === 'COMBAT_SETTINGS') {
+      settings.combat_options.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
+      settings.combat_options.shadow_bonus = {};
+      settings.combat_options.shadow_bonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
+      settings.combat_options.shadow_bonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
 
-        settings.throw_charge.normal = item.data.combatSettings.chargeScoreBase;
-        settings.throw_charge.nice = item.data.combatSettings.chargeScoreNice;
-        settings.throw_charge.great = item.data.combatSettings.chargeScoreGreat;
-        settings.throw_charge.excellent = item.data.combatSettings.chargeScoreExcellent;
-      } else if (item.templateId === 'BATTLE_SETTINGS') {
-        settings.battle_options = {};
-        settings.battle_options.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
-        settings.battle_options.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
-        settings.battle_options.shadow_bonus = {};
-        settings.battle_options.shadow_bonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
-        settings.battle_options.shadow_bonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
-      } else if (item.templateId.includes('BUDDY_LEVEL_')) {
-        const level = parseInt(item.templateId.replace('BUDDY_LEVEL_', ''));
-        settings.buddy_friendship[level] = {};
-        settings.buddy_friendship[level].level = level;
-        settings.buddy_friendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0;
-        settings.buddy_friendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
-      } else if (item.templateId.includes('FRIENDSHIP_LEVEL_')) {
-        const level = parseInt(item.templateId.replace('FRIENDSHIP_LEVEL_', ''));
-        settings.trainer_friendship[level] = {};
-        settings.trainer_friendship[level].level = level;
-        settings.trainer_friendship[level].atk_bonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
-        settings.trainer_friendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
-      }
+      settings.throw_charge.normal = item.data.combatSettings.chargeScoreBase;
+      settings.throw_charge.nice = item.data.combatSettings.chargeScoreNice;
+      settings.throw_charge.great = item.data.combatSettings.chargeScoreGreat;
+      settings.throw_charge.excellent = item.data.combatSettings.chargeScoreExcellent;
+    } else if (item.templateId === 'BATTLE_SETTINGS') {
+      settings.battle_options.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
+      settings.battle_options.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
+      settings.battle_options.shadow_bonus = {};
+      settings.battle_options.shadow_bonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
+      settings.battle_options.shadow_bonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
+    } else if (item.templateId.includes('BUDDY_LEVEL_')) {
+      const level = parseInt(item.templateId.replace('BUDDY_LEVEL_', ''));
+      settings.buddy_friendship[level] = {};
+      settings.buddy_friendship[level].level = level;
+      settings.buddy_friendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0;
+      settings.buddy_friendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
+    } else if (item.templateId.includes('FRIENDSHIP_LEVEL_')) {
+      const level = parseInt(item.templateId.replace('FRIENDSHIP_LEVEL_', ''));
+      settings.trainer_friendship[level] = {};
+      settings.trainer_friendship[level].level = level;
+      settings.trainer_friendship[level].atk_bonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
+      settings.trainer_friendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
     }
-  );
+  });
   return settings;
 };
 
@@ -125,10 +123,7 @@ export const optionPokemonTypes = (data: PokemonModel[] | any[]) => {
     'FAIRY',
   ];
   data
-    .filter(
-      (item: { templateId: string; data: {} }) =>
-        item.templateId.includes('POKEMON_TYPE') && Object.keys(item.data).includes('typeEffective')
-    )
+    .filter((item) => item.templateId.includes('POKEMON_TYPE') && Object.keys(item.data).includes('typeEffective'))
     .forEach((item: { data: { typeEffective: { attackScalar: number[] } }; templateId: string }) => {
       const rootType = item.templateId.replace('POKEMON_TYPE_', '');
       types[rootType] = {} as TypeSet;
@@ -148,7 +143,7 @@ export const optionPokemonData = (data: PokemonModel[]) => {
       pokemon.forme = 'single-strike-gmax';
     }
   });
-  const result: any = pokemonData;
+  const result: { [x: string]: PokemonDataModel } = pokemonData;
   data.forEach((pokemon) => {
     if (!ids.includes(pokemon.id)) {
       const types = [];
@@ -168,8 +163,8 @@ export const optionPokemonName = (details: Details[] | undefined) => {
   const pokemonDataId = [...new Set(Object.values(pokemonData).map((p) => p.num))];
   const result: any = {};
   pokemonDataId
-    .filter((id: number) => id > 0)
-    .forEach((id: number, index: number) => {
+    .filter((id) => id > 0)
+    .forEach((id, index) => {
       const pokemon = details?.find((p) => p.id === id && p.form?.toUpperCase() === FORM_NORMAL);
       if (pokemon) {
         result[pokemon.id.toString()] = {
@@ -203,13 +198,13 @@ export const optionPokemonWeather = (data: any[]) => {
   return weather;
 };
 
-export const optionPokemonSpawn = (data: any[]) => {
+export const optionPokemonSpawn = (data: { data: { genderSettings: { gender: any } }; templateId: string }[]) => {
   return data
     .filter((item) => item.templateId.includes('SPAWN') && Object.keys(item.data).includes('genderSettings'))
-    .map((item: { data: { genderSettings: { gender: any } }; templateId: string }) => {
+    .map((item) => {
       return {
-        id: parseInt(item.templateId.split('_')[1]?.replace('V', '') ?? ''),
-        name: item.templateId.split('POKEMON_')[1],
+        id: parseInt(item.templateId.split('_').at(1)?.replace('V', '') ?? ''),
+        name: item.templateId.split('POKEMON_').at(1),
         gender: item.data.genderSettings.gender,
       };
     });
@@ -403,10 +398,10 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
               dataEvo.quest.condition = {};
               dataEvo.quest.condition.desc = condition.type.replace('WITH_', '');
               if (condition.withPokemonType) {
-                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_')[2]);
+                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_').at(2));
               }
               if (condition.withThrowType) {
-                dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_')[2];
+                dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_').at(2);
               }
               // tslint:disable-next-line: no-empty
             } catch {} // eslint-disable-line no-empty
@@ -421,7 +416,7 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
           }
           if (evo.temporaryEvolution) {
             result.temp_evo.push({
-              tempEvolutionName: name + evo.temporaryEvolution.split('TEMP_EVOLUTION')[1],
+              tempEvolutionName: name + evo.temporaryEvolution.split('TEMP_EVOLUTION').at(1),
               firstTempEvolution: evo.temporaryEvolutionEnergyCost,
               tempEvolution: evo.temporaryEvolutionEnergyCostSubsequent,
               requireMove: evo.obEvolutionBranchRequiredMove,
@@ -445,7 +440,7 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
 };
 
 export const optionSticker = (data: any[], pokemon: PokemonModel[]) => {
-  const stickers: Sticker[] = [];
+  const stickers: StickerModel[] = [];
   data.forEach((item: { templateId: string | string[]; data: { iapItemDisplay?: any; stickerMetadata?: any } }) => {
     if (item.templateId.includes('STICKER_')) {
       if (Object.keys(item.data).includes('iapItemDisplay')) {
@@ -532,7 +527,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
       }
     }
 
-    const formList = result.image.map((img) => img.form.replaceAll('_', ''));
+    const formList = result.image.map((img) => img.form?.replaceAll('_', ''));
     formSet = imgs.filter(
       (img: string | string[]) =>
         !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_pm${result.id?.toString().padStart(4, '0')}`)
@@ -656,7 +651,7 @@ export const optionCombat = (data: any[], types: TypeEff) => {
             buffs: { [x: string]: number };
           };
         };
-        templateId: string | string[];
+        templateId: string;
       }) => {
         const result = new CombatDataModel();
         result.name = item.data.combatMove.uniqueId;
@@ -1061,7 +1056,7 @@ export const optionDetailsPokemon = (
       if (item.pokemonClass) {
         result.pokemonClass = item.pokemonClass.replace('POKEMON_CLASS_', '');
       }
-      result.formChange = item.formChange ?? null;
+      result.formChange = item.formChange ?? [];
 
       const form = assets?.find((asset) => asset.id === result.id)?.image.find((img) => img.form === result.form);
 

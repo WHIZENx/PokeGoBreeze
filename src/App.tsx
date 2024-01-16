@@ -10,7 +10,7 @@ import './App.scss';
 import NavbarComponent from './components/Navbar';
 // import FooterComponent from './components/Footer'
 
-import Home from './pages/Home/Home-v2';
+import Home from './pages/Home/Home';
 import SearchPokemon from './pages/Search/Pokemon/Search';
 import SearchMove from './pages/Search/Moves/SearchMoves';
 import TypeEffect from './pages/TypeEffect/TypeEffect';
@@ -45,6 +45,7 @@ import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
 import { TRANSITION_TIME } from './util/Constants';
 import { setDevice } from './store/actions/device.action';
+import { PaletteMode } from '@mui/material';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -62,9 +63,9 @@ function App() {
       sounds: null,
     })
   );
-  const [stateCandy, setStateCandy] = useLocalStorage('candy', null);
-  const [stateImage, setStateImage] = useLocalStorage('assets', null);
-  const [stateSound, setStateSound] = useLocalStorage('sounds', null);
+  const [stateCandy, setStateCandy] = useLocalStorage('candy', '');
+  const [stateImage, setStateImage] = useLocalStorage('assets', '');
+  const [stateSound, setStateSound] = useLocalStorage('sounds', '');
   const [, setVersion] = useLocalStorage('version', '');
 
   useEffect(() => {
@@ -134,8 +135,8 @@ function App() {
 }
 
 export default function Main() {
-  const [stateMode]: any = useLocalStorage('theme', 'light');
-  const [mode, setMode] = useState<'light' | 'dark'>(stateMode ?? 'light');
+  const [stateMode] = useLocalStorage('theme', 'light');
+  const [mode, setMode] = useState(stateMode ?? 'light');
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
@@ -145,7 +146,7 @@ export default function Main() {
     []
   );
 
-  const theme = useMemo(() => createTheme(getDesignThemes(mode)), [mode]);
+  const theme = useMemo(() => createTheme(getDesignThemes(mode as PaletteMode)), [mode]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>

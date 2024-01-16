@@ -2,9 +2,7 @@ import { PokemonFormModify, PokemonFormModifyModel } from './models/API/form.mod
 
 // Pokémon GO Forms
 const GO_FORMS: PokemonFormModify[] = [
-  new PokemonFormModifyModel(150, 'mewtwo', 'mewtwo', 'armor', true, true, false, false, false, 'mewtwo-armor', 'Pokémon-GO', [
-    { type: { name: 'psychic' } },
-  ]),
+  new PokemonFormModifyModel(150, 'mewtwo', 'mewtwo', 'armor', true, true, false, false, false, 'mewtwo-armor', 'Pokémon-GO', ['psychic']),
 ];
 
 export const getFormsGO = (id: number) => {

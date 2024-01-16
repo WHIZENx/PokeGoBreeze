@@ -1,34 +1,36 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
-import Form from './Form';
+import APIService from '../../services/API.service';
+import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
-import { RouterState, SearchingState, StatsState, StoreState } from '../../../store/models/state.model';
-import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.model';
+import { getPokemonById, getPokemonByIndex } from '../../util/Utils';
+import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
+import { PokemonSearchingModel } from '../../core/models/pokemon-searching.model';
 
-import loading from '../../../assets/loading.png';
+import loading from '../../assets/loading.png';
+import { PokemonFormModify } from '../../core/models/API/form.model';
 
 const Find = (props: {
+  setId?: React.Dispatch<React.SetStateAction<number>>;
+  setName?: React.Dispatch<React.SetStateAction<string>>;
   // eslint-disable-next-line no-unused-vars
-  setId?: (arg0: number) => void;
-  // eslint-disable-next-line no-unused-vars
-  setName?: (arg0: any) => void;
-  clearStats?: any;
-  // eslint-disable-next-line no-unused-vars
-  setStatATK?: (arg0: any) => void;
-  // eslint-disable-next-line no-unused-vars
-  setStatDEF?: (arg0: any) => void;
-  // eslint-disable-next-line no-unused-vars
-  setStatSTA?: (arg0: any) => void;
+  clearStats?: (reset?: boolean) => void;
+  setStatATK?: React.Dispatch<React.SetStateAction<number>>;
+  setStatDEF?: React.Dispatch<React.SetStateAction<number>>;
+  setStatSTA?: React.Dispatch<React.SetStateAction<number>>;
   hide?: boolean;
   raid?: boolean;
-  setRaid?: any;
+  setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   tier?: number;
-  setTier?: any;
-  setForm?: any;
+  setTier?: React.Dispatch<React.SetStateAction<number>>;
+  // eslint-disable-next-line no-unused-vars
+  setForm?: (form: PokemonFormModify | undefined) => void;
   urlEvo?: { url: string | null };
-  setUrlEvo?: any;
+  setUrlEvo?: React.Dispatch<
+    React.SetStateAction<{
+      url: string;
+    }>
+  >;
   title?: string;
   swap?: boolean;
   objective?: boolean;
@@ -47,12 +49,17 @@ const Find = (props: {
   const [id, setId] = useState(
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
   );
-  const [form, setForm] = useState(null);
+  const [form, setForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
 
-  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
+  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>] = useState(
+    [] as PokemonSearchingModel[]
+  );
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
+  const [pokemonListFilter, setPokemonListFilter]: [
+    PokemonSearchingModel[],
+    React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>
+  ] = useState([] as PokemonSearchingModel[]);
 
   useEffect(() => {
     if (pokemonName.length > 0) {
@@ -83,7 +90,7 @@ const Find = (props: {
   const getInfoPoke = (value: PokemonSearchingModel) => {
     const currentId = getPokemonById(pokemonName, value.id);
     setId(value.id);
-    setForm(null);
+    setForm(undefined);
     if (props.setId) {
       props.setId(value.id);
     }
@@ -170,7 +177,7 @@ const Find = (props: {
             aria-describedby="input-search"
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}
-            onKeyUp={(e: any) => setSearchTerm(e.target.value)}
+            onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
           />
         </div>
         <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
@@ -188,14 +195,14 @@ const Find = (props: {
                   className="img-search"
                   alt="img-pokemon"
                   src={value.sprites}
-                  onError={(e: any) => {
-                    e.onerror = null;
-                    APIService.getFetchUrl(e.target.currentSrc)
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    APIService.getFetchUrl(e.currentTarget.currentSrc)
                       .then(() => {
-                        e.target.src = APIService.getPokeSprite(0);
+                        e.currentTarget.src = APIService.getPokeSprite(0);
                       })
                       .catch(() => {
-                        e.target.src = APIService.getPokeIconSprite('unknown-pokemon');
+                        e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                       });
                   }}
                 />
@@ -213,31 +220,29 @@ const Find = (props: {
       <div className="col d-flex justify-content-center text-center">
         <div>
           {pokemonList.length > 0 && (
-            <Fragment>
-              <Form
-                router={router}
-                searching={searching}
-                hide={props.hide}
-                raid={props.raid}
-                setRaid={props.setRaid}
-                tier={props.tier}
-                setTier={props.setTier}
-                form={form}
-                setForm={props.setForm}
-                setFormOrigin={setForm}
-                id={id}
-                name={pokemonList.find((item) => item.id === id)?.name ?? ''}
-                data={pokemonData}
-                stats={stats}
-                onHandleSetStats={handleSetStats}
-                onClearStats={props.clearStats}
-                onSetPrev={decId}
-                onSetNext={incId}
-                setUrlEvo={props.setUrlEvo}
-                objective={props.objective}
-                pokemonName={pokemonName}
-              />
-            </Fragment>
+            <FormSelect
+              router={router}
+              searching={searching}
+              hide={props.hide}
+              raid={props.raid}
+              setRaid={props.setRaid}
+              tier={props.tier}
+              setTier={props.setTier}
+              form={form}
+              setForm={props.setForm}
+              setFormOrigin={setForm}
+              id={id}
+              name={pokemonList.find((item) => item.id === id)?.name ?? ''}
+              data={pokemonData}
+              stats={stats}
+              onHandleSetStats={handleSetStats}
+              onClearStats={props.clearStats}
+              onSetPrev={decId}
+              onSetNext={incId}
+              setUrlEvo={props.setUrlEvo}
+              objective={props.objective}
+              pokemonName={pokemonName}
+            />
           )}
         </div>
       </div>

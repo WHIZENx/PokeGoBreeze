@@ -1,4 +1,4 @@
-interface Buff {
+export interface Buff {
   type: string;
   target: string;
   power: number;

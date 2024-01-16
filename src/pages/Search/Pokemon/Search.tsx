@@ -30,8 +30,13 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
 
-  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], any] = useState([]);
-  const [pokemonListFilter, setPokemonListFilter]: [PokemonSearchingModel[], any] = useState([]);
+  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>] = useState(
+    [] as PokemonSearchingModel[]
+  );
+  const [pokemonListFilter, setPokemonListFilter]: [
+    PokemonSearchingModel[],
+    React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>
+  ] = useState([] as PokemonSearchingModel[]);
 
   useEffect(() => {
     if (pokemonName.length > 0) {
@@ -132,12 +137,12 @@ const Search = () => {
             defaultValue={searchTerm}
             onFocus={() => setShowResult(true)}
             onBlur={() => setShowResult(false)}
-            onKeyUp={(e: any) => onChangeSelect(e, e.target.value)}
+            onKeyUp={(e) => onChangeSelect(e, e.currentTarget.value)}
           />
         </div>
         <div className="result" style={{ display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>
           <Fragment>
-            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value: any, index: React.Key) => (
+            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
               <div
                 className={
                   'container card-pokemon' +
@@ -155,9 +160,9 @@ const Search = () => {
                   className="img-search"
                   alt="img-pokemon"
                   src={value.sprites}
-                  onError={(e: any) => {
-                    e.onerror = null;
-                    e.target.src = APIService.getPokeSprite(0);
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = APIService.getPokeSprite(0);
                   }}
                 />
                 {value.name}

@@ -7,24 +7,25 @@ import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
-import { StatsModel } from '../../core/models/stats.model';
+import { StatsModel, StatsPokemon } from '../../core/models/stats.model';
+import { Image } from '../../core/models/asset.model';
 
 const CardPokemonInfo = (props: {
-  image: { shiny: string | undefined | null; default: string | undefined | null };
+  image: Image;
   id: number;
   name: string;
   forme: string;
   defaultImg: boolean;
   types: string[];
-  pokemonStat: { atk: number; def: number; sta: number };
+  pokemonStat: StatsPokemon;
   stats: StatsModel;
   icon: string;
   releasedGO: boolean;
 }) => {
   const [isShiny, setIsShiny] = useState(false);
 
-  const imageRef: any = useRef(null);
-  const shinyRef: any = useRef(null);
+  const imageRef: React.LegacyRef<HTMLImageElement | undefined> = useRef();
+  const shinyRef: React.LegacyRef<HTMLImageElement | undefined> = useRef();
 
   const onTouchEnd = () => {
     if (props.defaultImg) {
@@ -78,7 +79,7 @@ const CardPokemonInfo = (props: {
           onTouchEnd={onTouchEnd}
           onMouseOver={onHoverShiny}
           onMouseLeave={onLeaveShiny}
-          ref={shinyRef}
+          ref={shinyRef as React.LegacyRef<HTMLImageElement> | undefined}
           className={'shiny-pokemon' + (props.defaultImg ? ' active' : '')}
           height={32}
           src={APIService.getShinyIcon()}
@@ -91,7 +92,7 @@ const CardPokemonInfo = (props: {
         <div className="d-flex justify-content-center" style={{ padding: 8 }}>
           <span style={{ width: 96 }}>
             <img
-              ref={imageRef}
+              ref={imageRef as React.LegacyRef<HTMLImageElement> | undefined}
               className="pokemon-sprite-large"
               alt="pokemon-img"
               src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default ?? ''}

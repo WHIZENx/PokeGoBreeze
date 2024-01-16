@@ -25,7 +25,7 @@ const TypeInfo = (props: {
     <div className={(props.block ? '' : 'element-top') + (props.shadow ? ' filter-shadow' : '')} style={props.style}>
       {props.text && <p>{props.text}</p>}
       <div className="d-inline-flex flex-wrap type-list align-items-center">
-        {props.arr?.map((value: string, index: React.Key) => (
+        {props.arr?.map((value, index) => (
           <div className="text-center d-flex" key={index}>
             {props.hideText ? (
               <img
@@ -34,9 +34,9 @@ const TypeInfo = (props: {
                 height={props.height}
                 alt="img-pokemon"
                 src={APIService.getTypeSprite(value)}
-                onError={(e: any) => {
-                  e.onerror = null;
-                  e.target.src = APIService.getPokeSprite(0);
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeSprite(0);
                 }}
               />
             ) : (

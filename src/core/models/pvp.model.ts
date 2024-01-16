@@ -1,9 +1,14 @@
+import { PokemonTeamData } from '../../pages/PVP/models/battle.model';
+import { Combat, CombatPokemon } from './combat.model';
+import { PokemonDataModel } from './pokemon.model';
+import { StatsPokemon } from './stats.model';
+
 export interface PVPDataModel {
   rankings: PVPInfo[];
   trains: PVPInfo[];
 }
 
-interface PVPInfo {
+export interface PVPInfo {
   id: string;
   name: string;
   cp: number[];
@@ -16,11 +21,27 @@ export interface TeamsPVP {
   teams: Teams[];
 }
 
-interface Performers {
+export interface Performers {
+  id: number | undefined;
+  name: string | undefined;
+  speciesId: string;
+  pokemonData: PokemonDataModel | undefined;
+  form: string | null;
+  stats: StatsPokemon;
+  atk: { id: number; form: string; attack: number; rank: number } | undefined;
+  def: { id: number; form: string; defense: number; rank: number } | undefined;
+  sta: { id: number; form: string; stamina: number; rank: number } | undefined;
+  fmove: Combat | undefined;
+  cmovePri: Combat | undefined;
+  cmoveSec: Combat | undefined;
+  combatPoke: CombatPokemon | undefined;
+  shadow: boolean;
+  purified: boolean | undefined;
   games: number;
   individualScore: number;
   pokemon: string;
   teamScore: number;
+  performersTotalGames: number;
 }
 
 interface Properties {
@@ -33,6 +54,8 @@ interface Teams {
   games: number;
   team: string;
   teamScore: number;
+  teamsData: PokemonTeamData[];
+  teamsTotalGames: number;
 }
 
 export interface RankingsPVP {
@@ -51,12 +74,12 @@ export interface RankingsPVP {
   stats: PokemonRankingStats;
 }
 
-interface PokemonVersus {
+export interface PokemonVersus {
   opponent: string;
   rating: number;
 }
 
-interface PokemonRankingMove {
+export interface PokemonRankingMove {
   moveId: string;
   uses: number | null;
 }
@@ -66,4 +89,26 @@ interface PokemonRankingStats {
   atk: number;
   def: number;
   hp?: number;
+}
+
+export interface BattlePokemonData {
+  counters: PokemonVersus[];
+  matchups: PokemonVersus[];
+  moves: {
+    chargedMoves: PokemonRankingMove[];
+    fastMoves: PokemonRankingMove[];
+  };
+  moveset: string[];
+  rating: number;
+  score: number;
+  scores: number[];
+  speciesId: string;
+  speciesName: string;
+  stats: PokemonRankingStats;
+  name: string | undefined;
+  pokemon: PokemonDataModel;
+  id: number;
+  form: string | null;
+  shadow?: boolean;
+  purified?: boolean;
 }

@@ -14,21 +14,36 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, CombatPokemon } from '../../../core/models/combat.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
-import { FormModel } from '../../../core/models/API/form.model';
+import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
+import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
+import { PokemonStatsRanking } from '../../../core/models/stats.model';
+
+interface PokemonMoves {
+  fastMoves: (Combat | undefined)[];
+  chargedMoves: (Combat | undefined)[];
+  eliteFastMoves: (Combat | undefined)[];
+  eliteChargedMoves: (Combat | undefined)[];
+  purifiedMoves: (Combat | undefined)[];
+  shadowMoves: (Combat | undefined)[];
+  specialMoves: (Combat | undefined)[];
+}
 
 const TableMove = (props: {
-  data: any;
+  data: PokemonDataForm | PokemonStatsRanking | undefined;
   statATK: number;
   statDEF: number;
   statSTA: number;
-  form: FormModel;
+  form: FormModel | undefined;
   id?: number;
   maxHeight?: number | string;
 }) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
-  const [move, setMove]: any = useState({ data: [] });
-  const [moveOrigin, setMoveOrigin]: any = useState(null);
+  const [move, setMove]: [PokemonQueryRankMove, React.Dispatch<React.SetStateAction<PokemonQueryRankMove>>] = useState({
+    data: [] as PokemonQueryMove[],
+  });
+  const [moveOrigin, setMoveOrigin]: [PokemonMoves | undefined, React.Dispatch<React.SetStateAction<PokemonMoves | undefined>>] =
+    useState();
 
   const [stateSorted, setStateSorted]: any = useState({
     offensive: {
@@ -47,7 +62,7 @@ const TableMove = (props: {
 
   const filterMoveType = (combat: CombatPokemon | undefined) => {
     if (!combat) {
-      return setMoveOrigin(null);
+      return setMoveOrigin(undefined);
     }
     return setMoveOrigin({
       fastMoves: combat.quickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
@@ -64,7 +79,7 @@ const TableMove = (props: {
     const combatPoke = data?.pokemonCombat
       ?.filter((item) =>
         props.form?.id || props.form?.is_shadow || props.form?.is_purified
-          ? item.id === parseInt(props.data?.species.url.split('/').at(6))
+          ? item.id === parseInt(props.data?.url?.split('/').at(6) ?? '0')
           : item.name ===
             (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
       )
@@ -78,7 +93,7 @@ const TableMove = (props: {
     if (combatPoke) {
       if (combatPoke.length === 1) {
         filterMoveType(combatPoke.at(0));
-        return setMove(setRankMove(combatPoke[0]));
+        return setMove(setRankMove(combatPoke.at(0)));
       } else if (combatPoke.length === 0 && props.id) {
         const combatPoke: CombatPokemon[] | undefined = data?.pokemonCombat?.filter(
           (item) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
@@ -92,7 +107,7 @@ const TableMove = (props: {
       );
       if (result === undefined) {
         filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
-        setMove(setRankMove(combatPoke[0]));
+        setMove(setRankMove(combatPoke.at(0)));
       } else {
         filterMoveType(result);
         setMove(setRankMove(result));
@@ -110,7 +125,7 @@ const TableMove = (props: {
       props.statATK * (props.form?.is_shadow ? SHADOW_ATK_BONUS(data?.options) : 1),
       props.statDEF * (props.form?.is_shadow ? SHADOW_DEF_BONUS(data?.options) : 1),
       props.statSTA,
-      props.data?.types.map((item: { type: { name: string } }) => capitalize(item?.type?.name ?? item))
+      props.data?.types?.map((type) => capitalize(type)) ?? []
     );
   };
 
@@ -120,15 +135,7 @@ const TableMove = (props: {
     }
   }, [findMove, props.form]);
 
-  const renderBestMovesetTable = (
-    value: {
-      fmove: { id: string; type: string; name: string; elite: boolean };
-      cmove: { id: string; type: string; name: string; elite: boolean; shadow: boolean; purified: boolean; special: boolean };
-      eDPS: { [x: string]: number };
-    },
-    max: number,
-    type: string
-  ) => {
+  const renderBestMovesetTable = (value: PokemonQueryMove, max: number, type: string) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
@@ -177,40 +184,40 @@ const TableMove = (props: {
           </Link>
         </td>
         <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-          {Math.round((value.eDPS[type] * 100) / max)}
+          {Math.round(((type === 'offensive' ? value.eDPS.offensive : value.eDPS.defensive) * 100) / max)}
         </td>
       </tr>
     );
   };
 
-  const renderMoveSetTable = (data: Combat[]) => {
+  const renderMoveSetTable = (data: (Combat | undefined)[]) => {
     return (
       <Fragment>
         {data?.map((value, index) => (
           <tr key={index}>
             <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-              <Link to={'../move/' + value.id} className="d-block">
+              <Link to={'../move/' + value?.id} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type))} />
+                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value?.type))} />
                 </div>
-                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-                  {value.elite && (
+                  {value?.elite && (
                     <span className="type-icon-small ic elite-ic">
                       <span>Elite</span>
                     </span>
                   )}
-                  {value.shadow && (
+                  {value?.shadow && (
                     <span className="type-icon-small ic shadow-ic">
                       <span>Shadow</span>
                     </span>
                   )}
-                  {value.purified && (
+                  {value?.purified && (
                     <span className="type-icon-small ic purified-ic">
                       <span>Purified</span>
                     </span>
                   )}
-                  {value.special && (
+                  {value?.special && (
                     <span className="type-icon-small ic special-ic">
                       <span>Special</span>
                     </span>
@@ -322,8 +329,8 @@ const TableMove = (props: {
                       return 0;
                     }
                   })
-                  .map((value, index: React.Key) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff, 'offensive')}</Fragment>
+                  .map((value, index) => (
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff ?? 0, 'offensive')}</Fragment>
                   ))}
               </tbody>
             </table>
@@ -374,8 +381,8 @@ const TableMove = (props: {
                       return 0;
                     }
                   })
-                  .map((value, index: React.Key) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef, 'defensive')}</Fragment>
+                  .map((value, index) => (
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef ?? 0, 'defensive')}</Fragment>
                   ))}
               </tbody>
             </table>

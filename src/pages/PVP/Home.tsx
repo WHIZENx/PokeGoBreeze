@@ -8,6 +8,13 @@ import { useLocalStorage } from 'usehooks-ts';
 import { hideSpinner } from '../../store/actions/spinner.action';
 import { Link } from 'react-router-dom';
 import { SpinnerState, StoreState } from '../../store/models/state.model';
+import { PVPInfo } from '../../core/models/pvp.model';
+
+// tslint:disable-next-line:class-name
+interface OptionsHome {
+  rank?: PVPInfo | undefined;
+  team?: PVPInfo | undefined;
+}
 
 const PVPHome = () => {
   const dispatch = useDispatch();
@@ -20,14 +27,11 @@ const PVPHome = () => {
       pvp: null,
     })
   );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
-  const [options, setOptions] = useState({
-    rank: null,
-    team: null,
-  }) as any;
+  const [options, setOptions]: [OptionsHome, React.Dispatch<React.SetStateAction<OptionsHome>>] = useState({});
 
-  const { rank, team }: any = options;
+  const { rank, team } = options;
 
   useEffect(() => {
     document.title = 'PVP - Simulator';
@@ -46,7 +50,7 @@ const PVPHome = () => {
     if (!rank && !team && pvp) {
       setOptions({
         rank: pvp.rankings.at(0),
-        team: pvp.trains ? pvp.trains.at(0) : null,
+        team: pvp.trains ? pvp.trains.at(0) : undefined,
       });
     }
   }, [rank, team, pvp]);
@@ -110,7 +114,7 @@ const PVPHome = () => {
             })
           }
         >
-          {pvp?.rankings.map((value, index: React.Key) => (
+          {pvp?.rankings.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -119,10 +123,10 @@ const PVPHome = () => {
       </div>
       {rank ? (
         <div className="group-selected">
-          {rank.cp.map((value: number, index: React.Key) => (
+          {rank.cp.map((value, index) => (
             <Link key={index} to={`/pvp/rankings/${rank.id}/${value}/overall`}>
               <Button className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
+                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo ?? '', value)} />
                 <div>
                   <b>{renderLeagueName(rank.name, value)}</b>
                 </div>
@@ -168,7 +172,7 @@ const PVPHome = () => {
             })
           }
         >
-          {pvp?.trains.map((value, index: React.Key) => (
+          {pvp?.trains.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -177,10 +181,10 @@ const PVPHome = () => {
       </div>
       {team ? (
         <div className="group-selected">
-          {team.cp.map((value: number, index: React.Key) => (
+          {team.cp.map((value, index) => (
             <Link key={index} to={`/pvp/teams/${team.id}/${value}`}>
               <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(team.logo, value)} />
+                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(team.logo ?? '', value)} />
                 <div>
                   <b>{renderLeagueName(team.name, value)}</b>
                 </div>

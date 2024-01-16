@@ -1,5 +1,5 @@
 import '../PVP.scss';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { capitalize, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -19,6 +19,9 @@ import { Button } from 'react-bootstrap';
 import { MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
+import { CombatPokemon } from '../../../core/models/combat.model';
+import { RankingsPVP } from '../../../core/models/pvp.model';
+import { PokemonBattleRanking } from '../models/battle.model';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -34,9 +37,12 @@ const PokemonPVP = () => {
       pvp: null,
     })
   );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', null);
+  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
-  const [rankingPoke, setRankingPoke]: any = useState(null);
+  const [rankingPoke, setRankingPoke]: [
+    PokemonBattleRanking | undefined,
+    React.Dispatch<React.SetStateAction<PokemonBattleRanking | undefined>>
+  ] = useState();
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
@@ -46,157 +52,168 @@ const PokemonPVP = () => {
     }
   }, [pvp]);
 
-  useEffect(() => {
-    if (dataStore?.combat?.every((combat) => !combat.archetype)) {
-      loadPVPMoves(dispatch);
-    }
-  }, [dataStore?.combat]);
-
-  useEffect(() => {
-    const fetchPokemon = async () => {
-      dispatch(showSpinner());
-      try {
-        const cp = parseInt(params.cp);
-        const paramName = params.pokemon.replaceAll('-', '_').toLowerCase();
-        const data = (
+  const fetchPokemonInfo = useCallback(async () => {
+    const axios = APIService;
+    const cancelToken = axios.getAxios().CancelToken;
+    const source = cancelToken.source();
+    dispatch(showSpinner());
+    try {
+      const cp = parseInt(params.cp);
+      const paramName = params.pokemon.replaceAll('-', '_').toLowerCase();
+      const data = (
+        (
           await APIService.getFetchUrl(APIService.getRankingFile(paramName.includes('_mega') ? 'mega' : 'all', cp, params.type), {
             cancelToken: APIService.getAxios().CancelToken.source().token,
           })
-        ).data.find((pokemon: { speciesId: string }) => pokemon.speciesId === paramName);
+        ).data as RankingsPVP[]
+      ).find((pokemon) => pokemon.speciesId === paramName);
 
-        const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-        const pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
-        const id = pokemon?.num;
-        const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
-        document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${
-          cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
-        } (${capitalize(params.type)})`;
-
-        const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-
-        let fmoveData = data.moveset.at(0),
-          cMoveDataPri = data.moveset[1],
-          cMoveDataSec = data.moveset[2];
-        if (fmoveData.includes('HIDDEN_POWER')) {
-          fmoveData = 'HIDDEN_POWER';
-        }
-        if (cMoveDataPri === 'FUTURE_SIGHT') {
-          cMoveDataPri = 'FUTURESIGHT';
-        }
-        if (cMoveDataSec === 'FUTURE_SIGHT') {
-          cMoveDataSec = 'FUTURESIGHT';
-        }
-        if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') {
-          cMoveDataPri = 'TECHNO_BLAST_WATER';
-        }
-        if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') {
-          cMoveDataSec = 'TECHNO_BLAST_WATER';
-        }
-
-        let fmove: any = dataStore?.combat?.find((item) => item.name === fmoveData);
-        const cmovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
-        let cmoveSec;
-        if (cMoveDataSec) {
-          cmoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
-        }
-
-        if (data.moveset.at(0).includes('HIDDEN_POWER')) {
-          fmove = { ...fmove, type: data.moveset.at(0).split('_').at(2) };
-        }
-
-        let combatPoke: any = dataStore?.pokemonCombat?.filter(
-          (item) =>
-            item.id === pokemon?.num &&
-            item.baseSpecies === (pokemon?.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
-        );
-        const result = combatPoke?.find((item: { name: string }) => item.name === convertName(pokemon?.name));
-        if (!result) {
-          combatPoke = combatPoke.at(0);
-        } else {
-          combatPoke = result;
-        }
-
-        const maxCP = parseInt(params.cp);
-
-        let bestStats: any = {};
-        if (maxCP === 10000) {
-          const cp = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
-          const buddyCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
-          bestStats[MAX_LEVEL - 1] = { cp };
-          bestStats[MAX_LEVEL] = { cp: buddyCP };
-        } else {
-          let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-          const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
-
-          if (maxPokeCP < minCP) {
-            if (maxPokeCP <= 500) {
-              minCP = 0;
-            } else if (maxPokeCP <= 1500) {
-              minCP = 500;
-            } else if (maxPokeCP <= 2500) {
-              minCP = 1500;
-            } else {
-              minCP = 2500;
-            }
-          }
-          const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
-          bestStats = allStats[allStats.length - 1];
-        }
-
-        setRankingPoke({
-          data,
-          id,
-          name,
-          pokemon,
-          form,
-          stats,
-          atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
-          def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
-          prod: statsRanking.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
-          scores: data.scores,
-          combatPoke,
-          fmove,
-          cmovePri,
-          cmoveSec,
-          bestStats,
-          shadow: data.speciesName.includes('(Shadow)'),
-          purified: combatPoke.purifiedMoves.includes(cmovePri) || (cMoveDataSec && combatPoke.purifiedMoves.includes(cMoveDataSec)),
-        });
-        dispatch(hideSpinner());
-      } catch (e: any) {
-        APIService.getAxios().CancelToken.source().cancel();
+      if (!data) {
         setFound(false);
-        dispatch(
-          showSpinner({
-            error: true,
-            msg: e.message,
-          })
-        );
+        return;
       }
-    };
-    if (statsRanking && dataStore?.pokemonCombat && dataStore?.combat && dataStore?.pokemonData?.length > 0 && dataStore?.assets) {
-      if (router.action === Action.Push) {
-        router.action = null as any;
-        setTimeout(() => fetchPokemon(), 100);
-      } else if (!rankingPoke && pvp) {
-        fetchPokemon();
+
+      const name = convertNameRankingToOri(data.speciesId, data.speciesName);
+      const pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
+      const id = pokemon?.num;
+      const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
+      document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${
+        cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
+      } (${capitalize(params.type)})`;
+
+      const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+
+      let fmoveData = data.moveset.at(0),
+        cMoveDataPri = data.moveset.at(1),
+        cMoveDataSec = data.moveset.at(2);
+      if (fmoveData?.includes('HIDDEN_POWER')) {
+        fmoveData = 'HIDDEN_POWER';
       }
+      if (cMoveDataPri === 'FUTURE_SIGHT') {
+        cMoveDataPri = 'FUTURESIGHT';
+      }
+      if (cMoveDataSec === 'FUTURE_SIGHT') {
+        cMoveDataSec = 'FUTURESIGHT';
+      }
+      if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') {
+        cMoveDataPri = 'TECHNO_BLAST_WATER';
+      }
+      if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') {
+        cMoveDataSec = 'TECHNO_BLAST_WATER';
+      }
+
+      let fmove = dataStore?.combat?.find((item) => item.name === fmoveData);
+      const cmovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
+      let cmoveSec;
+      if (cMoveDataSec) {
+        cmoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
+      }
+
+      if (fmove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
+        fmove = { ...fmove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
+      }
+
+      const pokemonCombatResult = dataStore?.pokemonCombat?.filter(
+        (item) =>
+          item.id === pokemon?.num &&
+          item.baseSpecies === (pokemon?.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+      );
+      const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon?.name));
+      let combatPoke: CombatPokemon | undefined;
+      if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
+        combatPoke = pokemonCombatResult.at(0);
+      } else {
+        combatPoke = result;
+      }
+
+      const maxCP = parseInt(params.cp);
+
+      let bestStats: any = {};
+      if (maxCP === 10000) {
+        const cp = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
+        const buddyCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+        bestStats[MAX_LEVEL - 1] = { cp };
+        bestStats[MAX_LEVEL] = { cp: buddyCP };
+      } else {
+        let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+
+        if (maxPokeCP < minCP) {
+          if (maxPokeCP <= 500) {
+            minCP = 0;
+          } else if (maxPokeCP <= 1500) {
+            minCP = 500;
+          } else if (maxPokeCP <= 2500) {
+            minCP = 1500;
+          } else {
+            minCP = 2500;
+          }
+        }
+        const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
+        bestStats = allStats[allStats.length - 1];
+      }
+
+      setRankingPoke({
+        data,
+        id: id ?? 0,
+        name: name ?? '',
+        pokemon,
+        form: form ?? '',
+        stats,
+        atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
+        def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
+        sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
+        prod: statsRanking.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
+        combatPoke,
+        fmove,
+        cmovePri,
+        cmoveSec,
+        bestStats,
+        shadow: data.speciesName.includes('(Shadow)') ?? false,
+        purified:
+          (combatPoke?.purifiedMoves.includes(cmovePri?.name ?? '') ||
+            (cMoveDataSec !== null && cMoveDataSec !== undefined && combatPoke?.purifiedMoves.includes(cMoveDataSec))) ??
+          false,
+      });
+      dispatch(hideSpinner());
+    } catch (e: any) {
+      source.cancel();
+      setFound(false);
+      dispatch(
+        showSpinner({
+          error: true,
+          msg: e.message,
+        })
+      );
     }
   }, [
-    dispatch,
-    params.cp,
     params.type,
     params.pokemon,
-    rankingPoke,
-    pvp,
-    router.action,
+    params.cp,
     statsRanking,
     dataStore?.pokemonCombat,
     dataStore?.combat,
     dataStore?.pokemonData,
     dataStore?.assets,
   ]);
+
+  useEffect(() => {
+    const fetchPokemon = async () => {
+      await fetchPokemonInfo();
+    };
+    if (statsRanking && dataStore?.pokemonCombat && dataStore?.combat && dataStore?.pokemonData && dataStore?.assets) {
+      if (dataStore.combat.every((combat) => !combat.archetype)) {
+        loadPVPMoves(dispatch);
+      } else {
+        if (router.action === Action.Push) {
+          router.action = null as any;
+          setTimeout(() => fetchPokemon(), 100);
+        } else if (!rankingPoke && pvp) {
+          fetchPokemon();
+        }
+      }
+    }
+  }, [fetchPokemonInfo, rankingPoke, pvp, router.action]);
 
   const renderLeague = () => {
     const cp = parseInt(params.cp);
@@ -295,7 +312,7 @@ const PokemonPVP = () => {
                         </b>
                       )}
                     </h3>
-                    <TypeInfo shadow={true} block={true} color={'white'} arr={rankingPoke?.pokemon.types} />
+                    <TypeInfo shadow={true} block={true} color={'white'} arr={rankingPoke?.pokemon?.types} />
                   </div>
                   <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
                     Recommend Moveset in PVP
@@ -307,7 +324,7 @@ const PokemonPVP = () => {
                       title="Fast Move"
                       color={'white'}
                       move={rankingPoke?.fmove}
-                      elite={rankingPoke?.combatPoke.eliteQuickMoves.includes(rankingPoke?.fmove.name)}
+                      elite={rankingPoke?.combatPoke?.eliteQuickMoves.includes(rankingPoke?.fmove?.name ?? '')}
                     />
                     <TypeBadge
                       grow={true}
@@ -315,10 +332,10 @@ const PokemonPVP = () => {
                       title="Primary Charged Move"
                       color={'white'}
                       move={rankingPoke?.cmovePri}
-                      elite={rankingPoke?.combatPoke.eliteCinematicMoves.includes(rankingPoke?.cmovePri.name)}
-                      shadow={rankingPoke?.combatPoke.shadowMoves.includes(rankingPoke?.cmovePri.name)}
-                      purified={rankingPoke?.combatPoke.purifiedMoves.includes(rankingPoke?.cmovePri.name)}
-                      special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cMovePri?.name)}
+                      elite={rankingPoke?.combatPoke?.eliteCinematicMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      shadow={rankingPoke?.combatPoke?.shadowMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      purified={rankingPoke?.combatPoke?.purifiedMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
                     />
                     {rankingPoke?.cmoveSec && (
                       <TypeBadge
@@ -327,9 +344,9 @@ const PokemonPVP = () => {
                         title="Secondary Charged Move"
                         color={'white'}
                         move={rankingPoke?.cmoveSec}
-                        elite={rankingPoke?.combatPoke.eliteCinematicMoves.includes(rankingPoke?.cmoveSec.name)}
-                        shadow={rankingPoke?.combatPoke.shadowMoves.includes(rankingPoke?.cmoveSec.name)}
-                        purified={rankingPoke?.combatPoke.purifiedMoves.includes(rankingPoke?.cmoveSec.name)}
+                        elite={rankingPoke?.combatPoke?.eliteCinematicMoves.includes(rankingPoke?.cmoveSec.name)}
+                        shadow={rankingPoke?.combatPoke?.shadowMoves.includes(rankingPoke?.cmoveSec.name)}
+                        purified={rankingPoke?.combatPoke?.purifiedMoves.includes(rankingPoke?.cmoveSec.name)}
                         special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cmoveSec?.name)}
                       />
                     )}
@@ -345,9 +362,9 @@ const PokemonPVP = () => {
             <div className="stats-container">{OverAllStats(rankingPoke, statsRanking, params.cp)}</div>
             <div className="container">
               <hr />
-              {TypeEffective(rankingPoke?.pokemon.types)}
+              {TypeEffective(rankingPoke?.pokemon?.types ?? [])}
             </div>
-            <div className="container">{MoveSet(rankingPoke?.data.moves, rankingPoke?.combatPoke, dataStore?.combat ?? [])}</div>
+            <div className="container">{MoveSet(rankingPoke?.data?.moves, rankingPoke?.combatPoke, dataStore?.combat ?? [])}</div>
           </div>
         </div>
       )}
