@@ -170,7 +170,7 @@ const TeamPVP = () => {
         file.performers = file.performers?.map((item) => {
           return {
             ...item,
-            ...mappingPokemonData(item.pokemon),
+            // ...mappingPokemonData(item.pokemon),
             performersTotalGames: performersTotalGames ?? 0,
           };
         });
