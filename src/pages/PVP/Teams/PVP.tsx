@@ -169,9 +169,9 @@ const TeamPVP = () => {
 
         file.performers = file.performers?.map((item) => {
           return {
-            // ...item,
+            ...item,
             ...mappingPokemonData(item.pokemon ?? ''),
-            performersTotalGames: performersTotalGames ?? 0,
+            // performersTotalGames: performersTotalGames ?? 0,
           };
         });
 
