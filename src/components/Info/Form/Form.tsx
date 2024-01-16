@@ -132,7 +132,7 @@ const Form = (props: {
 
   const filterFormName = useCallback((form: string, formStats: string) => {
     form =
-      form === '' || form?.toUpperCase() === FORM_STANDARD || form?.toUpperCase() === FORM_SHADOW || form?.toLowerCase() === FORM_PURIFIED
+      form === '' || form?.toUpperCase() === FORM_STANDARD || form?.toUpperCase() === FORM_SHADOW || form?.toUpperCase() === FORM_PURIFIED
         ? 'Normal'
         : form?.toUpperCase().includes(FORM_MEGA)
         ? form.toLowerCase()

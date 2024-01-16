@@ -302,12 +302,6 @@ const Evolution = (props: {
     }
   }, [props.forme, props.id]);
 
-  const handlePokeID = (id: string) => {
-    if (id !== id.toString() && props.onSetIDPoke) {
-      props.onSetIDPoke(parseInt(id));
-    }
-  };
-
   const getQuestEvo = (prevId: number, form: string) => {
     try {
       return evoData
@@ -658,7 +652,7 @@ const Evolution = (props: {
                           if (props.pokemonRouter?.action === 'POP') {
                             props.pokemonRouter.action = null as any;
                           }
-                          handlePokeID(value.id.toString());
+                          props.onSetIDPoke?.(value.id);
                         }}
                         title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
                       >
