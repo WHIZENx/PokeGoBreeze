@@ -1,5 +1,5 @@
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { capitalize, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
@@ -93,8 +93,8 @@ const Counter = (props: {
   const [frame, setFrame] = useState(false);
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const controller = new AbortController();
-  let timeOutId: NodeJS.Timeout;
+  const controller: React.MutableRefObject<AbortController> = useRef(new AbortController());
+  const timeOutId: React.MutableRefObject<NodeJS.Timeout | undefined> = useRef();
 
   const columns: any = [
     {
@@ -238,14 +238,14 @@ const Counter = (props: {
       setCounterList([]);
     }
     return () => {
-      clearTimeout(timeOutId);
-      controller.abort();
+      clearTimeout(timeOutId.current);
+      controller.current?.abort();
     };
-  }, [props.pokeID, props.currForm, props.isShadow]);
+  }, [props.pokeID, props.currForm, props.def, props.isShadow, props.form]);
 
   const calculateCounter = () => {
     return new Promise((resolve, reject) => {
-      timeOutId = setTimeout(() => {
+      timeOutId.current = setTimeout(() => {
         resolve(
           counterPokemon(
             data?.options,
@@ -259,7 +259,7 @@ const Counter = (props: {
           )
         );
       }, 3000);
-      controller.signal.addEventListener('abort', () => {
+      controller.current?.signal.addEventListener('abort', () => {
         reject();
       });
     });
@@ -269,11 +269,12 @@ const Counter = (props: {
     setFrame(true);
     calculateCounter()
       .then((data) => {
+        clearTimeout(timeOutId.current);
         setCounterList(data as CounterModel[]);
         setFrame(false);
       })
-      .catch(() => clearTimeout(timeOutId))
-      .finally(() => clearTimeout(timeOutId));
+      .catch(() => clearTimeout(timeOutId.current))
+      .finally(() => clearTimeout(timeOutId.current));
   };
 
   return (
