@@ -12,7 +12,6 @@ import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { FORM_GALARIAN, FORM_STANDARD, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { CounterModel } from './models/counter.model';
-import { FormModel, PokemonFormModify } from '../../../core/models/API/form.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -77,13 +76,7 @@ const customStyles: TableStyles = {
   },
 };
 
-const Counter = (props: {
-  def: number;
-  form: FormModel | undefined;
-  currForm: PokemonFormModify | undefined;
-  pokeID: number;
-  isShadow: boolean | undefined;
-}) => {
+const Counter = (props: { def: number; types: string[] | undefined; isShadow: boolean | undefined }) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -232,7 +225,7 @@ const Counter = (props: {
   );
 
   useEffect(() => {
-    if ((props.currForm || props.currForm === undefined) && props.pokeID && props.form) {
+    if (props.def && props.types && props.types.length > 0) {
       loadMetaData();
     } else if (counterList.length > 0) {
       setCounterList([]);
@@ -241,10 +234,10 @@ const Counter = (props: {
       clearTimeout(timeOutId.current);
       controller.current?.abort();
     };
-  }, [props.pokeID, props.currForm, props.def, props.isShadow, props.form]);
+  }, [props.def, props.isShadow, props.types]);
 
-  const calculateCounter = () => {
-    return new Promise((resolve, reject) => {
+  const calculateCounter = async () => {
+    return new Promise<CounterModel[]>((resolve, reject) => {
       timeOutId.current = setTimeout(() => {
         resolve(
           counterPokemon(
@@ -253,7 +246,7 @@ const Counter = (props: {
             data?.typeEff,
             data?.weatherBoost,
             props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
-            props.form?.types ?? [],
+            props.types ?? [],
             data?.combat ?? [],
             data?.pokemonCombat ?? []
           )
@@ -267,10 +260,11 @@ const Counter = (props: {
 
   const loadMetaData = () => {
     setFrame(true);
+    clearTimeout(timeOutId.current);
+    controller.current?.abort();
     calculateCounter()
       .then((data) => {
-        clearTimeout(timeOutId.current);
-        setCounterList(data as CounterModel[]);
+        setCounterList(data);
         setFrame(false);
       })
       .catch(() => clearTimeout(timeOutId.current))

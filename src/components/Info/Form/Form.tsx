@@ -119,21 +119,27 @@ const Form = (props: {
   const [statSTA, setStatSTA]: [StatsSta | undefined, React.Dispatch<React.SetStateAction<StatsSta | undefined>>] = useState();
   const [statProd, setStatProd]: [StatsProd | undefined, React.Dispatch<React.SetStateAction<StatsProd | undefined>>] = useState();
 
-  const filterFormList = (formName: string, stats: { id: number; form: string }[], id: number, formLength: number): any => {
-    const firstFilter = stats?.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
-    if (firstFilter) {
-      return firstFilter;
-    }
-    const filterId = stats?.filter((item) => item.id === id);
-    const filterForm = stats?.find((item) => item.id === id && filterFormName(formName, item.form));
-    if (filterId?.length === 1 && formLength === 1 && !filterForm) {
-      return filterId.at(0);
-    } else if (filterId?.length === formLength && !filterForm) {
-      return stats?.find((item) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
-    } else {
-      return filterForm;
-    }
-  };
+  const filterFormList = useCallback(
+    (stats: { id: number; form: string }[]): any => {
+      const id = props.idDefault;
+      const formLength = props.formList?.length;
+      const formName = currForm?.form.form_name ?? '';
+      const firstFilter = stats?.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
+      if (firstFilter) {
+        return firstFilter;
+      }
+      const filterId = stats?.filter((item) => item.id === id);
+      const filterForm = stats?.find((item) => item.id === id && filterFormName(formName, item.form));
+      if (filterId?.length === 1 && formLength === 1 && !filterForm) {
+        return filterId.at(0);
+      } else if (filterId?.length === formLength && !filterForm) {
+        return stats?.find((item) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
+      } else {
+        return filterForm;
+      }
+    },
+    [props.idDefault, props.formList, currForm?.form]
+  );
 
   const findFormData = (name: string) => {
     const findData = props.pokeData.find((item) => name === item.name);
@@ -215,22 +221,25 @@ const Form = (props: {
   }, [props.formList, props.region, props.setRegion, props.species?.generation.url, props.formName]);
 
   useEffect(() => {
-    if ((currForm || currForm === undefined) && pokeID) {
+    if (currForm && pokeID && statATK && statDEF && statSTA && statProd && dataPoke) {
       dispatch(hideSpinner());
     }
-  }, [pokeID, dispatch]);
+  }, [currForm, pokeID, statATK, statDEF, statSTA, statProd, dataPoke, dispatch]);
 
   useEffect(() => {
-    if (currForm && currForm.form && pokeID && props.stats) {
-      setStatATK(filterFormList(currForm.form.form_name, props.stats?.attack.ranking, props.idDefault ?? 0, props.formList?.length ?? 0));
-      setStatDEF(filterFormList(currForm.form.form_name, props.stats?.defense.ranking, props.idDefault ?? 0, props.formList?.length ?? 0));
-      setStatSTA(filterFormList(currForm.form.form_name, props.stats?.stamina.ranking, props.idDefault ?? 0, props.formList?.length ?? 0));
-      setStatProd(
-        filterFormList(currForm.form.form_name, props.stats?.statProd.ranking, props.idDefault ?? 0, props.formList?.length ?? 0)
-      );
+    if (currForm?.form && pokeID) {
       setPokeID(findIsDefaultForm() ? currForm.form.id ?? 0 : findFirst()?.form.id ?? 0);
     }
-  }, [currForm, pokeID, findIsDefaultForm, findFirst, props.idDefault, props.stats, props.formList?.length]);
+  }, [currForm?.form, pokeID]);
+
+  useEffect(() => {
+    if (props.stats) {
+      setStatATK(filterFormList(props.stats.attack.ranking));
+      setStatDEF(filterFormList(props.stats.defense.ranking));
+      setStatSTA(filterFormList(props.stats.stamina.ranking));
+      setStatProd(filterFormList(props.stats.statProd.ranking));
+    }
+  }, [filterFormList, props.stats]);
 
   useEffect(() => {
     if (
@@ -431,13 +440,7 @@ const Form = (props: {
             statDEF={statDEF?.defense ?? calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
             statSTA={statSTA?.stamina ?? calBaseSTA(dataPoke ? dataPoke.stats : defaultStats, true)}
           />
-          <Counter
-            currForm={currForm}
-            pokeID={pokeID}
-            def={statDEF?.defense ?? calBaseDEF(dataPoke ? dataPoke.stats : defaultStats, true)}
-            form={currForm?.form}
-            isShadow={currForm?.form.is_shadow}
-          />
+          <Counter def={statDEF?.defense ?? 0} types={currForm?.form.types ?? []} isShadow={currForm?.form.is_shadow} />
         </div>
       </div>
       <hr className="w-100" />

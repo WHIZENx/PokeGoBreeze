@@ -1,6 +1,10 @@
 import { Combat } from '../../core/models/combat.model';
 import { EvoList, PokemonTypeCost, TempEvo } from '../../core/models/evolution.model';
+import { Options } from '../../core/models/options.model';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { StatsPokemon } from '../../core/models/stats.model';
+import { TypeEff } from '../../core/models/type-eff.model';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 export interface BattleCalculate {
   atk?: number;
@@ -136,6 +140,38 @@ export interface BattleBaseStats {
   type?: string;
 }
 
+export class QueryMovesPokemon {
+  globalOptions: Options | undefined;
+  typeEff: TypeEff | undefined;
+  weatherBoost: WeatherBoost | undefined;
+  combat: Combat[] = [];
+  pokemon!: PokemonDataModel;
+  stats!: StatsPokemon;
+  def!: number;
+  types: string[] = [];
+
+  constructor(
+    globalOptions: Options | undefined,
+    typeEff: TypeEff | undefined,
+    weatherBoost: WeatherBoost | undefined,
+    combat: Combat[],
+    pokemon: PokemonDataModel,
+    stats: StatsPokemon,
+    def: number,
+    types: string[]
+  ) {
+    this.globalOptions = globalOptions;
+    this.typeEff = typeEff;
+    this.weatherBoost = weatherBoost;
+    this.combat = combat;
+    this.pokemon = pokemon;
+    this.stats = stats;
+    this.def = def;
+    this.types = types;
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
 export class StatsCalculate {
   IV!: { atk: number; def: number; sta: number };
   CP!: number;

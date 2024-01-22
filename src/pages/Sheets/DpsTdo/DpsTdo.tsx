@@ -1014,7 +1014,7 @@ const DpsTdo = () => {
                     setOptions({
                       ...options,
                       delay: {
-                        ftime: parseInt(e.currentTarget.value),
+                        ftime: parseFloat(e.currentTarget.value),
                         ctime: options.delay?.ctime ?? 0,
                       },
                     })
@@ -1035,7 +1035,7 @@ const DpsTdo = () => {
                       ...options,
                       delay: {
                         ftime: options.delay?.ftime ?? 0,
-                        ctime: parseInt(e.currentTarget.value),
+                        ctime: parseFloat(e.currentTarget.value),
                       },
                     })
                   }
@@ -1107,7 +1107,7 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        POKEMON_LEVEL: e.target.value ? parseInt(e.target.value) : 0,
+                        POKEMON_LEVEL: e.target.value ? parseFloat(e.target.value) : 0,
                       })
                     }
                   >
@@ -1131,7 +1131,7 @@ const DpsTdo = () => {
                     onInput={(e) =>
                       setOptions({
                         ...options,
-                        POKEMON_DEF_OBJ: parseInt(e.currentTarget.value),
+                        POKEMON_DEF_OBJ: parseFloat(e.currentTarget.value),
                       })
                     }
                     name="POKEMON_DEF_OBJ"

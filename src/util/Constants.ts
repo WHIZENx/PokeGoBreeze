@@ -105,6 +105,7 @@ export const DEFAULT_POKEMON_SHADOW = false;
 export const DEFAULT_TRAINER_FRIEND = false;
 export const DEFAULT_WEATHER_BOOSTS = false;
 export const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
+export const DEFAULT_POKEMON_LEVEL = 40;
 
 export const DEFAULT_ENERGY_PER_HP_LOST = 0.5;
 export const DEFAULT_DAMAGE_MULTIPLY = 0.5;
