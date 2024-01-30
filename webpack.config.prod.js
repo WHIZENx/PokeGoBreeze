@@ -73,6 +73,7 @@ module.exports = {
     new ReactRefreshPlugin()
   ],
   optimization: {
+    minimize: false,
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
