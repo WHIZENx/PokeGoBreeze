@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import './index.scss';
@@ -15,14 +15,12 @@ import configureStore, { history } from './store';
 import Main from './App';
 import { RouterState } from './store/models/state.model';
 
-if (module.hot) {
-  module.hot.accept();
-}
-
 const store = configureStore();
 const routerSelector: ReduxRouterSelector<RouterState> = (state) => state.router;
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+
+root.render(
   <React.StrictMode>
     <Provider store={store}>
       <SnackbarProvider
@@ -39,8 +37,7 @@ ReactDOM.render(
     </Provider>
     <Analytics />
     <SpeedInsights />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
