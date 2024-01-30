@@ -110,10 +110,7 @@ module.exports = {
           sourceMap: true,
         }
       }),
-      new CssMinimizerPlugin({
-        sourceMap: true,
-        minimize: true,
-      })
+      new CssMinimizerPlugin()
     ]
   },
   mode: 'production',
