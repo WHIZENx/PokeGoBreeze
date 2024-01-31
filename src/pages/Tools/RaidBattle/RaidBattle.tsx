@@ -9,6 +9,7 @@ import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
   FORM_MEGA,
+  FORM_PRIMAL,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -480,14 +481,17 @@ const RaidBattle = () => {
   ) => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
-      if (!pokemon.forme || !pokemon.forme?.toUpperCase().includes(FORM_MEGA)) {
+      if (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) {
         if (combat.shadowMoves.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         }
         addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves, pokemonTarget);
       }
-      if ((!pokemon.forme || !pokemon.forme?.toUpperCase().includes(FORM_MEGA)) && combat.shadowMoves.length > 0) {
+      if (
+        (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) &&
+        combat.shadowMoves.length > 0
+      ) {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves, pokemonTarget);
       } else {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true, null, pokemonTarget);
