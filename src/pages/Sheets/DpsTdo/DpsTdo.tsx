@@ -442,7 +442,7 @@ const DpsTdo = () => {
   ) => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, false, felite, false);
-      if (!pokemon.forme || !pokemon.forme.toLowerCase().toUpperCase().includes(FORM_MEGA)) {
+      if (!pokemon.forme || (!pokemon.forme.toUpperCase().includes(FORM_MEGA) && !pokemon.forme.toUpperCase().includes(FORM_PRIMAL))) {
         if (combat.shadowMoves?.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, false, felite, false, combat.shadowMoves);
           addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, false, felite, true, combat.shadowMoves);
@@ -459,9 +459,7 @@ const DpsTdo = () => {
     const dataList: PokemonSheetData[] = [];
     (data?.pokemonData ?? []).forEach((pokemon) => {
       const pokemonCombatResult = data?.pokemonCombat?.filter(
-        (item) =>
-          item.id === pokemon.num &&
-          item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
+        (item) => item.id === pokemon.num && item.baseSpecies === convertName(pokemon.baseSpecies ?? pokemon.name)
       );
 
       const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon.name));
@@ -476,9 +474,7 @@ const DpsTdo = () => {
         addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true);
       }
     });
-    setTimeout(() => {
-      setShowSpinner(false);
-    }, 700);
+    setShowSpinner(false);
     return dataList;
   };
 

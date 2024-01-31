@@ -47,7 +47,7 @@ const PokemonRaid = (props: {
 
   return (
     <div>
-      <span className="input-group-text justify-content-center position-relative">
+      <span className="input-group-text justify-content-center position-relative" style={{ height: 38 }}>
         {dataTargetPokemon && (
           <div className="d-flex text-group-small">
             <span>
@@ -57,7 +57,7 @@ const PokemonRaid = (props: {
             </span>
           </div>
         )}
-        <Badge color="primary" overlap="circular" badgeContent={props.id + 1} /> <b style={{ marginLeft: 15 }}>Pokémon Battle</b>
+        <Badge color="primary" overlap="circular" badgeContent={props.id + 1} />
         {props.controls && (
           <div className="d-flex ic-group-small">
             <span
