@@ -24,6 +24,7 @@ import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN } from '../../../util/Consta
 import { EvolutionModel } from '../../../core/models/evolution.model';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleBaseStats, QueryStatesEvoChain } from '../../../util/models/calculate.model';
+import FreeSoloInput from '../../../components/Input/FreeSoloInput';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ const FindBattle = () => {
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
-  const [name, setName] = useState('Bulbasaur');
+  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
   const [maxCP, setMaxCP] = useState(0);
 
@@ -98,7 +99,7 @@ const FindBattle = () => {
   );
 
   const prevEvoChain = useCallback(
-    (obj: EvolutionModel, defaultForm: string, arr: EvolutionModel[]) => {
+    (obj: EvolutionModel, defaultForm: string, arr: EvolutionModel[], result: EvolutionModel[][]) => {
       if (!arr.map((i) => i.id).includes(obj.id)) {
         arr.push({ ...obj, form: defaultForm });
       }
@@ -108,10 +109,11 @@ const FindBattle = () => {
       const curr = dataStore?.evolution?.filter((item) =>
         item.evo_list.find((i) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
       );
-      if ((curr?.length ?? 0) > 1) {
-        curr?.forEach((item) => prevEvoChain(item, defaultForm, arr));
+      if (curr && curr.length >= 1) {
+        curr?.forEach((item) => prevEvoChain(item, defaultForm, arr, result));
+      } else {
+        result.push(arr);
       }
-      return arr;
     },
     [currEvoChain, dataStore?.evolution]
   );
@@ -130,7 +132,9 @@ const FindBattle = () => {
       if (curr?.length === 0) {
         curr = dataStore?.evolution?.filter((item) => id === item.id && item.form === '');
       }
-      return curr?.map((item) => prevEvoChain(item, isForm, []));
+      const result: EvolutionModel[][] = [];
+      curr?.forEach((item) => prevEvoChain(item, isForm, [], result));
+      return result;
     },
     [prevEvoChain, form, dataStore?.evolution]
   );
@@ -203,6 +207,7 @@ const FindBattle = () => {
           bestLeague = evoBaseStats.filter((item) => (item.ratio ?? 0) > (currBastStats?.ratio ?? 0));
         }
         if (bestLeague.length === 0) {
+          dispatch(hideSpinner());
           return setBestInLeague([currBastStats]);
         }
         if ((currBastStats.ratio ?? 0) >= 90) {
@@ -218,11 +223,11 @@ const FindBattle = () => {
   const onSearchStatsPoke = useCallback(
     (e: { preventDefault: () => void }) => {
       e.preventDefault();
-      if (parseInt(searchCP) < 10) {
+      if (!searchCP || parseInt(searchCP) < 10) {
         return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
       }
       const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
-      if (result.level == null) {
+      if (!result.level) {
         return enqueueSnackbar(
           'At CP: ' + result.CP + ' and IV ' + result.IV.atk + '/' + result.IV.def + '/' + result.IV.sta + ' impossible found in ' + name,
           { variant: 'error' }
@@ -319,20 +324,19 @@ const FindBattle = () => {
       <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)} style={{ paddingBottom: 15 }}>
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
-            <div className="input-group mb-3">
-              <div className="input-group-prepend">
-                <span className="input-group-text">CP</span>
-              </div>
-              <input
-                required={true}
-                value={searchCP}
-                type="number"
-                min={10}
-                className="form-control"
-                aria-label="cp"
-                aria-describedby="input-cp"
-                placeholder="Enter CP"
-                onInput={(e) => setSearchCP(e.currentTarget.value)}
+            <div className="justify-content-center input-group mb-3">
+              <FreeSoloInput
+                statATK={statATK}
+                statDEF={statDEF}
+                statSTA={statSTA}
+                IV_ATK={ATKIv}
+                IV_DEF={DEFIv}
+                IV_STA={STAIv}
+                searchCP={searchCP}
+                setSearchCP={setSearchCP}
+                label={'Input CP'}
+                width={'50%'}
+                minWidth={350}
               />
             </div>
           </Box>

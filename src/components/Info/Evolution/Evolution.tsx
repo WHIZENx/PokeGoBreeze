@@ -29,7 +29,16 @@ import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { EvolutionModel } from '../../../core/models/evolution.model';
-import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
+import {
+  FORM_GALARIAN,
+  FORM_GMAX,
+  FORM_HISUIAN,
+  FORM_MEGA,
+  FORM_NORMAL,
+  FORM_PURIFIED,
+  FORM_SHADOW,
+  FORM_STANDARD,
+} from '../../../util/Constants';
 import { FormModel } from '../../../core/models/API/form.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 
@@ -250,11 +259,11 @@ const Evolution = (props: {
 
   const getEvoChainStore = (id: number, forme: FormModel) => {
     const form =
-      forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) || forme.is_default
+      forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) || (forme.is_default && forme.id === id)
         ? ''
-        : forme.form_name.replace('-shadow', '').replace('-purified', '');
+        : forme.form_name.toUpperCase().replace(`-${FORM_SHADOW}`, '').replace(`-${FORM_PURIFIED}`, '').replace(`-${FORM_STANDARD}`, '');
     const result: PokemonEvo[][] = [];
-    let pokemon = evoData.find((pokemon) => pokemon.id === id && pokemon.form === form?.toUpperCase());
+    let pokemon = evoData.find((pokemon) => pokemon.id === id && pokemon.form === form);
     if (!pokemon) {
       pokemon = evoData.find((pokemon) => pokemon.id === id);
     }

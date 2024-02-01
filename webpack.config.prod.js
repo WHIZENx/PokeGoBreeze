@@ -10,8 +10,9 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-const CssnanoPlugin = require('cssnano-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -68,9 +69,11 @@ module.exports = {
       fileName: './manifest.json',
       seed: manifest
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new ReactRefreshPlugin()
   ],
   optimization: {
+    minimize: false,
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
@@ -100,19 +103,15 @@ module.exports = {
       },
     },
     minimizer: [
-      new UglifyJSPlugin({
-        uglifyOptions: {
-          warnings: false,
+      new TerserPlugin({
+        terserOptions: {
           output: {
             comments: false,
           },
           sourceMap: true,
-          minimize: false,
         }
       }),
-      new CssnanoPlugin({
-        sourceMap: true
-      })
+      new CssMinimizerPlugin()
     ]
   },
   mode: 'production',
@@ -131,6 +130,7 @@ module.exports = {
     open: true,
     compress: true,
     port: 9000,
+    hot: true,
   },
   entry: {
     src: ['./src/index.tsx'],

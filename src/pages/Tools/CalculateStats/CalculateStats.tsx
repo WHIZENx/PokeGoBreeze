@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { LevelSlider, marks, PokeGoSlider, TypeRadioGroup } from '../../../util/Utils';
+import { LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/Calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -20,13 +20,14 @@ import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import { BattleLeagueCalculate, BetweenLevelCalculate, StatsCalculate } from '../../../util/models/calculate.model';
+import FreeSoloInput from '../../../components/Input/FreeSoloInput';
 
 const Calculate = () => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? undefined);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
-  const [name, setName] = useState('Bulbasaur');
+  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
 
   const [searchCP, setSearchCP] = useState('');
 
@@ -84,11 +85,11 @@ const Calculate = () => {
   };
 
   const calculateStatsPoke = useCallback(() => {
-    if (parseInt(searchCP) < 10) {
+    if (!searchCP || parseInt(searchCP) < 10) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
-    if (result.level == null) {
+    if (!result.level) {
       return enqueueSnackbar(
         'At CP: ' + result.CP + ' and IV ' + result.IV.atk + '/' + result.IV.def + '/' + result.IV.sta + ' impossible found in ' + name,
         { variant: 'error' }
@@ -155,19 +156,18 @@ const Calculate = () => {
           <div className="form-group d-flex justify-content-center text-center">
             <Box sx={{ width: '50%', minWidth: 350 }}>
               <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span className="input-group-text">CP</span>
-                </div>
-                <input
-                  required={true}
-                  value={searchCP}
-                  type="number"
-                  min={10}
-                  className="form-control"
-                  aria-label="cp"
-                  aria-describedby="input-cp"
-                  placeholder="Enter CP"
-                  onInput={(e) => setSearchCP(e.currentTarget.value)}
+                <FreeSoloInput
+                  statATK={statATK}
+                  statDEF={statDEF}
+                  statSTA={statSTA}
+                  IV_ATK={ATKIv}
+                  IV_DEF={DEFIv}
+                  IV_STA={STAIv}
+                  searchCP={searchCP}
+                  setSearchCP={setSearchCP}
+                  label={'Input CP'}
+                  width={'50%'}
+                  minWidth={350}
                 />
               </div>
             </Box>

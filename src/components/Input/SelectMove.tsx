@@ -125,7 +125,9 @@ const SelectMove = (props: {
         }
         style={{ padding: 0, borderRadius: 0 }}
       >
-        {resultMove?.length === 0 && <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>}
+        {props.pokemon && resultMove?.length === 0 && (
+          <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>
+        )}
         {resultMove?.length > 0 && (
           <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
             <CardMoveSmall value={props.move} show={props.pokemon ? true : false} disable={props.disable} select={resultMove?.length > 1} />

@@ -9,6 +9,7 @@ import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
   FORM_MEGA,
+  FORM_PRIMAL,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -94,7 +95,7 @@ const RaidBattle = () => {
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
 
   const initialize = useRef(false);
@@ -480,14 +481,17 @@ const RaidBattle = () => {
   ) => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
-      if (!pokemon.forme || !pokemon.forme?.toUpperCase().includes(FORM_MEGA)) {
+      if (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) {
         if (combat.shadowMoves.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         }
         addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves, pokemonTarget);
       }
-      if ((!pokemon.forme || !pokemon.forme?.toUpperCase().includes(FORM_MEGA)) && combat.shadowMoves.length > 0) {
+      if (
+        (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) &&
+        combat.shadowMoves.length > 0
+      ) {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves, pokemonTarget);
       } else {
         addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true, null, pokemonTarget);
@@ -1184,29 +1188,29 @@ const RaidBattle = () => {
         </div>
       </div>
       <hr />
-      {result.length > 0 && (
-        <div className="container" style={{ paddingBottom: 15 }}>
-          <div className="d-flex flex-wrap align-items-center justify-content-between">
-            <div>
-              <h4>
-                {`${used.sorted ? 'Worst' : 'Best'} 10 Counters Level: `}
-                {<span>{`${used.level} - ${used.iv.atk}/${used.iv.def}/${used.iv.sta}`}</span>}
-              </h4>
-              <p className="text-primary">
-                <b>
-                  {`Sort By: ${
-                    used.sortBy === 0 ? 'Damage Per Seconds (DPS)' : used.sortBy === 1 ? 'Total Damage Output (TDO)' : 'Tankiness'
-                  }`}{' '}
-                  <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${used.onlyMega ? '*Only Mega' : ''}`}</span>
-                </b>
-              </p>
-            </div>
-            <div>
-              <button className="btn btn-primary" onClick={handleShowOption}>
-                Search options
-              </button>
-            </div>
+      <div className="container" style={{ paddingBottom: 15 }}>
+        <div className="d-flex flex-wrap align-items-center justify-content-between">
+          <div>
+            <h4>
+              {`${used.sorted ? 'Worst' : 'Best'} 10 Counters Level: `}
+              {<span>{`${used.level} - ${used.iv.atk}/${used.iv.def}/${used.iv.sta}`}</span>}
+            </h4>
+            <p className="text-primary">
+              <b>
+                {`Sort By: ${
+                  used.sortBy === 0 ? 'Damage Per Seconds (DPS)' : used.sortBy === 1 ? 'Total Damage Output (TDO)' : 'Tankiness'
+                }`}{' '}
+                <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${used.onlyMega ? '*Only Mega' : ''}`}</span>
+              </b>
+            </p>
           </div>
+          <div>
+            <button className="btn btn-primary" onClick={handleShowOption}>
+              Search options
+            </button>
+          </div>
+        </div>
+        {result.length > 0 && (
           <div className="top-raid-group">
             {result
               .filter((obj) => {
@@ -1289,273 +1293,277 @@ const RaidBattle = () => {
                 </div>
               ))}
           </div>
-          <div className="row" style={{ marginLeft: 0, marginRight: 0, marginBottom: 15 }}>
-            <div className="col-lg-5 justify-content-center" style={{ marginBottom: 20 }}>
-              {trainerBattle.map((trainer, index) => (
-                <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
-                  <Badge
-                    color="primary"
-                    overlap="circular"
-                    badgeContent={'Trainer ' + (index + 1)}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'left',
+        )}
+        <div className="row" style={{ marginLeft: 0, marginRight: 0, marginBottom: 15, marginTop: 15 }}>
+          <div className="col-lg-5 justify-content-center" style={{ marginBottom: 20 }}>
+            {trainerBattle.map((trainer, index) => (
+              <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
+                <Badge
+                  color="primary"
+                  overlap="circular"
+                  badgeContent={'Trainer ' + (index + 1)}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                >
+                  <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel((trainer.trainerId ?? 0) % 294)} />
+                </Badge>
+                <button className="btn btn-primary" style={{ marginRight: 10 }} onClick={() => handleShow(trainer.pokemons, index)}>
+                  <EditIcon fontSize="small" />
+                </button>
+                <div className="pokemon-battle-group">
+                  {trainer.pokemons.map((pokemon, index) => (
+                    <div key={index} className="pokemon-battle">
+                      {pokemon.dataTargetPokemon ? (
+                        <span className="position-relative">
+                          {pokemon.dataTargetPokemon.stats?.isShadow && (
+                            <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                          )}
+                          <img
+                            className="pokemon-sprite-battle"
+                            alt="img-pokemon"
+                            src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, true)}
+                          />
+                        </span>
+                      ) : (
+                        <span>
+                          <AddIcon fontSize="large" sx={{ color: 'lightgray' }} />
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <span className="d-flex ic-group">
+                  <span
+                    className={
+                      'ic-copy text-white ' + (trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')
+                    }
+                    title="Copy"
+                    style={{ marginRight: 5 }}
+                    onClick={() => {
+                      if (trainer.pokemons.at(0)?.dataTargetPokemon) {
+                        setCountTrainer(countTrainer + 1);
+                        setTrainerBattle(
+                          update(trainerBattle, {
+                            $push: [{ ...trainerBattle[index], trainerId: countTrainer + 1 }],
+                          })
+                        );
+                      }
                     }}
                   >
-                    <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel((trainer.trainerId ?? 0) % 294)} />
-                  </Badge>
-                  <button className="btn btn-primary" style={{ marginRight: 10 }} onClick={() => handleShow(trainer.pokemons, index)}>
-                    <EditIcon fontSize="small" />
-                  </button>
-                  <div className="pokemon-battle-group">
-                    {trainer.pokemons.map((pokemon, index) => (
-                      <div key={index} className="pokemon-battle">
-                        {pokemon.dataTargetPokemon ? (
-                          <span className="position-relative">
-                            {pokemon.dataTargetPokemon.stats?.isShadow && (
-                              <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                            )}
-                            <img
-                              className="pokemon-sprite-battle"
-                              alt="img-pokemon"
-                              src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, true)}
-                            />
-                          </span>
-                        ) : (
-                          <span>
-                            <AddIcon fontSize="large" sx={{ color: 'lightgray' }} />
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <span className="d-flex ic-group">
-                    <span
-                      className={
-                        'ic-copy text-white ' + (trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')
+                    <ContentCopyIcon sx={{ fontSize: 14 }} />
+                  </span>
+                  <span
+                    className={'ic-remove text-white ' + (index > 0 ? 'bg-danger' : 'click-none bg-secondary')}
+                    title="Remove"
+                    onClick={() => {
+                      if (index > 0) {
+                        setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }));
                       }
-                      title="Copy"
-                      style={{ marginRight: 5 }}
-                      onClick={() => {
-                        if (trainer.pokemons.at(0)?.dataTargetPokemon) {
-                          setCountTrainer(countTrainer + 1);
-                          setTrainerBattle(
-                            update(trainerBattle, {
-                              $push: [{ ...trainerBattle[index], trainerId: countTrainer + 1 }],
-                            })
-                          );
-                        }
-                      }}
-                    >
-                      <ContentCopyIcon sx={{ fontSize: 14 }} />
-                    </span>
-                    <span
-                      className={'ic-remove text-white ' + (index > 0 ? 'bg-danger' : 'click-none bg-secondary')}
-                      title="Remove"
-                      onClick={() => {
-                        if (index > 0) {
-                          setTrainerBattle(update(trainerBattle, { $splice: [[index, 1]] }));
-                        }
-                      }}
-                    >
-                      <DeleteIcon sx={{ fontSize: 14 }} />
-                    </span>
+                    }}
+                  >
+                    <DeleteIcon sx={{ fontSize: 14 }} />
                   </span>
-                </div>
-              ))}
-              <div className="text-center element-top">
-                <button className="btn btn-primary" onClick={() => calculateTrainerBattle(trainerBattle)}>
-                  Raid Battle
-                </button>
+                </span>
               </div>
-              <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
-                <RemoveCircleIcon
-                  className={'cursor-pointer link-danger ' + (trainerBattle.length > 1 ? '' : 'click-none')}
-                  fontSize="large"
-                  onClick={() => {
-                    if (trainerBattle.length > 1) {
-                      setTrainerBattle(update(trainerBattle, { $splice: [[trainerBattle.length - 1]] }));
-                    }
-                  }}
-                />
-                <div className="count-pokemon">{trainerBattle.length}</div>
-                <AddCircleIcon
-                  className="cursor-pointer link-success"
-                  fontSize="large"
-                  onClick={() => {
-                    setCountTrainer(countTrainer + 1);
-                    setTrainerBattle(
-                      update(trainerBattle, {
-                        $push: [{ ...initTrainer, trainerId: countTrainer + 1 }],
-                      })
-                    );
-                  }}
-                />
-              </div>
+            ))}
+            <div className="text-center element-top">
+              <button className="btn btn-primary" onClick={() => calculateTrainerBattle(trainerBattle)} disabled={!resultBoss}>
+                Raid Battle
+              </button>
             </div>
-            <div className="col-lg-7 stats-boss h-100">
-              <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
-                <h3>
-                  <b>
-                    #{id} {form ? splitAndCapitalize(form.form.name, '-', ' ') : name.toLowerCase()} Tier {tier}
-                  </b>
-                </h3>
-                <TypeInfo arr={form?.form.types ?? []} />
-              </div>
-              <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
-                <TypeBadge title="Fast Move" move={fMove} elite={fMove?.elite} />
-                <TypeBadge
-                  title="Charged Move"
-                  move={cMove}
-                  elite={cMove?.elite}
-                  shadow={cMove?.shadow}
-                  purified={cMove?.purified}
-                  special={cMove?.special}
-                />
-              </div>
-              <hr />
-              <div className="row" style={{ margin: 0 }}>
-                <div className="col-lg-6" style={{ marginBottom: 20 }}>
-                  <span className="d-block element-top">
-                    DPS:{' '}
-                    <b>
-                      {resultBoss?.minDPS.toFixed(2)} - {resultBoss?.maxDPS.toFixed(2)}
-                    </b>
-                  </span>
-                  <span className="d-block">
-                    Average DPS: <b>{(((resultBoss?.minDPS ?? 0) + (resultBoss?.maxDPS ?? 0)) / 2).toFixed(2)}</b>
-                  </span>
-                  <span className="d-block">
-                    Total Damage Output:{' '}
-                    <b>
-                      {resultBoss?.minTDO.toFixed(2)} - {resultBoss?.maxTDO.toFixed(2)}
-                    </b>
-                  </span>
-                  <span className="d-block">
-                    Average Total Damage Output: <b>{(((resultBoss?.minTDO ?? 0) + (resultBoss?.maxTDO ?? 0)) / 2).toFixed(2)}</b>
-                  </span>
-                  <span className="d-block">
-                    Boss HP Remaining:{' '}
-                    <b>
-                      {Math.round(resultBoss?.minHP ?? 0)} - {Math.round(resultBoss?.maxHP ?? 0)}
-                    </b>
-                  </span>
-                  <span className="d-block">
-                    Boss Average HP Remaining: <b>{Math.round(((resultBoss?.minHP ?? 0) + (resultBoss?.maxHP ?? 0)) / 2)}</b>
-                  </span>
-                </div>
-                <div className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center" style={{ marginBottom: 20 }}>
-                  <h2 className="text-center" style={{ margin: 0 }}>
-                    Suggested players
-                  </h2>
-                  <hr className="w-100" />
-                  <div className="d-inline-block text-center">
-                    <h3 className="d-block" style={{ margin: 0 }}>
-                      {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss?.minHP ?? 0)))}
-                    </h3>
-                    {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss?.minHP ?? 0))) === 1 ? (
-                      <span className="caption text-success">Easy</span>
-                    ) : (
-                      <span className="caption text-danger">Hard</span>
-                    )}
-                  </div>
-                  <h3 style={{ marginBottom: 15, marginLeft: 10, marginRight: 10 }}> - </h3>
-                  <div className="d-inline-block text-center">
-                    <h3 className="d-block" style={{ margin: 0 }}>
-                      {Math.ceil(statBossHP / (statBossHP - Math.round(((resultBoss?.minHP ?? 0) + (resultBoss?.maxHP ?? 0)) / 2)))}+
-                    </h3>
-                    <span className="caption text-success">Easy</span>
-                  </div>
-                </div>
-              </div>
-              {resultRaid && (
-                <Fragment>
-                  <hr />
-                  <ul className="element-top" style={{ listStyleType: 'initial' }}>
-                    {resultRaid.map((result, turn) => (
-                      <li style={{ marginBottom: 15 }} key={turn}>
-                        <h4>
-                          <b>Pokémon Round {turn + 1}</b>
-                        </h4>
-                        <div className="w-100" style={{ overflowX: 'auto' }}>
-                          <table className="table-info table-round-battle">
-                            <thead className="text-center">
-                              <tr className="table-header">
-                                <th>Trainer ID</th>
-                                <th>Pokémon</th>
-                                <th>DPS</th>
-                                <th>TDO</th>
-                                <th>TTD</th>
-                                <th>HP</th>
-                              </tr>
-                            </thead>
-                            <tbody className="text-center">
-                              {result.pokemon.map((data, index) => (
-                                <tr key={index}>
-                                  <td>#{(data?.trainerId ?? 0) + 1}</td>
-                                  <td>
-                                    <div className="d-flex align-items-center table-pokemon">
-                                      <img
-                                        className="pokemon-sprite-battle"
-                                        height={36}
-                                        alt="img-pokemon"
-                                        src={APIService.getPokeIconSprite(data?.pokemon?.sprite ?? '', true)}
-                                      />
-                                      <span className="caption">
-                                        {splitAndCapitalize(data?.pokemon?.name.replaceAll('_', '-'), '-', ' ')}
-                                      </span>
-                                    </div>
-                                  </td>
-                                  <td>{data?.dpsAtk.toFixed(2)}</td>
-                                  <td>{Math.floor(data?.tdoAtk) === 0 ? '-' : data?.tdoAtk.toFixed(2)}</td>
-                                  <td>{Math.floor(data?.atkHpRemain ?? 0) === 0 ? data?.ttkDef.toFixed(2) : '-'}</td>
-                                  <td>
-                                    <b>
-                                      <span className={Math.floor(data?.atkHpRemain ?? 0) === 0 ? 'text-danger' : 'text-success'}>
-                                        {Math.max(0, Math.floor(data?.atkHpRemain ?? 0))}
-                                      </span>{' '}
-                                      / {Math.floor(data?.hp ?? 0)}
-                                    </b>
-                                  </td>
-                                </tr>
-                              ))}
-                              {((turn > 0 && Math.floor(result.summary.tdoAtk) > 0) ||
-                                turn === 0 ||
-                                (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
-                                <tr>
-                                  <td colSpan={6}>{calculateHpBar(result.summary.bossHp, result.summary.tdoAtk, result.summary.dpsAtk)}</td>
-                                </tr>
-                              )}
-                              <tr className="text-summary">
-                                <td colSpan={2}>Total DPS: {result.summary.dpsAtk.toFixed(2)}</td>
-                                <td className="text-center" colSpan={2}>
-                                  Total TDO: {result.summary.tdoAtk.toFixed(2)}
-                                </td>
-                                <td colSpan={2}>Boss HP Remain: {Math.floor(result.summary.bossHp - result.summary.tdoAtk)}</td>
-                              </tr>
-                              {((turn > 0 && Math.floor(result.summary.tdoAtk) > 0) ||
-                                turn === 0 ||
-                                (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
-                                <tr className="text-summary">
-                                  <td colSpan={3}>
-                                    <TimerIcon /> Time To Battle Remain: {result.summary.timer.toFixed(2)}{' '}
-                                    {enableTimeAllow && `/ ${timeAllow}`}
-                                  </td>
-                                  {resultBattle(Math.floor(result.summary.bossHp - result.summary.tdoAtk), result.summary.timer)}
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </Fragment>
-              )}
+            <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
+              <RemoveCircleIcon
+                className={'cursor-pointer link-danger ' + (trainerBattle.length > 1 ? '' : 'click-none')}
+                fontSize="large"
+                onClick={() => {
+                  if (trainerBattle.length > 1) {
+                    setTrainerBattle(update(trainerBattle, { $splice: [[trainerBattle.length - 1]] }));
+                  }
+                }}
+              />
+              <div className="count-pokemon">{trainerBattle.length}</div>
+              <AddCircleIcon
+                className="cursor-pointer link-success"
+                fontSize="large"
+                onClick={() => {
+                  setCountTrainer(countTrainer + 1);
+                  setTrainerBattle(
+                    update(trainerBattle, {
+                      $push: [{ ...initTrainer, trainerId: countTrainer + 1 }],
+                    })
+                  );
+                }}
+              />
             </div>
           </div>
+          <div className="col-lg-7 stats-boss h-100">
+            <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
+              <h3>
+                <b>
+                  {form ? `#${id}` : ''} {form ? splitAndCapitalize(form.form.name, '-', ' ') : name.toLowerCase()} Tier {tier}
+                </b>
+              </h3>
+              <TypeInfo arr={form?.form.types ?? []} />
+            </div>
+            <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
+              <TypeBadge title="Fast Move" move={fMove} elite={fMove?.elite} />
+              <TypeBadge
+                title="Charged Move"
+                move={cMove}
+                elite={cMove?.elite}
+                shadow={cMove?.shadow}
+                purified={cMove?.purified}
+                special={cMove?.special}
+              />
+            </div>
+            {resultBoss && (
+              <Fragment>
+                <hr />
+                <div className="row" style={{ margin: 0 }}>
+                  <div className="col-lg-6" style={{ marginBottom: 20 }}>
+                    <span className="d-block element-top">
+                      DPS:{' '}
+                      <b>
+                        {resultBoss?.minDPS.toFixed(2)} - {resultBoss?.maxDPS.toFixed(2)}
+                      </b>
+                    </span>
+                    <span className="d-block">
+                      Average DPS: <b>{(((resultBoss?.minDPS ?? 0) + (resultBoss?.maxDPS ?? 0)) / 2).toFixed(2)}</b>
+                    </span>
+                    <span className="d-block">
+                      Total Damage Output:{' '}
+                      <b>
+                        {resultBoss?.minTDO.toFixed(2)} - {resultBoss?.maxTDO.toFixed(2)}
+                      </b>
+                    </span>
+                    <span className="d-block">
+                      Average Total Damage Output: <b>{(((resultBoss?.minTDO ?? 0) + (resultBoss?.maxTDO ?? 0)) / 2).toFixed(2)}</b>
+                    </span>
+                    <span className="d-block">
+                      Boss HP Remaining:{' '}
+                      <b>
+                        {Math.round(resultBoss?.minHP ?? 0)} - {Math.round(resultBoss?.maxHP ?? 0)}
+                      </b>
+                    </span>
+                    <span className="d-block">
+                      Boss Average HP Remaining: <b>{Math.round(((resultBoss?.minHP ?? 0) + (resultBoss?.maxHP ?? 0)) / 2)}</b>
+                    </span>
+                  </div>
+                  <div className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center" style={{ marginBottom: 20 }}>
+                    <h2 className="text-center" style={{ margin: 0 }}>
+                      Suggested players
+                    </h2>
+                    <hr className="w-100" />
+                    <div className="d-inline-block text-center">
+                      <h3 className="d-block" style={{ margin: 0 }}>
+                        {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss?.minHP ?? 0)))}
+                      </h3>
+                      {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss?.minHP ?? 0))) === 1 ? (
+                        <span className="caption text-success">Easy</span>
+                      ) : (
+                        <span className="caption text-danger">Hard</span>
+                      )}
+                    </div>
+                    <h3 style={{ marginBottom: 15, marginLeft: 10, marginRight: 10 }}> - </h3>
+                    <div className="d-inline-block text-center">
+                      <h3 className="d-block" style={{ margin: 0 }}>
+                        {Math.ceil(statBossHP / (statBossHP - Math.round(((resultBoss?.minHP ?? 0) + (resultBoss?.maxHP ?? 0)) / 2)))}+
+                      </h3>
+                      <span className="caption text-success">Easy</span>
+                    </div>
+                  </div>
+                </div>
+              </Fragment>
+            )}
+            {resultRaid && (
+              <Fragment>
+                <hr />
+                <ul className="element-top" style={{ listStyleType: 'initial' }}>
+                  {resultRaid.map((result, turn) => (
+                    <li style={{ marginBottom: 15 }} key={turn}>
+                      <h4>
+                        <b>Pokémon Round {turn + 1}</b>
+                      </h4>
+                      <div className="w-100" style={{ overflowX: 'auto' }}>
+                        <table className="table-info table-round-battle">
+                          <thead className="text-center">
+                            <tr className="table-header">
+                              <th>Trainer ID</th>
+                              <th>Pokémon</th>
+                              <th>DPS</th>
+                              <th>TDO</th>
+                              <th>TTD</th>
+                              <th>HP</th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-center">
+                            {result.pokemon.map((data, index) => (
+                              <tr key={index}>
+                                <td>#{(data?.trainerId ?? 0) + 1}</td>
+                                <td>
+                                  <div className="d-flex align-items-center table-pokemon">
+                                    <img
+                                      className="pokemon-sprite-battle"
+                                      height={36}
+                                      alt="img-pokemon"
+                                      src={APIService.getPokeIconSprite(data?.pokemon?.sprite ?? '', true)}
+                                    />
+                                    <span className="caption">
+                                      {splitAndCapitalize(data?.pokemon?.name.replaceAll('_', '-'), '-', ' ')}
+                                    </span>
+                                  </div>
+                                </td>
+                                <td>{data?.dpsAtk.toFixed(2)}</td>
+                                <td>{Math.floor(data?.tdoAtk) === 0 ? '-' : data?.tdoAtk.toFixed(2)}</td>
+                                <td>{Math.floor(data?.atkHpRemain ?? 0) === 0 ? data?.ttkDef.toFixed(2) : '-'}</td>
+                                <td>
+                                  <b>
+                                    <span className={Math.floor(data?.atkHpRemain ?? 0) === 0 ? 'text-danger' : 'text-success'}>
+                                      {Math.max(0, Math.floor(data?.atkHpRemain ?? 0))}
+                                    </span>{' '}
+                                    / {Math.floor(data?.hp ?? 0)}
+                                  </b>
+                                </td>
+                              </tr>
+                            ))}
+                            {((turn > 0 && Math.floor(result.summary.tdoAtk) > 0) ||
+                              turn === 0 ||
+                              (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
+                              <tr>
+                                <td colSpan={6}>{calculateHpBar(result.summary.bossHp, result.summary.tdoAtk, result.summary.dpsAtk)}</td>
+                              </tr>
+                            )}
+                            <tr className="text-summary">
+                              <td colSpan={2}>Total DPS: {result.summary.dpsAtk.toFixed(2)}</td>
+                              <td className="text-center" colSpan={2}>
+                                Total TDO: {result.summary.tdoAtk.toFixed(2)}
+                              </td>
+                              <td colSpan={2}>Boss HP Remain: {Math.floor(result.summary.bossHp - result.summary.tdoAtk)}</td>
+                            </tr>
+                            {((turn > 0 && Math.floor(result.summary.tdoAtk) > 0) ||
+                              turn === 0 ||
+                              (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
+                              <tr className="text-summary">
+                                <td colSpan={3}>
+                                  <TimerIcon /> Time To Battle Remain: {result.summary.timer.toFixed(2)}{' '}
+                                  {enableTimeAllow && `/ ${timeAllow}`}
+                                </td>
+                                {resultBattle(Math.floor(result.summary.bossHp - result.summary.tdoAtk), result.summary.timer)}
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </Fragment>
+            )}
+          </div>
         </div>
-      )}
+      </div>
       <Modal show={show && !showSettingPokemon.isShow} onHide={handleClose} centered={true}>
         <Modal.Header closeButton={true}>
           <Modal.Title>Trainer #{trainerBattleId !== null ? trainerBattleId + 1 : 0}</Modal.Title>

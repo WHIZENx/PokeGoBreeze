@@ -232,6 +232,7 @@ const Find = (props: {
               setForm={props.setForm}
               setFormOrigin={setForm}
               id={id}
+              setName={props.setName}
               name={pokemonList.find((item) => item.id === id)?.name ?? ''}
               data={pokemonData}
               stats={stats}

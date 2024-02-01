@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 
-import { marks, PokeGoSlider } from '../../../util/Utils';
+import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
 import { calStatsProd } from '../../../util/Calculate';
 
 import APIService from '../../../services/API.service';
@@ -10,6 +10,9 @@ import APIService from '../../../services/API.service';
 import Find from '../../../components/Find/Find';
 import { MIN_IV, MAX_IV } from '../../../util/Constants';
 import { StatsProdCalculate } from '../../../util/models/calculate.model';
+import FreeSoloInput from '../../../components/Input/FreeSoloInput';
+import { useSelector } from 'react-redux';
+import { SearchingState } from '../../../store/models/state.model';
 
 export const columnsStats: TableColumn<StatsProdCalculate>[] = [
   {
@@ -55,7 +58,8 @@ export const columnsStats: TableColumn<StatsProdCalculate>[] = [
 ];
 
 const StatsTable = () => {
-  const [name, setName] = useState('Bulbasaur');
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
+  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
 
   const [searchCP, setSearchCP] = useState('');
 
@@ -168,19 +172,18 @@ const StatsTable = () => {
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="input-group mb-3">
-              <div className="input-group-prepend">
-                <span className="input-group-text">CP</span>
-              </div>
-              <input
-                required={true}
-                value={searchCP}
-                type="number"
-                min={10}
-                className="form-control"
-                aria-label="cp"
-                aria-describedby="input-cp"
-                placeholder="Enter CP"
-                onInput={(e) => setSearchCP(e.currentTarget.value)}
+              <FreeSoloInput
+                statATK={statATK}
+                statDEF={statDEF}
+                statSTA={statSTA}
+                IV_ATK={ATKIv}
+                IV_DEF={DEFIv}
+                IV_STA={STAIv}
+                searchCP={searchCP}
+                setSearchCP={setSearchCP}
+                label={'Input CP'}
+                width={'50%'}
+                minWidth={350}
               />
             </div>
           </Box>

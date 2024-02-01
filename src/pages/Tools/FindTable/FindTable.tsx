@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { HundoRate, marks, PokeGoSlider } from '../../../util/Utils';
+import { HundoRate, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/Calculate';
 
 import DataTable, { TableColumn } from 'react-data-table-component';
@@ -12,6 +12,9 @@ import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
 import { MAX_IV, MIN_IV } from '../../../util/Constants';
 import { PredictStatsModel, PredictStatsCalculate, PredictCPModel, PredictCPCalculate } from '../../../util/models/calculate.model';
+import FreeSoloInput from '../../../components/Input/FreeSoloInput';
+import { useSelector } from 'react-redux';
+import { SearchingState } from '../../../store/models/state.model';
 
 const columnsIV: TableColumn<PredictStatsModel>[] = [
   {
@@ -92,7 +95,8 @@ const conditionalRowStyles = [
 ];
 
 const FindTable = () => {
-  const [name, setName] = useState('Bulbasaur');
+  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
+  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
 
   const [searchCP, setSearchCP] = useState('');
 
@@ -114,10 +118,14 @@ const FindTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
-    if (parseInt(searchCP) < 10) {
+    if (!searchCP || parseInt(searchCP) < 10) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = predictStat(statATK, statDEF, statSTA, searchCP);
+    if (result.result.length === 0) {
+      setPreIvArr(undefined);
+      return enqueueSnackbar('At CP: ' + result.CP + ' impossible found in ' + name, { variant: 'error' });
+    }
     setPreIvArr(result);
   }, [enqueueSnackbar, searchCP, statATK, statDEF, statSTA]);
 
@@ -238,22 +246,16 @@ const FindTable = () => {
             </div>
           </Fragment>
         )}
-        {(preIvArr?.result.length ?? 0) > 0 ? (
-          <DataTable
-            title={'Levels/IV for CP: ' + preIvArr?.CP}
-            columns={columnsIV}
-            data={preIvArr?.result ?? []}
-            pagination={true}
-            defaultSortFieldId={6}
-            defaultSortAsc={false}
-            conditionalRowStyles={conditionalRowStyles}
-            highlightOnHover={true}
-          />
-        ) : (
-          <p className="element-top text-danger text-center">
-            At CP: <b>{preIvArr?.CP}</b> impossible found in <b>{name}</b>
-          </p>
-        )}
+        <DataTable
+          title={'Levels/IV for CP: ' + preIvArr?.CP}
+          columns={columnsIV}
+          data={preIvArr?.result ?? []}
+          pagination={true}
+          defaultSortFieldId={6}
+          defaultSortAsc={false}
+          conditionalRowStyles={conditionalRowStyles}
+          highlightOnHover={true}
+        />
       </Fragment>
     );
   };
@@ -343,19 +345,18 @@ const FindTable = () => {
         <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="input-group mb-3">
-              <div className="input-group-prepend">
-                <span className="input-group-text">CP</span>
-              </div>
-              <input
-                required={true}
-                value={searchCP}
-                type="number"
-                min={10}
-                className="form-control"
-                aria-label="cp"
-                aria-describedby="input-cp"
-                placeholder="Enter CP"
-                onInput={(e) => setSearchCP(e.currentTarget.value)}
+              <FreeSoloInput
+                statATK={statATK}
+                statDEF={statDEF}
+                statSTA={statSTA}
+                IV_ATK={searchATKIv}
+                IV_DEF={searchDEFIv}
+                IV_STA={searchSTAIv}
+                searchCP={searchCP}
+                setSearchCP={setSearchCP}
+                label={'Input CP'}
+                width={'50%'}
+                minWidth={350}
               />
             </div>
             <div className="btn-search d-flex justify-content-center text-center">

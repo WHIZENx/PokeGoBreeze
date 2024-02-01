@@ -372,7 +372,7 @@ const CatchChance = () => {
           <div className="d-flex justify-content-center " style={{ margin: 0 }}>
             <div>
               {medal && <SelectBadge type={medal.typePri.type} priority={medal.typePri.priority} setPriority={onSetPriorityPri} />}
-              {medal && medal.typeSec && (
+              {medal && medal.typeSec.type && (
                 <SelectBadge type={medal.typeSec.type} priority={medal.typeSec.priority} setPriority={onSetPrioritySec} />
               )}
               <div className="d-flex flex-wrap justify-content-center w-100 element-top" style={{ gap: 10 }}>

@@ -38,6 +38,7 @@ const FormSelect = (props: {
   onSetPrev?: () => void;
   onSetNext?: () => void;
   name: string;
+  setName?: React.Dispatch<React.SetStateAction<string>>;
   hide?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   form?: string | null;
@@ -237,6 +238,9 @@ const FormSelect = (props: {
     setCurrForm(findForm);
     if (props.onClearStats) {
       props.onClearStats();
+    }
+    if (props.setName) {
+      props.setName(splitAndCapitalize(findForm?.form.name, '-', ' '));
     }
   };
 

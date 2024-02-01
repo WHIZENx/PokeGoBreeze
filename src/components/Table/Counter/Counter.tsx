@@ -1,5 +1,5 @@
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { capitalize, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
@@ -12,7 +12,6 @@ import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { FORM_GALARIAN, FORM_STANDARD, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { CounterModel } from './models/counter.model';
-import { FormModel, PokemonFormModify } from '../../../core/models/API/form.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -77,13 +76,7 @@ const customStyles: TableStyles = {
   },
 };
 
-const Counter = (props: {
-  def: number;
-  form: FormModel | undefined;
-  currForm: PokemonFormModify | undefined;
-  pokeID: number;
-  isShadow: boolean | undefined;
-}) => {
+const Counter = (props: { def: number; types: string[] | undefined; isShadow: boolean | undefined }) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -93,8 +86,8 @@ const Counter = (props: {
   const [frame, setFrame] = useState(false);
   const [releasedGO, setReleaseGO] = useState(true);
 
-  const controller = new AbortController();
-  let timeOutId: NodeJS.Timeout;
+  const controller: React.MutableRefObject<AbortController> = useRef(new AbortController());
+  const timeOutId: React.MutableRefObject<NodeJS.Timeout | undefined> = useRef();
 
   const columns: any = [
     {
@@ -232,20 +225,20 @@ const Counter = (props: {
   );
 
   useEffect(() => {
-    if ((props.currForm || props.currForm === undefined) && props.pokeID && props.form) {
+    if (props.def && props.types && props.types.length > 0) {
       loadMetaData();
     } else if (counterList.length > 0) {
       setCounterList([]);
     }
     return () => {
-      clearTimeout(timeOutId);
-      controller.abort();
+      clearTimeout(timeOutId.current);
+      controller.current?.abort();
     };
-  }, [props.pokeID, props.currForm, props.isShadow]);
+  }, [props.def, props.isShadow, props.types]);
 
-  const calculateCounter = () => {
-    return new Promise((resolve, reject) => {
-      timeOutId = setTimeout(() => {
+  const calculateCounter = async () => {
+    return new Promise<CounterModel[]>((resolve, reject) => {
+      timeOutId.current = setTimeout(() => {
         resolve(
           counterPokemon(
             data?.options,
@@ -253,13 +246,13 @@ const Counter = (props: {
             data?.typeEff,
             data?.weatherBoost,
             props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
-            props.form?.types ?? [],
+            props.types ?? [],
             data?.combat ?? [],
             data?.pokemonCombat ?? []
           )
         );
       }, 3000);
-      controller.signal.addEventListener('abort', () => {
+      controller.current?.signal.addEventListener('abort', () => {
         reject();
       });
     });
@@ -267,13 +260,15 @@ const Counter = (props: {
 
   const loadMetaData = () => {
     setFrame(true);
+    clearTimeout(timeOutId.current);
+    controller.current?.abort();
     calculateCounter()
       .then((data) => {
-        setCounterList(data as CounterModel[]);
+        setCounterList(data);
         setFrame(false);
       })
-      .catch(() => clearTimeout(timeOutId))
-      .finally(() => clearTimeout(timeOutId));
+      .catch(() => clearTimeout(timeOutId.current))
+      .finally(() => clearTimeout(timeOutId.current));
   };
 
   return (
