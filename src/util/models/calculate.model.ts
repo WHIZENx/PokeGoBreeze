@@ -5,6 +5,7 @@ import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { StatsPokemon } from '../../core/models/stats.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { PokemonQueryCounter, PokemonQueryMove } from './pokemon-top-move.model';
 
 export interface BattleCalculate {
   atk?: number;
@@ -140,7 +141,7 @@ export interface BattleBaseStats {
   type?: string;
 }
 
-export class QueryMovesPokemon {
+export class QueryMovesCounterPokemon {
   globalOptions: Options | undefined;
   typeEff: TypeEff | undefined;
   weatherBoost: WeatherBoost | undefined;
@@ -149,6 +150,7 @@ export class QueryMovesPokemon {
   stats!: StatsPokemon;
   def!: number;
   types: string[] = [];
+  dataList!: PokemonQueryCounter[];
 
   constructor(
     globalOptions: Options | undefined,
@@ -158,7 +160,8 @@ export class QueryMovesPokemon {
     pokemon: PokemonDataModel,
     stats: StatsPokemon,
     def: number,
-    types: string[]
+    types: string[],
+    dataList: PokemonQueryCounter[] = []
   ) {
     this.globalOptions = globalOptions;
     this.typeEff = typeEff;
@@ -168,6 +171,44 @@ export class QueryMovesPokemon {
     this.stats = stats;
     this.def = def;
     this.types = types;
+    this.dataList = dataList;
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class QueryMovesPokemon {
+  globalOptions: Options | undefined;
+  typeEff: TypeEff | undefined;
+  weatherBoost: WeatherBoost | undefined;
+  combat: Combat[] = [];
+  pokemon!: PokemonDataModel;
+  stats!: StatsPokemon;
+  atk!: number;
+  def!: number;
+  sta!: number;
+  types: string[] = [];
+  dataList!: PokemonQueryMove[];
+
+  constructor(
+    globalOptions: Options | undefined,
+    typeEff: TypeEff | undefined,
+    weatherBoost: WeatherBoost | undefined,
+    combat: Combat[],
+    atk: number,
+    def: number,
+    sta: number,
+    types: string[],
+    dataList: PokemonQueryMove[] = []
+  ) {
+    this.globalOptions = globalOptions;
+    this.typeEff = typeEff;
+    this.weatherBoost = weatherBoost;
+    this.combat = combat;
+    this.atk = atk;
+    this.def = def;
+    this.sta = sta;
+    this.types = types;
+    this.dataList = dataList;
   }
 }
 

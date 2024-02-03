@@ -12,7 +12,6 @@ import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
 import { MAX_IV, MIN_IV } from '../../../util/Constants';
 import { PredictStatsModel, PredictStatsCalculate, PredictCPModel, PredictCPCalculate } from '../../../util/models/calculate.model';
-import FreeSoloInput from '../../../components/Input/FreeSoloInput';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 
@@ -127,7 +126,7 @@ const FindTable = () => {
       return enqueueSnackbar('At CP: ' + result.CP + ' impossible found in ' + name, { variant: 'error' });
     }
     setPreIvArr(result);
-  }, [enqueueSnackbar, searchCP, statATK, statDEF, statSTA]);
+  }, [enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);
 
   const onFindStats = useCallback(
     (e: { preventDefault: () => void }) => {
@@ -345,18 +344,19 @@ const FindTable = () => {
         <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="input-group mb-3">
-              <FreeSoloInput
-                statATK={statATK}
-                statDEF={statDEF}
-                statSTA={statSTA}
-                IV_ATK={searchATKIv}
-                IV_DEF={searchDEFIv}
-                IV_STA={searchSTAIv}
-                searchCP={searchCP}
-                setSearchCP={setSearchCP}
-                label={'Input CP'}
-                width={'50%'}
-                minWidth={350}
+              <div className="input-group-prepend">
+                <span className="input-group-text">CP</span>
+              </div>
+              <input
+                required={true}
+                value={searchCP}
+                type="number"
+                min={10}
+                className="form-control"
+                aria-label="cp"
+                aria-describedby="input-cp"
+                placeholder="Enter CP"
+                onInput={(e) => setSearchCP(e.currentTarget.value)}
               />
             </div>
             <div className="btn-search d-flex justify-content-center text-center">
