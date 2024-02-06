@@ -93,8 +93,8 @@ const Hexagon = (props: { defaultStats?: HexagonStats; stats: HexagonStats; size
 
   const drawHexagon = useCallback(
     (stats: HexagonStats) => {
-      const hexBorderSize: number = props.size ?? 0;
-      const hexSize: number = hexBorderSize / 2;
+      const hexBorderSize = props.size ?? 0;
+      const hexSize = hexBorderSize / 2;
 
       const ctx = canvasHex.current?.getContext('2d');
       ctx?.beginPath();

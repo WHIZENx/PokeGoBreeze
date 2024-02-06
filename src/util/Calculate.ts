@@ -14,12 +14,16 @@ import { OptionOtherDPS } from '../store/models/options.model';
 import {
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,
+  DEFAULT_DODGE_MULTIPLY,
   DEFAULT_ENEMY_ATK_DELAY,
   DEFAULT_ENERGY_PER_HP_LOST,
+  DEFAULT_MEGA_MULTIPLY,
   DEFAULT_POKEMON_DEF_OBJ,
   DEFAULT_POKEMON_LEVEL,
   DEFAULT_POKEMON_SHADOW,
+  DEFAULT_STAB_MULTIPLY,
   DEFAULT_TRAINER_FRIEND,
+  DEFAULT_TRAINER_MULTIPLY,
   DEFAULT_WEATHER_BOOSTS,
   FORM_MEGA,
   FORM_SHADOW,
@@ -318,7 +322,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
               sta: k,
               level: l,
               percent: parseFloat((((i + j + k) * 100) / 45).toFixed(2)),
-              hp: Math.min(1, Math.floor((sta + k) * ((data as CPM[]).find((item) => item.level === l)?.multiplier ?? 0))),
+              hp: Math.max(1, calculateStatsBattle(sta, k, l, true)),
             });
           }
         }
@@ -345,7 +349,7 @@ export const predictCPList = (
     predictArr.push({
       level: i,
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i),
-      hp: Math.min(1, Math.floor((sta + IVsta) * ((data as CPM[]).find((item) => item.level === i)?.multiplier ?? 0))),
+      hp: Math.max(1, calculateStatsBattle(sta, IVsta, i, true)),
     });
   }
   return new PredictCPCalculate(IVatk, IVdef, IVsta, predictArr);
@@ -386,7 +390,7 @@ export const calculateBetweenLevel = (
   IVsta: number,
   fromLV: number,
   toLV: number,
-  type: string = ''
+  type = ''
 ) => {
   // from_lv -= 0.5;
   toLV -= 0.5;
@@ -643,9 +647,9 @@ export const calculateDamagePVE = (
   if (eff) {
     const isStab = eff.stab ? StabMultiply : 1;
     const isWb = eff.wb ? StabMultiply : 1;
-    const isDodge = eff.dodge ? 0.25 : 1;
-    const isMega = eff.mega ? (eff.stab ? 1.3 : 1.1) : 1;
-    const isTrainer = eff.trainer ? 1.3 : 1;
+    const isDodge = eff.dodge ? DEFAULT_DODGE_MULTIPLY : 1;
+    const isMega = eff.mega ? (eff.stab ? DEFAULT_STAB_MULTIPLY : DEFAULT_MEGA_MULTIPLY) : 1;
+    const isTrainer = eff.trainer ? DEFAULT_TRAINER_MULTIPLY : 1;
     const isFriend = eff.flevel ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.flevel) : 1;
     let isCharge = eff.clevel ? MULTIPLY_THROW_CHARGE(globalOptions, 'normal') : 1;
     if (eff.clevel === 1) {

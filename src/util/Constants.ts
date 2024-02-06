@@ -112,6 +112,11 @@ export const DEFAULT_DAMAGE_MULTIPLY = 0.5;
 export const DEFAULT_DAMAGE_CONST = 1;
 export const DEFAULT_ENEMY_ATK_DELAY = 2;
 
+export const DEFAULT_STAB_MULTIPLY = 1.3;
+export const DEFAULT_TRAINER_MULTIPLY = 1.3;
+export const DEFAULT_MEGA_MULTIPLY = 1.1;
+export const DEFAULT_DODGE_MULTIPLY = 0.25;
+
 export const CURVE_INC_CHANCE = 1.7;
 export const PLATINUM_INC_CHANCE = 1.4;
 export const GOLD_INC_CHANCE = 1.3;
