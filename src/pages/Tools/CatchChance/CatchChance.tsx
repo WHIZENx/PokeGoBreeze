@@ -177,9 +177,10 @@ const CatchChance = () => {
       pokeballType.forEach((ball) => {
         result[ball.name.toLowerCase().replace(' ball', '')] = {};
         throwType.forEach((type) => {
+          const [minThreshold, maxThreshold] = type.threshold;
           const multiplier =
             ball.threshold *
-            (((type.threshold.at(0) ?? 0) + (type.threshold.at(1) ?? 0)) / 2) *
+            ((minThreshold + maxThreshold) / 2) *
             medalChance *
             (curveBall ? CURVE_INC_CHANCE : 1) *
             (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *

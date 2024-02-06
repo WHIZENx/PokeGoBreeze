@@ -112,6 +112,10 @@ export const DEFAULT_DAMAGE_MULTIPLY = 0.5;
 export const DEFAULT_DAMAGE_CONST = 1;
 export const DEFAULT_ENEMY_ATK_DELAY = 2;
 
+export const DEFAULT_TRAINER_MULTIPLY = 1.3;
+export const DEFAULT_MEGA_MULTIPLY = 1.1;
+export const DEFAULT_DODGE_MULTIPLY = 0.25;
+
 export const CURVE_INC_CHANCE = 1.7;
 export const PLATINUM_INC_CHANCE = 1.4;
 export const GOLD_INC_CHANCE = 1.3;
@@ -153,7 +157,7 @@ export const SHADOW_DEF_BONUS = (options: Options | undefined) => {
   return getOption(options, ['combat_options', 'shadow_bonus', 'def']) ?? 1;
 };
 
-export const genList: any = {
+export const genList: { [x: number]: number[] } = {
   1: [1, 151],
   2: [152, 251],
   3: [252, 386],
@@ -165,7 +169,7 @@ export const genList: any = {
   9: [906, 1008],
 };
 
-export const regionList: any = {
+export const regionList: { [x: number]: string } = {
   0: 'Unknown',
   1: 'Kanto',
   2: 'Johto',

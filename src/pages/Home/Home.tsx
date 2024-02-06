@@ -88,7 +88,7 @@ const Home = () => {
     version: true,
   });
 
-  const subItem: number = 100;
+  const subItem = 100;
 
   const addTypeArr = (value: string) => {
     let types = selectTypes;

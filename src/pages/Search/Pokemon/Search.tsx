@@ -49,15 +49,15 @@ const Search = () => {
   }, []);
 
   useEffect(() => {
-    if (pokemonList.length > 0) {
-      const timeOutId = setTimeout(() => {
+    const timeOutId = setTimeout(() => {
+      if (pokemonList.length > 0) {
         const results = pokemonList.filter(
           (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
         );
         setPokemonListFilter(results);
-      });
-      return () => clearTimeout(timeOutId);
-    }
+      }
+    });
+    return () => clearTimeout(timeOutId);
   }, [pokemonList, searchTerm]);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const Search = () => {
     }
   };
 
-  const getInfoPoke = (value: { id: number }) => {
+  const getInfoPoke = (value: PokemonSearchingModel) => {
     setShowResult(false);
     setId(value.id);
     if (first) {

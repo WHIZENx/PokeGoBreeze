@@ -477,11 +477,12 @@ const RaidBattle = () => {
     movePoke: string[],
     pokemon: PokemonDataModel,
     felite: boolean,
-    pokemonTarget: boolean
+    pokemonTarget: boolean,
+    isShadow = false
   ) => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
-      if (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) {
+      if (!pokemon.forme || isShadow) {
         if (combat.shadowMoves.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
         }
@@ -516,8 +517,9 @@ const RaidBattle = () => {
           combatPoke = result;
         }
         if (combatPoke) {
-          addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false, pokemonTarget);
-          addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true, pokemonTarget);
+          const pokemonGO = checkPokemonGO(pokemon, data?.details ?? []);
+          addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false, pokemonTarget, pokemonGO?.isShadow);
+          addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true, pokemonTarget, pokemonGO?.isShadow);
         }
       }
     });

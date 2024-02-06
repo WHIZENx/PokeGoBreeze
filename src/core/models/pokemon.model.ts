@@ -269,8 +269,9 @@ export class PokemonDataModel {
 
   constructor(pokemon: PokemonModel, types: string[]) {
     let gen = 0;
-    Object.entries(genList).forEach(([key, value]: any) => {
-      if (pokemon.id >= value[0] && pokemon.id <= value[1]) {
+    Object.entries(genList).forEach(([key, value]) => {
+      const [minId, maxId] = value;
+      if (pokemon.id >= minId && pokemon.id <= maxId) {
         gen = parseInt(key);
         return;
       }

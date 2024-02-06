@@ -76,8 +76,8 @@ const CalculatePoint = () => {
   const [isRaid, setIsRaid] = useState(true);
   const [tier, setTier] = useState(1);
 
-  const [idDef, setIdDef] = useState(searching && searching.obj ? searching.obj.id : 1);
-  const [nameDef, setNameDef] = useState('Bulbasaur');
+  const [idDef, setIdDef] = useState(searching?.obj ? searching.obj.id : 1);
+  const [nameDef, setNameDef] = useState(splitAndCapitalize(searching?.obj?.fullName, '-', ' '));
   const [formDef, setFormDef]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] =
     useState();
   const [moveDef, setMoveDef]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
@@ -104,28 +104,28 @@ const CalculatePoint = () => {
     document.title = 'Calculate Point Stats - Tools';
   }, []);
 
-  const clearData = (reset: boolean = true) => {
+  const clearData = (reset = true) => {
     clearDataAtk(reset);
     clearDataDef(reset);
     clearDataBulk(reset);
     initialize.current = false;
   };
 
-  const clearDataAtk = (reset: boolean = true) => {
+  const clearDataAtk = (reset = true) => {
     setResultBreakPointAtk(undefined);
     if (!reset) {
       setMove(undefined);
     }
   };
 
-  const clearDataDef = (reset: boolean = true) => {
+  const clearDataDef = (reset = true) => {
     setResultBreakPointDef(undefined);
     if (!reset) {
       setMoveDef(undefined);
     }
   };
 
-  const clearDataBulk = (reset: boolean = true) => {
+  const clearDataBulk = (reset = true) => {
     setResultBulkPointDef(undefined);
     if (!reset) {
       setFMove(undefined);

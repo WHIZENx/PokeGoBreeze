@@ -198,6 +198,12 @@ const FormSelect = (props: {
   );
 
   useEffect(() => {
+    if (props.setName) {
+      props.setName(currForm ? splitAndCapitalize(currForm.form.name, '-', ' ') : props.name);
+    }
+  }, [props.setName, props.name, currForm]);
+
+  useEffect(() => {
     const axios = APIService;
     const cancelToken = axios.getAxios().CancelToken;
     const source = cancelToken.source();

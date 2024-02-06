@@ -395,7 +395,7 @@ const convertPokemonGO = (item: PokemonDataModel, pokemon: Details) => {
 
 export const checkPokemonGO = (item: PokemonDataModel, details: Details[]) => {
   return details.find((pokemon) => {
-    return convertPokemonGO(item, pokemon) ? true : false;
+    return convertPokemonGO(item, pokemon);
   });
 };
 
@@ -673,18 +673,18 @@ const convertNameEffort = (name: string) => {
     case 'speed':
       return 'spe';
     default:
-      return '';
+      return name;
   }
 };
 
 export const convertStatsEffort = (stats: Stats[] | undefined) => {
-  const result: any = { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 };
+  const result: { [x: string]: number } = { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 };
 
   stats?.forEach((stat) => {
     result[convertNameEffort(stat.stat.name)] = stat.base_stat;
   });
 
-  return result as StatsPokemon;
+  return result as unknown as StatsPokemon;
 };
 
 export const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRanking): FormModel => {
