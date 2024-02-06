@@ -16,6 +16,7 @@ export interface Details {
   pokemonClass: string | null;
   disableTransferToPokemonHome: boolean | null;
   isBaby: boolean;
+  isShadow: boolean;
   formChange?: {
     availableForm: string[];
     candyCost: string;
@@ -35,6 +36,7 @@ export class DetailsPokemonModel {
   pokemonClass!: string | null;
   disableTransferToPokemonHome!: boolean | null;
   isBaby!: boolean;
+  isShadow!: boolean;
   formChange?: {
     availableForm: string[];
     candyCost: string;
@@ -51,5 +53,6 @@ export class DetailsPokemonModel {
     this.pokemonClass = null;
     this.isTradable = false;
     this.releasedGO = false;
+    this.isShadow = false;
   }
 }

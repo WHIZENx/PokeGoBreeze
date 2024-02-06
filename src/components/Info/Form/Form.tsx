@@ -145,7 +145,7 @@ const Form = (props: {
     const findData = props.pokeData.find((item) => name === item.name);
     const findForm = props.formList?.map((item) => item.find((item) => item.form.name === name)).find((item) => item);
     setCurrForm(findForm);
-    const region = Object.values(regionList).find((item: any) => findForm?.form.form_name.includes(item.toLowerCase()));
+    const region = Object.values(regionList).find((item) => findForm?.form.form_name.includes(item.toLowerCase()));
     if (findForm?.form.form_name !== '' && region) {
       props.setRegion(props.region);
     } else {
@@ -211,7 +211,7 @@ const Form = (props: {
           )
           .find((item) => item);
       }
-      const region = Object.values(regionList).find((item: any) => findForm?.form.form_name.includes(item.toLowerCase()));
+      const region = Object.values(regionList).find((item) => findForm?.form.form_name.includes(item.toLowerCase()));
       if (findForm?.form.form_name !== '' && region) {
         props.setRegion(props.region);
       } else {

@@ -395,7 +395,7 @@ const convertPokemonGO = (item: PokemonDataModel, pokemon: Details) => {
 
 export const checkPokemonGO = (item: PokemonDataModel, details: Details[]) => {
   return details.find((pokemon) => {
-    return convertPokemonGO(item, pokemon) ? true : false;
+    return convertPokemonGO(item, pokemon);
   });
 };
 

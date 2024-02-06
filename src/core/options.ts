@@ -1102,6 +1102,7 @@ export const optionDetailsPokemon = (
         result.pokemonClass = item.pokemonClass.replace('POKEMON_CLASS_', '');
       }
       result.formChange = item.formChange ?? [];
+      result.isShadow = item.shadow ? true : false;
 
       const form = assets?.find((asset) => asset.id === result.id)?.image.find((img) => img.form === result.form);
 

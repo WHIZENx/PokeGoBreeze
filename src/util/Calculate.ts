@@ -21,7 +21,6 @@ import {
   DEFAULT_POKEMON_DEF_OBJ,
   DEFAULT_POKEMON_LEVEL,
   DEFAULT_POKEMON_SHADOW,
-  DEFAULT_STAB_MULTIPLY,
   DEFAULT_TRAINER_FRIEND,
   DEFAULT_TRAINER_MULTIPLY,
   DEFAULT_WEATHER_BOOSTS,
@@ -648,7 +647,7 @@ export const calculateDamagePVE = (
     const isStab = eff.stab ? StabMultiply : 1;
     const isWb = eff.wb ? StabMultiply : 1;
     const isDodge = eff.dodge ? DEFAULT_DODGE_MULTIPLY : 1;
-    const isMega = eff.mega ? (eff.stab ? DEFAULT_STAB_MULTIPLY : DEFAULT_MEGA_MULTIPLY) : 1;
+    const isMega = eff.mega ? (eff.stab ? STAB_MULTIPLY(globalOptions) : DEFAULT_MEGA_MULTIPLY) : 1;
     const isTrainer = eff.trainer ? DEFAULT_TRAINER_MULTIPLY : 1;
     const isFriend = eff.flevel ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.flevel) : 1;
     let isCharge = eff.clevel ? MULTIPLY_THROW_CHARGE(globalOptions, 'normal') : 1;
