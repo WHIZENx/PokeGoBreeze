@@ -1048,9 +1048,9 @@ const Battle = () => {
     const def = parseInt((document.getElementById('defIV' + capitalize(type)) as HTMLInputElement).value);
     const sta = parseInt((document.getElementById('hpIV' + capitalize(type)) as HTMLInputElement).value);
 
-    const cp: number = calculateCP(atk, def, sta, level);
+    const cp = calculateCP(atk, def, sta, level);
 
-    if (cp > parseInt(params.cp as any)) {
+    if (cp > parseInt(params?.cp ?? '')) {
       enqueueSnackbar('This stats Pokémon CP is greater than ' + params.cp + ', which is not permitted by the league.', {
         variant: 'error',
       });

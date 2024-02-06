@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
-import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
+import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName, checkPokemonGO } from '../../../util/Utils';
 import {
   DEFAULT_POKEMON_DEF_OBJ,
   DEFAULT_TYPES,
@@ -438,11 +438,12 @@ const DpsTdo = () => {
     combat: CombatPokemon,
     movePoke: string[],
     pokemon: PokemonDataModel,
-    felite: boolean
+    felite: boolean,
+    isShadow = false
   ) => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, false, felite, false);
-      if (!pokemon.forme || (!pokemon.forme.toUpperCase().includes(FORM_MEGA) && !pokemon.forme.toUpperCase().includes(FORM_PRIMAL))) {
+      if (!pokemon.forme || isShadow) {
         if (combat.shadowMoves?.length > 0) {
           addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, false, felite, false, combat.shadowMoves);
           addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, false, felite, true, combat.shadowMoves);
@@ -470,8 +471,9 @@ const DpsTdo = () => {
         combatPoke = result;
       }
       if (combatPoke) {
-        addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false);
-        addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true);
+        const pokemonGO = checkPokemonGO(pokemon, data?.details ?? []);
+        addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false, pokemonGO?.isShadow);
+        addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true, pokemonGO?.isShadow);
       }
     });
     setShowSpinner(false);

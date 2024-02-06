@@ -100,7 +100,7 @@ export const optionPokeSound = (data: { tree: { path: string }[] }) => {
   return data.tree.map((item) => item.path.replace('.wav', ''));
 };
 
-export const optionPokemonTypes = (data: PokemonModel[] | any[]) => {
+export const optionPokemonTypes = (data: { data: { typeEffective: { attackScalar: number[] } }; templateId: string }[]) => {
   const types: any = {};
   const typeSet = [
     'NORMAL',
@@ -124,7 +124,7 @@ export const optionPokemonTypes = (data: PokemonModel[] | any[]) => {
   ];
   data
     .filter((item) => item.templateId.includes('POKEMON_TYPE') && Object.keys(item.data).includes('typeEffective'))
-    .forEach((item: { data: { typeEffective: { attackScalar: number[] } }; templateId: string }) => {
+    .forEach((item) => {
       const rootType = item.templateId.replace('POKEMON_TYPE_', '');
       types[rootType] = {} as TypeSet;
       typeSet.forEach((type, index) => {
@@ -256,7 +256,7 @@ export const optionFormSpecial = (data: { templateId: string; data: { formSettin
         item.data.formSettings.forms
     )
     .map((item) => item.data.formSettings.forms)
-    .reduce((prev: any, curr: any) => [...prev, ...curr], [])
+    .reduce((prev: any, curr) => [...prev, ...curr], [])
     .filter((item: { assetBundleSuffix: string; isCostume: boolean; form: string }) => {
       return (
         item.assetBundleSuffix ||
@@ -265,7 +265,7 @@ export const optionFormSpecial = (data: { templateId: string; data: { formSettin
       );
     })
     .map((item: { form: string }) => item.form)
-    .filter((form) => form !== 'MEWTWO_A' && form !== 'PIKACHU_ROCK_STAR' && form !== 'PIKACHU_POP_STAR');
+    .filter((form: string) => form !== 'MEWTWO_A' && form !== 'PIKACHU_ROCK_STAR' && form !== 'PIKACHU_POP_STAR');
 };
 
 export const optionPokemonFamily = (pokemon: PokemonModel[]) => {
@@ -884,8 +884,8 @@ export const optionLeagues = (
             whiteList.form = poke.forms ? poke.forms : FORM_NORMAL;
             return whiteList;
           });
-          const whiteList: any[] = [];
-          result.conditions.whiteList.forEach((value: { form: string[]; name: string }) => {
+          const whiteList: { id: number; form: string[]; name: string }[] = [];
+          result.conditions.whiteList.forEach((value) => {
             if (typeof value.form !== 'string') {
               value.form.forEach((form: string) => {
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
@@ -898,18 +898,18 @@ export const optionLeagues = (
               whiteList.push({ ...value, form: FORM_NORMAL });
             }
           });
-          result.conditions.whiteList = whiteList.sort((a: { id: number }, b: { id: number }) => a.id - b.id);
+          result.conditions.whiteList = whiteList.sort((a, b) => a.id - b.id);
         }
         if (con.type === 'POKEMON_BANLIST') {
-          result.conditions.banned = con.pokemonBanList.pokemon.map((poke: { id: any; form: string; forms: string }) => {
+          result.conditions.banned = con.pokemonBanList.pokemon.map((poke) => {
             const banList: any = {};
             banList.id = pokemon.find((item) => item.name === poke.id)?.id;
             banList.name = poke.id;
             banList.form = poke.forms ? poke.forms : FORM_NORMAL;
             return banList;
           });
-          const banList: any[] = [];
-          result.conditions.banned.forEach((value: { form: string[]; name: string }) => {
+          const banList: { id: number; form: string[]; name: string }[] = [];
+          result.conditions.banned.forEach((value) => {
             if (typeof value.form !== 'string') {
               value.form.forEach((form: string) => {
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
@@ -1102,6 +1102,7 @@ export const optionDetailsPokemon = (
         result.pokemonClass = item.pokemonClass.replace('POKEMON_CLASS_', '');
       }
       result.formChange = item.formChange ?? [];
+      result.isShadow = item.shadow ? true : false;
 
       const form = assets?.find((asset) => asset.id === result.id)?.image.find((img) => img.form === result.form);
 
@@ -1120,7 +1121,7 @@ export const optionDetailsPokemon = (
       formOrigin.form += '_SEA';
     }
     if (pokemon.form?.toUpperCase() === FORM_NORMAL && !pokemon.releasedGO && pokemon.form !== formOrigin?.form) {
-      const checkForm: boolean = result.find((poke) => poke.form === formOrigin?.form)?.releasedGO ?? false;
+      const checkForm = result.find((poke) => poke.form === formOrigin?.form)?.releasedGO ?? false;
       pokemon.releasedGO = checkForm;
       if (pokemon.id === 201 || pokemon.id === 718) {
         pokemon.releasedGO = true;
