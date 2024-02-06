@@ -5,6 +5,7 @@ name: Deploy to Firebase Hosting on PR
 'on': pull_request
 env:
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
+  REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
 jobs:
   build_and_preview:
     if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
@@ -12,6 +13,10 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.17.0'
       - name: Install dependencies
         run: |
           npm install
