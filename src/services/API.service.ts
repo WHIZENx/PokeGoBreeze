@@ -1,4 +1,4 @@
-import axios, { AxiosStatic } from 'axios';
+import axios, { AxiosRequestConfig, AxiosStatic } from 'axios';
 import { APIUrl } from './constants';
 import { FORM_MEGA } from '../util/Constants';
 import { Species } from '../core/models/API/species.model';
@@ -17,23 +17,23 @@ class APIService {
     return this.axios;
   }
 
-  getFetchUrl(url: string, options: any = null) {
+  getFetchUrl(url: string, options?: AxiosRequestConfig<any> | undefined) {
     return this.axios.get(url, options);
   }
 
-  getPokeInfo(value: number, options: any = null) {
+  getPokeInfo(value: number, options?: AxiosRequestConfig<any> | undefined) {
     return this.axios.get(this.getPokeAPI('pokemon', value), options);
   }
 
-  getPokeSpices(value: number, options: any = null) {
+  getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
     return this.axios.get<Species>(this.getPokeAPI('pokemon-species', value), options);
   }
 
-  getPokeForm(value: number, options: any = null) {
+  getPokeForm(value: number, options?: AxiosRequestConfig<any> | undefined) {
     return this.axios.get(this.getPokeAPI('pokemon-form', value), options);
   }
 
-  getPokeJSON(path: string, options: any = null) {
+  getPokeJSON(path: string, options?: AxiosRequestConfig<any> | undefined) {
     return this.axios.get(`${APIUrl.POGO_API_URL}${path}`, options);
   }
 

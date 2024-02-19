@@ -8,7 +8,7 @@ export interface Details {
   id: number;
   name: string;
   form: string;
-  gender: PokemonGender | null;
+  gender: PokemonGender | null | undefined;
   releasedGO: boolean;
   isTransferable: boolean | null;
   isDeployable: boolean | null;
@@ -28,7 +28,7 @@ export class DetailsPokemonModel {
   id!: number;
   name!: string;
   form!: string;
-  gender!: PokemonGender | null;
+  gender!: PokemonGender | null | undefined;
   releasedGO!: boolean;
   isTransferable!: boolean | null;
   isDeployable!: boolean | null;

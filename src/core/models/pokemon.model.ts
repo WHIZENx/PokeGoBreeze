@@ -15,7 +15,7 @@ interface EvolutionBranch {
   candyCost: number;
   form: string;
   obPurificationEvolutionCandyCost: number;
-  genderRequirement: number;
+  genderRequirement: string;
   kmBuddyDistanceRequirement: number;
   mustBeBuddy: boolean;
   onlyDaytime: boolean;
@@ -23,7 +23,9 @@ interface EvolutionBranch {
   lureItemRequirement: string;
   evolutionItemRequirement: string;
   onlyUpsideDown: boolean;
-  questDisplay: any;
+  questDisplay: {
+    questRequirementTemplateId: string;
+  }[];
   temporaryEvolution: string;
   temporaryEvolutionEnergyCost: number;
   temporaryEvolutionEnergyCostSubsequent: number;
@@ -59,8 +61,12 @@ export interface PokemonModel {
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | undefined;
-  formChange: null;
-  tempEvoOverrides: any;
+  formChange?: {
+    availableForm: string[];
+    candyCost: string;
+    stardustCost: string;
+  }[];
+  tempEvoOverrides: { tempEvoId: string }[];
   pokemonId: string;
   modelScale: number;
   type: string;
