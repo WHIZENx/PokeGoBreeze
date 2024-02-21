@@ -1,6 +1,7 @@
 import { Options } from '../core/models/options.model';
 import { getOption } from '../core/options';
 import APIService from '../services/API.service';
+import { RaidTier } from './models/constants.model';
 
 // KeyCode
 export const KEY_ENTER = 13;
@@ -13,7 +14,7 @@ export const SYNC_MSG = 'Waiting to sync current data';
 
 export const TRANSITION_TIME = '0.3s';
 
-export const BASE_CPM: any = {
+export const BASE_CPM: { [x: number]: number } = {
   1: 0.094,
   10: 0.4225,
   20: 0.5974,
@@ -23,7 +24,9 @@ export const BASE_CPM: any = {
   60: 0.91736427,
 };
 
-export const RAID_BOSS_TIER: any = {
+export const RAID_BOSS_TIER: {
+  [x: number]: RaidTier;
+} = {
   1: {
     level: 20,
     CPm: 0.61,

@@ -57,15 +57,17 @@ export const LOAD_PVP = 'LOAD_PVP';
 export const LOAD_PVP_MOVES = 'LOAD_PVP_MOVES';
 export const RESET_STORE = 'RESET_STORE';
 
+const axios = APIService;
+
 const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
-  cancelToken: APIService.getAxios().CancelToken.source().token,
+  cancelToken: axios.getAxios().CancelToken.source().token,
 };
 
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
   try {
-    APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options).then((res: { data: { url: string }[] }) => {
-      APIService.getFetchUrl(res.data.at(0)?.url ?? '', options).then((file: { data: { files: { filename: string }[] } }) => {
+    axios.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options).then((res: { data: { url: string }[] }) => {
+      axios.getFetchUrl(res.data.at(0)?.url ?? '', options).then((file: { data: { files: { filename: string }[] } }) => {
         dispatch({
           type: LOAD_LOGO_POKEGO,
           payload: file.data.files
@@ -103,11 +105,11 @@ export const loadTimestamp = async (
   stateCandy: string
 ) => {
   await Promise.all([
-    APIService.getFetchUrl(APIUrl.TIMESTAMP, {
-      cancelToken: APIService.getAxios().CancelToken.source().token,
+    axios.getFetchUrl(APIUrl.TIMESTAMP, {
+      cancelToken: axios.getAxios().CancelToken.source().token,
     }),
-    APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
-    APIService.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
+    axios.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
+    axios.getFetchUrl(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
   ])
     .then(async ([GMtimestamp, imageRoot, soundsRoot]) => {
       dispatch({
@@ -144,7 +146,7 @@ export const loadTimestamp = async (
         stateCandy
       );
     })
-    .catch((e) => {
+    .catch((e: ErrorEvent) => {
       dispatch(setBar(false));
       dispatch(
         showSpinner({
@@ -167,11 +169,12 @@ export const loadGameMaster = (
   stateSound: string,
   stateCandy: string
 ) => {
-  APIService.getFetchUrl(APIUrl.GAMEMASTER, {
-    cancelToken: APIService.getAxios().CancelToken.source().token,
-  })
+  axios
+    .getFetchUrl(APIUrl.GAMEMASTER, {
+      cancelToken: axios.getAxios().CancelToken.source().token,
+    })
     .then(async (gm) => {
-      let pokemonEncounter: DbModel = new DbModel();
+      let pokemonEncounter = new DbModel();
       try {
         pokemonEncounter = await getDbPokemonEncounter();
       } catch (e) {
@@ -194,16 +197,18 @@ export const loadGameMaster = (
 
       dispatch(setPercent(60));
       if (!stateCandy) {
-        APIService.getFetchUrl(APIUrl.CANDY_DATA, {
-          cancelToken: APIService.getAxios().CancelToken.source().token,
-        }).then((candy: { data: { CandyColors: CandyModel[] } }) => {
-          const candyData = optionPokemonCandy(candy.data.CandyColors, pokemon, pokemonFamily);
-          setStateCandy(JSON.stringify(candyData));
-          dispatch({
-            type: LOAD_CANDY,
-            payload: candyData,
+        axios
+          .getFetchUrl(APIUrl.CANDY_DATA, {
+            cancelToken: axios.getAxios().CancelToken.source().token,
+          })
+          .then((candy: { data: { CandyColors: CandyModel[] } }) => {
+            const candyData = optionPokemonCandy(candy.data.CandyColors, pokemon, pokemonFamily);
+            setStateCandy(JSON.stringify(candyData));
+            dispatch({
+              type: LOAD_CANDY,
+              payload: candyData,
+            });
           });
-        });
       } else {
         dispatch({
           type: LOAD_CANDY,
@@ -338,20 +343,20 @@ export const loadAssets = async (
   setStateSound: SetValue<string>
 ) => {
   await Promise.all([
-    APIService.getFetchUrl(imageRoot.data.at(0)?.commit.tree.url ?? '', options),
-    APIService.getFetchUrl(soundsRoot.data.at(0)?.commit.tree.url ?? '', options),
+    axios.getFetchUrl(imageRoot.data.at(0)?.commit.tree.url ?? '', options),
+    axios.getFetchUrl(soundsRoot.data.at(0)?.commit.tree.url ?? '', options),
   ]).then(async ([imageFolder, soundFolder]) => {
     const imageFolderPath = imageFolder.data.tree.find((item: { path: string }) => item.path === 'Images');
     const soundFolderPath = soundFolder.data.tree.find((item: { path: string }) => item.path === 'Sounds');
 
-    await Promise.all([APIService.getFetchUrl(imageFolderPath.url, options), APIService.getFetchUrl(soundFolderPath.url, options)]).then(
+    await Promise.all([axios.getFetchUrl(imageFolderPath.url, options), axios.getFetchUrl(soundFolderPath.url, options)]).then(
       async ([image, sound]) => {
         const imagePath = image.data.tree.find((item: { path: string }) => item.path === 'Pokemon');
         const soundPath = sound.data.tree.find((item: { path: string }) => item.path === 'Pokemon Cries');
 
         await Promise.all([
-          APIService.getFetchUrl(imagePath.url + '?recursive=1', options),
-          APIService.getFetchUrl(soundPath.url + '?recursive=1', options),
+          axios.getFetchUrl(imagePath.url + '?recursive=1', options),
+          axios.getFetchUrl(soundPath.url + '?recursive=1', options),
         ]).then(([imageData, soundData]) => {
           const assetImgFiles = optionPokeImg(imageData.data);
           setStateImage(JSON.stringify(assetImgFiles));
@@ -392,8 +397,9 @@ export const loadPVP = (
   setStatePVP: SetValue<string>,
   statePVP: string
 ) => {
-  APIService.getFetchUrl(APIUrl.FETCH_PVP_DATA, options).then(
-    (res: { data: { commit: { tree: { url: string }; committer: { date: Date } } }[] }) => {
+  axios
+    .getFetchUrl(APIUrl.FETCH_PVP_DATA, options)
+    .then((res: { data: { commit: { tree: { url: string }; committer: { date: Date } } }[] }) => {
       const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();
       if (pvpDate !== JSON.parse(stateTimestamp).pvp) {
         const pvpUrl = res.data.at(0)?.commit.tree.url;
@@ -403,13 +409,13 @@ export const loadPVP = (
             pvp: pvpDate,
           })
         );
-        APIService.getFetchUrl(pvpUrl ?? '', options).then((pvpRoot: { data: { tree: { path: string; url: string }[] } }) => {
+        axios.getFetchUrl(pvpUrl ?? '', options).then((pvpRoot: { data: { tree: { path: string; url: string }[] } }) => {
           const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');
 
-          APIService.getFetchUrl(pvpRootPath?.url + '', options).then((pvpFolder: { data: { tree: { path: string; url: string }[] } }) => {
+          axios.getFetchUrl(pvpRootPath?.url + '', options).then((pvpFolder: { data: { tree: { path: string; url: string }[] } }) => {
             const pvpFolderPath = pvpFolder.data.tree.find((item) => item.path === 'data');
 
-            APIService.getFetchUrl(pvpFolderPath?.url + '?recursive=1', options).then((pvp: { data: { tree: { path: string }[] } }) => {
+            axios.getFetchUrl(pvpFolderPath?.url + '?recursive=1', options).then((pvp: { data: { tree: { path: string }[] } }) => {
               const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
               const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 
@@ -438,12 +444,11 @@ export const loadPVP = (
           },
         });
       }
-    }
-  );
+    });
 };
 
 export const loadPVPMoves = (dispatch: Dispatch) => {
-  APIService.getFetchUrl(APIUrl.FETCH_PVP_MOVES).then((moves) => {
+  axios.getFetchUrl(APIUrl.FETCH_PVP_MOVES).then((moves) => {
     dispatch({
       type: LOAD_PVP_MOVES,
       payload: moves.data,

@@ -14,6 +14,7 @@ import { PokemonDataModel, PokemonEncounter, PokemonModel } from './models/pokem
 import { TypeEff } from './models/type-eff.model';
 import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
 import { APIUrl } from '../services/constants';
+import { PokemonData, PokemonPermission } from './models/options.model';
 
 export const getOption = (options: any, args: string[]) => {
   if (!options) {
@@ -26,30 +27,7 @@ export const getOption = (options: any, args: string[]) => {
   return options;
 };
 
-export const optionSettings = (
-  data: {
-    templateId: string;
-    data: {
-      combatSettings: {
-        sameTypeAttackBonusMultiplier: number;
-        shadowPokemonAttackBonusMultiplier: number;
-        shadowPokemonDefenseBonusMultiplier: number;
-        chargeScoreBase: number;
-        chargeScoreNice: number;
-        chargeScoreGreat: number;
-        chargeScoreExcellent: number;
-      };
-      battleSettings: {
-        enemyAttackInterval: number;
-        sameTypeAttackBonusMultiplier: number;
-        shadowPokemonAttackBonusMultiplier: number;
-        shadowPokemonDefenseBonusMultiplier: number;
-      };
-      buddyLevelSettings: { minNonCumulativePointsRequired: number; unlockedTraits: number };
-      friendshipMilestoneSettings: { attackBonusPercentage: number; unlockedTrading: number };
-    };
-  }[]
-) => {
+export const optionSettings = (data: PokemonData[]) => {
   const settings: any = {
     combat_options: {},
     battle_options: {},
@@ -100,7 +78,7 @@ export const optionPokeSound = (data: { tree: { path: string }[] }) => {
   return data.tree.map((item) => item.path.replace('.wav', ''));
 };
 
-export const optionPokemonTypes = (data: { data: { typeEffective: { attackScalar: number[] } }; templateId: string }[]) => {
+export const optionPokemonTypes = (data: PokemonData[]) => {
   const types: any = {};
   const typeSet = [
     'NORMAL',
@@ -187,12 +165,7 @@ export const optionPokemonName = (details: Details[] | undefined) => {
   return result;
 };
 
-export const optionPokemonWeather = (
-  data: {
-    data: { weatherAffinities: { weatherCondition: string; pokemonType: string[] } };
-    templateId: string;
-  }[]
-) => {
+export const optionPokemonWeather = (data: PokemonData[]) => {
   const weather: any = {};
   data
     .filter((item) => item.templateId.includes('WEATHER_AFFINITY') && Object.keys(item.data).includes('weatherAffinities'))
@@ -203,7 +176,7 @@ export const optionPokemonWeather = (
   return weather;
 };
 
-export const optionPokemonSpawn = (data: { data: { genderSettings: { gender: any } }; templateId: string }[]) => {
+export const optionPokemonSpawn = (data: PokemonData[]) => {
   return data
     .filter((item) => item.templateId.includes('SPAWN') && Object.keys(item.data).includes('genderSettings'))
     .map((item) => {
@@ -215,7 +188,7 @@ export const optionPokemonSpawn = (data: { data: { genderSettings: { gender: any
     });
 };
 
-export const optionPokemon = (data: { templateId: string; data: { pokemonSettings: PokemonModel } }[], encounter: PokemonEncounter[]) => {
+export const optionPokemon = (data: PokemonData[], encounter: PokemonEncounter[]) => {
   return data
     .filter((item) => item.templateId.includes('POKEMON') && Object.keys(item.data).includes('pokemonSettings'))
     .map((item) => {
@@ -234,7 +207,7 @@ export const optionPokemon = (data: { templateId: string; data: { pokemonSetting
     });
 };
 
-export const optionFormNone = (data: { templateId: string; data: { formSettings: { pokemon: string; forms: { form: string }[] } } }[]) => {
+export const optionFormNone = (data: PokemonData[]) => {
   return data
     .filter(
       (item) => item.templateId.includes('POKEMON') && item.templateId.includes('FORMS') && Object.keys(item.data).includes('formSettings')
@@ -246,7 +219,7 @@ export const optionFormNone = (data: { templateId: string; data: { formSettings:
     .map((item) => item.pokemon);
 };
 
-export const optionFormSpecial = (data: { templateId: string; data: { formSettings: { forms: string } } }[]) => {
+export const optionFormSpecial = (data: PokemonData[]) => {
   return data
     .filter(
       (item) =>
@@ -256,15 +229,15 @@ export const optionFormSpecial = (data: { templateId: string; data: { formSettin
         item.data.formSettings.forms
     )
     .map((item) => item.data.formSettings.forms)
-    .reduce((prev: any, curr) => [...prev, ...curr], [])
-    .filter((item: { assetBundleSuffix: string; isCostume: boolean; form: string }) => {
+    .reduce((prev, curr) => [...prev, ...curr], [])
+    .filter((item) => {
       return (
         item.assetBundleSuffix ||
         item.isCostume ||
         (item.form && item.form?.toUpperCase().includes(FORM_NORMAL) && !item.form.includes('UNOWN'))
       );
     })
-    .map((item: { form: string }) => item.form)
+    .map((item) => item.form)
     .filter((form: string) => form !== 'MEWTWO_A' && form !== 'PIKACHU_ROCK_STAR' && form !== 'PIKACHU_POP_STAR');
 };
 
@@ -272,7 +245,7 @@ export const optionPokemonFamily = (pokemon: PokemonModel[]) => {
   return [...new Set(pokemon.map((item) => item.pokemonId))];
 };
 
-export const optionPokemonFamilyGroup = (data: { templateId: string; data: { pokemonFamily: { familyId: string } } }[]) => {
+export const optionPokemonFamilyGroup = (data: PokemonData[]) => {
   return data
     .filter((item) => item.templateId.includes('FAMILY') && Object.keys(item.data).includes('pokemonFamily'))
     .map((item) => {
@@ -306,7 +279,7 @@ export const optionPokemonCandy = (candyData: CandyModel[], pokemon: PokemonMode
   return resultCandy;
 };
 
-export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecial: string[]) => {
+export const optionEvolution = (data: PokemonData[], pokemon: PokemonModel[], formSpecial: string[]) => {
   return pokemon
     .filter((item) => !formSpecial.includes(item.name))
     .map((item) => {
@@ -330,7 +303,6 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
             evo_to_name: '',
             candyCost: 0,
             purificationEvoCandyCost: 0,
-            quest: undefined,
           };
           const name = evo.evolution ?? result.name;
           if (evo.form) {
@@ -407,22 +379,21 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
           }
           if (evo.questDisplay) {
             const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
-            const template = data.find((template: { templateId: number }) => template.templateId === questDisplay);
-            dataEvo.quest.condition = null;
+            const template = data.find((template) => template.templateId === questDisplay);
             try {
-              const condition = template.data.evolutionQuestTemplate.goals[0].condition[0];
+              const condition = template?.data.evolutionQuestTemplate?.goals[0].condition[0];
               dataEvo.quest.condition = {};
-              dataEvo.quest.condition.desc = condition.type.replace('WITH_', '');
-              if (condition.withPokemonType) {
-                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type: string) => type.split('_').at(2));
+              dataEvo.quest.condition.desc = condition?.type.replace('WITH_', '');
+              if (condition?.withPokemonType) {
+                dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type) => type.split('_').at(2) ?? '');
               }
-              if (condition.withThrowType) {
+              if (condition?.withThrowType) {
                 dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_').at(2);
               }
               // tslint:disable-next-line: no-empty
             } catch {} // eslint-disable-line no-empty
-            dataEvo.quest.goal = template.data.evolutionQuestTemplate.goals[0].target;
-            dataEvo.quest.type = template.data.evolutionQuestTemplate.questType.replace('QUEST_', '');
+            dataEvo.quest.goal = template?.data.evolutionQuestTemplate?.goals[0].target;
+            dataEvo.quest.type = template?.data.evolutionQuestTemplate?.questType.replace('QUEST_', '');
           } else if (item.evolutionBranch && item.evolutionBranch.length > 1 && Object.keys(dataEvo.quest).length === 0) {
             if (evo.form) {
               dataEvo.quest.randomEvolution = false;
@@ -455,16 +426,7 @@ export const optionEvolution = (data: any[], pokemon: PokemonModel[], formSpecia
     });
 };
 
-export const optionSticker = (
-  data: {
-    templateId: string;
-    data: {
-      iapItemDisplay: { sku: string };
-      stickerMetadata: { stickerId: string; maxCount: number; stickerUrl: string | null; pokemonId: string | undefined };
-    };
-  }[],
-  pokemon: PokemonModel[]
-) => {
+export const optionSticker = (data: PokemonData[], pokemon: PokemonModel[]) => {
   const stickers: StickerModel[] = [];
   data.forEach((item) => {
     if (item.templateId.includes('STICKER_')) {
@@ -637,23 +599,7 @@ export const optionAssets = (pokemon: PokemonModel[], family: string[], imgs: st
   });
 };
 
-export const optionCombat = (
-  data: {
-    data: {
-      combatMove: {
-        uniqueId: string;
-        type: string;
-        power: number;
-        energyDelta: number;
-        buffs: { [x: string]: number };
-      };
-      moveSettings: any;
-      moveSequenceSettings: { sequence: string[] };
-    };
-    templateId: string;
-  }[],
-  types: TypeEff
-) => {
+export const optionCombat = (data: PokemonData[], types: TypeEff) => {
   const moves = data
     .filter((item) => item.templateId[0] === 'V' && item.templateId.includes('MOVE'))
     .map((item) => {
@@ -723,22 +669,22 @@ export const optionCombat = (
           result.buffs[result.buffs.length - 1].buffChance = item.data.combatMove.buffs[buffKey[buffKey.length - 1]];
         });
       }
-      const move = moves.find((move: { movementId: string }) => move.movementId === result.name);
-      result.id = move.id;
-      result.track = move.id;
+      const move = moves.find((move) => move.movementId === result.name);
+      result.id = move?.id ?? 0;
+      result.track = move?.id ?? 0;
       result.name = convertIdMove(result.name?.toString()).replace('_FAST', '');
-      result.pve_power = move.power ?? 0.0;
+      result.pve_power = move?.power ?? 0.0;
       if (result.name === 'STRUGGLE') {
         result.pve_energy = -33;
       } else {
-        result.pve_energy = move.energyDelta ?? 0;
+        result.pve_energy = move?.energyDelta ?? 0;
       }
-      result.durationMs = move.durationMs;
-      result.damageWindowStartMs = move.damageWindowStartMs;
-      result.damageWindowEndMs = move.damageWindowEndMs;
-      result.accuracyChance = move.accuracyChance;
-      result.criticalChance = move.criticalChance ?? 0;
-      result.staminaLossScalar = move.staminaLossScalar ?? 0;
+      result.durationMs = move?.durationMs ?? 0;
+      result.damageWindowStartMs = move?.damageWindowStartMs ?? 0;
+      result.damageWindowEndMs = move?.damageWindowEndMs ?? 0;
+      result.accuracyChance = move?.accuracyChance ?? 0;
+      result.criticalChance = move?.criticalChance ?? 0;
+      result.staminaLossScalar = move?.staminaLossScalar ?? 0;
       return result;
     });
 
@@ -761,12 +707,7 @@ export const optionCombat = (
   return result;
 };
 
-export const optionPokemonCombat = (
-  data: { templateId: string; data: { smeargleMovesSettings: PokemonModel } }[],
-  pokemon: PokemonModel[],
-  formSpecial: string[],
-  noneForm: string[]
-) => {
+export const optionPokemonCombat = (data: PokemonData[], pokemon: PokemonModel[], formSpecial: string[], noneForm: string[]) => {
   return pokemon
     .filter(
       (item) =>
@@ -811,35 +752,7 @@ export const optionPokemonCombat = (
     }, []);
 };
 
-export const optionLeagues = (
-  data: {
-    templateId: string;
-    data: {
-      vsSeekerClientSettings: { allowedVsSeekerLeagueTemplateId: string[] };
-      vsSeekerPokemonRewards: any;
-      combatCompetitiveSeasonSettings: { seasonEndTimeTimestamp: any };
-      combatRankingProtoSettings: { rankLevel: any };
-      vsSeekerLoot: any;
-      combatLeague: {
-        title: string;
-        enabled: boolean;
-        pokemonCondition: {
-          pokemonBanList: { pokemon: { id: string; form: string; forms: string }[] };
-          type: string;
-          pokemonCaughtTimestamp: { afterTimestamp: number; beforeTimestamp: number };
-          withPokemonType: { pokemonType: string[] };
-          pokemonLevelRange: { maxLevel: number };
-          withPokemonCpLimit: { maxCp: number };
-          pokemonWhiteList: { pokemon: { id: string; form: string; forms: string }[] };
-        }[];
-        iconUrl: string;
-        badgeType: string;
-        bannedPokemon: any[];
-      };
-    };
-  }[],
-  pokemon: PokemonModel[]
-) => {
+export const optionLeagues = (data: PokemonData[], pokemon: PokemonModel[]) => {
   const result = new LeagueOptionsDataModel();
   result.allowLeagues =
     data
@@ -878,16 +791,16 @@ export const optionLeagues = (
         }
         if (con.type === 'POKEMON_WHITELIST') {
           result.conditions.whiteList = con.pokemonWhiteList.pokemon.map((poke) => {
-            const whiteList: any = {};
-            whiteList.id = pokemon.find((item) => item.name === poke.id)?.id;
-            whiteList.name = poke.id;
-            whiteList.form = poke.forms ? poke.forms : FORM_NORMAL;
-            return whiteList;
+            return {
+              id: pokemon.find((item) => item.name === poke.id?.toString())?.id,
+              name: poke.id?.toString(),
+              form: poke.forms ? poke.forms : FORM_NORMAL,
+            };
           });
-          const whiteList: { id: number; form: string[]; name: string }[] = [];
+          const whiteList: PokemonPermission[] = [];
           result.conditions.whiteList.forEach((value) => {
             if (typeof value.form !== 'string') {
-              value.form.forEach((form: string) => {
+              (value.form as string[]).forEach((form) => {
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
                   whiteList.push({ ...value, form: FORM_NORMAL });
                 } else if (form !== 'FORM_UNSET') {
@@ -898,20 +811,20 @@ export const optionLeagues = (
               whiteList.push({ ...value, form: FORM_NORMAL });
             }
           });
-          result.conditions.whiteList = whiteList.sort((a, b) => a.id - b.id);
+          result.conditions.whiteList = whiteList.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
         }
         if (con.type === 'POKEMON_BANLIST') {
           result.conditions.banned = con.pokemonBanList.pokemon.map((poke) => {
-            const banList: any = {};
-            banList.id = pokemon.find((item) => item.name === poke.id)?.id;
-            banList.name = poke.id;
-            banList.form = poke.forms ? poke.forms : FORM_NORMAL;
-            return banList;
+            return {
+              id: pokemon.find((item) => item.name === poke.id?.toString())?.id,
+              name: poke.id?.toString(),
+              form: poke.forms ? poke.forms : FORM_NORMAL,
+            };
           });
-          const banList: { id: number; form: string[]; name: string }[] = [];
+          const banList: PokemonPermission[] = [];
           result.conditions.banned.forEach((value) => {
             if (typeof value.form !== 'string') {
-              value.form.forEach((form: string) => {
+              (value.form as string[]).forEach((form) => {
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
                   banList.push({ ...value, form: FORM_NORMAL });
                 } else if (form !== 'FORM_UNSET') {
@@ -922,7 +835,7 @@ export const optionLeagues = (
               banList.push({ ...value, form: FORM_NORMAL });
             }
           });
-          result.conditions.banned = banList.sort((a, b) => a.id - b.id);
+          result.conditions.banned = banList.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
         }
       });
       result.iconUrl = item.data.combatLeague.iconUrl
@@ -931,15 +844,15 @@ export const optionLeagues = (
       result.league = item.data.combatLeague.badgeType.replace('BADGE_', '');
       if (item.data.combatLeague.bannedPokemon) {
         const banList = result.conditions.banned.concat(
-          item.data.combatLeague.bannedPokemon.map((poke: string) => {
-            const banList: any = {};
-            banList.id = pokemon.find((item) => item.name === poke)?.id;
-            banList.name = poke;
-            banList.form = FORM_NORMAL;
-            return banList;
+          item.data.combatLeague.bannedPokemon.map((poke) => {
+            return {
+              id: pokemon.find((item) => item.name === poke?.toString())?.id,
+              name: poke,
+              form: FORM_NORMAL,
+            };
           })
         );
-        result.conditions.banned = banList.sort((a: { id: number }, b: { id: number }) => a.id - b.id);
+        result.conditions.banned = banList.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
       }
       return result;
     });
@@ -1035,22 +948,24 @@ export const optionLeagues = (
       );
     });
 
-  result.season = {
-    season: seasons.length - 1,
-    timestamp: {
-      start: seasons[seasons.length - 3],
-      end: seasons[seasons.length - 2],
-    },
-    rewards,
-    settings: data.find((item) => item.templateId === `COMBAT_RANKING_SETTINGS_S${seasons.length - 1}`)?.data.combatRankingProtoSettings
-      .rankLevel,
-  };
+  if (seasons) {
+    result.season = {
+      season: seasons.length - 1,
+      timestamp: {
+        start: seasons[seasons.length - 3],
+        end: seasons[seasons.length - 2],
+      },
+      rewards,
+      settings: data.find((item) => item.templateId === `COMBAT_RANKING_SETTINGS_S${seasons.length - 1}`)?.data.combatRankingProtoSettings
+        .rankLevel,
+    };
+  }
 
   return result;
 };
 
 export const optionDetailsPokemon = (
-  data: { data: { genderSettings: { gender: any } }; templateId: string }[],
+  data: PokemonData[],
   pokemonData: PokemonDataModel[],
   pokemon: PokemonModel[],
   formSpecial: string[],
@@ -1145,7 +1060,7 @@ export const optionDetailsPokemon = (
     .filter((item) => !formSpecial.includes(item.name))
     .forEach((item) => {
       if (item.tempEvoOverrides) {
-        item.tempEvoOverrides.forEach((evos: { tempEvoId: string }) => {
+        item.tempEvoOverrides.forEach((evos) => {
           if (evos.tempEvoId) {
             const detail = new DetailsPokemonModel();
             detail.id = item.id;

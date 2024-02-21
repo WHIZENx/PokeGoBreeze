@@ -37,16 +37,14 @@ const Leagues = () => {
   const [setting, setSetting]: [SettingLeague | undefined, React.Dispatch<React.SetStateAction<SettingLeague | undefined>>] = useState();
   const [showData, setShowData]: [LeagueData | undefined, React.Dispatch<React.SetStateAction<LeagueData | undefined>>] = useState();
 
-  const getAssetPokeGo = (id: string, form: string) => {
+  const getAssetPokeGo = (id: number, form: string) => {
     try {
       const dataId = dataStore?.assets?.find((item) => item.id?.toString() === id.toString());
       if (dataId?.image.length === 0) {
         if (form && !Object.keys(dataStore?.typeEff ?? {}).includes(form)) {
           return APIService.getPokeFullSprite(
             id,
-            capitalize(
-              convertFormName(parseInt(id), form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui'))
-            )
+            capitalize(convertFormName(id, form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui')))
           );
         }
         return APIService.getPokeFullSprite(id);
@@ -236,23 +234,23 @@ const Leagues = () => {
                           ? ''
                           : '?form=' +
                             convertFormName(
-                              parseInt(item.id),
+                              item.id ?? 0,
                               item.form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui')
                             ))
                       }
-                      title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
+                      title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
                         <span style={{ width: 64 }}>
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.form)}
+                            src={getAssetPokeGo(item.id ?? 0, item.form)}
                           />
                         </span>
                       </div>
                       <span className="caption">
-                        {splitAndCapitalize(item.name.toLowerCase(), '_', ' ') +
+                        {splitAndCapitalize(item.name?.toLowerCase(), '_', ' ') +
                           (item.form?.toUpperCase() === FORM_NORMAL ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
                       </span>
                     </Link>
@@ -273,23 +271,23 @@ const Leagues = () => {
                           ? ''
                           : '?form=' +
                             convertFormName(
-                              parseInt(item.id),
+                              item.id ?? 0,
                               item.form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui')
                             ))
                       }
-                      title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
+                      title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
                         <span style={{ width: 64 }}>
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.form)}
+                            src={getAssetPokeGo(item.id ?? 0, item.form)}
                           />
                         </span>
                       </div>
                       <span className="caption">
-                        {splitAndCapitalize(item.name.toLowerCase(), '_', ' ') +
+                        {splitAndCapitalize(item.name?.toLowerCase(), '_', ' ') +
                           (item.form?.toUpperCase() === FORM_NORMAL ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
                       </span>
                     </Link>
@@ -690,7 +688,7 @@ const Leagues = () => {
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="img-pokemon"
-                        src={getAssetPokeGo(item.id.toString(), item.form)}
+                        src={getAssetPokeGo(item.id, item.form)}
                       />
                     </span>
                   </div>
@@ -715,7 +713,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id.toString(), item.form)}
+                            src={getAssetPokeGo(item.id, item.form)}
                           />
                         </span>
                       </div>
