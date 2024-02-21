@@ -111,10 +111,12 @@ const SelectMove = (props: {
   );
 
   useEffect(() => {
-    if (props.pokemon?.num && props.moveType) {
+    if (props.pokemon?.num) {
       findMove(props.pokemon.num, props.pokemon?.forme ?? '', props.moveType, props.selected);
+    } else if (resultMove.length > 0) {
+      setResultMove([]);
     }
-  }, [props.pokemon?.num, props.pokemon?.forme, props.moveType, props.selected]);
+  }, [props.pokemon?.num, props.pokemon?.forme, props.selected, resultMove.length]);
 
   const smallInput = () => {
     return (
