@@ -28,7 +28,7 @@ import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
-import { EvolutionModel } from '../../../core/models/evolution.model';
+import { EvoList, EvolutionModel } from '../../../core/models/evolution.model';
 import {
   FORM_GALARIAN,
   FORM_GMAX,
@@ -311,7 +311,7 @@ const Evolution = (props: {
     }
   }, [props.forme, props.id]);
 
-  const getQuestEvo = (prevId: number, form: string) => {
+  const getQuestEvo = (prevId: number, form: string): EvoList | undefined => {
     try {
       return evoData
         .find((item) => item.evo_list.find((value) => value.evo_to_form.includes(form) && value.evo_to_id === prevId))
@@ -323,9 +323,11 @@ const Evolution = (props: {
           ?.evo_list.find((item) => item.evo_to_id === prevId);
       } catch (error) {
         return {
+          evo_to_form: '',
+          evo_to_id: 0,
+          evo_to_name: '',
           candyCost: 0,
           purificationEvoCandyCost: 0,
-          quest: {},
         };
       }
     }
@@ -404,12 +406,12 @@ const Evolution = (props: {
                     )}
                     {Object.keys(data?.quest ?? {}).length > 0 && (
                       <Fragment>
-                        {data?.quest.randomEvolution && (
+                        {data?.quest?.randomEvolution && (
                           <span className="caption">
                             <QuestionMarkIcon fontSize="small" />
                           </span>
                         )}
-                        {data?.quest.genderRequirement && (
+                        {data?.quest?.genderRequirement && (
                           <span className="caption">
                             {form === 'male' ? (
                               <MaleIcon fontSize="small" />
@@ -419,7 +421,7 @@ const Evolution = (props: {
                                   <FemaleIcon fontSize="small" />
                                 ) : (
                                   <Fragment>
-                                    {data?.quest.genderRequirement === 'MALE' ? (
+                                    {data?.quest?.genderRequirement === 'MALE' ? (
                                       <MaleIcon fontSize="small" />
                                     ) : (
                                       <FemaleIcon fontSize="small" />
@@ -430,7 +432,7 @@ const Evolution = (props: {
                             )}
                           </span>
                         )}
-                        {data?.quest.kmBuddyDistanceRequirement && (
+                        {data?.quest?.kmBuddyDistanceRequirement && (
                           <span className="caption">
                             {data?.quest.mustBeBuddy ? (
                               <div className="d-flex align-items-end">
@@ -443,28 +445,28 @@ const Evolution = (props: {
                             {`${data?.quest.kmBuddyDistanceRequirement}km`}
                           </span>
                         )}
-                        {data?.quest.onlyDaytime && (
+                        {data?.quest?.onlyDaytime && (
                           <span className="caption">
                             <WbSunnyIcon fontSize="small" />
                           </span>
                         )}
-                        {data?.quest.onlyNighttime && (
+                        {data?.quest?.onlyNighttime && (
                           <span className="caption">
                             <DarkModeIcon fontSize="small" />
                           </span>
                         )}
-                        {data?.quest.evolutionItemRequirement && (
+                        {data?.quest?.evolutionItemRequirement && (
                           <img alt="img-item-required" height={20} src={APIService.getItemEvo(data?.quest.evolutionItemRequirement)} />
                         )}
-                        {data?.quest.lureItemRequirement && (
+                        {data?.quest?.lureItemRequirement && (
                           <img alt="img-troy-required" height={20} src={APIService.getItemTroy(data?.quest.lureItemRequirement)} />
                         )}
-                        {data?.quest.onlyUpsideDown && (
+                        {data?.quest?.onlyUpsideDown && (
                           <span className="caption">
                             <SecurityUpdateIcon fontSize="small" />
                           </span>
                         )}
-                        {data?.quest.condition && (
+                        {data?.quest?.condition && (
                           <span className="caption">
                             {data?.quest.condition.desc === 'THROW_TYPE' && (
                               <Fragment>
@@ -474,7 +476,7 @@ const Evolution = (props: {
                             )}
                             {data?.quest.condition.desc === 'POKEMON_TYPE' && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
-                                {data?.quest.condition.pokemonType.map((value: string, index: number) => (
+                                {data?.quest?.condition.pokemonType?.map((value: string, index: number) => (
                                   <img
                                     key={index}
                                     alt="img-stardust"
@@ -497,7 +499,7 @@ const Evolution = (props: {
                             )}
                           </span>
                         )}
-                        {data?.quest.type && data?.quest.type === 'BUDDY_EARN_AFFECTION_POINTS' && (
+                        {data?.quest?.type === 'BUDDY_EARN_AFFECTION_POINTS' && (
                           <span className="caption">
                             <Fragment>
                               <FavoriteIcon fontSize="small" sx={{ color: 'red' }} />
@@ -505,7 +507,7 @@ const Evolution = (props: {
                             </Fragment>
                           </span>
                         )}
-                        {data?.quest.type && data?.quest.type === 'BUDDY_FEED' && (
+                        {data?.quest?.type === 'BUDDY_FEED' && (
                           <span className="caption">
                             <Fragment>
                               <RestaurantIcon fontSize="small" />

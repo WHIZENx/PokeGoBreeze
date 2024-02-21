@@ -1,6 +1,6 @@
 import { CPMDataModel } from './models/cpm.model';
 
-export const calculateCPM = (baseCPM: number[], min: number, max: number) => {
+export const calculateCPM = (baseCPM: { [x: number]: number }, min: number, max: number) => {
   const cpmList: CPMDataModel[] = [];
   for (let i = min; i <= max; i += 1) {
     const result = new CPMDataModel();

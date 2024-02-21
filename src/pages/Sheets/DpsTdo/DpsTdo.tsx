@@ -929,7 +929,7 @@ const DpsTdo = () => {
               <div className="row w-100" style={{ margin: 0 }}>
                 <Box className="col-xl-4" style={{ padding: 0 }}>
                   <div className="input-group h-100">
-                    <span className="input-group-text">Target Pokémon</span>
+                    <span className="input-group-text">Defender</span>
                     <SelectPokemon
                       pokemon={dataTargetPokemon}
                       selected={true}

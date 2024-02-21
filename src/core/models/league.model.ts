@@ -1,3 +1,5 @@
+import { PokemonPermission } from './options.model';
+
 export interface LeaguePVP {
   id: string;
   name: string;
@@ -23,8 +25,8 @@ export interface LeagueCondition {
   unique_type: string[];
   max_level: number | null;
   max_cp: number;
-  whiteList: any[];
-  banned: any[];
+  whiteList: PokemonPermission[];
+  banned: PokemonPermission[];
 }
 
 export interface LeagueReward {
@@ -96,7 +98,7 @@ export class LeagueOptionsDataModel {
       rank: RankRewardLeague[];
       pokemon: PokemonRewardLeague[];
     };
-    settings: SettingLeague[];
+    settings: SettingLeague[] | undefined;
   };
 
   constructor() {

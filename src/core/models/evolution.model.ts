@@ -1,10 +1,31 @@
+interface EvolutionQuestCondition {
+  desc?: string;
+  pokemonType?: string[];
+  throwType?: string;
+}
+
+interface EvolutionQuest {
+  genderRequirement?: string;
+  kmBuddyDistanceRequirement?: number;
+  mustBeBuddy?: boolean;
+  onlyDaytime?: boolean;
+  onlyNighttime?: boolean;
+  lureItemRequirement?: string;
+  evolutionItemRequirement?: string;
+  onlyUpsideDown?: boolean;
+  condition?: EvolutionQuestCondition | undefined;
+  goal?: number;
+  type?: string;
+  randomEvolution?: boolean;
+}
+
 export interface EvoList {
   evo_to_form: string;
   evo_to_id: number;
   evo_to_name: string;
   candyCost: number;
   purificationEvoCandyCost: number;
-  quest: any;
+  quest?: EvolutionQuest;
 }
 
 export interface TempEvo {
