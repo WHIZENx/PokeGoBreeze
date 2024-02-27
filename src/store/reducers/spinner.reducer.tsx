@@ -25,7 +25,7 @@ const initialize: SpinnerModel = {
   error: null,
 };
 
-const SpinnerReducer = (state: SpinnerModel = initialize, action: any) => {
+const SpinnerReducer = (state: SpinnerModel = initialize, action: { type: string; payload: SpinnerModel }) => {
   switch (action.type) {
     case SHOW_SPINNER:
       return {

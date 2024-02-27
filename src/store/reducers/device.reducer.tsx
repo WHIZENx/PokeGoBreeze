@@ -12,7 +12,7 @@ const initialize: DeviceModel = {
   osName: null,
 };
 
-const DeviceReducer = (state: DeviceModel = initialize, action: any) => {
+const DeviceReducer = (state: DeviceModel = initialize, action: { type: string; payload: DeviceModel }) => {
   switch (action.type) {
     case SET_DEVICE: {
       return action.payload;
