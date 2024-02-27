@@ -48,18 +48,21 @@ const Tools = (props: {
   const filterFormList = useCallback(
     (stats: { id: number; form: string }[], id: number): any => {
       const filterId = stats.filter((item) => item.id === id);
+      const formLength = props.formList?.filter(
+        (forms) => !forms.some((modifyForm) => modifyForm.form.form_name === 'shadow' || modifyForm.form.form_name === 'purified')
+      ).length;
       const filterForm = stats.find(
         (item) => item.id === id && item.form !== 'a' && filterFormName(props.currForm?.form.form_name ?? '', item.form)
       );
-      if (filterId.length === 1 && props.formList.length === 1 && !filterForm) {
+      if (filterId.length === 1 && formLength === 1 && !filterForm) {
         return filterId.at(0);
-      } else if (filterId.length === props.formList.length && !filterForm) {
+      } else if (filterId.length === formLength && !filterForm) {
         return stats.find((item) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       } else {
         return filterForm;
       }
     },
-    [props.currForm, props.formList.length]
+    [props.currForm, props.formList]
   );
 
   useEffect(() => {
