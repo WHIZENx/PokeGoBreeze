@@ -5,7 +5,7 @@ import { CPM } from '../core/models/cpm.model';
 import { EvolutionModel } from '../core/models/evolution.model';
 import { Options } from '../core/models/options.model';
 import { PokemonDataModel } from '../core/models/pokemon.model';
-import { StatsPokemon } from '../core/models/stats.model';
+import { StatsModel, StatsPokemon } from '../core/models/stats.model';
 import { TypeEff } from '../core/models/type-eff.model';
 import { WeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
@@ -158,7 +158,7 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
   const attackStats = stats.map((item) => {
     return {
       id: item.id,
-      form: item.name.split('-').at(1) ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      form: item.form,
       attack: item.baseStatsPokeGo.attack,
       rank: attackRanking.length - attackRanking.indexOf(item.baseStatsPokeGo.attack),
     };
@@ -179,7 +179,7 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
   const defenseStats = stats.map((item) => {
     return {
       id: item.id,
-      form: item.name.split('-').at(1) ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      form: item.form,
       defense: item.baseStatsPokeGo.defense,
       rank: defenseRanking.length - defenseRanking.indexOf(item.baseStatsPokeGo.defense),
     };
@@ -200,7 +200,7 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
   const staminaStats = stats.map((item) => {
     return {
       id: item.id,
-      form: item.name.split('-').at(1) ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      form: item.form,
       stamina: item.baseStatsPokeGo.stamina,
       rank: staminaRanking.length - staminaRanking.indexOf(item.baseStatsPokeGo.stamina),
     };
@@ -221,7 +221,7 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
   const prodStats = stats.map((item) => {
     return {
       id: item.id,
-      form: item.name.split('-').at(1) ? item.name.slice(item.name.indexOf('-') + 1, item.name.length) : 'Normal',
+      form: item.form,
       prod: item.baseStatsProd,
       rank: prodRanking.length - prodRanking.indexOf(item.baseStatsProd),
     };
@@ -256,7 +256,7 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
       min_stats: minPROD,
       max_stats: maxPROD,
     },
-  };
+  } as StatsModel;
 };
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) => {

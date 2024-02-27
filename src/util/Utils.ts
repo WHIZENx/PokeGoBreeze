@@ -293,6 +293,7 @@ export const convertArrStats = (data: { [x: string]: PokemonDataModel }) => {
       return {
         id: value.num,
         name: value.slug,
+        form: value.forme?.toLowerCase().replaceAll('-standard', '') ?? 'Normal',
         base_stats: value.baseStats,
         baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats?.sta ?? 0 },
         baseStatsProd: stats.atk * stats.def * (stats?.sta ?? 0),

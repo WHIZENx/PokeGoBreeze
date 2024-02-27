@@ -122,7 +122,9 @@ const Form = (props: {
   const filterFormList = useCallback(
     (stats: { id: number; form: string }[]): any => {
       const id = props.idDefault;
-      const formLength = props.formList?.length;
+      const formLength = props.formList?.filter(
+        (forms) => !forms.some((modifyForm) => modifyForm.form.form_name === 'shadow' || modifyForm.form.form_name === 'purified')
+      ).length;
       const formName = currForm?.form.form_name ?? '';
       const firstFilter = stats?.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
       if (firstFilter) {
