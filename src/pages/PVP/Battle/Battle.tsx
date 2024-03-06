@@ -638,8 +638,8 @@ const Battle = () => {
       dispatch(showSpinner());
       try {
         clearData();
-        const file: RankingsPVP[] = (
-          await axios.getFetchUrl(axios.getRankingFile('all', league, 'overall'), {
+        const file = (
+          await axios.getFetchUrl<RankingsPVP[]>(axios.getRankingFile('all', league, 'overall'), {
             cancelToken: source.token,
           })
         ).data;
@@ -652,10 +652,10 @@ const Battle = () => {
             .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
             .map((item) => {
               const name = convertNameRankingToOri(item.speciesId.replace('_shadow', ''), item.speciesName);
-              let pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
+              let pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
 
               if (!pokemon) {
-                pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
+                pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
                 if (!pokemon) {
                   return null;
                 }
@@ -688,14 +688,14 @@ const Battle = () => {
         );
       }
     },
-    [dataStore?.options, dataStore?.pokemonData, dataStore?.assets]
+    [dataStore?.options, dataStore?.pokemon, dataStore?.assets]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (dataStore?.options && dataStore?.pokemonData && dataStore?.assets) {
+    if (dataStore?.options && dataStore?.pokemon && dataStore?.assets) {
       fetchPokemon(league);
     }
   }, [fetchPokemonBattle, league]);

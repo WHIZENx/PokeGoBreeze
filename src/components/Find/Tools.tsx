@@ -35,7 +35,7 @@ const Tools = (props: {
   setTier: (tier: number) => void;
   hide: boolean | undefined;
 }) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [currDataPoke, setCurrDataPoke]: [StatsPokemon | undefined, React.Dispatch<React.SetStateAction<StatsPokemon | undefined>>] =
     useState();
   const [currTier, setCurrTier] = useState(props.tier);

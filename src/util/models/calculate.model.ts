@@ -111,8 +111,8 @@ export interface QueryStatesEvoChain {
   id: number;
   name: string;
   prev?: string | undefined;
-  evo_list: EvoList[];
-  temp_evo: TempEvo[];
+  evoList: EvoList[];
+  tempEvo: TempEvo[];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   canPurified?: boolean;

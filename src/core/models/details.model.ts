@@ -22,6 +22,7 @@ export interface Details {
     candyCost: string;
     stardustCost: string;
   }[];
+  isOnlyGO: boolean;
 }
 
 export class DetailsPokemonModel {
@@ -42,6 +43,7 @@ export class DetailsPokemonModel {
     candyCost: string;
     stardustCost: string;
   }[];
+  isOnlyGO: boolean;
 
   constructor() {
     this.id = 0;
@@ -50,6 +52,7 @@ export class DetailsPokemonModel {
     this.disableTransferToPokemonHome = false;
     this.isTransferable = false;
     this.formChange = [];
+    this.isOnlyGO = false;
     this.pokemonClass = null;
     this.isTradable = false;
     this.releasedGO = false;

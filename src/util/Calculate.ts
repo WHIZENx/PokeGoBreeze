@@ -598,7 +598,7 @@ export const calculateStatsByTag = (
     def = 0,
     sta = 0;
 
-  if (pokemon) {
+  if (pokemon || (baseStats && tag)) {
     if (pokemon?.baseStatsGO) {
       return pokemon.baseStats;
     }

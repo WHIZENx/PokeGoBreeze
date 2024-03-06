@@ -74,7 +74,7 @@ const Evolution = (props: {
   purified: boolean | undefined;
 }) => {
   const theme = useTheme();
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
   const [arrEvoList, setArrEvoList]: [PokemonEvo[][], React.Dispatch<React.SetStateAction<PokemonEvo[][]>>] = useState(
     [] as PokemonEvo[][]
@@ -190,7 +190,7 @@ const Evolution = (props: {
 
   const getPrevEvoChainStore = (poke: EvolutionModel, result: PokemonEvo[][]) => {
     const evoList: PokemonEvo[] = [];
-    const pokemon = evoData.filter((pokemon) => pokemon.evo_list.find((evo) => evo.evo_to_id === poke.id && evo.evo_to_form === poke.form));
+    const pokemon = evoData.filter((pokemon) => pokemon.evoList.find((evo) => evo.evoToId === poke.id && evo.evoToForm === poke.form));
     if (pokemon.length === 0) {
       return;
     }
@@ -205,20 +205,20 @@ const Evolution = (props: {
 
   const getCurrEvoChainStore = (poke: EvolutionModel, result: PokemonEvo[][]) => {
     let evoList: PokemonEvo[] = [];
-    const pokemon = evoData.find((pokemon) => pokemon.evo_list.find((evo) => evo.evo_to_id === poke.id && evo.evo_to_form === poke.form));
+    const pokemon = evoData.find((pokemon) => pokemon.evoList.find((evo) => evo.evoToId === poke.id && evo.evoToForm === poke.form));
     if (!pokemon) {
       evoList.push(modelEvoChain(poke));
     } else {
       evoList =
-        pokemon.evo_list
+        pokemon.evoList
           ?.map((evo) =>
             modelEvoChain({
-              id: evo.evo_to_id,
-              name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
-              form: evo.evo_to_form,
+              id: evo.evoToId,
+              name: evo.evoToName + (evo.evoToForm === '' ? '' : `_${evo.evoToForm}`),
+              form: evo.evoToForm,
               canPurified: evo.purificationEvoCandyCost ? true : false,
-              evo_list: [],
-              temp_evo: [],
+              evoList: [],
+              tempEvo: [],
             })
           )
           .filter((pokemon) => pokemon.id === poke.id) ?? [];
@@ -227,18 +227,18 @@ const Evolution = (props: {
   };
 
   const getNextEvoChainStore = (poke: EvolutionModel | undefined, result: PokemonEvo[][]) => {
-    if (!poke || (poke && poke.evo_list.length === 0)) {
+    if (!poke || (poke && poke.evoList.length === 0)) {
       return;
     }
-    const evoList = poke.evo_list.map((evo) =>
+    const evoList = poke.evoList.map((evo) =>
       modelEvoChain({
-        id: evo.evo_to_id,
-        name: evo.evo_to_name + (evo.evo_to_form === '' ? '' : `_${evo.evo_to_form}`),
-        form: evo.evo_to_form,
+        id: evo.evoToId,
+        name: evo.evoToName + (evo.evoToForm === '' ? '' : `_${evo.evoToForm}`),
+        form: evo.evoToForm,
         prev: poke.name,
         canPurified: evo.purificationEvoCandyCost ? true : false,
-        evo_list: [],
-        temp_evo: [],
+        evoList: [],
+        tempEvo: [],
       })
     );
     if (evoList) {
@@ -249,8 +249,8 @@ const Evolution = (props: {
       }
     }
 
-    poke.evo_list.forEach((evo) => {
-      const pokemon = evoData.find((pokemon) => pokemon.id === evo.evo_to_id && pokemon.form === evo.evo_to_form);
+    poke.evoList.forEach((evo) => {
+      const pokemon = evoData.find((pokemon) => pokemon.id === evo.evoToId && pokemon.form === evo.evoToForm);
       getNextEvoChainStore(pokemon, result);
     });
 
@@ -314,18 +314,18 @@ const Evolution = (props: {
   const getQuestEvo = (prevId: number, form: string): EvoList | undefined => {
     try {
       return evoData
-        .find((item) => item.evo_list.find((value) => value.evo_to_form.includes(form) && value.evo_to_id === prevId))
-        ?.evo_list.find((item) => item.evo_to_form.includes(form) && item.evo_to_id === prevId);
+        .find((item) => item.evoList.find((value) => value.evoToForm.includes(form) && value.evoToId === prevId))
+        ?.evoList.find((item) => item.evoToForm.includes(form) && item.evoToId === prevId);
     } catch (error) {
       try {
         return evoData
-          .find((item) => item.evo_list.find((value) => value.evo_to_id === prevId))
-          ?.evo_list.find((item) => item.evo_to_id === prevId);
+          .find((item) => item.evoList.find((value) => value.evoToId === prevId))
+          ?.evoList.find((item) => item.evoToId === prevId);
       } catch (error) {
         return {
-          evo_to_form: '',
-          evo_to_id: 0,
-          evo_to_name: '',
+          evoToForm: '',
+          evoToId: 0,
+          evoToName: '',
           candyCost: 0,
           purificationEvoCandyCost: 0,
         };

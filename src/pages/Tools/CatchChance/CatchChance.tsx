@@ -203,7 +203,7 @@ const CatchChance = () => {
   };
 
   const findCatchCapture = (id: number, form: PokemonFormModify) => {
-    const pokemon = pokemonData.find((data) => data.id === id && data.name === convertName(form.form.name));
+    const pokemon = pokemonData.find((data) => data.num === id && data.name === convertName(form.form.name));
     if (!pokemon) {
       return setEncounter(false);
     }
@@ -216,15 +216,15 @@ const CatchChance = () => {
       medalType = {
         ...medalType,
         typePri: {
-          type: pokemon.type.replace('POKEMON_TYPE_', ''),
+          type: pokemon.types[0],
           priority: medal && medal.typePri ? medal.typePri.priority : 0,
         },
       };
-      if (pokemon.type2) {
+      if (pokemon.types.length > 1) {
         medalType = {
           ...medalType,
           typeSec: {
-            type: pokemon.type2.replace('POKEMON_TYPE_', ''),
+            type: pokemon.types[1],
             priority: medal && medal.typeSec ? medal.typeSec.priority : 0,
           },
         };

@@ -39,31 +39,31 @@ export class PokemonHomeModel {
   releasedGO!: boolean;
   image!: Image;
 
-  constructor(item: PokemonDataModel, assetForm: Image | null | undefined, versionList: string[], stats: StatsPokemon) {
-    this.id = item?.num;
-    this.name = item?.name;
-    this.forme = assetForm?.default ? item?.forme : convertFormNameImg(item?.num ?? 0, item?.forme?.toLowerCase() ?? '');
-    this.types = item?.types;
-    this.color = item?.color.toLowerCase();
-    this.sprite = item?.sprite.toLowerCase();
-    this.baseSpecies = item?.baseSpecies;
-    this.baseStats = item?.baseStats;
-    this.gen = item?.gen;
-    this.region = item?.region;
-    this.version = versionList.indexOf(splitAndCapitalize(item?.version, '-', ' '));
+  constructor(item: PokemonDataModel, assetForm: Image | null | undefined, versionList: string[]) {
+    this.id = item.num;
+    this.name = item.name;
+    this.forme = assetForm?.default ? item?.forme : convertFormNameImg(item.num, item?.forme?.toLowerCase() ?? '');
+    this.types = item.types;
+    this.color = item.color.toLowerCase();
+    this.sprite = item.sprite.toLowerCase();
+    this.baseSpecies = item.baseSpecies;
+    this.baseStats = item.baseStats;
+    this.gen = item.gen;
+    this.region = item.region;
+    this.version = versionList.indexOf(splitAndCapitalize(item.version, '-', ' '));
     this.goStats = {
-      atk: stats.atk,
-      def: stats.def,
-      sta: stats?.sta ?? 0,
+      atk: item.baseStats.atk,
+      def: item.baseStats.def,
+      sta: item.baseStats.sta,
     };
-    this.class = item?.pokemonClass;
-    this.releasedGO = item?.releasedGO;
+    this.class = item.pokemonClass;
+    this.releasedGO = item.releasedGO;
     this.image = {
       default: assetForm?.default
         ? APIService.getPokemonModel(assetForm.default)
         : APIService.getPokeFullSprite(
-            item?.num,
-            splitAndCapitalize(convertFormNameImg(item?.num ?? 0, item?.forme?.toLowerCase() ?? ''), '-', '-')
+            item.num,
+            splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase() ?? ''), '-', '-')
           ),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
     };

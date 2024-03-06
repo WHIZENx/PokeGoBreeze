@@ -58,7 +58,7 @@ const TeamPVP = () => {
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-    const pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
+    const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
     const id = pokemon?.num;
     const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
 
@@ -138,8 +138,8 @@ const TeamPVP = () => {
       dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
-        const file: TeamsPVP = (
-          await axios.getFetchUrl(axios.getTeamFile('analysis', params.serie, cp), {
+        const file = (
+          await axios.getFetchUrl<TeamsPVP>(axios.getTeamFile('analysis', params.serie, cp), {
             cancelToken: source.token,
           })
         ).data;
@@ -200,7 +200,7 @@ const TeamPVP = () => {
       pvp &&
       dataStore?.pokemonCombat &&
       dataStore?.combat &&
-      dataStore?.pokemonData?.length > 0 &&
+      dataStore?.pokemon?.length > 0 &&
       dataStore?.assets &&
       statsRanking
     ) {
@@ -214,7 +214,7 @@ const TeamPVP = () => {
     pvp,
     dataStore?.pokemonCombat,
     dataStore?.combat,
-    dataStore?.pokemonData,
+    dataStore?.pokemon,
     dataStore?.assets,
     statsRanking,
   ]);

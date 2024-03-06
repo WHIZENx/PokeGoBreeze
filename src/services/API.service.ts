@@ -17,8 +17,8 @@ class APIService {
     return this.axios;
   }
 
-  getFetchUrl(url: string, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get(url, options);
+  getFetchUrl<T>(url: string, options?: AxiosRequestConfig<any> | undefined) {
+    return this.axios.get<T>(url, options);
   }
 
   getPokeInfo(value: number, options?: AxiosRequestConfig<any> | undefined) {

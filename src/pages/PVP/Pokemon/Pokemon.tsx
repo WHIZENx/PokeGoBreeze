@@ -74,7 +74,7 @@ const PokemonPVP = () => {
       }
 
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-      const pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
+      const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
       const id = pokemon?.num;
       const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
       document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${
@@ -193,7 +193,7 @@ const PokemonPVP = () => {
     statsRanking,
     dataStore?.pokemonCombat,
     dataStore?.combat,
-    dataStore?.pokemonData,
+    dataStore?.pokemon,
     dataStore?.assets,
   ]);
 
@@ -201,7 +201,7 @@ const PokemonPVP = () => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
     };
-    if (statsRanking && dataStore?.pokemonCombat && dataStore?.combat && dataStore?.pokemonData && dataStore?.assets) {
+    if (statsRanking && dataStore?.pokemonCombat && dataStore?.combat && dataStore?.pokemon && dataStore?.assets) {
       if (dataStore.combat.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
       } else {
@@ -354,7 +354,7 @@ const PokemonPVP = () => {
                 </div>
               </div>
               <hr />
-              {Keys(dataStore?.assets ?? [], dataStore?.pokemonData ?? [], rankingPoke?.data, params.cp, params.type)}
+              {Keys(dataStore?.assets ?? [], dataStore?.pokemon ?? [], rankingPoke?.data, params.cp, params.type)}
             </div>
             <div className="container">
               <hr />

@@ -135,10 +135,10 @@ const Move = (props: { id?: number }) => {
   }, [params.id, props.id, queryMoveData, move]);
 
   useEffect(() => {
-    if (move && data?.options && data?.released && data?.typeEff && data?.weatherBoost && data?.pokemonCombat) {
-      setTopList(queryTopMove(data?.options, data?.released, data?.typeEff, data?.weatherBoost, data?.pokemonCombat, move));
+    if (move && data?.options && data?.pokemon && data?.typeEff && data?.weatherBoost && data?.pokemonCombat) {
+      setTopList(queryTopMove(data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost, data?.pokemonCombat, move));
     }
-  }, [move, data?.options, data?.released, data?.typeEff, data?.weatherBoost, data?.pokemonCombat]);
+  }, [move, data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost, data?.pokemonCombat]);
 
   return (
     <div className={'element-bottom poke-container' + (props.id ? '' : ' container')}>
@@ -478,11 +478,11 @@ const Move = (props: { id?: number }) => {
                       if (!releasedGO) {
                         return true;
                       }
-                      const result = data?.details?.find(
+                      const result = data?.pokemon?.find(
                         (item) =>
-                          item.id === pokemon.num &&
+                          item.num === pokemon.num &&
                           item.name ===
-                            (item.id === 555 && !pokemon.name.toLowerCase().includes('zen')
+                            (item.num === 555 && !pokemon.name.toLowerCase().includes('zen')
                               ? pokemon.name?.toUpperCase().replaceAll(' ', '_').replace('_GALAR', `_${FORM_GALARIAN}`) +
                                 `_${FORM_STANDARD}`
                               : convertName(pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))

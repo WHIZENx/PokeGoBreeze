@@ -25,8 +25,7 @@ import { PokemonDataForm, PokemonFormModify } from '../../../core/models/API/for
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { PokemonInfo } from '../../../core/models/API/info.model';
 import { Species } from '../../../core/models/API/species.model';
-import { Details } from '../../../core/models/details.model';
-import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
+import { PokemonDataModel, PokemonGenderRatio } from '../../../core/models/pokemon.model';
 
 const Form = (props: {
   pokemonRouter: ReduxRouterState;
@@ -58,7 +57,7 @@ const Form = (props: {
   // eslint-disable-next-line no-unused-vars
   onSetIDPoke?: (id: number) => void;
   paramForm: string | undefined | null;
-  pokemonDetail: Details | undefined;
+  pokemonDetail: PokemonDataModel | undefined;
 }) => {
   const dispatch = useDispatch();
 

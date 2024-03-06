@@ -43,7 +43,7 @@ const Find = (props: {
   const stats = useSelector((state: StatsState) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const pokemonName = useSelector((state: StoreState) => state.store.data?.pokemonName ?? []);
 
   const [id, setId] = useState(

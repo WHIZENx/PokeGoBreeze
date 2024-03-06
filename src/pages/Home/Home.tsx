@@ -5,7 +5,6 @@ import loadingImg from '../../assets/loading.png';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { calculateStatsByTag } from '../../util/Calculate';
 import { splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
@@ -107,24 +106,25 @@ const Home = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    setDataList(
-      data?.released
-        ?.map((item) => {
-          const stats = calculateStatsByTag(item, item?.baseStats, item?.slug);
-          const assetForm = queryAssetForm(data?.assets ?? [], item?.num, item?.name);
-          return new PokemonHomeModel(item, assetForm, versionList, stats);
-        })
-        .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0)) ?? []
-    );
-  }, [data?.released]);
+    if (data?.assets && data?.pokemon) {
+      setDataList(
+        data.pokemon
+          ?.map((item) => {
+            const assetForm = queryAssetForm(data.assets, item.num, item.forme ?? '');
+            return new PokemonHomeModel(item, assetForm, versionList);
+          })
+          .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0)) ?? []
+      );
+    }
+  }, [data?.assets, data?.pokemon]);
 
   useEffect(() => {
     document.title = 'Home';
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     if (dataList) {
-      setLoading(true);
       const timeOutId = setTimeout(
         () => {
           const result = dataList?.filter((item) => {

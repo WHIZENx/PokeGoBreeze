@@ -370,7 +370,7 @@ const Leagues = () => {
                   <span className="caption text-black">Premium</span>
                 </Badge>
               </div>
-              {dataStore?.leagues?.season.rewards.rank[rank].free.map((value, index) => (
+              {dataStore?.leagues?.season.rewards.rank[rank].free?.map((value, index) => (
                 <Fragment key={index}>
                   <div className="group-rank-league text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
@@ -458,23 +458,23 @@ const Leagues = () => {
                       color="primary"
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
-                      badgeContent={dataStore?.leagues?.season.rewards.rank[rank].premium[index].count}
+                      badgeContent={dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].count}
                       max={10000}
                       sx={{
                         paddingBottom:
-                          dataStore?.leagues?.season.rewards.rank[rank].premium[index].type === 'pokemon' ||
-                          dataStore?.leagues?.season.rewards.rank[rank].premium[index].type === 'itemLoot'
+                          dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'pokemon' ||
+                          dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'itemLoot'
                             ? '0 !important'
                             : '1.5rem !important',
                         minWidth: 64,
                       }}
                     >
-                      {!dataStore?.leagues?.season.rewards.rank[rank].premium[index].type && (
+                      {!dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type && (
                         <Fragment>
                           <CloseIcon fontSize="large" sx={{ color: 'red', height: 82 }} />
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium[index].type === 'pokemon' && (
+                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'pokemon' && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -487,12 +487,12 @@ const Leagues = () => {
                             className="view-pokemon"
                             sx={{ fontSize: '1rem', color: 'black' }}
                             onClick={() =>
-                              handleShow(dataStore?.leagues?.season.rewards.rank[rank].premium[index].type, 'PREMIUM', value.step)
+                              handleShow(dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type, 'PREMIUM', value.step)
                             }
                           />
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium[index].type === 'itemLoot' && (
+                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'itemLoot' && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -510,7 +510,7 @@ const Leagues = () => {
                           />
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium[index].type === 'ITEM_RARE_CANDY' && (
+                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'ITEM_RARE_CANDY' && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -521,7 +521,7 @@ const Leagues = () => {
                           <span className="caption text-black">Rare Candy</span>
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium[index].type === 'stardust' && (
+                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'stardust' && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -532,7 +532,7 @@ const Leagues = () => {
                           <span className="caption text-black">Stardust</span>
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium[index].type === 'ITEM_MOVE_REROLL_SPECIAL_ATTACK' && (
+                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'ITEM_MOVE_REROLL_SPECIAL_ATTACK' && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"

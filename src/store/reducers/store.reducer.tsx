@@ -1,9 +1,7 @@
 import { optionPokemonName } from '../../core/options';
 import { convertPVPRankings, convertPVPTrain } from '../../core/pvp';
-import { mappingReleasedGO } from '../../util/Utils';
 import {
   LOAD_ASSETS,
-  LOAD_CANDY,
   LOAD_COMBAT,
   LOAD_CPM,
   LOAD_DETAILS,
@@ -13,11 +11,9 @@ import {
   LOAD_OPTIONS,
   LOAD_POKEMON,
   LOAD_POKEMON_COMBAT,
-  LOAD_POKEMON_DATA,
   LOAD_POKEMON_NAME,
   LOAD_PVP,
   LOAD_PVP_MOVES,
-  LOAD_RELEASED_GO,
   LOAD_STICKER,
   LOAD_STORE,
   LOAD_TIMESTAMP,
@@ -27,12 +23,7 @@ import {
 } from '../actions/store.action';
 import { StoreModel } from '../models/store.model';
 
-const initialize: StoreModel = {
-  icon: null,
-  data: null,
-  searching: null,
-  timestamp: null,
-};
+const initialize: StoreModel = {};
 
 const StoreReducer = (state: StoreModel = initialize, action: { type: string; payload: any }) => {
   switch (action.type) {
@@ -52,14 +43,6 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
       return {
         ...state,
         icon: action.payload,
-      };
-    case LOAD_CANDY:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          candy: action.payload,
-        },
       };
     case LOAD_OPTIONS:
       return {
@@ -91,14 +74,6 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
         data: {
           ...state.data,
           pokemon: action.payload,
-        },
-      };
-    case LOAD_POKEMON_DATA:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          pokemonData: Object.values(action.payload) ?? [],
         },
       };
     case LOAD_EVOLUTION:
@@ -138,7 +113,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
         ...state,
         data: {
           ...state.data,
-          pokemonName: Object.values(optionPokemonName(state.data?.details ?? [])) ?? [],
+          pokemonName: Object.values(optionPokemonName(state.data?.pokemon ?? [])) ?? [],
         },
       };
     case LOAD_ASSETS:
@@ -157,15 +132,6 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           leagues: action.payload,
         },
       };
-    case LOAD_RELEASED_GO: {
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          released: mappingReleasedGO(state.data?.pokemonData ?? [], state.data?.details ?? []),
-        },
-      };
-    }
     case LOAD_DETAILS:
       return {
         ...state,

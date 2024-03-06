@@ -1,6 +1,6 @@
-import { capitalize, checkMoveSetAvailable } from '../../util/Utils';
+import { capitalize } from '../../util/Utils';
 import { Combat } from './combat.model';
-import { genList } from '../../util/Constants';
+import { FORM_NORMAL, genList } from '../../util/Constants';
 import { StatsPokemon } from './stats.model';
 import { SelectMoveModel } from '../../components/Input/models/select-move.model';
 
@@ -66,7 +66,14 @@ export interface PokemonModel {
     candyCost: string;
     stardustCost: string;
   }[];
-  tempEvoOverrides: { tempEvoId: string }[];
+  tempEvoOverrides: {
+    tempEvoId: string;
+    stats: {
+      baseStamina: number;
+      baseAttack: number;
+      baseDefense: number;
+    };
+  }[];
   pokemonId: string;
   modelScale: number;
   type: string;
@@ -129,7 +136,6 @@ export interface PokemonGenderRatio {
 export interface PokemonDataModel {
   num: number;
   name: string;
-  alias: string;
   slug: string;
   sprite: string;
   types: string[];
@@ -166,9 +172,14 @@ export interface PokemonDataModel {
   gen: number;
   region: string | null;
   version: string | null;
-  isForceReleasedGO?: boolean;
   baseStatsGO?: boolean;
   stats?: PokemonDataStats | null;
+  isShadow?: boolean;
+  formChange?: {
+    availableForm: string[];
+    candyCost: string;
+    stardustCost: string;
+  }[];
 }
 
 export interface PokemonNameModel {
@@ -226,10 +237,24 @@ export interface PokemonRaidModel {
   attackHpRemain?: number;
 }
 
+export interface PokemonDataOptional {
+  sprite?: string;
+  baseStatsGO?: boolean;
+  genderRatio?: {
+    M: number;
+    F: number;
+  };
+  color?: string;
+  baseForme?: string;
+  releasedGO?: boolean;
+  isBaby?: boolean;
+  region?: string;
+  version?: string;
+}
+
 export class PokemonDataModel {
   num!: number;
   name!: string;
-  alias!: string;
   slug!: string;
   sprite!: string;
   types!: string[];
@@ -269,11 +294,17 @@ export class PokemonDataModel {
   gen!: number;
   region!: string | null;
   version!: string | null;
-  isForceReleasedGO?: boolean;
   baseStatsGO?: boolean;
   stats?: PokemonDataStats | null;
+  encounter?: Encounter;
+  isShadow?: boolean;
+  formChange?: {
+    availableForm: string[];
+    candyCost: string;
+    stardustCost: string;
+  }[];
 
-  constructor(pokemon: PokemonModel, types: string[]) {
+  constructor(pokemon: PokemonModel, types: string[], options?: PokemonDataOptional) {
     let gen = 0;
     Object.entries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
@@ -284,15 +315,14 @@ export class PokemonDataModel {
     });
     this.num = pokemon.id;
     this.name = capitalize(pokemon.name);
-    this.alias = pokemon.name.toLowerCase();
     this.slug = pokemon.name.toLowerCase();
-    this.sprite = 'unknown-pokemon';
+    this.sprite = options?.sprite ?? 'unknown-pokemon';
     this.types = types;
     this.genderRatio = {
-      M: 0.5,
-      F: 0.5,
+      M: options?.genderRatio?.M ?? 0.5,
+      F: options?.genderRatio?.F ?? 0.5,
     };
-    this.baseStatsGO = true;
+    this.baseStatsGO = options?.baseStatsGO === undefined ? true : options?.baseStatsGO;
     this.baseStats = {
       atk: pokemon.stats?.baseAttack,
       def: pokemon.stats?.baseDefense,
@@ -300,26 +330,25 @@ export class PokemonDataModel {
     };
     this.heightm = pokemon.pokedexHeightM;
     this.weightkg = pokemon.pokedexWeightKg;
-    this.color = 'None';
+    this.color = options?.color ?? 'None';
     this.evos = pokemon.evolutionIds ? pokemon.evolutionIds.map((name) => capitalize(name)) : [];
-    this.baseForme = null;
+    this.baseForme = options?.baseForme ?? null;
     this.prevo = capitalize(pokemon.parentPokemonId ?? '');
-    this.isForceReleasedGO = checkMoveSetAvailable(pokemon);
-    this.releasedGO = false;
+    this.releasedGO = options?.releasedGO ?? false;
     this.isTransferable = pokemon.isTransferable;
     this.isDeployable = pokemon.isDeployable;
     this.isTradable = pokemon.isTradable;
     this.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '') ?? null;
     this.disableTransferToPokemonHome = pokemon.disableTransferToPokemonHome ?? false;
-    this.isBaby = false;
+    this.isBaby = options?.isBaby ?? false;
     this.gen = gen;
-    this.region = 'Unknown';
-    this.version = 'scarlet-violet';
+    this.region = options?.region ?? 'Unknown';
+    this.version = options?.version ?? 'scarlet-violet';
     this.baseSpecies = capitalize(pokemon.pokemonId);
-    this.forme =
-      this.name.indexOf('_') > -1
-        ? this.name.slice(this.name.indexOf('_') + 1).replaceAll('_', '-') + (this.num === 931 ? '-plumage' : '')
-        : null;
+    this.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
+    this.encounter = pokemon.encounter;
+    this.isShadow = pokemon.shadow ? true : false;
+    this.formChange = [];
   }
 }
 
@@ -328,7 +357,7 @@ export class PokemonModel {
   id!: number;
   name!: string;
 
-  constructor(id: number, name: string | undefined) {
+  constructor(id: number, name?: string) {
     this.id = id;
     this.name = name ?? '';
   }

@@ -23,7 +23,7 @@ const SelectPokemon = (props: {
   defaultSetting?: PokemonDataStats;
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.pokemonCombat ?? []);
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;

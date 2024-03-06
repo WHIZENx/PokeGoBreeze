@@ -28,8 +28,8 @@ const Primal = (props: { formList: PokemonFormModify[][]; id: number }) => {
       .join('_');
     try {
       return evoData
-        ?.find((item) => item.temp_evo.find((value) => value.tempEvolutionName === name))
-        ?.temp_evo.find((item) => item.tempEvolutionName === name);
+        ?.find((item) => item.tempEvo.find((value) => value.tempEvolutionName === name))
+        ?.tempEvo.find((item) => item.tempEvolutionName === name);
     } catch (error) {
       return {
         firstTempEvolution: 'Unavailable',

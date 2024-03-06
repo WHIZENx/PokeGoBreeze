@@ -69,7 +69,7 @@ const Pokemon = (props: {
   const stats = useSelector((state: StatsState) => state.stats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemonName ?? []);
-  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemonData ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -122,9 +122,9 @@ const Pokemon = (props: {
       const dataFormList: PokemonForm[][] = [];
       await Promise.all(
         data?.varieties.map(async (value) => {
-          const pokeInfo: PokemonInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
-          const pokeForm: PokemonForm[] = await Promise.all(
-            pokeInfo.forms.map(async (item) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
+          const pokeInfo = (await axios.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken: source.token })).data;
+          const pokeForm = await Promise.all(
+            pokeInfo.forms.map(async (item) => (await axios.getFetchUrl<PokemonForm>(item.url, { cancelToken: source.token })).data)
           );
           dataPokeList.push({
             ...pokeInfo,
@@ -310,12 +310,12 @@ const Pokemon = (props: {
         });
       }
     },
-    [searchParams, params.id, dataStore?.pokemon, pokemonName, pokemonData, dataStore?.evolution, dataStore?.details]
+    [searchParams, params.id, dataStore?.pokemon, pokemonName, pokemonData, dataStore?.evolution]
   );
 
   const queryPokemon = useCallback(
     (id: number | string | undefined, axios: typeof APIService, source: CancelTokenSource) => {
-      if (id && dataStore?.pokemon && pokemonName.length > 0 && pokemonData.length > 0 && dataStore?.evolution && dataStore?.details) {
+      if (id && dataStore?.pokemon && pokemonName.length > 0 && pokemonData.length > 0 && dataStore?.evolution) {
         if (!params.id || (params.id && data && parseInt(id.toString()) !== data?.id)) {
           dispatch(showSpinner());
         }
@@ -396,18 +396,18 @@ const Pokemon = (props: {
     let pokemonForm;
 
     if (form) {
-      pokemonForm = dataStore?.details?.find(
-        (item) => item.id === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
+      pokemonForm = dataStore?.pokemon?.find(
+        (item) => item.num === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
       );
 
       if (isDefault && !pokemonForm) {
-        pokemonForm = dataStore?.details?.find((item) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
+        pokemonForm = dataStore?.pokemon?.find((item) => item.num === id && item.forme?.toUpperCase() === FORM_NORMAL);
       }
     }
 
     if (!form && defaultForm) {
-      pokemonForm = dataStore?.details?.find(
-        (item) => item.id === id && item.form === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
+      pokemonForm = dataStore?.pokemon?.find(
+        (item) => item.num === id && item.forme === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
       );
     }
 

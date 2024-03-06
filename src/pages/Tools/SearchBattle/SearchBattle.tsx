@@ -84,13 +84,13 @@ const FindBattle = () => {
           form,
           id: curr?.id ?? 0,
           name: curr?.name ?? '',
-          evo_list: curr?.evo_list ?? [],
-          temp_evo: curr?.temp_evo ?? [],
+          evoList: curr?.evoList ?? [],
+          tempEvo: curr?.tempEvo ?? [],
           canPurified: curr?.canPurified ?? false,
         });
       }
       currEvoChain(
-        curr?.evo_list.map((i) => i.evo_to_id),
+        curr?.evoList.map((i) => i.evoToId),
         form,
         arr
       );
@@ -103,12 +103,10 @@ const FindBattle = () => {
       if (!arr.map((i) => i.id).includes(obj.id)) {
         arr.push({ ...obj, form: defaultForm });
       }
-      obj.evo_list.forEach((i) => {
-        currEvoChain([i.evo_to_id], i.evo_to_form, arr);
+      obj.evoList.forEach((i) => {
+        currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = dataStore?.evolution?.filter((item) =>
-        item.evo_list.find((i) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
-      );
+      const curr = dataStore?.evolution?.filter((item) => item.evoList.find((i) => obj.id === i.evoToId && i.evoToForm === defaultForm));
       if (curr && curr.length >= 1) {
         curr?.forEach((item) => prevEvoChain(item, defaultForm, arr, result));
       } else {
@@ -121,7 +119,7 @@ const FindBattle = () => {
   const getEvoChain = useCallback(
     (id: number) => {
       const isForm = form?.form.form_name?.toUpperCase() ?? '';
-      let curr = dataStore?.evolution?.filter((item) => item.evo_list.find((i) => id === i.evo_to_id && isForm === i.evo_to_form));
+      let curr = dataStore?.evolution?.filter((item) => item.evoList.find((i) => id === i.evoToId && isForm === i.evoToForm));
       if (curr?.length === 0) {
         if (isForm === '') {
           curr = dataStore?.evolution?.filter((item) => id === item.id && isForm === item.form);
@@ -145,7 +143,7 @@ const FindBattle = () => {
       getEvoChain(id)?.forEach((item) => {
         const tempArr: QueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemonData ?? [], value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemon ?? [], value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
             setMaxCP(data.maxCP);
           }
@@ -277,11 +275,11 @@ const FindBattle = () => {
     if (evoId === id) {
       return candy;
     }
-    const data = item.find((i) => i.evo_list.find((e) => e.evo_to_id === evoId));
+    const data = item.find((i) => i.evoList.find((e) => e.evoToId === evoId));
     if (!data) {
       return candy;
     }
-    const prevEvo = data.evo_list.find((e) => e.evo_to_id === evoId);
+    const prevEvo = data.evoList.find((e) => e.evoToId === evoId);
     if (!prevEvo) {
       return candy;
     }

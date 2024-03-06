@@ -87,9 +87,9 @@ const FormSelect = (props: {
     const dataFormList: PokemonForm[][] = [];
     await Promise.all(
       data.varieties.map(async (value) => {
-        const pokeInfo: PokemonInfo = (await axios.getFetchUrl(value.pokemon.url, { cancelToken: source.token })).data;
-        const pokeForm: PokemonForm[] = await Promise.all(
-          pokeInfo.forms.map(async (item) => (await axios.getFetchUrl(item.url, { cancelToken: source.token })).data)
+        const pokeInfo = (await axios.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken: source.token })).data;
+        const pokeForm = await Promise.all(
+          pokeInfo.forms.map(async (item) => (await axios.getFetchUrl<PokemonForm>(item.url, { cancelToken: source.token })).data)
         );
         dataPokeList.push(pokeInfo);
         dataFormList.push(pokeForm);

@@ -89,8 +89,8 @@ const RankingPVP = () => {
       dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
-        const file: RankingsPVP[] = (
-          await APIService.getFetchUrl(APIService.getRankingFile(params.serie, cp, params.type), {
+        const file = (
+          await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type), {
             cancelToken: APIService.getAxios().CancelToken.source().token,
           })
         ).data;
@@ -114,10 +114,10 @@ const RankingPVP = () => {
         }
         const filePVP = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          let pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
+          let pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
 
           if (!pokemon) {
-            pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
+            pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
           }
 
           const id = pokemon?.num;
@@ -210,7 +210,7 @@ const RankingPVP = () => {
       statsRanking &&
       dataStore?.pokemonCombat &&
       dataStore?.combat &&
-      dataStore?.pokemonData?.length > 0 &&
+      dataStore?.pokemon?.length > 0 &&
       dataStore?.assets &&
       !onLoadData
     ) {
@@ -234,7 +234,7 @@ const RankingPVP = () => {
     statsRanking,
     dataStore?.pokemonCombat,
     dataStore?.combat,
-    dataStore?.pokemonData,
+    dataStore?.pokemon,
     dataStore?.assets,
   ]);
 
@@ -327,7 +327,7 @@ const RankingPVP = () => {
                     )}
                   </div>
                   <hr />
-                  {Keys(dataStore?.assets ?? [], dataStore?.pokemonData ?? [], data?.data, params.cp, params.type)}
+                  {Keys(dataStore?.assets ?? [], dataStore?.pokemon ?? [], data?.data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />

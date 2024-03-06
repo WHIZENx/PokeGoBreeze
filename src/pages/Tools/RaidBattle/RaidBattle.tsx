@@ -502,7 +502,7 @@ const RaidBattle = () => {
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: PokemonMoveData[] = [];
-    (data?.pokemonData ?? []).forEach((pokemon) => {
+    (data?.pokemon ?? []).forEach((pokemon) => {
       if (pokemon.forme?.toUpperCase() !== FORM_GMAX) {
         const pokemonCombatResult = data?.pokemonCombat?.filter(
           (item) =>
@@ -517,7 +517,7 @@ const RaidBattle = () => {
           combatPoke = result;
         }
         if (combatPoke) {
-          const pokemonGO = checkPokemonGO(pokemon, data?.details ?? []);
+          const pokemonGO = checkPokemonGO(pokemon.num, pokemon.name, data?.pokemon ?? []);
           addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false, pokemonTarget, pokemonGO?.isShadow);
           addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true, pokemonTarget, pokemonGO?.isShadow);
         }
@@ -1221,7 +1221,7 @@ const RaidBattle = () => {
                 }
                 if (obj.pokemon) {
                   obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
-                  const result = checkPokemonGO(obj.pokemon, data?.details ?? []);
+                  const result = checkPokemonGO(obj.pokemon.num, obj.pokemon.name, data?.pokemon ?? []);
                   return result ? result.releasedGO : false;
                 }
                 return false;
