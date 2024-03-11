@@ -1,6 +1,6 @@
 import { capitalize } from '../../util/Utils';
 import { Combat } from './combat.model';
-import { FORM_NORMAL, genList } from '../../util/Constants';
+import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
 import { StatsPokemon } from './stats.model';
 import { SelectMoveModel } from '../../components/Input/models/select-move.model';
 
@@ -134,8 +134,10 @@ export interface PokemonGenderRatio {
 }
 
 export interface PokemonDataModel {
+  pokemonId?: string;
   num: number;
   name: string;
+  fullName?: string;
   slug: string;
   sprite: string;
   types: string[];
@@ -238,6 +240,7 @@ export interface PokemonRaidModel {
 }
 
 export interface PokemonDataOptional {
+  slug?: string;
   sprite?: string;
   baseStatsGO?: boolean;
   genderRatio?: {
@@ -253,47 +256,36 @@ export interface PokemonDataOptional {
 }
 
 export class PokemonDataModel {
-  num!: number;
-  name!: string;
-  slug!: string;
-  sprite!: string;
-  types!: string[];
-  genderRatio!: {
+  pokemonId?: string;
+  num: number;
+  name: string;
+  fullName?: string;
+  slug: string;
+  sprite: string;
+  types: string[];
+  genderRatio: {
     M: number;
     F: number;
   };
-  baseStats!: StatsPokemon;
-  heightm!: number;
-  weightkg!: number;
-  color!: string;
-  evos!: string[];
-  baseForme!: string | null;
-  baseFormeAlias!: string | null;
-  baseFormeSlug!: string | null;
-  baseFormeSprite!: string | null;
-  cosmeticFormes!: string[];
-  cosmeticFormesAliases!: string[];
-  cosmeticFormesSprites!: string[];
-  otherFormes!: string[];
-  otherFormesAliases!: string[];
-  otherFormesSprites!: string[];
-  formeOrder!: string[];
-  prevo!: string | null;
-  canGigantamax!: boolean | null | string;
-  baseSpecies!: string | null;
-  forme!: string | null;
-  changesFrom!: string | null;
-  cannotDynamax!: boolean;
-  releasedGO!: boolean;
+  baseStats: StatsPokemon;
+  heightm: number;
+  weightkg: number;
+  color: string;
+  evos: string[];
+  baseForme: string | null;
+  prevo: string | null;
+  baseSpecies: string | null;
+  forme: string | null;
+  releasedGO: boolean;
   isTransferable?: boolean | null;
-  isDeployable!: boolean | null;
-  isTradable!: boolean | null;
-  pokemonClass!: string | null;
-  disableTransferToPokemonHome!: boolean | null;
-  isBaby!: boolean;
-  gen!: number;
-  region!: string | null;
-  version!: string | null;
+  isDeployable: boolean | null;
+  isTradable: boolean | null;
+  pokemonClass: string | null;
+  disableTransferToPokemonHome: boolean | null;
+  isBaby: boolean;
+  gen: number;
+  region: string | null;
+  version: string | null;
   baseStatsGO?: boolean;
   stats?: PokemonDataStats | null;
   encounter?: Encounter;
@@ -313,9 +305,13 @@ export class PokemonDataModel {
         return;
       }
     });
+    this.pokemonId = pokemon.pokemonId;
     this.num = pokemon.id;
-    this.name = capitalize(pokemon.name);
-    this.slug = pokemon.name.toLowerCase();
+    this.name = capitalize(pokemon.name.replaceAll('_', '-'));
+    this.fullName = pokemon.form && pokemon.form !== FORM_NORMAL ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
+    this.slug =
+      options?.slug ??
+      pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
     this.sprite = options?.sprite ?? 'unknown-pokemon';
     this.types = types;
     this.genderRatio = {

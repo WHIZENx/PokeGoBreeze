@@ -14,7 +14,6 @@ import {
   optionFormSpecial,
   optionPokemonCombat,
   optionPokemonData,
-  optionPokemonFamily,
   optionPokemon,
   mappingReleasedPokemonGO,
 } from '../../core/options';
@@ -32,7 +31,7 @@ import { SetValue } from '../models/state.model';
 import { PokemonData } from '../../core/models/options.model';
 import { APITreeRoot, APITree, APIPath } from '../../services/models/api.model';
 import { CombatPokemon } from '../../core/models/combat.model';
-import { PokemonModel, PokemonDataModel } from '../../core/models/pokemon.model';
+import { PokemonDataModel } from '../../core/models/pokemon.model';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -172,7 +171,6 @@ export const loadGameMaster = (
 
       const pokemon = optionPokemon(gm.data, pokemonEncounter?.rows);
       const pokemonData = optionPokemonData(gm.data, pokemonEncounter?.rows);
-      const pokemonFamily = optionPokemonFamily(pokemon);
       const noneForm = optionFormNone(gm.data);
       const formSpecial = optionFormSpecial(gm.data);
 
@@ -206,7 +204,7 @@ export const loadGameMaster = (
 
       dispatch({
         type: LOAD_STICKER,
-        payload: optionSticker(gm.data, pokemon),
+        payload: optionSticker(gm.data, pokemonData),
       });
 
       dispatch({
@@ -225,9 +223,9 @@ export const loadGameMaster = (
       });
 
       if (timestampLoaded.images || timestampLoaded.sounds) {
-        await loadAssets(dispatch, imageRoot, soundsRoot, pokemon, pokemonFamily, pokemonData, pokemonCombat, setStateImage, setStateSound);
+        await loadAssets(dispatch, imageRoot, soundsRoot, pokemonData, pokemonCombat, setStateImage, setStateSound);
       } else {
-        const assetsPokemon = optionAssets(pokemon, pokemonFamily, JSON.parse(stateImage), JSON.parse(stateSound));
+        const assetsPokemon = optionAssets(pokemonData, JSON.parse(stateImage), JSON.parse(stateSound));
         mappingReleasedPokemonGO(pokemonData, assetsPokemon, pokemonCombat);
         dispatch({
           type: LOAD_ASSETS,
@@ -264,8 +262,6 @@ export const loadAssets = async (
   dispatch: Dispatch,
   imageRoot: APITreeRoot[],
   soundsRoot: APITreeRoot[],
-  pokemon: PokemonModel[],
-  pokemonFamily: string[],
   pokemonData: PokemonDataModel[],
   pokemonCombat: CombatPokemon[],
   setStateImage: SetValue<string>,
@@ -297,7 +293,7 @@ export const loadAssets = async (
             const assetSoundFiles = optionPokeSound(soundData.data);
             setStateSound(JSON.stringify(assetSoundFiles));
 
-            const assetsPokemon = optionAssets(pokemon, pokemonFamily, assetImgFiles, assetSoundFiles);
+            const assetsPokemon = optionAssets(pokemonData, assetImgFiles, assetSoundFiles);
             mappingReleasedPokemonGO(pokemonData, assetsPokemon, pokemonCombat);
 
             dispatch({

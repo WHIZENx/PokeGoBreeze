@@ -135,7 +135,7 @@ export const queryAssetForm = (pokemonAssets: Asset[], id: number | undefined, n
     return null;
   }
   const standard = pokemon.image.filter((item) => item.form?.toUpperCase().includes(FORM_STANDARD));
-  name = convertName(name);
+  name = convertName(name).replaceAll('.', '');
 
   if (pokemon.name === name || standard.length > 0) {
     const image = pokemon.image.find((item) => item.form?.toUpperCase() === FORM_NORMAL);

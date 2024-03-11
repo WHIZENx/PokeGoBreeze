@@ -459,6 +459,7 @@ export const convertFormGif = (name: string | undefined) => {
 };
 
 export const convertFormNameImg = (id: number, form: string) => {
+  form = form.replaceAll('_', '-');
   if (
     id === 201 ||
     id === 414 ||
@@ -533,6 +534,16 @@ export const convertFormNameImg = (id: number, form: string) => {
     return 'dusk';
   } else if (form === 'dawn-wings') {
     return 'dawn';
+  } else if (form === 'dawn-wings') {
+    return 'dawn';
+  } else if (form === 'dawn-wings') {
+    return 'dawn';
+  } else if (id === 801 && form.includes('color')) {
+    return form.replace('-color', '');
+  } else if ((id === 888 || id === 889) && form.includes('crowned')) {
+    return 'crowned';
+  } else if (id === 898 && form.includes('rider')) {
+    return form.replace('-rider', '');
   } else if (id === 25 && ['original', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'partner', 'world'].includes(form)) {
     return form + '-cap';
   }

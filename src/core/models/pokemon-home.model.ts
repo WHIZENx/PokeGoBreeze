@@ -1,4 +1,5 @@
 import APIService from '../../services/API.service';
+import { FORM_NORMAL } from '../../util/Constants';
 import { convertFormNameImg, splitAndCapitalize } from '../../util/Utils';
 import { Image } from './asset.model';
 import { PokemonDataModel } from './pokemon.model';
@@ -23,26 +24,30 @@ export interface PokemonHomeModel {
 }
 
 export class PokemonHomeModel {
-  id!: number;
-  name!: string;
-  forme!: string | null;
-  types!: string[];
-  color!: string;
-  sprite!: string;
-  baseSpecies!: string | null;
-  baseStats!: StatsPokemon;
-  gen!: number;
-  region!: string | null;
-  version!: number;
-  goStats!: StatsPokemon;
-  class!: string | null;
-  releasedGO!: boolean;
-  image!: Image;
+  id: number;
+  name: string;
+  forme: string | null;
+  types: string[];
+  color: string;
+  sprite: string;
+  baseSpecies: string | null;
+  baseStats: StatsPokemon;
+  gen: number;
+  region: string | null;
+  version: number;
+  goStats: StatsPokemon;
+  class: string | null;
+  releasedGO: boolean;
+  image: Image;
 
   constructor(item: PokemonDataModel, assetForm: Image | null | undefined, versionList: string[]) {
     this.id = item.num;
     this.name = item.name;
-    this.forme = assetForm?.default ? item?.forme : convertFormNameImg(item.num, item?.forme?.toLowerCase() ?? '');
+    this.forme = assetForm?.default
+      ? item.forme !== FORM_NORMAL
+        ? item.forme
+        : null
+      : convertFormNameImg(item.num, item.forme?.toLowerCase() ?? '');
     this.types = item.types;
     this.color = item.color.toLowerCase();
     this.sprite = item.sprite.toLowerCase();

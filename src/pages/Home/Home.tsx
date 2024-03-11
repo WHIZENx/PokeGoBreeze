@@ -13,6 +13,7 @@ import {
   FORM_GMAX,
   FORM_MEGA,
   FORM_PRIMAL,
+  FORM_SHADOW,
   genList,
   regionList,
   TRANSITION_TIME,
@@ -109,8 +110,9 @@ const Home = () => {
     if (data?.assets && data?.pokemon) {
       setDataList(
         data.pokemon
-          ?.map((item) => {
-            const assetForm = queryAssetForm(data.assets, item.num, item.forme ?? '');
+          .filter((item) => item.forme !== FORM_SHADOW)
+          .map((item) => {
+            const assetForm = queryAssetForm(data.assets, item.num, item.name);
             return new PokemonHomeModel(item, assetForm, versionList);
           })
           .sort((a, b) => (a.id ?? 0) - (b?.id ?? 0)) ?? []
