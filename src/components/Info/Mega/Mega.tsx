@@ -9,7 +9,7 @@ import { FORM_MEGA } from '../../../util/Constants';
 import { FormModel, PokemonFormModify } from '../../../core/models/API/form.model';
 
 const Mega = (props: { formList: PokemonFormModify[][]; id: number }) => {
-  const evoData = useSelector((state: StoreState) => state.store.data?.evolution ?? []);
+  const evoData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [arrEvoList, setArrEvoList]: [
     (FormModel | undefined)[] | undefined,
     React.Dispatch<React.SetStateAction<(FormModel | undefined)[]>>
@@ -28,8 +28,8 @@ const Mega = (props: { formList: PokemonFormModify[][]; id: number }) => {
       .join('_');
     try {
       return evoData
-        ?.find((item) => item.tempEvo.find((value) => value.tempEvolutionName === name))
-        ?.tempEvo.find((item) => item.tempEvolutionName === name);
+        ?.find((item) => item.tempEvo?.find((value) => value.tempEvolutionName === name))
+        ?.tempEvo?.find((item) => item.tempEvolutionName === name);
     } catch (error) {
       return {
         firstTempEvolution: 'Unavailable',

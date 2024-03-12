@@ -41,7 +41,10 @@ class APIService {
     return `${APIUrl.POKE_API_URL}${path}/${value}`;
   }
 
-  getPokemonModel(item: string | null) {
+  getPokemonModel(item: string | null | undefined) {
+    if (!item) {
+      return this.getPokeSprite(0);
+    }
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon/${item}.png`;
   }
 

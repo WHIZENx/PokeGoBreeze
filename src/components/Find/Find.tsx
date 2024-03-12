@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, getPokemonByIndex } from '../../util/Utils';
+import { getPokemonById, mappingPokemonName } from '../../util/Utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { PokemonSearchingModel } from '../../core/models/pokemon-searching.model';
 
@@ -44,7 +44,6 @@ const Find = (props: {
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const pokemonName = useSelector((state: StoreState) => state.store.data?.pokemonName ?? []);
 
   const [id, setId] = useState(
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
@@ -62,10 +61,10 @@ const Find = (props: {
   ] = useState([] as PokemonSearchingModel[]);
 
   useEffect(() => {
-    if (pokemonName.length > 0) {
-      setPokemonList(pokemonName.filter((item) => item.id > 0).map((item) => new PokemonSearchingModel(item)));
+    if (pokemonData.length > 0) {
+      setPokemonList(mappingPokemonName(pokemonData));
     }
-  }, [pokemonName]);
+  }, [pokemonData]);
 
   useEffect(() => {
     if (pokemonList.length > 0) {
@@ -88,7 +87,7 @@ const Find = (props: {
   };
 
   const getInfoPoke = (value: PokemonSearchingModel) => {
-    const currentId = getPokemonById(pokemonName, value.id);
+    const currentId = getPokemonById(pokemonData, value.id);
     setId(value.id);
     setForm(undefined);
     if (props.setId) {
@@ -114,9 +113,9 @@ const Find = (props: {
 
   const decId = () => {
     setTimeout(() => {
-      const currentId = getPokemonById(pokemonName, id);
+      const currentId = getPokemonById(pokemonData, id);
       if (currentId) {
-        const prev = getPokemonByIndex(pokemonName, currentId.index - 1);
+        const prev = getPokemonById(pokemonData, currentId.id - 1);
         if (prev) {
           setId(prev.id);
           if (props.setId) {
@@ -138,9 +137,9 @@ const Find = (props: {
 
   const incId = () => {
     setTimeout(() => {
-      const currentId = getPokemonById(pokemonName, id);
+      const currentId = getPokemonById(pokemonData, id);
       if (currentId) {
-        const next = getPokemonByIndex(pokemonName, currentId.index + 1);
+        const next = getPokemonById(pokemonData, currentId.id + 1);
         if (next) {
           setId(next.id);
           if (props.setId) {
@@ -242,7 +241,7 @@ const Find = (props: {
               onSetNext={incId}
               setUrlEvo={props.setUrlEvo}
               objective={props.objective}
-              pokemonName={pokemonName}
+              pokemonName={pokemonData}
             />
           )}
         </div>

@@ -1,8 +1,9 @@
-import { capitalize } from '../../util/Utils';
+import { capitalize, convertIdMove } from '../../util/Utils';
 import { Combat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
 import { StatsPokemon } from './stats.model';
 import { SelectMoveModel } from '../../components/Input/models/select-move.model';
+import { EvoList, TempEvo } from './evolution.model';
 
 export interface PokemonDataStats {
   level: number;
@@ -182,10 +183,26 @@ export interface PokemonDataModel {
     candyCost: string;
     stardustCost: string;
   }[];
+  quickMoves?: string[];
+  cinematicMoves?: string[];
+  specialMoves?: string[];
+  eliteQuickMove?: string[];
+  eliteCinematicMove?: string[];
+  shadowMoves?: string[];
+  purifiedMoves?: string[];
+  evoList?: EvoList[];
+  tempEvo?: TempEvo[];
+  purified?: {
+    stardust?: number;
+    candy?: number;
+  };
+  thirdMove?: {
+    stardust?: number;
+    candy?: number;
+  };
 }
 
 export interface PokemonNameModel {
-  index: number;
   id: number;
   name: string;
 }
@@ -253,6 +270,18 @@ export interface PokemonDataOptional {
   isBaby?: boolean;
   region?: string;
   version?: string;
+  shadowMoves?: string[];
+  purifiedMoves?: string[];
+  evoList?: EvoList[];
+  tempEvo?: TempEvo[];
+  purified?: {
+    stardust?: number;
+    candy?: number;
+  };
+  thirdMove?: {
+    stardust?: number;
+    candy?: number;
+  };
 }
 
 export class PokemonDataModel {
@@ -295,6 +324,23 @@ export class PokemonDataModel {
     candyCost: string;
     stardustCost: string;
   }[];
+  quickMoves?: string[];
+  cinematicMoves?: string[];
+  specialMoves?: string[];
+  eliteQuickMove?: string[];
+  eliteCinematicMove?: string[];
+  shadowMoves?: string[];
+  purifiedMoves?: string[];
+  evoList?: EvoList[];
+  tempEvo?: TempEvo[];
+  purified?: {
+    stardust?: number;
+    candy?: number;
+  };
+  thirdMove?: {
+    stardust?: number;
+    candy?: number;
+  };
 
   constructor(pokemon: PokemonModel, types: string[], options?: PokemonDataOptional) {
     let gen = 0;
@@ -345,13 +391,37 @@ export class PokemonDataModel {
     this.encounter = pokemon.encounter;
     this.isShadow = pokemon.shadow ? true : false;
     this.formChange = [];
+
+    this.quickMoves = pokemon.quickMoves?.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) ?? [];
+    this.cinematicMoves = pokemon.cinematicMoves?.map((move) => convertIdMove(move?.toString())) ?? [];
+    this.eliteQuickMove = pokemon.eliteQuickMove?.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) ?? [];
+    this.eliteCinematicMove = pokemon.eliteCinematicMove?.map((move) => convertIdMove(move?.toString())) ?? [];
+    this.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => convertIdMove(move?.toString())) ?? [];
+    this.shadowMoves = options?.shadowMoves ?? [];
+    this.purifiedMoves = options?.purifiedMoves ?? [];
+
+    this.evoList = options?.evoList ?? [];
+    this.tempEvo = options?.tempEvo ?? [];
+    this.purified = options?.purified;
+    this.thirdMove = options?.purified;
   }
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonModel {
-  id!: number;
-  name!: string;
+  id: number;
+  name: string;
+
+  constructor(id: number, name?: string) {
+    this.id = id;
+    this.name = name ?? '';
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonNameModel {
+  id: number;
+  name: string;
 
   constructor(id: number, name?: string) {
     this.id = id;

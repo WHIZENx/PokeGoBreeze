@@ -1,6 +1,6 @@
 import { CounterModel } from '../components/Table/Counter/models/counter.model';
 import { findStatsPokeGO } from '../core/forms';
-import { Combat, CombatPokemon } from '../core/models/combat.model';
+import { Combat } from '../core/models/combat.model';
 import { CPM } from '../core/models/cpm.model';
 import { EvolutionModel } from '../core/models/evolution.model';
 import { Options } from '../core/models/options.model';
@@ -38,14 +38,7 @@ import {
   STAB_MULTIPLY,
   typeCostPowerUp,
 } from './Constants';
-import {
-  capitalize,
-  convertName,
-  splitAndCapitalize,
-  convertNameRankingToOri,
-  convertNameRankingToForm,
-  checkMoveSetAvailable,
-} from './Utils';
+import { capitalize, splitAndCapitalize, checkMoveSetAvailable } from './Utils';
 import {
   BattleCalculate,
   BattleLeague,
@@ -1009,48 +1002,37 @@ export const queryTopMove = (
   pokemonList: PokemonDataModel[] | undefined,
   typeEff: TypeEff | undefined,
   weatherBoost: WeatherBoost | undefined,
-  pokemonCombatList: CombatPokemon[],
   move: Combat | undefined
 ) => {
   const dataPri: PokemonTopMove[] = [];
-  pokemonList?.forEach((value: PokemonDataModel) => {
+  pokemonList?.forEach((value) => {
     if (move?.track === 281) {
       move.name = 'HIDDEN_POWER';
     }
-    const pokemonCombatResult = pokemonCombatList.filter(
-      (item) => item.id === value.num && item.baseSpecies === (value.baseSpecies ? convertName(value.baseSpecies) : convertName(value.name))
-    );
-    const result = pokemonCombatResult.find((item) => item.name === convertName(value.name));
-    let combatPoke: CombatPokemon | undefined;
-    if (!result) {
-      combatPoke = pokemonCombatResult.at(0);
-    } else {
-      combatPoke = result;
-    }
-    if (combatPoke) {
+    if (value) {
       let pokemonList;
       let isElite = false;
       let isSpecial = true;
       if (move?.type_move === TypeMove.FAST) {
-        pokemonList = combatPoke.quickMoves.map((item: string) => item).includes(move.name);
+        pokemonList = value.quickMoves?.map((item: string) => item).includes(move.name);
         if (!pokemonList) {
-          pokemonList = combatPoke.eliteQuickMoves.map((item: string) => item).includes(move.name);
+          pokemonList = value.eliteQuickMove?.map((item: string) => item).includes(move.name);
           isElite = true;
         }
       } else if (move?.type_move === TypeMove.CHARGE) {
-        pokemonList = combatPoke.cinematicMoves.includes(move.name);
+        pokemonList = value.cinematicMoves?.includes(move.name);
         if (!pokemonList) {
-          pokemonList = combatPoke.shadowMoves.includes(move.name);
+          pokemonList = value.shadowMoves?.includes(move.name);
         }
         if (!pokemonList) {
-          pokemonList = combatPoke.purifiedMoves.includes(move.name);
+          pokemonList = value.purifiedMoves?.includes(move.name);
         }
         if (!pokemonList) {
-          pokemonList = combatPoke.eliteCinematicMoves.includes(move.name);
+          pokemonList = value.eliteCinematicMove?.includes(move.name);
           isElite = true;
         }
         if (!pokemonList) {
-          pokemonList = combatPoke.specialMoves.includes(move.name);
+          pokemonList = value.specialMoves?.includes(move.name);
           isSpecial = true;
         }
       }
@@ -1163,7 +1145,7 @@ export const rankMove = (
   typeEff: TypeEff | undefined,
   weatherBoost: WeatherBoost | undefined,
   combat: Combat[],
-  move: CombatPokemon | undefined,
+  move: PokemonDataModel | undefined,
   atk: number,
   def: number,
   sta: number,
@@ -1173,8 +1155,8 @@ export const rankMove = (
     return { data: [] };
   }
   const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, atk, def, sta, types);
-  move.quickMoves.forEach((vf) => setQueryMove(data, vf, move, false));
-  move.eliteQuickMoves.forEach((vf) => setQueryMove(data, vf, move, true));
+  move.quickMoves?.forEach((vf) => setQueryMove(data, vf, move, false));
+  move.eliteQuickMove?.forEach((vf) => setQueryMove(data, vf, move, true));
 
   return {
     data: data.dataList,
@@ -1183,12 +1165,12 @@ export const rankMove = (
   };
 };
 
-const setQueryMove = (data: QueryMovesPokemon, vf: string, value: CombatPokemon, isEliteQuick: boolean) => {
-  queryMove(data, vf, value.cinematicMoves, isEliteQuick, false, false, false, false);
-  queryMove(data, vf, value.eliteCinematicMoves, isEliteQuick, true, false, false, false);
-  queryMove(data, vf, value.shadowMoves, isEliteQuick, false, true, false, false);
-  queryMove(data, vf, value.purifiedMoves, isEliteQuick, false, false, true, false);
-  queryMove(data, vf, value.specialMoves, isEliteQuick, false, false, false, true);
+const setQueryMove = (data: QueryMovesPokemon, vf: string, value: PokemonDataModel, isEliteQuick: boolean) => {
+  queryMove(data, vf, value.cinematicMoves ?? [], isEliteQuick, false, false, false, false);
+  queryMove(data, vf, value.eliteCinematicMove ?? [], isEliteQuick, true, false, false, false);
+  queryMove(data, vf, value.shadowMoves ?? [], isEliteQuick, false, true, false, false);
+  queryMove(data, vf, value.purifiedMoves ?? [], isEliteQuick, false, false, true, false);
+  queryMove(data, vf, value.specialMoves ?? [], isEliteQuick, false, false, false, true);
 };
 
 export const queryStatesEvoChain = (
@@ -1380,23 +1362,18 @@ export const counterPokemon = (
   weatherBoost: WeatherBoost | undefined,
   def: number,
   types: string[],
-  combat: Combat[],
-  combatList: CombatPokemon[]
+  combat: Combat[]
 ) => {
   const dataList: PokemonQueryCounter[] = [];
-  combatList.forEach((value) => {
-    if (checkMoveSetAvailable(value) && !value.name.includes('_FEMALE')) {
-      const pokemon = pokemonList.find((item) => {
-        const name = convertNameRankingToOri(value.name.toLowerCase(), convertNameRankingToForm(value.name.toLowerCase()), true);
-        return item.slug === name;
-      });
+  pokemonList.forEach((pokemon) => {
+    if (checkMoveSetAvailable(pokemon) && !pokemon.name.includes('_FEMALE')) {
       if (pokemon === undefined) {
         return false;
       }
       const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, stats, def, types, dataList);
-      value.quickMoves.forEach((vf) => setQueryMoveCounter(data, vf, value, false));
-      value.eliteQuickMoves.forEach((vf) => setQueryMoveCounter(data, vf, value, true));
+      pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, false));
+      pokemon.eliteQuickMove?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, true));
     }
   });
   return dataList
@@ -1404,10 +1381,10 @@ export const counterPokemon = (
     .map((item) => ({ ...item, ratio: (item.dps * 100) / (dataList.at(0)?.dps ?? 0) })) as CounterModel[];
 };
 
-const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: CombatPokemon, isEliteQuick: boolean) => {
-  queryMoveCounter(data, vf, value.cinematicMoves, isEliteQuick, false, false, false, false);
-  queryMoveCounter(data, vf, value.eliteCinematicMoves, isEliteQuick, true, false, false, false);
-  queryMoveCounter(data, vf, value.shadowMoves, isEliteQuick, false, true, false, false);
-  queryMoveCounter(data, vf, value.purifiedMoves, isEliteQuick, false, false, true, false);
-  queryMoveCounter(data, vf, value.specialMoves, isEliteQuick, false, false, false, true);
+const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: PokemonDataModel, isEliteQuick: boolean) => {
+  queryMoveCounter(data, vf, value.cinematicMoves ?? [], isEliteQuick, false, false, false, false);
+  queryMoveCounter(data, vf, value.eliteCinematicMove ?? [], isEliteQuick, true, false, false, false);
+  queryMoveCounter(data, vf, value.shadowMoves ?? [], isEliteQuick, false, true, false, false);
+  queryMoveCounter(data, vf, value.purifiedMoves ?? [], isEliteQuick, false, false, true, false);
+  queryMoveCounter(data, vf, value.specialMoves ?? [], isEliteQuick, false, false, false, true);
 };

@@ -1,17 +1,12 @@
-import { optionPokemonName } from '../../core/options';
 import { convertPVPRankings, convertPVPTrain } from '../../core/pvp';
 import {
   LOAD_ASSETS,
   LOAD_COMBAT,
   LOAD_CPM,
-  LOAD_DETAILS,
-  LOAD_EVOLUTION,
   LOAD_LEAGUES,
   LOAD_LOGO_POKEGO,
   LOAD_OPTIONS,
   LOAD_POKEMON,
-  LOAD_POKEMON_COMBAT,
-  LOAD_POKEMON_NAME,
   LOAD_PVP,
   LOAD_PVP_MOVES,
   LOAD_STICKER,
@@ -76,14 +71,6 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           pokemon: action.payload,
         },
       };
-    case LOAD_EVOLUTION:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          evolution: action.payload,
-        },
-      };
     case LOAD_STICKER:
       return {
         ...state,
@@ -100,22 +87,6 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           combat: action.payload,
         },
       };
-    case LOAD_POKEMON_COMBAT:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          pokemonCombat: action.payload,
-        },
-      };
-    case LOAD_POKEMON_NAME:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          pokemonName: Object.values(optionPokemonName(state.data?.pokemon ?? [])) ?? [],
-        },
-      };
     case LOAD_ASSETS:
       return {
         ...state,
@@ -130,14 +101,6 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
         data: {
           ...state.data,
           leagues: action.payload,
-        },
-      };
-    case LOAD_DETAILS:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          details: action.payload,
         },
       };
     case LOAD_PVP:

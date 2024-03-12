@@ -247,8 +247,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
             data?.weatherBoost,
             props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
             props.types ?? [],
-            data?.combat ?? [],
-            data?.pokemonCombat ?? []
+            data?.combat ?? []
           )
         );
       }, 3000);

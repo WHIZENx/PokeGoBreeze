@@ -50,9 +50,7 @@ const Leagues = () => {
         return APIService.getPokeFullSprite(id);
       }
       const data = dataId?.image.find((item) => item.form === form);
-      return data
-        ? APIService.getPokemonModel(data.default)
-        : APIService.getPokemonModel(dataId ? dataId.image.at(0)?.default ?? null : null);
+      return APIService.getPokemonModel(data ? data.default : dataId?.image.at(0)?.default);
     } catch {
       return APIService.getPokeFullSprite(id);
     }

@@ -17,10 +17,10 @@ import {
 } from './Constants';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
 import { PokemonStatsRanking, StatsModel, StatsPokemon } from '../core/models/stats.model';
-import { CombatPokemon } from '../core/models/combat.model';
 import { Stats } from '../core/models/API/info.model';
 import { FormModel } from '../core/models/API/form.model';
 import { ArrayStats } from './models/util.model';
+import { PokemonSearchingModel } from '../core/models/pokemon-searching.model';
 
 export const marks = [...Array(MAX_IV + 1).keys()].map((n) => {
   return { value: n, label: n.toString() };
@@ -186,7 +186,10 @@ export const convertModelSpritName = (text: string) => {
     .replace('eiscue-ice', 'eiscue')
     .replace('-hangry', '-hangry-mode')
     .replace('-white-striped', '')
-    .replace('-single-strike', '');
+    .replace('-single-strike', '')
+    .replace('-shadow', '')
+    .replace('-armor', '')
+    .replace('-normal', '');
 };
 
 export const convertName = (text: string | undefined) => {
@@ -595,12 +598,18 @@ export const calRank = (
   return ((pokemonStats[type].max_rank - rank + 1) * 100) / pokemonStats[type].max_rank;
 };
 
-export const getPokemonById = (pokemonName: PokemonNameModel[], id: number) => {
-  return pokemonName.find((pokemon) => pokemon.id === id);
+export const mappingPokemonName = (pokemonData: PokemonDataModel[]) => {
+  return pokemonData
+    .filter((pokemon) => pokemon.num > 0 && pokemon.forme === FORM_NORMAL)
+    .map((pokemon) => new PokemonSearchingModel(pokemon));
 };
 
-export const getPokemonByIndex = (pokemonName: PokemonNameModel[], index: number) => {
-  return pokemonName.find((pokemon) => pokemon.index === index);
+export const getPokemonById = (pokemonData: PokemonDataModel[], id: number) => {
+  if (id < 1) {
+    return;
+  }
+  const result = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === FORM_NORMAL);
+  return new PokemonNameModel(result?.num ?? 0, result?.name ?? '');
 };
 
 export const getCustomThemeDataTable = (theme: Theme) => {
@@ -643,15 +652,15 @@ export const getDataWithKey = (data: any, key: string | number) => {
   return result ? result[1] : {};
 };
 
-export const checkMoveSetAvailable = (pokemon: PokemonModel | CombatPokemon | undefined) => {
+export const checkMoveSetAvailable = (pokemon: PokemonModel | PokemonDataModel | undefined) => {
   if (!pokemon) {
     return false;
   }
 
-  const eliteQuickMoves = (pokemon as PokemonModel).eliteQuickMove ?? (pokemon as CombatPokemon).eliteQuickMoves ?? [];
-  const eliteCinematicMoves = (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as CombatPokemon).eliteCinematicMoves ?? [];
-  const specialMoves = (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as CombatPokemon).specialMoves ?? [];
-  const allMoves = pokemon.quickMoves?.concat(pokemon.cinematicMoves, eliteQuickMoves, eliteCinematicMoves, specialMoves);
+  const eliteQuickMoves = (pokemon as PokemonModel).eliteQuickMove ?? (pokemon as PokemonDataModel).eliteQuickMove ?? [];
+  const eliteCinematicMoves = (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as PokemonDataModel).eliteCinematicMove ?? [];
+  const specialMoves = (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as PokemonDataModel).specialMoves ?? [];
+  const allMoves = pokemon.quickMoves?.concat(pokemon.cinematicMoves ?? [], eliteQuickMoves, eliteCinematicMoves, specialMoves) ?? [];
   if (allMoves?.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
     return false;
   }
@@ -808,8 +817,8 @@ export const convertPokemonDataName = (text: string | undefined) => {
     .replaceAll('-', '_')
     .replace('NIDORAN_F', 'NIDORAN')
     .replace('NIDORAN_M', 'NIDORAN_MALE')
-    .replace(/_GALAR$/, `_GALARIAN`)
-    .replace(/_HISUI$/, `_HISUIAN`);
+    .replace(/_GALAR$/, `_${FORM_GALARIAN}`)
+    .replace(/_HISUI$/, `_${FORM_HISUIAN}`);
 };
 
 export const findPokemonData = (id: number, name: string) => {

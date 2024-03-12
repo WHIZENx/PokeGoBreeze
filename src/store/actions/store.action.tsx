@@ -9,12 +9,7 @@ import {
   optionPokemonTypes,
   optionPokemonWeather,
   optionAssets,
-  optionEvolution,
-  optionFormNone,
-  optionFormSpecial,
-  optionPokemonCombat,
   optionPokemonData,
-  optionPokemon,
   mappingReleasedPokemonGO,
 } from '../../core/options';
 import { pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
@@ -30,7 +25,6 @@ import { isMobile } from 'react-device-detect';
 import { SetValue } from '../models/state.model';
 import { PokemonData } from '../../core/models/options.model';
 import { APITreeRoot, APITree, APIPath } from '../../services/models/api.model';
-import { CombatPokemon } from '../../core/models/combat.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 
 export const LOAD_STORE = 'LOAD_STORE';
@@ -39,17 +33,12 @@ export const LOAD_OPTIONS = 'LOAD_OPTIONS';
 export const LOAD_TYPE_EFF = 'LOAD_TYPE_EFF';
 export const LOAD_WEATHER_BOOST = 'LOAD_WEATHER_BOOST';
 export const LOAD_POKEMON = 'LOAD_POKEMON';
-export const LOAD_POKEMON_DATA = 'LOAD_POKEMON_DATA';
-export const LOAD_EVOLUTION = 'LOAD_EVOLUTION';
 export const LOAD_STICKER = 'LOAD_STICKER';
 export const LOAD_COMBAT = 'LOAD_COMBAT';
-export const LOAD_POKEMON_COMBAT = 'LOAD_POKEMON_COMBAT';
-export const LOAD_POKEMON_NAME = 'LOAD_POKEMON_NAME';
 export const LOAD_ASSETS = 'LOAD_ASSETS';
 export const LOAD_LEAGUES = 'LOAD_LEAGUES';
 export const LOAD_LOGO_POKEGO = 'LOAD_LOGO_POKEGO';
 export const LOAD_CPM = 'LOAD_CPM';
-export const LOAD_DETAILS = 'LOAD_DETAILS';
 export const LOAD_PVP = 'LOAD_PVP';
 export const LOAD_PVP_MOVES = 'LOAD_PVP_MOVES';
 export const RESET_STORE = 'RESET_STORE';
@@ -169,13 +158,9 @@ export const loadGameMaster = (
         }
       }
 
-      const pokemon = optionPokemon(gm.data, pokemonEncounter?.rows);
-      const pokemonData = optionPokemonData(gm.data, pokemonEncounter?.rows);
-      const noneForm = optionFormNone(gm.data);
-      const formSpecial = optionFormSpecial(gm.data);
+      const pokemon = optionPokemonData(gm.data, pokemonEncounter?.rows);
 
-      const league = optionLeagues(gm.data, pokemonData);
-      const pokemonCombat = optionPokemonCombat(gm.data, pokemon, formSpecial, noneForm);
+      const league = optionLeagues(gm.data, pokemon);
 
       const typeEff = optionPokemonTypes(gm.data);
       const weatherBoost = optionPokemonWeather(gm.data);
@@ -198,13 +183,8 @@ export const loadGameMaster = (
       });
 
       dispatch({
-        type: LOAD_EVOLUTION,
-        payload: optionEvolution(gm.data, pokemon, formSpecial),
-      });
-
-      dispatch({
         type: LOAD_STICKER,
-        payload: optionSticker(gm.data, pokemonData),
+        payload: optionSticker(gm.data, pokemon),
       });
 
       dispatch({
@@ -213,36 +193,27 @@ export const loadGameMaster = (
       });
 
       dispatch({
-        type: LOAD_POKEMON_COMBAT,
-        payload: pokemonCombat,
-      });
-
-      dispatch({
         type: LOAD_LEAGUES,
         payload: league,
       });
 
       if (timestampLoaded.images || timestampLoaded.sounds) {
-        await loadAssets(dispatch, imageRoot, soundsRoot, pokemonData, pokemonCombat, setStateImage, setStateSound);
+        await loadAssets(dispatch, imageRoot, soundsRoot, pokemon, setStateImage, setStateSound);
       } else {
-        const assetsPokemon = optionAssets(pokemonData, JSON.parse(stateImage), JSON.parse(stateSound));
-        mappingReleasedPokemonGO(pokemonData, assetsPokemon, pokemonCombat);
+        const assetsPokemon = optionAssets(pokemon, JSON.parse(stateImage), JSON.parse(stateSound));
+        mappingReleasedPokemonGO(pokemon, assetsPokemon);
         dispatch({
           type: LOAD_ASSETS,
           payload: assetsPokemon,
         });
         dispatch({
           type: LOAD_POKEMON,
-          payload: pokemonData,
+          payload: pokemon,
         });
       }
 
       dispatch(setPercent(90));
-      dispatch(loadStats(pokemonData));
-
-      dispatch({
-        type: LOAD_POKEMON_NAME,
-      });
+      dispatch(loadStats(pokemon));
 
       dispatch(setPercent(100));
       setTimeout(() => dispatch(setBar(false)), 500);
@@ -262,8 +233,7 @@ export const loadAssets = async (
   dispatch: Dispatch,
   imageRoot: APITreeRoot[],
   soundsRoot: APITreeRoot[],
-  pokemonData: PokemonDataModel[],
-  pokemonCombat: CombatPokemon[],
+  pokemon: PokemonDataModel[],
   setStateImage: SetValue<string>,
   setStateSound: SetValue<string>
 ) => {
@@ -293,8 +263,8 @@ export const loadAssets = async (
             const assetSoundFiles = optionPokeSound(soundData.data);
             setStateSound(JSON.stringify(assetSoundFiles));
 
-            const assetsPokemon = optionAssets(pokemonData, assetImgFiles, assetSoundFiles);
-            mappingReleasedPokemonGO(pokemonData, assetsPokemon, pokemonCombat);
+            const assetsPokemon = optionAssets(pokemon, assetImgFiles, assetSoundFiles);
+            mappingReleasedPokemonGO(pokemon, assetsPokemon);
 
             dispatch({
               type: LOAD_ASSETS,
@@ -303,7 +273,7 @@ export const loadAssets = async (
 
             dispatch({
               type: LOAD_POKEMON,
-              payload: pokemonData,
+              payload: pokemon,
             });
           });
         }

@@ -1,5 +1,5 @@
 import { PokemonTeamData } from '../../pages/PVP/models/battle.model';
-import { Combat, CombatPokemon } from './combat.model';
+import { Combat } from './combat.model';
 import { PokemonDataModel } from './pokemon.model';
 import { StatsPokemon } from './stats.model';
 
@@ -34,7 +34,7 @@ export interface Performers {
   fmove: Combat | undefined;
   cmovePri: Combat | undefined;
   cmoveSec: Combat | undefined;
-  combatPoke: CombatPokemon | undefined;
+  combatPoke: PokemonDataModel | undefined;
   shadow: boolean;
   purified: boolean | undefined;
   games: number;

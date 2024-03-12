@@ -4,7 +4,7 @@ import APIService from '../../services/API.service';
 import Tools from './Tools';
 
 import loading from '../../assets/loading.png';
-import { convertFormNameImg, getPokemonById, getPokemonByIndex, splitAndCapitalize, TypeRadioGroup } from '../../util/Utils';
+import { convertFormNameImg, getPokemonById, splitAndCapitalize, TypeRadioGroup } from '../../util/Utils';
 import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { getFormsGO } from '../../core/forms';
@@ -55,7 +55,7 @@ const FormSelect = (props: {
     }>
   >;
   objective?: boolean;
-  pokemonName: PokemonNameModel[];
+  pokemonName: PokemonDataModel[];
 }) => {
   const dispatch = useDispatch();
 
@@ -169,9 +169,9 @@ const FormSelect = (props: {
     const currentId = getPokemonById(props.pokemonName, data.id);
     if (currentId) {
       setDataStorePokemon({
-        prev: getPokemonByIndex(props.pokemonName, currentId.index - 1),
-        current: currentId,
-        next: getPokemonByIndex(props.pokemonName, currentId.index + 1),
+        prev: getPokemonById(props.pokemonName, currentId.id - 1),
+        current: getPokemonById(props.pokemonName, currentId.id),
+        next: getPokemonById(props.pokemonName, currentId.id + 1),
       });
     }
   };

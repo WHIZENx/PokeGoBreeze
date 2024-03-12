@@ -148,7 +148,7 @@ const Form = (props: {
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item) => findForm?.form.form_name.includes(item.toLowerCase()));
     if (findForm?.form.form_name !== '' && region) {
-      props.setRegion(props.region);
+      props.setRegion(!props.region || props.region !== region ? region : props.region);
     } else {
       props.setRegion(regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]);
     }
@@ -214,7 +214,7 @@ const Form = (props: {
       }
       const region = Object.values(regionList).find((item) => findForm?.form.form_name.includes(item.toLowerCase()));
       if (findForm?.form.form_name !== '' && region) {
-        props.setRegion(props.region);
+        props.setRegion(!props.region || props.region !== region ? region : props.region);
       } else {
         props.setRegion(regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]);
       }

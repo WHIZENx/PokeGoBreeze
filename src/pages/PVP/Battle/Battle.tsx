@@ -1259,15 +1259,15 @@ const Battle = () => {
               find={true}
               title="Fast Move"
               move={pokemon.fMove}
-              elite={pokemon.pokemonData?.combatPoke?.eliteQuickMoves.includes(pokemon.fMove?.name ?? '')}
+              elite={pokemon.pokemonData?.combatPoke?.eliteQuickMove?.includes(pokemon.fMove?.name ?? '')}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
                 find={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                elite={pokemon.pokemonData?.combatPoke?.eliteCinematicMoves.includes(pokemon.cMovePri?.name ?? '')}
-                special={pokemon.pokemonData?.combatPoke?.specialMoves.includes(pokemon.cMovePri?.name ?? '')}
+                elite={pokemon.pokemonData?.combatPoke?.eliteCinematicMove?.includes(pokemon.cMovePri?.name ?? '')}
+                special={pokemon.pokemonData?.combatPoke?.specialMoves?.includes(pokemon.cMovePri?.name ?? '')}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1277,8 +1277,8 @@ const Battle = () => {
                   find={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={pokemon.pokemonData?.combatPoke?.eliteCinematicMoves.includes(pokemon.cMoveSec?.name ?? '')}
-                  special={pokemon.pokemonData?.combatPoke?.specialMoves.includes(pokemon.cMovePri?.name ?? '')}
+                  elite={pokemon.pokemonData?.combatPoke?.eliteCinematicMove?.includes(pokemon.cMoveSec?.name ?? '')}
+                  special={pokemon.pokemonData?.combatPoke?.specialMoves?.includes(pokemon.cMovePri?.name ?? '')}
                 />
                 {findBuff(pokemon.cMoveSec)}
               </div>

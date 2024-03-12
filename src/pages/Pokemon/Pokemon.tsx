@@ -3,14 +3,7 @@ import APIService from '../../services/API.service';
 
 import './Pokemon.scss';
 
-import {
-  checkPokemonIncludeShadowForm,
-  convertFormNameImg,
-  convertName,
-  getPokemonById,
-  getPokemonByIndex,
-  splitAndCapitalize,
-} from '../../util/Utils';
+import { checkPokemonIncludeShadowForm, convertFormNameImg, convertName, getPokemonById, splitAndCapitalize } from '../../util/Utils';
 import { FORM_NORMAL, KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constants';
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -68,7 +61,6 @@ const Pokemon = (props: {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemonName ?? []);
   const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
 
   const params = useParams();
@@ -301,21 +293,21 @@ const Pokemon = (props: {
         document.title = `#${data?.id} - ${nameInfo}`;
       }
       setOnChangeForm(false);
-      const currentId = getPokemonById(pokemonName, data?.id);
+      const currentId = getPokemonById(pokemonData, data?.id);
       if (currentId) {
         setDataStorePokemon({
-          prev: getPokemonByIndex(pokemonName, currentId.index - 1),
-          current: currentId,
-          next: getPokemonByIndex(pokemonName, currentId.index + 1),
+          prev: getPokemonById(pokemonData, currentId.id - 1),
+          current: getPokemonById(pokemonData, currentId.id),
+          next: getPokemonById(pokemonData, currentId.id + 1),
         });
       }
     },
-    [searchParams, params.id, dataStore?.pokemon, pokemonName, pokemonData, dataStore?.evolution]
+    [searchParams, params.id, pokemonData]
   );
 
   const queryPokemon = useCallback(
     (id: number | string | undefined, axios: typeof APIService, source: CancelTokenSource) => {
-      if (id && dataStore?.pokemon && pokemonName.length > 0 && pokemonData.length > 0 && dataStore?.evolution) {
+      if (id && pokemonData.length > 0) {
         if (!params.id || (params.id && data && parseInt(id.toString()) !== data?.id)) {
           dispatch(showSpinner());
         }
@@ -353,15 +345,15 @@ const Pokemon = (props: {
   }, [dispatch, params.id, props.id, queryPokemon, reForm]);
 
   useEffect(() => {
-    if (pokemonName.length > 0) {
+    if (pokemonData.length > 0) {
       const keyDownHandler = (event: { keyCode: number; preventDefault: () => void }) => {
         if (!spinner.loading) {
-          const currentId = getPokemonById(pokemonName, parseInt(params.id ? params.id.toLowerCase() : props.id ?? ''));
+          const currentId = getPokemonById(pokemonData, parseInt(params.id ? params.id.toLowerCase() : props.id ?? ''));
           if (currentId) {
             const result = {
-              prev: getPokemonByIndex(pokemonName, currentId.index - 1),
-              current: currentId,
-              next: getPokemonByIndex(pokemonName, currentId.index + 1),
+              prev: getPokemonById(pokemonData, currentId.id - 1),
+              current: getPokemonById(pokemonData, currentId.id - 1),
+              next: getPokemonById(pokemonData, currentId.id + 1),
             };
             if (result.prev && event.keyCode === KEY_LEFT) {
               event.preventDefault();
@@ -378,7 +370,7 @@ const Pokemon = (props: {
         document.removeEventListener('keyup', keyDownHandler, false);
       };
     }
-  }, [params.id, props.id, spinner.loading, pokemonName]);
+  }, [params.id, props.id, spinner.loading, pokemonData]);
 
   const getNumGen = (url: string) => {
     return 'Gen ' + url?.split('/').at(6);
@@ -389,7 +381,7 @@ const Pokemon = (props: {
   };
 
   const getCostModifier = (id: number) => {
-    return dataStore?.evolution?.find((item) => item.id === id);
+    return dataStore?.pokemon?.find((item) => item.num === id);
   };
 
   const getPokemonDetails = (id: number, form: string | null, isDefault = false) => {

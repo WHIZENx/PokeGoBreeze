@@ -180,7 +180,7 @@ const SearchTypes = () => {
       setResult({
         pokemonList: data?.pokemon
           ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-          .filter((pokemon) => pokemon.types.includes(capitalize(currentType))),
+          .filter((pokemon) => pokemon.types.includes(currentType)),
         fastMove: data?.combat?.filter((type) => type.type_move === TypeMove.FAST && type.type === currentType),
         chargedMove: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE && type.type === currentType),
       });
