@@ -391,11 +391,23 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
   return result.sort((a, b) => a.num - b.num);
 };
 
+const convertBaseName = (name: string) => {
+  return name
+    .toLowerCase()
+    .replaceAll(' ', '-')
+    .replaceAll('.', '')
+    .replaceAll(':', '')
+    .replaceAll('é', 'e')
+    .replaceAll('’', '')
+    .replace('-east', '')
+    .replace('-dusk', '');
+};
+
 const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => {
   Object.values(pokemonData)
     .filter(
       (pokemon: PokemonDataModel) =>
-        pokemon.num > 0 && !result.some((item) => item.slug === pokemon.name.toLowerCase()) && pokemon.forme !== 'F'
+        pokemon.num > 0 && !result.some((item) => item.slug === convertBaseName(pokemon.name)) && pokemon.forme !== 'F'
     )
     .forEach((item: PokemonDataModel) => {
       const pokemon = new PokemonModel(item.num, item.name);

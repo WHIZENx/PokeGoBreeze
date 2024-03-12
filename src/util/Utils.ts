@@ -601,14 +601,15 @@ export const calRank = (
 export const mappingPokemonName = (pokemonData: PokemonDataModel[]) => {
   return pokemonData
     .filter((pokemon) => pokemon.num > 0 && pokemon.forme === FORM_NORMAL)
-    .map((pokemon) => new PokemonSearchingModel(pokemon));
+    .map((pokemon) => new PokemonSearchingModel(pokemon))
+    .sort((a, b) => a.id - b.id);
 };
 
 export const getPokemonById = (pokemonData: PokemonDataModel[], id: number) => {
-  if (id < 1) {
+  const result = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === FORM_NORMAL);
+  if (!result) {
     return;
   }
-  const result = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === FORM_NORMAL);
   return new PokemonNameModel(result?.num ?? 0, result?.name ?? '');
 };
 
