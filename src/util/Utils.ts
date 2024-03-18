@@ -686,7 +686,7 @@ export const convertIdMove = (name: string) => {
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: PokemonDataModel[], form: string) => {
-  return pokemon.some((p) => splitAndCapitalize(form, '-', '_').toUpperCase() === p.name && p.isShadow);
+  return pokemon.some((p) => splitAndCapitalize(form, '-', '_').toUpperCase() === (p.fullName ?? p.name) && p.isShadow);
 };
 
 const convertNameEffort = (name: string) => {

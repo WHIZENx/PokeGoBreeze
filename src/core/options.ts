@@ -383,7 +383,25 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
 
     optional.baseStatsGO = true;
 
-    result.push(new PokemonDataModel(pokemon, types, optional));
+    if (pokemon.shadow && pokemon.form === FORM_SHADOW) {
+      const pokemonOrigin = result.find((pk) => pk.num === pokemon.id && pk.forme === FORM_NORMAL);
+      if (pokemonOrigin) {
+        optional.shadowMoves?.forEach((move) => {
+          if (!pokemonOrigin.shadowMoves?.includes(move)) {
+            pokemonOrigin.shadowMoves?.push(move);
+          }
+        });
+        optional.purifiedMoves?.forEach((move) => {
+          if (!pokemonOrigin.purifiedMoves?.includes(move)) {
+            pokemonOrigin.purifiedMoves?.push(move);
+          }
+        });
+      }
+    }
+
+    if (pokemon.form !== FORM_SHADOW) {
+      result.push(new PokemonDataModel(pokemon, types, optional));
+    }
   });
 
   addPokemonFromData(data, result);
