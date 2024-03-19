@@ -195,11 +195,6 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
 
     const optional: PokemonDataOptional = {};
 
-    const gender = data.find(
-      (item) =>
-        item.templateId === `SPAWN_V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(pokemonSettings.pokemonId)}`
-    );
-
     if (pokemon.id === 235) {
       const moves = data.find((item) => item.templateId === 'SMEARGLE_MOVES_SETTINGS')?.data.smeargleMovesSettings;
       pokemon.quickMoves = moves?.quickMoves ?? [];
@@ -223,6 +218,11 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
         candy: pokemonSettings.thirdMove.candyToUnlock,
       };
     }
+
+    const gender = data.find(
+      (item) =>
+        item.templateId === `SPAWN_V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(pokemonSettings.pokemonId)}`
+    );
 
     optional.genderRatio = {
       M: gender?.data.genderSettings.gender?.malePercent ?? 0,
@@ -279,8 +279,10 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
           i.templateId.match(/^V\d{4}_POKEMON_*/g) &&
           i.data.pokemonSettings &&
           i.data.pokemonSettings.pokemonId === dataEvo.evoToName &&
-          convertAndReplaceNameGO(i.data.pokemonSettings.form?.toString() ?? FORM_NORMAL, i.data.pokemonSettings.pokemonId) ===
-            dataEvo.evoToForm
+          convertAndReplaceNameGO(
+            i.data.pokemonSettings.form?.toString() ?? pokemon.form?.toString() ?? FORM_NORMAL,
+            i.data.pokemonSettings.pokemonId
+          ) === dataEvo.evoToForm
       );
 
       if (pokemonGO) {
@@ -452,7 +454,9 @@ const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => 
         (i) =>
           i.templateId ===
           `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
-            pokemon.form === FORM_MEGA || pokemon.form === FORM_PRIMAL ? pokemon.pokemonId : convertName(item.slug)
+            pokemon.form?.toString().includes(FORM_MEGA) || pokemon.form?.toString() === FORM_PRIMAL
+              ? pokemon.pokemonId
+              : convertName(item.slug)
           )}`
       );
 
@@ -480,7 +484,16 @@ const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => 
         if (tempEvo) {
           pokemon.stats = tempEvo.stats;
         } else {
-          pokemon.stats = pokemonSettings?.stats;
+          if (pokemon.form?.toString().includes(FORM_MEGA)) {
+            const stats = calculateStatsByTag(undefined, item.baseStats, item.slug);
+            pokemon.stats = {
+              baseAttack: stats.atk,
+              baseDefense: stats.def,
+              baseStamina: stats.sta ?? 0,
+            };
+          } else {
+            pokemon.stats = pokemonSettings?.stats;
+          }
         }
       }
 

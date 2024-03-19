@@ -366,7 +366,9 @@ const Evolution = (props: {
                 e.currentTarget.src = APIService.getPokeSprite(value.id);
               })
               .catch(() => {
-                e.currentTarget.src = APIService.getPokeFullSprite(value.id);
+                if (e.currentTarget?.src) {
+                  e.currentTarget.src = APIService.getPokeFullSprite(value.id);
+                }
               });
           }}
         />
