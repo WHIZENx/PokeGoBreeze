@@ -1,6 +1,6 @@
 import { StatsPokemon } from '../stats.model';
 
-export interface PokemonSprit {
+interface PokemonSprit {
   back_default: string;
   back_female: string;
   back_shiny: string;

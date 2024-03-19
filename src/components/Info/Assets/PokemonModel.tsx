@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Asset } from '../../../core/models/asset.model';
 import { PokemonModelComponent } from './models/pokemon-model.model';
-import { PokemonGender } from '../../../core/models/details.model';
+import { PokemonGender } from '../../../core/models/pokemon.model';
 
 const PokemonModel = (props: { id: number; name: string }) => {
   const theme = useTheme();

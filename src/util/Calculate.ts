@@ -1334,9 +1334,9 @@ const queryMoveCounter = (
         data.weatherBoost,
         mf,
         mc,
-        calculateStatsBattle(data.stats.atk, options.IV_ATK, options.POKEMON_LEVEL, true),
-        calculateStatsBattle(data.stats.def, options.IV_DEF, options.POKEMON_LEVEL, true),
-        calculateStatsBattle(data.stats?.sta ?? 0, options.IV_HP, options.POKEMON_LEVEL, true),
+        calculateStatsBattle(data.pokemon.baseStats.atk, options.IV_ATK, options.POKEMON_LEVEL, true),
+        calculateStatsBattle(data.pokemon.baseStats.def, options.IV_DEF, options.POKEMON_LEVEL, true),
+        calculateStatsBattle(data.pokemon.baseStats?.sta ?? 0, options.IV_HP, options.POKEMON_LEVEL, true),
         data.pokemon.types,
         options,
         shadow
@@ -1366,12 +1366,8 @@ export const counterPokemon = (
 ) => {
   const dataList: PokemonQueryCounter[] = [];
   pokemonList.forEach((pokemon) => {
-    if (checkMoveSetAvailable(pokemon) && !pokemon.name.includes('_FEMALE')) {
-      if (pokemon === undefined) {
-        return false;
-      }
-      const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-      const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, stats, def, types, dataList);
+    if (pokemon && checkMoveSetAvailable(pokemon) && !pokemon.fullName?.includes('_FEMALE')) {
+      const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
       pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, false));
       pokemon.eliteQuickMove?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, true));
     }

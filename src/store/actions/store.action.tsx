@@ -44,10 +44,12 @@ export const LOAD_PVP_MOVES = 'LOAD_PVP_MOVES';
 export const RESET_STORE = 'RESET_STORE';
 
 const axios = APIService;
+const cancelToken = axios.getAxios().CancelToken;
+const source = cancelToken.source();
 
 const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
-  cancelToken: axios.getAxios().CancelToken.source().token,
+  cancelToken: source.token,
 };
 
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
@@ -94,7 +96,7 @@ export const loadTimestamp = async (
 ) => {
   await Promise.all([
     axios.getFetchUrl<string>(APIUrl.TIMESTAMP, {
-      cancelToken: axios.getAxios().CancelToken.source().token,
+      cancelToken: source.token,
     }),
     axios.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
     axios.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
@@ -146,7 +148,7 @@ export const loadGameMaster = (
 ) => {
   axios
     .getFetchUrl<PokemonData[]>(APIUrl.GAMEMASTER, {
-      cancelToken: axios.getAxios().CancelToken.source().token,
+      cancelToken: source.token,
     })
     .then(async (gm) => {
       let pokemonEncounter = new DbModel();

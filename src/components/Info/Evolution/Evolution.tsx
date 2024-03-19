@@ -489,7 +489,7 @@ const Evolution = (props: {
                             )}
                             {data?.quest.condition.desc === 'POKEMON_TYPE' && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
-                                {data?.quest?.condition.pokemonType?.map((value: string, index: number) => (
+                                {data?.quest?.condition.pokemonType?.map((value, index) => (
                                   <img
                                     key={index}
                                     alt="img-stardust"
@@ -543,9 +543,9 @@ const Evolution = (props: {
           )}
           {evoCount > 1 ? (
             <Fragment>
-              {chain.length > 1 || (chain.length === 1 && form !== '') ? (
+              {chain.length > 1 || (chain.length === 1 && form !== FORM_NORMAL && form !== '') ? (
                 <Fragment>
-                  {form !== '' && !form?.toUpperCase().includes(FORM_MEGA) ? (
+                  {form !== FORM_NORMAL && form !== '' && !form?.toUpperCase().includes(FORM_MEGA) ? (
                     <ThemeProvider theme={customTheme}>
                       <Badge
                         color="secondary"

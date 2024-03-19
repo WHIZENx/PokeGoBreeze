@@ -93,6 +93,10 @@ const Battle = () => {
     pokemonObj: { hp: 0, energy: 0 },
   });
 
+  const axios = APIService;
+  const cancelToken = axios.getAxios().CancelToken;
+  const source = cancelToken.source();
+
   const State = (
     timer: number,
     type: string | null,
@@ -632,9 +636,6 @@ const Battle = () => {
 
   const fetchPokemonBattle = useCallback(
     async (league: number) => {
-      const axios = APIService;
-      const cancelToken = axios.getAxios().CancelToken;
-      const source = cancelToken.source();
       dispatch(showSpinner());
       try {
         clearData();

@@ -4,7 +4,7 @@ import APIService from '../../services/API.service';
 import Tools from './Tools';
 
 import loading from '../../assets/loading.png';
-import { convertFormNameImg, getPokemonById, splitAndCapitalize, TypeRadioGroup } from '../../util/Utils';
+import { capitalize, convertFormNameImg, getPokemonById, splitAndCapitalize, TypeRadioGroup } from '../../util/Utils';
 import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { getFormsGO } from '../../core/forms';
@@ -19,6 +19,7 @@ import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { FormModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
+import { FORM_NORMAL } from '../../util/Constants';
 
 interface OptionsPokemon {
   prev: PokemonNameModel | undefined;
@@ -79,6 +80,10 @@ const FormSelect = (props: {
   const [pokeID, setPokeID] = useState(0);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const axios = APIService;
+  const cancelToken = axios.getAxios().CancelToken;
+  const source = cancelToken.source();
 
   const fetchMap = async (data: Species, axios: typeof APIService, source: CancelTokenSource) => {
     setFormList([]);
@@ -204,9 +209,6 @@ const FormSelect = (props: {
   }, [props.setName, props.name, currForm]);
 
   useEffect(() => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
     queryPokemon(props.id?.toString() ?? '', axios, source);
   }, [props.id, queryPokemon]);
 
@@ -369,7 +371,7 @@ const FormSelect = (props: {
                           : APIService.getPokeIconSprite(value.form.name)
                       }
                     />
-                    <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
+                    <p>{value.form.form_name === '' ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
                     {value.form.id === pokeID && (
                       <b>
                         <small>(Default)</small>

@@ -48,6 +48,10 @@ const TeamPVP = () => {
 
   const styleSheet: React.MutableRefObject<CSSStyleSheet | null> = useRef(null);
 
+  const axios = APIService;
+  const cancelToken = axios.getAxios().CancelToken;
+  const source = cancelToken.source();
+
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
@@ -109,9 +113,6 @@ const TeamPVP = () => {
   }, [pvp]);
 
   useEffect(() => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
     const fetchPokemon = async () => {
       dispatch(showSpinner());
       try {

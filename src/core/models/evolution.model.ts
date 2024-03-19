@@ -51,29 +51,3 @@ export interface EvolutionModel {
   form: string;
   canPurified?: boolean;
 }
-
-export class EvolutionDataModel {
-  id!: number;
-  name!: string;
-  evoList!: EvoList[];
-  tempEvo!: TempEvo[];
-  purified!: {
-    stardust?: number;
-    candy?: number;
-  };
-  thirdMove!: {
-    stardust?: number;
-    candy?: number;
-  };
-  form!: string;
-
-  constructor() {
-    this.id = 0;
-    this.name = '';
-    this.evoList = [];
-    this.tempEvo = [];
-    this.purified = {};
-    this.thirdMove = {};
-    this.form = '';
-  }
-}

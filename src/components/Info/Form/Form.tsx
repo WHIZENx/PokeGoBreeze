@@ -9,7 +9,14 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { convertFormNameImg, convertStatsEffort, filterFormName, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
+import {
+  capitalize,
+  convertFormNameImg,
+  convertStatsEffort,
+  filterFormName,
+  reversedCapitalize,
+  splitAndCapitalize,
+} from '../../../util/Utils';
 import { FORM_GMAX, FORM_INCARNATE, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD, regionList } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
@@ -361,7 +368,7 @@ const Form = (props: {
                       />
                     </div>
                   </div>
-                  <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
+                  <p>{value.form.form_name === '' ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
                   {value.form.id === pokeID && (
                     <b>
                       <small>(Default)</small>

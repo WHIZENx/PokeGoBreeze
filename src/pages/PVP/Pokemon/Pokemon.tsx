@@ -45,6 +45,10 @@ const PokemonPVP = () => {
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
+  const axios = APIService;
+  const cancelToken = axios.getAxios().CancelToken;
+  const source = cancelToken.source();
+
   useEffect(() => {
     if (!pvp) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
@@ -52,9 +56,6 @@ const PokemonPVP = () => {
   }, [pvp]);
 
   const fetchPokemonInfo = useCallback(async () => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
     dispatch(showSpinner());
     try {
       const cp = parseInt(params.cp);

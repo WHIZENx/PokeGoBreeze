@@ -1,7 +1,6 @@
 import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import pokemonData from '../data/pokemon.json';
-import { calculateStatsByTag } from './Calculate';
 import {
   FORM_GALARIAN,
   FORM_GMAX,
@@ -289,17 +288,16 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
 };
 
 export const convertArrStats = (data: PokemonDataModel[]) => {
-  return Object.values(data)
+  return data
     .filter((pokemon) => pokemon.num > 0)
     .map((value) => {
-      const stats = calculateStatsByTag(value, value.baseStats, value.slug);
       return {
         id: value.num,
         name: value.slug,
-        form: value.forme?.toLowerCase().replaceAll('-standard', '') ?? 'Normal',
+        form: (value.forme ?? FORM_NORMAL).toLowerCase().replaceAll('_', '-').replace('-standard', ''),
         base_stats: value.baseStats,
-        baseStatsPokeGo: { attack: stats.atk, defense: stats.def, stamina: stats?.sta ?? 0 },
-        baseStatsProd: stats.atk * stats.def * (stats?.sta ?? 0),
+        baseStatsPokeGo: { attack: value.baseStats.atk, defense: value.baseStats.def, stamina: value.baseStats.sta ?? 0 },
+        baseStatsProd: value.baseStats.atk * value.baseStats.def * (value.baseStats.sta ?? 0),
       } as ArrayStats;
     });
 };
@@ -386,7 +384,7 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
 const filterPokemonGO = (id: number, name: string, pokemon: PokemonDataModel) => {
   return (
     pokemon.num === id &&
-    pokemon.name ===
+    pokemon.fullName ===
       (pokemon.num === 555 && !name.toLowerCase().includes('zen')
         ? name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
         : convertName(name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
@@ -395,7 +393,7 @@ const filterPokemonGO = (id: number, name: string, pokemon: PokemonDataModel) =>
 
 const convertPokemonGO = (id: number, name: string, pokemon: PokemonDataModel) => {
   if (name.toLowerCase().includes('_mega')) {
-    return pokemon.num === id && pokemon.name === name?.toUpperCase().replaceAll('-', '_');
+    return pokemon.num === id && pokemon.fullName === name?.toUpperCase().replaceAll('-', '_');
   } else {
     return filterPokemonGO(id, name, pokemon);
   }
@@ -737,12 +735,12 @@ export const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRan
 export const filterFormName = (form: string, formStats: string) => {
   form =
     form === '' || form?.toUpperCase() === FORM_STANDARD || form?.toUpperCase() === FORM_SHADOW || form?.toUpperCase() === FORM_PURIFIED
-      ? 'Normal'
+      ? capitalize(FORM_NORMAL)
       : form?.toUpperCase().includes(FORM_MEGA)
       ? form.toLowerCase()
       : capitalize(form);
   formStats = formStats.toUpperCase().includes(FORM_MEGA) ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
-  formStats = formStats.toUpperCase() === FORM_HERO ? 'Normal' : formStats;
+  formStats = formStats.toUpperCase() === FORM_HERO ? capitalize(FORM_NORMAL) : formStats;
   return form.toLowerCase().includes(formStats.toLowerCase());
 };
 

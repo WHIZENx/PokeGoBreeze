@@ -102,6 +102,9 @@ const Pokemon = (props: {
 
   const [onChangeForm, setOnChangeForm] = useState(false);
 
+  const axios = APIService;
+  const cancelToken = axios.getAxios().CancelToken;
+  const source = cancelToken.source();
   const { enqueueSnackbar } = useSnackbar();
 
   const getRatioGender = (id: number) => {
@@ -337,9 +340,6 @@ const Pokemon = (props: {
   );
 
   useEffect(() => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
     const id = params.id ? params.id.toLowerCase() : props.id;
     queryPokemon(id, axios, source);
   }, [dispatch, params.id, props.id, queryPokemon, reForm]);
@@ -389,7 +389,7 @@ const Pokemon = (props: {
 
     if (form) {
       pokemonForm = dataStore?.pokemon?.find(
-        (item) => item.num === id && item.name === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
+        (item) => item.num === id && item.fullName === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
       );
 
       if (isDefault && !pokemonForm) {

@@ -5,6 +5,12 @@ import { StatsPokemon } from './stats.model';
 import { SelectMoveModel } from '../../components/Input/models/select-move.model';
 import { EvoList, TempEvo } from './evolution.model';
 
+export interface PokemonGender {
+  malePercent?: number;
+  femalePercent?: number;
+  genderlessPercent?: number;
+}
+
 export interface PokemonDataStats {
   level: number;
   isShadow: boolean;
@@ -36,23 +42,23 @@ interface EvolutionBranch {
 export interface Encounter {
   baseCaptureRate?: number;
   baseFleeRate?: number;
-  collisionRadiusM: number;
-  collisionHeightM: number;
-  collisionHeadRadiusM: number;
-  movementType: string;
-  movementTimerS: number;
-  jumpTimeS: number;
-  attackTimerS: number;
-  attackProbability: number;
-  dodgeProbability: number;
-  dodgeDurationS: number;
-  dodgeDistance: number;
-  cameraDistance: number;
-  minPokemonActionFrequencyS: number;
-  maxPokemonActionFrequencyS: number;
-  obShadowFormBaseCaptureRate: number;
-  obShadowFormAttackProbability: number;
-  obShadowFormDodgeProbability: number;
+  collisionRadiusM?: number;
+  collisionHeightM?: number;
+  collisionHeadRadiusM?: number;
+  movementType?: string;
+  movementTimerS?: number;
+  jumpTimeS?: number;
+  attackTimerS?: number;
+  attackProbability?: number;
+  dodgeProbability?: number;
+  dodgeDurationS?: number;
+  dodgeDistance?: number;
+  cameraDistance?: number;
+  minPokemonActionFrequencyS?: number;
+  maxPokemonActionFrequencyS?: number;
+  obShadowFormBaseCaptureRate?: number;
+  obShadowFormAttackProbability?: number;
+  obShadowFormDodgeProbability?: number;
 }
 
 export interface PokemonModel {

@@ -1,16 +1,28 @@
-import axios, { AxiosRequestConfig, AxiosStatic } from 'axios';
+import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
 import { FORM_MEGA } from '../util/Constants';
 import { Species } from '../core/models/API/species.model';
 
+interface CancelTokenAPI {
+  cancelToken: CancelTokenSource;
+}
+
 class APIService {
   date: Date;
   axios: AxiosStatic;
+  cancelToken: CancelTokenAPI;
 
   constructor() {
     this.date = new Date();
     this.axios = axios;
+    this.cancelToken = {
+      cancelToken: axios.CancelToken.source(),
+    };
     // this.axios.defaults.timeout = 10000;
+  }
+
+  getCancelToken() {
+    return this.cancelToken;
   }
 
   getAxios() {
@@ -21,16 +33,8 @@ class APIService {
     return this.axios.get<T>(url, options);
   }
 
-  getPokeInfo(value: number, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get(this.getPokeAPI('pokemon', value), options);
-  }
-
   getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
     return this.axios.get<Species>(this.getPokeAPI('pokemon-species', value), options);
-  }
-
-  getPokeForm(value: number, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get(this.getPokeAPI('pokemon-form', value), options);
   }
 
   getPokeJSON(path: string, options?: AxiosRequestConfig<any> | undefined) {

@@ -106,7 +106,8 @@ const TableMove = (props: {
       }
 
       const result = combatPoke.find(
-        (item) => props.form && item.name === convertName(props.form?.name.replace('-shadow', '').replace('-purified', '') ?? props.form)
+        (item) =>
+          props.form && item.fullName === convertName(props.form?.name.replace('-shadow', '').replace('-purified', '') ?? props.form)
       );
       if (result === undefined) {
         filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
