@@ -63,7 +63,6 @@ function App() {
       sounds: null,
     })
   );
-  const [stateCandy, setStateCandy] = useLocalStorage('candy', '');
   const [stateImage, setStateImage] = useLocalStorage('assets', '');
   const [stateSound, setStateSound] = useLocalStorage('sounds', '');
   const [, setVersion] = useLocalStorage('version', '');
@@ -73,17 +72,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      await loadTimestamp(
-        dispatch,
-        stateTimestamp,
-        setStateTimestamp,
-        setStateImage,
-        setStateSound,
-        setStateCandy,
-        stateImage,
-        stateSound,
-        stateCandy
-      );
+      await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound);
     };
     dispatch(setBar(true));
     dispatch(setPercent(0));

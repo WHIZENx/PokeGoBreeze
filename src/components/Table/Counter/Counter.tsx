@@ -2,7 +2,7 @@ import { FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, checkPokemonGO, convertFormName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
@@ -10,7 +10,7 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { FORM_GALARIAN, FORM_STANDARD, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { CounterModel } from './models/counter.model';
 
 const customStyles: TableStyles = {
@@ -242,13 +242,12 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
         resolve(
           counterPokemon(
             data?.options,
-            data?.released ?? [],
+            data?.pokemon ?? [],
             data?.typeEff,
             data?.weatherBoost,
             props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
             props.types ?? [],
-            data?.combat ?? [],
-            data?.pokemonCombat ?? []
+            data?.combat ?? []
           )
         );
       }, 3000);
@@ -310,15 +309,8 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
           if (!releasedGO) {
             return true;
           }
-          const result = data?.details?.find(
-            (item) =>
-              item.id === pokemon.pokemon_id &&
-              item.name ===
-                (item.id === 555 && !pokemon.pokemon_name.toLowerCase().includes('zen')
-                  ? pokemon.pokemon_name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
-                  : convertName(pokemon.pokemon_name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
-          );
-          return result ? result.releasedGO : false;
+          const result = checkPokemonGO(pokemon.pokemon_id, pokemon.pokemon_name, data?.pokemon ?? [], true);
+          return pokemon.releasedGO ?? result?.releasedGO ?? false;
         })}
       />
     </div>

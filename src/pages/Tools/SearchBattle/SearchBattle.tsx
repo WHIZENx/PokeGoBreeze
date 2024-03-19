@@ -20,11 +20,12 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN } from '../../../util/Constants';
+import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN } from '../../../util/Constants';
 import { EvolutionModel } from '../../../core/models/evolution.model';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleBaseStats, QueryStatesEvoChain } from '../../../util/models/calculate.model';
 import FreeSoloInput from '../../../components/Input/FreeSoloInput';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 const FindBattle = () => {
   const dispatch = useDispatch();
@@ -66,77 +67,80 @@ const FindBattle = () => {
 
   const currEvoChain = useCallback(
     (currId: number[] | undefined, form: string, arr: EvolutionModel[]) => {
-      if (form === FORM_GALARIAN) {
-        form = 'GALAR';
-      }
+      form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
       if (currId?.length === 0) {
         return arr;
       }
       let curr;
-      if (form === '') {
-        curr = dataStore?.evolution?.find((item) => currId?.includes(item.id) && form === item.form);
+      if (form === FORM_NORMAL) {
+        curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && form === item.forme);
       } else {
-        curr = dataStore?.evolution?.find((item) => currId?.includes(item.id) && item.form.includes(form));
+        curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && item.forme?.includes(form));
       }
-      if (!arr.map((i) => i.id).includes(curr?.id ?? 0)) {
+      if (!arr.map((i) => i.id).includes(curr?.num ?? 0)) {
         arr.push({
           ...curr,
           form,
-          id: curr?.id ?? 0,
-          name: curr?.name ?? '',
-          evo_list: curr?.evo_list ?? [],
-          temp_evo: curr?.temp_evo ?? [],
-          canPurified: curr?.canPurified ?? false,
+          id: curr?.num ?? 0,
+          name: curr?.pokemonId ?? '',
+          evoList: curr?.evoList ?? [],
+          tempEvo: curr?.tempEvo ?? [],
+          canPurified: curr?.isShadow ?? false,
         });
       }
       currEvoChain(
-        curr?.evo_list.map((i) => i.evo_to_id),
+        curr?.evoList?.map((i) => i.evoToId),
         form,
         arr
       );
     },
-    [dataStore?.evolution]
+    [dataStore?.pokemon]
   );
 
   const prevEvoChain = useCallback(
-    (obj: EvolutionModel, defaultForm: string, arr: EvolutionModel[], result: EvolutionModel[][]) => {
-      if (!arr.map((i) => i.id).includes(obj.id)) {
-        arr.push({ ...obj, form: defaultForm });
+    (obj: PokemonDataModel, defaultForm: string, arr: EvolutionModel[], result: EvolutionModel[][]) => {
+      if (!arr.map((i) => i.id).includes(obj.num)) {
+        arr.push({
+          ...obj,
+          name: obj.pokemonId ?? '',
+          id: obj.num,
+          evoList: obj.evoList ?? [],
+          tempEvo: obj.tempEvo ?? [],
+          form: defaultForm,
+        });
       }
-      obj.evo_list.forEach((i) => {
-        currEvoChain([i.evo_to_id], i.evo_to_form, arr);
+      obj.evoList?.forEach((i) => {
+        currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = dataStore?.evolution?.filter((item) =>
-        item.evo_list.find((i) => obj.id === i.evo_to_id && i.evo_to_form === defaultForm)
-      );
+      const curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => obj.num === i.evoToId && i.evoToForm === defaultForm));
       if (curr && curr.length >= 1) {
         curr?.forEach((item) => prevEvoChain(item, defaultForm, arr, result));
       } else {
         result.push(arr);
       }
     },
-    [currEvoChain, dataStore?.evolution]
+    [currEvoChain, dataStore?.pokemon]
   );
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const isForm = form?.form.form_name?.toUpperCase() ?? '';
-      let curr = dataStore?.evolution?.filter((item) => item.evo_list.find((i) => id === i.evo_to_id && isForm === i.evo_to_form));
+      const isForm = form?.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form?.form.form_name.replaceAll('-', '_').toUpperCase();
+      let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isForm === i.evoToForm));
       if (curr?.length === 0) {
-        if (isForm === '') {
-          curr = dataStore?.evolution?.filter((item) => id === item.id && isForm === item.form);
+        if (isForm === FORM_NORMAL) {
+          curr = dataStore?.pokemon?.filter((item) => id === item.num && isForm === item.forme);
         } else {
-          curr = dataStore?.evolution?.filter((item) => id === item.id && item.form.includes(isForm));
+          curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme?.includes(isForm ?? FORM_NORMAL));
         }
       }
       if (curr?.length === 0) {
-        curr = dataStore?.evolution?.filter((item) => id === item.id && item.form === '');
+        curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme === FORM_NORMAL);
       }
       const result: EvolutionModel[][] = [];
-      curr?.forEach((item) => prevEvoChain(item, isForm, [], result));
+      curr?.forEach((item) => prevEvoChain(item, isForm ?? FORM_NORMAL, [], result));
       return result;
     },
-    [prevEvoChain, form, dataStore?.evolution]
+    [prevEvoChain, form, dataStore?.pokemon]
   );
 
   const searchStatsPoke = useCallback(
@@ -145,7 +149,7 @@ const FindBattle = () => {
       getEvoChain(id)?.forEach((item) => {
         const tempArr: QueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemonData ?? [], value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemon ?? [], value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
             setMaxCP(data.maxCP);
           }
@@ -262,7 +266,7 @@ const FindBattle = () => {
 
   const getImageList = (id: number) => {
     const isForm = form?.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form?.form.form_name.replaceAll('-', '_').toUpperCase();
-    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form?.includes(isForm ?? ''));
+    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form?.includes(isForm ?? FORM_NORMAL));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
     }
@@ -277,11 +281,11 @@ const FindBattle = () => {
     if (evoId === id) {
       return candy;
     }
-    const data = item.find((i) => i.evo_list.find((e) => e.evo_to_id === evoId));
+    const data = item.find((i) => i.evoList.find((e) => e.evoToId === evoId));
     if (!data) {
       return candy;
     }
-    const prevEvo = data.evo_list.find((e) => e.evo_to_id === evoId);
+    const prevEvo = data.evoList.find((e) => e.evoToId === evoId);
     if (!prevEvo) {
       return candy;
     }

@@ -20,9 +20,9 @@ interface EvolutionQuest {
 }
 
 export interface EvoList {
-  evo_to_form: string;
-  evo_to_id: number;
-  evo_to_name: string;
+  evoToForm: string;
+  evoToId: number;
+  evoToName: string;
   candyCost: number;
   purificationEvoCandyCost: number;
   quest?: EvolutionQuest;
@@ -44,38 +44,10 @@ export interface EvolutionModel {
   prev?: string | undefined;
   id: number;
   name: string;
-  evo_list: EvoList[];
-  temp_evo: TempEvo[];
+  evoList: EvoList[];
+  tempEvo: TempEvo[];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form: string;
   canPurified?: boolean;
-}
-
-export class EvolutionDataModel {
-  id!: number;
-  name!: string;
-  // tslint:disable-next-line:variable-name
-  evo_list!: EvoList[];
-  // tslint:disable-next-line:variable-name
-  temp_evo!: TempEvo[];
-  purified!: {
-    stardust?: number;
-    candy?: number;
-  };
-  thirdMove!: {
-    stardust?: number;
-    candy?: number;
-  };
-  form!: string;
-
-  constructor() {
-    this.id = 0;
-    this.name = '';
-    this.evo_list = [];
-    this.temp_evo = [];
-    this.purified = {};
-    this.thirdMove = {};
-    this.form = '';
-  }
 }

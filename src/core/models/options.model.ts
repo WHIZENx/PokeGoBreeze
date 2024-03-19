@@ -1,4 +1,4 @@
-import { SettingLeague } from './league.model';
+import { LeagueReward, PokemonRewardLeague, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
 
 export interface PokemonData {
@@ -63,10 +63,22 @@ export interface PokemonData {
     moveSequenceSettings: { sequence: string[] };
     smeargleMovesSettings: PokemonModel;
     vsSeekerClientSettings: { allowedVsSeekerLeagueTemplateId: string[] };
-    vsSeekerPokemonRewards: any;
+    vsSeekerPokemonRewards: {
+      availablePokemon: {
+        unlockedAtRank: number;
+        guaranteedLimitedPokemonReward: { pokemon: { pokemonId: string; pokemonDisplay: { form: string } } };
+        pokemon: { pokemonId: string; pokemonDisplay: { form: string } };
+      }[];
+    };
     combatCompetitiveSeasonSettings: { seasonEndTimeTimestamp: string[] };
     combatRankingProtoSettings: { rankLevel: SettingLeague[] | undefined };
-    vsSeekerLoot: any;
+    vsSeekerLoot: {
+      rankLevel: number;
+      rank: PokemonRewardLeague;
+      pokemon: PokemonRewardLeague;
+      reward: LeagueReward[];
+      rewardTrack: string;
+    };
     combatLeague: {
       title: string;
       enabled: boolean;

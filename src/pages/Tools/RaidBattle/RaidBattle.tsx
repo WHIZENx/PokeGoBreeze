@@ -4,7 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { checkPokemonGO, convertFormName, convertName, splitAndCapitalize } from '../../../util/Utils';
+import { checkPokemonGO, convertFormName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
@@ -51,7 +51,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { PokemonDataModel, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
-import { CombatPokemon } from '../../../core/models/combat.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { TypeMove } from '../../../enums/move.enum';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
@@ -321,7 +320,7 @@ const RaidBattle = () => {
 
   const findMove = useCallback(
     (id: number, form: string) => {
-      const resultFirst = data?.pokemonCombat?.filter((item) => item.id === id);
+      const resultFirst = data?.pokemon?.filter((item) => item.num === id);
       form = form.replaceAll('-', '_').replaceAll('_standard', '').toUpperCase();
       const result = resultFirst?.find((item) => item.name === form);
       let simpleMove: SelectMoveModel[] = [];
@@ -334,62 +333,62 @@ const RaidBattle = () => {
           return;
         }
         let simpleMove: SelectMoveModel[] = [];
-        resultFirst.at(0)?.quickMoves.forEach((value) => {
+        resultFirst.at(0)?.quickMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
-        resultFirst.at(0)?.eliteQuickMoves.forEach((value) => {
+        resultFirst.at(0)?.eliteQuickMove?.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
         });
         setFMove(simpleMove.at(0));
         setResultFMove(simpleMove);
         simpleMove = [];
-        resultFirst.at(0)?.cinematicMoves.forEach((value) => {
+        resultFirst.at(0)?.cinematicMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
-        resultFirst.at(0)?.eliteCinematicMoves.forEach((value) => {
+        resultFirst.at(0)?.eliteCinematicMove?.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
         });
-        resultFirst.at(0)?.shadowMoves.forEach((value) => {
+        resultFirst.at(0)?.shadowMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
         });
-        resultFirst.at(0)?.purifiedMoves.forEach((value) => {
+        resultFirst.at(0)?.purifiedMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
         });
-        resultFirst.at(0)?.specialMoves.forEach((value) => {
+        resultFirst.at(0)?.specialMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
         });
         setCMove(simpleMove.at(0));
         return setResultCMove(simpleMove);
       }
       simpleMove = [];
-      result?.quickMoves.forEach((value) => {
+      result?.quickMoves?.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
       });
-      result?.eliteQuickMoves.forEach((value) => {
+      result?.eliteQuickMove?.forEach((value) => {
         simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
       });
       setFMove(simpleMove.at(0));
       setResultFMove(simpleMove);
       simpleMove = [];
-      result?.cinematicMoves.forEach((value) => {
+      result?.cinematicMoves?.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
       });
-      result?.eliteCinematicMoves.forEach((value) => {
+      result?.eliteCinematicMove?.forEach((value) => {
         simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
       });
-      result?.shadowMoves.forEach((value) => {
+      result?.shadowMoves?.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
       });
-      result?.purifiedMoves.forEach((value) => {
+      result?.purifiedMoves?.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
       });
-      result?.specialMoves.forEach((value) => {
+      result?.specialMoves?.forEach((value) => {
         simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
       });
       setCMove(simpleMove.at(0));
       return setResultCMove(simpleMove);
     },
-    [data?.pokemonCombat]
+    [data?.pokemon]
   );
 
   const addCPokeData = (
@@ -473,54 +472,72 @@ const RaidBattle = () => {
 
   const addFPokeData = (
     dataList: PokemonMoveData[],
-    combat: CombatPokemon,
-    movePoke: string[],
     pokemon: PokemonDataModel,
+    movePoke: string[],
     felite: boolean,
     pokemonTarget: boolean,
     isShadow = false
   ) => {
     movePoke.forEach((vf) => {
-      addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, felite, false, null, pokemonTarget);
+      addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, felite, false, null, pokemonTarget);
       if (!pokemon.forme || isShadow) {
-        if (combat.shadowMoves.length > 0) {
-          addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
+        if (pokemon.shadowMoves && pokemon.shadowMoves.length > 0) {
+          addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, true, false, felite, false, pokemon.shadowMoves, pokemonTarget);
         }
-        addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, felite, false, combat.shadowMoves, pokemonTarget);
-        addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, felite, false, combat.purifiedMoves, pokemonTarget);
+        addCPokeData(
+          dataList,
+          pokemon.shadowMoves ?? [],
+          pokemon,
+          vf,
+          true,
+          false,
+          felite,
+          false,
+          pokemon.shadowMoves ?? [],
+          pokemonTarget
+        );
+        addCPokeData(
+          dataList,
+          pokemon.purifiedMoves ?? [],
+          pokemon,
+          vf,
+          false,
+          true,
+          felite,
+          false,
+          pokemon.purifiedMoves ?? [],
+          pokemonTarget
+        );
       }
       if (
         (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) &&
-        combat.shadowMoves.length > 0
+        pokemon.shadowMoves &&
+        pokemon.shadowMoves.length > 0
       ) {
-        addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, felite, true, combat.shadowMoves, pokemonTarget);
+        addCPokeData(
+          dataList,
+          pokemon.eliteCinematicMove ?? [],
+          pokemon,
+          vf,
+          true,
+          false,
+          felite,
+          true,
+          pokemon.shadowMoves,
+          pokemonTarget
+        );
       } else {
-        addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, felite, true, null, pokemonTarget);
+        addCPokeData(dataList, pokemon.eliteCinematicMove ?? [], pokemon, vf, false, false, felite, true, null, pokemonTarget);
       }
     });
   };
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: PokemonMoveData[] = [];
-    (data?.pokemonData ?? []).forEach((pokemon) => {
-      if (pokemon.forme?.toUpperCase() !== FORM_GMAX) {
-        const pokemonCombatResult = data?.pokemonCombat?.filter(
-          (item) =>
-            item.id === pokemon.num &&
-            item.baseSpecies === (pokemon.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
-        );
-        const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon.name));
-        let combatPoke: CombatPokemon | undefined;
-        if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
-          combatPoke = pokemonCombatResult.at(0);
-        } else {
-          combatPoke = result;
-        }
-        if (combatPoke) {
-          const pokemonGO = checkPokemonGO(pokemon, data?.details ?? []);
-          addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false, pokemonTarget, pokemonGO?.isShadow);
-          addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true, pokemonTarget, pokemonGO?.isShadow);
-        }
+    data?.pokemon?.forEach((pokemon) => {
+      if (pokemon && pokemon.forme?.toUpperCase() !== FORM_GMAX) {
+        addFPokeData(dataList, pokemon, pokemon.quickMoves ?? [], false, pokemonTarget, pokemon.isShadow);
+        addFPokeData(dataList, pokemon, pokemon.eliteQuickMove ?? [], true, pokemonTarget, pokemon.isShadow);
       }
     });
     if (pokemonTarget) {
@@ -1221,8 +1238,8 @@ const RaidBattle = () => {
                 }
                 if (obj.pokemon) {
                   obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
-                  const result = checkPokemonGO(obj.pokemon, data?.details ?? []);
-                  return result ? result.releasedGO : false;
+                  const result = checkPokemonGO(obj.pokemon.num, obj.pokemon.name, data?.pokemon ?? []);
+                  return obj.pokemon.releasedGO ?? result?.releasedGO ?? false;
                 }
                 return false;
               })

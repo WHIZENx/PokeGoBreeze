@@ -1,7 +1,7 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertName, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -19,7 +19,6 @@ import { Button } from 'react-bootstrap';
 import { MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
-import { CombatPokemon } from '../../../core/models/combat.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { PokemonBattleRanking } from '../models/battle.model';
 
@@ -46,6 +45,10 @@ const PokemonPVP = () => {
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
+  const axios = APIService;
+  const cancelToken = axios.getAxios().CancelToken;
+  const source = cancelToken.source();
+
   useEffect(() => {
     if (!pvp) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
@@ -53,9 +56,6 @@ const PokemonPVP = () => {
   }, [pvp]);
 
   const fetchPokemonInfo = useCallback(async () => {
-    const axios = APIService;
-    const cancelToken = axios.getAxios().CancelToken;
-    const source = cancelToken.source();
     dispatch(showSpinner());
     try {
       const cp = parseInt(params.cp);
@@ -74,7 +74,7 @@ const PokemonPVP = () => {
       }
 
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-      const pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
+      const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
       const id = pokemon?.num;
       const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
       document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${
@@ -111,19 +111,6 @@ const PokemonPVP = () => {
 
       if (fmove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
         fmove = { ...fmove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
-      }
-
-      const pokemonCombatResult = dataStore?.pokemonCombat?.filter(
-        (item) =>
-          item.id === pokemon?.num &&
-          item.baseSpecies === (pokemon?.baseSpecies ? convertName(pokemon.baseSpecies) : convertName(pokemon.name))
-      );
-      const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon?.name));
-      let combatPoke: CombatPokemon | undefined;
-      if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
-        combatPoke = pokemonCombatResult.at(0);
-      } else {
-        combatPoke = result;
       }
 
       const maxCP = parseInt(params.cp);
@@ -164,15 +151,14 @@ const PokemonPVP = () => {
         def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
         sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
         prod: statsRanking.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
-        combatPoke,
         fmove,
         cmovePri,
         cmoveSec,
         bestStats,
         shadow: data.speciesName.includes('(Shadow)') ?? false,
         purified:
-          (combatPoke?.purifiedMoves.includes(cmovePri?.name ?? '') ||
-            (cMoveDataSec !== null && cMoveDataSec !== undefined && combatPoke?.purifiedMoves.includes(cMoveDataSec))) ??
+          (pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') ||
+            (cMoveDataSec !== null && cMoveDataSec !== undefined && pokemon?.purifiedMoves?.includes(cMoveDataSec))) ??
           false,
       });
       dispatch(hideSpinner());
@@ -186,22 +172,13 @@ const PokemonPVP = () => {
         })
       );
     }
-  }, [
-    params.type,
-    params.pokemon,
-    params.cp,
-    statsRanking,
-    dataStore?.pokemonCombat,
-    dataStore?.combat,
-    dataStore?.pokemonData,
-    dataStore?.assets,
-  ]);
+  }, [params.type, params.pokemon, params.cp, statsRanking, dataStore?.combat, dataStore?.pokemon, dataStore?.assets]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
     };
-    if (statsRanking && dataStore?.pokemonCombat && dataStore?.combat && dataStore?.pokemonData && dataStore?.assets) {
+    if (statsRanking && dataStore?.combat && dataStore?.pokemon && dataStore?.assets) {
       if (dataStore.combat.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
       } else {
@@ -324,7 +301,7 @@ const PokemonPVP = () => {
                       title="Fast Move"
                       color={'white'}
                       move={rankingPoke?.fmove}
-                      elite={rankingPoke?.combatPoke?.eliteQuickMoves.includes(rankingPoke?.fmove?.name ?? '')}
+                      elite={rankingPoke?.pokemon?.eliteQuickMove?.includes(rankingPoke?.fmove?.name ?? '')}
                     />
                     <TypeBadge
                       grow={true}
@@ -332,10 +309,10 @@ const PokemonPVP = () => {
                       title="Primary Charged Move"
                       color={'white'}
                       move={rankingPoke?.cmovePri}
-                      elite={rankingPoke?.combatPoke?.eliteCinematicMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
-                      shadow={rankingPoke?.combatPoke?.shadowMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
-                      purified={rankingPoke?.combatPoke?.purifiedMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
-                      special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      elite={rankingPoke?.pokemon?.eliteCinematicMove?.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      shadow={rankingPoke?.pokemon?.shadowMoves?.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      purified={rankingPoke?.pokemon?.purifiedMoves?.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      special={rankingPoke?.pokemon?.specialMoves?.includes(rankingPoke?.cmovePri?.name ?? '')}
                     />
                     {rankingPoke?.cmoveSec && (
                       <TypeBadge
@@ -344,17 +321,17 @@ const PokemonPVP = () => {
                         title="Secondary Charged Move"
                         color={'white'}
                         move={rankingPoke?.cmoveSec}
-                        elite={rankingPoke?.combatPoke?.eliteCinematicMoves.includes(rankingPoke?.cmoveSec.name)}
-                        shadow={rankingPoke?.combatPoke?.shadowMoves.includes(rankingPoke?.cmoveSec.name)}
-                        purified={rankingPoke?.combatPoke?.purifiedMoves.includes(rankingPoke?.cmoveSec.name)}
-                        special={rankingPoke?.combatPoke?.specialMoves.includes(rankingPoke?.cmoveSec?.name)}
+                        elite={rankingPoke?.pokemon?.eliteCinematicMove?.includes(rankingPoke?.cmoveSec.name)}
+                        shadow={rankingPoke?.pokemon?.shadowMoves?.includes(rankingPoke?.cmoveSec.name)}
+                        purified={rankingPoke?.pokemon?.purifiedMoves?.includes(rankingPoke?.cmoveSec.name)}
+                        special={rankingPoke?.pokemon?.specialMoves?.includes(rankingPoke?.cmoveSec?.name)}
                       />
                     )}
                   </div>
                 </div>
               </div>
               <hr />
-              {Keys(dataStore?.assets ?? [], dataStore?.pokemonData ?? [], rankingPoke?.data, params.cp, params.type)}
+              {Keys(dataStore?.assets ?? [], dataStore?.pokemon ?? [], rankingPoke?.data, params.cp, params.type)}
             </div>
             <div className="container">
               <hr />
@@ -364,7 +341,7 @@ const PokemonPVP = () => {
               <hr />
               {TypeEffective(rankingPoke?.pokemon?.types ?? [])}
             </div>
-            <div className="container">{MoveSet(rankingPoke?.data?.moves, rankingPoke?.combatPoke, dataStore?.combat ?? [])}</div>
+            <div className="container">{MoveSet(rankingPoke?.data?.moves, rankingPoke?.pokemon, dataStore?.combat ?? [])}</div>
           </div>
         </div>
       )}

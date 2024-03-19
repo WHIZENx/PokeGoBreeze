@@ -49,16 +49,16 @@ export interface PokemonRewardSetLeague {
   rank?: number;
 }
 
-interface RankRewardLeague {
-  rank: number;
-  free: RankRewardSetLeague[];
-  premium: RankRewardSetLeague[];
+export interface RankRewardLeague {
+  rank?: number;
+  free?: RankRewardSetLeague[];
+  premium?: RankRewardSetLeague[];
 }
 
 export interface PokemonRewardLeague {
-  rank: number;
-  free: PokemonRewardSetLeague[];
-  premium: PokemonRewardSetLeague[];
+  rank?: number;
+  free?: PokemonRewardSetLeague[];
+  premium?: PokemonRewardSetLeague[];
 }
 
 export interface SettingLeague {
@@ -66,6 +66,12 @@ export interface SettingLeague {
   additionalTotalBattlesRequired?: number;
   additionalWinsRequired: number;
   minRatingRequired: number;
+}
+
+export interface LeagueReward {
+  pokemonReward: boolean;
+  itemLootTable: boolean;
+  item: { stardust: number; item: string | boolean; count: number };
 }
 
 export interface LeagueData {
@@ -95,8 +101,8 @@ export class LeagueOptionsDataModel {
       end: number | string;
     };
     rewards: {
-      rank: RankRewardLeague[];
-      pokemon: PokemonRewardLeague[];
+      rank: { [x: number]: RankRewardLeague };
+      pokemon: { [x: number]: PokemonRewardLeague };
     };
     settings: SettingLeague[] | undefined;
   };
@@ -157,11 +163,12 @@ export class LeagueRewardDataModel {
 // tslint:disable-next-line:max-classes-per-file
 export class LeagueRewardPokemonDataModel {
   guaranteedLimited!: boolean;
-  id?: number | null;
+  id: number;
   name: string;
   form: string;
 
   constructor() {
+    this.id = 0;
     this.name = '';
     this.form = '';
   }
