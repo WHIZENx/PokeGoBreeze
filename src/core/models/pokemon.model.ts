@@ -409,7 +409,7 @@ export class PokemonDataModel {
     this.evoList = options?.evoList ?? [];
     this.tempEvo = options?.tempEvo ?? [];
     this.purified = options?.purified;
-    this.thirdMove = options?.purified;
+    this.thirdMove = options?.thirdMove;
   }
 }
 
