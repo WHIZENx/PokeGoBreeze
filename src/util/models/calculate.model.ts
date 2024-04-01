@@ -111,8 +111,8 @@ export interface QueryStatesEvoChain {
   id: number;
   name: string;
   prev?: string | undefined;
-  evo_list: EvoList[];
-  temp_evo: TempEvo[];
+  evoList: EvoList[];
+  tempEvo: TempEvo[];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   canPurified?: boolean;
@@ -147,7 +147,6 @@ export class QueryMovesCounterPokemon {
   weatherBoost: WeatherBoost | undefined;
   combat: Combat[] = [];
   pokemon!: PokemonDataModel;
-  stats!: StatsPokemon;
   def!: number;
   types: string[] = [];
   dataList!: PokemonQueryCounter[];
@@ -158,7 +157,6 @@ export class QueryMovesCounterPokemon {
     weatherBoost: WeatherBoost | undefined,
     combat: Combat[],
     pokemon: PokemonDataModel,
-    stats: StatsPokemon,
     def: number,
     types: string[],
     dataList: PokemonQueryCounter[] = []
@@ -168,7 +166,6 @@ export class QueryMovesCounterPokemon {
     this.weatherBoost = weatherBoost;
     this.combat = combat;
     this.pokemon = pokemon;
-    this.stats = stats;
     this.def = def;
     this.types = types;
     this.dataList = dataList;

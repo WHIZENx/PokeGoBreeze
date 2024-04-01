@@ -12,11 +12,12 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { Combat, CombatPokemon } from '../../../core/models/combat.model';
+import { Combat } from '../../../core/models/combat.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
 import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
 interface PokemonMoves {
   fastMoves: (Combat | undefined)[];
@@ -60,26 +61,28 @@ const TableMove = (props: {
     },
   });
 
-  const filterMoveType = (combat: CombatPokemon | undefined) => {
+  const filterMoveType = (combat: PokemonDataModel | undefined) => {
     if (!combat) {
       return setMoveOrigin(undefined);
     }
     return setMoveOrigin({
-      fastMoves: combat.quickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
-      chargedMoves: combat.cinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
-      eliteFastMoves: combat.eliteQuickMoves.map((move) => data?.combat?.find((item) => item.name === move)),
-      eliteChargedMoves: combat.eliteCinematicMoves.map((move) => data?.combat?.find((item) => item.name === move)),
-      purifiedMoves: props.form?.is_shadow ? [] : combat.purifiedMoves.map((move) => data?.combat?.find((item) => item.name === move)),
-      shadowMoves: props.form?.is_purified ? [] : combat.shadowMoves.map((move) => data?.combat?.find((item) => item.name === move)),
-      specialMoves: combat.specialMoves.map((move) => data?.combat?.find((item) => item.name === move)),
+      fastMoves: combat.quickMoves?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
+      chargedMoves: combat.cinematicMoves?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
+      eliteFastMoves: combat.eliteQuickMove?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
+      eliteChargedMoves: combat.eliteCinematicMove?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
+      purifiedMoves:
+        (props.form?.is_shadow ? [] : combat.purifiedMoves?.map((move) => data?.combat?.find((item) => item.name === move))) ?? [],
+      shadowMoves:
+        (props.form?.is_purified ? [] : combat.shadowMoves?.map((move) => data?.combat?.find((item) => item.name === move))) ?? [],
+      specialMoves: combat.specialMoves?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
     });
   };
 
   const findMove = useCallback(() => {
-    const combatPoke = data?.pokemonCombat
+    const combatPoke = data?.pokemon
       ?.filter((item) =>
         props.form?.id || props.form?.is_shadow || props.form?.is_purified
-          ? item.id === parseInt(props.data?.url?.split('/').at(6) ?? '0')
+          ? item.num === parseInt(props.data?.url?.split('/').at(6) ?? '0')
           : item.name ===
             (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
       )
@@ -95,15 +98,16 @@ const TableMove = (props: {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
       } else if (combatPoke.length === 0 && props.id) {
-        const combatPoke: CombatPokemon[] | undefined = data?.pokemonCombat?.filter(
-          (item) => (item.id === props.id ?? 0) && item.baseSpecies === item.name
+        const combatPoke: PokemonDataModel[] | undefined = data?.pokemon?.filter(
+          (item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name
         );
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       }
 
       const result = combatPoke.find(
-        (item) => props.form && item.name === convertName(props.form?.name.replace('-shadow', '').replace('-purified', '') ?? props.form)
+        (item) =>
+          props.form && item.fullName === convertName(props.form?.name.replace('-shadow', '').replace('-purified', '') ?? props.form)
       );
       if (result === undefined) {
         filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
@@ -115,7 +119,7 @@ const TableMove = (props: {
     }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
 
-  const setRankMove = (result: CombatPokemon | undefined) => {
+  const setRankMove = (result: PokemonDataModel | undefined) => {
     return rankMove(
       data?.options,
       data?.typeEff,

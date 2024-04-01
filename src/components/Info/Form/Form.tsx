@@ -9,7 +9,14 @@ import APIService from '../../../services/API.service';
 import Evolution from '../Evolution/Evolution';
 import Gender from '../Gender';
 import Mega from '../Mega/Mega';
-import { convertFormNameImg, convertStatsEffort, filterFormName, reversedCapitalize, splitAndCapitalize } from '../../../util/Utils';
+import {
+  capitalize,
+  convertFormNameImg,
+  convertStatsEffort,
+  filterFormName,
+  reversedCapitalize,
+  splitAndCapitalize,
+} from '../../../util/Utils';
 import { FORM_GMAX, FORM_INCARNATE, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD, regionList } from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
@@ -25,8 +32,7 @@ import { PokemonDataForm, PokemonFormModify } from '../../../core/models/API/for
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { PokemonInfo } from '../../../core/models/API/info.model';
 import { Species } from '../../../core/models/API/species.model';
-import { Details } from '../../../core/models/details.model';
-import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
+import { PokemonDataModel, PokemonGenderRatio } from '../../../core/models/pokemon.model';
 
 const Form = (props: {
   pokemonRouter: ReduxRouterState;
@@ -58,7 +64,7 @@ const Form = (props: {
   // eslint-disable-next-line no-unused-vars
   onSetIDPoke?: (id: number) => void;
   paramForm: string | undefined | null;
-  pokemonDetail: Details | undefined;
+  pokemonDetail: PokemonDataModel | undefined;
 }) => {
   const dispatch = useDispatch();
 
@@ -149,7 +155,7 @@ const Form = (props: {
     setCurrForm(findForm);
     const region = Object.values(regionList).find((item) => findForm?.form.form_name.includes(item.toLowerCase()));
     if (findForm?.form.form_name !== '' && region) {
-      props.setRegion(props.region);
+      props.setRegion(!props.region || props.region !== region ? region : props.region);
     } else {
       props.setRegion(regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]);
     }
@@ -215,7 +221,7 @@ const Form = (props: {
       }
       const region = Object.values(regionList).find((item) => findForm?.form.form_name.includes(item.toLowerCase()));
       if (findForm?.form.form_name !== '' && region) {
-        props.setRegion(props.region);
+        props.setRegion(!props.region || props.region !== region ? region : props.region);
       } else {
         props.setRegion(regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]);
       }
@@ -362,7 +368,7 @@ const Form = (props: {
                       />
                     </div>
                   </div>
-                  <p>{value.form.form_name === '' ? 'Normal' : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
+                  <p>{value.form.form_name === '' ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
                   {value.form.id === pokeID && (
                     <b>
                       <small>(Default)</small>

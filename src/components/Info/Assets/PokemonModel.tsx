@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Asset } from '../../../core/models/asset.model';
 import { PokemonModelComponent } from './models/pokemon-model.model';
-import { PokemonGender } from '../../../core/models/details.model';
+import { PokemonGender } from '../../../core/models/pokemon.model';
 
 const PokemonModel = (props: { id: number; name: string }) => {
   const theme = useTheme();
@@ -28,8 +28,12 @@ const PokemonModel = (props: { id: number; name: string }) => {
     (id: number) => {
       sound.current = data?.assets?.find((item) => item.id === id);
       const model = sound.current;
-      const detail = data?.details?.find((item) => item.id === id);
-      gender.current = detail?.gender;
+      const detail = data?.pokemon?.find((item) => item.num === id);
+      gender.current = {
+        malePercent: detail?.genderRatio.M,
+        femalePercent: detail?.genderRatio.F,
+        genderlessPercent: detail?.genderRatio.M === 0 && detail?.genderRatio.M === 0 ? 1 : 0,
+      };
       return model
         ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
         : [];

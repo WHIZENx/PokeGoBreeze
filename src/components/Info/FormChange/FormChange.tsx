@@ -7,9 +7,9 @@ import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonModelComponent } from '../Assets/models/pokemon-model.model';
-import { Details } from '../../../core/models/details.model';
+import { PokemonDataModel } from '../../../core/models/pokemon.model';
 
-const FromChange = (props: { details: Details | undefined; defaultName: string | undefined }) => {
+const FromChange = (props: { details: PokemonDataModel | undefined; defaultName: string | undefined }) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
 
@@ -29,7 +29,7 @@ const FromChange = (props: { details: Details | undefined; defaultName: string |
 
   useEffect(() => {
     if (props.details) {
-      setPokeAssets(getImageList(props.details.id));
+      setPokeAssets(getImageList(props.details.num));
     }
   }, [getImageList, props.details]);
 
@@ -47,7 +47,7 @@ const FromChange = (props: { details: Details | undefined; defaultName: string |
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
                   src={APIService.getPokemonModel(
-                    pokeAssets?.find((pokemon) => pokemon.form === props.details?.form)?.image?.at(0)?.default ?? ''
+                    pokeAssets?.find((pokemon) => pokemon.form === props.details?.forme)?.image?.at(0)?.default ?? ''
                   )}
                 />
               </div>
@@ -94,7 +94,7 @@ const FromChange = (props: { details: Details | undefined; defaultName: string |
                           className="d-flex align-items-center caption"
                           style={{ color: (theme.palette as any).customText.caption, width: 'max-content' }}
                         >
-                          <Candy id={props.details?.id} />
+                          <Candy id={props.details?.num} />
                           <span style={{ marginLeft: 2 }}> {`x${value.candyCost}`}</span>
                         </span>
                         <span

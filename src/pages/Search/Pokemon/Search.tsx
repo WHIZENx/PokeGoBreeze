@@ -6,7 +6,7 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, getPokemonByIndex } from '../../../util/Utils';
+import { getPokemonById, mappingPokemonName } from '../../../util/Utils';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
@@ -17,7 +17,7 @@ const Search = () => {
   const theme = useTheme();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
-  const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemonName ?? []);
+  const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
 
   const [first, setFirst] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
@@ -40,7 +40,7 @@ const Search = () => {
 
   useEffect(() => {
     if (pokemonName.length > 0) {
-      setPokemonList(pokemonName.filter((item) => item.id > 0).map((item) => new PokemonSearchingModel(item)));
+      setPokemonList(mappingPokemonName(pokemonName));
     }
   }, [pokemonName]);
 
@@ -87,14 +87,14 @@ const Search = () => {
   const decId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getPokemonByIndex(pokemonName, currentId.index - 1)?.id ?? 0);
+      setId(getPokemonById(pokemonName, currentId.id - 1)?.id ?? 0);
     }
   };
 
   const incId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getPokemonByIndex(pokemonName, currentId.index + 1)?.id ?? 0);
+      setId(getPokemonById(pokemonName, currentId.id + 1)?.id ?? 0);
     }
   };
 
@@ -102,9 +102,9 @@ const Search = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
       const result = {
-        prev: getPokemonByIndex(pokemonName, currentId.index - 1),
+        prev: getPokemonById(pokemonName, currentId.id - 1),
         current: currentId,
-        next: getPokemonByIndex(pokemonName, currentId.index + 1),
+        next: getPokemonById(pokemonName, currentId.id + 1),
       };
       if (event.keyCode === KEY_ENTER) {
         setShowResult(false);

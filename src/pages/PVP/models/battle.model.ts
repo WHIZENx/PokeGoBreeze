@@ -1,4 +1,4 @@
-import { Buff, Combat, CombatPokemon } from '../../../core/models/combat.model';
+import { Buff, Combat } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { StatsPokemon } from '../../../core/models/stats.model';
@@ -21,7 +21,7 @@ export interface PokemonBattleData {
   energy: number;
   block: number;
   turn: number;
-  combatPoke?: CombatPokemon;
+  combatPoke?: PokemonDataModel;
   disableCMoveSec?: boolean;
   disableCMovePri?: boolean;
 }
@@ -67,7 +67,6 @@ export interface PokemonTeamData {
   fmove: Combat | undefined;
   cmovePri: Combat | undefined;
   cmoveSec: Combat | undefined;
-  combatPoke: CombatPokemon | undefined;
   shadow: boolean;
   purified: boolean | undefined;
 }
@@ -112,7 +111,6 @@ export interface PokemonBattleRanking {
         rank: number;
       }
     | undefined;
-  combatPoke: CombatPokemon | undefined;
   fmove: Combat | undefined;
   cmovePri: Combat | undefined;
   cmoveSec: Combat | undefined;

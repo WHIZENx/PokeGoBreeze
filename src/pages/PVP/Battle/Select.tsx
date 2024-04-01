@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { convertName, splitAndCapitalize } from '../../../util/Utils';
+import { splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { MAX_IV, MAX_LEVEL } from '../../../util/Constants';
-import { Combat, CombatPokemon } from '../../../core/models/combat.model';
+import { Combat } from '../../../core/models/combat.model';
 import { BattlePokemonData } from '../../../core/models/pvp.model';
 import { PokemonBattle } from '../models/battle.model';
 
@@ -23,7 +23,6 @@ const SelectPoke = (props: {
   clearData: (removeMove: boolean) => void;
 }) => {
   const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
-  const pokemonCombat = useSelector((state: StoreState) => state.store?.data?.pokemonCombat ?? []);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -92,21 +91,7 @@ const SelectPoke = (props: {
     }
     const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, props.league);
 
-    const pokemonCombatResult = pokemonCombat.filter(
-      (item) =>
-        item.id === value.pokemon?.num &&
-        item.baseSpecies === (value.pokemon?.baseSpecies ? convertName(value.pokemon?.baseSpecies) : convertName(value.pokemon?.name))
-    );
-
-    const result = pokemonCombatResult.find((item) => item.name === convertName(value.pokemon?.name));
-    let combatPoke: CombatPokemon | undefined;
-    if (!result && pokemonCombatResult.length > 0) {
-      combatPoke = pokemonCombatResult.at(0);
-    } else {
-      combatPoke = result;
-    }
-
-    if (allStats && combatPoke && value) {
+    if (allStats && value && value.pokemon) {
       setScore(value.score);
       props.setPokemonBattle({
         ...props.pokemonBattle,
@@ -122,7 +107,6 @@ const SelectPoke = (props: {
           block: 0,
           turn: 0,
           allStats,
-          combatPoke,
           currentStats: allStats[allStats.length - 1],
           bestStats: allStats[allStats.length - 1],
         },
