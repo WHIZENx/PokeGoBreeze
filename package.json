@@ -141,6 +141,8 @@
     "yargs-parser": "^13.1.2",
     "tough-cookie": "^4.1.3",
     "request": "https://registry.npmjs.org/@cypress/request/-/request-3.0.1.tgz",
-    "ip": "^2.0.1"
+    "ip": "^2.0.1",
+    "express": "4.19.2",
+    "webpack-dev-middleware": "5.3.4"
   }
 }
