@@ -93,6 +93,10 @@ const Battle = () => {
     pokemonObj: { hp: 0, energy: 0 },
   });
 
+  const axios = APIService;
+  const cancelToken = axios.getAxios().CancelToken;
+  const source = cancelToken.source();
+
   const State = (
     timer: number,
     type: string | null,
@@ -632,14 +636,11 @@ const Battle = () => {
 
   const fetchPokemonBattle = useCallback(
     async (league: number) => {
-      const axios = APIService;
-      const cancelToken = axios.getAxios().CancelToken;
-      const source = cancelToken.source();
       dispatch(showSpinner());
       try {
         clearData();
-        const file: RankingsPVP[] = (
-          await axios.getFetchUrl(axios.getRankingFile('all', league, 'overall'), {
+        const file = (
+          await axios.getFetchUrl<RankingsPVP[]>(axios.getRankingFile('all', league, 'overall'), {
             cancelToken: source.token,
           })
         ).data;
@@ -652,10 +653,10 @@ const Battle = () => {
             .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
             .map((item) => {
               const name = convertNameRankingToOri(item.speciesId.replace('_shadow', ''), item.speciesName);
-              let pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === name);
+              let pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
 
               if (!pokemon) {
-                pokemon = dataStore?.pokemonData?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
+                pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
                 if (!pokemon) {
                   return null;
                 }
@@ -688,14 +689,14 @@ const Battle = () => {
         );
       }
     },
-    [dataStore?.options, dataStore?.pokemonData, dataStore?.assets]
+    [dataStore?.options, dataStore?.pokemon, dataStore?.assets]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (dataStore?.options && dataStore?.pokemonData && dataStore?.assets) {
+    if (dataStore?.options && dataStore?.pokemon && dataStore?.assets) {
       fetchPokemon(league);
     }
   }, [fetchPokemonBattle, league]);
@@ -1259,15 +1260,15 @@ const Battle = () => {
               find={true}
               title="Fast Move"
               move={pokemon.fMove}
-              elite={pokemon.pokemonData?.combatPoke?.eliteQuickMoves.includes(pokemon.fMove?.name ?? '')}
+              elite={pokemon.pokemonData?.combatPoke?.eliteQuickMove?.includes(pokemon.fMove?.name ?? '')}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
                 find={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                elite={pokemon.pokemonData?.combatPoke?.eliteCinematicMoves.includes(pokemon.cMovePri?.name ?? '')}
-                special={pokemon.pokemonData?.combatPoke?.specialMoves.includes(pokemon.cMovePri?.name ?? '')}
+                elite={pokemon.pokemonData?.combatPoke?.eliteCinematicMove?.includes(pokemon.cMovePri?.name ?? '')}
+                special={pokemon.pokemonData?.combatPoke?.specialMoves?.includes(pokemon.cMovePri?.name ?? '')}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1277,8 +1278,8 @@ const Battle = () => {
                   find={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={pokemon.pokemonData?.combatPoke?.eliteCinematicMoves.includes(pokemon.cMoveSec?.name ?? '')}
-                  special={pokemon.pokemonData?.combatPoke?.specialMoves.includes(pokemon.cMovePri?.name ?? '')}
+                  elite={pokemon.pokemonData?.combatPoke?.eliteCinematicMove?.includes(pokemon.cMoveSec?.name ?? '')}
+                  special={pokemon.pokemonData?.combatPoke?.specialMoves?.includes(pokemon.cMovePri?.name ?? '')}
                 />
                 {findBuff(pokemon.cMoveSec)}
               </div>

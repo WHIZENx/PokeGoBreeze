@@ -34,9 +34,6 @@ import { PokemonFormModify } from '../../../core/models/API/form.model';
 interface PokemonCatchChance {
   baseCaptureRate?: number;
   baseFleeRate?: number;
-  collisionRadiusM?: number;
-  collisionHeightM?: number;
-  collisionHeadRadiusM?: number;
   movementType?: string;
   movementTimerS?: number;
   jumpTimeS?: number;
@@ -45,9 +42,6 @@ interface PokemonCatchChance {
   dodgeProbability?: number;
   dodgeDurationS?: number;
   dodgeDistance?: number;
-  cameraDistance?: number;
-  minPokemonActionFrequencyS?: number;
-  maxPokemonActionFrequencyS?: number;
   obShadowFormBaseCaptureRate?: number;
   obShadowFormAttackProbability?: number;
   obShadowFormDodgeProbability?: number;
@@ -203,7 +197,7 @@ const CatchChance = () => {
   };
 
   const findCatchCapture = (id: number, form: PokemonFormModify) => {
-    const pokemon = pokemonData.find((data) => data.id === id && data.name === convertName(form.form.name));
+    const pokemon = pokemonData.find((data) => data.num === id && data.fullName === convertName(form.form.name));
     if (!pokemon) {
       return setEncounter(false);
     }
@@ -216,15 +210,15 @@ const CatchChance = () => {
       medalType = {
         ...medalType,
         typePri: {
-          type: pokemon.type.replace('POKEMON_TYPE_', ''),
+          type: pokemon.types[0],
           priority: medal && medal.typePri ? medal.typePri.priority : 0,
         },
       };
-      if (pokemon.type2) {
+      if (pokemon.types.length > 1) {
         medalType = {
           ...medalType,
           typeSec: {
-            type: pokemon.type2.replace('POKEMON_TYPE_', ''),
+            type: pokemon.types[1],
             priority: medal && medal.typeSec ? medal.typeSec.priority : 0,
           },
         };
@@ -366,7 +360,7 @@ const CatchChance = () => {
           {!encounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
-                <b>{splitAndCapitalize(convertName(form?.form.name), '_', ' ')}</b> cannot be encountered.
+                <b>{splitAndCapitalize(convertName(form?.form.name), '_', ' ')}</b> cannot be encountered in wild.
               </h5>
             </div>
           )}
@@ -494,7 +488,7 @@ const CatchChance = () => {
                             0) * 100
                         }%`}
                     </h5>
-                    <p>{data && `Time: ${(data.attackTimerS ?? 0) / 10} sec`}</p>
+                    <p>{data && `Time: ${((data.attackTimerS ?? 0) / 10).toFixed(2)} sec`}</p>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
@@ -507,7 +501,7 @@ const CatchChance = () => {
                         100
                       }%`}
                   </h5>
-                  <p>{data && `Time: ${(data.dodgeDurationS ?? 0) / 10} sec`}</p>
+                  <p>{data && `Time: ${((data.dodgeDurationS ?? 0) / 10).toFixed(2)} sec`}</p>
                 </div>
               </div>
             </div>

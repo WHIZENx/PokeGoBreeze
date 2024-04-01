@@ -30,19 +30,6 @@ export interface Combat {
   special?: boolean;
 }
 
-export interface CombatPokemon {
-  id: number;
-  name: string;
-  baseSpecies: string;
-  quickMoves: string[];
-  cinematicMoves: string[];
-  shadowMoves: string[];
-  purifiedMoves: string[];
-  eliteQuickMoves: string[];
-  eliteCinematicMoves: string[];
-  specialMoves: string[];
-}
-
 export class CombatDataModel {
   name!: string;
   type!: string | null;
@@ -87,32 +74,5 @@ export class CombatDataModel {
     this.accuracyChance = 0;
     this.criticalChance = 0;
     this.staminaLossScalar = 0;
-  }
-}
-
-// tslint:disable-next-line:max-classes-per-file
-export class CombatPokemonDataModel {
-  id!: number;
-  name!: string;
-  baseSpecies!: string;
-  quickMoves!: string[];
-  cinematicMoves!: string[];
-  shadowMoves!: string[];
-  purifiedMoves!: string[];
-  eliteQuickMoves!: string[];
-  eliteCinematicMoves!: string[];
-  specialMoves!: string[];
-
-  constructor() {
-    this.id = 0;
-    this.name = '';
-    this.baseSpecies = '';
-    this.quickMoves = [];
-    this.cinematicMoves = [];
-    this.shadowMoves = [];
-    this.purifiedMoves = [];
-    this.eliteQuickMoves = [];
-    this.eliteCinematicMoves = [];
-    this.specialMoves = [];
   }
 }

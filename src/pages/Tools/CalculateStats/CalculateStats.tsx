@@ -128,12 +128,12 @@ const Calculate = () => {
     [calculateStatsPoke]
   );
 
-  const onHandleLevel = useCallback(() => {
-    setStatLevel(statLevel);
-    setStatData(
-      calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats?.level ?? 1, statLevel, typePoke)
-    );
-  }, [globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats, typePoke]);
+  const onHandleLevel = (level: number) => {
+    if (pokeStats) {
+      setStatLevel(level);
+      setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, level, typePoke));
+    }
+  };
 
   return (
     <Fragment>
@@ -282,7 +282,7 @@ const Calculate = () => {
                 max={typePoke === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={pokeStats ? false : true}
-                onChange={(pokeStats ? onHandleLevel : null) as any}
+                onChange={(_, value) => onHandleLevel(value as number)}
               />
             </Box>
           </div>

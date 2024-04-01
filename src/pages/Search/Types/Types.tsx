@@ -152,7 +152,7 @@ const SearchTypes = () => {
     chargedMove: [] as Combat[],
   });
   const allData = {
-    pokemon: (data?.released?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length ?? 1) - 1,
+    pokemon: (data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length ?? 1) - 1,
     fastMoves: data?.combat?.filter((type) => type.type_move === TypeMove.FAST)?.length,
     chargedMoves: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE)?.length,
   };
@@ -176,16 +176,16 @@ const SearchTypes = () => {
   }, [typeList, currentType]);
 
   useEffect(() => {
-    if (data?.released) {
+    if (data?.pokemon) {
       setResult({
-        pokemonList: data?.released
+        pokemonList: data?.pokemon
           ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-          .filter((pokemon) => pokemon.types.includes(capitalize(currentType))),
+          .filter((pokemon) => pokemon.types.includes(currentType)),
         fastMove: data?.combat?.filter((type) => type.type_move === TypeMove.FAST && type.type === currentType),
         chargedMove: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE && type.type === currentType),
       });
     }
-  }, [currentType, releasedGO, data?.released]);
+  }, [currentType, releasedGO, data?.pokemon]);
 
   const changeType = (value: string) => {
     setShowType(false);

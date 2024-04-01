@@ -30,7 +30,7 @@ import CandyXL from '../../components/Sprites/Candy/CandyXL';
 import { StatsModel, StatsPokemon } from '../../core/models/stats.model';
 import { Asset } from '../../core/models/asset.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
-import { Combat, CombatPokemon } from '../../core/models/combat.model';
+import { Combat } from '../../core/models/combat.model';
 import { MAX_IV, MAX_LEVEL } from '../../util/Constants';
 import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
 import { PokemonBattleRanking } from './models/battle.model';
@@ -271,7 +271,7 @@ export const MoveSet = (
         fastMoves: PokemonRankingMove[];
       }
     | undefined,
-  combatList: CombatPokemon | undefined,
+  combatList: PokemonDataModel | undefined,
   combatData: Combat[]
 ) => {
   const findArchetype = (archetype: string | string[]) => {
@@ -325,13 +325,13 @@ export const MoveSet = (
 
     let elite = false;
     let special = false;
-    if (combatList?.eliteQuickMoves.includes(name)) {
+    if (combatList?.eliteQuickMove?.includes(name)) {
       elite = true;
     }
-    if (combatList?.eliteCinematicMoves.includes(name)) {
+    if (combatList?.eliteCinematicMove?.includes(name)) {
       elite = true;
     }
-    if (combatList?.specialMoves.includes(name)) {
+    if (combatList?.specialMoves?.includes(name)) {
       special = true;
     }
 

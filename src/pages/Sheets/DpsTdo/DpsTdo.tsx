@@ -1,14 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
-import { LevelRating, convertName, splitAndCapitalize, capitalize, convertFormName, checkPokemonGO } from '../../../util/Utils';
+import { LevelRating, splitAndCapitalize, capitalize, convertFormName, checkPokemonGO } from '../../../util/Utils';
 import {
   DEFAULT_POKEMON_DEF_OBJ,
   DEFAULT_TYPES,
-  FORM_GALARIAN,
   FORM_GMAX,
   FORM_MEGA,
   FORM_PRIMAL,
-  FORM_STANDARD,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -47,7 +45,7 @@ import { setDPSSheetPage } from '../../../store/actions/options.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/move.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
-import { Combat, CombatPokemon } from '../../../core/models/combat.model';
+import { Combat } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { OptionOtherDPS } from '../../../store/models/options.model';
@@ -66,7 +64,6 @@ interface PokemonSheetData {
   mShadow: boolean;
   elite: { fmove: boolean; cmove: boolean };
   cp: number;
-  isForceReleasedGO?: boolean;
 }
 
 const nameSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
@@ -433,47 +430,28 @@ const DpsTdo = () => {
     });
   };
 
-  const addFPokeData = (
-    dataList: PokemonSheetData[],
-    combat: CombatPokemon,
-    movePoke: string[],
-    pokemon: PokemonDataModel,
-    felite: boolean,
-    isShadow = false
-  ) => {
+  const addFPokeData = (dataList: PokemonSheetData[], pokemon: PokemonDataModel, movePoke: string[], felite: boolean, isShadow = false) => {
     movePoke.forEach((vf) => {
-      addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, false, false, false, felite, false);
+      addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, false, felite, false);
       if (!pokemon.forme || isShadow) {
-        if (combat.shadowMoves?.length > 0) {
-          addCPokeData(dataList, combat.cinematicMoves, pokemon, vf, true, false, false, felite, false, combat.shadowMoves);
-          addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, true, false, false, felite, true, combat.shadowMoves);
+        if (pokemon.shadowMoves && pokemon.shadowMoves.length > 0) {
+          addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, true, false, false, felite, false, pokemon.shadowMoves);
+          addCPokeData(dataList, pokemon.eliteCinematicMove ?? [], pokemon, vf, true, false, false, felite, true, pokemon.shadowMoves);
         }
-        addCPokeData(dataList, combat.shadowMoves, pokemon, vf, true, false, false, felite, false, combat.shadowMoves);
-        addCPokeData(dataList, combat.purifiedMoves, pokemon, vf, false, true, false, felite, false, combat.purifiedMoves);
+        addCPokeData(dataList, pokemon.shadowMoves ?? [], pokemon, vf, true, false, false, felite, false, pokemon.shadowMoves);
+        addCPokeData(dataList, pokemon.purifiedMoves ?? [], pokemon, vf, false, true, false, felite, false, pokemon.purifiedMoves);
       }
-      addCPokeData(dataList, combat.specialMoves, pokemon, vf, false, false, true, felite, false, combat.specialMoves);
-      addCPokeData(dataList, combat.eliteCinematicMoves, pokemon, vf, false, false, false, felite, true);
+      addCPokeData(dataList, pokemon.specialMoves ?? [], pokemon, vf, false, false, true, felite, false, pokemon.specialMoves);
+      addCPokeData(dataList, pokemon.eliteCinematicMove ?? [], pokemon, vf, false, false, false, felite, true);
     });
   };
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
-    (data?.pokemonData ?? []).forEach((pokemon) => {
-      const pokemonCombatResult = data?.pokemonCombat?.filter(
-        (item) => item.id === pokemon.num && item.baseSpecies === convertName(pokemon.baseSpecies ?? pokemon.name)
-      );
-
-      const result = pokemonCombatResult?.find((item) => item.name === convertName(pokemon.name));
-      let combatPoke: CombatPokemon | undefined;
-      if (!result && pokemonCombatResult && pokemonCombatResult.length > 0) {
-        combatPoke = pokemonCombatResult.find((item) => item.name === item.baseSpecies);
-      } else {
-        combatPoke = result;
-      }
-      if (combatPoke) {
-        const pokemonGO = checkPokemonGO(pokemon, data?.details ?? []);
-        addFPokeData(dataList, combatPoke, combatPoke.quickMoves, pokemon, false, pokemonGO?.isShadow);
-        addFPokeData(dataList, combatPoke, combatPoke.eliteQuickMoves, pokemon, true, pokemonGO?.isShadow);
+    data?.pokemon?.forEach((pokemon) => {
+      if (pokemon) {
+        addFPokeData(dataList, pokemon, pokemon.quickMoves ?? [], false, pokemon.isShadow);
+        addFPokeData(dataList, pokemon, pokemon.eliteQuickMove ?? [], true, pokemon.isShadow);
       }
     });
     setShowSpinner(false);
@@ -522,22 +500,8 @@ const DpsTdo = () => {
 
       let boolReleaseGO = true;
       if (releasedGO) {
-        const result = data?.details?.find((pokemon) => {
-          if (item.pokemon.name?.toLowerCase().includes('_mega')) {
-            return pokemon.id === item.pokemon?.num && pokemon.name === item.pokemon.name?.toUpperCase().replaceAll('-', '_');
-          } else {
-            return (
-              pokemon.id === item.pokemon.num &&
-              pokemon.name ===
-                (pokemon.id === 555 && !item.pokemon.name?.toLowerCase().includes('zen')
-                  ? item.pokemon.name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
-                  : convertName(item.pokemon.name ?? '')
-                      .replace('NIDORAN_F', 'NIDORAN_FEMALE')
-                      .replace('NIDORAN_M', 'NIDORAN_MALE'))
-            );
-          }
-        });
-        boolReleaseGO = item.isForceReleasedGO ?? (result ? result.releasedGO : false);
+        const result = checkPokemonGO(item.pokemon?.num, item.pokemon.name, data?.pokemon ?? []);
+        boolReleaseGO = item.pokemon?.releasedGO ?? result?.releasedGO ?? false;
       }
       if (enableShadow || enableElite || enableMega || enableGmax || enablePrimal || enableLegendary || enableMythic || enableUltrabeast) {
         return (
@@ -600,14 +564,7 @@ const DpsTdo = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    if (
-      (data?.pokemonData ?? []).length > 0 &&
-      data?.pokemonCombat &&
-      data?.combat &&
-      data?.options &&
-      data?.typeEff &&
-      data?.weatherBoost
-    ) {
+    if (data?.pokemon && data?.pokemon.length > 0 && data?.combat && data?.options && data?.typeEff && data?.weatherBoost) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDpsTable(calculateDPSTable());
@@ -618,8 +575,7 @@ const DpsTdo = () => {
     dataTargetPokemon,
     fmoveTargetPokemon,
     cmoveTargetPokemon,
-    data?.pokemonData,
-    data?.pokemonCombat,
+    data?.pokemon,
     data?.combat,
     data?.options,
     data?.typeEff,

@@ -1,11 +1,12 @@
+import { APIPath, APITree } from '../services/models/api.model';
 import { splitAndCapitalize } from '../util/Utils';
 import { League, LeaguePVP, LeaguePVPPokemonDataModel } from './models/league.model';
 
-export const pvpConvertPath = (data: { tree: { path: string }[] }, path: string) => {
+export const pvpConvertPath = (data: APITree, path: string) => {
   return data.tree.filter((item) => item.path.includes(path)).map((item) => item.path.replace(path, ''));
 };
 
-export const pvpFindFirstPath = (data: { path: string }[], path: string) => {
+export const pvpFindFirstPath = (data: APIPath[], path: string) => {
   return data?.filter((item) => item.path.includes(path)).map((item) => item.path);
 };
 

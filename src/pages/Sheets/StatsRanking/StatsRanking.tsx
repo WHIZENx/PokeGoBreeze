@@ -117,7 +117,7 @@ const StatsRanking = () => {
   ];
 
   const stats = useSelector((state: StatsState) => state.stats);
-  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemonData ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
   const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: PokemonDataModel[]) => {
@@ -334,7 +334,7 @@ const StatsRanking = () => {
         </div>
       </div>
       <Stats statATK={select?.atk} statDEF={select?.def} statSTA={select?.sta} statProd={select?.statProd} pokemonStats={stats} />
-      <div className="d-flex" style={{ gap: 15 }}>
+      <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
           <span className="input-group-text">Find Pokémon</span>
           <input

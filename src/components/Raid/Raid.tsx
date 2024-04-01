@@ -27,8 +27,7 @@ const Raid = (props: {
   setTimeAllow?: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const theme = useTheme();
-  const details = useSelector((state: StoreState) => state.store.data?.details ?? []);
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemonData ?? []);
+  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [tier, setTier]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(1);
   const [pokemonClass, setPokemonClass]: [string | null | undefined, React.Dispatch<React.SetStateAction<string | null | undefined>>] =
     useState();
@@ -147,7 +146,7 @@ const Raid = (props: {
               tier,
               !pokemonClass && (props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) ?? false),
               pokemonClass !== null && pokemonClass !== undefined && props.currForm?.form.form_name?.toUpperCase() === FORM_PRIMAL,
-              details.find((pokemon) => pokemon.id === props.id)?.pokemonClass === 'ULTRA_BEAST'
+              pokemonData.find((pokemon) => pokemon.num === props.id)?.pokemonClass === 'ULTRA_BEAST'
             )}
           />
         </div>

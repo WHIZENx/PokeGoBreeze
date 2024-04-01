@@ -3,8 +3,8 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import { capitalize, convertFormName, convertName, splitAndCapitalize } from '../../util/Utils';
-import { FORM_GALARIAN, FORM_STANDARD, STAB_MULTIPLY } from '../../util/Constants';
+import { capitalize, checkPokemonGO, convertFormName, splitAndCapitalize } from '../../util/Utils';
+import { STAB_MULTIPLY } from '../../util/Constants';
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
@@ -135,10 +135,10 @@ const Move = (props: { id?: number }) => {
   }, [params.id, props.id, queryMoveData, move]);
 
   useEffect(() => {
-    if (move && data?.options && data?.released && data?.typeEff && data?.weatherBoost && data?.pokemonCombat) {
-      setTopList(queryTopMove(data?.options, data?.released, data?.typeEff, data?.weatherBoost, data?.pokemonCombat, move));
+    if (move && data?.options && data?.pokemon && data?.typeEff && data?.weatherBoost) {
+      setTopList(queryTopMove(data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost, move));
     }
-  }, [move, data?.options, data?.released, data?.typeEff, data?.weatherBoost, data?.pokemonCombat]);
+  }, [move, data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost]);
 
   return (
     <div className={'element-bottom poke-container' + (props.id ? '' : ' container')}>
@@ -478,16 +478,8 @@ const Move = (props: { id?: number }) => {
                       if (!releasedGO) {
                         return true;
                       }
-                      const result = data?.details?.find(
-                        (item) =>
-                          item.id === pokemon.num &&
-                          item.name ===
-                            (item.id === 555 && !pokemon.name.toLowerCase().includes('zen')
-                              ? pokemon.name?.toUpperCase().replaceAll(' ', '_').replace('_GALAR', `_${FORM_GALARIAN}`) +
-                                `_${FORM_STANDARD}`
-                              : convertName(pokemon.name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
-                      );
-                      return result ? result.releasedGO : false;
+                      const result = checkPokemonGO(pokemon.num, pokemon.name, data?.pokemon ?? []);
+                      return pokemon.releasedGO ?? result?.releasedGO ?? false;
                     })}
                     pagination={true}
                     defaultSortFieldId={4}

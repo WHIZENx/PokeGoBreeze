@@ -1,36 +1,40 @@
-import axios, { AxiosRequestConfig, AxiosStatic } from 'axios';
+import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
 import { FORM_MEGA } from '../util/Constants';
 import { Species } from '../core/models/API/species.model';
 
+interface CancelTokenAPI {
+  cancelToken: CancelTokenSource;
+}
+
 class APIService {
   date: Date;
   axios: AxiosStatic;
+  cancelToken: CancelTokenAPI;
 
   constructor() {
     this.date = new Date();
     this.axios = axios;
+    this.cancelToken = {
+      cancelToken: axios.CancelToken.source(),
+    };
     // this.axios.defaults.timeout = 10000;
+  }
+
+  getCancelToken() {
+    return this.cancelToken;
   }
 
   getAxios() {
     return this.axios;
   }
 
-  getFetchUrl(url: string, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get(url, options);
-  }
-
-  getPokeInfo(value: number, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get(this.getPokeAPI('pokemon', value), options);
+  getFetchUrl<T>(url: string, options?: AxiosRequestConfig<any> | undefined) {
+    return this.axios.get<T>(url, options);
   }
 
   getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
     return this.axios.get<Species>(this.getPokeAPI('pokemon-species', value), options);
-  }
-
-  getPokeForm(value: number, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get(this.getPokeAPI('pokemon-form', value), options);
   }
 
   getPokeJSON(path: string, options?: AxiosRequestConfig<any> | undefined) {
@@ -41,7 +45,10 @@ class APIService {
     return `${APIUrl.POKE_API_URL}${path}/${value}`;
   }
 
-  getPokemonModel(item: string | null) {
+  getPokemonModel(item: string | null | undefined) {
+    if (!item) {
+      return this.getPokeSprite(0);
+    }
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon/${item}.png`;
   }
 

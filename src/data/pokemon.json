@@ -12801,23 +12801,19 @@
     "cosmeticFormesAliases": [],
     "cosmeticFormesSprites": [],
     "otherFormes": [
-      "Mewtwo-Armor",
       "Mewtwo-Mega-X",
       "Mewtwo-Mega-Y"
     ],
     "otherFormesAliases": [
-      "mewtwoarmor",
       "mewtwomegax",
       "mewtwomegay"
     ],
     "otherFormesSprites": [
-      "mewtwo-armor",
       "mewtwo-mega-x",
       "mewtwo-mega-y"
     ],
     "formeOrder": [
       "Mewtwo",
-      "Mewtwo-Armor",
       "Mewtwo-Mega-X",
       "Mewtwo-Mega-Y"
     ],
@@ -12837,59 +12833,6 @@
     "gen": 1,
     "region": "kanto",
     "version": "red-blue"
-  },
-  "mewtwoarmor": {
-    "num": 150,
-    "name": "Mewtwo-Armor",
-    "alias": "mewtwoarmor",
-    "slug": "mewtwo-armor",
-    "sprite": "unknown-pokemon",
-    "types": [
-      "Psychic"
-    ],
-    "genderRatio": {
-      "M": 0,
-      "F": 0
-    },
-    "baseStats": {
-      "hp": 94,
-      "atk": 60,
-      "def": 125,
-      "spa": 85,
-      "spd": 125,
-      "spe": 130
-    },
-    "heightm": 2,
-    "weightkg": 122,
-    "color": "Purple",
-    "evos": [],
-    "baseForme": null,
-    "baseFormeAlias": null,
-    "baseFormeSlug": null,
-    "baseFormeSprite": null,
-    "cosmeticFormes": [],
-    "cosmeticFormesAliases": [],
-    "cosmeticFormesSprites": [],
-    "otherFormes": [],
-    "otherFormesAliases": [],
-    "otherFormesSprites": [],
-    "formeOrder": [],
-    "prevo": null,
-    "canGigantamax": null,
-    "baseSpecies": "Mewtwo",
-    "forme": "Armor",
-    "changesFrom": null,
-    "cannotDynamax": true,
-    "releasedGO": true,
-    "isTransferable": true,
-    "isDeployable": false,
-    "isTradable": true,
-    "pokemonClass": "LEGENDARY",
-    "disableTransferToPokemonHome": false,
-    "isBaby": false,
-    "gen": 1,
-    "region": "kanto",
-    "version": "pokemon-go"
   },
   "mewtwomegax": {
     "num": 150,
