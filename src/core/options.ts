@@ -146,11 +146,16 @@ const convertAndReplaceNameGO = (name: string, defaultName = '') => {
     .replace(/^S$/gi, FORM_SHADOW)
     .replace(/^A$/gi, 'ARMOR')
     .replace(FORM_GALARIAN, 'GALAR')
-    .replace(FORM_HISUIAN, 'HISUI');
+    .replace(FORM_HISUIAN, 'HISUI')
+    .replace('_SEA', '');
+};
+
+const convertBaseNameToGO = (name: string | null, defaultName = undefined) => {
+  return name?.replaceAll('-', '_').replaceAll('%', '').toUpperCase().replace('50', 'FIFTY_PERCENT').replace(/^M$/, 'MALE') ?? defaultName;
 };
 
 export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncounter[]) => {
-  const result: PokemonDataModel[] = [];
+  let result: PokemonDataModel[] = [];
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
     const regId = item.templateId.match(/\d{4}/g) as string[];
@@ -174,7 +179,7 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
       types.push(pokemonSettings.type2.replace('POKEMON_TYPE_', ''));
     }
 
-    const defaultName = pokemonSettings.form ? `${pokemonSettings.pokemonId}_${pokemonSettings.form}` : pokemonSettings.pokemonId;
+    const defaultName = pokemonSettings.form ? pokemonSettings.form.toString() : pokemonSettings.pokemonId;
     const pokemonEncounter = encounter?.find((e) => defaultName === e.name);
 
     pokemon.encounter = {
@@ -193,7 +198,9 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
       obShadowFormDodgeProbability: pokemon.encounter.obShadowFormDodgeProbability,
     };
 
-    const optional: PokemonDataOptional = {};
+    const optional: PokemonDataOptional = {
+      baseStatsGO: true,
+    };
 
     if (pokemon.id === 235) {
       const moves = data.find((item) => item.templateId === 'SMEARGLE_MOVES_SETTINGS')?.data.smeargleMovesSettings;
@@ -201,12 +208,9 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
       pokemon.cinematicMoves = moves?.cinematicMoves ?? [];
     }
 
-    if (optional && pokemonSettings.shadow) {
+    if (pokemonSettings.shadow) {
       optional.shadowMoves = [pokemonSettings.shadow.shadowChargeMove];
       optional.purifiedMoves = [pokemonSettings.shadow.purifiedChargeMove];
-    }
-
-    if (pokemonSettings.shadow) {
       optional.purified = {
         stardust: pokemonSettings.shadow.purificationStardustNeeded,
         candy: pokemonSettings.shadow.purificationCandyNeeded,
@@ -241,7 +245,7 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
       optional.slug = pokemonBaseData.slug;
       optional.color = pokemonBaseData.color;
       optional.sprite = pokemonBaseData.sprite;
-      optional.baseForme = pokemonBaseData.baseForme ?? undefined;
+      optional.baseForme = convertBaseNameToGO(pokemonBaseData.baseForme);
       optional.region = pokemonBaseData.region ?? undefined;
       optional.version = pokemonBaseData.version ?? undefined;
       pokemon.pokedexHeightM = pokemonBaseData.heightm;
@@ -293,6 +297,9 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
       if (evo.candyCost) {
         dataEvo.candyCost = evo.candyCost;
       }
+      if (evo.evolutionItemRequirementCost) {
+        dataEvo.itemCost = evo.evolutionItemRequirementCost;
+      }
       if (evo.obPurificationEvolutionCandyCost) {
         dataEvo.purificationEvoCandyCost = evo.obPurificationEvolutionCandyCost;
       }
@@ -340,6 +347,8 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
           dataEvo.quest.evolutionItemRequirement = 'Unova_Stone';
         } else if (evo.evolutionItemRequirement === 'ITEM_OTHER_EVOLUTION_STONE_A') {
           dataEvo.quest.evolutionItemRequirement = 'Other_Stone_A';
+        } else if (evo.evolutionItemRequirement === 'ITEM_BEANS') {
+          dataEvo.quest.evolutionItemRequirement = 'Beans';
         }
       }
       if (evo.onlyUpsideDown) {
@@ -390,8 +399,6 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
       }
     });
 
-    optional.baseStatsGO = true;
-
     if (pokemon.shadow && pokemon.form === FORM_SHADOW) {
       const pokemonOrigin = result.find((pk) => pk.num === pokemon.id && pk.forme === FORM_NORMAL);
       if (pokemonOrigin) {
@@ -414,6 +421,7 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
   });
 
   addPokemonFromData(data, result);
+  result = cleanPokemonDupForm(result);
 
   return result.sort((a, b) => a.num - b.num);
 };
@@ -426,6 +434,8 @@ const convertBaseName = (name: string) => {
     .replaceAll(':', '')
     .replaceAll('é', 'e')
     .replaceAll('’', '')
+    .replaceAll("'", '')
+    .replaceAll('%', '')
     .replace('-east', '')
     .replace('-dusk', '');
 };
@@ -516,6 +526,44 @@ const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => 
     });
 };
 
+const cleanPokemonDupForm = (result: PokemonDataModel[]) => {
+  const cloneResult = [...result];
+  const filterPokemon = result.filter((pokemon) => {
+    const count = cloneResult.filter((p) => p.forme !== FORM_NORMAL && p.num === pokemon.num).length;
+    if (count > 1 && pokemon.forme === FORM_NORMAL && pokemon.baseForme && pokemon.baseForme !== pokemon.forme) {
+      return false;
+    }
+    if (
+      (pokemon.num === 710 || pokemon.num === 711) &&
+      count > 1 &&
+      pokemon.forme === FORM_NORMAL &&
+      !pokemon.baseForme &&
+      cloneResult.some((p) => p.baseForme && p.baseForme !== p.forme)
+    ) {
+      return false;
+    }
+    return true;
+  });
+  const idConcat = [744];
+
+  result = filterPokemon.filter((p) => !idConcat.includes(p.num));
+  idConcat.forEach((id) => {
+    const concatPokemon = filterPokemon.filter((p) => p.num === id);
+    if (concatPokemon.length > 1) {
+      const tempPokemon = concatPokemon.find((p) => p.forme === FORM_NORMAL);
+      if (tempPokemon) {
+        concatPokemon
+          .filter((p) => p.forme !== FORM_NORMAL)
+          .forEach((p) => {
+            tempPokemon.evoList?.concat(p.evoList ?? []);
+          });
+        result.push(tempPokemon);
+      }
+    }
+  });
+  return result;
+};
+
 export const optionPokemonWeather = (data: PokemonData[]) => {
   const weather: any = {};
   data
@@ -602,9 +650,6 @@ export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds
       if (form?.toUpperCase().includes(FORM_MEGA)) {
         mega = true;
       }
-      // if (form === 'A') {
-      //   form = 'ARMOR';
-      // }
       result.image.push({
         gender,
         pokemonId: result.id,
@@ -1034,10 +1079,14 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
 
 export const mappingReleasedPokemonGO = (pokemonData: PokemonDataModel[], assets: Asset[]) => {
   pokemonData.forEach((item) => {
-    const form = assets?.find((asset) => asset.id === item.num)?.image.find((img) => img.form === item.forme);
-    const combat = pokemonData.find((pokemon) => pokemon.num === item.num);
+    const form = assets
+      ?.find((asset) => asset.id === item.num)
+      ?.image.find(
+        (img) =>
+          img.form?.replace('_SEA', '') === item.forme?.replace('GALAR', FORM_GALARIAN).replace('HISUI', FORM_HISUIAN).replace('ARMOR', 'A')
+      );
 
-    if (checkMoveSetAvailable(combat) && form && form.default) {
+    if (form && (item.isShadow || (checkMoveSetAvailable(item) && form.default))) {
       item.releasedGO = form.default.includes('Addressable Assets/');
     }
   });

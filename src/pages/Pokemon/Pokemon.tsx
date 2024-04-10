@@ -286,6 +286,8 @@ const Pokemon = (props: {
       const nameInfo =
         router.action === Action.Pop && props.searching
           ? props.searching.fullName
+          : isDefaultForm?.form?.is_default
+          ? isDefaultForm?.form?.name
           : splitAndCapitalize(formParams ? isDefaultForm?.form.name : data?.name, '-', ' ');
       const formInfo = formParams ? splitAndCapitalize(convertFormNameImg(data?.id, isDefaultForm?.form.form_name ?? ''), '-', '-') : null;
       setFormName(nameInfo);
@@ -293,7 +295,7 @@ const Pokemon = (props: {
       setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo ?? undefined);
       setDefaultForm(isDefaultForm);
       if (params.id) {
-        document.title = `#${data?.id} - ${nameInfo}`;
+        document.title = `#${data?.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
       }
       setOnChangeForm(false);
       const currentId = getPokemonById(pokemonData, data?.id);
@@ -309,7 +311,7 @@ const Pokemon = (props: {
   );
 
   const queryPokemon = useCallback(
-    (id: number | string | undefined, axios: typeof APIService, source: CancelTokenSource) => {
+    (id: number | string | undefined) => {
       if (id && pokemonData.length > 0) {
         if (!params.id || (params.id && data && parseInt(id.toString()) !== data?.id)) {
           dispatch(showSpinner());
@@ -341,8 +343,8 @@ const Pokemon = (props: {
 
   useEffect(() => {
     const id = params.id ? params.id.toLowerCase() : props.id;
-    queryPokemon(id, axios, source);
-  }, [dispatch, params.id, props.id, queryPokemon, reForm]);
+    queryPokemon(id);
+  }, [params.id, props.id, queryPokemon, reForm]);
 
   useEffect(() => {
     if (pokemonData.length > 0) {
@@ -389,11 +391,20 @@ const Pokemon = (props: {
 
     if (form) {
       pokemonForm = dataStore?.pokemon?.find(
-        (item) => item.num === id && item.fullName === convertName(form.replaceAll(' ', '-')).replaceAll('MR.', 'MR')
+        (item) =>
+          item.num === id &&
+          item.fullName ===
+            convertName(form.replaceAll(' ', '-'), false)
+              .replace('MR.', 'MR')
+              .replace('SUNSHINE', 'SUNNY')
+              .replace('HERO', '')
+              .replace('CROWNED', `${id === 888 ? 'CROWNED_SWORD' : 'CROWNED_SHIELD'}`)
       );
 
       if (isDefault && !pokemonForm) {
-        pokemonForm = dataStore?.pokemon?.find((item) => item.num === id && item.forme?.toUpperCase() === FORM_NORMAL);
+        pokemonForm = dataStore?.pokemon?.find(
+          (item) => (item.num === id && item.forme === FORM_NORMAL) || (item.baseForme && item.baseForme === item.forme)
+        );
       }
     }
 
@@ -407,11 +418,12 @@ const Pokemon = (props: {
   };
 
   const checkReleased = (id: number, form: string, isDefault = false) => {
-    if (!form) {
+    if (!form && !defaultForm) {
       return false;
     }
 
-    return getPokemonDetails(id, form, isDefault)?.releasedGO ?? false;
+    const details = getPokemonDetails(id, form, isDefault);
+    return details?.releasedGO ?? false;
   };
 
   return (

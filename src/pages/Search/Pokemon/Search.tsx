@@ -40,7 +40,8 @@ const Search = () => {
 
   useEffect(() => {
     if (pokemonName.length > 0) {
-      setPokemonList(mappingPokemonName(pokemonName));
+      const result = mappingPokemonName(pokemonName);
+      setPokemonList(result);
     }
   }, [pokemonName]);
 
@@ -135,7 +136,12 @@ const Search = () => {
             style={{ backgroundColor: (theme.palette.background as any).input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}
-            onFocus={() => setShowResult(true)}
+            onFocus={(e) => {
+              setShowResult(true);
+              if (e.currentTarget.value !== searchTerm) {
+                setSearchTerm(e.currentTarget.value);
+              }
+            }}
             onBlur={() => setShowResult(false)}
             onKeyUp={(e) => onChangeSelect(e, e.currentTarget.value)}
           />
