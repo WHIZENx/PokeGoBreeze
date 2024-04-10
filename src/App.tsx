@@ -46,6 +46,7 @@ import { getDesignThemes } from './assets/themes/themes';
 // import { TRANSITION_TIME } from './util/Constants';
 import { setDevice } from './store/actions/device.action';
 import { PaletteMode } from '@mui/material';
+import { TRANSITION_TIME } from './util/Constants';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -86,7 +87,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: 0.3 }}>
+    <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
       <NavbarComponent />
       <Routes>
         <Route path="/" element={<Home />} />
