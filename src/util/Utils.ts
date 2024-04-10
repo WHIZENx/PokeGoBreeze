@@ -181,6 +181,8 @@ export const convertModelSpritName = (text: string) => {
     .replace('-midday', '')
     .replace('-solo', '')
     .replace('-disguised', '')
+    .replace('-red', '')
+    .replace('-natural', '')
     .replace('-amped', '')
     .replace('eiscue-ice', 'eiscue')
     .replace('-hangry', '-hangry-mode')
@@ -191,9 +193,12 @@ export const convertModelSpritName = (text: string) => {
     .replace('-normal', '');
 };
 
-export const convertName = (text: string | undefined) => {
+export const convertName = (text: string | undefined, isChangeForm = true) => {
   if (!text) {
     return '';
+  }
+  if (isChangeForm) {
+    text = text.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`).replace('_HISUI', `_${FORM_HISUIAN}`);
   }
   return text
     .toUpperCase()
@@ -209,8 +214,7 @@ export const convertName = (text: string | undefined) => {
     .replace('PUMPKABOO_AVERAGE', 'PUMPKABOO')
     .replace('GOURGEIST_AVERAGE', 'GOURGEIST')
     .replace('_ARMOR', '_A')
-    .replace('_GALAR', `_${FORM_GALARIAN}`)
-    .replace('_HISUI', `_${FORM_HISUIAN}`)
+
     .replace('_POM_POM', '_POMPOM')
     .replace("_PA'U", '_PAU');
 };
@@ -451,12 +455,24 @@ export const convertFormGif = (name: string | undefined) => {
   return name
     ?.replace('mr', 'mr.')
     .replace('-hisui', '')
+    .replace('-plant', '')
+    .replace('-overcast', '')
+    .replace('-east', '')
+    .replace('-west', '')
+    .replace('-spring', '')
+    .replace('-incarnate', '')
+    .replace('-neutral', '')
+    .replace('-confined', '')
+    .replace('-red-striped', '')
     .replace('slowking-galar', 'slowking')
     .replace('articuno-galar', 'articuno')
     .replace('zapdos-galar', 'zapdos')
     .replace('moltres-galar', 'moltres')
     .replace('ten-percent', '10')
-    .replace('-fifty-percent', '');
+    .replace('-fifty-percent', '')
+    .replaceAll('-phony', '')
+    .replaceAll('-antique', '')
+    .replace('-hero', '');
 };
 
 export const convertFormNameImg = (id: number, form: string) => {
@@ -598,13 +614,23 @@ export const calRank = (
 
 export const mappingPokemonName = (pokemonData: PokemonDataModel[]) => {
   return pokemonData
-    .filter((pokemon) => pokemon.num > 0 && pokemon.forme === FORM_NORMAL)
+    .filter(
+      (pokemon) =>
+        pokemon.num > 0 &&
+        (pokemon.forme === FORM_NORMAL ||
+          (pokemon.num === 744 && pokemon.forme === 'DUSK') ||
+          (pokemon.baseForme && pokemon.baseForme === pokemon.forme))
+    )
     .map((pokemon) => new PokemonSearchingModel(pokemon))
     .sort((a, b) => a.id - b.id);
 };
 
 export const getPokemonById = (pokemonData: PokemonDataModel[], id: number) => {
-  const result = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === FORM_NORMAL);
+  const result = pokemonData
+    .filter((pokemon) => pokemon.num === id)
+    .find(
+      (pokemon) => pokemon.forme?.toUpperCase() === FORM_NORMAL || (pokemon.baseForme && pokemon.baseForme === pokemon.forme?.toUpperCase())
+    );
   if (!result) {
     return;
   }
@@ -733,6 +759,14 @@ export const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRan
 };
 
 export const filterFormName = (form: string, formStats: string) => {
+  form = form
+    .toLowerCase()
+    .replace('-power-construct', '')
+    .replace('sunshine', 'sunny')
+    .replace('active', 'normal')
+    .replace('10', 'ten-percent')
+    .replace('50', 'fifty-percent');
+
   form =
     form === '' || form?.toUpperCase() === FORM_STANDARD || form?.toUpperCase() === FORM_SHADOW || form?.toUpperCase() === FORM_PURIFIED
       ? capitalize(FORM_NORMAL)
@@ -752,6 +786,9 @@ export const convertPokemonGOName = (text: string | undefined) => {
   if (!text) {
     return '';
   }
+  if (!text.includes('MEOWSTIC') || !text.includes('INDEEDEE')) {
+    text = text.replace(/_FEMALE$/, '');
+  }
   return text
     .replace(/_PALDEA$/, '')
     .replace(/_PLANT$/, '')
@@ -769,7 +806,6 @@ export const convertPokemonGOName = (text: string | undefined) => {
     .replace(/_SPRING$/, '')
     .replace(/_SUMMER$/, '')
     .replace(/_WINTER$/, '')
-    .replace(/_FEMALE$/, '')
     .replace(/_INCARNATE$/, '')
     .replace(/_ORDINARY$/, '')
     .replace(/_ARIA$/, '')
@@ -816,6 +852,7 @@ export const convertPokemonDataName = (text: string | undefined) => {
     .replaceAll('-', '_')
     .replace('NIDORAN_F', 'NIDORAN')
     .replace('NIDORAN_M', 'NIDORAN_MALE')
+    .replace('MEOWSTIC_F', 'MEOWSTIC_FEMALE')
     .replace(/_GALAR$/, `_${FORM_GALARIAN}`)
     .replace(/_HISUI$/, `_${FORM_HISUIAN}`);
 };

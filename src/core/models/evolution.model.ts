@@ -24,6 +24,8 @@ export interface EvoList {
   evoToId: number;
   evoToName: string;
   candyCost: number;
+  item?: string;
+  itemCost?: number;
   purificationEvoCandyCost: number;
   quest?: EvolutionQuest;
 }
@@ -41,6 +43,7 @@ export interface PokemonTypeCost {
 }
 
 export interface EvolutionModel {
+  pokemonId?: string;
   prev?: string | undefined;
   id: number;
   name: string;
@@ -50,4 +53,5 @@ export interface EvolutionModel {
   thirdMove?: PokemonTypeCost;
   form: string;
   canPurified?: boolean;
+  isBaby?: boolean;
 }
