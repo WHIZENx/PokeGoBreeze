@@ -97,7 +97,7 @@ const columns: any = [
     selector: (row: PokemonSheetData) => (
       <Link
         to={`/pokemon/${row.pokemon?.num}${
-          row.pokemon?.forme ? `?form=${convertFormName(row.pokemon?.num, row.pokemon?.forme.toLowerCase())}` : ''
+          row.pokemon?.forme ? `?form=${convertFormName(row.pokemon?.num, row.pokemon?.forme.toLowerCase().replaceAll('_', '-'))}` : ''
         }`}
         title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
       >

@@ -52,7 +52,7 @@ const Tools = (props: {
         (forms) => !forms.some((modifyForm) => modifyForm.form.form_name === 'shadow' || modifyForm.form.form_name === 'purified')
       ).length;
       const filterForm = stats.find(
-        (item) => item.id === id && item.form !== 'a' && filterFormName(props.currForm?.form.form_name ?? '', item.form)
+        (item) => item.id === id && filterFormName(props.currForm?.form.form_name ?? '', item.form.toLowerCase().replace('-sea', ''))
       );
       if (filterId.length === 1 && formLength === 1 && !filterForm) {
         return filterId.at(0);

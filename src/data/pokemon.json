@@ -53594,67 +53594,9 @@
       "Lycanroc-Midnight",
       "Lycanroc-Dusk"
     ],
-    "baseForme": "Midday",
-    "baseFormeAlias": "rockruffmidday",
-    "baseFormeSlug": "rockruff-midday",
-    "baseFormeSprite": "rockruff",
-    "cosmeticFormes": [],
-    "cosmeticFormesAliases": [],
-    "cosmeticFormesSprites": [],
-    "otherFormes": [],
-    "otherFormesAliases": [],
-    "otherFormesSprites": [],
-    "formeOrder": [
-      "Rockruff",
-      "Rockruff"
-    ],
-    "prevo": null,
-    "canGigantamax": null,
-    "baseSpecies": null,
-    "forme": null,
-    "changesFrom": null,
-    "cannotDynamax": true,
-    "releasedGO": true,
-    "isTransferable": true,
-    "isDeployable": true,
-    "isTradable": true,
-    "pokemonClass": null,
-    "disableTransferToPokemonHome": false,
-    "isBaby": false,
-    "gen": 7,
-    "region": "alola",
-    "version": "sun-moon"
-  },
-  "rockruffdusk": {
-    "num": 744,
-    "name": "Rockruff Dusk",
-    "alias": "rockruffdusk",
-    "slug": "rockruffdusk",
-    "sprite": "rockruff",
-    "types": [
-      "Rock"
-    ],
-    "genderRatio": {
-      "M": 0.5,
-      "F": 0.5
-    },
-    "baseStats": {
-      "hp": 45,
-      "atk": 65,
-      "def": 40,
-      "spa": 30,
-      "spd": 40,
-      "spe": 60
-    },
-    "heightm": 0.5,
-    "weightkg": 9.2,
-    "color": "Brown",
-    "evos": [
-      "Lycanroc-Dusk"
-    ],
-    "baseForme": "Midday",
-    "baseFormeAlias": "rockruffmidday",
-    "baseFormeSlug": "rockruff-midday",
+    "baseForme": null,
+    "baseFormeAlias": null,
+    "baseFormeSlug": null,
     "baseFormeSprite": "rockruff",
     "cosmeticFormes": [],
     "cosmeticFormesAliases": [],

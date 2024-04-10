@@ -131,17 +131,14 @@ const Form = (props: {
       const formLength = props.formList?.filter(
         (forms) => !forms.some((modifyForm) => modifyForm.form.form_name === 'shadow' || modifyForm.form.form_name === 'purified')
       ).length;
-      const formName = currForm?.form.form_name ?? '';
-      const firstFilter = stats?.find((item) => item.id === id && formName.toLowerCase() === item.form.toLowerCase());
-      if (firstFilter) {
-        return firstFilter;
-      }
       const filterId = stats?.filter((item) => item.id === id);
-      const filterForm = stats?.find((item) => item.id === id && filterFormName(formName, item.form));
-      if (filterId?.length === 1 && formLength === 1 && !filterForm) {
+      const filterForm = stats.find(
+        (item) => item.id === id && filterFormName(currForm?.form.form_name ?? '', item.form.toLowerCase().replace('-sea', ''))
+      );
+      if (filterId.length === 1 && formLength === 1 && !filterForm) {
         return filterId.at(0);
-      } else if (filterId?.length === formLength && !filterForm) {
-        return stats?.find((item) => item && item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
+      } else if (filterId.length === formLength && !filterForm) {
+        return stats.find((item) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
       } else {
         return filterForm;
       }

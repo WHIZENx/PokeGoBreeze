@@ -141,7 +141,7 @@ class APIService {
 
   getPokeFullSprite(id: number | string | undefined, form?: string) {
     if (id) {
-      if (parseInt(id.toString()) > 905) {
+      if (parseInt(id.toString()) === 716 || parseInt(id.toString()) > 905) {
         return `${APIUrl.POKE_ASSETS}${id}.png`;
       }
       id = id.toString().padStart(3, '0');
@@ -156,17 +156,29 @@ class APIService {
         name += '-wings';
       } else if (name.includes('necrozma-dusk')) {
         name += '-mane';
+      } else if (name.includes('alcremie') && !name.includes('gmax')) {
+        if (name.includes('-vanilla-cream')) {
+          name = 'alcremie';
+        } else {
+          name = 'unknown-pokemon';
+        }
+      } else if (name.includes('-antique')) {
+        name = 'unknown-pokemon';
       }
       name = name
         .replace('-incarnate', '')
         .replace('-normal', '')
         .replace('-plant', '')
+        .replace('-overcast', '')
+        .replace('-west', '')
         .replace('-altered', '')
         .replace('-land', '')
         .replace('-red-striped', '')
         .replace('-standard', '')
         .replace('-ordinary', '')
         .replace('-aria', '')
+        .replace('-spring', '')
+        .replace('-red', '')
         .replace('meowstic-male', 'meowstic')
         .replace('meowstic-female', 'meowstic-f')
         .replace('aegislash-shield', 'aegislash')
@@ -183,7 +195,9 @@ class APIService {
         .replace('indeedee-female', 'indeedee-f')
         .replace('-full-belly', '')
         .replace('-single-strike', '')
-        .replace('-natural', '');
+        .replace('-natural', '')
+        .replaceAll('-phony', '')
+        .replace('-matcha-cream', '');
     }
     return `${APIUrl.POKE_ASSETS_URL}/icon/${name}.png`;
   }
@@ -227,6 +241,9 @@ class APIService {
   }
 
   getItemEvo(item: string) {
+    if (item === 'Beans') {
+      return this.getPokeSprite(0);
+    }
     return `${APIUrl.POGO_ASSET_API_URL}Items/Bag_${item}_Sprite.png`;
   }
 

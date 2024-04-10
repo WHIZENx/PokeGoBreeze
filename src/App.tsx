@@ -43,7 +43,7 @@ import { loadTheme } from './store/actions/theme.action';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
-import { TRANSITION_TIME } from './util/Constants';
+// import { TRANSITION_TIME } from './util/Constants';
 import { setDevice } from './store/actions/device.action';
 import { PaletteMode } from '@mui/material';
 
@@ -86,7 +86,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
+    <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: 0.3 }}>
       <NavbarComponent />
       <Routes>
         <Route path="/" element={<Home />} />

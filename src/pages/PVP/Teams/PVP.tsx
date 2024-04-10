@@ -83,8 +83,14 @@ const TeamPVP = () => {
     );
     fmove = dataStore?.combat?.find((item) => item.name === findMoveTeam(fMoveText, fastMoveSet ?? []));
     cmovePri = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMovePriText, chargedMoveSet ?? []));
+    if (!cmovePri) {
+      cmovePri = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMoveSecText, dataStore?.combat?.map((c) => c.name) ?? []));
+    }
     if (cMoveSecText) {
       cmoveSec = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMoveSecText, chargedMoveSet ?? []));
+      if (!cmoveSec) {
+        cmoveSec = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMoveSecText, dataStore?.combat?.map((c) => c.name) ?? []));
+      }
     }
 
     return {

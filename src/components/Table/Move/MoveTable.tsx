@@ -83,8 +83,7 @@ const TableMove = (props: {
       ?.filter((item) =>
         props.form?.id || props.form?.is_shadow || props.form?.is_purified
           ? item.num === parseInt(props.data?.url?.split('/').at(6) ?? '0')
-          : item.name ===
-            (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_').replace('ARMOR', 'A')
+          : item.fullName === (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_')
       )
       .map((c) => {
         return {
@@ -107,7 +106,22 @@ const TableMove = (props: {
 
       const result = combatPoke.find(
         (item) =>
-          props.form && item.fullName === convertName(props.form?.name.replace('-shadow', '').replace('-purified', '') ?? props.form)
+          props.form &&
+          item.fullName?.replace('_SEA', '').replace('_HERO', '').replace('_CONFINED', '') ===
+            convertName(
+              props.form?.name
+                .replace('-shadow', '')
+                .replace('-purified', '')
+                .replace('-sunshine', '-sunny')
+                .replace('-crowned', `${props.form?.id === 889 ? '-crowned-shield' : '-crowned-sword'}`)
+                .replace('-meteor', '')
+                .replace('-power-construct', '')
+                .replace('totem-disguised', 'totem')
+                .replace('totem-busted', 'busted-totem')
+                .replace('10', 'ten-percent')
+                .replace('50', 'fifty-percent') ?? props.form,
+              false
+            )
       );
       if (result === undefined) {
         filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));

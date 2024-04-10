@@ -86,14 +86,26 @@ const Evolution = (props: {
   };
 
   const modelEvoChain = (pokemon: EvolutionModel) => {
+    const name = pokeSetName(pokemon.form !== FORM_NORMAL ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name);
+    const form =
+      pokemon.id === 718 && pokemon.form === '' ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace('_STANDARD', '');
+    let sprite = '';
+    if (pokemon.id === 555 && form === 'GALAR') {
+      sprite = `${name.toLowerCase()}-${form.toLowerCase()}`;
+    } else if (pokemon.id === 664 || pokemon.id === 665) {
+      sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;
+    } else {
+      sprite = convertModelSpritName(`${name}_${form}`);
+    }
+
     return {
       prev: pokemon.prev,
-      name: pokeSetName(pokemon.form !== FORM_NORMAL ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name),
+      name,
       id: pokemon.id,
-      baby: false,
-      form: pokemon.id === 718 && pokemon.form === '' ? 'TEN_PERCENT' : pokemon.form,
+      baby: pokemon.isBaby ?? false,
+      form,
       gmax: false,
-      sprite: convertModelSpritName(pokemon.name),
+      sprite,
       purified: pokemon.canPurified ?? false,
     } as PokemonEvo;
   };
@@ -194,6 +206,7 @@ const Evolution = (props: {
         evoList.unshift(
           modelEvoChain({
             ...evo,
+            name: evo.name.replaceAll('-', '_').toUpperCase(),
             id: evo.num,
             form: evo.forme ?? FORM_NORMAL,
             evoList: evo.evoList ?? [],
@@ -208,7 +221,9 @@ const Evolution = (props: {
 
   const getCurrEvoChainStore = (poke: PokemonDataModel, result: PokemonEvo[][]) => {
     let evoList: PokemonEvo[] = [];
-    const pokemon = pokemonData.find((pokemon) => pokemon.evoList?.find((evo) => evo.evoToId === poke.num && evo.evoToForm === poke.forme));
+    const pokemon = pokemonData.find((pokemon) =>
+      pokemon.evoList?.find((evo) => evo.evoToId === poke.num && evo.evoToForm === poke.forme?.replace('_STANDARD', ''))
+    );
     if (!pokemon) {
       evoList.push(
         modelEvoChain({
@@ -273,12 +288,17 @@ const Evolution = (props: {
   const getEvoChainStore = (id: number, forme: FormModel) => {
     const form =
       forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) || (forme.is_default && forme.id === id)
-        ? ''
+        ? FORM_NORMAL
         : forme.form_name.toUpperCase().replace(`-${FORM_SHADOW}`, '').replace(`-${FORM_PURIFIED}`, '').replace(`-${FORM_STANDARD}`, '');
     const result: PokemonEvo[][] = [];
-    let pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === form);
+    const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
+    let pokemon = pokemons.find(
+      (p) =>
+        p.forme?.replace('_SEA', '').replace('_STANDARD', '').replace('CROWNED_SHIELD', 'CROWNED').replace('CROWNED_SWORD', 'CROWNED') ===
+        form.replaceAll('-', '_')
+    );
     if (!pokemon) {
-      pokemon = pokemonData.find((pokemon) => pokemon.num === id);
+      pokemon = pokemons.find((p) => p.baseForme && p.baseForme.replaceAll('-', '_').toUpperCase() === p.forme);
     }
     if (!pokemon) {
       return getEvoChainJSON(id, forme);
@@ -355,7 +375,7 @@ const Evolution = (props: {
           id="img-pokemon"
           alt="img-pokemon"
           src={
-            value.id >= 894
+            value.id >= 894 || (value.id === 892 && value.form.includes(FORM_GMAX))
               ? APIService.getPokeSprite(value.id)
               : APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')
           }
@@ -403,7 +423,7 @@ const Evolution = (props: {
                   <div className="position-absolute" style={{ left: -40 }}>
                     {!value.gmax && (
                       <div>
-                        {(data?.candyCost || data?.purificationEvoCandyCost) && (
+                        {!data?.itemCost && (data?.candyCost || data?.purificationEvoCandyCost) && (
                           <span
                             className="d-flex align-items-center caption"
                             style={{ color: (theme.palette as any).customText.caption, width: 'max-content' }}
@@ -412,7 +432,7 @@ const Evolution = (props: {
                             <span style={{ marginLeft: 2 }}>{`x${props.purified ? data?.purificationEvoCandyCost : data?.candyCost}`}</span>
                           </span>
                         )}
-                        {props.purified && (
+                        {props.purified && data?.candyCost && data?.purificationEvoCandyCost && (
                           <span className="d-block text-end caption text-danger">{`-${
                             (data?.candyCost ?? 0) - (data?.purificationEvoCandyCost ?? 0)
                           }`}</span>
@@ -471,7 +491,15 @@ const Evolution = (props: {
                           </span>
                         )}
                         {data?.quest?.evolutionItemRequirement && (
-                          <img alt="img-item-required" height={20} src={APIService.getItemEvo(data?.quest.evolutionItemRequirement)} />
+                          <Fragment>
+                            <img alt="img-item-required" height={20} src={APIService.getItemEvo(data?.quest.evolutionItemRequirement)} />
+                            {data?.itemCost && (
+                              <span
+                                className="d-flex align-items-center caption"
+                                style={{ color: (theme.palette as any).customText.caption, width: 'max-content', marginLeft: 2 }}
+                              >{`x${data.itemCost ?? 0}`}</span>
+                            )}
+                          </Fragment>
                         )}
                         {data?.quest?.lureItemRequirement && (
                           <img alt="img-troy-required" height={20} src={APIService.getItemTroy(data?.quest.lureItemRequirement)} />
@@ -586,7 +614,6 @@ const Evolution = (props: {
           </div>
         </span>
         {value.baby && <span className="caption text-danger">(Baby)</span>}
-        {arrEvoList.length === 1 && <span className="caption text-danger">(No Evolution)</span>}
         <p>
           {value.id === props.id && (
             <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>

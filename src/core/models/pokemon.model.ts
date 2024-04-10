@@ -20,6 +20,7 @@ export interface PokemonDataStats {
 interface EvolutionBranch {
   evolution: string;
   candyCost: number;
+  evolutionItemRequirementCost?: number;
   form: string;
   obPurificationEvolutionCandyCost: number;
   genderRequirement: string;
