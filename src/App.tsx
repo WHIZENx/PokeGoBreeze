@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import packageInfo from '../package.json';
@@ -40,12 +40,13 @@ import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 import { loadTheme } from './store/actions/theme.action';
-import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
 // import { TRANSITION_TIME } from './util/Constants';
 import { setDevice } from './store/actions/device.action';
 import { PaletteMode } from '@mui/material';
+import { TRANSITION_TIME } from './util/Constants';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -66,9 +67,6 @@ function App() {
   const [stateImage, setStateImage] = useLocalStorage('assets', '');
   const [stateSound, setStateSound] = useLocalStorage('sounds', '');
   const [, setVersion] = useLocalStorage('version', '');
-
-  const theme = useTheme();
-  const colorMode = useContext(ColorModeContext);
 
   useEffect(() => {
     const fetchData = async () => {
