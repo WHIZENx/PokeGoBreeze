@@ -4,7 +4,7 @@ import APIService from '../../services/API.service';
 import './Pokemon.scss';
 
 import { checkPokemonIncludeShadowForm, convertFormNameImg, convertName, getPokemonById, splitAndCapitalize } from '../../util/Utils';
-import { FORM_NORMAL, KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constants';
+import { FORM_GMAX, FORM_NORMAL, KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constants';
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -18,7 +18,6 @@ import { Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../store/actions/spinner.action';
 import Candy from '../../components/Sprites/Candy/Candy';
-import { getFormsGO } from '../../core/forms';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SpinnerState, StatsState, StoreState } from '../../store/models/state.model';
@@ -26,8 +25,7 @@ import { SearchingModel } from '../../store/models/searching.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
-import { CancelTokenSource } from 'axios';
-import { PokemonGenderRatio, PokemonNameModel } from '../../core/models/pokemon.model';
+import { PokemonDataModel, PokemonGenderRatio, PokemonNameModel } from '../../core/models/pokemon.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 
@@ -58,7 +56,6 @@ const Pokemon = (props: {
   const dispatch = useDispatch();
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const dataStore = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
@@ -112,7 +109,8 @@ const Pokemon = (props: {
   };
 
   const fetchMap = useCallback(
-    async (data: Species, axios: typeof APIService, source: CancelTokenSource) => {
+    async (data: Species) => {
+      setData(data);
       const dataPokeList: PokemonInfo[] = [];
       const dataFormList: PokemonForm[][] = [];
       await Promise.all(
@@ -123,7 +121,7 @@ const Pokemon = (props: {
           );
           dataPokeList.push({
             ...pokeInfo,
-            is_include_shadow: checkPokemonIncludeShadowForm(dataStore?.pokemon ?? [], pokeInfo.name),
+            is_include_shadow: checkPokemonIncludeShadowForm(pokemonData, pokeInfo.name),
           });
           dataFormList.push(pokeForm);
         })
@@ -160,46 +158,69 @@ const Pokemon = (props: {
           });
       }
 
-      const formListResult: PokemonFormModify[][] = formListModify
-        .map((item) => {
-          return item
-            ? item
-                .map(
-                  (item) =>
-                    ({
-                      form: new FormModel(item),
-                      name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                      default_name: data?.name,
-                      default_id: data.id,
-                    } as PokemonFormModify)
-                )
-                .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
-            : [];
-        })
+      const formListResult = formListModify
+        .map(
+          (item) =>
+            item
+              ?.map(
+                (item) =>
+                  new PokemonFormModify(
+                    data?.id,
+                    data?.name,
+                    data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                    new FormModel(item)
+                  )
+              )
+              .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0)) ?? []
+        )
         .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
 
-      const goForm = getFormsGO(data.id);
-      if (goForm.length > 0) {
-        formListResult.push(goForm);
-      }
-
-      if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name === 'gmax')).length > 1) {
+      if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name.toUpperCase() === FORM_GMAX)).length > 1) {
         formListResult.forEach((form) => {
           form.forEach((pokemon) => {
-            if (pokemon.form.form_name === 'gmax') {
+            if (pokemon.form.form_name.toUpperCase() === FORM_GMAX) {
               pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
             }
           });
         });
       }
 
+      let indexPokemonGO = 0;
+      const formList: string[] = [];
+      formListModify.forEach((form) => form?.forEach((p) => formList.push(convertName(p.form_name || FORM_NORMAL))));
+      const pokemonGOForm = pokemonData.filter((pokemon) => pokemon.num === data.id);
+      pokemonGOForm.forEach((pokemon) => {
+        const isIncludeFormGO = formList.some((form) => form === pokemon.forme);
+        if (!isIncludeFormGO) {
+          indexPokemonGO--;
+          const pokemonGOModify = new PokemonFormModifyModel(
+            data?.id,
+            data?.name,
+            pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
+            pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
+            false,
+            true,
+            false,
+            false,
+            false,
+            pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
+            'Pokémon-GO',
+            pokemon.types,
+            null,
+            indexPokemonGO
+          );
+          formListResult.push([pokemonGOModify]);
+        }
+      });
+
       if (costModifier?.purified?.candy && costModifier?.purified.stardust) {
         const pokemonDefault = dataPokeList.filter((p) => p.is_include_shadow);
-        pokemonDefault.forEach((p, index) => {
+        pokemonDefault.forEach((p) => {
           let form = '';
           if (!p.is_default) {
             form = p.name.replace(`${data?.name}-`, '') + '-';
           }
+          indexPokemonGO--;
           const pokemonShadowModify = new PokemonFormModifyModel(
             data?.id,
             data?.name,
@@ -214,8 +235,9 @@ const Pokemon = (props: {
             'Pokémon-GO',
             p.types.map((item) => item.type.name) ?? [],
             null,
-            -1 + -2 * index
+            indexPokemonGO
           );
+          indexPokemonGO--;
           const pokemonPurifiedModify = new PokemonFormModifyModel(
             data?.id,
             data?.name,
@@ -230,7 +252,7 @@ const Pokemon = (props: {
             'Pokémon-GO',
             p.types.map((item) => item.type.name) ?? [],
             null,
-            -2 * (index + 1)
+            indexPokemonGO
           );
           formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
         });
@@ -311,46 +333,46 @@ const Pokemon = (props: {
   );
 
   const queryPokemon = useCallback(
-    (id: number | string | undefined) => {
-      if (id && pokemonData.length > 0) {
-        if (!params.id || (params.id && data && parseInt(id.toString()) !== data?.id)) {
-          dispatch(showSpinner());
-        }
-        if (data?.id !== parseInt(id.toString())) {
+    (id: string) => {
+      if (!params.id || (params.id && data && id !== data.id.toString())) {
+        if (data && id !== data.id.toString()) {
           setForm(undefined);
         }
-        axios
-          .getPokeSpices(parseInt(id.toString()), {
-            cancelToken: source.token,
-          })
-          .then((res) => {
-            fetchMap(res.data, axios, source);
-            setData(res.data);
-          })
-          .catch((e: ErrorEvent) => {
-            enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
-            if (params.id) {
-              document.title = `#${params.id} - Not Found`;
-            }
-            setIsFound(false);
-            source.cancel(e.message);
-            dispatch(hideSpinner());
-          });
+        dispatch(showSpinner());
       }
+      axios
+        .getPokeSpices(id, {
+          cancelToken: source.token,
+        })
+        .then((res) => {
+          fetchMap(res.data);
+        })
+        .catch((e: ErrorEvent) => {
+          enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
+          if (params.id) {
+            document.title = `#${params.id} - Not Found`;
+          }
+          setIsFound(false);
+          source.cancel(e.message);
+          dispatch(hideSpinner());
+        });
     },
     [dispatch, enqueueSnackbar, fetchMap]
   );
 
   useEffect(() => {
     const id = params.id ? params.id.toLowerCase() : props.id;
-    queryPokemon(id);
-  }, [params.id, props.id, queryPokemon, reForm]);
+    if (id && pokemonData.length > 0) {
+      queryPokemon(id.toString());
+    }
+  }, [params.id, props.id, queryPokemon, reForm, pokemonData.length]);
 
   useEffect(() => {
-    if (pokemonData.length > 0) {
-      const keyDownHandler = (event: { keyCode: number; preventDefault: () => void }) => {
+    const id = params.id ? params.id.toLowerCase() : props.id;
+    if (id && pokemonData.length > 0) {
+      const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.loading) {
-          const currentId = getPokemonById(pokemonData, parseInt(params.id ? params.id.toLowerCase() : props.id ?? ''));
+          const currentId = getPokemonById(pokemonData, parseInt(id));
           if (currentId) {
             const result = {
               prev: getPokemonById(pokemonData, currentId.id - 1),
@@ -383,18 +405,18 @@ const Pokemon = (props: {
   };
 
   const getCostModifier = (id: number) => {
-    return dataStore?.pokemon?.find((item) => item.num === id);
+    return pokemonData.find((item) => item.num === id);
   };
 
   const getPokemonDetails = (id: number, form: string | null, isDefault = false) => {
-    let pokemonForm;
+    let pokemonForm: PokemonDataModel | undefined;
 
     if (form) {
-      pokemonForm = dataStore?.pokemon?.find(
+      pokemonForm = pokemonData.find(
         (item) =>
           item.num === id &&
           item.fullName ===
-            convertName(form.replaceAll(' ', '-'), false)
+            convertName(form?.replaceAll(' ', '-'), false)
               .replace('MR.', 'MR')
               .replace('SUNSHINE', 'SUNNY')
               .replace('HERO', '')
@@ -402,24 +424,21 @@ const Pokemon = (props: {
       );
 
       if (isDefault && !pokemonForm) {
-        pokemonForm = dataStore?.pokemon?.find(
-          (item) => (item.num === id && item.forme === FORM_NORMAL) || (item.baseForme && item.baseForme === item.forme)
+        pokemonForm = pokemonData.find(
+          (item) => item.num === id && (item.forme === FORM_NORMAL || (item.baseForme && item.baseForme === item.forme))
         );
       }
     }
-
-    if (!form && defaultForm) {
-      pokemonForm = dataStore?.pokemon?.find(
-        (item) => item.num === id && item.forme === defaultForm.form?.form_name.replace('-', '_').toUpperCase()
-      );
-    }
-
     return pokemonForm;
   };
 
   const checkReleased = (id: number, form: string, isDefault = false) => {
-    if (!form && !defaultForm) {
-      return false;
+    if (!form) {
+      if (defaultForm) {
+        form = (defaultForm.form?.form_name ?? defaultForm.default_name).replace('-', '_').toUpperCase();
+      } else {
+        return false;
+      }
     }
 
     const details = getPokemonDetails(id, form, isDefault);
@@ -436,7 +455,11 @@ const Pokemon = (props: {
             {params.id ? (
               <Fragment>
                 {dataStorePokemon?.prev && (
-                  <div title="Previous Pokémon" className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`} style={{ padding: 0 }}>
+                  <div
+                    title="Previous Pokémon"
+                    className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`}
+                    style={{ float: 'left', padding: 0 }}
+                  >
                     <Link
                       onClick={() => {
                         setReForm(false);
@@ -509,7 +532,11 @@ const Pokemon = (props: {
             ) : (
               <Fragment>
                 {dataStorePokemon?.prev && (
-                  <div title="Previous Pokémon" className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`} style={{ padding: 0 }}>
+                  <div
+                    title="Previous Pokémon"
+                    className={`prev-block col${dataStorePokemon?.next ? '-6' : ''}`}
+                    style={{ float: 'left', padding: 0 }}
+                  >
                     <div
                       className="d-flex justify-content-start align-items-center"
                       onClick={() => {
@@ -598,11 +625,10 @@ const Pokemon = (props: {
             className={'element-bottom position-relative poke-container' + (props.isSearch ? '' : ' container')}
           >
             <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-              {!released && formName && (
+              {!released && (
                 <Alert variant="danger">
                   <h5 className="text-danger" style={{ margin: 0 }}>
-                    * <b>{splitAndCapitalize(convertName(formName?.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}</b>{' '}
-                    not released in Pokémon GO
+                    * <b>{splitAndCapitalize(convertName(formName?.replaceAll(' ', '-')), '_', ' ')}</b> not released in Pokémon GO
                     <img
                       width={50}
                       height={50}

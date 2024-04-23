@@ -1,5 +1,4 @@
 import { CounterModel } from '../components/Table/Counter/models/counter.model';
-import { findStatsPokeGO } from '../core/forms';
 import { Combat } from '../core/models/combat.model';
 import { CPM } from '../core/models/cpm.model';
 import { EvolutionModel } from '../core/models/evolution.model';
@@ -598,16 +597,9 @@ export const calculateStatsByTag = (
     const from = tag?.toLowerCase();
     const checkNerf = from?.toUpperCase().includes(FORM_MEGA) ? false : true;
 
-    const result = findStatsPokeGO(from);
-    if (result) {
-      atk = result.attack;
-      def = result.defense;
-      sta = result.stamina;
-    } else {
-      atk = calBaseATK(baseStats, checkNerf);
-      def = calBaseDEF(baseStats, checkNerf);
-      sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
-    }
+    atk = calBaseATK(baseStats, checkNerf);
+    def = calBaseDEF(baseStats, checkNerf);
+    sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
   }
   return {
     atk,

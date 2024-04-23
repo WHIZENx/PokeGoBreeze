@@ -61,12 +61,31 @@ export interface PokemonFormModify {
   form: FormModel;
 }
 
+export class PokemonFormModify {
+  // tslint:disable-next-line:variable-name
+  default_id!: number;
+  // tslint:disable-next-line:variable-name
+  default_name!: string;
+  id?: number;
+  name!: string;
+  form!: FormModel;
+
+  // tslint:disable-next-line:variable-name
+  constructor(defaultId: number, defaultName: string, name: string, form: FormModel) {
+    this.default_id = defaultId;
+    this.default_name = defaultName;
+    this.name = name;
+    this.form = form;
+  }
+}
+
 export interface PokemonDataForm {
   stats: StatsPokemon;
   url?: string | undefined;
   types: string[];
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class PokemonFormModifyModel {
   // tslint:disable-next-line:variable-name
   default_id!: number;
@@ -93,6 +112,7 @@ export class PokemonFormModifyModel {
     sprites: PokemonSprit | null = null,
     formId: number | null = null
   ) {
+    this.id = formId ?? id;
     this.default_id = id;
     this.default_name = defaultName;
     this.name = name;

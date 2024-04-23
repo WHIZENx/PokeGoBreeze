@@ -9,6 +9,7 @@ import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from './models/select-move.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { Combat } from '../../core/models/combat.model';
+import { FORM_NORMAL } from '../../util/Constants';
 
 const SelectMove = (props: {
   move: SelectMoveModel | Combat | undefined;
@@ -40,9 +41,8 @@ const SelectMove = (props: {
     (id: number, form: string, type: string, selected = false) => {
       if (combat.length > 0) {
         const resultFirst = combat.filter((item) => item.num === id);
-
-        form = form ? form.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() : '';
-        const result = resultFirst.find((item) => item.name.replace(item.baseSpecies + (form === '' ? '' : '_'), '') === form);
+        form = form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() ?? FORM_NORMAL;
+        const result = resultFirst.find((item) => item.forme === form);
         const simpleMove: SelectMoveModel[] = [];
         if (resultFirst.length === 1 || result == null) {
           if (resultFirst.length === 0) {

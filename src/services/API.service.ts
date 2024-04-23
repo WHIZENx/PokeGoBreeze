@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
-import { FORM_MEGA } from '../util/Constants';
+import { FORM_GMAX, FORM_MEGA } from '../util/Constants';
 import { Species } from '../core/models/API/species.model';
 
 interface CancelTokenAPI {
@@ -33,7 +33,7 @@ class APIService {
     return this.axios.get<T>(url, options);
   }
 
-  getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
+  getPokeSpices(value: string, options?: AxiosRequestConfig<any> | undefined) {
     return this.axios.get<Species>(this.getPokeAPI('pokemon-species', value), options);
   }
 
@@ -41,7 +41,7 @@ class APIService {
     return this.axios.get(`${APIUrl.POGO_API_URL}${path}`, options);
   }
 
-  getPokeAPI(path: string, value: number | undefined) {
+  getPokeAPI(path: string, value: string) {
     return `${APIUrl.POKE_API_URL}${path}/${value}`;
   }
 
@@ -156,7 +156,7 @@ class APIService {
         name += '-wings';
       } else if (name.includes('necrozma-dusk')) {
         name += '-mane';
-      } else if (name.includes('alcremie') && !name.includes('gmax')) {
+      } else if (name.includes('alcremie') && !name.includes(FORM_GMAX.toLowerCase())) {
         if (name.includes('-vanilla-cream')) {
           name = 'alcremie';
         } else {
