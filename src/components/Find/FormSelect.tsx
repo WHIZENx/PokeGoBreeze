@@ -4,22 +4,20 @@ import APIService from '../../services/API.service';
 import Tools from './Tools';
 
 import loading from '../../assets/loading.png';
-import { capitalize, convertFormNameImg, getPokemonById, splitAndCapitalize, TypeRadioGroup } from '../../util/Utils';
+import { capitalize, convertFormNameImg, convertName, getPokemonById, splitAndCapitalize, TypeRadioGroup } from '../../util/Utils';
 import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
-import { getFormsGO } from '../../core/forms';
 import { useDispatch } from 'react-redux';
 import { setSearchToolPage } from '../../store/actions/searching.action';
 import { Action } from 'history';
 import { StatsModel } from '../../core/models/stats.model';
 import { ToolSearching } from '../../core/models/searching.model';
 import { PokemonDataModel, PokemonNameModel } from '../../core/models/pokemon.model';
-import { CancelTokenSource } from 'axios';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import { FormModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
+import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
-import { FORM_NORMAL } from '../../util/Constants';
+import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
 
 interface OptionsPokemon {
   prev: PokemonNameModel | undefined;
@@ -68,7 +66,6 @@ const FormSelect = (props: {
   const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
   const [tier, setTier] = useState(props.tier ?? 1);
 
-  const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
   const [dataStorePokemon, setDataStorePokemon]: [
     OptionsPokemon | undefined,
     React.Dispatch<React.SetStateAction<OptionsPokemon | undefined>>
@@ -85,7 +82,7 @@ const FormSelect = (props: {
   const cancelToken = axios.getAxios().CancelToken;
   const source = cancelToken.source();
 
-  const fetchMap = async (data: Species, axios: typeof APIService, source: CancelTokenSource) => {
+  const fetchMap = async (data: Species) => {
     setFormList([]);
     setPokeData([]);
     const dataPokeList: PokemonInfo[] = [];
@@ -119,38 +116,60 @@ const FormSelect = (props: {
         });
     }
 
-    const formListResult: PokemonFormModify[][] = formListModify
-      .map((item) => {
-        return item
-          ? item
-              .map(
-                (item) =>
-                  ({
-                    form: new FormModel(item),
-                    name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                    default_name: data?.name,
-                    default_id: data.id,
-                  } as PokemonFormModify)
-              )
-              .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
-          : [];
-      })
+    const formListResult = formListModify
+      .map(
+        (item) =>
+          item
+            ?.map(
+              (item) =>
+                ({
+                  form: new FormModel(item),
+                  name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                  default_name: data?.name,
+                  default_id: data.id,
+                } as PokemonFormModify)
+            )
+            .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0)) ?? []
+      )
       .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
 
-    const goForm = getFormsGO(data.id);
-    if (goForm.length > 0) {
-      formListResult.push(goForm);
-    }
-
-    if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name === 'gmax')).length > 1) {
+    if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name.toUpperCase() === FORM_GMAX)).length > 1) {
       formListResult.forEach((form) => {
         form.forEach((pokemon) => {
-          if (pokemon.form.form_name === 'gmax') {
+          if (pokemon.form.form_name.toUpperCase() === FORM_GMAX) {
             pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
           }
         });
       });
     }
+
+    let indexPokemonGO = 0;
+    const formList: string[] = [];
+    formListModify.forEach((form) => form?.forEach((p) => formList.push(convertName(p.form_name || FORM_NORMAL))));
+    const pokemonGOForm = props.data.filter((pokemon) => pokemon.num === data.id);
+    pokemonGOForm.forEach((pokemon) => {
+      const isIncludeFormGO = formList.some((form) => form === pokemon.forme);
+      if (!isIncludeFormGO) {
+        indexPokemonGO--;
+        const pokemonGOModify = new PokemonFormModifyModel(
+          data?.id,
+          data?.name,
+          pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
+          pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
+          false,
+          true,
+          false,
+          false,
+          false,
+          pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
+          'Pokémon-GO',
+          pokemon.types,
+          null,
+          indexPokemonGO
+        );
+        formListResult.push([pokemonGOModify]);
+      }
+    });
 
     setFormList(formListResult);
     const formDefault = formListResult.map((item) => {
@@ -182,17 +201,13 @@ const FormSelect = (props: {
   };
 
   const queryPokemon = useCallback(
-    (id: string, axios: typeof APIService, source: CancelTokenSource) => {
-      if (!id) {
-        return;
-      }
+    (id: string) => {
       axios
-        .getPokeSpices(parseInt(id.toString()), {
+        .getPokeSpices(id, {
           cancelToken: source.token,
         })
         .then((res) => {
-          fetchMap(res.data, axios, source);
-          setData(res.data);
+          fetchMap(res.data);
         })
         .catch(() => {
           enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
@@ -209,7 +224,9 @@ const FormSelect = (props: {
   }, [props.setName, props.name, currForm]);
 
   useEffect(() => {
-    queryPokemon(props.id?.toString() ?? '', axios, source);
+    if (props.id) {
+      queryPokemon(props.id.toString());
+    }
   }, [props.id, queryPokemon]);
 
   useEffect(() => {
@@ -316,9 +333,7 @@ const FormSelect = (props: {
         )}
       </div>
       <div className="element-top" style={{ height: 64 }}>
-        {currForm && pokeID && pokeData.length === data?.varieties.length && formList.length === data.varieties.length && (
-          <TypeInfo arr={currForm.form.types} />
-        )}
+        {currForm && pokeID && <TypeInfo arr={currForm.form.types} />}
       </div>
       <h4>
         <b>

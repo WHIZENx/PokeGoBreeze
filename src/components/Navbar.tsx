@@ -1,21 +1,42 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useLocalStorage } from 'usehooks-ts';
+
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 import logo from '../assets/pokedex.png';
 import { getTime } from '../util/Utils';
 
 import './Navbar.scss';
-import { Box, LinearProgress } from '@mui/material';
+import { Box, IconButton, LinearProgress, PaletteMode } from '@mui/material';
 import { SpinnerState, StoreState } from '../store/models/state.model';
+import { loadThemeData } from '../store/actions/theme.action';
 
-const NavbarComponent = () => {
+const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void }) => {
+  const dispatch = useDispatch();
+
   const dataStore = useSelector((state: StoreState) => state.store);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
 
   const [version] = useLocalStorage('version', '');
+
+  const [isDelay, setIsDelay] = useState(false);
+
+  const onChangeTheme = () => {
+    if (!isDelay) {
+      setIsDelay(true);
+      setStateTheme(props.mode === 'light' ? 'dark' : 'light');
+      dispatch(loadThemeData(props.mode === 'light' ? 'dark' : 'light'));
+      setTimeout(() => {
+        setIsDelay(false);
+        props.toggleColorMode();
+      }, 500);
+    }
+  };
 
   return (
     <Fragment>
@@ -110,6 +131,18 @@ const NavbarComponent = () => {
               </span>
             </Navbar.Text>
           )}
+          <IconButton
+            className={stateTheme + '-mode'}
+            onClick={onChangeTheme}
+            style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
+            color="inherit"
+          >
+            {props.mode === 'light' ? (
+              <LightModeIcon fontSize="large" style={{ color: 'white' }} />
+            ) : (
+              <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
+            )}
+          </IconButton>
         </Navbar.Collapse>
       </Navbar>
       {spinner.bar.show && (

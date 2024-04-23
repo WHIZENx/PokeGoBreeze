@@ -79,14 +79,6 @@ const Form = (props: {
       .at(0);
   }, [props.formList]);
 
-  const findIsDefaultForm = useCallback(() => {
-    return props.formList
-      ?.map((item) => {
-        return item.find((item) => item.form.is_default);
-      })
-      .some((item) => item?.id === props.idDefault);
-  }, [props.formList, props.idDefault]);
-
   const findForm = useCallback(() => {
     if (props.idDefault === 555 && props.paramForm === 'galar') {
       props.paramForm += '-standard';
@@ -200,9 +192,9 @@ const Form = (props: {
   };
 
   useEffect(() => {
-    if (!props.region && props.formName) {
+    if (!props.region && props.formName && props.formList && props.formList.length > 0) {
       let findForm = props.formList
-        ?.map((item) => item.find((item) => item.form.name === reversedCapitalize(props.formName ?? '', '-', ' ')))
+        .map((item) => item.find((item) => item.form.name === reversedCapitalize(props.formName ?? '', '-', ' ')))
         .find((item) => item);
       if (!findForm) {
         findForm = props.formList
@@ -232,12 +224,6 @@ const Form = (props: {
   }, [currForm, pokeID, statATK, statDEF, statSTA, statProd, dataPoke, dispatch]);
 
   useEffect(() => {
-    if (currForm?.form && pokeID) {
-      setPokeID(findIsDefaultForm() ? currForm.form.id ?? 0 : findFirst()?.form.id ?? 0);
-    }
-  }, [currForm?.form, pokeID]);
-
-  useEffect(() => {
     if (props.stats) {
       setStatATK(filterFormList(props.stats.attack.ranking));
       setStatDEF(filterFormList(props.stats.defense.ranking));
@@ -248,12 +234,13 @@ const Form = (props: {
 
   useEffect(() => {
     if (
-      !props.onChangeForm ||
+      (!props.onChangeForm && currForm) ||
       (!currForm && props.idDefault && props.pokeData && props.formList && props.formList.length > 0 && props.pokeData.length > 0)
     ) {
-      const currentForm = findForm() ?? findFirst();
-      setCurrForm(currentForm);
-      setPokeID(findFirst() ? findFirst()?.form.id ?? 0 : props.idDefault ?? 0);
+      const form = findForm();
+      const formFirst = findFirst();
+      setCurrForm(form ?? formFirst);
+      setPokeID(formFirst ? formFirst.form.id ?? 0 : props.idDefault ?? 0);
       if (!dataPoke || dataPoke?.types.length === 0 || pokeID !== parseInt(dataPoke.url?.split('/').at(6) ?? '')) {
         let data;
         if (props.paramForm) {
@@ -271,10 +258,10 @@ const Form = (props: {
         }
       }
     }
-  }, [currForm, findForm, findFirst, props.idDefault, props.formList?.length, props.onChangeForm, props.pokeData]);
+  }, [currForm, findForm, findFirst, props.idDefault, props.formList, props.onChangeForm, props.pokeData]);
 
   useEffect(() => {
-    if (currForm && !params.id) {
+    if (currForm && pokeID && !params.id) {
       dispatch(
         setSearchMainPage({
           id: pokeID,
@@ -285,7 +272,7 @@ const Form = (props: {
         })
       );
     }
-  }, [currForm]);
+  }, [currForm, pokeID]);
 
   const changeForm = (name: string, form: string) => {
     if (params.id) {

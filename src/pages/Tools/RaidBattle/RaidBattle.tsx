@@ -9,6 +9,7 @@ import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
   FORM_MEGA,
+  FORM_NORMAL,
   FORM_PRIMAL,
   MAX_IV,
   MAX_LEVEL,
@@ -321,8 +322,8 @@ const RaidBattle = () => {
   const findMove = useCallback(
     (id: number, form: string) => {
       const resultFirst = data?.pokemon?.filter((item) => item.num === id);
-      form = form.replaceAll('-', '_').replaceAll('_standard', '').toUpperCase();
-      const result = resultFirst?.find((item) => item.name === form);
+      form = form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() ?? FORM_NORMAL;
+      const result = resultFirst?.find((item) => item.fullName === form);
       let simpleMove: SelectMoveModel[] = [];
       if (resultFirst && (resultFirst.length === 1 || result == null)) {
         if (resultFirst.length === 0) {
