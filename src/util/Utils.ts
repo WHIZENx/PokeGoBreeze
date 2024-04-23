@@ -214,7 +214,6 @@ export const convertName = (text: string | undefined, isChangeForm = true) => {
     .replace('PUMPKABOO_AVERAGE', 'PUMPKABOO')
     .replace('GOURGEIST_AVERAGE', 'GOURGEIST')
     .replace('_ARMOR', '_A')
-
     .replace('_POM_POM', '_POMPOM')
     .replace("_PA'U", '_PAU');
 };

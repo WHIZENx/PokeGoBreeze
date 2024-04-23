@@ -107,7 +107,7 @@ const TableMove = (props: {
       const result = combatPoke.find(
         (item) =>
           props.form &&
-          item.fullName?.replace('_SEA', '').replace('_HERO', '').replace('_CONFINED', '') ===
+          item.fullName?.replace('_SEA', '').replace('_HERO', '').replace('_CONFINED', '').replace('_ARMOR', '_A') ===
             convertName(
               props.form?.name
                 .replace('-shadow', '')
