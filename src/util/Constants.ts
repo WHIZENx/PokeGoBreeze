@@ -209,20 +209,20 @@ export const versionList = [
 ];
 
 export const typeCostPowerUp = (type: string) => {
-  switch (type) {
-    case 'shadow':
+  switch (type.toUpperCase()) {
+    case FORM_SHADOW:
       return {
         stadust: 1.2,
         candy: 1.2,
         type,
       };
-    case 'purified':
+    case FORM_PURIFIED:
       return {
         stadust: 0.9,
         candy: 0.9,
         type,
       };
-    case 'lucky':
+    case 'LUCKY':
       return {
         stadust: 0.5,
         candy: 1,

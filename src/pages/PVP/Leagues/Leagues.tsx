@@ -17,7 +17,7 @@ import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
 import { League, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
-import { FORM_NORMAL } from '../../../util/Constants';
+import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL } from '../../../util/Constants';
 
 interface LeagueData {
   data: PokemonRewardSetLeague[];
@@ -44,7 +44,16 @@ const Leagues = () => {
         if (form && !Object.keys(dataStore?.typeEff ?? {}).includes(form)) {
           return APIService.getPokeFullSprite(
             id,
-            capitalize(convertFormName(id, form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui')))
+            capitalize(
+              convertFormName(
+                id,
+                form
+                  .toLowerCase()
+                  .replace('_', '-')
+                  .replace(FORM_GALARIAN.toLowerCase(), 'galar')
+                  .replace(FORM_HISUIAN.toLowerCase(), 'hisui')
+              )
+            )
           );
         }
         return APIService.getPokeFullSprite(id);
@@ -233,7 +242,11 @@ const Leagues = () => {
                           : '?form=' +
                             convertFormName(
                               item.id ?? 0,
-                              item.form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui')
+                              item.form
+                                .toLowerCase()
+                                .replace('_', '-')
+                                .replace(FORM_GALARIAN.toLowerCase(), 'galar')
+                                .replace(FORM_HISUIAN.toLowerCase(), 'hisui')
                             ))
                       }
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
@@ -270,7 +283,11 @@ const Leagues = () => {
                           : '?form=' +
                             convertFormName(
                               item.id ?? 0,
-                              item.form.toLowerCase().replace('_', '-').replace('galarian', 'galar').replace('hisuian', 'hisui')
+                              item.form
+                                .toLowerCase()
+                                .replace('_', '-')
+                                .replace(FORM_GALARIAN.toLowerCase(), 'galar')
+                                .replace(FORM_HISUIAN.toLowerCase(), 'hisui')
                             ))
                       }
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}

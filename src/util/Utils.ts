@@ -2,6 +2,7 @@ import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
 import pokemonData from '../data/pokemon.json';
 import {
+  FORM_ALOLA,
   FORM_GALARIAN,
   FORM_GMAX,
   FORM_HERO,
@@ -173,7 +174,7 @@ export const convertModelSpritName = (text: string) => {
     )
     .replace('-altered', '')
     .replace('-land', '')
-    .replace('-standard', '')
+    .replace(`-${FORM_STANDARD.toLowerCase()}`, '')
     .replace('-ordinary', '')
     .replace('-aria', '')
     .replace('-average', '')
@@ -188,9 +189,9 @@ export const convertModelSpritName = (text: string) => {
     .replace('-hangry', '-hangry-mode')
     .replace('-white-striped', '')
     .replace('-single-strike', '')
-    .replace('-shadow', '')
+    .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
     .replace('-armor', '')
-    .replace('-normal', '');
+    .replace(`-${FORM_NORMAL.toLowerCase()}`, '');
 };
 
 export const convertName = (text: string | undefined, isChangeForm = true) => {
@@ -219,7 +220,11 @@ export const convertName = (text: string | undefined, isChangeForm = true) => {
 };
 
 export const convertNameRanking = (text: string) => {
-  return text.toLowerCase().replaceAll('-', '_').replaceAll('galar', 'galarian').replaceAll('alola', 'alolan');
+  return text
+    .toLowerCase()
+    .replaceAll('-', '_')
+    .replaceAll('galar', FORM_GALARIAN.toLowerCase())
+    .replaceAll(FORM_ALOLA.toLowerCase(), 'alolan');
 };
 
 export const convertNameRankingToForm = (text: string) => {
@@ -244,9 +249,9 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
   text = text
     .toLowerCase()
     .replaceAll('_', '-')
-    .replaceAll('galarian', 'galar')
-    .replaceAll('alolan', 'alola')
-    .replaceAll('hisuian', 'hisui')
+    .replaceAll(FORM_GALARIAN.toLowerCase(), 'galar')
+    .replaceAll('alolan', FORM_ALOLA.toLowerCase())
+    .replaceAll(FORM_HISUIAN.toLowerCase(), 'hisui')
     .replace('-xs', '')
     .replace('indeedee-male', 'indeedee')
     .replace('female', 'f')
@@ -260,13 +265,13 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
     .replace('-rider', '')
     .replace('cherrim-sunny', 'cherrim-sunshine')
     .replace('-5th-anniversary', '')
-    .replace('-shadow', '')
+    .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
     .replace(local ? 'mewtwo-a' : '-armored', local ? 'mewtwo-armor' : '-armor');
   if (local && text === 'mewtwo-armor') {
     return text;
   }
   if (text?.toUpperCase().includes(FORM_STANDARD)) {
-    form = '-standard';
+    form = `-${FORM_STANDARD.toLowerCase()}`;
   }
   let invalidForm: string[] = [
     '-therian',
@@ -285,7 +290,15 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
     '-super',
   ];
   if (local) {
-    invalidForm = invalidForm.concat(['-attack', '-speed', '-standard', '-zen', '-confined', '-unbound', '-incarnate']);
+    invalidForm = invalidForm.concat([
+      '-attack',
+      '-speed',
+      `-${FORM_STANDARD.toLowerCase()}`,
+      '-zen',
+      '-confined',
+      '-unbound',
+      '-incarnate',
+    ]);
   }
   return formOri.includes('(') && formOri.includes(')') && !invalidForm.includes(form) ? text.replaceAll(form.toLowerCase(), '') : text;
 };
@@ -297,7 +310,7 @@ export const convertArrStats = (data: PokemonDataModel[]) => {
       return {
         id: value.num,
         name: value.slug,
-        form: (value.forme ?? FORM_NORMAL).toLowerCase().replaceAll('_', '-').replace('-standard', ''),
+        form: (value.forme ?? FORM_NORMAL).toLowerCase().replaceAll('_', '-').replace(`-${FORM_STANDARD.toLowerCase()}`, ''),
         base_stats: value.baseStats,
         baseStatsPokeGo: { attack: value.baseStats.atk, defense: value.baseStats.def, stamina: value.baseStats.sta ?? 0 },
         baseStatsProd: value.baseStats.atk * value.baseStats.def * (value.baseStats.sta ?? 0),
@@ -438,7 +451,7 @@ export const convertFormName = (id: number, form: string) => {
     return 'dusk';
   } else if (form === 'dawn-wings') {
     return 'dawn';
-  } else if (id === 25 && ['origin', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'partner', 'world'].includes(form)) {
+  } else if (id === 25 && ['origin', 'hoenn', 'sinnoh', 'unova', 'kalos', FORM_ALOLA.toLowerCase(), 'partner', 'world'].includes(form)) {
     return form + '-cap';
   }
   return form;
@@ -560,7 +573,7 @@ export const convertFormNameImg = (id: number, form: string) => {
     return 'crowned';
   } else if (id === 898 && form.includes('rider')) {
     return form.replace('-rider', '');
-  } else if (id === 25 && ['original', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'partner', 'world'].includes(form)) {
+  } else if (id === 25 && ['original', 'hoenn', 'sinnoh', 'unova', 'kalos', FORM_ALOLA.toLowerCase(), 'partner', 'world'].includes(form)) {
     return form + '-cap';
   }
   return form;
@@ -762,7 +775,7 @@ export const filterFormName = (form: string, formStats: string) => {
     .toLowerCase()
     .replace('-power-construct', '')
     .replace('sunshine', 'sunny')
-    .replace('active', 'normal')
+    .replace('active', FORM_NORMAL.toLowerCase())
     .replace('10', 'ten-percent')
     .replace('50', 'fifty-percent');
 
@@ -772,8 +785,9 @@ export const filterFormName = (form: string, formStats: string) => {
       : form?.toUpperCase().includes(FORM_MEGA)
       ? form.toLowerCase()
       : capitalize(form);
+
   formStats = formStats.toUpperCase().includes(FORM_MEGA) ? formStats.toLowerCase() : formStats.replaceAll('_', '-');
-  formStats = formStats.toUpperCase() === FORM_HERO ? capitalize(FORM_NORMAL) : formStats;
+  formStats = [FORM_HERO, FORM_STANDARD].includes(formStats.toUpperCase()) ? capitalize(FORM_NORMAL) : formStats;
   return form.toLowerCase().includes(formStats.toLowerCase());
 };
 

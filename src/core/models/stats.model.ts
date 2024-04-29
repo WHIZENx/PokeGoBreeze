@@ -88,3 +88,22 @@ export interface PokemonStatsRanking {
   types?: string[];
   url?: string | undefined;
 }
+
+export class StatsPokemon {
+  hp?: number;
+  atk: number;
+  def: number;
+  sta?: number;
+  spa?: number;
+  spd?: number;
+  spe?: number;
+
+  constructor() {
+    this.atk = 0;
+    this.def = 0;
+    this.hp = 0;
+    this.spa = 0;
+    this.spd = 0;
+    this.spe = 0;
+  }
+}

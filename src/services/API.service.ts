@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
-import { FORM_GMAX, FORM_MEGA } from '../util/Constants';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
 import { Species } from '../core/models/API/species.model';
 
 interface CancelTokenAPI {
@@ -167,14 +167,14 @@ class APIService {
       }
       name = name
         .replace('-incarnate', '')
-        .replace('-normal', '')
+        .replace(`-${FORM_NORMAL.toLowerCase()}`, '')
         .replace('-plant', '')
         .replace('-overcast', '')
         .replace('-west', '')
         .replace('-altered', '')
         .replace('-land', '')
         .replace('-red-striped', '')
-        .replace('-standard', '')
+        .replace(`-${FORM_STANDARD.toLowerCase()}`, '')
         .replace('-ordinary', '')
         .replace('-aria', '')
         .replace('-spring', '')

@@ -226,19 +226,35 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
   );
 
   useEffect(() => {
-    if (props.def && props.types && props.types.length > 0) {
-      loadMetaData();
-    } else if (counterList.length > 0) {
+    const loadMetaData = async () => {
+      clearTimeout(timeOutId.current);
+      controller.current?.abort();
+      await calculateCounter()
+        .then((data) => {
+          setCounterList(data);
+          setFrame(false);
+        })
+        .catch(() => clearTimeout(timeOutId.current))
+        .finally(() => clearTimeout(timeOutId.current));
+    };
+    setFrame(true);
+    if (counterList.length > 0) {
       setCounterList([]);
     }
+    const processTimeOutId = setTimeout(() => {
+      if (props.def && props.types && props.types.length > 0) {
+        loadMetaData();
+      }
+    }, 3000);
     return () => {
+      clearTimeout(processTimeOutId);
       clearTimeout(timeOutId.current);
       controller.current?.abort();
     };
   }, [props.def, props.isShadow, props.types]);
 
   const calculateCounter = async () => {
-    return new Promise<CounterModel[]>((resolve, reject) => {
+    return await new Promise<CounterModel[]>(async (resolve, reject) => {
       timeOutId.current = setTimeout(() => {
         resolve(
           counterPokemon(
@@ -251,24 +267,11 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
             data?.combat ?? []
           )
         );
-      }, 3000);
+      });
       controller.current?.signal.addEventListener('abort', () => {
         reject();
       });
     });
-  };
-
-  const loadMetaData = () => {
-    setFrame(true);
-    clearTimeout(timeOutId.current);
-    controller.current?.abort();
-    calculateCounter()
-      .then((data) => {
-        setCounterList(data);
-        setFrame(false);
-      })
-      .catch(() => clearTimeout(timeOutId.current))
-      .finally(() => clearTimeout(timeOutId.current));
   };
 
   return (
