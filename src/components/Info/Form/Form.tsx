@@ -17,7 +17,17 @@ import {
   reversedCapitalize,
   splitAndCapitalize,
 } from '../../../util/Utils';
-import { FORM_GMAX, FORM_INCARNATE, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD, regionList } from '../../../util/Constants';
+import {
+  FORM_GMAX,
+  FORM_INCARNATE,
+  FORM_MEGA,
+  FORM_NORMAL,
+  FORM_PRIMAL,
+  FORM_PURIFIED,
+  FORM_SHADOW,
+  FORM_STANDARD,
+  regionList,
+} from '../../../util/Constants';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import Counter from '../../Table/Counter/Counter';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -81,7 +91,7 @@ const Form = (props: {
 
   const findForm = useCallback(() => {
     if (props.idDefault === 555 && props.paramForm === 'galar') {
-      props.paramForm += '-standard';
+      props.paramForm += `-${FORM_STANDARD.toLowerCase()}`;
     }
     return props.formList
       ?.map((form) => {
@@ -106,7 +116,7 @@ const Form = (props: {
 
   const [currForm, setCurrForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] =
     useState();
-  const defaultStats: StatsPokemon = { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 };
+  const defaultStats = new StatsPokemon();
   const [dataPoke, setDataPoke]: [PokemonDataForm, React.Dispatch<React.SetStateAction<PokemonDataForm>>] = useState({
     stats: defaultStats,
     types: [] as string[],
@@ -121,7 +131,11 @@ const Form = (props: {
     (stats: { id: number; form: string }[]): any => {
       const id = props.idDefault;
       const formLength = props.formList?.filter(
-        (forms) => !forms.some((modifyForm) => modifyForm.form.form_name === 'shadow' || modifyForm.form.form_name === 'purified')
+        (forms) =>
+          !forms.some(
+            (modifyForm) =>
+              modifyForm.form.form_name.toUpperCase() === FORM_SHADOW || modifyForm.form.form_name.toUpperCase() === FORM_PURIFIED
+          )
       ).length;
       const filterId = stats?.filter((item) => item.id === id);
       const filterForm = stats.find(
@@ -141,7 +155,9 @@ const Form = (props: {
   const findFormData = (name: string) => {
     const findData = props.pokeData.find((item) => name === item.name);
     const findForm = props.formList?.map((item) => item.find((item) => item.form.name === name)).find((item) => item);
-    setCurrForm(findForm);
+    if (!params.id) {
+      setCurrForm(findForm);
+    }
     const region = Object.values(regionList).find((item) => findForm?.form.form_name.includes(item.toLowerCase()));
     if (findForm?.form.form_name !== '' && region) {
       props.setRegion(!props.region || props.region !== region ? region : props.region);
@@ -279,11 +295,34 @@ const Form = (props: {
       searchParams.set('form', form);
       setSearchParams(searchParams);
       props.onSetReForm(true);
+    } else {
+      findFormData(name);
     }
     if (props.setOnChangeForm) {
       props.setOnChangeForm(true);
     }
-    findFormData(name);
+  };
+
+  const formAssets = (value: PokemonFormModify) => {
+    return value.form.name.includes('-totem') ||
+      value.form.name.includes('-hisui') ||
+      value.form.name.includes('power-construct') ||
+      value.form.name.includes('own-tempo') ||
+      value.form.name.includes('-meteor') ||
+      value.form.name === 'mewtwo-armor' ||
+      value.form.name === 'arceus-unknown' ||
+      value.form.name === 'dialga-origin' ||
+      value.form.name === 'palkia-origin' ||
+      value.form.name === 'mothim-sandy' ||
+      value.form.name === 'mothim-trash' ||
+      value.form.name === 'basculin-white-striped' ||
+      value.form.name === 'greninja-battle-bond' ||
+      value.form.name === 'urshifu-rapid-strike' ||
+      (pokeID && pokeID >= 899)
+      ? APIService.getPokeIconSprite('unknown-pokemon')
+      : value.form.name.includes(`-${FORM_SHADOW.toLowerCase()}`) || value.form.name.includes(`-${FORM_PURIFIED.toLowerCase()}`)
+      ? APIService.getPokeIconSprite(value.name)
+      : APIService.getPokeIconSprite(value.form.name);
   };
 
   return (
@@ -328,27 +367,7 @@ const Form = (props: {
                             });
                         }}
                         alt="img-icon-form"
-                        src={
-                          value.form.name.includes('-totem') ||
-                          value.form.name.includes('-hisui') ||
-                          value.form.name.includes('power-construct') ||
-                          value.form.name.includes('own-tempo') ||
-                          value.form.name.includes('-meteor') ||
-                          value.form.name === 'mewtwo-armor' ||
-                          value.form.name === 'arceus-unknown' ||
-                          value.form.name === 'dialga-origin' ||
-                          value.form.name === 'palkia-origin' ||
-                          value.form.name === 'mothim-sandy' ||
-                          value.form.name === 'mothim-trash' ||
-                          value.form.name === 'basculin-white-striped' ||
-                          value.form.name === 'greninja-battle-bond' ||
-                          value.form.name === 'urshifu-rapid-strike' ||
-                          (pokeID && pokeID >= 899)
-                            ? APIService.getPokeIconSprite('unknown-pokemon')
-                            : value.form.name.includes('-shadow') || value.form.name.includes('-purified')
-                            ? APIService.getPokeIconSprite(value.name)
-                            : APIService.getPokeIconSprite(value.form.name)
-                        }
+                        src={formAssets(value)}
                       />
                     </div>
                   </div>

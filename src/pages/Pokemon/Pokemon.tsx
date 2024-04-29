@@ -4,7 +4,7 @@ import APIService from '../../services/API.service';
 import './Pokemon.scss';
 
 import { checkPokemonIncludeShadowForm, convertFormNameImg, convertName, getPokemonById, splitAndCapitalize } from '../../util/Utils';
-import { FORM_GMAX, FORM_NORMAL, KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constants';
+import { FORM_GMAX, FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW, FORM_STANDARD, KEY_LEFT, KEY_RIGHT, regionList } from '../../util/Constants';
 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -198,16 +198,14 @@ const Pokemon = (props: {
             data?.name,
             pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
             pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
-            false,
-            true,
-            false,
-            false,
-            false,
             pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
             'Pokémon-GO',
             pokemon.types,
             null,
-            indexPokemonGO
+            indexPokemonGO,
+            FORM_NORMAL,
+            false,
+            false
           );
           formListResult.push([pokemonGOModify]);
         }
@@ -226,16 +224,13 @@ const Pokemon = (props: {
             data?.name,
             p.name,
             `${form}shadow`,
-            true,
-            p.is_default,
-            false,
-            true,
-            false,
             `${p.name}-shadow`,
             'Pokémon-GO',
             p.types.map((item) => item.type.name) ?? [],
             null,
-            indexPokemonGO
+            indexPokemonGO,
+            FORM_SHADOW,
+            true
           );
           indexPokemonGO--;
           const pokemonPurifiedModify = new PokemonFormModifyModel(
@@ -243,16 +238,13 @@ const Pokemon = (props: {
             data?.name,
             p.name,
             `${form}purified`,
-            true,
-            p.is_default,
-            false,
-            false,
-            true,
             `${p.name}-purified`,
             'Pokémon-GO',
             p.types.map((item) => item.type.name) ?? [],
             null,
-            indexPokemonGO
+            indexPokemonGO,
+            FORM_PURIFIED,
+            true
           );
           formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
         });
@@ -266,7 +258,7 @@ const Pokemon = (props: {
 
       if (formParams) {
         if (data?.id === 555 && formParams === 'galar') {
-          formParams += '-standard';
+          formParams += `-${FORM_STANDARD.toLowerCase()}`;
         }
         defaultFrom = formListResult.find((value) =>
           value.find(
@@ -647,9 +639,12 @@ const Pokemon = (props: {
                   src={APIService.getPokeFullSprite(
                     data?.id,
                     splitAndCapitalize(
-                      form?.endsWith('Shadow') || form?.endsWith('Purified')
-                        ? form.replace('Shadow', '').replace('Purified', '').replaceAll('-', '').toLowerCase()
-                        : form,
+                      form
+                        ?.toUpperCase()
+                        .replace(`-${FORM_SHADOW}`, '')
+                        .replace(`-${FORM_PURIFIED}`, '')
+                        .replace(FORM_SHADOW, '')
+                        .replace(FORM_PURIFIED, ''),
                       '-',
                       '-'
                     )

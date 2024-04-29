@@ -156,16 +156,14 @@ const FormSelect = (props: {
           data?.name,
           pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
           pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
-          false,
-          true,
-          false,
-          false,
-          false,
           pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
           'Pokémon-GO',
           pokemon.types,
           null,
-          indexPokemonGO
+          indexPokemonGO,
+          FORM_NORMAL,
+          false,
+          false
         );
         formListResult.push([pokemonGOModify]);
       }

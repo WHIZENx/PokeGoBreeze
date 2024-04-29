@@ -13,7 +13,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
 import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
@@ -93,7 +93,7 @@ const TableMove = (props: {
         };
       });
     if (combatPoke) {
-      if (combatPoke.length === 1) {
+      if (combatPoke.length === 1 || (typeof props.form === 'string' ? props.form : props.form?.form_name)?.toUpperCase() === FORM_GMAX) {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
       } else if (combatPoke.length === 0 && props.id) {
@@ -110,8 +110,8 @@ const TableMove = (props: {
           item.fullName?.replace('_SEA', '').replace('_HERO', '').replace('_CONFINED', '').replace('_ARMOR', '_A') ===
             convertName(
               props.form?.name
-                .replace('-shadow', '')
-                .replace('-purified', '')
+                .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
+                .replace(`-${FORM_PURIFIED.toLowerCase()}`, '')
                 .replace('-sunshine', '-sunny')
                 .replace('-crowned', `${props.form?.id === 889 ? '-crowned-shield' : '-crowned-sword'}`)
                 .replace('-meteor', '')

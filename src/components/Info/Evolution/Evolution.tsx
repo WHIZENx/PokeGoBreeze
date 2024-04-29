@@ -88,14 +88,14 @@ const Evolution = (props: {
   const modelEvoChain = (pokemon: EvolutionModel) => {
     const name = pokeSetName(pokemon.form !== FORM_NORMAL ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name);
     const form =
-      pokemon.id === 718 && pokemon.form === '' ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace('_STANDARD', '');
+      pokemon.id === 718 && pokemon.form === '' ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
     let sprite = '';
     if (pokemon.id === 555 && form === 'GALAR') {
       sprite = `${name.toLowerCase()}-${form.toLowerCase()}`;
     } else if (pokemon.id === 664 || pokemon.id === 665) {
       sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;
     } else {
-      sprite = convertModelSpritName(`${name}_${form}`);
+      sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
 
     return {
@@ -222,7 +222,7 @@ const Evolution = (props: {
   const getCurrEvoChainStore = (poke: PokemonDataModel, result: PokemonEvo[][]) => {
     let evoList: PokemonEvo[] = [];
     const pokemon = pokemonData.find((pokemon) =>
-      pokemon.evoList?.find((evo) => evo.evoToId === poke.num && evo.evoToForm === poke.forme?.replace('_STANDARD', ''))
+      pokemon.evoList?.find((evo) => evo.evoToId === poke.num && evo.evoToForm === poke.forme?.replace(`_${FORM_STANDARD}`, ''))
     );
     if (!pokemon) {
       evoList.push(
@@ -289,13 +289,23 @@ const Evolution = (props: {
     const form =
       forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) || (forme.is_default && forme.id === id)
         ? FORM_NORMAL
-        : forme.form_name.toUpperCase().replace(`-${FORM_SHADOW}`, '').replace(`-${FORM_PURIFIED}`, '').replace(`-${FORM_STANDARD}`, '');
+        : forme.form_name
+            .toUpperCase()
+            .replace(`-${FORM_SHADOW}`, '')
+            .replace(`-${FORM_PURIFIED}`, '')
+            .replace(`-${FORM_STANDARD}`, '')
+            .replace(FORM_SHADOW, FORM_NORMAL)
+            .replace(FORM_PURIFIED, FORM_NORMAL)
+            .replace(FORM_STANDARD, FORM_NORMAL);
     const result: PokemonEvo[][] = [];
     const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
     let pokemon = pokemons.find(
       (p) =>
-        p.forme?.replace('_SEA', '').replace('_STANDARD', '').replace('CROWNED_SHIELD', 'CROWNED').replace('CROWNED_SWORD', 'CROWNED') ===
-        form.replaceAll('-', '_')
+        p.forme
+          ?.replace('_SEA', '')
+          .replace(`_${FORM_STANDARD}`, '')
+          .replace('CROWNED_SHIELD', 'CROWNED')
+          .replace('CROWNED_SWORD', 'CROWNED') === form.replaceAll('-', '_')
     );
     if (!pokemon) {
       pokemon = pokemons.find((p) => p.baseForme && p.baseForme.replaceAll('-', '_').toUpperCase() === p.forme);

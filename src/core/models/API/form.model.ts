@@ -101,16 +101,15 @@ export class PokemonFormModifyModel {
     defaultName: string,
     name: string,
     formName: string,
-    isBattleOnly: boolean,
-    isDefault: boolean,
-    isMega: boolean,
-    isShadow: boolean,
-    isPurified: boolean,
     fullFormName: string,
     version: string,
     types: string[],
     sprites: PokemonSprit | null = null,
-    formId: number | null = null
+    formId: number | null = null,
+    specialForm: 'NORMAL' | 'SHADOW' | 'PURIFIED' = 'NORMAL',
+    isBattleOnly = true,
+    isDefault = true,
+    isMega = false
   ) {
     this.id = formId ?? id;
     this.default_id = id;
@@ -124,8 +123,8 @@ export class PokemonFormModifyModel {
       is_battle_only: isBattleOnly,
       is_default: isDefault,
       is_mega: isMega,
-      is_shadow: isShadow,
-      is_purified: isPurified,
+      is_shadow: specialForm === 'SHADOW',
+      is_purified: specialForm === 'PURIFIED',
       name: fullFormName,
       version_group: { name: version },
       types,

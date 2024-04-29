@@ -3,7 +3,7 @@ import Stats from '../Info/Stats/Stats';
 import { calculateRaidStat } from '../../util/Calculate';
 
 import { Form } from 'react-bootstrap';
-import { FORM_MEGA, FORM_NORMAL, RAID_BOSS_TIER } from '../../util/Constants';
+import { FORM_MEGA, FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW, RAID_BOSS_TIER } from '../../util/Constants';
 
 import atk_logo from '../../assets/attack.png';
 import def_logo from '../../assets/defense.png';
@@ -49,7 +49,11 @@ const Tools = (props: {
     (stats: { id: number; form: string }[], id: number): any => {
       const filterId = stats.filter((item) => item.id === id);
       const formLength = props.formList?.filter(
-        (forms) => !forms.some((modifyForm) => modifyForm.form.form_name === 'shadow' || modifyForm.form.form_name === 'purified')
+        (forms) =>
+          !forms.some(
+            (modifyForm) =>
+              modifyForm.form.form_name.toUpperCase() === FORM_SHADOW || modifyForm.form.form_name.toUpperCase() === FORM_PURIFIED
+          )
       ).length;
       const filterForm = stats.find(
         (item) => item.id === id && filterFormName(props.currForm?.form.form_name ?? '', item.form.toLowerCase().replace('-sea', ''))
