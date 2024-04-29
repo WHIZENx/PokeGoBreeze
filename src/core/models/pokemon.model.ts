@@ -5,6 +5,12 @@ import { StatsPokemon } from './stats.model';
 import { SelectMoveModel } from '../../components/Input/models/select-move.model';
 import { EvoList, TempEvo } from './evolution.model';
 
+export interface OptionsPokemon {
+  prev: PokemonNameModel | undefined;
+  current: PokemonNameModel | undefined;
+  next: PokemonNameModel | undefined;
+}
+
 export interface PokemonGender {
   malePercent?: number;
   femalePercent?: number;
