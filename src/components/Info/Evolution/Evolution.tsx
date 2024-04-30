@@ -286,8 +286,8 @@ const Evolution = (props: {
   };
 
   const getEvoChainStore = (id: number, forme: FormModel) => {
-    const form =
-      forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) || (forme.is_default && forme.id === id)
+    let form =
+      forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) || (forme.is_default && forme.id === id && id !== 718)
         ? FORM_NORMAL
         : forme.form_name
             .toUpperCase()
@@ -296,7 +296,12 @@ const Evolution = (props: {
             .replace(`-${FORM_STANDARD}`, '')
             .replace(FORM_SHADOW, FORM_NORMAL)
             .replace(FORM_PURIFIED, FORM_NORMAL)
-            .replace(FORM_STANDARD, FORM_NORMAL);
+            .replace(FORM_STANDARD, FORM_NORMAL)
+            .replace(/10$/g, `COMPLETE_TEN_PERCENT`)
+            .replace(/50$/g, `COMPLETE_FIFTY_PERCENT`);
+    if (id === 800) {
+      form = form.replace('DAWN', 'DAWN_WINGS').replace('DUSK', 'DUSK_MANE');
+    }
     const result: PokemonEvo[][] = [];
     const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
     let pokemon = pokemons.find(

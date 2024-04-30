@@ -1,6 +1,6 @@
 import React from 'react';
 import { splitAndCapitalize, convertName } from '../../../util/Utils';
-import { genRoman } from '../../../util/Constants';
+import { FORM_ARMOR, genRoman } from '../../../util/Constants';
 
 const PokemonTable = (props: {
   id: number | undefined;
@@ -32,7 +32,7 @@ const PokemonTable = (props: {
           </td>
           <td colSpan={2}>
             <h5 className="d-flex">
-              <b>{splitAndCapitalize(convertName(props.formName?.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}</b>
+              <b>{splitAndCapitalize(convertName(props.formName?.replaceAll(' ', '-')).replace(/_A$/g, `_${FORM_ARMOR}`), '_', ' ')}</b>
             </h5>
           </td>
         </tr>
