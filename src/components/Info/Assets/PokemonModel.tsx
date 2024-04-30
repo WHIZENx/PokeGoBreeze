@@ -12,6 +12,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { Asset } from '../../../core/models/asset.model';
 import { PokemonModelComponent } from './models/pokemon-model.model';
 import { PokemonGender } from '../../../core/models/pokemon.model';
+import { FORM_ARMOR } from '../../../util/Constants';
 
 const PokemonModel = (props: { id: number; name: string }) => {
   const theme = useTheme();
@@ -97,7 +98,7 @@ const PokemonModel = (props: { id: number; name: string }) => {
               </div>
             ))}
             <div className="desc text-black">
-              {splitAndCapitalize((props.id === 150 && assets.form === 'A' ? 'ARMOR' : assets.form).toLowerCase(), '_', ' ')}
+              {splitAndCapitalize((props.id === 150 && assets.form === 'A' ? FORM_ARMOR : assets.form).toLowerCase(), '_', ' ')}
             </div>
           </div>
         ))}

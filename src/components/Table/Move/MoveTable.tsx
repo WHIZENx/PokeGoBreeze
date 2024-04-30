@@ -13,7 +13,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
-import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_ARMOR, FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
 import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
@@ -107,7 +107,7 @@ const TableMove = (props: {
       const result = combatPoke.find(
         (item) =>
           props.form &&
-          item.fullName?.replace('_SEA', '').replace('_HERO', '').replace('_CONFINED', '').replace('_ARMOR', '_A') ===
+          item.fullName?.replace('_SEA', '').replace('_HERO', '').replace('_CONFINED', '').replace(`_${FORM_ARMOR}`, '_A') ===
             convertName(
               props.form?.name
                 .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
@@ -119,7 +119,9 @@ const TableMove = (props: {
                 .replace('totem-disguised', 'totem')
                 .replace('totem-busted', 'busted-totem')
                 .replace('10', 'ten-percent')
-                .replace('50', 'fifty-percent') ?? props.form,
+                .replace('50', 'fifty-percent')
+                .replace('-wings', '')
+                .replace('-mane', '') ?? props.form,
               false
             )
       );

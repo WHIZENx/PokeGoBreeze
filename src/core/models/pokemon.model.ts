@@ -5,6 +5,12 @@ import { StatsPokemon } from './stats.model';
 import { SelectMoveModel } from '../../components/Input/models/select-move.model';
 import { EvoList, TempEvo } from './evolution.model';
 
+export interface OptionsPokemon {
+  prev: PokemonNameModel | undefined;
+  current: PokemonNameModel | undefined;
+  next: PokemonNameModel | undefined;
+}
+
 export interface PokemonGender {
   malePercent?: number;
   femalePercent?: number;
@@ -15,6 +21,19 @@ export interface PokemonDataStats {
   level: number;
   isShadow: boolean;
   iv: StatsPokemon;
+}
+
+export interface PokemonFormChange {
+  availableForm: string[];
+  candyCost: string;
+  stardustCost: string;
+  item?: string;
+  itemCostCount?: number;
+  componentPokemonSettings?: {
+    pokedexId: string;
+    componentCandyCost: number;
+    formChangeType: string;
+  };
 }
 
 interface EvolutionBranch {
@@ -69,11 +88,7 @@ export interface PokemonModel {
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | undefined;
-  formChange?: {
-    availableForm: string[];
-    candyCost: string;
-    stardustCost: string;
-  }[];
+  formChange?: PokemonFormChange[];
   tempEvoOverrides: {
     tempEvoId: string;
     stats: {
@@ -185,11 +200,7 @@ export interface PokemonDataModel {
   baseStatsGO?: boolean;
   stats?: PokemonDataStats | null;
   isShadow?: boolean;
-  formChange?: {
-    availableForm: string[];
-    candyCost: string;
-    stardustCost: string;
-  }[];
+  formChange?: PokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
@@ -326,11 +337,7 @@ export class PokemonDataModel {
   stats?: PokemonDataStats | null;
   encounter?: Encounter;
   isShadow?: boolean;
-  formChange?: {
-    availableForm: string[];
-    candyCost: string;
-    stardustCost: string;
-  }[];
+  formChange?: PokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
@@ -397,7 +404,7 @@ export class PokemonDataModel {
     this.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
     this.encounter = pokemon.encounter;
     this.isShadow = pokemon.shadow ? true : false;
-    this.formChange = [];
+    this.formChange = pokemon.formChange ?? [];
 
     this.quickMoves = pokemon.quickMoves?.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) ?? [];
     this.cinematicMoves = pokemon.cinematicMoves?.map((move) => convertIdMove(move?.toString())) ?? [];

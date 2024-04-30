@@ -15,9 +15,10 @@ export class PokemonSearchingModel {
 
   constructor(item: PokemonDataModel) {
     this.id = item.num;
-    this.name = splitAndCapitalize(item.name.replace(/-M$/, 'MALE').replace(/-F$/, 'FEMALE'), '-', ' ')
+    this.name = splitAndCapitalize(item.pokemonId?.replace(/-M$/, 'MALE').replace(/-F$/, 'FEMALE'), '_', ' ')
       .replace('Mr ', 'Mr. ')
-      .replace(/^Ho Oh$/, 'Ho-Oh');
+      .replace(/^Ho Oh$/, 'Ho-Oh')
+      .replace(/ O$/, '-O');
     this.sprites = APIService.getPokeSprite(item.num);
   }
 }

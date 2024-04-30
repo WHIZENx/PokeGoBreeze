@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, convertName, capitalize, convertFormName, convertToPokemonForm } from '../../../util/Utils';
+import { splitAndCapitalize, capitalize, convertFormName, convertToPokemonForm } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
-import { genRoman } from '../../../util/Constants';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
 
@@ -15,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
+import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 
 const columnPokemon: any = [
   {
@@ -231,92 +231,16 @@ const StatsRanking = () => {
         </div>
         <div className="row w-100 element-top" style={{ margin: 0 }}>
           <div className="col-xl-5" style={{ padding: 0 }}>
-            <table className="table-info table-desc table-stats-ranking">
-              <thead />
-              <tbody>
-                <tr>
-                  <td>
-                    <h5 className="d-flex">ID</h5>
-                  </td>
-                  <td colSpan={2}>
-                    <h5 className="d-flex">
-                      <b>{select && `#${select?.num}`}</b>
-                    </h5>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5 className="d-flex">Name</h5>
-                  </td>
-                  <td colSpan={2}>
-                    <h5 className="d-flex">
-                      <b>
-                        {splitAndCapitalize(convertName(select?.name.replaceAll(' ', '-')).replace('MEWTWO_A', 'MEWTOW_ARMOR'), '_', ' ')}
-                      </b>
-                    </h5>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5 className="d-flex">Generation</h5>
-                  </td>
-                  <td colSpan={2}>
-                    <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                      {!select || select?.gen === 0 ? (
-                        <b>Unknown</b>
-                      ) : (
-                        <>
-                          <b>{genRoman(select.gen)}</b> <span className="text-gen">{`Gen ${select.gen}`}</span>
-                        </>
-                      )}
-                    </h5>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5 className="d-flex">Region</h5>
-                  </td>
-                  <td colSpan={2}>
-                    <h5 className="d-flex">{splitAndCapitalize(select?.region, '-', ' ')}</h5>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5 className="d-flex">Version</h5>
-                  </td>
-                  <td colSpan={2}>
-                    <h5 className="d-flex">{select?.version && splitAndCapitalize(select?.version.replace(' Go', ' GO'), '-', ' ')}</h5>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5 className="d-flex">Body</h5>
-                  </td>
-                  <td colSpan={2} style={{ padding: 0 }}>
-                    <div className="d-flex align-items-center first-extra-col h-100" style={{ float: 'left', width: '50%' }}>
-                      <div>
-                        <div className="d-inline-block" style={{ marginRight: 5 }}>
-                          <h6>Weight:</h6>
-                        </div>
-                        <div className="d-inline-block">
-                          <h6>{select?.weightkg} kg</h6>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center h-100" style={{ float: 'left', width: '50%' }}>
-                      <div>
-                        <div className="d-inline-block" style={{ marginRight: 5 }}>
-                          <h6>Height:</h6>
-                        </div>
-                        <div className="d-inline-block">
-                          <h6>{select?.heightm} m</h6>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <PokemonTable
+              id={select?.num}
+              gen={select?.gen}
+              formName={select?.name}
+              region={select?.region}
+              version={select?.version}
+              weight={select?.weightkg}
+              height={select?.heightm}
+              className={'table-stats-ranking'}
+            />
           </div>
           {select && (
             <div className="col-xl-7" style={{ padding: 0 }}>

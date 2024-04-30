@@ -24,7 +24,7 @@ import { TypeSet } from './models/type.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonDataOptional, PokemonEncounter, PokemonModel } from './models/pokemon.model';
 import { TypeEff } from './models/type-eff.model';
-import { FORM_GALARIAN, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_SHADOW } from '../util/Constants';
+import { FORM_ARMOR, FORM_GALARIAN, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_SHADOW } from '../util/Constants';
 import { APIUrl } from '../services/constants';
 import { PokemonData, PokemonPermission } from './models/options.model';
 import { calculateStatsByTag } from '../util/Calculate';
@@ -144,7 +144,7 @@ const convertAndReplaceNameGO = (name: string, defaultName = '') => {
   return name
     ?.replace(`${replacePokemonGoForm(defaultName)}_`, '')
     .replace(/^S$/gi, FORM_SHADOW)
-    .replace(/^A$/gi, 'ARMOR')
+    .replace(/^A$/gi, FORM_ARMOR)
     .replace(FORM_GALARIAN, 'GALAR')
     .replace(FORM_HISUIAN, 'HISUI')
     .replace('_SEA', '');
@@ -437,7 +437,7 @@ const convertBaseName = (name: string) => {
     .replaceAll("'", '')
     .replaceAll('%', '')
     .replace('-east', '')
-    .replace('-dusk', '');
+    .replace(/-dusk$/, '');
 };
 
 const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => {
@@ -1083,7 +1083,8 @@ export const mappingReleasedPokemonGO = (pokemonData: PokemonDataModel[], assets
       ?.find((asset) => asset.id === item.num)
       ?.image.find(
         (img) =>
-          img.form?.replace('_SEA', '') === item.forme?.replace('GALAR', FORM_GALARIAN).replace('HISUI', FORM_HISUIAN).replace('ARMOR', 'A')
+          img.form?.replace('_SEA', '') ===
+          item.forme?.replace('GALAR', FORM_GALARIAN).replace('HISUI', FORM_HISUIAN).replace(FORM_ARMOR, 'A')
       );
 
     if (form && (item.isShadow || (checkMoveSetAvailable(item) && form.default))) {

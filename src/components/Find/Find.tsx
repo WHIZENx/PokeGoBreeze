@@ -62,7 +62,8 @@ const Find = (props: {
 
   useEffect(() => {
     if (pokemonData.length > 0) {
-      setPokemonList(mappingPokemonName(pokemonData));
+      const result = mappingPokemonName(pokemonData);
+      setPokemonList(result);
     }
   }, [pokemonData]);
 

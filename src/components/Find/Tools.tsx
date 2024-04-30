@@ -56,7 +56,12 @@ const Tools = (props: {
           )
       ).length;
       const filterForm = stats.find(
-        (item) => item.id === id && filterFormName(props.currForm?.form.form_name ?? '', item.form.toLowerCase().replace('-sea', ''))
+        (item) =>
+          item.id === id &&
+          filterFormName(
+            props.currForm?.form.form_name?.replace(/10$/g, `complete-ten-percent`).replace(/50$/g, `complete-fifty-percent`) ?? '',
+            item.form.toLowerCase().replace('-sea', '').replace('-wings', '').replace('-mane', '')
+          )
       );
       if (filterId.length === 1 && formLength === 1 && !filterForm) {
         return filterId.at(0);
