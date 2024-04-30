@@ -148,7 +148,9 @@ const FormSelect = (props: {
     formListModify.forEach((form) => form?.forEach((p) => formList.push(convertName(p.form_name || FORM_NORMAL))));
     const pokemonGOForm = props.data.filter((pokemon) => pokemon.num === data.id);
     pokemonGOForm.forEach((pokemon) => {
-      const isIncludeFormGO = formList.some((form) => form === pokemon.forme);
+      const isIncludeFormGO = formList.some((form) =>
+        pokemon.forme?.includes(form.replace('50', 'FIFTY_PERCENT').replace('10', 'TEN_PERCENT'))
+      );
       if (!isIncludeFormGO) {
         indexPokemonGO--;
         const pokemonGOModify = new PokemonFormModifyModel(

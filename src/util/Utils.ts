@@ -3,6 +3,7 @@ import Moment from 'moment';
 import pokemonData from '../data/pokemon.json';
 import {
   FORM_ALOLA,
+  FORM_ARMOR,
   FORM_GALARIAN,
   FORM_GMAX,
   FORM_HERO,
@@ -214,7 +215,7 @@ export const convertName = (text: string | undefined, isChangeForm = true) => {
     .replaceAll('É', 'E')
     .replace('PUMPKABOO_AVERAGE', 'PUMPKABOO')
     .replace('GOURGEIST_AVERAGE', 'GOURGEIST')
-    .replace('_ARMOR', '_A')
+    .replace(`_${FORM_ARMOR}`, '_A')
     .replace('_POM_POM', '_POMPOM')
     .replace("_PA'U", '_PAU');
 };
@@ -480,6 +481,8 @@ export const convertFormGif = (name: string | undefined) => {
     .replace('articuno-galar', 'articuno')
     .replace('zapdos-galar', 'zapdos')
     .replace('moltres-galar', 'moltres')
+    .replace('complete-ten-percent', '10')
+    .replace('-complete-fifty-percent', '')
     .replace('ten-percent', '10')
     .replace('-fifty-percent', '')
     .replaceAll('-phony', '')

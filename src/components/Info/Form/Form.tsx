@@ -62,9 +62,6 @@ const Form = (props: {
   formName: string | undefined;
   setFormName: React.Dispatch<React.SetStateAction<string | undefined>>;
   setForm: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setReleased: React.Dispatch<React.SetStateAction<boolean>>;
-  // eslint-disable-next-line no-unused-vars
-  checkReleased: (id: number, form: string, isDefault?: boolean) => boolean;
   idDefault: number | undefined;
   pokeData: PokemonInfo[];
   formList: PokemonFormModify[][] | undefined;
@@ -139,7 +136,12 @@ const Form = (props: {
       ).length;
       const filterId = stats?.filter((item) => item.id === id);
       const filterForm = stats.find(
-        (item) => item.id === id && filterFormName(currForm?.form.form_name ?? '', item.form.toLowerCase().replace('-sea', ''))
+        (item) =>
+          item.id === id &&
+          filterFormName(
+            currForm?.form.form_name?.replace(/10$/g, `complete-ten-percent`).replace(/50$/g, `complete-fifty-percent`) ?? '',
+            item.form.toLowerCase().replace('-sea', '').replace('-wings', '').replace('-mane', '')
+          )
       );
       if (filterId.length === 1 && formLength === 1 && !filterForm) {
         return filterId.at(0);
@@ -166,7 +168,6 @@ const Form = (props: {
     }
     const nameInfo = splitAndCapitalize(findForm?.form.name, '-', ' ');
     props.setFormName(nameInfo);
-    props.setReleased(props.checkReleased(pokeID, nameInfo, findForm?.form?.is_default));
     props.setForm(splitAndCapitalize(convertFormNameImg(pokeID, findForm?.form.form_name ?? ''), '-', '-'));
     if (findData && findForm) {
       const oriForm = findData;

@@ -49,6 +49,11 @@ class APIService {
     if (!item) {
       return this.getPokeSprite(0);
     }
+    if (item.includes('necrozma-dawn')) {
+      item += '-wings';
+    } else if (item.includes('necrozma-dusk')) {
+      item += '-mane';
+    }
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon/${item}.png`;
   }
 

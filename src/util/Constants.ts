@@ -89,15 +89,18 @@ export const DEFAULT_TYPES = [
 export const FORM_NORMAL = 'NORMAL';
 export const FORM_SHADOW = 'SHADOW';
 export const FORM_PURIFIED = 'PURIFIED';
-export const FORM_STANDARD = 'STANDARD';
-export const FORM_INCARNATE = 'INCARNATE';
-export const FORM_HERO = 'HERO';
 export const FORM_MEGA = 'MEGA';
 export const FORM_GMAX = 'GMAX';
 export const FORM_PRIMAL = 'PRIMAL';
 export const FORM_ALOLA = 'ALOLA';
 export const FORM_HISUIAN = 'HISUIAN';
 export const FORM_GALARIAN = 'GALARIAN';
+
+// Forms special
+export const FORM_HERO = 'HERO';
+export const FORM_STANDARD = 'STANDARD';
+export const FORM_INCARNATE = 'INCARNATE';
+export const FORM_ARMOR = 'ARMOR';
 
 export const TYPE_LEGENDARY = 'LEGENDARY';
 export const TYPE_MYTHIC = 'MYTHIC';
