@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/Utils';
 import { rankMove } from '../../../util/Calculate';
 
 import './MoveTable.scss';
@@ -13,7 +13,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
-import { FORM_ARMOR, FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_GMAX, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
 import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
@@ -82,7 +82,7 @@ const TableMove = (props: {
     const combatPoke = data?.pokemon
       ?.filter((item) =>
         props.form?.id || props.form?.is_shadow || props.form?.is_purified
-          ? item.num === parseInt(props.data?.url?.split('/').at(6) ?? '0')
+          ? item.num === props.data?.num ?? 0
           : item.fullName === (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_')
       )
       .map((c) => {
@@ -104,27 +104,7 @@ const TableMove = (props: {
         return setMove(setRankMove(combatPoke?.at(0)));
       }
 
-      const result = combatPoke.find(
-        (item) =>
-          props.form &&
-          item.fullName?.replace('_SEA', '').replace('_HERO', '').replace('_CONFINED', '').replace(`_${FORM_ARMOR}`, '_A') ===
-            convertName(
-              props.form?.name
-                .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
-                .replace(`-${FORM_PURIFIED.toLowerCase()}`, '')
-                .replace('-sunshine', '-sunny')
-                .replace('-crowned', `${props.form?.id === 889 ? '-crowned-shield' : '-crowned-sword'}`)
-                .replace('-meteor', '')
-                .replace('-power-construct', '')
-                .replace('totem-disguised', 'totem')
-                .replace('totem-busted', 'busted-totem')
-                .replace('10', 'ten-percent')
-                .replace('50', 'fifty-percent')
-                .replace('-wings', '')
-                .replace('-mane', '') ?? props.form,
-              false
-            )
-      );
+      const result = combatPoke.find((item) => props.form && item.fullName === convertPokemonAPIDataName(props.form?.name));
       if (result === undefined) {
         filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
         setMove(setRankMove(combatPoke.at(0)));

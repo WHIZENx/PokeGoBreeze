@@ -11,20 +11,13 @@ import {
 } from './models/league.model';
 import { StickerModel, StickerDataModel } from './models/sticker.model';
 
-import pokemonData from '../data/pokemon.json';
-import {
-  checkMoveSetAvailable,
-  convertIdMove,
-  convertName,
-  convertPokemonGOName,
-  findPokemonData,
-  replacePokemonGoForm,
-} from '../util/Utils';
+import pokemonStoreData from '../data/pokemon.json';
+import { checkMoveSetAvailable, convertIdMove, convertPokemonDataName, replacePokemonGoForm } from '../util/Utils';
 import { TypeSet } from './models/type.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonDataOptional, PokemonEncounter, PokemonModel } from './models/pokemon.model';
 import { TypeEff } from './models/type-eff.model';
-import { FORM_ARMOR, FORM_GALARIAN, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_SHADOW } from '../util/Constants';
+import { FORM_ARMOR, FORM_GALARIAN, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_SHADOW } from '../util/Constants';
 import { APIUrl } from '../services/constants';
 import { PokemonData, PokemonPermission } from './models/options.model';
 import { calculateStatsByTag } from '../util/Calculate';
@@ -140,18 +133,18 @@ const optionFormNoneSpecial = (data: PokemonData[]) => {
   return result;
 };
 
+const findPokemonData = (id: number, name: string) => {
+  return Object.values(pokemonStoreData).find(
+    (pokemon: PokemonDataModel) => pokemon.num === id && name === convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug)
+  );
+};
+
 const convertAndReplaceNameGO = (name: string, defaultName = '') => {
   return name
     ?.replace(`${replacePokemonGoForm(defaultName)}_`, '')
     .replace(/^S$/gi, FORM_SHADOW)
     .replace(/^A$/gi, FORM_ARMOR)
-    .replace(FORM_GALARIAN, 'GALAR')
-    .replace(FORM_HISUIAN, 'HISUI')
-    .replace('_SEA', '');
-};
-
-const convertBaseNameToGO = (name: string | null, defaultName = undefined) => {
-  return name?.replaceAll('-', '_').replaceAll('%', '').toUpperCase().replace('50', 'FIFTY_PERCENT').replace(/^M$/, 'MALE') ?? defaultName;
+    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN);
 };
 
 export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncounter[]) => {
@@ -235,17 +228,13 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
 
     const pokemonBaseData = findPokemonData(
       pokemon.id,
-      convertPokemonGOName(
-        pokemon.form === FORM_NORMAL || pokemon.form === FORM_SHADOW || [664, 665, 666, 676].includes(pokemon.id)
-          ? pokemonSettings.pokemonId
-          : pokemonSettings.form?.toString() ?? pokemonSettings.pokemonId
-      )
+      pokemon.form && pokemon.form !== FORM_NORMAL ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId
     );
     if (pokemonBaseData) {
-      optional.slug = pokemonBaseData.slug;
+      optional.slug = convertPokemonDataName(pokemonBaseData.slug)?.replaceAll('_', '-').toLowerCase();
       optional.color = pokemonBaseData.color;
       optional.sprite = pokemonBaseData.sprite;
-      optional.baseForme = convertBaseNameToGO(pokemonBaseData.baseForme);
+      optional.baseForme = convertPokemonDataName(pokemonBaseData.baseForme, undefined);
       optional.region = pokemonBaseData.region ?? undefined;
       optional.version = pokemonBaseData.version ?? undefined;
       pokemon.pokedexHeightM = pokemonBaseData.heightm;
@@ -426,31 +415,17 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
   return result.sort((a, b) => a.num - b.num);
 };
 
-const convertBaseName = (name: string) => {
-  return name
-    .toLowerCase()
-    .replaceAll(' ', '-')
-    .replaceAll('.', '')
-    .replaceAll(':', '')
-    .replaceAll('é', 'e')
-    .replaceAll('’', '')
-    .replaceAll("'", '')
-    .replaceAll('%', '')
-    .replace('-east', '')
-    .replace(/-dusk$/, '');
-};
-
 const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => {
-  Object.values(pokemonData)
+  Object.values(pokemonStoreData)
     .filter(
       (pokemon: PokemonDataModel) =>
-        pokemon.num > 0 && !result.some((item) => item.slug === convertBaseName(pokemon.name)) && pokemon.forme !== 'F'
+        pokemon.num > 0 && !result.some((item) => item.fullName === convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug))
     )
     .forEach((item: PokemonDataModel) => {
-      const pokemon = new PokemonModel(item.num, item.name);
+      const pokemon = new PokemonModel(item.num, convertPokemonDataName(item.name));
 
-      pokemon.pokemonId = (item.baseSpecies ?? item.name).replaceAll('-', '_').toUpperCase();
-      pokemon.form = item.forme ? item.forme.replaceAll('-', '_').toUpperCase() : FORM_NORMAL;
+      pokemon.pokemonId = convertPokemonDataName(item.baseSpecies ?? item.name);
+      pokemon.form = item.forme ? convertPokemonDataName(item.forme) : FORM_NORMAL;
       pokemon.pokedexHeightM = item.heightm;
       pokemon.pokedexWeightKg = item.weightkg;
       pokemon.pokemonClass = item.pokemonClass ?? undefined;
@@ -466,7 +441,7 @@ const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => 
           `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
             pokemon.form?.toString().includes(FORM_MEGA) || pokemon.form?.toString() === FORM_PRIMAL
               ? pokemon.pokemonId
-              : convertName(item.slug)
+              : convertPokemonDataName(item.baseFormeSlug ?? item.slug)
           )}`
       );
 
@@ -520,6 +495,10 @@ const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => 
         M: item.genderRatio.M,
         F: item.genderRatio.F,
       };
+      optional.slug = convertPokemonDataName(item.baseFormeSlug ?? item.slug)
+        ?.replaceAll('_', '-')
+        .toLowerCase();
+      optional.baseForme = item.baseForme?.toUpperCase();
       optional.baseStatsGO = true;
 
       result.push(new PokemonDataModel(pokemon, types, optional));
@@ -527,22 +506,16 @@ const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => 
 };
 
 const cleanPokemonDupForm = (result: PokemonDataModel[]) => {
-  const cloneResult = [...result];
-  const filterPokemon = result.filter((pokemon) => {
-    const count = cloneResult.filter((p) => p.forme !== FORM_NORMAL && p.num === pokemon.num).length;
-    if (count > 1 && pokemon.forme === FORM_NORMAL && pokemon.baseForme && pokemon.baseForme !== pokemon.forme) {
-      return false;
+  const filterPokemon = result.filter((pokemon, _, r) => {
+    const normalForm = r.filter(
+      (p) => pokemon.forme === FORM_NORMAL && p.num === pokemon.num && p.baseForme && r.some((pr) => pr.baseForme === p.baseForme)
+    );
+    if (normalForm.length > 0) {
+      return pokemon.baseForme && pokemon.forme === FORM_NORMAL;
     }
-    if (
-      (pokemon.num === 710 || pokemon.num === 711) &&
-      count > 1 &&
-      pokemon.forme === FORM_NORMAL &&
-      !pokemon.baseForme &&
-      cloneResult.some((p) => p.baseForme && p.baseForme !== p.forme)
-    ) {
-      return false;
-    }
-    return true;
+    return !r.some(
+      (p) => pokemon.forme === FORM_NORMAL && p.num === pokemon.num && p.forme !== FORM_NORMAL && p.baseForme && p.baseForme === p.forme
+    );
   });
   const idConcat = [744];
 
@@ -653,7 +626,7 @@ export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds
       result.image.push({
         gender,
         pokemonId: result.id,
-        form: form.replace(`${result.name}_`, ''),
+        form: form.replace(`${result.name}_`, '').replace(/^A$/gi, FORM_ARMOR),
         default: formSet[count],
         shiny: shiny ? formSet[count + 1] : null,
       });
@@ -690,7 +663,7 @@ export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds
         result.image.push({
           gender: 3,
           pokemonId: result.id,
-          form,
+          form: form.replace(/^A$/gi, FORM_ARMOR).replace(/GALARIAN_STANDARD/, FORM_GALARIAN),
           default: formSet[index],
           shiny: formSet[index + 1],
         });
@@ -708,7 +681,7 @@ export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds
           result.image.push({
             gender: 3,
             pokemonId: result.id,
-            form,
+            form: form.replace(/^A$/gi, FORM_ARMOR).replace(/GALARIAN_STANDARD/, FORM_GALARIAN),
             default: formSet[index],
             shiny: formSet[index + 1],
           });
@@ -1079,13 +1052,7 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
 
 export const mappingReleasedPokemonGO = (pokemonData: PokemonDataModel[], assets: Asset[]) => {
   pokemonData.forEach((item) => {
-    const form = assets
-      ?.find((asset) => asset.id === item.num)
-      ?.image.find(
-        (img) =>
-          img.form?.replace('_SEA', '') ===
-          item.forme?.replace('GALAR', FORM_GALARIAN).replace('HISUI', FORM_HISUIAN).replace(FORM_ARMOR, 'A')
-      );
+    const form = assets?.find((asset) => asset.id === item.num)?.image.find((img) => img.form === item.forme);
 
     if (form && (item.isShadow || (checkMoveSetAvailable(item) && form.default))) {
       item.releasedGO = form.default.includes('Addressable Assets/');

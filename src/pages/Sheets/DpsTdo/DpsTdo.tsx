@@ -500,7 +500,7 @@ const DpsTdo = () => {
 
       let boolReleaseGO = true;
       if (releasedGO) {
-        const result = checkPokemonGO(item.pokemon?.num, item.pokemon.name, data?.pokemon ?? []);
+        const result = checkPokemonGO(item.pokemon?.num, item.pokemon.fullName || item.pokemon.pokemonId || '', data?.pokemon ?? []);
         boolReleaseGO = item.pokemon?.releasedGO ?? result?.releasedGO ?? false;
       }
       if (enableShadow || enableElite || enableMega || enableGmax || enablePrimal || enableLegendary || enableMythic || enableUltrabeast) {

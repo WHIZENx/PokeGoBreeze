@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, convertFormName, splitAndCapitalize } from '../../util/Utils';
+import { capitalize, checkPokemonGO, convertFormName, convertPokemonDataName, splitAndCapitalize } from '../../util/Utils';
 import { STAB_MULTIPLY } from '../../util/Constants';
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
@@ -136,7 +136,8 @@ const Move = (props: { id?: number }) => {
 
   useEffect(() => {
     if (move && data?.options && data?.pokemon && data?.typeEff && data?.weatherBoost) {
-      setTopList(queryTopMove(data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost, move));
+      const result = queryTopMove(data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost, move);
+      setTopList(result);
     }
   }, [move, data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost]);
 
@@ -478,7 +479,11 @@ const Move = (props: { id?: number }) => {
                       if (!releasedGO) {
                         return true;
                       }
-                      const result = checkPokemonGO(pokemon.num, pokemon.name, data?.pokemon ?? []);
+                      const result = checkPokemonGO(
+                        pokemon.num,
+                        convertPokemonDataName(pokemon.sprite ?? pokemon.name.replaceAll(' ', '_')),
+                        data?.pokemon ?? []
+                      );
                       return pokemon.releasedGO ?? result?.releasedGO ?? false;
                     })}
                     pagination={true}

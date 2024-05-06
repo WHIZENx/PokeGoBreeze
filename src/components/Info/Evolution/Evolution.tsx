@@ -20,7 +20,7 @@ import APIService from '../../../services/API.service';
 import './Evolution.scss';
 import { useTheme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { capitalize, convertFormGif, convertModelSpritName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertFormGif, convertModelSpritName, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/Utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
@@ -29,7 +29,7 @@ import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { EvoList, EvolutionModel } from '../../../core/models/evolution.model';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW, FORM_STANDARD } from '../../../util/Constants';
+import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../../../util/Constants';
 import { FormModel } from '../../../core/models/API/form.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 
@@ -87,12 +87,11 @@ const Evolution = (props: {
 
   const modelEvoChain = (pokemon: EvolutionModel) => {
     const name = pokeSetName(pokemon.form !== FORM_NORMAL ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name);
-    const form =
+    let form =
       pokemon.id === 718 && pokemon.form === '' ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
+    form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
     let sprite = '';
-    if (pokemon.id === 555 && form === 'GALAR') {
-      sprite = `${name.toLowerCase()}-${form.toLowerCase()}`;
-    } else if (pokemon.id === 664 || pokemon.id === 665) {
+    if (pokemon.id === 664 || pokemon.id === 665) {
       sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;
     } else {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
@@ -286,32 +285,13 @@ const Evolution = (props: {
   };
 
   const getEvoChainStore = (id: number, forme: FormModel) => {
-    let form =
-      forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) || (forme.is_default && forme.id === id && id !== 718)
+    const form =
+      forme.form_name === '' || forme.is_purified || forme.is_shadow || forme.form_name?.toUpperCase().includes(FORM_MEGA)
         ? FORM_NORMAL
-        : forme.form_name
-            .toUpperCase()
-            .replace(`-${FORM_SHADOW}`, '')
-            .replace(`-${FORM_PURIFIED}`, '')
-            .replace(`-${FORM_STANDARD}`, '')
-            .replace(FORM_SHADOW, FORM_NORMAL)
-            .replace(FORM_PURIFIED, FORM_NORMAL)
-            .replace(FORM_STANDARD, FORM_NORMAL)
-            .replace(/10$/g, `COMPLETE_TEN_PERCENT`)
-            .replace(/50$/g, `COMPLETE_FIFTY_PERCENT`);
-    if (id === 800) {
-      form = form.replace('DAWN', 'DAWN_WINGS').replace('DUSK', 'DUSK_MANE');
-    }
+        : convertPokemonAPIDataName(forme.form_name);
     const result: PokemonEvo[][] = [];
     const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
-    let pokemon = pokemons.find(
-      (p) =>
-        p.forme
-          ?.replace('_SEA', '')
-          .replace(`_${FORM_STANDARD}`, '')
-          .replace('CROWNED_SHIELD', 'CROWNED')
-          .replace('CROWNED_SWORD', 'CROWNED') === form.replaceAll('-', '_')
-    );
+    let pokemon = pokemons.find((p) => p.forme === form);
     if (!pokemon) {
       pokemon = pokemons.find((p) => p.baseForme && p.baseForme.replaceAll('-', '_').toUpperCase() === p.forme);
     }

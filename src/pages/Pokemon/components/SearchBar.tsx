@@ -9,7 +9,6 @@ import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 
 const SearchBar = (props: {
   data: OptionsPokemon | undefined;
-  setReForm: React.Dispatch<React.SetStateAction<boolean>>;
   setForm: React.Dispatch<React.SetStateAction<string | undefined>>;
   setFormName: React.Dispatch<React.SetStateAction<string | undefined>>;
   router: ReduxRouterState;

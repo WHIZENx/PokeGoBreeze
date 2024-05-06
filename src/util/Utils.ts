@@ -1,6 +1,5 @@
 import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
 import Moment from 'moment';
-import pokemonData from '../data/pokemon.json';
 import {
   FORM_ALOLA,
   FORM_ARMOR,
@@ -398,43 +397,8 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
   return null;
 };
 
-const filterPokemonGO = (id: number, name: string, pokemon: PokemonDataModel) => {
-  return (
-    pokemon.num === id &&
-    pokemon.fullName ===
-      (pokemon.num === 555 && !name.toLowerCase().includes('zen')
-        ? name?.toUpperCase().replaceAll('-', '_').replace('_GALAR', `_${FORM_GALARIAN}`) + `_${FORM_STANDARD}`
-        : convertName(name).replace('NIDORAN_F', 'NIDORAN_FEMALE').replace('NIDORAN_M', 'NIDORAN_MALE'))
-  );
-};
-
-const convertPokemonGO = (id: number, name: string, pokemon: PokemonDataModel) => {
-  if (name.toLowerCase().includes('_mega')) {
-    return pokemon.num === id && pokemon.fullName === name?.toUpperCase().replaceAll('-', '_');
-  } else {
-    return filterPokemonGO(id, name, pokemon);
-  }
-};
-
-export const checkPokemonGO = (id: number, name: string, details: PokemonDataModel[], isIgnoreMega = false) => {
-  return details.find((pokemon) => {
-    if (isIgnoreMega) {
-      return filterPokemonGO(id, name, pokemon);
-    }
-    return convertPokemonGO(id, name, pokemon);
-  });
-};
-
-export const mappingReleasedGO = (pokemon: PokemonDataModel[], details?: PokemonDataModel[]) => {
-  return pokemon
-    .filter((item) => item.num > 0)
-    .map((item) => {
-      const result = checkPokemonGO(item.num, item.name, details ?? []);
-      return {
-        ...item,
-        releasedGO: result?.releasedGO ?? false,
-      };
-    });
+export const checkPokemonGO = (id: number, name: string, details: PokemonDataModel[]) => {
+  return details.find((pokemon) => pokemon.num === id && pokemon.fullName === name);
 };
 
 export const convertFormName = (id: number, form: string) => {
@@ -725,7 +689,7 @@ export const convertIdMove = (name: string) => {
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: PokemonDataModel[], form: string) => {
-  return pokemon.some((p) => splitAndCapitalize(form, '-', '_').toUpperCase() === (p.fullName ?? p.name) && p.isShadow);
+  return pokemon.some((p) => convertPokemonAPIDataName(form) === (p.fullName ?? p.name) && p.isShadow);
 };
 
 const convertNameEffort = (name: string) => {
@@ -798,83 +762,80 @@ export const replacePokemonGoForm = (form: string) => {
   return form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
 };
 
-export const convertPokemonGOName = (text: string | undefined) => {
+// Convert Pokemon from Storage data to GO name
+export const convertPokemonDataName = (text: string | undefined | null, defaultName = '') => {
   if (!text) {
-    return '';
-  }
-  if (!text.includes('MEOWSTIC') || !text.includes('INDEEDEE')) {
-    text = text.replace(/_FEMALE$/, '');
-  }
-  return text
-    .replace(/_PALDEA$/, '')
-    .replace(/_PLANT$/, '')
-    .replace(/_SANDY$/, '')
-    .replace(/_TRASH$/, '')
-    .replace(/_OVERCAST$/, '')
-    .replace('CHERRIM_SUNNY', 'CHERRIM_SUNSHINE')
-    .replace(/_EAST_SEA$/, '')
-    .replace(/_WEST_SEA$/, '')
-    .replace(/_ALTERED$/, '')
-    .replace(/_LAND$/, '')
-    .replace(/_RED_STRIPED$/, '')
-    .replace(/_STANDARD$/, '')
-    .replace(/_AUTUMN$/, '')
-    .replace(/_SPRING$/, '')
-    .replace(/_SUMMER$/, '')
-    .replace(/_WINTER$/, '')
-    .replace(/_INCARNATE$/, '')
-    .replace(/_ORDINARY$/, '')
-    .replace(/_ARIA$/, '')
-    .replace(/_BLUE$/, '')
-    .replace(/_ORANGE$/, '')
-    .replace(/_RED$/, '')
-    .replace(/_WHITE$/, '')
-    .replace(/_YELLOW$/, '')
-    .replace(/_COMPLETE_TEN_PERCENT$/, '_10')
-    .replace(/_COMPLETE_FIFTY_PERCENT$/, '')
-    .replace(/_TEN_PERCENT$/, '_10')
-    .replace(/_FIFTY_PERCENT$/, '')
-    .replace(/_CONFINED$/, '')
-    .replace(/_BAILE$/, '')
-    .replace(/_POMPOM$/, '_POM_POM')
-    .replace('ROCKRUFF_DUSK', 'ROCKRUFFDUSK')
-    .replace(/_MIDDAY$/, '')
-    .replace(/_SOLO$/, '')
-    .replace(/_GREEN$/, '')
-    .replace(/_INDIGO$/, '')
-    .replace(/_VIOLET$/, '')
-    .replace(/_DISGUISED$/, '')
-    .replace(/_COLOR$/, '')
-    .replace(/_AMPED$/, '')
-    .replace(/_PHONY$/, '')
-    .replace(/_ANTIQUE$/, '')
-    .replace(/_ICE$/, '')
-    .replace('INDEEDEE_MALE', 'INDEEDEE')
-    .replace(/_FULL_BELLY$/, '')
-    .replace(/_CROWNED_SWORD$/, '_CROWNED')
-    .replace(/_HERO$/, '')
-    .replace(/_CROWNED_SHIELD$/, '_CROWNED')
-    .replace(/_RAPID_STRIKE$/, '')
-    .replace(/_SINGLE_STRIKE$/, '')
-    .replace(/_RIDER$/, '');
-};
-
-export const convertPokemonDataName = (text: string | undefined) => {
-  if (!text) {
-    return '';
+    return defaultName;
   }
   return text
     .toUpperCase()
     .replaceAll('-', '_')
-    .replace('NIDORAN_F', 'NIDORAN')
-    .replace('NIDORAN_M', 'NIDORAN_MALE')
-    .replace('MEOWSTIC_F', 'MEOWSTIC_FEMALE')
-    .replace(/_GALAR$/, `_${FORM_GALARIAN}`)
-    .replace(/_HISUI$/, `_${FORM_HISUIAN}`);
+    .replaceAll('.', '')
+    .replaceAll(':', '')
+    .replaceAll('É', 'E')
+    .replaceAll('’', '')
+    .replaceAll("'", '')
+    .replaceAll('%', '')
+    .replace(/_F$/, '_FEMALE')
+    .replace(/_M$/, '_MALE')
+    .replace(/^F$/, 'FEMALE')
+    .replace(/^M$/, 'MALE')
+    .replace(/GALAR/, FORM_GALARIAN)
+    .replace(/HISUI/, FORM_HISUIAN)
+    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
+    .replace(/_SUNSHINE$/, '_SUNNY')
+    .replace(/_TOTEM$/, '')
+    .replace(/_CAP$/, '')
+    .replace(/_PALDEA$/, '')
+    .replace(/_EAST$/, '')
+    .replace(/10$/, 'TEN_PERCENT')
+    .replace(/50$/, 'FIFTY_PERCENT')
+    .replace('ZACIAN_CROWNED', 'ZACIAN_CROWNED_SWORD')
+    .replace('ZAMAZENTA_CROWNED', 'ZAMAZENTA_CROWNED_SHIELD')
+    .replace(/_ICE$/, '_ICE_RIDER')
+    .replace(/_SHADOW$/, '_SHADOW_RIDER')
+    .replace(/_ORIGINAL$/, '_ORIGINAL_COLOR')
+    .replace(/_WEST$/, '_WEST_SEA')
+    .replace(/_EAST$/, '_EAST_SEA')
+    .replace(/^WEST$/, 'WEST_SEA')
+    .replace(/^EAST$/, 'EAST_SEA');
 };
 
-export const findPokemonData = (id: number, name: string) => {
-  return Object.values(pokemonData).find(
-    (pokemon: PokemonDataModel) => pokemon.num === id && name === convertPokemonDataName(pokemon.slug)
-  );
+// Convert Pokemon from API data to GO name
+export const convertPokemonAPIDataName = (text: string | undefined | null, defaultName = '') => {
+  if (!text) {
+    return defaultName;
+  }
+  return text
+    .toUpperCase()
+    .replaceAll('-', '_')
+    .replace(/_PURIFIED$/, '')
+    .replace(/_SHADOW$/, '')
+    .replace(/_MALE$/, '')
+    .replace(/GALAR/, FORM_GALARIAN)
+    .replace(/HISUI/, FORM_HISUIAN)
+    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
+    .replace(/_TOTEM$/, '')
+    .replace(/_PALDEA_COMBAT_BREED$/, '')
+    .replace(/_PALDEA_BLAZE_BREED$/, '')
+    .replace(/_PALDEA_AQUA_BREED$/, '')
+    .replace(/_NORMAL$/, '')
+    .replace(/10$/, 'TEN_PERCENT')
+    .replace(/50$/, 'FIFTY_PERCENT')
+    .replace('DARMANITAN_GALARIAN', 'DARMANITAN_GALARIAN_STANDARD')
+    .replace(/_BATTLE_BOND$/, '')
+    .replace(/_POWER_CONSTRUCT$/, '')
+    .replace(/_POM_POM$/, 'POMPOM')
+    .replace(/_OWN_TEMPO$/, '')
+    .replace(/_WINGS$/, '')
+    .replace(/_MANE$/, 'MANE')
+    .replace(/_ORIGINAL$/, '_ORIGINAL_COLOR')
+    .replace('ZACIAN_CROWNED', 'ZACIAN_CROWNED_SWORD')
+    .replace('ZAMAZENTA_CROWNED', 'ZAMAZENTA_CROWNED_SHIELD')
+    .replace(/_ICE$/, '_ICE_RIDER')
+    .replace(/_SHADOW$/, '_SHADOW_RIDER')
+    .replace('BASCULEGION_MALE', 'BASCULEGION')
+    .replace(/_PLUMAGE$/, '')
+    .replace(/_ROAMING$/, '')
+    .replace(/_SEGMENT$/, '');
 };

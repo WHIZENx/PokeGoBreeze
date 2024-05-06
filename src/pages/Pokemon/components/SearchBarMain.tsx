@@ -7,18 +7,13 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
-const SearchBarMain = (props: {
-  data: OptionsPokemon | undefined;
-  setReForm: React.Dispatch<React.SetStateAction<boolean>>;
-  setForm: React.Dispatch<React.SetStateAction<string | undefined>>;
-}) => {
+const SearchBarMain = (props: { data: OptionsPokemon | undefined; setForm: React.Dispatch<React.SetStateAction<string | undefined>> }) => {
   return (
     <>
       {props.data?.prev && (
         <div title="Previous Pokémon" className={`prev-block col${props.data?.next ? '-6' : ''}`} style={{ float: 'left', padding: 0 }}>
           <Link
             onClick={() => {
-              props.setReForm(false);
               props.setForm(undefined);
             }}
             className="d-flex justify-content-start align-items-center"
@@ -51,7 +46,6 @@ const SearchBarMain = (props: {
         <div title="Next Pokémon" className={`next-block col${props.data?.prev ? '-6' : ''}`} style={{ float: 'right', padding: 0 }}>
           <Link
             onClick={() => {
-              props.setReForm(false);
               props.setForm(undefined);
             }}
             className="d-flex justify-content-end align-items-center"

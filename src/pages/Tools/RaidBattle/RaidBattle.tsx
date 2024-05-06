@@ -1239,7 +1239,7 @@ const RaidBattle = () => {
                 }
                 if (obj.pokemon) {
                   obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
-                  const result = checkPokemonGO(obj.pokemon.num, obj.pokemon.name, data?.pokemon ?? []);
+                  const result = checkPokemonGO(obj.pokemon.num, obj.pokemon.fullName || obj.pokemon.pokemonId || '', data?.pokemon ?? []);
                   return obj.pokemon.releasedGO ?? result?.releasedGO ?? false;
                 }
                 return false;
