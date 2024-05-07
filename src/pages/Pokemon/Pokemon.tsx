@@ -15,20 +15,14 @@ import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import { showSpinner, hideSpinner } from '../../store/actions/spinner.action';
-import {
-  checkPokemonIncludeShadowForm,
-  convertFormNameImg,
-  convertPokemonAPIDataName,
-  getPokemonById,
-  splitAndCapitalize,
-} from '../../util/Utils';
+import { checkPokemonIncludeShadowForm, convertPokemonAPIDataName, getPokemonById, splitAndCapitalize } from '../../util/Utils';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
 import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { FORM_SHADOW, FORM_PURIFIED, KEY_LEFT, KEY_RIGHT, FORM_NORMAL, FORM_GMAX, FORM_STANDARD, regionList } from '../../util/Constants';
+import { FORM_SHADOW, FORM_PURIFIED, KEY_LEFT, KEY_RIGHT, FORM_NORMAL, FORM_GMAX, regionList } from '../../util/Constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
@@ -106,6 +100,8 @@ const Pokemon = (props: {
 
   const fetchMap = useCallback(
     async (data: Species) => {
+      setFormList([]);
+      setPokeData([]);
       setData(data);
       const dataPokeList: PokemonInfo[] = [];
       const dataFormList: PokemonForm[][] = [];
@@ -233,43 +229,30 @@ const Pokemon = (props: {
       setFormList(formListResult);
 
       // Set Default Form
-      let defaultFrom: (PokemonFormModify | undefined)[] | undefined,
-        currentForm: PokemonFormModify | undefined,
-        defaultData: PokemonInfo | undefined;
-      let formParams = searchParams.get('form');
+      let currentForm: PokemonFormModify | undefined;
+      const formParams = searchParams.get('form')?.toLowerCase().replaceAll('_', '-');
+      const defaultForm = formListResult.map((value) => value.find((item) => item.form.is_default));
       if (formParams) {
-        if (data?.id === 555 && formParams === 'galar') {
-          formParams += `-${FORM_STANDARD.toLowerCase()}`;
-        }
-        defaultFrom = formListResult.find((value) =>
+        const defaultFormSearch = formListResult.find((value) =>
           value.find(
             (item) =>
-              item.form.form_name === formParams?.toLowerCase() || item.form.name === `${item.default_name}-${formParams?.toLowerCase()}`
+              convertPokemonAPIDataName(item.form.form_name).toLowerCase().replaceAll('_', '-') === formParams ||
+              convertPokemonAPIDataName(item.form.name).toLowerCase().replaceAll('_', '-') === `${item.default_name}-${formParams}`
           )
         );
-
-        if (defaultFrom) {
-          currentForm = defaultFrom.at(0);
-          if (
-            currentForm?.form.form_name !== formParams.toLowerCase() &&
-            currentForm?.form.name !== `${currentForm?.default_name}-${formParams?.toLowerCase()}`
-          ) {
-            currentForm = defaultFrom.find((value) => value?.form.form_name === formParams?.toLowerCase());
-          }
+        if (defaultFormSearch) {
+          currentForm = defaultFormSearch.at(0);
         } else {
-          defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
-          currentForm = defaultFrom?.find((item) => item?.form.id === data?.id);
+          currentForm = defaultForm?.find((item) => item?.form.id === data?.id);
           searchParams.delete('form');
-          setSearchParams(searchParams);
         }
+        setSearchParams(searchParams);
       } else if (router.action === Action.Pop && props.searching) {
-        defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
-        currentForm = defaultFrom?.find((item) => item?.form.form_name === props.searching?.form);
+        currentForm = defaultForm?.find((item) => item?.form.form_name === props.searching?.form);
       } else {
-        defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
-        currentForm = defaultFrom?.find((item) => item?.form.id === data?.id);
+        currentForm = defaultForm?.find((item) => item?.form.id === data?.id);
       }
-      defaultData = dataPokeList.find((value) => value.name === currentForm?.form.name);
+      let defaultData = dataPokeList.find((value) => value.name === currentForm?.form.name);
       if (!defaultData) {
         defaultData = dataPokeList.find((value) => value.name === currentForm?.name);
       }
@@ -397,9 +380,9 @@ const Pokemon = (props: {
           : currentForm?.form?.is_default
           ? currentForm?.form?.name
           : splitAndCapitalize(formParams ? currentForm?.form.name : data?.name, '-', ' ');
-      const formInfo = splitAndCapitalize(convertFormNameImg(data?.id ?? 0, currentForm?.form.form_name ?? ''), '-', '-');
+      const formInfo = splitAndCapitalize(convertPokemonAPIDataName(currentForm?.form.form_name), '_', '-');
       setFormName(nameInfo);
-      setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo ?? undefined);
+      setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
       if (params.id) {
         document.title = `#${data?.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
       }

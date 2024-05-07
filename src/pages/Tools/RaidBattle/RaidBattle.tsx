@@ -4,7 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { checkPokemonGO, convertFormName, splitAndCapitalize } from '../../../util/Utils';
+import { checkPokemonGO, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
@@ -1262,7 +1262,7 @@ const RaidBattle = () => {
                   <div className="d-flex justify-content-center w-100">
                     <Link
                       to={`/pokemon/${value.pokemon?.num}${
-                        value.pokemon?.forme ? `?form=${convertFormName(value.pokemon?.num, value.pokemon?.forme.toLowerCase())}` : ''
+                        value.pokemon?.forme ? `?form=${value.pokemon?.forme.toLowerCase().replaceAll('_', '-')}` : ''
                       }`}
                       className="sprite-raid position-relative"
                     >

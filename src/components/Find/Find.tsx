@@ -48,7 +48,6 @@ const Find = (props: {
   const [id, setId] = useState(
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
   );
-  const [form, setForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
 
   const [pokemonList, setPokemonList]: [PokemonSearchingModel[], React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>] = useState(
     [] as PokemonSearchingModel[]
@@ -90,7 +89,6 @@ const Find = (props: {
   const getInfoPoke = (value: PokemonSearchingModel) => {
     const currentId = getPokemonById(pokemonData, value.id);
     setId(value.id);
-    setForm(undefined);
     if (props.setId) {
       props.setId(value.id);
     }
@@ -228,9 +226,7 @@ const Find = (props: {
               setRaid={props.setRaid}
               tier={props.tier}
               setTier={props.setTier}
-              form={form}
               setForm={props.setForm}
-              setFormOrigin={setForm}
               id={id}
               setName={props.setName}
               name={pokemonList.find((item) => item.id === id)?.name ?? ''}

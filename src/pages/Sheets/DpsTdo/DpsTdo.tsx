@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, convertFormName, checkPokemonGO } from '../../../util/Utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/Utils';
 import {
   DEFAULT_POKEMON_DEF_OBJ,
   DEFAULT_TYPES,
@@ -96,9 +96,7 @@ const columns: any = [
     name: 'Pokémon Name',
     selector: (row: PokemonSheetData) => (
       <Link
-        to={`/pokemon/${row.pokemon?.num}${
-          row.pokemon?.forme ? `?form=${convertFormName(row.pokemon?.num, row.pokemon?.forme.toLowerCase().replaceAll('_', '-'))}` : ''
-        }`}
+        to={`/pokemon/${row.pokemon?.num}${row.pokemon?.forme ? `?form=${row.pokemon?.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
       >
         {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
@@ -475,9 +473,9 @@ const DpsTdo = () => {
       const boolFilterPoke =
         searchTerm === '' ||
         (match
-          ? splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() ||
+          ? item.pokemon?.name.replaceAll('-', ' ').toLowerCase() === searchTerm.toLowerCase() ||
             item.pokemon?.num.toString() === searchTerm
-          : splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          : item.pokemon?.name.replaceAll('-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.pokemon?.num.toString().includes(searchTerm));
 
       const boolShowShadow = !showShadow && item.shadow;

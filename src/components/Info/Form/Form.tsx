@@ -8,8 +8,8 @@ import { StatsAtk, StatsDef, StatsPokemon, StatsProd, StatsSta } from '../../../
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { hideSpinner } from '../../../store/actions/spinner.action';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, regionList } from '../../../util/Constants';
-import { capitalize, convertPokemonAPIDataName, convertStatsEffort, splitAndCapitalize } from '../../../util/Utils';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, regionList } from '../../../util/Constants';
+import { capitalize, convertPokemonAPIDataName, convertStatsEffort, formIconAssets, splitAndCapitalize } from '../../../util/Utils';
 import APIService from '../../../services/API.service';
 
 import './Form.scss';
@@ -59,27 +59,12 @@ const Form = (props: {
 
   const filterFormList = useCallback(
     (stats: { id: number; form: string }[]): any => {
-      const id = props.species?.id;
-      const formLength = props.formList?.filter(
-        (forms) =>
-          !forms.some(
-            (modifyForm) =>
-              modifyForm.form.form_name.toUpperCase() === FORM_SHADOW || modifyForm.form.form_name.toUpperCase() === FORM_PURIFIED
-          )
-      ).length;
-      const filterId = stats?.filter((item) => item.id === id);
       const filterForm = stats.find(
-        (item) =>
-          item.id === id &&
-          item.form.toUpperCase().replaceAll('-', '_') === (convertPokemonAPIDataName(props.form?.form.form_name) || FORM_NORMAL)
+        (item) => item.id === props.species?.id && item.form === (convertPokemonAPIDataName(props.form?.form.form_name) || FORM_NORMAL)
       );
-      if (filterId.length === 1 && formLength === 1 && !filterForm) {
-        return filterId.at(0);
-      } else {
-        return filterForm;
-      }
+      return filterForm;
     },
-    [props.species?.id, props.formList, props.form?.form]
+    [props.species?.id, props.form?.form]
   );
 
   useEffect(() => {
@@ -119,32 +104,11 @@ const Form = (props: {
 
   const changeForm = (name: string, form: string) => {
     if (params.id) {
+      form = convertPokemonAPIDataName(form).toLowerCase().replaceAll('_', '-');
       searchParams.set('form', form);
       setSearchParams(searchParams);
     }
     findFormData(name);
-  };
-
-  const formAssets = (value: PokemonFormModify) => {
-    return value.form.name.includes('-totem') ||
-      value.form.name.includes('-hisui') ||
-      value.form.name.includes('power-construct') ||
-      value.form.name.includes('own-tempo') ||
-      value.form.name.includes('-meteor') ||
-      value.form.name === 'mewtwo-armor' ||
-      value.form.name === 'arceus-unknown' ||
-      value.form.name === 'dialga-origin' ||
-      value.form.name === 'palkia-origin' ||
-      value.form.name === 'mothim-sandy' ||
-      value.form.name === 'mothim-trash' ||
-      value.form.name === 'basculin-white-striped' ||
-      value.form.name === 'greninja-battle-bond' ||
-      value.form.name === 'urshifu-rapid-strike' ||
-      (props.species?.id ?? 0) >= 899
-      ? APIService.getPokeIconSprite('unknown-pokemon')
-      : value.form.name.includes(`-${FORM_SHADOW.toLowerCase()}`) || value.form.name.includes(`-${FORM_PURIFIED.toLowerCase()}`)
-      ? APIService.getPokeIconSprite(value.name)
-      : APIService.getPokeIconSprite(value.form.name);
   };
 
   return (
@@ -189,7 +153,7 @@ const Form = (props: {
                             });
                         }}
                         alt="img-icon-form"
-                        src={formAssets(value)}
+                        src={formIconAssets(value, props.species?.id ?? 0)}
                       />
                     </div>
                   </div>

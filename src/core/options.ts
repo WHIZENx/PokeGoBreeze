@@ -12,7 +12,7 @@ import {
 import { StickerModel, StickerDataModel } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
-import { checkMoveSetAvailable, convertIdMove, convertPokemonDataName, replacePokemonGoForm } from '../util/Utils';
+import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm } from '../util/Utils';
 import { TypeSet } from './models/type.model';
 import { TypeMove } from '../enums/move.enum';
 import { PokemonDataModel, PokemonDataOptional, PokemonEncounter, PokemonModel } from './models/pokemon.model';
@@ -810,7 +810,7 @@ export const optionCombat = (data: PokemonData[], types: TypeEff) => {
       const move = moves.find((move) => move.movementId === result.name);
       result.id = move?.id ?? 0;
       result.track = move?.id ?? 0;
-      result.name = convertIdMove(result.name?.toString()).replace('_FAST', '');
+      result.name = result.name?.toString().replace('_FAST', '');
       result.pve_power = move?.power ?? 0.0;
       if (result.name === 'STRUGGLE') {
         result.pve_energy = -33;

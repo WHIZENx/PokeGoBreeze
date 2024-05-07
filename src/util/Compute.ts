@@ -139,6 +139,7 @@ export const queryAssetForm = (assets: Asset[], id: number | undefined, name: st
     if (!formNormal) {
       return pokemonAssets.image.at(0);
     }
+    return formNormal;
   } else {
     return null;
   }

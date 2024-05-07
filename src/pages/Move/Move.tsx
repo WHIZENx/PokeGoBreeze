@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, convertFormName, convertPokemonDataName, splitAndCapitalize } from '../../util/Utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../util/Utils';
 import { STAB_MULTIPLY } from '../../util/Constants';
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
@@ -42,7 +42,7 @@ const columns: any = [
   {
     name: 'Name',
     selector: (row: PokemonTopMove) => (
-      <Link to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}>
+      <Link to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
         <img
           height={48}
           alt="img-pokemon"
