@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { SearchingModel } from '../../store/models/searching.model';
 import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
 
@@ -15,7 +15,13 @@ import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import { showSpinner, hideSpinner } from '../../store/actions/spinner.action';
-import { checkPokemonIncludeShadowForm, convertPokemonAPIDataName, getPokemonById, splitAndCapitalize } from '../../util/Utils';
+import {
+  checkPokemonIncludeShadowForm,
+  convertPokemonAPIDataName,
+  convertPokemonImageName,
+  getPokemonById,
+  splitAndCapitalize,
+} from '../../util/Utils';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
 import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
@@ -42,8 +48,6 @@ const Pokemon = (props: {
   isSearch?: boolean;
   // eslint-disable-next-line no-unused-vars
   onSetIDPoke?: (id: number) => void;
-  first?: boolean;
-  setFirst?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -76,7 +80,7 @@ const Pokemon = (props: {
   const [region, setRegion] = useState('');
   const [WH, setWH] = useState({ weight: 0, height: 0 });
   const [formName, setFormName]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
-  const [form, setForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
+  const [originForm, setOriginForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
   const [currentForm, setCurrentForm]: [
@@ -102,7 +106,6 @@ const Pokemon = (props: {
     async (data: Species) => {
       setFormList([]);
       setPokeData([]);
-      setData(data);
       const dataPokeList: PokemonInfo[] = [];
       const dataFormList: PokemonForm[][] = [];
       await Promise.all(
@@ -259,19 +262,14 @@ const Pokemon = (props: {
       setWH((prevWH) => ({ ...prevWH, weight: defaultData?.weight ?? 0, height: defaultData?.height ?? 0 }));
       setCurrentData(defaultData);
       setCurrentForm(currentForm);
+      setData(data);
     },
-    [pokemonData]
+    [pokemonData, searchParams]
   );
 
   const queryPokemon = useCallback(
     (id: string) => {
-      if (pokemonData.length > 0 && id !== data?.id.toString()) {
-        if (data && id !== data.id.toString()) {
-          setForm(undefined);
-        }
-        dispatch(showSpinner());
-      }
-
+      dispatch(showSpinner());
       axios
         .getPokeSpices(id, {
           cancelToken: source.token,
@@ -293,11 +291,12 @@ const Pokemon = (props: {
   );
 
   useEffect(() => {
-    const id = params.id ? params.id.toLowerCase() : props.id;
-    if (id && pokemonData.length > 0) {
+    const id = params.id?.toLowerCase() ?? props.id;
+    if (id && (data?.id ?? 0) !== parseInt(id) && pokemonData.length > 0) {
+      setOriginForm(undefined);
       queryPokemon(id);
     }
-  }, [params.id, props.id, queryPokemon, pokemonData.length]);
+  }, [params.id, props.id, pokemonData.length, data?.id, queryPokemon]);
 
   useEffect(() => {
     const id = params.id ? params.id.toLowerCase() : props.id;
@@ -313,10 +312,10 @@ const Pokemon = (props: {
             };
             if (result.prev && event.keyCode === KEY_LEFT) {
               event.preventDefault();
-              params.id ? navigate(`/pokemon/${result.prev.id}`) : props.onDecId?.();
+              params.id ? navigate(`/pokemon/${result.prev.id}`, { replace: true }) : props.onDecId?.();
             } else if (result.next && event.keyCode === KEY_RIGHT) {
               event.preventDefault();
-              params.id ? navigate(`/pokemon/${result.next.id}`) : props.onIncId?.();
+              params.id ? navigate(`/pokemon/${result.next.id}`, { replace: true }) : props.onIncId?.();
             }
           }
         }
@@ -358,7 +357,8 @@ const Pokemon = (props: {
   };
 
   useEffect(() => {
-    if (currentForm && currentForm.default_id === parseInt(props.id ?? params.id ?? '0') && (data?.id ?? 0) > 0) {
+    setOriginForm(undefined);
+    if (currentForm && (data?.id ?? 0) > 0) {
       const released = checkReleased(data?.id ?? 0, formName ?? '', currentForm);
       setReleased(released);
 
@@ -380,9 +380,14 @@ const Pokemon = (props: {
           : currentForm?.form?.is_default
           ? currentForm?.form?.name
           : splitAndCapitalize(formParams ? currentForm?.form.name : data?.name, '-', ' ');
-      const formInfo = splitAndCapitalize(convertPokemonAPIDataName(currentForm?.form.form_name), '_', '-');
+
       setFormName(nameInfo);
-      setForm(router.action === Action.Pop && props.searching ? props.searching.form : formInfo);
+      const originForm = splitAndCapitalize(
+        router.action === Action.Pop && props.searching ? props.searching.form : currentForm?.form.form_name,
+        '-',
+        '-'
+      );
+      setOriginForm(originForm);
       if (params.id) {
         document.title = `#${data?.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
       }
@@ -410,19 +415,9 @@ const Pokemon = (props: {
         <Fragment>
           <div className="w-100 row prev-next-block sticky-top">
             {params.id ? (
-              <SearchBarMain data={dataStorePokemon} setForm={setForm} />
+              <SearchBarMain data={dataStorePokemon} />
             ) : (
-              <SearchBar
-                data={dataStorePokemon}
-                setForm={setForm}
-                setFormName={setFormName}
-                router={router}
-                onDecId={props.onDecId}
-                onIncId={props.onIncId}
-                onSetIDPoke={props.onSetIDPoke}
-                first={props.first}
-                setFirst={props.setFirst}
-              />
+              <SearchBar data={dataStorePokemon} router={router} onDecId={props.onDecId} onIncId={props.onIncId} />
             )}
           </div>
           <div
@@ -436,19 +431,16 @@ const Pokemon = (props: {
                   className="pokemon-main-sprite"
                   style={{ verticalAlign: 'baseline' }}
                   alt="img-full-pokemon"
-                  src={APIService.getPokeFullSprite(
-                    data?.id,
-                    splitAndCapitalize(
-                      form
-                        ?.toUpperCase()
-                        .replace(`-${FORM_SHADOW}`, '')
-                        .replace(`-${FORM_PURIFIED}`, '')
-                        .replace(FORM_SHADOW, '')
-                        .replace(FORM_PURIFIED, ''),
-                      '-',
-                      '-'
-                    )
-                  )}
+                  src={APIService.getPokeFullSprite(data?.id ?? 0, convertPokemonImageName(originForm))}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = APIService.getPokeFullAsset(data?.id ?? 0);
+                    APIService.getFetchUrl(e.currentTarget?.currentSrc)
+                      .then(() => {
+                        e.currentTarget.src = APIService.getPokeFullSprite(data?.id ?? 0);
+                      })
+                      .catch(() => false);
+                  }}
                 />
               </div>
               <div className="d-inline-block">
@@ -516,6 +508,7 @@ const Pokemon = (props: {
               pokemonRouter={router}
               form={currentForm}
               setForm={setCurrentForm}
+              setOriginForm={setOriginForm}
               setWH={setWH}
               data={currentData}
               setData={setCurrentData}

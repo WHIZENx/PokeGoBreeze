@@ -626,7 +626,7 @@ export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds
       result.image.push({
         gender,
         pokemonId: result.id,
-        form: form.replace(`${result.name}_`, '').replace(/^A$/gi, FORM_ARMOR),
+        form: convertAndReplaceNameGO(form, result.name),
         default: formSet[count],
         shiny: shiny ? formSet[count + 1] : null,
       });
@@ -663,7 +663,7 @@ export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds
         result.image.push({
           gender: 3,
           pokemonId: result.id,
-          form: form.replace(/^A$/gi, FORM_ARMOR).replace(/GALARIAN_STANDARD/, FORM_GALARIAN),
+          form: convertAndReplaceNameGO(form, result.name),
           default: formSet[index],
           shiny: formSet[index + 1],
         });
@@ -681,7 +681,7 @@ export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds
           result.image.push({
             gender: 3,
             pokemonId: result.id,
-            form: form.replace(/^A$/gi, FORM_ARMOR).replace(/GALARIAN_STANDARD/, FORM_GALARIAN),
+            form: convertAndReplaceNameGO(form, result.name),
             default: formSet[index],
             shiny: formSet[index + 1],
           });

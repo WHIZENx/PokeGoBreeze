@@ -30,6 +30,7 @@ const Form = (props: {
   pokemonRouter: ReduxRouterState;
   form: PokemonFormModify | undefined;
   setForm: React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>;
+  setOriginForm: React.Dispatch<React.SetStateAction<string | undefined>>;
   data: PokemonInfo | undefined;
   setData: React.Dispatch<React.SetStateAction<PokemonInfo | undefined>>;
   setWH: React.Dispatch<
@@ -59,9 +60,14 @@ const Form = (props: {
 
   const filterFormList = useCallback(
     (stats: { id: number; form: string }[]): any => {
-      const filterForm = stats.find(
-        (item) => item.id === props.species?.id && item.form === (convertPokemonAPIDataName(props.form?.form.form_name) || FORM_NORMAL)
-      );
+      const forms = stats.filter((i) => i.id === props.species?.id);
+      let filterForm = forms.find((item) => item.form === (convertPokemonAPIDataName(props.form?.form.form_name) || FORM_NORMAL));
+      if (!filterForm && forms.length > 0) {
+        filterForm = forms.find((item) => item.form === FORM_NORMAL);
+        if (!filterForm) {
+          filterForm = forms.at(0);
+        }
+      }
       return filterForm;
     },
     [props.species?.id, props.form?.form]
@@ -87,6 +93,8 @@ const Form = (props: {
     const currentForm = props.formList?.map((item) => item.find((item) => item.form.name === name)).find((item) => item);
     props.setData(currentData);
     props.setForm(currentForm);
+    const originForm = splitAndCapitalize(currentForm?.form.form_name, '-', '-');
+    props.setOriginForm(originForm);
 
     if (currentData) {
       props.setWH((prevWH) => ({ ...prevWH, weight: currentData.weight, height: currentData.height }));
@@ -144,13 +152,12 @@ const Form = (props: {
                         className="pokemon-sprite-medium"
                         onError={(e) => {
                           e.currentTarget.onerror = null;
+                          e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                           APIService.getFetchUrl(e.currentTarget.currentSrc)
                             .then(() => {
                               e.currentTarget.src = APIService.getPokeIconSprite(value.default_name);
                             })
-                            .catch(() => {
-                              e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
-                            });
+                            .catch(() => false);
                         }}
                         alt="img-icon-form"
                         src={formIconAssets(value, props.species?.id ?? 0)}
@@ -158,7 +165,7 @@ const Form = (props: {
                     </div>
                   </div>
                   <p>{value.form.form_name === '' ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                  {value.form.id === props.species?.id && (
+                  {(value.form.id ?? 0) > 0 && value.form.id === props.species?.id && (
                     <b>
                       <small>(Default)</small>
                     </b>

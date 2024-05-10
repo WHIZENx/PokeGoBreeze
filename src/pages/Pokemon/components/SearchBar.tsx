@@ -7,18 +7,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 
-const SearchBar = (props: {
-  data: OptionsPokemon | undefined;
-  setForm: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setFormName: React.Dispatch<React.SetStateAction<string | undefined>>;
-  router: ReduxRouterState;
-  onDecId?: () => void;
-  onIncId?: () => void;
-  // eslint-disable-next-line no-unused-vars
-  onSetIDPoke?: (id: number) => void;
-  first?: boolean;
-  setFirst?: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+const SearchBar = (props: { data: OptionsPokemon | undefined; router: ReduxRouterState; onDecId?: () => void; onIncId?: () => void }) => {
   return (
     <>
       {props.data?.prev && (
@@ -27,14 +16,9 @@ const SearchBar = (props: {
             className="d-flex justify-content-start align-items-center"
             onClick={() => {
               if (props.router?.action === 'POP') {
-                props.setFormName(undefined);
                 props.router.action = null as any;
               }
               props.onDecId?.();
-              props.setForm(undefined);
-              if (props.first && props.setFirst) {
-                props.setFirst(false);
-              }
             }}
             title={`#${props.data?.prev?.id} ${splitAndCapitalize(props.data?.prev?.name, '-', ' ')}`}
           >
@@ -49,6 +33,15 @@ const SearchBar = (props: {
                 className="pokemon-navigate-sprite"
                 alt="img-full-pokemon"
                 src={APIService.getPokeFullSprite(props.data?.prev?.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeFullAsset(props.data?.prev?.id ?? 0);
+                  APIService.getFetchUrl(e.currentTarget?.currentSrc)
+                    .then(() => {
+                      e.currentTarget.src = APIService.getPokeFullSprite(props.data?.prev?.id ?? 0);
+                    })
+                    .catch(() => false);
+                }}
               />
             </div>
             <div className="w-100" style={{ cursor: 'pointer' }}>
@@ -66,14 +59,9 @@ const SearchBar = (props: {
             className="d-flex justify-content-end align-items-center"
             onClick={() => {
               if (props.router?.action === 'POP') {
-                props.setFormName(undefined);
                 props.router.action = null as any;
               }
               props.onIncId?.();
-              props.setForm(undefined);
-              if (props.first && props.setFirst) {
-                props.setFirst(false);
-              }
             }}
             title={`#${props.data?.next?.id} ${splitAndCapitalize(props.data?.next?.name, '-', ' ')}`}
           >
@@ -89,6 +77,15 @@ const SearchBar = (props: {
                 className="pokemon-navigate-sprite"
                 alt="img-full-pokemon"
                 src={APIService.getPokeFullSprite(props.data?.next?.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeFullAsset(props.data?.next?.id ?? 0);
+                  APIService.getFetchUrl(e.currentTarget?.currentSrc)
+                    .then(() => {
+                      e.currentTarget.src = APIService.getPokeFullSprite(props.data?.next?.id ?? 0);
+                    })
+                    .catch(() => false);
+                }}
               />
             </div>
             <div style={{ cursor: 'pointer' }}>

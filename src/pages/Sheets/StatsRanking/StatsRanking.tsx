@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, capitalize, convertToPokemonForm } from '../../../util/Utils';
+import { splitAndCapitalize, capitalize, convertToPokemonForm, convertPokemonImageName } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
@@ -225,7 +225,7 @@ const StatsRanking = () => {
               className="pokemon-main-sprite"
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
-              src={APIService.getPokeFullSprite(select?.num, splitAndCapitalize(select?.forme, '-', '-'))}
+              src={APIService.getPokeFullSprite(select?.num, convertPokemonImageName(select?.forme))}
             />
           </div>
         </div>

@@ -47,9 +47,14 @@ const Tools = (props: {
 
   const filterFormList = useCallback(
     (stats: { id: number; form: string }[]): any => {
-      const filterForm = stats.find(
-        (item) => item.id === props.id && item.form === (convertPokemonAPIDataName(props.currForm?.form.form_name) || FORM_NORMAL)
-      );
+      const forms = stats.filter((i) => i.id === props.id);
+      let filterForm = forms.find((item) => item.form === (convertPokemonAPIDataName(props.currForm?.form.form_name) || FORM_NORMAL));
+      if (!filterForm && forms.length > 0) {
+        filterForm = forms.find((item) => item.form === FORM_NORMAL);
+        if (!filterForm) {
+          filterForm = forms.at(0);
+        }
+      }
       return filterForm;
     },
     [props.id, props.currForm?.form.form_name]

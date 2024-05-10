@@ -376,15 +376,12 @@ const Evolution = (props: {
           }
           onError={(e) => {
             e.currentTarget.onerror = null;
+            e.currentTarget.src = APIService.getPokeFullSprite(value.id);
             APIService.getFetchUrl(e.currentTarget.currentSrc)
               .then(() => {
                 e.currentTarget.src = APIService.getPokeSprite(value.id);
               })
-              .catch(() => {
-                if (e.currentTarget?.src) {
-                  e.currentTarget.src = APIService.getPokeFullSprite(value.id);
-                }
-              });
+              .catch(() => false);
           }}
         />
       </>

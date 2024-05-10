@@ -7,6 +7,7 @@ import loading from '../../assets/loading.png';
 import {
   capitalize,
   convertPokemonAPIDataName,
+  convertPokemonImageName,
   formIconAssets,
   getPokemonById,
   splitAndCapitalize,
@@ -301,7 +302,7 @@ const FormSelect = (props: {
         alt="img-full-pokemon"
         src={
           currentForm?.form
-            ? APIService.getPokeFullSprite(props.id, splitAndCapitalize(convertPokemonAPIDataName(currentForm?.form.form_name), '_', '-'))
+            ? APIService.getPokeFullSprite(props.id, convertPokemonImageName(currentForm?.form.form_name))
             : APIService.getPokeFullSprite(props.id)
         }
         onError={(e) => {
@@ -355,19 +356,18 @@ const FormSelect = (props: {
                       height={64}
                       onError={(e) => {
                         e.currentTarget.onerror = null;
+                        e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                         APIService.getFetchUrl(e.currentTarget.currentSrc)
                           .then(() => {
                             e.currentTarget.src = APIService.getPokeIconSprite(value.default_name);
                           })
-                          .catch(() => {
-                            e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
-                          });
+                          .catch(() => false);
                       }}
                       alt="img-icon-form"
                       src={formIconAssets(value, currentForm?.default_id ?? 0)}
                     />
                     <p>{!value.form.form_name ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                    {value.form.id === currentForm?.default_id && (
+                    {(value.form.id ?? 0 > 0) && value.form.id === currentForm?.default_id && (
                       <b>
                         <small>(Default)</small>
                       </b>

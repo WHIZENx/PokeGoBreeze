@@ -1,5 +1,5 @@
 import React from 'react';
-import { splitAndCapitalize, convertPokemonAPIDataName } from '../../../util/Utils';
+import { splitAndCapitalize } from '../../../util/Utils';
 import { genRoman } from '../../../util/Constants';
 
 const PokemonTable = (props: {
@@ -32,7 +32,7 @@ const PokemonTable = (props: {
           </td>
           <td colSpan={2}>
             <h5 className="d-flex">
-              <b>{splitAndCapitalize(convertPokemonAPIDataName(props.formName?.replaceAll(' ', '-')), '_', ' ')}</b>
+              <b>{splitAndCapitalize(props.formName, '-', ' ')}</b>
             </h5>
           </td>
         </tr>
@@ -65,7 +65,7 @@ const PokemonTable = (props: {
             <h5 className="d-flex">Version</h5>
           </td>
           <td colSpan={2}>
-            <h5 className="d-flex">{splitAndCapitalize(props.version?.replace(' Go', ' GO'), '-', ' ')}</h5>
+            <h5 className="d-flex">{splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO')}</h5>
           </td>
         </tr>
         <tr>

@@ -1,6 +1,6 @@
 import APIService from '../../services/API.service';
 import { FORM_NORMAL } from '../../util/Constants';
-import { splitAndCapitalize } from '../../util/Utils';
+import { convertPokemonImageName, splitAndCapitalize } from '../../util/Utils';
 import { Image } from './asset.model';
 import { PokemonDataModel } from './pokemon.model';
 import { StatsPokemon } from './stats.model';
@@ -66,7 +66,7 @@ export class PokemonHomeModel {
     this.image = {
       default: assetForm?.default
         ? APIService.getPokemonModel(assetForm.default)
-        : APIService.getPokeFullSprite(item.num, splitAndCapitalize(item.forme, '_', '-')),
+        : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.forme, '_', '-'))),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
     };
   }

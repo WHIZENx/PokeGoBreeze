@@ -19,7 +19,6 @@ const Search = () => {
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
 
-  const [first, setFirst] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;
@@ -76,9 +75,6 @@ const Search = () => {
   const getInfoPoke = (value: PokemonSearchingModel) => {
     setShowResult(false);
     setId(value.id);
-    if (first) {
-      setFirst(false);
-    }
   };
 
   const setIDPoke = (id: number) => {
@@ -184,8 +180,6 @@ const Search = () => {
           isSearch={true}
           prevRouter={router}
           searching={searching}
-          first={first}
-          setFirst={setFirst}
         />
       </div>
     </Fragment>

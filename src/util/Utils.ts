@@ -625,7 +625,9 @@ export const convertPokemonDataName = (text: string | undefined | null, defaultN
     .replace(/_WEST$/, '_WEST_SEA')
     .replace(/_EAST$/, '_EAST_SEA')
     .replace(/^WEST$/, 'WEST_SEA')
-    .replace(/^EAST$/, 'EAST_SEA');
+    .replace(/^EAST$/, 'EAST_SEA')
+    .replace(/_ACTIVE$/, '')
+    .replace(/_NEUTRAL$/, '');
 };
 
 // Convert Pokemon from API data to GO name
@@ -641,8 +643,9 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/^PURIFIED$/, '')
     .replace(/^SHADOW$/, '')
     .replace(/_MALE$/, '')
-    .replace(/GALAR/, FORM_GALARIAN)
-    .replace(/HISUI/, FORM_HISUIAN)
+    .replace(/GALAR$/, FORM_GALARIAN)
+    .replace(/HISUI$/, FORM_HISUIAN)
+    .replace(/GALAR_/, `${FORM_GALARIAN}_`)
     .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
     .replace(/_TOTEM$/, '')
     .replace(/_PALDEA_COMBAT_BREED$/, '')
@@ -651,7 +654,6 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/_NORMAL$/, '')
     .replace(/10$/, 'TEN_PERCENT')
     .replace(/50$/, 'FIFTY_PERCENT')
-    .replace('DARMANITAN_GALARIAN', 'DARMANITAN_GALARIAN_STANDARD')
     .replace(/_BATTLE_BOND$/, '')
     .replace(/_POWER_CONSTRUCT$/, '')
     .replace(/_POM_POM$/, 'POMPOM')
@@ -667,4 +669,17 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/_PLUMAGE$/, '')
     .replace(/_ROAMING$/, '')
     .replace(/_SEGMENT$/, '');
+};
+
+export const convertPokemonImageName = (text: string | undefined | null, defaultName = '') => {
+  if (!text) {
+    return defaultName;
+  }
+  return splitAndCapitalize(text.toLowerCase().replaceAll('_', '-'), '-', '-')
+    .replace(/^Shadow$/, '')
+    .replace(/^Purified$/, '')
+    .replace(/^Active$/, '')
+    .replace(/^Normal$/, '')
+    .replace(/-Shadow$/, '')
+    .replace(/-Purified$/, '');
 };
