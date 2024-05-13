@@ -1,4 +1,4 @@
-import { capitalize, convertIdMove } from '../../util/Utils';
+import { capitalize } from '../../util/Utils';
 import { Combat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
 import { StatsPokemon } from './stats.model';
@@ -406,11 +406,11 @@ export class PokemonDataModel {
     this.isShadow = pokemon.shadow ? true : false;
     this.formChange = pokemon.formChange ?? [];
 
-    this.quickMoves = pokemon.quickMoves?.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) ?? [];
-    this.cinematicMoves = pokemon.cinematicMoves?.map((move) => convertIdMove(move?.toString())) ?? [];
-    this.eliteQuickMove = pokemon.eliteQuickMove?.map((move) => convertIdMove(move?.toString()).replace('_FAST', '')) ?? [];
-    this.eliteCinematicMove = pokemon.eliteCinematicMove?.map((move) => convertIdMove(move?.toString())) ?? [];
-    this.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => convertIdMove(move?.toString())) ?? [];
+    this.quickMoves = pokemon.quickMoves?.map((move) => move?.toString().replace('_FAST', '')) ?? [];
+    this.cinematicMoves = pokemon.cinematicMoves?.map((move) => move?.toString()) ?? [];
+    this.eliteQuickMove = pokemon.eliteQuickMove?.map((move) => move?.toString().replace('_FAST', '')) ?? [];
+    this.eliteCinematicMove = pokemon.eliteCinematicMove?.map((move) => move?.toString()) ?? [];
+    this.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => move?.toString()) ?? [];
     this.shadowMoves = options?.shadowMoves ?? [];
     this.purifiedMoves = options?.purifiedMoves ?? [];
 

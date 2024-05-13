@@ -1,6 +1,6 @@
 import APIService from '../../services/API.service';
 import { FORM_NORMAL } from '../../util/Constants';
-import { convertFormNameImg, splitAndCapitalize } from '../../util/Utils';
+import { convertPokemonImageName, splitAndCapitalize } from '../../util/Utils';
 import { Image } from './asset.model';
 import { PokemonDataModel } from './pokemon.model';
 import { StatsPokemon } from './stats.model';
@@ -47,7 +47,7 @@ export class PokemonHomeModel {
       ? item.forme !== FORM_NORMAL
         ? item.forme
         : null
-      : convertFormNameImg(item.num, item.forme?.toLowerCase() ?? '');
+      : item.forme?.toLowerCase().replaceAll('_', '-') ?? '';
     this.types = item.types;
     this.color = item.color.toLowerCase();
     this.sprite = item.sprite.toLowerCase();
@@ -66,10 +66,7 @@ export class PokemonHomeModel {
     this.image = {
       default: assetForm?.default
         ? APIService.getPokemonModel(assetForm.default)
-        : APIService.getPokeFullSprite(
-            item.num,
-            splitAndCapitalize(convertFormNameImg(item.num, item.forme?.toLowerCase() ?? ''), '-', '-')
-          ),
+        : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.forme, '_', '-'))),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
     };
   }

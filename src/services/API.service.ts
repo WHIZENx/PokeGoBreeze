@@ -144,15 +144,15 @@ class APIService {
     return `${APIUrl.POKE_SPRITES_API_URL}${id}.png`;
   }
 
+  getPokeFullAsset(id: number | string) {
+    return `${APIUrl.POKE_ASSETS}${id}.png`;
+  }
+
   getPokeFullSprite(id: number | string | undefined, form?: string) {
     if (id) {
-      if (parseInt(id.toString()) === 716 || parseInt(id.toString()) > 905) {
-        return `${APIUrl.POKE_ASSETS}${id}.png`;
-      }
-      id = id.toString().padStart(3, '0');
-      return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id}${form ? `-${form}` : ''}.png`;
+      return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${form ? `-${form}` : ''}.png`;
     }
-    return `${APIUrl.POKE_ASSETS}0.png`;
+    return this.getPokeFullAsset(0);
   }
 
   getPokeIconSprite(name: string, noFix = false) {
@@ -202,7 +202,8 @@ class APIService {
         .replace('-single-strike', '')
         .replace('-natural', '')
         .replaceAll('-phony', '')
-        .replace('-matcha-cream', '');
+        .replace('-matcha-cream', '')
+        .replace('-neutral', '');
     }
     return `${APIUrl.POKE_ASSETS_URL}/icon/${name}.png`;
   }

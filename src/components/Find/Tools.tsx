@@ -3,14 +3,14 @@ import Stats from '../Info/Stats/Stats';
 import { calculateRaidStat } from '../../util/Calculate';
 
 import { Form } from 'react-bootstrap';
-import { FORM_MEGA, FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW, RAID_BOSS_TIER } from '../../util/Constants';
+import { FORM_MEGA, FORM_NORMAL, RAID_BOSS_TIER } from '../../util/Constants';
 
 import atk_logo from '../../assets/attack.png';
 import def_logo from '../../assets/defense.png';
 import hp_logo from '../../assets/hp.png';
 import sta_logo from '../../assets/stamina.png';
 
-import { convertStatsEffort, filterFormName } from '../../util/Utils';
+import { convertPokemonAPIDataName, convertStatsEffort } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { PokemonFormModify } from '../../core/models/API/form.model';
@@ -46,32 +46,18 @@ const Tools = (props: {
   const [statProd, setStatProd]: [StatsProd | undefined, React.Dispatch<React.SetStateAction<StatsProd | undefined>>] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[], id: number): any => {
-      const filterId = stats.filter((item) => item.id === id);
-      const formLength = props.formList?.filter(
-        (forms) =>
-          !forms.some(
-            (modifyForm) =>
-              modifyForm.form.form_name.toUpperCase() === FORM_SHADOW || modifyForm.form.form_name.toUpperCase() === FORM_PURIFIED
-          )
-      ).length;
-      const filterForm = stats.find(
-        (item) =>
-          item.id === id &&
-          filterFormName(
-            props.currForm?.form.form_name?.replace(/10$/g, `complete-ten-percent`).replace(/50$/g, `complete-fifty-percent`) ?? '',
-            item.form.toLowerCase().replace('-sea', '').replace('-wings', '').replace('-mane', '')
-          )
-      );
-      if (filterId.length === 1 && formLength === 1 && !filterForm) {
-        return filterId.at(0);
-      } else if (filterId.length === formLength && !filterForm) {
-        return stats.find((item) => item.id === id && item.form?.toUpperCase() === FORM_NORMAL);
-      } else {
-        return filterForm;
+    (stats: { id: number; form: string }[]): any => {
+      const forms = stats.filter((i) => i.id === props.id);
+      let filterForm = forms.find((item) => item.form === (convertPokemonAPIDataName(props.currForm?.form.form_name) || FORM_NORMAL));
+      if (!filterForm && forms.length > 0) {
+        filterForm = forms.find((item) => item.form === FORM_NORMAL);
+        if (!filterForm) {
+          filterForm = forms.at(0);
+        }
       }
+      return filterForm;
     },
-    [props.currForm, props.formList]
+    [props.id, props.currForm?.form.form_name]
   );
 
   useEffect(() => {
@@ -94,10 +80,10 @@ const Tools = (props: {
 
   useEffect(() => {
     if (props.currForm && props.dataPoke) {
-      const formATK = filterFormList(props.stats.attack.ranking, props.id ?? 0);
-      const formDEF = filterFormList(props.stats.defense.ranking, props.id ?? 0);
-      const formSTA = filterFormList(props.stats.stamina.ranking, props.id ?? 0);
-      const formProd = filterFormList(props.stats.statProd.ranking, props.id ?? 0);
+      const formATK = filterFormList(props.stats.attack.ranking);
+      const formDEF = filterFormList(props.stats.defense.ranking);
+      const formSTA = filterFormList(props.stats.stamina.ranking);
+      const formProd = filterFormList(props.stats.statProd.ranking);
 
       setStatATK(props.raid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack, props.tier) } : formATK);
       setStatDEF(props.raid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense, props.tier) } : formDEF);

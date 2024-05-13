@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../util/Compute';
-import { convertFormName, splitAndCapitalize } from '../../util/Utils';
+import { splitAndCapitalize } from '../../util/Utils';
 import ProgressBar from '../Sprites/ProgressBar/ProgressBar';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
@@ -87,7 +87,7 @@ const CardPokemonInfo = (props: {
       )}
       <Link
         className="d-block h-100 pokemon-link"
-        to={`/pokemon/${props.id}${props.forme ? `?form=${convertFormName(props.id, props.forme.toLowerCase())}` : ''}`}
+        to={`/pokemon/${props.id}${props.forme ? `?form=${props.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
       >
         <div className="d-flex justify-content-center" style={{ padding: 8 }}>
           <span style={{ width: 96 }}>
