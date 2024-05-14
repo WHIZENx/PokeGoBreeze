@@ -1,28 +1,21 @@
 import React from 'react';
 import { OptionsPokemon } from '../../../core/models/pokemon.model';
 import APIService from '../../../services/API.service';
-import { Link } from 'react-router-dom';
 import { splitAndCapitalize } from '../../../util/Utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Link } from 'react-router-dom';
 
-const SearchBarMain = (props: {
-  data: OptionsPokemon | undefined;
-  setReForm: React.Dispatch<React.SetStateAction<boolean>>;
-  setForm: React.Dispatch<React.SetStateAction<string | undefined>>;
-}) => {
+// eslint-disable-next-line no-unused-vars
+const SearchBarMain = (props: { data: OptionsPokemon | undefined }) => {
   return (
     <>
       {props.data?.prev && (
         <div title="Previous Pokémon" className={`prev-block col${props.data?.next ? '-6' : ''}`} style={{ float: 'left', padding: 0 }}>
           <Link
-            onClick={() => {
-              props.setReForm(false);
-              props.setForm(undefined);
-            }}
+            to={`/pokemon/${props.data?.prev?.id}`}
             className="d-flex justify-content-start align-items-center"
-            to={'/pokemon/' + props.data?.prev?.id}
             title={`#${props.data?.prev?.id} ${splitAndCapitalize(props.data?.prev?.name, '-', ' ')}`}
           >
             <div style={{ cursor: 'pointer' }}>
@@ -36,6 +29,15 @@ const SearchBarMain = (props: {
                 className="pokemon-navigate-sprite"
                 alt="img-full-pokemon"
                 src={APIService.getPokeFullSprite(props.data?.prev?.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeFullAsset(props.data?.prev?.id ?? 0);
+                  APIService.getFetchUrl(e.currentTarget?.currentSrc)
+                    .then(() => {
+                      e.currentTarget.src = APIService.getPokeFullSprite(props.data?.prev?.id ?? 0);
+                    })
+                    .catch(() => false);
+                }}
               />
             </div>
             <div className="w-100" style={{ cursor: 'pointer' }}>
@@ -50,12 +52,8 @@ const SearchBarMain = (props: {
       {props.data?.next && (
         <div title="Next Pokémon" className={`next-block col${props.data?.prev ? '-6' : ''}`} style={{ float: 'right', padding: 0 }}>
           <Link
-            onClick={() => {
-              props.setReForm(false);
-              props.setForm(undefined);
-            }}
+            to={`/pokemon/${props.data?.next?.id}`}
             className="d-flex justify-content-end align-items-center"
-            to={'/pokemon/' + props.data?.next?.id}
             title={`#${props.data?.next?.id} ${splitAndCapitalize(props.data?.next?.name, '-', ' ')}`}
           >
             <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
@@ -70,6 +68,15 @@ const SearchBarMain = (props: {
                 className="pokemon-navigate-sprite"
                 alt="img-full-pokemon"
                 src={APIService.getPokeFullSprite(props.data?.next?.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeFullAsset(props.data?.next?.id ?? 0);
+                  APIService.getFetchUrl(e.currentTarget?.currentSrc)
+                    .then(() => {
+                      e.currentTarget.src = APIService.getPokeFullSprite(props.data?.next?.id ?? 0);
+                    })
+                    .catch(() => false);
+                }}
               />
             </div>
             <div style={{ cursor: 'pointer' }}>

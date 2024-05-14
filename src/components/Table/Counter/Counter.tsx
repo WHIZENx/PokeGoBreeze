@@ -2,7 +2,7 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, checkPokemonGO, convertFormName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
@@ -94,11 +94,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
     {
       name: 'Pokémon',
       selector: (row: CounterModel) => (
-        <Link
-          to={`/pokemon/${row.pokemon_id}${
-            row.pokemon_forme ? `?form=${convertFormName(row.pokemon_id, row.pokemon_forme.toLowerCase())}` : ''
-          }`}
-        >
+        <Link to={`/pokemon/${row.pokemon_id}${row.pokemon_forme ? `?form=${row.pokemon_forme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
           <div className="d-flex justify-content-center">
             <div
               className={
@@ -112,8 +108,8 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_name)
-                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_name))
+                  findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme)
+                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme))
                     : APIService.getPokeFullSprite(row.pokemon_id)
                 }
               />
@@ -324,7 +320,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
             if (!releasedGO) {
               return true;
             }
-            const result = checkPokemonGO(pokemon.pokemon_id, pokemon.pokemon_name, data?.pokemon ?? [], true);
+            const result = checkPokemonGO(pokemon.pokemon_id, convertPokemonDataName(pokemon.pokemon_name), data?.pokemon ?? []);
             return pokemon.releasedGO ?? result?.releasedGO ?? false;
           })}
       />

@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, convertFormName, checkPokemonGO } from '../../../util/Utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/Utils';
 import {
   DEFAULT_POKEMON_DEF_OBJ,
   DEFAULT_TYPES,
@@ -96,9 +96,7 @@ const columns: any = [
     name: 'Pokémon Name',
     selector: (row: PokemonSheetData) => (
       <Link
-        to={`/pokemon/${row.pokemon?.num}${
-          row.pokemon?.forme ? `?form=${convertFormName(row.pokemon?.num, row.pokemon?.forme.toLowerCase().replaceAll('_', '-'))}` : ''
-        }`}
+        to={`/pokemon/${row.pokemon?.num}${row.pokemon?.forme ? `?form=${row.pokemon?.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
       >
         {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
@@ -475,9 +473,9 @@ const DpsTdo = () => {
       const boolFilterPoke =
         searchTerm === '' ||
         (match
-          ? splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() ||
+          ? item.pokemon?.name.replaceAll('-', ' ').toLowerCase() === searchTerm.toLowerCase() ||
             item.pokemon?.num.toString() === searchTerm
-          : splitAndCapitalize(item.pokemon?.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          : item.pokemon?.name.replaceAll('-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.pokemon?.num.toString().includes(searchTerm));
 
       const boolShowShadow = !showShadow && item.shadow;
@@ -500,7 +498,7 @@ const DpsTdo = () => {
 
       let boolReleaseGO = true;
       if (releasedGO) {
-        const result = checkPokemonGO(item.pokemon?.num, item.pokemon.name, data?.pokemon ?? []);
+        const result = checkPokemonGO(item.pokemon?.num, item.pokemon.fullName || item.pokemon.pokemonId || '', data?.pokemon ?? []);
         boolReleaseGO = item.pokemon?.releasedGO ?? result?.releasedGO ?? false;
       }
       if (enableShadow || enableElite || enableMega || enableGmax || enablePrimal || enableLegendary || enableMythic || enableUltrabeast) {

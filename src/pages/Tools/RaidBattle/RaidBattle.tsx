@@ -4,7 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { checkPokemonGO, convertFormName, splitAndCapitalize } from '../../../util/Utils';
+import { checkPokemonGO, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
@@ -1239,7 +1239,7 @@ const RaidBattle = () => {
                 }
                 if (obj.pokemon) {
                   obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
-                  const result = checkPokemonGO(obj.pokemon.num, obj.pokemon.name, data?.pokemon ?? []);
+                  const result = checkPokemonGO(obj.pokemon.num, obj.pokemon.fullName || obj.pokemon.pokemonId || '', data?.pokemon ?? []);
                   return obj.pokemon.releasedGO ?? result?.releasedGO ?? false;
                 }
                 return false;
@@ -1262,7 +1262,7 @@ const RaidBattle = () => {
                   <div className="d-flex justify-content-center w-100">
                     <Link
                       to={`/pokemon/${value.pokemon?.num}${
-                        value.pokemon?.forme ? `?form=${convertFormName(value.pokemon?.num, value.pokemon?.forme.toLowerCase())}` : ''
+                        value.pokemon?.forme ? `?form=${value.pokemon?.forme.toLowerCase().replaceAll('_', '-')}` : ''
                       }`}
                       className="sprite-raid position-relative"
                     >

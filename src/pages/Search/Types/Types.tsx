@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, convertFormName, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
@@ -33,7 +33,7 @@ const columnPokemon: any = [
     name: 'Pokémon Name',
     selector: (row: PokemonDataModel | undefined) => (
       <Link
-        to={`/pokemon/${row?.num}${row?.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
+        to={`/pokemon/${row?.num}${row?.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row?.num} ${splitAndCapitalize(row?.name, '-', ' ')}`}
       >
         <img

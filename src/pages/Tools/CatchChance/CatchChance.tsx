@@ -25,7 +25,7 @@ import {
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/Constants';
-import { convertName, LevelSlider, splitAndCapitalize } from '../../../util/Utils';
+import { convertPokemonAPIDataName, LevelSlider, splitAndCapitalize } from '../../../util/Utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
@@ -197,8 +197,8 @@ const CatchChance = () => {
   };
 
   const findCatchCapture = (id: number, form: PokemonFormModify) => {
-    const pokemon = pokemonData.find((data) => data.num === id && data.fullName === convertName(form.form.name));
-    if (!pokemon) {
+    const pokemon = pokemonData.find((data) => data.num === id && data.fullName === convertPokemonAPIDataName(form.form.name));
+    if (!pokemon || !pokemon.encounter) {
       return setEncounter(false);
     }
     setEncounter(true);
@@ -360,7 +360,7 @@ const CatchChance = () => {
           {!encounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
-                <b>{splitAndCapitalize(convertName(form?.form.name), '_', ' ')}</b> cannot be encountered in wild.
+                <b>{splitAndCapitalize(convertPokemonAPIDataName(form?.form.name), '_', ' ')}</b> cannot be encountered in wild.
               </h5>
             </div>
           )}

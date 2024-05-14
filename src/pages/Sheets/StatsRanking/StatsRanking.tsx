@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, capitalize, convertFormName, convertToPokemonForm } from '../../../util/Utils';
+import { splitAndCapitalize, capitalize, convertToPokemonForm, convertPokemonImageName } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
@@ -21,7 +21,7 @@ const columnPokemon: any = [
     name: '',
     selector: (row: PokemonStatsRanking) => (
       <Link
-        to={`/pokemon/${row.num}${row.forme ? `?form=${convertFormName(row.num, row.forme.toLowerCase())}` : ''}`}
+        to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
         <VisibilityIcon className="view-pokemon" fontSize="small" sx={{ color: 'black' }} />
@@ -225,7 +225,7 @@ const StatsRanking = () => {
               className="pokemon-main-sprite"
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
-              src={APIService.getPokeFullSprite(select?.num, splitAndCapitalize(select?.forme, '-', '-'))}
+              src={APIService.getPokeFullSprite(select?.num, convertPokemonImageName(select?.forme))}
             />
           </div>
         </div>

@@ -8,8 +8,8 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, convertFormName } from '../../../util/Utils';
-import { rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
+import { getTime, splitAndCapitalize, capitalize } from '../../../util/Utils';
+import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -17,7 +17,7 @@ import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
 import { League, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
-import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL } from '../../../util/Constants';
+import { FORM_NORMAL } from '../../../util/Constants';
 
 interface LeagueData {
   data: PokemonRewardSetLeague[];
@@ -38,29 +38,10 @@ const Leagues = () => {
   const [showData, setShowData]: [LeagueData | undefined, React.Dispatch<React.SetStateAction<LeagueData | undefined>>] = useState();
 
   const getAssetPokeGo = (id: number, form: string) => {
-    try {
-      const dataId = dataStore?.assets?.find((item) => item.id?.toString() === id.toString());
-      if (dataId?.image.length === 0) {
-        if (form && !Object.keys(dataStore?.typeEff ?? {}).includes(form)) {
-          return APIService.getPokeFullSprite(
-            id,
-            capitalize(
-              convertFormName(
-                id,
-                form
-                  .toLowerCase()
-                  .replace('_', '-')
-                  .replace(FORM_GALARIAN.toLowerCase(), 'galar')
-                  .replace(FORM_HISUIAN.toLowerCase(), 'hisui')
-              )
-            )
-          );
-        }
-        return APIService.getPokeFullSprite(id);
-      }
-      const data = dataId?.image.find((item) => item.form === form);
-      return APIService.getPokemonModel(data ? data.default : dataId?.image.at(0)?.default);
-    } catch {
+    const asset = queryAssetForm(dataStore?.assets ?? [], id, form);
+    if (asset) {
+      return APIService.getPokemonModel(asset.default);
+    } else {
       return APIService.getPokeFullSprite(id);
     }
   };
@@ -237,17 +218,7 @@ const Leagues = () => {
                       to={
                         '/pokemon/' +
                         item.id +
-                        (item.form?.toUpperCase() === FORM_NORMAL
-                          ? ''
-                          : '?form=' +
-                            convertFormName(
-                              item.id ?? 0,
-                              item.form
-                                .toLowerCase()
-                                .replace('_', '-')
-                                .replace(FORM_GALARIAN.toLowerCase(), 'galar')
-                                .replace(FORM_HISUIAN.toLowerCase(), 'hisui')
-                            ))
+                        (item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`)
                       }
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -278,17 +249,7 @@ const Leagues = () => {
                       to={
                         '/pokemon/' +
                         item.id +
-                        (item.form?.toUpperCase() === FORM_NORMAL
-                          ? ''
-                          : '?form=' +
-                            convertFormName(
-                              item.id ?? 0,
-                              item.form
-                                .toLowerCase()
-                                .replace('_', '-')
-                                .replace(FORM_GALARIAN.toLowerCase(), 'galar')
-                                .replace(FORM_HISUIAN.toLowerCase(), 'hisui')
-                            ))
+                        (item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`)
                       }
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
