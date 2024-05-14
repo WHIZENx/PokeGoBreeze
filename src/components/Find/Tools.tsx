@@ -76,7 +76,7 @@ const Tools = (props: {
         props.setTier(6);
       }
     }
-  }, [props.currForm, props.id, props.setTier, props.tier]);
+  }, [props.currForm?.form.form_name, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
     if (props.currForm && props.dataPoke) {
