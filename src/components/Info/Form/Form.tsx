@@ -46,6 +46,9 @@ const Form = (props: {
   // eslint-disable-next-line no-unused-vars
   onSetIDPoke?: (id: number) => void;
   pokemonDetail: PokemonDataModel | undefined;
+  progress: {
+    forms: boolean;
+  };
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
   const dispatch = useDispatch();
@@ -70,7 +73,7 @@ const Form = (props: {
       }
       return filterForm;
     },
-    [props.species?.id, props.form?.form]
+    [props.species?.id, props.form?.form.form_name]
   );
 
   useEffect(() => {
@@ -126,55 +129,69 @@ const Form = (props: {
           <b>Form varieties</b>
         </h4>
         <div className="scroll-form">
-          {props.formList?.map((value, index) => (
-            <Fragment key={index}>
-              {value.map((value, index) => (
-                <button
-                  key={index}
-                  className={
-                    'btn btn-form ' +
-                    ((props.form && props.species?.id === props.form.form.id && value.form.id === props.form.form.id) ||
-                    (props.form && props.species?.id !== props.form.form.id && value.form.id === props.form.form.id)
-                      ? 'form-selected'
-                      : '')
-                  }
-                  onClick={() => changeForm(value.form.name, value.form.form_name)}
-                >
-                  <div className="d-flex w-100 justify-content-center">
-                    <div className="position-relative" style={{ width: 64 }}>
-                      {value.form.is_shadow && (
-                        <img height={24} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+          {props.progress.forms ? (
+            <Fragment>
+              {props.formList?.map((value, index) => (
+                <Fragment key={index}>
+                  {value.map((value, index) => (
+                    <button
+                      key={index}
+                      className={
+                        'btn btn-form ' +
+                        ((props.form && props.species?.id === props.form.form.id && value.form.id === props.form.form.id) ||
+                        (props.form && props.species?.id !== props.form.form.id && value.form.id === props.form.form.id)
+                          ? 'form-selected'
+                          : '')
+                      }
+                      onClick={() => changeForm(value.form.name, value.form.form_name)}
+                    >
+                      <div className="d-flex w-100 justify-content-center">
+                        <div className="position-relative" style={{ width: 64 }}>
+                          {value.form.is_shadow && (
+                            <img height={24} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                          )}
+                          {value.form.is_purified && (
+                            <img height={24} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
+                          )}
+                          <img
+                            className="pokemon-sprite-medium"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
+                              APIService.getFetchUrl(e.currentTarget.currentSrc)
+                                .then(() => {
+                                  e.currentTarget.src = APIService.getPokeIconSprite(value.default_name);
+                                })
+                                .catch(() => false);
+                            }}
+                            alt="img-icon-form"
+                            src={formIconAssets(value, props.species?.id ?? 0)}
+                          />
+                        </div>
+                      </div>
+                      <p>{value.form.form_name === '' ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
+                      {(value.form.id ?? 0) > 0 && value.form.id === props.species?.id && (
+                        <b>
+                          <small>(Default)</small>
+                        </b>
                       )}
-                      {value.form.is_purified && (
-                        <img height={24} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
-                      )}
-                      <img
-                        className="pokemon-sprite-medium"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
-                          APIService.getFetchUrl(e.currentTarget.currentSrc)
-                            .then(() => {
-                              e.currentTarget.src = APIService.getPokeIconSprite(value.default_name);
-                            })
-                            .catch(() => false);
-                        }}
-                        alt="img-icon-form"
-                        src={formIconAssets(value, props.species?.id ?? 0)}
-                      />
-                    </div>
-                  </div>
-                  <p>{value.form.form_name === '' ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                  {(value.form.id ?? 0) > 0 && value.form.id === props.species?.id && (
-                    <b>
-                      <small>(Default)</small>
-                    </b>
-                  )}
-                  {(value.form.id ?? 0) <= 0 && <small className="text-danger">* Only in GO</small>}
-                </button>
+                      {(value.form.id ?? 0) <= 0 && <small className="text-danger">* Only in GO</small>}
+                    </button>
+                  ))}
+                </Fragment>
               ))}
             </Fragment>
-          ))}
+          ) : (
+            <div className="ph-item flex-nowrap" style={{ width: '100%', columnGap: 10 }}>
+              {[...Array(10).keys()].map((_, index) => (
+                <div key={index} className="ph-col-3" style={{ padding: 0, margin: '2px 0' }}>
+                  <div className="ph-row">
+                    <div className="ph-picture ph-col-3" style={{ height: 142, width: 90 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       {props.ratio?.M !== 0 || props.ratio?.F !== 0 ? (

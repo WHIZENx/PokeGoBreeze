@@ -381,7 +381,10 @@ const RankingPVP = () => {
             <Button
               key={index}
               className={params.type.toLowerCase() === type.toLowerCase() ? 'active' : ''}
-              onClick={() => navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`)}
+              onClick={() => {
+                setOnLoadData(false);
+                navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`);
+              }}
             >
               {type}
             </Button>

@@ -97,6 +97,10 @@ const Pokemon = (props: {
     thirdMove: {},
   });
 
+  const [progress, setProgress] = useState({
+    forms: false,
+  });
+
   const axios = APIService;
   const cancelToken = axios.getAxios().CancelToken;
   const source = cancelToken.source();
@@ -263,13 +267,16 @@ const Pokemon = (props: {
       setCurrentData(defaultData);
       setCurrentForm(currentForm);
       setData(data);
+
+      setProgress((p) => ({ ...p, forms: true }));
     },
-    [pokemonData, searchParams]
+    [dispatch, pokemonData, searchParams]
   );
 
   const queryPokemon = useCallback(
     (id: string) => {
       dispatch(showSpinner());
+      setProgress((p) => ({ ...p, forms: false }));
       axios
         .getPokeSpices(id, {
           cancelToken: source.token,
@@ -518,6 +525,7 @@ const Pokemon = (props: {
               species={data}
               onSetIDPoke={props.onSetIDPoke}
               pokemonDetail={pokemonDetails}
+              progress={progress}
             />
             <PokemonModel id={data?.id ?? 0} name={data?.name ?? ''} />
           </div>
