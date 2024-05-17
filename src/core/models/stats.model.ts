@@ -29,6 +29,20 @@ export interface StatsModel {
   };
 }
 
+export interface StatsPokemonGO {
+  atk: number;
+  def: number;
+  sta: number;
+  prod: number;
+}
+
+export interface StatsRankingPokemonGO {
+  atk: StatsAtk;
+  def: StatsDef;
+  sta: StatsSta;
+  prod: StatsProd;
+}
+
 export interface StatsPokemon {
   hp?: number;
   atk: number;
@@ -51,21 +65,29 @@ export interface HexagonStats {
 export interface StatsAtk {
   attack: number;
   rank: number;
+  id?: number;
+  form?: string;
 }
 
 export interface StatsDef {
   defense: number;
   rank: number;
+  id?: number;
+  form?: string;
 }
 
 export interface StatsSta {
   stamina: number;
   rank: number;
+  id?: number;
+  form?: string;
 }
 
 export interface StatsProd {
   prod: number;
   rank: number;
+  id?: number;
+  form?: string;
 }
 
 export interface PokemonStatsRanking {

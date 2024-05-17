@@ -3,19 +3,19 @@ import Stats from '../Info/Stats/Stats';
 import { calculateRaidStat } from '../../util/Calculate';
 
 import { Form } from 'react-bootstrap';
-import { FORM_MEGA, FORM_NORMAL, RAID_BOSS_TIER } from '../../util/Constants';
+import { FORM_MEGA, RAID_BOSS_TIER } from '../../util/Constants';
 
 import atk_logo from '../../assets/attack.png';
 import def_logo from '../../assets/defense.png';
 import hp_logo from '../../assets/hp.png';
 import sta_logo from '../../assets/stamina.png';
 
-import { convertPokemonAPIDataName, convertStatsEffort } from '../../util/Utils';
+import { convertStatsEffort, getFormFromForms } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { PokemonFormModify } from '../../core/models/API/form.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
-import { StatsAtk, StatsDef, StatsModel, StatsPokemon, StatsProd, StatsSta } from '../../core/models/stats.model';
+import { StatsModel, StatsPokemon, StatsRankingPokemonGO } from '../../core/models/stats.model';
 
 const Tools = (props: {
   id: number | undefined;
@@ -29,7 +29,7 @@ const Tools = (props: {
   onSetStats: ((type: string, value: number) => void) | undefined;
   // eslint-disable-next-line no-unused-vars
   onClearStats: ((reset?: boolean) => void) | undefined;
-  raid: boolean;
+  isRaid: boolean;
   tier: number;
   // eslint-disable-next-line no-unused-vars
   setTier: (tier: number) => void;
@@ -40,23 +40,13 @@ const Tools = (props: {
     useState();
   const [currTier, setCurrTier] = useState(props.tier);
 
-  const [statATK, setStatATK]: [StatsAtk | undefined, React.Dispatch<React.SetStateAction<StatsAtk | undefined>>] = useState();
-  const [statDEF, setStatDEF]: [StatsDef | undefined, React.Dispatch<React.SetStateAction<StatsDef | undefined>>] = useState();
-  const [statSTA, setStatSTA]: [StatsSta | undefined, React.Dispatch<React.SetStateAction<StatsSta | undefined>>] = useState();
-  const [statProd, setStatProd]: [StatsProd | undefined, React.Dispatch<React.SetStateAction<StatsProd | undefined>>] = useState();
+  const [statsPokemon, setStatsPokemon]: [
+    StatsRankingPokemonGO | undefined,
+    React.Dispatch<React.SetStateAction<StatsRankingPokemonGO | undefined>>
+  ] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[]): any => {
-      const forms = stats.filter((i) => i.id === props.id);
-      let filterForm = forms.find((item) => item.form === (convertPokemonAPIDataName(props.currForm?.form.form_name) || FORM_NORMAL));
-      if (!filterForm && forms.length > 0) {
-        filterForm = forms.find((item) => item.form === FORM_NORMAL);
-        if (!filterForm) {
-          filterForm = forms.at(0);
-        }
-      }
-      return filterForm;
-    },
+    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.id, props.currForm?.form.form_name),
     [props.id, props.currForm?.form.form_name]
   );
 
@@ -85,16 +75,22 @@ const Tools = (props: {
       const formSTA = filterFormList(props.stats.stamina.ranking);
       const formProd = filterFormList(props.stats.statProd.ranking);
 
-      setStatATK(props.raid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack, props.tier) } : formATK);
-      setStatDEF(props.raid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense, props.tier) } : formDEF);
-      setStatSTA(props.raid && props.tier && !props.hide ? { stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA);
-      setStatProd(props.raid && props.tier && !props.hide ? null : formProd);
+      setStatsPokemon({
+        atk: props.isRaid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack, props.tier) } : formATK,
+        def: props.isRaid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense, props.tier) } : formDEF,
+        sta: props.isRaid && props.tier && !props.hide ? { stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA,
+        prod: props.isRaid && props.tier && !props.hide ? null : formProd,
+      });
+
       setCurrDataPoke(convertStatsEffort(props.dataPoke.find((item) => item.id === props.id)?.stats));
 
       if (props.onSetStats && formATK && formDEF && formSTA) {
-        props.onSetStats('atk', props.raid && props.tier && !props.hide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack);
-        props.onSetStats('def', props.raid && props.tier && !props.hide ? calculateRaidStat(formDEF.defense, props.tier) : formDEF.defense);
-        props.onSetStats('sta', props.raid && props.tier && !props.hide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
+        props.onSetStats('atk', props.isRaid && props.tier && !props.hide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack);
+        props.onSetStats(
+          'def',
+          props.isRaid && props.tier && !props.hide ? calculateRaidStat(formDEF.defense, props.tier) : formDEF.defense
+        );
+        props.onSetStats('sta', props.isRaid && props.tier && !props.hide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
         if (props.setForm) {
           props.setForm(props.currForm);
         }
@@ -109,14 +105,14 @@ const Tools = (props: {
     props.stats.attack.ranking,
     props.stats.defense.ranking,
     props.stats.stamina.ranking,
-    props.raid,
+    props.isRaid,
     props.tier,
     props.hide,
   ]);
 
   return (
     <Fragment>
-      {props.raid ? (
+      {props.isRaid ? (
         <div className="element-top" style={{ marginBottom: 15 }}>
           <Form.Select
             className="w-100"
@@ -167,21 +163,23 @@ const Tools = (props: {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
                   ATK
                 </td>
-                <td className="text-center">{statATK ? statATK.attack : 0}</td>
+                <td className="text-center">{statsPokemon?.atk?.attack ?? 0}</td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
                   DEF
                 </td>
-                <td className="text-center">{statDEF ? statDEF.defense : 0}</td>
+                <td className="text-center">{statsPokemon?.def?.defense ?? 0}</td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={sta_logo} />
                   STA
                 </td>
-                <td className="text-center">{statSTA ? Math.floor(statSTA.stamina / RAID_BOSS_TIER[props.tier].CPm) : 0}</td>
+                <td className="text-center">
+                  {statsPokemon?.sta ? Math.floor(statsPokemon?.sta?.stamina / RAID_BOSS_TIER[props.tier].CPm) : 0}
+                </td>
               </tr>
               <tr>
                 <td>
@@ -194,7 +192,14 @@ const Tools = (props: {
           </table>
         </div>
       ) : (
-        <Stats statATK={statATK} statDEF={statDEF} statSTA={statSTA} statProd={statProd} pokemonStats={props.stats} stats={currDataPoke} />
+        <Stats
+          statATK={statsPokemon?.atk}
+          statDEF={statsPokemon?.def}
+          statSTA={statsPokemon?.sta}
+          statProd={statsPokemon?.prod}
+          pokemonStats={props.stats}
+          stats={currDataPoke}
+        />
       )}
     </Fragment>
   );

@@ -4,12 +4,19 @@ import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { PokemonInfo } from '../../../core/models/API/info.model';
 import { Species } from '../../../core/models/API/species.model';
 import { PokemonGenderRatio, PokemonDataModel } from '../../../core/models/pokemon.model';
-import { StatsAtk, StatsDef, StatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
+import { StatsRankingPokemonGO } from '../../../core/models/stats.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { hideSpinner } from '../../../store/actions/spinner.action';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, regionList } from '../../../util/Constants';
-import { capitalize, convertPokemonAPIDataName, convertStatsEffort, formIconAssets, splitAndCapitalize } from '../../../util/Utils';
+import {
+  capitalize,
+  convertPokemonAPIDataName,
+  convertStatsEffort,
+  formIconAssets,
+  getFormFromForms,
+  splitAndCapitalize,
+} from '../../../util/Utils';
 import APIService from '../../../services/API.service';
 
 import './Form.scss';
@@ -56,38 +63,30 @@ const Form = (props: {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [statATK, setStatATK]: [StatsAtk | undefined, React.Dispatch<React.SetStateAction<StatsAtk | undefined>>] = useState();
-  const [statDEF, setStatDEF]: [StatsDef | undefined, React.Dispatch<React.SetStateAction<StatsDef | undefined>>] = useState();
-  const [statSTA, setStatSTA]: [StatsSta | undefined, React.Dispatch<React.SetStateAction<StatsSta | undefined>>] = useState();
-  const [statProd, setStatProd]: [StatsProd | undefined, React.Dispatch<React.SetStateAction<StatsProd | undefined>>] = useState();
+  const [statsPokemon, setStatsPokemon]: [
+    StatsRankingPokemonGO | undefined,
+    React.Dispatch<React.SetStateAction<StatsRankingPokemonGO | undefined>>
+  ] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[]): any => {
-      const forms = stats.filter((i) => i.id === props.species?.id);
-      let filterForm = forms.find((item) => item.form === (convertPokemonAPIDataName(props.form?.form.form_name) || FORM_NORMAL));
-      if (!filterForm && forms.length > 0) {
-        filterForm = forms.find((item) => item.form === FORM_NORMAL);
-        if (!filterForm) {
-          filterForm = forms.at(0);
-        }
-      }
-      return filterForm;
-    },
+    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.species?.id, props.form?.form.form_name),
     [props.species?.id, props.form?.form.form_name]
   );
 
   useEffect(() => {
-    if (props.form && props.species && statATK && statDEF && statSTA && statProd) {
+    if (props.form && props.species && statsPokemon) {
       dispatch(hideSpinner());
     }
-  }, [props.form, props.species, statATK, statDEF, statSTA, statProd, dispatch]);
+  }, [props.form, props.species, statsPokemon, dispatch]);
 
   useEffect(() => {
     if (stats) {
-      setStatATK(filterFormList(stats.attack.ranking));
-      setStatDEF(filterFormList(stats.defense.ranking));
-      setStatSTA(filterFormList(stats.stamina.ranking));
-      setStatProd(filterFormList(stats.statProd.ranking));
+      setStatsPokemon({
+        atk: filterFormList(stats.attack.ranking),
+        def: filterFormList(stats.defense.ranking),
+        sta: filterFormList(stats.stamina.ranking),
+        prod: filterFormList(stats.statProd.ranking),
+      });
     }
   }, [filterFormList, stats]);
 
@@ -128,7 +127,7 @@ const Form = (props: {
         <h4 className="info-title">
           <b>Form varieties</b>
         </h4>
-        <div className="scroll-form">
+        <div className="scroll-form" style={{ width: props.progress.forms ? '100%' : '' }}>
           {props.progress.forms ? (
             <Fragment>
               {props.formList?.map((value, index) => (
@@ -169,7 +168,7 @@ const Form = (props: {
                           />
                         </div>
                       </div>
-                      <p>{value.form.form_name === '' ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
+                      <p>{!value.form.form_name ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
                       {(value.form.id ?? 0) > 0 && value.form.id === props.species?.id && (
                         <b>
                           <small>(Default)</small>
@@ -183,7 +182,7 @@ const Form = (props: {
             </Fragment>
           ) : (
             <div className="ph-item flex-nowrap" style={{ width: '100%', columnGap: 10 }}>
-              {[...Array(10).keys()].map((_, index) => (
+              {[...Array(Math.ceil(window.innerWidth / 150)).keys()].map((_, index) => (
                 <div key={index} className="ph-col-3" style={{ padding: 0, margin: '2px 0' }}>
                   <div className="ph-row">
                     <div className="ph-picture ph-col-3" style={{ height: 142, width: 90 }} />
@@ -228,10 +227,10 @@ const Form = (props: {
       )}
       <Stats
         isShadow={props.form?.form.is_shadow}
-        statATK={statATK}
-        statDEF={statDEF}
-        statSTA={statSTA}
-        statProd={statProd}
+        statATK={statsPokemon?.atk}
+        statDEF={statsPokemon?.def}
+        statSTA={statsPokemon?.sta}
+        statProd={statsPokemon?.prod}
         pokemonStats={stats}
         stats={convertStatsEffort(props.data?.stats)}
       />
@@ -247,8 +246,8 @@ const Form = (props: {
               <Raid
                 currForm={props.form}
                 id={props.species?.id}
-                statATK={statATK?.attack ?? calBaseATK(props.data?.stats ?? new StatsPokemon(), true)}
-                statDEF={statDEF?.defense ?? calBaseDEF(props.data?.stats ?? new StatsPokemon(), true)}
+                statATK={statsPokemon?.atk?.attack ?? calBaseATK(props.data?.stats, true)}
+                statDEF={statsPokemon?.def?.defense ?? calBaseDEF(props.data?.stats, true)}
               />
             </Fragment>
           )}
@@ -261,11 +260,11 @@ const Form = (props: {
               types: props.form?.form.types ?? [],
             }}
             form={props.form?.form}
-            statATK={statATK?.attack ?? calBaseATK(props.data?.stats ?? new StatsPokemon(), true)}
-            statDEF={statDEF?.defense ?? calBaseDEF(props.data?.stats ?? new StatsPokemon(), true)}
-            statSTA={statSTA?.stamina ?? calBaseSTA(props.data?.stats ?? new StatsPokemon(), true)}
+            statATK={statsPokemon?.atk?.attack ?? calBaseATK(props.data?.stats, true)}
+            statDEF={statsPokemon?.def?.defense ?? calBaseDEF(props.data?.stats, true)}
+            statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(props.data?.stats, true)}
           />
-          <Counter def={statDEF?.defense ?? 0} types={props.form?.form.types ?? []} isShadow={props.form?.form.is_shadow} />
+          <Counter def={statsPokemon?.def?.defense ?? 0} types={props.form?.form.types ?? []} isShadow={props.form?.form.is_shadow} />
         </div>
       </div>
       <hr className="w-100" />

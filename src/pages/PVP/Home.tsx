@@ -136,14 +136,16 @@ const PVPHome = () => {
           ))}
         </div>
       ) : (
-        <div className="ph-item flex-nowrap">
-          {[...Array(4).keys()].map((_, index) => (
-            <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
-              <div className="ph-row">
-                <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
+        <div style={{ overflowX: 'hidden' }}>
+          <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
+            {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
+              <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
+                <div className="ph-row">
+                  <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
       <div className="d-flex align-items-center justify-content-between">
@@ -181,14 +183,16 @@ const PVPHome = () => {
           ))}
         </div>
       ) : (
-        <div className="ph-item flex-nowrap">
-          {[...Array(4).keys()].map((_, index) => (
-            <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
-              <div className="ph-row">
-                <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
+        <div style={{ overflowX: 'hidden' }}>
+          <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
+            {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
+              <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
+                <div className="ph-row">
+                  <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
       <h1>

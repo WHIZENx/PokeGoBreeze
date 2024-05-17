@@ -115,7 +115,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
               />
             </div>
           </div>
-          <span className="caption" style={{ color: theme.palette.text.primary }}>
+          <span className="caption text-overflow" style={{ color: theme.palette.text.primary }}>
             #{row.pokemon_id} {splitAndCapitalize(row.pokemon_name, '-', ' ')}
           </span>
         </Link>

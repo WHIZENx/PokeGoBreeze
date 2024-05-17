@@ -12,9 +12,9 @@ import {
   MAX_IV,
 } from './Constants';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
-import { PokemonStatsRanking, StatsModel, StatsPokemon } from '../core/models/stats.model';
-import { Stats } from '../core/models/API/info.model';
-import { FormModel, PokemonFormModify } from '../core/models/API/form.model';
+import { PokemonStatsRanking, StatsModel, StatsPokemon, StatsPokemonGO } from '../core/models/stats.model';
+import { PokemonInfo, Stats } from '../core/models/API/info.model';
+import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../core/models/API/form.model';
 import { PokemonSearchingModel } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 
@@ -389,15 +389,7 @@ export const convertFormGif = (name: string | undefined) => {
     .replace('-hero', '');
 };
 
-export const checkRankAllAvailable = (
-  pokemonStats: StatsModel,
-  stats: {
-    atk: number;
-    def: number;
-    sta: number;
-    prod: number;
-  }
-) => {
+export const checkRankAllAvailable = (pokemonStats: StatsModel, stats: StatsPokemonGO) => {
   const data = {
     attackRank: 0,
     defenseRank: 0,
@@ -682,4 +674,100 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/^Normal$/, '')
     .replace(/-Shadow$/, '')
     .replace(/-Purified$/, '');
+};
+
+export const generatePokemonGoForms = (
+  pokemonData: PokemonDataModel[],
+  dataFormList: PokemonForm[][],
+  formListResult: PokemonFormModify[][],
+  id: number,
+  name: string,
+  index = 0
+) => {
+  const formList: string[] = [];
+  dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.form_name || FORM_NORMAL))));
+  const pokemonGOForm = pokemonData.filter((pokemon) => pokemon.num === id);
+
+  pokemonGOForm.forEach((pokemon) => {
+    const isIncludeFormGO = formList.some((form) => pokemon.forme?.includes(form));
+    if (!isIncludeFormGO) {
+      index--;
+      const pokemonGOModify = new PokemonFormModifyModel(
+        id,
+        name,
+        pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
+        pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
+        pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
+        'Pokémon-GO',
+        pokemon.types,
+        null,
+        index,
+        FORM_NORMAL,
+        false,
+        false
+      );
+      formListResult.push([pokemonGOModify]);
+    }
+  });
+
+  return index;
+};
+
+export const generatePokemonGoShadowForms = (
+  dataPokeList: PokemonInfo[],
+  formListResult: PokemonFormModify[][],
+  id: number,
+  name: string,
+  index = 0
+) => {
+  const pokemonDefault = dataPokeList.filter((p) => p.is_include_shadow);
+  pokemonDefault.forEach((p) => {
+    let form = '';
+    if (!p.is_default) {
+      form = p.name.replace(`${name}-`, '') + '-';
+    }
+    index--;
+    const pokemonShadowModify = new PokemonFormModifyModel(
+      id,
+      name,
+      p.name,
+      `${form}shadow`,
+      `${p.name}-shadow`,
+      'Pokémon-GO',
+      p.types.map((item) => item.type.name) ?? [],
+      null,
+      index,
+      FORM_SHADOW,
+      true
+    );
+    index--;
+    const pokemonPurifiedModify = new PokemonFormModifyModel(
+      id,
+      name,
+      p.name,
+      `${form}purified`,
+      `${p.name}-purified`,
+      'Pokémon-GO',
+      p.types.map((item) => item.type.name) ?? [],
+      null,
+      index,
+      FORM_PURIFIED,
+      true
+    );
+    formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
+  });
+
+  return index;
+};
+
+export const getFormFromForms = (stats: { id: number; form: string }[], id: number | undefined, formName: string | undefined) => {
+  const forms = stats.filter((i) => i.id === id);
+  let filterForm = forms.find((item) => item.form === (convertPokemonAPIDataName(formName) || FORM_NORMAL));
+  if (!filterForm && forms.length > 0) {
+    filterForm = forms.find((item) => item.form === FORM_NORMAL);
+    if (!filterForm) {
+      filterForm = forms.at(0);
+    }
+  }
+  return filterForm;
 };

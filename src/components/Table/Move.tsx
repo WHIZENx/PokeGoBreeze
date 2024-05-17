@@ -6,7 +6,7 @@ import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from '../Input/models/select-move.model';
 import { Combat } from '../../core/models/combat.model';
-import { FORM_NORMAL } from '../../util/Constants';
+import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
 
 const Move = (props: {
   type?: string;
@@ -40,10 +40,11 @@ const Move = (props: {
   const findMove = useCallback(
     (id: number, form: string) => {
       const resultFirst = data?.pokemon?.filter((item) => item.num === id);
+
       form = form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() ?? FORM_NORMAL;
       const result = resultFirst?.find((item) => item.fullName === form);
       const simpleMove: SelectMoveModel[] = [];
-      if (resultFirst && (resultFirst.length === 1 || result == null)) {
+      if (resultFirst && (resultFirst.length === 1 || result == null || form.includes(FORM_GMAX))) {
         if (resultFirst?.length === 0) {
           return setResultMove(simpleMove);
         }
