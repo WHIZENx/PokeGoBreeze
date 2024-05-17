@@ -6,9 +6,9 @@ import Tools from './Tools';
 import loading from '../../assets/loading.png';
 import {
   capitalize,
-  convertPokemonAPIDataName,
   convertPokemonImageName,
   formIconAssets,
+  generatePokemonGoForms,
   getPokemonById,
   splitAndCapitalize,
   TypeRadioGroup,
@@ -22,7 +22,7 @@ import { StatsModel } from '../../core/models/stats.model';
 import { ToolSearching } from '../../core/models/searching.model';
 import { PokemonDataModel, PokemonNameModel } from '../../core/models/pokemon.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
+import { FormModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
@@ -132,32 +132,7 @@ const FormSelect = (props: {
         });
       }
 
-      let indexPokemonGO = 0;
-      const formList: string[] = [];
-      dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.form_name || FORM_NORMAL))));
-      const pokemonGOForm = props.data.filter((pokemon) => pokemon.num === data.id);
-
-      pokemonGOForm.forEach((pokemon) => {
-        const isIncludeFormGO = formList.some((form) => pokemon.forme?.includes(form));
-        if (!isIncludeFormGO) {
-          indexPokemonGO--;
-          const pokemonGOModify = new PokemonFormModifyModel(
-            data?.id,
-            data?.name,
-            pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
-            pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
-            pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
-            'Pokémon-GO',
-            pokemon.types,
-            null,
-            indexPokemonGO,
-            FORM_NORMAL,
-            false,
-            false
-          );
-          formListResult.push([pokemonGOModify]);
-        }
-      });
+      generatePokemonGoForms(props.data, dataFormList, formListResult, data.id, data.name);
 
       setPokeData(dataPokeList);
       setFormList(formListResult);
@@ -205,6 +180,8 @@ const FormSelect = (props: {
 
   useEffect(() => {
     if (props.id && props.data.length > 0) {
+      props.setForm?.(undefined);
+      setCurrentForm(undefined);
       queryPokemon(props.id.toString());
     }
   }, [props.id, props.data.length, queryPokemon]);
@@ -248,15 +225,9 @@ const FormSelect = (props: {
     }
   }, [props.data, currentForm?.default_id]);
 
-  useEffect(() => {
-    if (currentForm && currentForm.default_id !== props.id) {
-      setCurrentForm(undefined);
-    }
-  }, [currentForm, props.id]);
-
-  const changeForm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const changeForm = (name: string) => {
     setCurrentForm(undefined);
-    const findForm = formList.map((item) => item.find((item) => item.form.name === e.currentTarget.value)).find((item) => item);
+    const findForm = formList.map((item) => item.find((item) => item.form.name === name)).find((item) => item);
     setCurrentForm(findForm);
     if (props.onClearStats) {
       props.onClearStats();
@@ -277,14 +248,7 @@ const FormSelect = (props: {
     <Fragment>
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
         {dataStorePokemon?.prev && (
-          <div
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              setCurrentForm(undefined);
-              props.setForm?.(undefined);
-              props.onSetPrev?.();
-            }}
-          >
+          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
             <div>
               <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)} />
             </div>
@@ -312,14 +276,7 @@ const FormSelect = (props: {
       />
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
         {dataStorePokemon?.next && (
-          <div
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              setCurrentForm(undefined);
-              props.setForm?.(undefined);
-              props.onSetNext?.();
-            }}
-          >
+          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetNext?.()}>
             <div>
               <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)} />
             </div>
@@ -346,10 +303,9 @@ const FormSelect = (props: {
               <Fragment key={index}>
                 {value.map((value, index) => (
                   <button
-                    value={value.form.name}
                     key={index}
                     className={'btn btn-form' + (value.form.id === currentForm.form.id ? ' form-selected' : '')}
-                    onClick={(e) => changeForm(e)}
+                    onClick={() => changeForm(value.form.name)}
                   >
                     <img
                       width={64}
@@ -435,7 +391,7 @@ const FormSelect = (props: {
       </div>
       <Tools
         hide={props.hide}
-        raid={typePoke === 'pokemon' ? false : true}
+        isRaid={typePoke === 'pokemon' ? false : true}
         tier={tier}
         setTier={onSetTier}
         setForm={props.setForm}

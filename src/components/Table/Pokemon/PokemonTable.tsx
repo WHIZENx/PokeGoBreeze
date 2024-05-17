@@ -65,7 +65,7 @@ const PokemonTable = (props: {
             <h5 className="d-flex">Version</h5>
           </td>
           <td colSpan={2}>
-            <h5 className="d-flex">{splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO')}</h5>
+            <h5 className="d-flex">{splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO').replace(/X y$/i, 'X-Y')}</h5>
           </td>
         </tr>
         <tr>

@@ -77,6 +77,9 @@ export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj:
 
 /* Algorithm calculate from pokemongohub.net */
 export const calBaseATK = (stats: any, nerf: boolean) => {
+  if (!stats) {
+    stats = new StatsPokemon();
+  }
   const atk = stats.atk ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'attack').base_stat;
   const spa = stats.spa ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'special-attack').base_stat;
 
@@ -99,6 +102,9 @@ export const calBaseATK = (stats: any, nerf: boolean) => {
 };
 
 export const calBaseDEF = (stats: any, nerf: boolean) => {
+  if (!stats) {
+    stats = new StatsPokemon();
+  }
   const def = stats.def ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'defense').base_stat;
   const spd = stats.spd ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'special-defense').base_stat;
 
@@ -121,6 +127,9 @@ export const calBaseDEF = (stats: any, nerf: boolean) => {
 };
 
 export const calBaseSTA = (stats: any, nerf: boolean) => {
+  if (!stats) {
+    stats = new StatsPokemon();
+  }
   const hp = stats.hp ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'hp').base_stat;
 
   const baseSTA = hp > 0 ? Math.floor(hp * 1.75 + 50) : hp;

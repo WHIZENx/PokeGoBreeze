@@ -248,7 +248,7 @@ const Find = (props: {
   return (
     <div className="container element-top">
       <h1 id="main" className="text-center" style={{ marginBottom: 15 }}>
-        {props.title ? props.title : 'Pokémon GO Tools'}
+        {props.title ?? 'Pokémon GO Tools'}
       </h1>
       {pokemonList.length > 0 ? (
         <div className="row search-container">

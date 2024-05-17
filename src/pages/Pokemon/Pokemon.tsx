@@ -7,7 +7,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
 
-import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../../core/models/API/form.model';
+import { FormModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { Species } from '../../core/models/API/species.model';
 import { OptionsPokemon, PokemonGenderRatio, PokemonDataModel } from '../../core/models/pokemon.model';
@@ -19,6 +19,8 @@ import {
   checkPokemonIncludeShadowForm,
   convertPokemonAPIDataName,
   convertPokemonImageName,
+  generatePokemonGoForms,
+  generatePokemonGoShadowForms,
   getPokemonById,
   splitAndCapitalize,
 } from '../../util/Utils';
@@ -28,7 +30,7 @@ import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { FORM_SHADOW, FORM_PURIFIED, KEY_LEFT, KEY_RIGHT, FORM_NORMAL, FORM_GMAX, regionList } from '../../util/Constants';
+import { KEY_LEFT, KEY_RIGHT, FORM_NORMAL, FORM_GMAX, regionList } from '../../util/Constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
@@ -166,70 +168,10 @@ const Pokemon = (props: {
         });
       }
 
-      let indexPokemonGO = 0;
-      const formList: string[] = [];
-      dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.form_name || FORM_NORMAL))));
-      const pokemonGOForm = pokemonData.filter((pokemon) => pokemon.num === data.id);
-
-      pokemonGOForm.forEach((pokemon) => {
-        const isIncludeFormGO = formList.some((form) => pokemon.forme?.includes(form));
-        if (!isIncludeFormGO) {
-          indexPokemonGO--;
-          const pokemonGOModify = new PokemonFormModifyModel(
-            data?.id,
-            data?.name,
-            pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
-            pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
-            pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
-            'Pokémon-GO',
-            pokemon.types,
-            null,
-            indexPokemonGO,
-            FORM_NORMAL,
-            false,
-            false
-          );
-          formListResult.push([pokemonGOModify]);
-        }
-      });
+      const indexPokemonGO = generatePokemonGoForms(pokemonData, dataFormList, formListResult, data.id, data.name);
 
       if (pokemon?.isShadow && pokemon?.purified?.candy && pokemon?.purified.stardust) {
-        const pokemonDefault = dataPokeList.filter((p) => p.is_include_shadow);
-        pokemonDefault.forEach((p) => {
-          let form = '';
-          if (!p.is_default) {
-            form = p.name.replace(`${data?.name}-`, '') + '-';
-          }
-          indexPokemonGO--;
-          const pokemonShadowModify = new PokemonFormModifyModel(
-            data?.id,
-            data?.name,
-            p.name,
-            `${form}shadow`,
-            `${p.name}-shadow`,
-            'Pokémon-GO',
-            p.types.map((item) => item.type.name) ?? [],
-            null,
-            indexPokemonGO,
-            FORM_SHADOW,
-            true
-          );
-          indexPokemonGO--;
-          const pokemonPurifiedModify = new PokemonFormModifyModel(
-            data?.id,
-            data?.name,
-            p.name,
-            `${form}purified`,
-            `${p.name}-purified`,
-            'Pokémon-GO',
-            p.types.map((item) => item.type.name) ?? [],
-            null,
-            indexPokemonGO,
-            FORM_PURIFIED,
-            true
-          );
-          formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
-        });
+        generatePokemonGoShadowForms(dataPokeList, formListResult, data.id, data.name, indexPokemonGO);
       }
 
       setPokeData(dataPokeList);
@@ -270,7 +212,7 @@ const Pokemon = (props: {
 
       setProgress((p) => ({ ...p, forms: true }));
     },
-    [dispatch, pokemonData, searchParams]
+    [pokemonData, searchParams]
   );
 
   const queryPokemon = useCallback(
@@ -370,7 +312,7 @@ const Pokemon = (props: {
       setReleased(released);
 
       const formParams = searchParams.get('form');
-      setVersion(splitAndCapitalize(currentForm?.form.version_group.name, '-', ' '));
+      setVersion(currentForm?.form.version_group.name);
       if (!params.id) {
         setRegion(regionList[parseInt(data?.generation.url.split('/').at(6) ?? '')]);
       } else {
@@ -386,7 +328,9 @@ const Pokemon = (props: {
           ? props.searching.fullName
           : currentForm?.form?.is_default
           ? currentForm?.form?.name
-          : splitAndCapitalize(formParams ? currentForm?.form.name : data?.name, '-', ' ');
+          : formParams || (currentForm?.form.id ?? 0) < 0
+          ? currentForm?.form.name
+          : data?.name;
 
       setFormName(nameInfo);
       const originForm = splitAndCapitalize(
