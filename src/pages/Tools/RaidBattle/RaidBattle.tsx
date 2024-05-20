@@ -325,7 +325,7 @@ const RaidBattle = () => {
       form = form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() ?? FORM_NORMAL;
       const result = resultFirst?.find((item) => item.fullName === form);
       let simpleMove: SelectMoveModel[] = [];
-      if (resultFirst && (resultFirst.length === 1 || result == null)) {
+      if (resultFirst && (resultFirst.length === 1 || result == null || form.includes(FORM_GMAX))) {
         if (resultFirst.length === 0) {
           setFMove(undefined);
           setResultFMove(undefined);
