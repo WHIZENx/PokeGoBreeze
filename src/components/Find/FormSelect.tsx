@@ -213,8 +213,8 @@ const FormSelect = (props: {
   }, [currentForm]);
 
   useEffect(() => {
-    if (props.data.length > 0 && (currentForm?.default_id ?? 0) > 0) {
-      const currentId = getPokemonById(props.data, currentForm?.default_id ?? 0);
+    if (props.data.length > 0 && (props.id ?? 0) > 0) {
+      const currentId = getPokemonById(props.data, props.id ?? 0);
       if (currentId) {
         setDataStorePokemon({
           prev: getPokemonById(props.data, currentId.id - 1),
@@ -223,7 +223,7 @@ const FormSelect = (props: {
         });
       }
     }
-  }, [props.data, currentForm?.default_id]);
+  }, [props.data, props.id]);
 
   const changeForm = (name: string) => {
     setCurrentForm(undefined);
@@ -247,14 +247,14 @@ const FormSelect = (props: {
   return (
     <Fragment>
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
-        {dataStorePokemon?.prev && (
+        {(props.id ?? 0) > 1 && (
           <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
             <div>
-              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(dataStorePokemon?.prev?.id)} />
+              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite((props.id ?? 0) - 1)} />
             </div>
             <span>
               <b>
-                <span className="text-navigator">{'<'}</span> <span>#{dataStorePokemon?.prev?.id}</span>
+                <span className="text-navigator">{'<'}</span> <span>#{(props.id ?? 0) - 1}</span>
               </b>
             </span>
           </div>
@@ -278,11 +278,11 @@ const FormSelect = (props: {
         {dataStorePokemon?.next && (
           <div style={{ cursor: 'pointer' }} onClick={() => props.onSetNext?.()}>
             <div>
-              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(dataStorePokemon?.next?.id)} />
+              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite((props.id ?? 0) + 1)} />
             </div>
             <span>
               <b>
-                <span>#{dataStorePokemon?.next?.id}</span> <span className="text-navigator">{'>'}</span>
+                <span>#{(props.id ?? 0) + 1}</span> <span className="text-navigator">{'>'}</span>
               </b>
             </span>
           </div>

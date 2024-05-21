@@ -31,7 +31,7 @@ import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
 import Mega from '../Mega/Mega';
 import Primal from '../Primal/Primal';
-import { StatsState } from '../../../store/models/state.model';
+import { SpinnerState, StatsState } from '../../../store/models/state.model';
 
 const Form = (props: {
   pokemonRouter: ReduxRouterState;
@@ -51,13 +51,14 @@ const Form = (props: {
   ratio: PokemonGenderRatio | undefined;
   species: Species | undefined;
   // eslint-disable-next-line no-unused-vars
-  onSetIDPoke?: (id: number) => void;
+  setId?: (id: number) => void;
   pokemonDetail: PokemonDataModel | undefined;
   progress: {
     forms: boolean;
   };
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
+  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const dispatch = useDispatch();
 
   const params = useParams();
@@ -74,10 +75,10 @@ const Form = (props: {
   );
 
   useEffect(() => {
-    if (props.form && props.species && statsPokemon) {
+    if (spinner.loading && props.species && statsPokemon) {
       dispatch(hideSpinner());
     }
-  }, [props.form, props.species, statsPokemon, dispatch]);
+  }, [spinner.loading, props.species, statsPokemon, dispatch]);
 
   useEffect(() => {
     if (stats) {
@@ -182,7 +183,7 @@ const Form = (props: {
             </Fragment>
           ) : (
             <div className="ph-item flex-nowrap" style={{ width: '100%', columnGap: 10 }}>
-              {[...Array(Math.ceil(window.innerWidth / 150)).keys()].map((_, index) => (
+              {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
                 <div key={index} className="ph-col-3" style={{ padding: 0, margin: '2px 0' }}>
                   <div className="ph-row">
                     <div className="ph-picture ph-col-3" style={{ height: 142, width: 90 }} />
@@ -273,13 +274,14 @@ const Form = (props: {
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
-              onSetIDPoke={props.onSetIDPoke}
+              setId={props.setId}
               id={props.species?.id}
               forme={props.form?.form}
               formDefault={props.species?.id === props.form?.form.id}
               region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
               pokemonRouter={props.pokemonRouter}
               purified={props.form?.form.is_purified}
+              shadow={props.form?.form.is_shadow}
             />
           </div>
           <div className="col-xl" style={{ padding: 0 }}>
@@ -291,13 +293,14 @@ const Form = (props: {
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
-              onSetIDPoke={props.onSetIDPoke}
+              setId={props.setId}
               id={props.species?.id}
               forme={props.form?.form}
               formDefault={props.species?.id === props.form?.form.id}
               region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
               pokemonRouter={props.pokemonRouter}
               purified={props.form?.form.is_purified}
+              shadow={props.form?.form.is_shadow}
             />
           </div>
           <div className="col-xl" style={{ padding: 0 }}>
@@ -306,13 +309,14 @@ const Form = (props: {
         </div>
       ) : (
         <Evolution
-          onSetIDPoke={props.onSetIDPoke}
+          setId={props.setId}
           id={props.species?.id}
           forme={props.form?.form}
           formDefault={props.species?.id === props.form?.form.id}
           region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
           pokemonRouter={props.pokemonRouter}
           purified={props.form?.form.is_purified}
+          shadow={props.form?.form.is_shadow}
         />
       )}
       {(props.pokemonDetail?.formChange?.length ?? 0) > 0 && (

@@ -49,7 +49,7 @@ const Pokemon = (props: {
   onIncId?: () => void;
   isSearch?: boolean;
   // eslint-disable-next-line no-unused-vars
-  onSetIDPoke?: (id: number) => void;
+  setId?: (id: number) => void;
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -467,7 +467,7 @@ const Pokemon = (props: {
               pokeData={pokeData}
               ratio={pokeRatio}
               species={data}
-              onSetIDPoke={props.onSetIDPoke}
+              setId={props.setId}
               pokemonDetail={pokemonDetails}
               progress={progress}
             />

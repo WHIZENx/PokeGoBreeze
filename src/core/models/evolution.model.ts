@@ -30,6 +30,25 @@ export interface EvoList {
   quest?: EvolutionQuest;
 }
 
+export class EvoList {
+  evoToForm: string;
+  evoToId: number;
+  evoToName: string;
+  candyCost: number;
+  item?: string;
+  itemCost?: number;
+  purificationEvoCandyCost: number;
+  quest?: EvolutionQuest;
+
+  constructor() {
+    this.evoToForm = '';
+    this.evoToId = 0;
+    this.evoToName = '';
+    this.candyCost = 0;
+    this.purificationEvoCandyCost = 0;
+  }
+}
+
 export interface TempEvo {
   tempEvolutionName: string;
   firstTempEvolution: number;

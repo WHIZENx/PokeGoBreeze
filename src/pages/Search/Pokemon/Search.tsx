@@ -77,10 +77,6 @@ const Search = () => {
     setId(value.id);
   };
 
-  const setIDPoke = (id: number) => {
-    setId(id);
-  };
-
   const decId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
@@ -174,7 +170,7 @@ const Search = () => {
         </div>
         <Pokemon
           id={id?.toString()}
-          onSetIDPoke={setIDPoke}
+          setId={setId}
           onIncId={incId}
           onDecId={decId}
           isSearch={true}

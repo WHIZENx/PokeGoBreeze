@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -25,26 +25,25 @@ const PokemonModel = (props: { id: number; name: string }) => {
   const gender: React.MutableRefObject<PokemonGender | null | undefined> = useRef();
   const sound: React.MutableRefObject<Asset | undefined> = useRef();
 
-  const getImageList = useCallback(
-    (id: number) => {
-      sound.current = data?.assets?.find((item) => item.id === id);
-      const model = sound.current;
-      const detail = data?.pokemon?.find((item) => item.num === id);
-      gender.current = {
-        malePercent: detail?.genderRatio.M,
-        femalePercent: detail?.genderRatio.F,
-        genderlessPercent: detail?.genderRatio.M === 0 && detail?.genderRatio.M === 0 ? 1 : 0,
-      };
-      return model
-        ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
-        : [];
-    },
-    [data?.assets]
-  );
+  const getImageList = (id: number) => {
+    sound.current = data?.assets?.find((item) => item.id === id);
+    const model = sound.current;
+    const detail = data?.pokemon?.find((item) => item.num === id);
+    gender.current = {
+      malePercent: detail?.genderRatio.M,
+      femalePercent: detail?.genderRatio.F,
+      genderlessPercent: detail?.genderRatio.M === 0 && detail?.genderRatio.M === 0 ? 1 : 0,
+    };
+    return model
+      ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
+      : [];
+  };
 
   useEffect(() => {
-    setPokeAssets(getImageList(props.id));
-  }, [getImageList, props.id]);
+    if (data?.assets && data?.pokemon) {
+      setPokeAssets(getImageList(props.id));
+    }
+  }, [data?.assets, data?.pokemon, props.id]);
 
   return (
     <div className="element-top">

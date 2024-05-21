@@ -270,11 +270,7 @@ const FindBattle = () => {
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
     }
-    try {
-      return img?.default;
-    } catch {
-      return null;
-    }
+    return img?.default;
   };
 
   const getCandyEvo = (item: EvolutionModel[], evoId: number, candy: number): number => {

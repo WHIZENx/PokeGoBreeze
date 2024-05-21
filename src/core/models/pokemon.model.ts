@@ -41,7 +41,7 @@ interface EvolutionBranch {
   candyCost: number;
   evolutionItemRequirementCost?: number;
   form: string;
-  obPurificationEvolutionCandyCost: number;
+  candyCostPurified: number;
   genderRequirement: string;
   kmBuddyDistanceRequirement: number;
   mustBeBuddy: boolean;
