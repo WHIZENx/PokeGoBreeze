@@ -24,13 +24,12 @@ const Primal = (props: { formList: PokemonFormModify[][]; id: number }) => {
   const getQuestEvo = (name: string) => {
     name = name
       .split('-')
-      .map((text: string) => text.toUpperCase())
+      .map((text) => text.toUpperCase())
       .join('_');
-    try {
-      return evoData
-        ?.find((item) => item.tempEvo?.find((value) => value.tempEvolutionName === name))
-        ?.tempEvo?.find((item) => item.tempEvolutionName === name);
-    } catch (error) {
+    const pokemon = evoData?.find((item) => item.tempEvo?.find((value) => value.tempEvolutionName === name));
+    if (pokemon) {
+      return pokemon.tempEvo?.find((item) => item.tempEvolutionName === name);
+    } else {
       return {
         firstTempEvolution: 'Unavailable',
         tempEvolution: 'Unavailable',

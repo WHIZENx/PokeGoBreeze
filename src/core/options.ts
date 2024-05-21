@@ -252,13 +252,7 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
     }
 
     pokemonSettings.evolutionBranch?.forEach((evo) => {
-      const dataEvo: EvoList = {
-        evoToForm: '',
-        evoToId: 0,
-        evoToName: '',
-        candyCost: 0,
-        purificationEvoCandyCost: 0,
-      };
+      const dataEvo = new EvoList();
       const name = evo.evolution ?? pokemon.name;
       if (evo.form) {
         dataEvo.evoToForm = convertAndReplaceNameGO(evo.form, name);
@@ -289,8 +283,8 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
       if (evo.evolutionItemRequirementCost) {
         dataEvo.itemCost = evo.evolutionItemRequirementCost;
       }
-      if (evo.obPurificationEvolutionCandyCost) {
-        dataEvo.purificationEvoCandyCost = evo.obPurificationEvolutionCandyCost;
+      if (evo.candyCostPurified) {
+        dataEvo.purificationEvoCandyCost = evo.candyCostPurified;
       }
       dataEvo.quest = {};
       if (evo.genderRequirement) {

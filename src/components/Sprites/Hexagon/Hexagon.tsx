@@ -8,80 +8,79 @@ const Hexagon = (props: { defaultStats?: HexagonStats; stats: HexagonStats; size
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
 
-  const getHexConnerCord = useCallback((center: { x: number; y: number }, size: number, i: number) => {
+  const getHexConnerCord = (center: { x: number; y: number }, size: number, i: number) => {
     const angleDeg = 60 * i - 30;
     const angleRad = (Math.PI / 180) * angleDeg;
     const x = center.x + size * Math.cos(angleRad);
     const y = center.y + size * Math.sin(angleRad);
     return Point(x, y);
-  }, []);
+  };
 
   const Point = (x: number, y: number) => {
     return { x, y };
   };
 
-  const drawLineHex = useCallback(
-    (
-      ctx: CanvasRenderingContext2D | null | undefined,
-      center: { x: number; y: number },
-      percentage: number,
-      color: string,
-      fill: boolean
-    ) => {
-      const start = getHexConnerCord(center, percentage, 0);
-      ctx?.beginPath();
-      ctx?.moveTo(start.x, start.y);
-      for (let i = 1; i <= 6; i++) {
-        const end = getHexConnerCord(center, percentage, i);
-        ctx?.lineTo(end.x, end.y);
+  const drawLineHex = (
+    ctx: CanvasRenderingContext2D | null | undefined,
+    center: { x: number; y: number },
+    percentage: number,
+    color: string,
+    fill: boolean
+  ) => {
+    const start = getHexConnerCord(center, percentage, 0);
+    ctx?.beginPath();
+    ctx?.moveTo(start.x, start.y);
+    for (let i = 1; i <= 6; i++) {
+      const end = getHexConnerCord(center, percentage, i);
+      ctx?.lineTo(end.x, end.y);
+    }
+    ctx?.setLineDash([20, 15]);
+    if (ctx) {
+      if (fill) {
+        ctx.fillStyle = 'gray';
+        ctx.fill();
       }
-      ctx?.setLineDash([20, 15]);
-      if (ctx) {
-        if (fill) {
-          ctx.fillStyle = 'gray';
-          ctx.fill();
-        }
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = color;
-      }
-      ctx?.stroke();
-      ctx?.closePath();
-    },
-    [getHexConnerCord]
-  );
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = color;
+    }
+    ctx?.stroke();
+    ctx?.closePath();
+  };
 
-  const drawStatsHex = useCallback(
-    (ctx: CanvasRenderingContext2D | null | undefined, center: { x: number; y: number }, stat: HexagonStats, hexSize: number) => {
-      const stats: { [x: string]: number } = {
-        '0': ((stat.switching || 0) * hexSize) / 100,
-        '1': ((stat.charger || 0) * hexSize) / 100,
-        '2': ((stat.closer || 0) * hexSize) / 100,
-        '3': ((stat.cons || 0) * hexSize) / 100,
-        '4': ((stat.atk || 0) * hexSize) / 100,
-        '5': ((stat.lead || 0) * hexSize) / 100,
-      };
-      const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
-      ctx?.beginPath();
-      ctx?.moveTo(start.x, start.y);
-      for (let i = 1; i <= 6; i++) {
-        const end = getHexConnerCord(center, Math.min(stats[i.toString()], 100), i);
-        ctx?.lineTo(end.x, end.y);
-      }
-      ctx?.setLineDash([]);
-      ctx?.lineTo(start.x, start.y);
-      if (ctx) {
-        ctx.lineWidth = 3;
-        ctx.fillStyle = '#a3eca380';
-      }
-      ctx?.fill();
-      if (ctx) {
-        ctx.strokeStyle = 'green';
-      }
-      ctx?.stroke();
-      ctx?.closePath();
-    },
-    [getHexConnerCord]
-  );
+  const drawStatsHex = (
+    ctx: CanvasRenderingContext2D | null | undefined,
+    center: { x: number; y: number },
+    stat: HexagonStats,
+    hexSize: number
+  ) => {
+    const stats: { [x: string]: number } = {
+      '0': ((stat.switching || 0) * hexSize) / 100,
+      '1': ((stat.charger || 0) * hexSize) / 100,
+      '2': ((stat.closer || 0) * hexSize) / 100,
+      '3': ((stat.cons || 0) * hexSize) / 100,
+      '4': ((stat.atk || 0) * hexSize) / 100,
+      '5': ((stat.lead || 0) * hexSize) / 100,
+    };
+    const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
+    ctx?.beginPath();
+    ctx?.moveTo(start.x, start.y);
+    for (let i = 1; i <= 6; i++) {
+      const end = getHexConnerCord(center, Math.min(stats[i.toString()], 100), i);
+      ctx?.lineTo(end.x, end.y);
+    }
+    ctx?.setLineDash([]);
+    ctx?.lineTo(start.x, start.y);
+    if (ctx) {
+      ctx.lineWidth = 3;
+      ctx.fillStyle = '#a3eca380';
+    }
+    ctx?.fill();
+    if (ctx) {
+      ctx.strokeStyle = 'green';
+    }
+    ctx?.stroke();
+    ctx?.closePath();
+  };
 
   const loop = (type: number, startStat: number, endStat: number) => {
     return type === 1
@@ -107,7 +106,7 @@ const Hexagon = (props: { defaultStats?: HexagonStats; stats: HexagonStats; size
       drawStatsHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, stats, hexSize);
       setInitHex(true);
     },
-    [drawLineHex, drawStatsHex, props.size]
+    [props.size]
   );
 
   useEffect(() => {
@@ -142,7 +141,7 @@ const Hexagon = (props: { defaultStats?: HexagonStats; stats: HexagonStats; size
         }
       };
     }
-  }, [drawHexagon, defaultStats, setDefaultStats, props.animation, props.stats]);
+  }, [drawHexagon, defaultStats, props.animation, props.stats]);
 
   const animateId: React.MutableRefObject<number | undefined> = useRef();
   const onPlayAnimation = () => {
