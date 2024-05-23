@@ -7,7 +7,6 @@ import { PokemonGenderRatio, PokemonDataModel } from '../../../core/models/pokem
 import { StatsRankingPokemonGO } from '../../../core/models/stats.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { hideSpinner } from '../../../store/actions/spinner.action';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, regionList } from '../../../util/Constants';
 import {
   capitalize,
@@ -31,7 +30,7 @@ import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
 import Mega from '../Mega/Mega';
 import Primal from '../Primal/Primal';
-import { SpinnerState, StatsState } from '../../../store/models/state.model';
+import { StatsState } from '../../../store/models/state.model';
 
 const Form = (props: {
   pokemonRouter: ReduxRouterState;
@@ -56,9 +55,9 @@ const Form = (props: {
   progress: {
     forms: boolean;
   };
+  setIsLoad: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const dispatch = useDispatch();
 
   const params = useParams();
@@ -75,10 +74,10 @@ const Form = (props: {
   );
 
   useEffect(() => {
-    if (spinner.loading && props.species && statsPokemon) {
-      dispatch(hideSpinner());
+    if (props.species && statsPokemon) {
+      props.setIsLoad(false);
     }
-  }, [spinner.loading, props.species, statsPokemon, dispatch]);
+  }, [props.species, statsPokemon, dispatch]);
 
   useEffect(() => {
     if (stats) {

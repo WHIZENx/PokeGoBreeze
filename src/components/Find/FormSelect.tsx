@@ -106,19 +106,18 @@ const FormSelect = (props: {
       );
 
       const formListResult = dataFormList
-        .map(
-          (item) =>
-            item
-              ?.map(
-                (item) =>
-                  ({
-                    form: new FormModel(item),
-                    name: data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                    default_name: data?.name,
-                    default_id: data.id,
-                  } as PokemonFormModify)
-              )
-              .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0)) ?? []
+        .map((item) =>
+          item
+            .map(
+              (item) =>
+                new PokemonFormModify(
+                  data.id,
+                  data.name,
+                  data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                  new FormModel(item)
+                )
+            )
+            .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
         )
         .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
 

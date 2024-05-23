@@ -21,6 +21,10 @@ class APIService {
     // this.axios.defaults.timeout = 10000;
   }
 
+  isCancel(throwErr: any) {
+    return axios.isCancel(throwErr);
+  }
+
   getCancelToken() {
     return this.cancelToken;
   }
