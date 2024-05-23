@@ -5,7 +5,7 @@ import { PokemonInfo } from '../../../core/models/API/info.model';
 import { Species } from '../../../core/models/API/species.model';
 import { PokemonGenderRatio, PokemonDataModel } from '../../../core/models/pokemon.model';
 import { StatsRankingPokemonGO } from '../../../core/models/stats.model';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, regionList } from '../../../util/Constants';
 import {
@@ -55,10 +55,8 @@ const Form = (props: {
   progress: {
     forms: boolean;
   };
-  setIsLoad: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
-  const dispatch = useDispatch();
 
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -72,12 +70,6 @@ const Form = (props: {
     (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.species?.id, props.form?.form.form_name),
     [props.species?.id, props.form?.form.form_name]
   );
-
-  useEffect(() => {
-    if (props.species && statsPokemon) {
-      props.setIsLoad(false);
-    }
-  }, [props.species, statsPokemon, dispatch]);
 
   useEffect(() => {
     if (stats) {

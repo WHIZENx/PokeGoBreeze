@@ -3,30 +3,35 @@ import { APIUrl } from './constants';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/Constants';
 import { Species } from '../core/models/API/species.model';
 
-interface CancelTokenAPI {
-  cancelToken: CancelTokenSource;
-}
-
 class APIService {
   date: Date;
   axios: AxiosStatic;
-  cancelToken: CancelTokenAPI;
+  cancelToken: CancelTokenSource;
 
   constructor() {
     this.date = new Date();
     this.axios = axios;
-    this.cancelToken = {
-      cancelToken: axios.CancelToken.source(),
-    };
+    this.cancelToken = axios.CancelToken.source();
     // this.axios.defaults.timeout = 10000;
-  }
-
-  isCancel(throwErr: any) {
-    return axios.isCancel(throwErr);
   }
 
   getCancelToken() {
     return this.cancelToken;
+  }
+
+  reNewCancelToken() {
+    return this.axios.CancelToken.source();
+  }
+
+  cancel(cancelToken?: CancelTokenSource) {
+    if (cancelToken) {
+      return cancelToken.cancel();
+    }
+    return this.cancelToken.cancel();
+  }
+
+  isCancel(throwErr: any) {
+    return this.axios.isCancel(throwErr);
   }
 
   getAxios() {

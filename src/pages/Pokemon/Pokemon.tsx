@@ -1,5 +1,5 @@
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { SearchingModel } from '../../store/models/searching.model';
 import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,7 +34,6 @@ import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import Form from '../../components/Info/Form/Form';
-import { useCancelToken } from '../../services/hooks/cancalToken.hook';
 import { AxiosError } from 'axios';
 
 interface TypeCost {
@@ -100,16 +99,12 @@ const Pokemon = (props: {
     thirdMove: {},
   });
 
-  const [isLoad, setIsLoad] = useState(false);
   const [progress, setProgress] = useState({
     forms: false,
   });
 
-  const axios = APIService;
-  const cancelToken = axios.getAxios().CancelToken;
+  const axiosSource = useRef(APIService.getCancelToken());
   const { enqueueSnackbar } = useSnackbar();
-
-  const { newCancelToken, cancel } = useCancelToken(cancelToken);
 
   const fetchMap = useCallback(
     async (data: Species) => {
@@ -117,11 +112,12 @@ const Pokemon = (props: {
       setPokeData([]);
       const dataPokeList: PokemonInfo[] = [];
       const dataFormList: PokemonForm[][] = [];
+      const cancelToken = axiosSource.current.token;
       await Promise.all(
         data?.varieties.map(async (value) => {
-          const pokeInfo = (await axios.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken: newCancelToken() })).data;
+          const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken })).data;
           const pokeForm = await Promise.all(
-            pokeInfo.forms.map(async (item) => (await axios.getFetchUrl<PokemonForm>(item.url, { cancelToken: newCancelToken() })).data)
+            pokeInfo.forms.map(async (item) => (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data)
           );
           dataPokeList.push({
             ...pokeInfo,
@@ -216,17 +212,16 @@ const Pokemon = (props: {
 
       setProgress((p) => ({ ...p, forms: true }));
     },
-    [pokemonData, searchParams, newCancelToken]
+    [pokemonData, searchParams]
   );
 
   const queryPokemon = useCallback(
     (id: string) => {
+      axiosSource.current = APIService.reNewCancelToken();
+      const cancelToken = axiosSource.current.token;
+
       setProgress((p) => ({ ...p, forms: false }));
-      setIsLoad(true);
-      axios
-        .getPokeSpices(id, {
-          cancelToken: newCancelToken(),
-        })
+      APIService.getPokeSpices(id, { cancelToken })
         .then((res) => {
           fetchMap(res.data);
         })
@@ -234,14 +229,14 @@ const Pokemon = (props: {
           if (APIService.isCancel(e)) {
             return;
           }
-          enqueueSnackbar('Pokémon ID or name: ' + id + ' Not found!', { variant: 'error' });
+          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: 'error' });
           if (params.id) {
             document.title = `#${params.id} - Not Found`;
           }
           setIsFound(false);
         });
     },
-    [dispatch, enqueueSnackbar, fetchMap, newCancelToken]
+    [dispatch, enqueueSnackbar, fetchMap]
   );
 
   useEffect(() => {
@@ -251,11 +246,11 @@ const Pokemon = (props: {
       queryPokemon(id);
     }
     return () => {
-      if (isLoad) {
-        cancel();
+      if (data?.id) {
+        APIService.cancel(axiosSource.current);
       }
     };
-  }, [params.id, props.id, pokemonData.length, data?.id, isLoad, queryPokemon, cancel]);
+  }, [params.id, props.id, pokemonData.length, data?.id, queryPokemon]);
 
   useEffect(() => {
     const id = params.id ? params.id.toLowerCase() : props.id;
@@ -356,8 +351,9 @@ const Pokemon = (props: {
   }, [data?.id, props.id, params.id, formName, currentForm]);
 
   useEffect(() => {
-    if (pokemonData.length > 0 && data && data.id > 0) {
-      const currentId = getPokemonById(pokemonData, data.id);
+    const id = params.id?.toLowerCase() ?? props.id;
+    if (pokemonData.length > 0 && id && parseInt(id.toString()) > 0) {
+      const currentId = getPokemonById(pokemonData, parseInt(id.toString()));
       if (currentId) {
         setDataStorePokemon({
           prev: getPokemonById(pokemonData, currentId.id - 1),
@@ -366,7 +362,7 @@ const Pokemon = (props: {
         });
       }
     }
-  }, [pokemonData.length, data]);
+  }, [pokemonData.length, params.id, props.id]);
 
   return (
     <Fragment>
@@ -392,13 +388,13 @@ const Pokemon = (props: {
                   className="pokemon-main-sprite"
                   style={{ verticalAlign: 'baseline' }}
                   alt="img-full-pokemon"
-                  src={APIService.getPokeFullSprite(data?.id ?? 0, convertPokemonImageName(originForm))}
+                  src={APIService.getPokeFullSprite(dataStorePokemon?.current?.id ?? 0, convertPokemonImageName(originForm))}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    e.currentTarget.src = APIService.getPokeFullAsset(data?.id ?? 0);
+                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
                     APIService.getFetchUrl(e.currentTarget?.currentSrc)
                       .then(() => {
-                        e.currentTarget.src = APIService.getPokeFullSprite(data?.id ?? 0);
+                        e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon?.current?.id ?? 0);
                       })
                       .catch(() => false);
                   }}
@@ -406,7 +402,7 @@ const Pokemon = (props: {
               </div>
               <div className="d-inline-block">
                 <PokemonTable
-                  id={data?.id}
+                  id={dataStorePokemon?.current?.id}
                   gen={parseInt(data?.generation.url?.split('/').at(6) ?? '')}
                   formName={formName}
                   region={region}
@@ -480,7 +476,6 @@ const Pokemon = (props: {
               setId={props.setId}
               pokemonDetail={pokemonDetails}
               progress={progress}
-              setIsLoad={setIsLoad}
             />
             <PokemonModel id={data?.id ?? 0} name={data?.name ?? ''} />
           </div>
