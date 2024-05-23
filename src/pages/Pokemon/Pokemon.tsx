@@ -2,7 +2,7 @@ import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { SearchingModel } from '../../store/models/searching.model';
 import { useSnackbar } from 'notistack';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
@@ -52,7 +52,6 @@ const Pokemon = (props: {
   setId?: (id: number) => void;
 }) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
@@ -236,7 +235,7 @@ const Pokemon = (props: {
           setIsFound(false);
         });
     },
-    [dispatch, enqueueSnackbar, fetchMap]
+    [enqueueSnackbar, fetchMap]
   );
 
   useEffect(() => {
@@ -393,9 +392,7 @@ const Pokemon = (props: {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
                     APIService.getFetchUrl(e.currentTarget?.currentSrc)
-                      .then(() => {
-                        e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon?.current?.id ?? 0);
-                      })
+                      .then(() => (e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon?.current?.id ?? 0)))
                       .catch(() => false);
                   }}
                 />

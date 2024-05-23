@@ -260,8 +260,7 @@ const Form = (props: {
         </div>
       </div>
       <hr className="w-100" />
-      {(props.formList?.filter((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)).map((item) => item.at(0)?.form)
-        ?.length ?? 0) > 0 && !props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
+      {!props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
@@ -276,26 +275,12 @@ const Form = (props: {
             />
           </div>
           <div className="col-xl" style={{ padding: 0 }}>
-            <Mega formList={props.formList ?? []} id={props.species?.id ?? 0} />
-          </div>
-        </div>
-      ) : (props.formList?.filter((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)).map((item) => item.at(0)?.form)
-          ?.length ?? 0) > 0 && !props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
-        <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xl" style={{ padding: 0 }}>
-            <Evolution
-              setId={props.setId}
-              id={props.species?.id}
-              forme={props.form?.form}
-              formDefault={props.species?.id === props.form?.form.id}
-              region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
-              pokemonRouter={props.pokemonRouter}
-              purified={props.form?.form.is_purified}
-              shadow={props.form?.form.is_shadow}
-            />
-          </div>
-          <div className="col-xl" style={{ padding: 0 }}>
-            <Primal formList={props.formList ?? []} id={props.species?.id ?? 0} />
+            {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
+              <Mega formList={props.formList ?? []} id={props.species?.id ?? 0} />
+            )}
+            {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)) && (
+              <Primal formList={props.formList ?? []} id={props.species?.id ?? 0} />
+            )}
           </div>
         </div>
       ) : (

@@ -45,10 +45,6 @@ const PokemonPVP = () => {
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
-  const axios = APIService;
-  const cancelToken = axios.getAxios().CancelToken;
-  const source = cancelToken.source();
-
   useEffect(() => {
     if (!pvp) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
@@ -61,11 +57,8 @@ const PokemonPVP = () => {
       const cp = parseInt(params.cp);
       const paramName = params.pokemon.replaceAll('-', '_').toLowerCase();
       const data = (
-        (
-          await APIService.getFetchUrl(APIService.getRankingFile(paramName.includes('_mega') ? 'mega' : 'all', cp, params.type), {
-            cancelToken: APIService.getAxios().CancelToken.source().token,
-          })
-        ).data as RankingsPVP[]
+        (await APIService.getFetchUrl(APIService.getRankingFile(paramName.includes('_mega') ? 'mega' : 'all', cp, params.type)))
+          .data as RankingsPVP[]
       ).find((pokemon) => pokemon.speciesId === paramName);
 
       if (!data) {
@@ -163,7 +156,6 @@ const PokemonPVP = () => {
       });
       dispatch(hideSpinner());
     } catch (e: any) {
-      source.cancel();
       setFound(false);
       dispatch(
         showSpinner({

@@ -48,10 +48,6 @@ const TeamPVP = () => {
 
   const styleSheet: React.MutableRefObject<CSSStyleSheet | null> = useRef(null);
 
-  const axios = APIService;
-  const cancelToken = axios.getAxios().CancelToken;
-  const source = cancelToken.source();
-
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
@@ -123,11 +119,7 @@ const TeamPVP = () => {
       dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
-        const file = (
-          await axios.getFetchUrl<TeamsPVP>(axios.getTeamFile('analysis', params.serie, cp), {
-            cancelToken: source.token,
-          })
-        ).data;
+        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp))).data;
         if (params.serie === 'all') {
           document.title = `PVP Teams - ${
             cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
@@ -171,7 +163,6 @@ const TeamPVP = () => {
         setRankingData(file);
         dispatch(hideSpinner());
       } catch (e: any) {
-        source.cancel();
         dispatch(
           showSpinner({
             error: true,
