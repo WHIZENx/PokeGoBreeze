@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export class APIUrl {
   static POKE_API_URL = 'https://pokeapi.co/api/v2/';
   static POKE_ASSETS = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';

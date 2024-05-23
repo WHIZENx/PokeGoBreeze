@@ -5,9 +5,8 @@ import { PokemonInfo } from '../../../core/models/API/info.model';
 import { Species } from '../../../core/models/API/species.model';
 import { PokemonGenderRatio, PokemonDataModel } from '../../../core/models/pokemon.model';
 import { StatsRankingPokemonGO } from '../../../core/models/stats.model';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { hideSpinner } from '../../../store/actions/spinner.action';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, regionList } from '../../../util/Constants';
 import {
   capitalize,
@@ -31,7 +30,7 @@ import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
 import Mega from '../Mega/Mega';
 import Primal from '../Primal/Primal';
-import { SpinnerState, StatsState } from '../../../store/models/state.model';
+import { StatsState } from '../../../store/models/state.model';
 
 const Form = (props: {
   pokemonRouter: ReduxRouterState;
@@ -58,8 +57,6 @@ const Form = (props: {
   };
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const dispatch = useDispatch();
 
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -73,12 +70,6 @@ const Form = (props: {
     (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.species?.id, props.form?.form.form_name),
     [props.species?.id, props.form?.form.form_name]
   );
-
-  useEffect(() => {
-    if (spinner.loading && props.species && statsPokemon) {
-      dispatch(hideSpinner());
-    }
-  }, [spinner.loading, props.species, statsPokemon, dispatch]);
 
   useEffect(() => {
     if (stats) {
@@ -269,8 +260,7 @@ const Form = (props: {
         </div>
       </div>
       <hr className="w-100" />
-      {(props.formList?.filter((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)).map((item) => item.at(0)?.form)
-        ?.length ?? 0) > 0 && !props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
+      {!props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
@@ -285,26 +275,12 @@ const Form = (props: {
             />
           </div>
           <div className="col-xl" style={{ padding: 0 }}>
-            <Mega formList={props.formList ?? []} id={props.species?.id ?? 0} />
-          </div>
-        </div>
-      ) : (props.formList?.filter((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)).map((item) => item.at(0)?.form)
-          ?.length ?? 0) > 0 && !props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
-        <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xl" style={{ padding: 0 }}>
-            <Evolution
-              setId={props.setId}
-              id={props.species?.id}
-              forme={props.form?.form}
-              formDefault={props.species?.id === props.form?.form.id}
-              region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
-              pokemonRouter={props.pokemonRouter}
-              purified={props.form?.form.is_purified}
-              shadow={props.form?.form.is_shadow}
-            />
-          </div>
-          <div className="col-xl" style={{ padding: 0 }}>
-            <Primal formList={props.formList ?? []} id={props.species?.id ?? 0} />
+            {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
+              <Mega formList={props.formList ?? []} id={props.species?.id ?? 0} />
+            )}
+            {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)) && (
+              <Primal formList={props.formList ?? []} id={props.species?.id ?? 0} />
+            )}
           </div>
         </div>
       ) : (

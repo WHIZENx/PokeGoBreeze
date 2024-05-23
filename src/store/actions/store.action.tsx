@@ -43,32 +43,27 @@ export const LOAD_PVP = 'LOAD_PVP';
 export const LOAD_PVP_MOVES = 'LOAD_PVP_MOVES';
 export const RESET_STORE = 'RESET_STORE';
 
-const axios = APIService;
-const cancelToken = axios.getAxios().CancelToken;
-const source = cancelToken.source();
-
 const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
-  cancelToken: source.token,
 };
 
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
   try {
-    axios.getFetchUrl<APIPath[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options).then((res) => {
-      axios
-        .getFetchUrl<{
+    APIService.getFetchUrl<APIPath[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options)
+      .then((res) =>
+        APIService.getFetchUrl<{
           files: { filename: string }[];
         }>(res.data[0]?.url ?? '', options)
-        .then((file) => {
-          dispatch({
-            type: LOAD_LOGO_POKEGO,
-            payload: file.data.files
-              ?.find((item) => item.filename.includes('Images/App Icons/'))
-              ?.filename.replace('Images/App Icons/', '')
-              .replace('.png', ''),
-          });
+      )
+      .then((file) => {
+        dispatch({
+          type: LOAD_LOGO_POKEGO,
+          payload: file.data.files
+            ?.find((item) => item.filename.includes('Images/App Icons/'))
+            ?.filename.replace('Images/App Icons/', '')
+            .replace('.png', ''),
         });
-    });
+      });
   } catch {
     dispatch({
       type: LOAD_LOGO_POKEGO,
@@ -95,11 +90,9 @@ export const loadTimestamp = async (
   stateSound: string
 ) => {
   await Promise.all([
-    axios.getFetchUrl<string>(APIUrl.TIMESTAMP, {
-      cancelToken: source.token,
-    }),
-    axios.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
-    axios.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
+    APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
+    APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
+    APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
   ])
     .then(async ([GMtimestamp, imageRoot, soundsRoot]) => {
       dispatch({
@@ -146,10 +139,7 @@ export const loadGameMaster = (
   stateImage: string,
   stateSound: string
 ) => {
-  axios
-    .getFetchUrl<PokemonData[]>(APIUrl.GAMEMASTER, {
-      cancelToken: source.token,
-    })
+  APIService.getFetchUrl<PokemonData[]>(APIUrl.GAMEMASTER)
     .then(async (gm) => {
       let pokemonEncounter = new DbModel();
       try {
@@ -240,24 +230,24 @@ export const loadAssets = async (
   setStateSound: SetValue<string>
 ) => {
   await Promise.all([
-    axios.getFetchUrl<APITree>(imageRoot.at(0)?.commit.tree.url ?? '', options),
-    axios.getFetchUrl<APITree>(soundsRoot.at(0)?.commit.tree.url ?? '', options),
+    APIService.getFetchUrl<APITree>(imageRoot.at(0)?.commit.tree.url ?? '', options),
+    APIService.getFetchUrl<APITree>(soundsRoot.at(0)?.commit.tree.url ?? '', options),
   ]).then(async ([imageFolder, soundFolder]) => {
     const imageFolderPath = imageFolder.data.tree.find((item) => item.path === 'Images');
     const soundFolderPath = soundFolder.data.tree.find((item) => item.path === 'Sounds');
 
     if (imageFolderPath && soundFolderPath) {
       await Promise.all([
-        axios.getFetchUrl<APITree>(imageFolderPath?.url, options),
-        axios.getFetchUrl<APITree>(soundFolderPath.url, options),
+        APIService.getFetchUrl<APITree>(imageFolderPath?.url, options),
+        APIService.getFetchUrl<APITree>(soundFolderPath.url, options),
       ]).then(async ([image, sound]) => {
         const imagePath = image.data.tree.find((item) => item.path === 'Pokemon');
         const soundPath = sound.data.tree.find((item) => item.path === 'Pokemon Cries');
 
         if (imagePath && soundPath) {
           await Promise.all([
-            axios.getFetchUrl<APITree>(imagePath.url + '?recursive=1', options),
-            axios.getFetchUrl<APITree>(soundPath.url + '?recursive=1', options),
+            APIService.getFetchUrl<APITree>(imagePath.url + '?recursive=1', options),
+            APIService.getFetchUrl<APITree>(soundPath.url + '?recursive=1', options),
           ]).then(([imageData, soundData]) => {
             const assetImgFiles = optionPokeImg(imageData.data);
             setStateImage(JSON.stringify(assetImgFiles));
@@ -291,7 +281,7 @@ export const loadPVP = (
   setStatePVP: SetValue<string>,
   statePVP: string
 ) => {
-  axios.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, options).then((res) => {
+  APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, options).then((res) => {
     const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();
     if (pvpDate !== JSON.parse(stateTimestamp).pvp) {
       const pvpUrl = res.data.at(0)?.commit.tree.url;
@@ -301,30 +291,31 @@ export const loadPVP = (
           pvp: pvpDate,
         })
       );
-      axios.getFetchUrl<APITree>(pvpUrl ?? '', options).then((pvpRoot) => {
-        const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');
-
-        axios.getFetchUrl<APITree>(pvpRootPath?.url + '', options).then((pvpFolder) => {
+      APIService.getFetchUrl<APITree>(pvpUrl ?? '', options)
+        .then((pvpRoot) => {
+          const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');
+          return APIService.getFetchUrl<APITree>(pvpRootPath?.url + '', options);
+        })
+        .then((pvpFolder) => {
           const pvpFolderPath = pvpFolder.data.tree.find((item) => item.path === 'data');
+          return APIService.getFetchUrl<APITree>(pvpFolderPath?.url + '?recursive=1', options);
+        })
+        .then((pvp) => {
+          const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
+          const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 
-          axios.getFetchUrl<APITree>(pvpFolderPath?.url + '?recursive=1', options).then((pvp) => {
-            const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
-            const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
+          const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(pvpFindFirstPath(pvp.data.tree, 'training/analysis/'));
 
-            const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(pvpFindFirstPath(pvp.data.tree, 'training/analysis/'));
+          setStatePVP(JSON.stringify(pvpData));
 
-            setStatePVP(JSON.stringify(pvpData));
-
-            dispatch({
-              type: LOAD_PVP,
-              payload: {
-                rankings: pvpRank,
-                trains: pvpTrain,
-              },
-            });
+          dispatch({
+            type: LOAD_PVP,
+            payload: {
+              rankings: pvpRank,
+              trains: pvpTrain,
+            },
           });
         });
-      });
     } else {
       const pvpRank = pvpFindPath(JSON.parse(statePVP), 'rankings/');
       const pvpTrain = pvpFindPath(JSON.parse(statePVP), 'training/analysis/');
@@ -340,7 +331,7 @@ export const loadPVP = (
 };
 
 export const loadPVPMoves = (dispatch: Dispatch) => {
-  axios.getFetchUrl(APIUrl.FETCH_PVP_MOVES).then((moves) => {
+  APIService.getFetchUrl(APIUrl.FETCH_PVP_MOVES).then((moves) => {
     dispatch({
       type: LOAD_PVP_MOVES,
       payload: moves.data,

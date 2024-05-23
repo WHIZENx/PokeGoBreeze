@@ -93,10 +93,6 @@ const Battle = () => {
     pokemonObj: { hp: 0, energy: 0 },
   });
 
-  const axios = APIService;
-  const cancelToken = axios.getAxios().CancelToken;
-  const source = cancelToken.source();
-
   const State = (
     timer: number,
     type: string | null,
@@ -639,11 +635,7 @@ const Battle = () => {
       dispatch(showSpinner());
       try {
         clearData();
-        const file = (
-          await axios.getFetchUrl<RankingsPVP[]>(axios.getRankingFile('all', league, 'overall'), {
-            cancelToken: source.token,
-          })
-        ).data;
+        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile('all', league, 'overall'))).data;
         document.title = `PVP Battle Simalator - ${
           league === 500 ? 'Little Cup' : league === 1500 ? 'Great League' : league === 2500 ? 'Ultra League' : 'Master League'
         }`;
@@ -680,7 +672,6 @@ const Battle = () => {
         );
         dispatch(hideSpinner());
       } catch (e: any) {
-        source.cancel();
         dispatch(
           showSpinner({
             error: true,
