@@ -2,12 +2,11 @@ import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { PokemonInfo } from '../../../core/models/API/info.model';
-import { Species } from '../../../core/models/API/species.model';
 import { PokemonGenderRatio, PokemonDataModel } from '../../../core/models/pokemon.model';
 import { StatsRankingPokemonGO } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, regionList } from '../../../util/Constants';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/Constants';
 import {
   capitalize,
   convertPokemonAPIDataName,
@@ -48,10 +47,11 @@ const Form = (props: {
   pokeData: PokemonInfo[];
   formList: PokemonFormModify[][] | undefined;
   ratio: PokemonGenderRatio | undefined;
-  species: Species | undefined;
   // eslint-disable-next-line no-unused-vars
   setId?: (id: number) => void;
   pokemonDetail: PokemonDataModel | undefined;
+  defaultId: number;
+  region: string;
   progress: {
     forms: boolean;
   };
@@ -67,8 +67,8 @@ const Form = (props: {
   ] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.species?.id, props.form?.form.form_name),
-    [props.species?.id, props.form?.form.form_name]
+    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.defaultId, props.form?.form.form_name),
+    [props.defaultId, props.form?.form.form_name]
   );
 
   useEffect(() => {
@@ -129,8 +129,8 @@ const Form = (props: {
                       key={index}
                       className={
                         'btn btn-form ' +
-                        ((props.form && props.species?.id === props.form.form.id && value.form.id === props.form.form.id) ||
-                        (props.form && props.species?.id !== props.form.form.id && value.form.id === props.form.form.id)
+                        ((props.form && props.defaultId === props.form.form.id && value.form.id === props.form.form.id) ||
+                        (props.form && props.defaultId !== props.form.form.id && value.form.id === props.form.form.id)
                           ? 'form-selected'
                           : '')
                       }
@@ -156,12 +156,12 @@ const Form = (props: {
                                 .catch(() => false);
                             }}
                             alt="img-icon-form"
-                            src={formIconAssets(value, props.species?.id ?? 0)}
+                            src={formIconAssets(value, props.defaultId)}
                           />
                         </div>
                       </div>
                       <p>{!value.form.form_name ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                      {(value.form.id ?? 0) > 0 && value.form.id === props.species?.id && (
+                      {(value.form.id ?? 0) > 0 && value.form.id === props.defaultId && (
                         <b>
                           <small>(Default)</small>
                         </b>
@@ -229,7 +229,7 @@ const Form = (props: {
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
-          <Info data={props.data} currForm={props.form} />
+          <Info currForm={props.form} />
           {!props.form?.form.is_shadow && !props.form?.form.is_purified && (
             <Fragment>
               <h5>
@@ -237,7 +237,7 @@ const Form = (props: {
               </h5>
               <Raid
                 currForm={props.form}
-                id={props.species?.id}
+                id={props.defaultId}
                 statATK={statsPokemon?.atk?.attack ?? calBaseATK(props.data?.stats, true)}
                 statDEF={statsPokemon?.def?.defense ?? calBaseDEF(props.data?.stats, true)}
               />
@@ -248,7 +248,7 @@ const Form = (props: {
           <TableMove
             data={{
               stats: convertStatsEffort(props.data?.stats),
-              num: props.species?.id ?? 0,
+              num: props.defaultId,
               types: props.form?.form.types ?? [],
             }}
             form={props.form?.form}
@@ -265,10 +265,10 @@ const Form = (props: {
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
               setId={props.setId}
-              id={props.species?.id}
+              id={props.defaultId}
               forme={props.form?.form}
-              formDefault={props.species?.id === props.form?.form.id}
-              region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
+              formDefault={props.defaultId === props.form?.form.id}
+              region={props.region}
               pokemonRouter={props.pokemonRouter}
               purified={props.form?.form.is_purified}
               shadow={props.form?.form.is_shadow}
@@ -276,20 +276,20 @@ const Form = (props: {
           </div>
           <div className="col-xl" style={{ padding: 0 }}>
             {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
-              <Mega formList={props.formList ?? []} id={props.species?.id ?? 0} />
+              <Mega formList={props.formList ?? []} id={props.defaultId} />
             )}
             {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)) && (
-              <Primal formList={props.formList ?? []} id={props.species?.id ?? 0} />
+              <Primal formList={props.formList ?? []} id={props.defaultId} />
             )}
           </div>
         </div>
       ) : (
         <Evolution
           setId={props.setId}
-          id={props.species?.id}
+          id={props.defaultId}
           forme={props.form?.form}
-          formDefault={props.species?.id === props.form?.form.id}
-          region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
+          formDefault={props.defaultId === props.form?.form.id}
+          region={props.region}
           pokemonRouter={props.pokemonRouter}
           purified={props.form?.form.is_purified}
           shadow={props.form?.form.is_shadow}

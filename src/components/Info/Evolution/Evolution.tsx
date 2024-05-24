@@ -356,6 +356,7 @@ const Evolution = (props: {
   };
 
   useEffect(() => {
+    setArrEvoList([]);
     if (props.id && props.forme) {
       if (props.forme.form_name?.toUpperCase() !== FORM_GMAX) {
         getEvoChainStore(props.id, props.forme);

@@ -8,8 +8,8 @@ const PokemonTable = (props: {
   gen: number | undefined;
   region: string | undefined;
   version: string | undefined;
-  weight: number | undefined;
-  height: number | undefined;
+  weight: number;
+  height: number;
   className?: string;
 }) => {
   return (
@@ -79,7 +79,7 @@ const PokemonTable = (props: {
                   <h6>Weight:</h6>
                 </div>
                 <div className="d-inline-block">
-                  <h6>{(props.weight ?? 0) / 10} kg</h6>
+                  <h6>{props.weight >= 0 && `${props.weight / 10} kg`}</h6>
                 </div>
               </div>
             </div>
@@ -89,7 +89,7 @@ const PokemonTable = (props: {
                   <h6>Height:</h6>
                 </div>
                 <div className="d-inline-block">
-                  <h6>{(props.height ?? 0) / 10} m</h6>
+                  <h6>{props.height >= 0 && `${props.height / 10} m`}</h6>
                 </div>
               </div>
             </div>

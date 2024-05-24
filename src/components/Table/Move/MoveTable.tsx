@@ -113,7 +113,7 @@ const TableMove = (props: {
         setMove(setRankMove(result));
       }
     }
-  }, [data, props.data, props.statATK, props.statDEF, props.statSTA, props.form]);
+  }, [data, props.data, props.statATK, props.statDEF, props.statSTA]);
 
   const setRankMove = (result: PokemonDataModel | undefined) => {
     return rankMove(
@@ -130,6 +130,10 @@ const TableMove = (props: {
   };
 
   useEffect(() => {
+    setMoveOrigin(undefined);
+    setMove({
+      data: [],
+    });
     if (props.form) {
       findMove();
     }
