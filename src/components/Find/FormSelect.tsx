@@ -115,22 +115,15 @@ const FormSelect = (props: {
                 data.id,
                 data.name,
                 data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                new FormModel(item)
+                new FormModel({
+                  ...item,
+                  form_name: item.form_name.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.form_name,
+                })
               )
           )
           .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
       )
       .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
-
-    if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name.toUpperCase() === FORM_GMAX)).length > 1) {
-      formListResult.forEach((form) => {
-        form.forEach((pokemon) => {
-          if (pokemon.form.form_name.toUpperCase() === FORM_GMAX) {
-            pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
-          }
-        });
-      });
-    }
 
     generatePokemonGoForms(props.data, dataFormList, formListResult, data.id, data.name);
 

@@ -57,8 +57,8 @@ export interface TempEvo {
 }
 
 export interface PokemonTypeCost {
-  stardust?: number;
-  candy?: number;
+  stardust?: number | undefined;
+  candy?: number | undefined;
 }
 
 export interface EvolutionModel {

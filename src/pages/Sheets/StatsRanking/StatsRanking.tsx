@@ -237,8 +237,8 @@ const StatsRanking = () => {
               formName={select?.name}
               region={select?.region}
               version={select?.version}
-              weight={select?.weightkg}
-              height={select?.heightm}
+              weight={select?.weightkg ?? 0}
+              height={select?.heightm ?? 0}
               className={'table-stats-ranking'}
             />
           </div>

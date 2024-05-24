@@ -79,7 +79,8 @@ const Pokemon = (props: {
 
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
-  const [WH, setWH] = useState({ weight: 0, height: 0 });
+  const [generation, setGeneration] = useState('');
+  const [WH, setWH] = useState({ weight: -1, height: -1 });
   const [formName, setFormName]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
   const [originForm, setOriginForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
   const [released, setReleased] = useState(true);
@@ -107,8 +108,6 @@ const Pokemon = (props: {
 
   const fetchMap = useCallback(
     async (data: Species) => {
-      setFormList([]);
-      setPokeData([]);
       const dataPokeList: PokemonInfo[] = [];
       const dataFormList: PokemonForm[][] = [];
       const cancelToken = axiosSource.current.token;
@@ -132,12 +131,12 @@ const Pokemon = (props: {
       setPokeRatio(pokemon?.genderRatio);
       setCostModifier({
         purified: {
-          candy: pokemon?.purified?.candy,
-          stardust: pokemon?.purified?.stardust,
+          candy: pokemon?.purified?.candy ?? 0,
+          stardust: pokemon?.purified?.stardust ?? 0,
         },
         thirdMove: {
-          candy: pokemon?.thirdMove?.candy,
-          stardust: pokemon?.thirdMove?.stardust,
+          candy: pokemon?.thirdMove?.candy ?? 0,
+          stardust: pokemon?.thirdMove?.stardust ?? 0,
         },
       });
 
@@ -147,25 +146,18 @@ const Pokemon = (props: {
             .map(
               (item) =>
                 new PokemonFormModify(
-                  data?.id,
-                  data?.name,
-                  data?.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                  new FormModel(item)
+                  data.id,
+                  data.name,
+                  data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                  new FormModel({
+                    ...item,
+                    form_name: item.form_name.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.form_name,
+                  })
                 )
             )
             .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
         )
         .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
-
-      if (formListResult.filter((form) => form.find((pokemon) => pokemon.form.form_name.toUpperCase() === FORM_GMAX)).length > 1) {
-        formListResult.forEach((form) => {
-          form.forEach((pokemon) => {
-            if (pokemon.form.form_name.toUpperCase() === FORM_GMAX) {
-              pokemon.form.form_name = pokemon.form.name.replace(`${pokemon.default_name}-`, '');
-            }
-          });
-        });
-      }
 
       const indexPokemonGO = generatePokemonGoForms(pokemonData, dataFormList, formListResult, data.id, data.name);
 
@@ -238,10 +230,37 @@ const Pokemon = (props: {
     [enqueueSnackbar, fetchMap]
   );
 
+  const clearData = (isForceClear = false) => {
+    setOriginForm(undefined);
+    setReleased(true);
+    setFormName(undefined);
+    setWH({ weight: -1, height: -1 });
+    setVersion('');
+    setRegion('');
+    setGeneration('');
+    setPokeRatio(undefined);
+    if (isForceClear) {
+      setFormList([]);
+      setPokeData([]);
+      setCurrentForm(undefined);
+      setCurrentData(undefined);
+      setCostModifier({
+        purified: {
+          candy: -1,
+          stardust: -1,
+        },
+        thirdMove: {
+          candy: -1,
+          stardust: -1,
+        },
+      });
+    }
+  };
+
   useEffect(() => {
     const id = params.id?.toLowerCase() ?? props.id;
     if (id && (data?.id ?? 0) !== parseInt(id) && pokemonData.length > 0) {
-      setOriginForm(undefined);
+      clearData(true);
       queryPokemon(id);
     }
     return () => {
@@ -249,7 +268,34 @@ const Pokemon = (props: {
         APIService.cancel(axiosSource.current);
       }
     };
-  }, [params.id, props.id, pokemonData.length, data?.id, queryPokemon]);
+  }, [params.id, props.id, pokemonData, data?.id, queryPokemon]);
+
+  useEffect(() => {
+    if (!data) {
+      let id = 0;
+      if (params.id && !isNaN(parseInt(params.id))) {
+        id = parseInt(params.id);
+      } else if (props.id) {
+        id = parseInt(props.id);
+      }
+      setDataStorePokemon({
+        current: {
+          id,
+          name: '',
+        },
+      });
+      setCostModifier({
+        purified: {
+          candy: -1,
+          stardust: -1,
+        },
+        thirdMove: {
+          candy: -1,
+          stardust: -1,
+        },
+      });
+    }
+  }, [data]);
 
   useEffect(() => {
     const id = params.id ? params.id.toLowerCase() : props.id;
@@ -310,21 +356,22 @@ const Pokemon = (props: {
   };
 
   useEffect(() => {
-    setOriginForm(undefined);
     if (currentForm && (data?.id ?? 0) > 0) {
       const released = checkReleased(data?.id ?? 0, formName ?? '', currentForm);
       setReleased(released);
 
       const formParams = searchParams.get('form');
       setVersion(currentForm?.form.version_group.name);
+      const gen = data?.generation.url?.split('/').at(6);
+      setGeneration(gen ?? '');
       if (!params.id) {
-        setRegion(regionList[parseInt(data?.generation.url.split('/').at(6) ?? '')]);
+        setRegion(regionList[parseInt(gen ?? '')]);
       } else {
         const currentRegion = Object.values(regionList).find((item) => currentForm?.form.form_name.includes(item.toLowerCase()));
         if (currentForm?.form.form_name !== '' && currentRegion) {
           setRegion(!region || region !== currentRegion ? currentRegion : region);
         } else {
-          setRegion(regionList[parseInt(data?.generation.url.split('/').at(6) ?? '0')]);
+          setRegion(regionList[parseInt(gen ?? '0')]);
         }
       }
       const nameInfo =
@@ -346,6 +393,8 @@ const Pokemon = (props: {
       if (params.id) {
         document.title = `#${data?.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
       }
+    } else {
+      clearData();
     }
   }, [data?.id, props.id, params.id, formName, currentForm]);
 
@@ -400,12 +449,12 @@ const Pokemon = (props: {
               <div className="d-inline-block">
                 <PokemonTable
                   id={dataStorePokemon?.current?.id}
-                  gen={parseInt(data?.generation.url?.split('/').at(6) ?? '')}
+                  gen={parseInt(generation)}
                   formName={formName}
                   region={region}
                   version={version}
-                  weight={WH.weight}
-                  height={WH.height}
+                  weight={WH.weight ?? 0}
+                  height={WH.height ?? 0}
                 />
               </div>
               <div className="d-inline-block" style={{ padding: 0 }}>
@@ -422,14 +471,26 @@ const Pokemon = (props: {
                       </td>
                       <td style={{ padding: 0 }}>
                         <div className="d-flex align-items-center row-extra td-costs">
-                          <Candy id={data?.id} style={{ marginRight: 5 }} />
-                          <span>{costModifier.thirdMove.candy ? `x${costModifier.thirdMove.candy}` : 'Unavailable'}</span>
+                          <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
+                          <span>
+                            {costModifier.thirdMove.candy
+                              ? costModifier.purified.candy === -1
+                                ? ''
+                                : `x${costModifier.thirdMove.candy}`
+                              : 'Unavailable'}
+                          </span>
                         </div>
                         <div className="row-extra d-flex">
                           <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
                             <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                           </div>
-                          <span>{costModifier.thirdMove.stardust ? `x${costModifier.thirdMove.stardust}` : 'Unavailable'}</span>
+                          <span>
+                            {costModifier.thirdMove.stardust
+                              ? costModifier.purified.stardust === -1
+                                ? ''
+                                : `x${costModifier.thirdMove.stardust}`
+                              : 'Unavailable'}
+                          </span>
                         </div>
                       </td>
                     </tr>
@@ -443,14 +504,26 @@ const Pokemon = (props: {
                       </td>
                       <td style={{ padding: 0 }}>
                         <div className="d-flex align-items-center row-extra td-costs">
-                          <Candy id={data?.id} style={{ marginRight: 5 }} />
-                          <span>{costModifier.purified.candy ? `x${costModifier.purified.candy}` : 'Unavailable'}</span>
+                          <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
+                          <span>
+                            {costModifier.purified.candy
+                              ? costModifier.purified.candy === -1
+                                ? ''
+                                : `x${costModifier.purified.candy}`
+                              : 'Unavailable'}
+                          </span>
                         </div>
                         <div className="row-extra d-flex">
                           <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
                             <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                           </div>
-                          <span>{costModifier.purified.stardust ? `x${costModifier.purified.stardust}` : 'Unavailable'}</span>
+                          <span>
+                            {costModifier.purified.stardust
+                              ? costModifier.purified.stardust === -1
+                                ? ''
+                                : `x${costModifier.purified.stardust}`
+                              : 'Unavailable'}
+                          </span>
                         </div>
                       </td>
                     </tr>
@@ -469,12 +542,13 @@ const Pokemon = (props: {
               formList={formList}
               pokeData={pokeData}
               ratio={pokeRatio}
-              species={data}
               setId={props.setId}
               pokemonDetail={pokemonDetails}
+              defaultId={dataStorePokemon?.current?.id ?? 0}
+              region={region}
               progress={progress}
             />
-            <PokemonModel id={data?.id ?? 0} name={data?.name ?? ''} />
+            <PokemonModel id={dataStorePokemon?.current?.id ?? 0} name={dataStorePokemon?.current?.name ?? ''} />
           </div>
         </Fragment>
       )}
