@@ -52,9 +52,14 @@ const Form = (props: {
   pokemonDetail: PokemonDataModel | undefined;
   defaultId: number;
   region: string;
-  progress: {
-    forms: boolean;
-  };
+  setProgress: React.Dispatch<
+    React.SetStateAction<{
+      isLoadedForms: boolean;
+      isSetEvo: boolean;
+    }>
+  >;
+  isLoadedForms: boolean;
+  isSetEvo: boolean;
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
 
@@ -119,8 +124,8 @@ const Form = (props: {
         <h4 className="info-title">
           <b>Form varieties</b>
         </h4>
-        <div className="scroll-form" style={{ width: props.progress.forms ? '100%' : '' }}>
-          {props.progress.forms ? (
+        <div className="scroll-form" style={{ width: props.isLoadedForms ? '100%' : '' }}>
+          {props.isLoadedForms ? (
             <Fragment>
               {props.formList?.map((value, index) => (
                 <Fragment key={index}>
@@ -129,8 +134,8 @@ const Form = (props: {
                       key={index}
                       className={
                         'btn btn-form ' +
-                        ((props.form && props.defaultId === props.form.form.id && value.form.id === props.form.form.id) ||
-                        (props.form && props.defaultId !== props.form.form.id && value.form.id === props.form.form.id)
+                        ((props.defaultId === props.form?.form.id && value.form.id === props.form.form.id) ||
+                        (props.defaultId !== props.form?.form.id && value.form.id === props.form?.form.id)
                           ? 'form-selected'
                           : '')
                       }
@@ -240,6 +245,7 @@ const Form = (props: {
                 id={props.defaultId}
                 statATK={statsPokemon?.atk?.attack ?? calBaseATK(props.data?.stats, true)}
                 statDEF={statsPokemon?.def?.defense ?? calBaseDEF(props.data?.stats, true)}
+                isLoadedForms={props.isLoadedForms}
               />
             </Fragment>
           )}
@@ -272,16 +278,21 @@ const Form = (props: {
               pokemonRouter={props.pokemonRouter}
               purified={props.form?.form.is_purified}
               shadow={props.form?.form.is_shadow}
+              setProgress={props.setProgress}
+              isLoadedForms={props.isLoadedForms}
+              isSetEvo={props.isSetEvo}
             />
           </div>
-          <div className="col-xl" style={{ padding: 0 }}>
-            {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
+          {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
+            <div className="col-xl" style={{ padding: 0 }}>
               <Mega formList={props.formList ?? []} id={props.defaultId} />
-            )}
-            {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)) && (
+            </div>
+          )}
+          {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)) && (
+            <div className="col-xl" style={{ padding: 0 }}>
               <Primal formList={props.formList ?? []} id={props.defaultId} />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       ) : (
         <Evolution
@@ -293,6 +304,9 @@ const Form = (props: {
           pokemonRouter={props.pokemonRouter}
           purified={props.form?.form.is_purified}
           shadow={props.form?.form.is_shadow}
+          setProgress={props.setProgress}
+          isLoadedForms={props.isLoadedForms}
+          isSetEvo={props.isSetEvo}
         />
       )}
       {(props.pokemonDetail?.formChange?.length ?? 0) > 0 && (

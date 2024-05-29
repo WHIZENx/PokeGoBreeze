@@ -180,6 +180,9 @@ const StatsRanking = () => {
   const [filters, setFilters] = useState({ match: false });
   const { match } = filters;
 
+  const [progress, setProgress] = useState({ isLoadedForms: false });
+  const { isLoadedForms } = progress;
+
   useEffect(() => {
     document.title = `Stats Ranking`;
   }, []);
@@ -189,6 +192,7 @@ const StatsRanking = () => {
       const pokemon = sortRanking(mappingData(pokemonData.filter((pokemon) => pokemon.num > 0)), sortId);
       setPokemonList(pokemon);
       setPokemonFilter(pokemon);
+      setProgress((p) => ({ ...p, isLoadedForms: true }));
     }
   }, [pokemonList, pokemonData]);
 
@@ -240,6 +244,7 @@ const StatsRanking = () => {
               weight={select?.weightkg ?? 0}
               height={select?.heightm ?? 0}
               className={'table-stats-ranking'}
+              isLoadedForms={isLoadedForms}
             />
           </div>
           {select && (

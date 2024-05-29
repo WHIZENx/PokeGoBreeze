@@ -10,7 +10,7 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { FORM_MEGA, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_MEGA, FORM_PRIMAL, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { CounterModel } from './models/counter.model';
 
 const customStyles: TableStyles = {
@@ -293,7 +293,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
         />
         <FormControlLabel
           control={<Checkbox disabled={counterList.length === 0} checked={showMega} onChange={(_, check) => setShowMega(check)} />}
-          label="Mega"
+          label="Mega/Primal"
         />
       </div>
       <DataTable
@@ -314,7 +314,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
             if (showMega) {
               return true;
             }
-            return !pokemon.pokemon_forme.includes(FORM_MEGA);
+            return !pokemon.pokemon_forme.includes(FORM_MEGA) && !pokemon.pokemon_forme.includes(FORM_PRIMAL);
           })
           .filter((pokemon) => {
             if (!releasedGO) {

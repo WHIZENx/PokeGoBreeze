@@ -26,6 +26,7 @@ const Raid = (props: {
   setStatBossDEF?: React.Dispatch<React.SetStateAction<number>>;
   setStatBossHP?: React.Dispatch<React.SetStateAction<number>>;
   setTimeAllow?: React.Dispatch<React.SetStateAction<number>>;
+  isLoadedForms?: boolean;
 }) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
@@ -77,6 +78,17 @@ const Raid = (props: {
     props.statDEF,
     props.setTimeAllow,
   ]);
+
+  const reload = (element: JSX.Element, color = '#f5f5f5') => {
+    if (props.isLoadedForms) {
+      return element;
+    }
+    return (
+      <div className="ph-item w-75" style={{ padding: 0, margin: 'auto', height: 24 }}>
+        <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: color }} />
+      </div>
+    );
+  };
 
   return (
     <Fragment>
@@ -171,7 +183,7 @@ const Raid = (props: {
                   ATK
                 </td>
                 <td className="text-center" style={{ color: theme.palette.text.primary }}>
-                  {props.currForm ? calculateRaidStat(props.statATK, tier) : ''}
+                  {reload(<>{props.currForm ? calculateRaidStat(props.statATK, tier) : ''}</>)}
                 </td>
               </tr>
               <tr>
@@ -180,7 +192,7 @@ const Raid = (props: {
                   DEF
                 </td>
                 <td className="text-center" style={{ color: theme.palette.text.primary }}>
-                  {props.currForm ? calculateRaidStat(props.statDEF, tier) : ''}
+                  {reload(<>{props.currForm ? calculateRaidStat(props.statDEF, tier) : ''}</>)}
                 </td>
               </tr>
               <tr>
@@ -189,7 +201,7 @@ const Raid = (props: {
                   STA
                 </td>
                 <td className="text-center" style={{ color: theme.palette.text.primary }}>
-                  {props.currForm ? Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm) : ''}
+                  {reload(<>{props.currForm ? Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm) : ''}</>)}
                 </td>
               </tr>
             </tbody>
