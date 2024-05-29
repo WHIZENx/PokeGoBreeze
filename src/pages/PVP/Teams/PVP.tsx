@@ -21,7 +21,7 @@ import { StatsState, StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
-import { FORM_SHADOW } from '../../../util/Constants';
+import { FORM_NORMAL, FORM_SHADOW } from '../../../util/Constants';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -53,7 +53,7 @@ const TeamPVP = () => {
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
     const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
     const id = pokemon?.num;
-    const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
+    const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 

@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
-import { scoreType } from '../../../util/Constants';
+import { FORM_NORMAL, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
@@ -116,7 +116,7 @@ const RankingPVP = () => {
           }
 
           const id = pokemon?.num;
-          const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
+          const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
           const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
