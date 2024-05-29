@@ -95,6 +95,14 @@ const Evolution = (props: {
   pokemonRouter: ReduxRouterState;
   purified: boolean | undefined;
   shadow: boolean | undefined;
+  setProgress: React.Dispatch<
+    React.SetStateAction<{
+      isLoadedForms: boolean;
+      isSetEvo: boolean;
+    }>
+  >;
+  isLoadedForms: boolean;
+  isSetEvo: boolean;
 }) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
@@ -356,7 +364,9 @@ const Evolution = (props: {
   };
 
   useEffect(() => {
-    setArrEvoList([]);
+    if (!props.isSetEvo) {
+      setArrEvoList([]);
+    }
     if (props.id && props.forme) {
       if (props.forme.form_name?.toUpperCase() !== FORM_GMAX) {
         getEvoChainStore(props.id, props.forme);
@@ -364,7 +374,7 @@ const Evolution = (props: {
         getGmaxChain(props.id, props.forme);
       }
     }
-  }, [props.forme, props.id]);
+  }, [props.isSetEvo, props.forme, props.id]);
 
   const getQuestEvo = (prevId: number, form: string) => {
     const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToForm.includes(form) && value.evoToId === prevId));
@@ -632,6 +642,17 @@ const Evolution = (props: {
     );
   };
 
+  const reload = (element: JSX.Element, color = '#fafafa') => {
+    if (props.isLoadedForms || props.isSetEvo) {
+      return element;
+    }
+    return (
+      <div className="ph-item w-75" style={{ padding: 0, margin: 'auto', height: 120 }}>
+        <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: color }} />
+      </div>
+    );
+  };
+
   return (
     <Fragment>
       <h4 className="title-evo">
@@ -694,45 +715,48 @@ const Evolution = (props: {
         </OverlayTrigger>
       </h4>
       <div className="evo-container scroll-evolution">
-        <ul
-          className="ul-evo d-inline-flex"
-          style={{
-            columnGap: arrEvoList.length > 0 ? window.innerWidth / (6.5 * arrEvoList.length) : 0,
-          }}
-        >
-          {arrEvoList.map((values, evo) => (
-            <li key={evo} className="img-form-gender-group li-evo">
-              <ul className="ul-evo d-flex flex-column">
-                {values.map((value, index) => (
-                  <li key={index} className="img-form-gender-group img-evo-group li-evo">
-                    {props.setId ? (
-                      <div
-                        className="select-evo"
-                        onClick={() => {
-                          if (props.pokemonRouter?.action === 'POP') {
-                            props.pokemonRouter.action = null as any;
-                          }
-                          props.setId?.(value.id);
-                        }}
-                        title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
-                      >
-                        {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                      </div>
-                    ) : (
-                      <Link
-                        className="select-evo"
-                        to={'/pokemon/' + value.id}
-                        title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
-                      >
-                        {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
+        {reload(
+          <ul
+            className="ul-evo d-inline-flex"
+            style={{
+              columnGap: arrEvoList.length > 0 ? window.innerWidth / (6.5 * arrEvoList.length) : 0,
+            }}
+          >
+            {arrEvoList.map((values, evo) => (
+              <li key={evo} className="img-form-gender-group li-evo">
+                <ul className="ul-evo d-flex flex-column">
+                  {values.map((value, index) => (
+                    <li key={index} className="img-form-gender-group img-evo-group li-evo">
+                      {props.setId ? (
+                        <div
+                          className="select-evo"
+                          onClick={() => {
+                            if (props.pokemonRouter?.action === 'POP') {
+                              props.pokemonRouter.action = null as any;
+                            }
+                            props.setId?.(value.id);
+                          }}
+                          title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
+                        >
+                          {renderImageEvo(value, values, evo, index, arrEvoList.length)}
+                        </div>
+                      ) : (
+                        <Link
+                          onClick={() => props.setProgress((p) => ({ ...p, isSetEvo: true }))}
+                          className="select-evo"
+                          to={'/pokemon/' + value.id}
+                          title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
+                        >
+                          {renderImageEvo(value, values, evo, index, arrEvoList.length)}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </Fragment>
   );

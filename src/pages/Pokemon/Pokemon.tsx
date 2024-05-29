@@ -99,9 +99,9 @@ const Pokemon = (props: {
     thirdMove: {},
   });
 
-  const [progress, setProgress] = useState({
-    forms: false,
-  });
+  const [progress, setProgress] = useState({ isLoadedForms: false, isSetEvo: false });
+
+  const { isLoadedForms, isSetEvo } = progress;
 
   const axiosSource = useRef(APIService.getCancelToken());
   const { enqueueSnackbar } = useSnackbar();
@@ -201,7 +201,7 @@ const Pokemon = (props: {
       setCurrentForm(currentForm);
       setData(data);
 
-      setProgress((p) => ({ ...p, forms: true }));
+      setProgress((p) => ({ ...p, isLoadedForms: true, isSetEvo: false }));
     },
     [pokemonData, searchParams]
   );
@@ -211,7 +211,6 @@ const Pokemon = (props: {
       axiosSource.current = APIService.reNewCancelToken();
       const cancelToken = axiosSource.current.token;
 
-      setProgress((p) => ({ ...p, forms: false }));
       APIService.getPokeSpices(id, { cancelToken })
         .then((res) => {
           fetchMap(res.data);
@@ -240,6 +239,7 @@ const Pokemon = (props: {
     setGeneration('');
     setPokeRatio(undefined);
     if (isForceClear) {
+      setProgress((p) => ({ ...p, isLoadedForms: false }));
       setFormList([]);
       setPokeData([]);
       setCurrentForm(undefined);
@@ -382,7 +382,6 @@ const Pokemon = (props: {
           : formParams || (currentForm?.form.id ?? 0) < 0
           ? currentForm?.form.name
           : data?.name;
-
       setFormName(nameInfo);
       const originForm = splitAndCapitalize(
         router.action === Action.Pop && props.searching ? props.searching.form : currentForm?.form.form_name,
@@ -412,6 +411,17 @@ const Pokemon = (props: {
     }
   }, [pokemonData.length, params.id, props.id]);
 
+  const reload = (element: JSX.Element, color = '#f5f5f5') => {
+    if (isLoadedForms) {
+      return element;
+    }
+    return (
+      <div className="ph-item w-75" style={{ padding: 0, margin: 0, height: 24 }}>
+        <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: color }} />
+      </div>
+    );
+  };
+
   return (
     <Fragment>
       {!isFound ? (
@@ -436,7 +446,10 @@ const Pokemon = (props: {
                   className="pokemon-main-sprite"
                   style={{ verticalAlign: 'baseline' }}
                   alt="img-full-pokemon"
-                  src={APIService.getPokeFullSprite(dataStorePokemon?.current?.id ?? 0, convertPokemonImageName(originForm))}
+                  src={APIService.getPokeFullSprite(
+                    dataStorePokemon?.current?.id ?? 0,
+                    convertPokemonImageName(originForm || searchParams.get('form'))
+                  )}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
@@ -455,6 +468,7 @@ const Pokemon = (props: {
                   version={version}
                   weight={WH.weight ?? 0}
                   height={WH.height ?? 0}
+                  isLoadedForms={isLoadedForms}
                 />
               </div>
               <div className="d-inline-block" style={{ padding: 0 }}>
@@ -472,25 +486,29 @@ const Pokemon = (props: {
                       <td style={{ padding: 0 }}>
                         <div className="d-flex align-items-center row-extra td-costs">
                           <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
-                          <span>
-                            {costModifier.thirdMove.candy
-                              ? costModifier.purified.candy === -1
-                                ? ''
-                                : `x${costModifier.thirdMove.candy}`
-                              : 'Unavailable'}
-                          </span>
+                          {reload(
+                            <span>
+                              {costModifier.thirdMove.candy
+                                ? costModifier.purified.candy === -1
+                                  ? ''
+                                  : `x${costModifier.thirdMove.candy}`
+                                : 'Unavailable'}
+                            </span>
+                          )}
                         </div>
                         <div className="row-extra d-flex">
                           <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
                             <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                           </div>
-                          <span>
-                            {costModifier.thirdMove.stardust
-                              ? costModifier.purified.stardust === -1
-                                ? ''
-                                : `x${costModifier.thirdMove.stardust}`
-                              : 'Unavailable'}
-                          </span>
+                          {reload(
+                            <span>
+                              {costModifier.thirdMove.stardust
+                                ? costModifier.purified.stardust === -1
+                                  ? ''
+                                  : `x${costModifier.thirdMove.stardust}`
+                                : 'Unavailable'}
+                            </span>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -505,25 +523,29 @@ const Pokemon = (props: {
                       <td style={{ padding: 0 }}>
                         <div className="d-flex align-items-center row-extra td-costs">
                           <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
-                          <span>
-                            {costModifier.purified.candy
-                              ? costModifier.purified.candy === -1
-                                ? ''
-                                : `x${costModifier.purified.candy}`
-                              : 'Unavailable'}
-                          </span>
+                          {reload(
+                            <span>
+                              {costModifier.purified.candy
+                                ? costModifier.purified.candy === -1
+                                  ? ''
+                                  : `x${costModifier.purified.candy}`
+                                : 'Unavailable'}
+                            </span>
+                          )}
                         </div>
                         <div className="row-extra d-flex">
                           <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
                             <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                           </div>
-                          <span>
-                            {costModifier.purified.stardust
-                              ? costModifier.purified.stardust === -1
-                                ? ''
-                                : `x${costModifier.purified.stardust}`
-                              : 'Unavailable'}
-                          </span>
+                          {reload(
+                            <span>
+                              {costModifier.purified.stardust
+                                ? costModifier.purified.stardust === -1
+                                  ? ''
+                                  : `x${costModifier.purified.stardust}`
+                                : 'Unavailable'}
+                            </span>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -546,9 +568,15 @@ const Pokemon = (props: {
               pokemonDetail={pokemonDetails}
               defaultId={dataStorePokemon?.current?.id ?? 0}
               region={region}
-              progress={progress}
+              setProgress={setProgress}
+              isLoadedForms={isLoadedForms}
+              isSetEvo={isSetEvo}
             />
-            <PokemonModel id={dataStorePokemon?.current?.id ?? 0} name={dataStorePokemon?.current?.name ?? ''} />
+            <PokemonModel
+              id={dataStorePokemon?.current?.id ?? 0}
+              name={dataStorePokemon?.current?.name ?? ''}
+              isLoadedForms={isLoadedForms}
+            />
           </div>
         </Fragment>
       )}
