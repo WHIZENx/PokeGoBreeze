@@ -16,7 +16,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
+import { FORM_NORMAL, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
@@ -69,7 +69,7 @@ const PokemonPVP = () => {
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
       const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
       const id = pokemon?.num;
-      const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.name);
+      const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
       document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${
         cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
       } (${capitalize(params.type)})`;

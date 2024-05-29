@@ -220,9 +220,7 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
   text = text
     .toLowerCase()
     .replaceAll('_', '-')
-    .replaceAll(FORM_GALARIAN.toLowerCase(), 'galar')
-    .replaceAll('alolan', FORM_ALOLA.toLowerCase())
-    .replaceAll(FORM_HISUIAN.toLowerCase(), 'hisui')
+    .replace('alolan', FORM_ALOLA.toLowerCase())
     .replace('-xs', '')
     .replace('indeedee-male', 'indeedee')
     .replace('female', 'f')
