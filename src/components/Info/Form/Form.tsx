@@ -2,13 +2,11 @@ import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { PokemonInfo } from '../../../core/models/API/info.model';
-import { Species } from '../../../core/models/API/species.model';
 import { PokemonGenderRatio, PokemonDataModel } from '../../../core/models/pokemon.model';
 import { StatsRankingPokemonGO } from '../../../core/models/stats.model';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { hideSpinner } from '../../../store/actions/spinner.action';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, regionList } from '../../../util/Constants';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/Constants';
 import {
   capitalize,
   convertPokemonAPIDataName,
@@ -49,16 +47,21 @@ const Form = (props: {
   pokeData: PokemonInfo[];
   formList: PokemonFormModify[][] | undefined;
   ratio: PokemonGenderRatio | undefined;
-  species: Species | undefined;
   // eslint-disable-next-line no-unused-vars
-  onSetIDPoke?: (id: number) => void;
+  setId?: (id: number) => void;
   pokemonDetail: PokemonDataModel | undefined;
-  progress: {
-    forms: boolean;
-  };
+  defaultId: number;
+  region: string;
+  setProgress: React.Dispatch<
+    React.SetStateAction<{
+      isLoadedForms: boolean;
+      isSetEvo: boolean;
+    }>
+  >;
+  isLoadedForms: boolean;
+  isSetEvo: boolean;
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
-  const dispatch = useDispatch();
 
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -69,15 +72,9 @@ const Form = (props: {
   ] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.species?.id, props.form?.form.form_name),
-    [props.species?.id, props.form?.form.form_name]
+    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.defaultId, props.form?.form.form_name),
+    [props.defaultId, props.form?.form.form_name]
   );
-
-  useEffect(() => {
-    if (props.form && props.species && statsPokemon) {
-      dispatch(hideSpinner());
-    }
-  }, [props.form, props.species, statsPokemon, dispatch]);
 
   useEffect(() => {
     if (stats) {
@@ -127,8 +124,8 @@ const Form = (props: {
         <h4 className="info-title">
           <b>Form varieties</b>
         </h4>
-        <div className="scroll-form" style={{ width: props.progress.forms ? '100%' : '' }}>
-          {props.progress.forms ? (
+        <div className="scroll-form" style={{ width: props.isLoadedForms ? '100%' : '' }}>
+          {props.isLoadedForms ? (
             <Fragment>
               {props.formList?.map((value, index) => (
                 <Fragment key={index}>
@@ -137,8 +134,8 @@ const Form = (props: {
                       key={index}
                       className={
                         'btn btn-form ' +
-                        ((props.form && props.species?.id === props.form.form.id && value.form.id === props.form.form.id) ||
-                        (props.form && props.species?.id !== props.form.form.id && value.form.id === props.form.form.id)
+                        ((props.defaultId === props.form?.form.id && value.form.id === props.form.form.id) ||
+                        (props.defaultId !== props.form?.form.id && value.form.id === props.form?.form.id)
                           ? 'form-selected'
                           : '')
                       }
@@ -164,12 +161,12 @@ const Form = (props: {
                                 .catch(() => false);
                             }}
                             alt="img-icon-form"
-                            src={formIconAssets(value, props.species?.id ?? 0)}
+                            src={formIconAssets(value, props.defaultId)}
                           />
                         </div>
                       </div>
                       <p>{!value.form.form_name ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                      {(value.form.id ?? 0) > 0 && value.form.id === props.species?.id && (
+                      {(value.form.id ?? 0) > 0 && value.form.id === props.defaultId && (
                         <b>
                           <small>(Default)</small>
                         </b>
@@ -182,7 +179,7 @@ const Form = (props: {
             </Fragment>
           ) : (
             <div className="ph-item flex-nowrap" style={{ width: '100%', columnGap: 10 }}>
-              {[...Array(Math.ceil(window.innerWidth / 150)).keys()].map((_, index) => (
+              {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
                 <div key={index} className="ph-col-3" style={{ padding: 0, margin: '2px 0' }}>
                   <div className="ph-row">
                     <div className="ph-picture ph-col-3" style={{ height: 142, width: 90 }} />
@@ -237,7 +234,7 @@ const Form = (props: {
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
-          <Info data={props.data} currForm={props.form} />
+          <Info currForm={props.form} />
           {!props.form?.form.is_shadow && !props.form?.form.is_purified && (
             <Fragment>
               <h5>
@@ -245,9 +242,10 @@ const Form = (props: {
               </h5>
               <Raid
                 currForm={props.form}
-                id={props.species?.id}
+                id={props.defaultId}
                 statATK={statsPokemon?.atk?.attack ?? calBaseATK(props.data?.stats, true)}
                 statDEF={statsPokemon?.def?.defense ?? calBaseDEF(props.data?.stats, true)}
+                isLoadedForms={props.isLoadedForms}
               />
             </Fragment>
           )}
@@ -256,7 +254,7 @@ const Form = (props: {
           <TableMove
             data={{
               stats: convertStatsEffort(props.data?.stats),
-              num: props.species?.id ?? 0,
+              num: props.defaultId,
               types: props.form?.form.types ?? [],
             }}
             form={props.form?.form}
@@ -268,51 +266,47 @@ const Form = (props: {
         </div>
       </div>
       <hr className="w-100" />
-      {(props.formList?.filter((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)).map((item) => item.at(0)?.form)
-        ?.length ?? 0) > 0 && !props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
+      {!props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
-              onSetIDPoke={props.onSetIDPoke}
-              id={props.species?.id}
+              setId={props.setId}
+              id={props.defaultId}
               forme={props.form?.form}
-              formDefault={props.species?.id === props.form?.form.id}
-              region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
+              formDefault={props.defaultId === props.form?.form.id}
+              region={props.region}
               pokemonRouter={props.pokemonRouter}
               purified={props.form?.form.is_purified}
+              shadow={props.form?.form.is_shadow}
+              setProgress={props.setProgress}
+              isLoadedForms={props.isLoadedForms}
+              isSetEvo={props.isSetEvo}
             />
           </div>
-          <div className="col-xl" style={{ padding: 0 }}>
-            <Mega formList={props.formList ?? []} id={props.species?.id ?? 0} />
-          </div>
-        </div>
-      ) : (props.formList?.filter((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)).map((item) => item.at(0)?.form)
-          ?.length ?? 0) > 0 && !props.form?.form.form_name?.toUpperCase().includes(FORM_GMAX) ? (
-        <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xl" style={{ padding: 0 }}>
-            <Evolution
-              onSetIDPoke={props.onSetIDPoke}
-              id={props.species?.id}
-              forme={props.form?.form}
-              formDefault={props.species?.id === props.form?.form.id}
-              region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
-              pokemonRouter={props.pokemonRouter}
-              purified={props.form?.form.is_purified}
-            />
-          </div>
-          <div className="col-xl" style={{ padding: 0 }}>
-            <Primal formList={props.formList ?? []} id={props.species?.id ?? 0} />
-          </div>
+          {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
+            <div className="col-xl" style={{ padding: 0 }}>
+              <Mega formList={props.formList ?? []} id={props.defaultId} />
+            </div>
+          )}
+          {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)) && (
+            <div className="col-xl" style={{ padding: 0 }}>
+              <Primal formList={props.formList ?? []} id={props.defaultId} />
+            </div>
+          )}
         </div>
       ) : (
         <Evolution
-          onSetIDPoke={props.onSetIDPoke}
-          id={props.species?.id}
+          setId={props.setId}
+          id={props.defaultId}
           forme={props.form?.form}
-          formDefault={props.species?.id === props.form?.form.id}
-          region={regionList[parseInt(props.species?.generation.url.split('/').at(6) ?? '0')]}
+          formDefault={props.defaultId === props.form?.form.id}
+          region={props.region}
           pokemonRouter={props.pokemonRouter}
           purified={props.form?.form.is_purified}
+          shadow={props.form?.form.is_shadow}
+          setProgress={props.setProgress}
+          isLoadedForms={props.isLoadedForms}
+          isSetEvo={props.isSetEvo}
         />
       )}
       {(props.pokemonDetail?.formChange?.length ?? 0) > 0 && (

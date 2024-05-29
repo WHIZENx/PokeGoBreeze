@@ -686,29 +686,29 @@ export const generatePokemonGoForms = (
 ) => {
   const formList: string[] = [];
   dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.form_name || FORM_NORMAL))));
-  const pokemonGOForm = pokemonData.filter((pokemon) => pokemon.num === id);
-
-  pokemonGOForm.forEach((pokemon) => {
-    const isIncludeFormGO = formList.some((form) => pokemon.forme?.includes(form));
-    if (!isIncludeFormGO) {
-      index--;
-      const pokemonGOModify = new PokemonFormModifyModel(
-        id,
-        name,
-        pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
-        pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
-        pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
-        'Pokémon-GO',
-        pokemon.types,
-        null,
-        index,
-        FORM_NORMAL,
-        false,
-        false
-      );
-      formListResult.push([pokemonGOModify]);
-    }
-  });
+  pokemonData
+    .filter((pokemon) => pokemon.num === id)
+    .forEach((pokemon) => {
+      const isIncludeFormGO = formList.some((form) => pokemon.forme?.includes(form));
+      if (!isIncludeFormGO) {
+        index--;
+        const pokemonGOModify = new PokemonFormModifyModel(
+          id,
+          name,
+          pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
+          pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
+          pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
+          'Pokémon-GO',
+          pokemon.types,
+          null,
+          index,
+          FORM_NORMAL,
+          false,
+          false
+        );
+        formListResult.push([pokemonGOModify]);
+      }
+    });
 
   return index;
 };
@@ -720,42 +720,43 @@ export const generatePokemonGoShadowForms = (
   name: string,
   index = 0
 ) => {
-  const pokemonDefault = dataPokeList.filter((p) => p.is_include_shadow);
-  pokemonDefault.forEach((p) => {
-    let form = '';
-    if (!p.is_default) {
-      form = p.name.replace(`${name}-`, '') + '-';
-    }
-    index--;
-    const pokemonShadowModify = new PokemonFormModifyModel(
-      id,
-      name,
-      p.name,
-      `${form}shadow`,
-      `${p.name}-shadow`,
-      'Pokémon-GO',
-      p.types.map((item) => item.type.name) ?? [],
-      null,
-      index,
-      FORM_SHADOW,
-      true
-    );
-    index--;
-    const pokemonPurifiedModify = new PokemonFormModifyModel(
-      id,
-      name,
-      p.name,
-      `${form}purified`,
-      `${p.name}-purified`,
-      'Pokémon-GO',
-      p.types.map((item) => item.type.name) ?? [],
-      null,
-      index,
-      FORM_PURIFIED,
-      true
-    );
-    formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
-  });
+  dataPokeList
+    .filter((p) => p.is_include_shadow)
+    .forEach((p) => {
+      let form = '';
+      if (!p.is_default) {
+        form = p.name.replace(`${name}-`, '') + '-';
+      }
+      index--;
+      const pokemonShadowModify = new PokemonFormModifyModel(
+        id,
+        name,
+        p.name,
+        `${form}${FORM_SHADOW.toLowerCase()}`,
+        `${p.name}-${FORM_SHADOW.toLowerCase()}`,
+        'Pokémon-GO',
+        p.types.map((item) => item.type.name) ?? [],
+        null,
+        index,
+        FORM_SHADOW,
+        true
+      );
+      index--;
+      const pokemonPurifiedModify = new PokemonFormModifyModel(
+        id,
+        name,
+        p.name,
+        `${form}${FORM_PURIFIED.toLowerCase()}`,
+        `${p.name}-${FORM_PURIFIED.toLowerCase()}`,
+        'Pokémon-GO',
+        p.types.map((item) => item.type.name) ?? [],
+        null,
+        index,
+        FORM_PURIFIED,
+        true
+      );
+      formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
+    });
 
   return index;
 };

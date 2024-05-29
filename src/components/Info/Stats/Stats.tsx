@@ -8,6 +8,7 @@ import { StatsAtk, StatsDef, StatsModel, StatsPokemon, StatsProd, StatsSta } fro
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 
 const Stats = (props: {
   isShadow?: boolean;
@@ -95,90 +96,39 @@ const Stats = (props: {
 
   return (
     <div className="element-top" style={{ color: (theme.palette as any).constant.text }}>
-      <div className="progress position-relative">
-        <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-          <span>ATK {currentStats.stats.atk}</span>
-        </div>
-        <div
-          className="progress-bar bg-danger"
-          style={{
-            width: currentStats.atk + '%',
-          }}
-          role="progressbar"
-          aria-valuenow={currentStats.atk}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        />
-        <div className="box-text rank-text justify-content-end d-flex position-absolute">
-          <span>
-            Rank: {isAvailable.attackRank ? isAvailable.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'} /{' '}
-            {props.pokemonStats?.attack.max_rank}
-          </span>
-        </div>
-      </div>
-      <div className="progress position-relative">
-        <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-          <span>DEF {currentStats.stats.def}</span>
-        </div>
-        <div
-          className="progress-bar bg-success"
-          style={{
-            width: currentStats.def + '%',
-          }}
-          role="progressbar"
-          aria-valuenow={currentStats.def}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        />
-        <div className="box-text rank-text justify-content-end d-flex position-absolute">
-          <span>
-            Rank: {isAvailable.defenseRank ? isAvailable.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'} /{' '}
-            {props.pokemonStats?.defense.max_rank}
-          </span>
-        </div>
-      </div>
-      <div className="progress position-relative">
-        <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-          <span>STA {currentStats.stats.sta}</span>
-        </div>
-        <div
-          className="progress-bar bg-info"
-          style={{
-            width: currentStats.sta + '%',
-          }}
-          role="progressbar"
-          aria-valuenow={currentStats.sta}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        />
-        <div className="box-text rank-text justify-content-end d-flex position-absolute">
-          <span>
-            Rank: {isAvailable.staminaRank ? isAvailable.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'} /{' '}
-            {props.pokemonStats?.stamina.max_rank}
-          </span>
-        </div>
-      </div>
-      <div className="progress position-relative">
-        <div className="box-text stats-text justify-content-start d-flex position-absolute w-100">
-          <span>Stat Prod {(currentStats.stats.prod / Math.pow(10, 6)).toFixed(2)} MM</span>
-        </div>
-        <div
-          className="progress-bar bg-warning"
-          style={{
-            width: currentStats.prod + '%',
-          }}
-          role="progressbar"
-          aria-valuenow={currentStats.prod}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        />
-        <div className="box-text rank-text justify-content-end d-flex position-absolute">
-          <span>
-            Rank: {isAvailable.statProdRank ? isAvailable.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'} /{' '}
-            {props.pokemonStats?.statProd.max_rank}
-          </span>
-        </div>
-      </div>
+      <StatsBar
+        tag="ATK"
+        class="bg-danger"
+        statsPercent={currentStats.atk}
+        rank={isAvailable.attackRank ? isAvailable.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'}
+        pokemonStats={props.pokemonStats}
+        currentStats={currentStats.stats.atk}
+      />
+      <StatsBar
+        tag="DEF"
+        class="bg-success"
+        statsPercent={currentStats.def}
+        rank={isAvailable.defenseRank ? isAvailable.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'}
+        pokemonStats={props.pokemonStats}
+        currentStats={currentStats.stats.def}
+      />
+      <StatsBar
+        tag="STA"
+        class="bg-info"
+        statsPercent={currentStats.sta}
+        rank={isAvailable.staminaRank ? isAvailable.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'}
+        pokemonStats={props.pokemonStats}
+        currentStats={currentStats.stats.sta}
+      />
+      <StatsBar
+        tag="Stat Prod"
+        class="bg-warning"
+        statsPercent={currentStats.prod}
+        rank={isAvailable.statProdRank ? isAvailable.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'}
+        pokemonStats={props.pokemonStats}
+        currentStats={currentStats.stats.prod}
+        optionalStats={`${(currentStats.stats.prod / Math.pow(10, 6)).toFixed(2)} MM`}
+      />
     </div>
   );
 };

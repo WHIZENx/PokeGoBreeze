@@ -6,9 +6,9 @@ import { SelectMoveModel } from '../../components/Input/models/select-move.model
 import { EvoList, TempEvo } from './evolution.model';
 
 export interface OptionsPokemon {
-  prev: PokemonNameModel | undefined;
+  prev?: PokemonNameModel | undefined;
   current: PokemonNameModel | undefined;
-  next: PokemonNameModel | undefined;
+  next?: PokemonNameModel | undefined;
 }
 
 export interface PokemonGender {
@@ -41,7 +41,7 @@ interface EvolutionBranch {
   candyCost: number;
   evolutionItemRequirementCost?: number;
   form: string;
-  obPurificationEvolutionCandyCost: number;
+  candyCostPurified: number;
   genderRequirement: string;
   kmBuddyDistanceRequirement: number;
   mustBeBuddy: boolean;

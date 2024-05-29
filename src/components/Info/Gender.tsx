@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import React, { Fragment } from 'react';
+import React from 'react';
 import APIService from '../../services/API.service';
 import { PokemonGenderRatio } from '../../core/models/pokemon.model';
 
@@ -23,13 +23,7 @@ const Gender = (props: {
       <div className="d-flex align-items-center" style={{ columnGap: 15 }}>
         <img className="img-gender" width={40} height={40} alt="img-pokemon-sex" src={APIService.getGenderSprite(props.sex)} />
         <h6 className="ratio-gender" style={{ margin: 0 }}>
-          {props.ratio ? (
-            <Fragment>
-              {props.sex} ratio: {calculateRatio(props.sex, props.ratio)}%
-            </Fragment>
-          ) : (
-            <Fragment>{props.sex} ratio: 100%</Fragment>
-          )}
+          {props.sex} {props.ratio && `ratio: ${calculateRatio(props.sex, props.ratio)}%`}
         </h6>
       </div>
       <div className="element-top d-flex" style={{ marginLeft: 30, columnGap: 15 }}>

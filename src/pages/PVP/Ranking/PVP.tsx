@@ -88,11 +88,7 @@ const RankingPVP = () => {
       dispatch(showSpinner());
       try {
         const cp = parseInt(params.cp);
-        const file = (
-          await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type), {
-            cancelToken: APIService.getAxios().CancelToken.source().token,
-          })
-        ).data;
+        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))).data;
         if (params.serie === 'all') {
           document.title = `PVP Ranking - ${
             cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'

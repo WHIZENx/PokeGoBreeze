@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
@@ -17,21 +17,18 @@ const FromChange = (props: { details: PokemonDataModel | undefined; defaultName:
     [] as PokemonModelComponent[]
   );
 
-  const getImageList = useCallback(
-    (id: number) => {
-      const model = assets.find((item) => item.id === id);
-      return model
-        ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
-        : [];
-    },
-    [assets]
-  );
+  const getImageList = (id: number) => {
+    const model = assets.find((item) => item.id === id);
+    return model
+      ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
+      : [];
+  };
 
   useEffect(() => {
-    if (props.details?.num) {
+    if (props.details?.num && assets.length > 0) {
       setPokeAssets(getImageList(props.details.num));
     }
-  }, [getImageList, props.details?.num]);
+  }, [assets.length, props.details?.num]);
 
   return (
     <Fragment>

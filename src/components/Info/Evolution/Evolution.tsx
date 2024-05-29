@@ -12,7 +12,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import PetsIcon from '@mui/icons-material/Pets';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import Xarrow, { cAnchorEdge } from 'react-xarrows';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
@@ -29,7 +29,16 @@ import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { EvoList, EvolutionModel } from '../../../core/models/evolution.model';
-import { FORM_GALARIAN, FORM_GMAX, FORM_HISUIAN, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../../../util/Constants';
+import {
+  FORM_GALARIAN,
+  FORM_GMAX,
+  FORM_HISUIAN,
+  FORM_MEGA,
+  FORM_NORMAL,
+  FORM_PURIFIED,
+  FORM_SHADOW,
+  FORM_STANDARD,
+} from '../../../util/Constants';
 import { FormModel } from '../../../core/models/API/form.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 
@@ -42,6 +51,28 @@ interface PokemonEvo {
   gmax: boolean;
   sprite: string;
   purified?: boolean;
+}
+
+class PokemonEvo {
+  prev?: string | undefined;
+  name: string;
+  id: number;
+  baby: boolean;
+  form: string;
+  gmax: boolean;
+  sprite: string;
+  purified?: boolean;
+
+  constructor(name: string, id: number, form: string, sprite: string, prev = '', gmax = false, baby = false, purified = false) {
+    this.prev = prev;
+    this.name = name;
+    this.id = id;
+    this.baby = baby;
+    this.form = form;
+    this.gmax = gmax;
+    this.sprite = sprite;
+    this.purified = purified;
+  }
 }
 
 const customTheme = createTheme({
@@ -60,9 +91,18 @@ const Evolution = (props: {
   formDefault: boolean;
   id: number | undefined;
   // eslint-disable-next-line no-unused-vars
-  onSetIDPoke?: (id: number) => void;
+  setId?: (id: number) => void;
   pokemonRouter: ReduxRouterState;
   purified: boolean | undefined;
+  shadow: boolean | undefined;
+  setProgress: React.Dispatch<
+    React.SetStateAction<{
+      isLoadedForms: boolean;
+      isSetEvo: boolean;
+    }>
+  >;
+  isLoadedForms: boolean;
+  isSetEvo: boolean;
 }) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
@@ -70,15 +110,16 @@ const Evolution = (props: {
     [] as PokemonEvo[][]
   );
 
-  const formatEvoChain = (pokemon: PokemonDataModel | undefined): PokemonEvo => {
-    return {
-      name: pokemon?.baseSpecies ? pokemon?.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase() ?? '',
-      id: pokemon?.num ?? 0,
-      baby: pokemon?.isBaby ?? false,
-      form: pokemon?.forme ?? '',
-      gmax: false,
-      sprite: convertModelSpritName(pokemon?.name ?? ''),
-    };
+  const formatEvoChain = (pokemon: PokemonDataModel | undefined) => {
+    return new PokemonEvo(
+      pokemon?.baseSpecies ? pokemon?.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase() ?? '',
+      pokemon?.num ?? 0,
+      pokemon?.forme ?? '',
+      convertModelSpritName(pokemon?.name ?? ''),
+      undefined,
+      false,
+      pokemon?.isBaby ?? false
+    );
   };
 
   const pokeSetName = (name: string) => {
@@ -97,19 +138,10 @@ const Evolution = (props: {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
 
-    return {
-      prev: pokemon.prev,
-      name,
-      id: pokemon.id,
-      baby: pokemon.isBaby ?? false,
-      form,
-      gmax: false,
-      sprite,
-      purified: pokemon.canPurified ?? false,
-    } as PokemonEvo;
+    return new PokemonEvo(name, pokemon.id, form, sprite, pokemon.prev, false, pokemon?.isBaby ?? false, pokemon.canPurified ?? false);
   };
 
-  const getPrevEvoChainJSON = useCallback((name: string, arr: PokemonEvo[][]) => {
+  const getPrevEvoChainJSON = (name: string, arr: PokemonEvo[][]) => {
     if (name) {
       const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
       if (pokemon) {
@@ -117,9 +149,9 @@ const Evolution = (props: {
         getPrevEvoChainJSON(pokemon.prevo ?? '', arr);
       }
     }
-  }, []);
+  };
 
-  const getCurrEvoChainJSON = useCallback((prev: PokemonDataModel, arr: PokemonEvo[][]) => {
+  const getCurrEvoChainJSON = (prev: PokemonDataModel, arr: PokemonEvo[][]) => {
     const evo: PokemonEvo[] = [];
     prev.evos.forEach((name) => {
       const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
@@ -128,9 +160,9 @@ const Evolution = (props: {
       }
     });
     arr.push(evo);
-  }, []);
+  };
 
-  const getNextEvoChainJSON = useCallback((evos: string[], arr: PokemonEvo[][]) => {
+  const getNextEvoChainJSON = (evos: string[], arr: PokemonEvo[][]) => {
     if (evos.length === 0) {
       return;
     }
@@ -148,48 +180,45 @@ const Evolution = (props: {
         getNextEvoChainJSON(pokemon.evos, arr);
       }
     });
-  }, []);
+  };
 
-  const getEvoChainJSON = useCallback(
-    (id: number, forme: FormModel) => {
-      let form = forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) ? null : forme.form_name;
-      if (forme.form_name === '10') {
-        form += '%';
-      }
-      if (forme.name === 'necrozma-dawn') {
-        form += '-wings';
-      } else if (forme.name === 'necrozma-dusk') {
-        form += '-mane';
-      }
-      if (!form) {
-        form = FORM_NORMAL;
-      }
-      let pokemon = pokemonData.find(
-        (pokemon) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
-      );
-      if (!pokemon) {
-        pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === null);
-      }
+  const getEvoChainJSON = (id: number, forme: FormModel) => {
+    let form = forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) ? null : forme.form_name;
+    if (forme.form_name === '10') {
+      form += '%';
+    }
+    if (forme.name === 'necrozma-dawn') {
+      form += '-wings';
+    } else if (forme.name === 'necrozma-dusk') {
+      form += '-mane';
+    }
+    if (!form) {
+      form = FORM_NORMAL;
+    }
+    let pokemon = pokemonData.find(
+      (pokemon) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
+    );
+    if (!pokemon) {
+      pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === null);
+    }
 
-      const prevEvo: PokemonEvo[][] = [],
-        curr: PokemonEvo[][] = [],
-        evo: PokemonEvo[][] = [];
-      if (!pokemon) {
-        return;
-      }
-      getPrevEvoChainJSON(pokemon?.prevo ?? '', prevEvo);
-      const prev = pokemonData.find((p) => p.name === pokemon?.prevo);
-      if (prev) {
-        getCurrEvoChainJSON(prev, curr);
-      } else {
-        curr.push([formatEvoChain(pokemon)]);
-      }
-      getNextEvoChainJSON(pokemon.evos, evo);
-      const result = prevEvo.concat(curr, evo);
-      return setArrEvoList(result);
-    },
-    [getPrevEvoChainJSON, getCurrEvoChainJSON, getNextEvoChainJSON]
-  );
+    const prevEvo: PokemonEvo[][] = [],
+      curr: PokemonEvo[][] = [],
+      evo: PokemonEvo[][] = [];
+    if (!pokemon) {
+      return;
+    }
+    getPrevEvoChainJSON(pokemon?.prevo ?? '', prevEvo);
+    const prev = pokemonData.find((p) => p.name === pokemon?.prevo);
+    if (prev) {
+      getCurrEvoChainJSON(prev, curr);
+    } else {
+      curr.push([formatEvoChain(pokemon)]);
+    }
+    getNextEvoChainJSON(pokemon.evos, evo);
+    const result = prevEvo.concat(curr, evo);
+    return setArrEvoList(result);
+  };
 
   const getPrevEvoChainStore = (poke: PokemonDataModel, result: PokemonEvo[][]) => {
     const evoList: PokemonEvo[] = [];
@@ -285,10 +314,15 @@ const Evolution = (props: {
   };
 
   const getEvoChainStore = (id: number, forme: FormModel) => {
+    const formName = forme.form_name?.toUpperCase() ?? '';
     const form =
-      forme.form_name === '' || forme.is_purified || forme.is_shadow || forme.form_name?.toUpperCase().includes(FORM_MEGA)
+      formName === '' || formName.includes(FORM_MEGA)
         ? FORM_NORMAL
-        : convertPokemonAPIDataName(forme.form_name);
+        : forme.is_purified || forme.is_shadow
+        ? formName === FORM_SHADOW || formName === FORM_PURIFIED
+          ? FORM_NORMAL
+          : formName.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
+        : convertPokemonAPIDataName(formName);
     const result: PokemonEvo[][] = [];
     const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
     let pokemon = pokemons.find((p) => p.forme === form);
@@ -304,32 +338,35 @@ const Evolution = (props: {
     return setArrEvoList(result);
   };
 
-  const getGmaxChain = useCallback((id: number, form: FormModel) => {
+  const getGmaxChain = (id: number, form: FormModel) => {
     return setArrEvoList([
       [
-        {
-          name: form.name.replace('-gmax', ''),
+        new PokemonEvo(
+          form.name.replace('-gmax', ''),
           id,
-          baby: false,
-          form: FORM_NORMAL.toLowerCase(),
-          gmax: true,
-          sprite: convertModelSpritName(form.name.replace('-gmax', '')),
-        },
+          FORM_NORMAL.toLowerCase(),
+          convertModelSpritName(form.name.replace('-gmax', '')),
+          undefined,
+          true
+        ),
       ],
       [
-        {
-          name: form.name.replace('-gmax', ''),
+        new PokemonEvo(
+          form.name.replace('-gmax', ''),
           id,
-          baby: false,
-          form: FORM_GMAX.toLowerCase(),
-          gmax: true,
-          sprite: convertModelSpritName(form.name.replace('-gmax', '-gigantamax').replace('-low-key', '')),
-        },
+          FORM_GMAX.toLowerCase(),
+          convertModelSpritName(form.name.replace('-gmax', '-gigantamax').replace('-low-key', '')),
+          undefined,
+          true
+        ),
       ],
     ]);
-  }, []);
+  };
 
   useEffect(() => {
+    if (!props.isSetEvo) {
+      setArrEvoList([]);
+    }
     if (props.id && props.forme) {
       if (props.forme.form_name?.toUpperCase() !== FORM_GMAX) {
         getEvoChainStore(props.id, props.forme);
@@ -337,27 +374,14 @@ const Evolution = (props: {
         getGmaxChain(props.id, props.forme);
       }
     }
-  }, [props.forme, props.id]);
+  }, [props.isSetEvo, props.forme, props.id]);
 
-  const getQuestEvo = (prevId: number, form: string): EvoList | undefined => {
-    try {
-      return pokemonData
-        .find((item) => item.evoList?.find((value) => value.evoToForm.includes(form) && value.evoToId === prevId))
-        ?.evoList?.find((item) => item.evoToForm.includes(form) && item.evoToId === prevId);
-    } catch (error) {
-      try {
-        return pokemonData
-          .find((item) => item.evoList?.find((value) => value.evoToId === prevId))
-          ?.evoList?.find((item) => item.evoToId === prevId);
-      } catch (error) {
-        return {
-          evoToForm: '',
-          evoToId: 0,
-          evoToName: '',
-          candyCost: 0,
-          purificationEvoCandyCost: 0,
-        };
-      }
+  const getQuestEvo = (prevId: number, form: string) => {
+    const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToForm.includes(form) && value.evoToId === prevId));
+    if (pokemon) {
+      return pokemon.evoList?.find((item) => item.evoToForm.includes(form) && item.evoToId === prevId);
+    } else {
+      return new EvoList();
     }
   };
 
@@ -365,6 +389,7 @@ const Evolution = (props: {
     return (
       <>
         {props.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+        {props.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
         <img
           className="pokemon-sprite"
           id="img-pokemon"
@@ -617,6 +642,17 @@ const Evolution = (props: {
     );
   };
 
+  const reload = (element: JSX.Element, color = '#fafafa') => {
+    if (props.isLoadedForms || props.isSetEvo) {
+      return element;
+    }
+    return (
+      <div className="ph-item w-75" style={{ padding: 0, margin: 'auto', height: 120 }}>
+        <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: color }} />
+      </div>
+    );
+  };
+
   return (
     <Fragment>
       <h4 className="title-evo">
@@ -679,45 +715,48 @@ const Evolution = (props: {
         </OverlayTrigger>
       </h4>
       <div className="evo-container scroll-evolution">
-        <ul
-          className="ul-evo d-inline-flex"
-          style={{
-            columnGap: arrEvoList.length > 0 ? window.innerWidth / (6.5 * arrEvoList.length) : 0,
-          }}
-        >
-          {arrEvoList.map((values, evo) => (
-            <li key={evo} className="img-form-gender-group li-evo">
-              <ul className="ul-evo d-flex flex-column">
-                {values.map((value, index) => (
-                  <li key={index} className="img-form-gender-group img-evo-group li-evo">
-                    {props.onSetIDPoke ? (
-                      <div
-                        className="select-evo"
-                        onClick={() => {
-                          if (props.pokemonRouter?.action === 'POP') {
-                            props.pokemonRouter.action = null as any;
-                          }
-                          props.onSetIDPoke?.(value.id);
-                        }}
-                        title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
-                      >
-                        {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                      </div>
-                    ) : (
-                      <Link
-                        className="select-evo"
-                        to={'/pokemon/' + value.id}
-                        title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
-                      >
-                        {renderImageEvo(value, values, evo, index, arrEvoList.length)}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
+        {reload(
+          <ul
+            className="ul-evo d-inline-flex"
+            style={{
+              columnGap: arrEvoList.length > 0 ? window.innerWidth / (6.5 * arrEvoList.length) : 0,
+            }}
+          >
+            {arrEvoList.map((values, evo) => (
+              <li key={evo} className="img-form-gender-group li-evo">
+                <ul className="ul-evo d-flex flex-column">
+                  {values.map((value, index) => (
+                    <li key={index} className="img-form-gender-group img-evo-group li-evo">
+                      {props.setId ? (
+                        <div
+                          className="select-evo"
+                          onClick={() => {
+                            if (props.pokemonRouter?.action === 'POP') {
+                              props.pokemonRouter.action = null as any;
+                            }
+                            props.setId?.(value.id);
+                          }}
+                          title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
+                        >
+                          {renderImageEvo(value, values, evo, index, arrEvoList.length)}
+                        </div>
+                      ) : (
+                        <Link
+                          onClick={() => props.setProgress((p) => ({ ...p, isSetEvo: true }))}
+                          className="select-evo"
+                          to={'/pokemon/' + value.id}
+                          title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
+                        >
+                          {renderImageEvo(value, values, evo, index, arrEvoList.length)}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </Fragment>
   );

@@ -37,9 +37,7 @@ const SearchBar = (props: { data: OptionsPokemon | undefined; router: ReduxRoute
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = APIService.getPokeFullAsset(props.data?.prev?.id ?? 0);
                   APIService.getFetchUrl(e.currentTarget?.currentSrc)
-                    .then(() => {
-                      e.currentTarget.src = APIService.getPokeFullSprite(props.data?.prev?.id ?? 0);
-                    })
+                    .then(() => (e.currentTarget.src = APIService.getPokeFullSprite(props.data?.prev?.id ?? 0)))
                     .catch(() => false);
                 }}
               />
@@ -81,9 +79,7 @@ const SearchBar = (props: { data: OptionsPokemon | undefined; router: ReduxRoute
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = APIService.getPokeFullAsset(props.data?.next?.id ?? 0);
                   APIService.getFetchUrl(e.currentTarget?.currentSrc)
-                    .then(() => {
-                      e.currentTarget.src = APIService.getPokeFullSprite(props.data?.next?.id ?? 0);
-                    })
+                    .then(() => (e.currentTarget.src = APIService.getPokeFullSprite(props.data?.next?.id ?? 0)))
                     .catch(() => false);
                 }}
               />
