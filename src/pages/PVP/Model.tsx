@@ -31,7 +31,7 @@ import { StatsModel, StatsPokemon } from '../../core/models/stats.model';
 import { Asset } from '../../core/models/asset.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { Combat } from '../../core/models/combat.model';
-import { MAX_IV, MAX_LEVEL } from '../../util/Constants';
+import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/Constants';
 import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
 import { PokemonBattleRanking } from './models/battle.model';
 
@@ -52,7 +52,7 @@ export const Keys = (
     const name = convertNameRankingToOri(data?.opponent, convertNameRankingToForm(data?.opponent));
     const pokemon = pokemonData.find((pokemon) => pokemon.slug === name);
     const id = pokemon?.num;
-    const form = findAssetForm(assets, pokemon?.num, pokemon?.name);
+    const form = findAssetForm(assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
     return (
       <Link

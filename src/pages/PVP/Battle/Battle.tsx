@@ -6,7 +6,16 @@ import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/Calculate';
-import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS, STAB_MULTIPLY } from '../../../util/Constants';
+import {
+  FORM_NORMAL,
+  MAX_IV,
+  MAX_LEVEL,
+  MIN_IV,
+  MIN_LEVEL,
+  SHADOW_ATK_BONUS,
+  SHADOW_DEF_BONUS,
+  STAB_MULTIPLY,
+} from '../../../util/Constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -655,7 +664,7 @@ const Battle = () => {
               }
 
               const id = pokemon.num;
-              const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon.name);
+              const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon?.forme ?? FORM_NORMAL);
 
               const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
