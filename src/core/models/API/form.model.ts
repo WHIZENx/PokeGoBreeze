@@ -1,4 +1,6 @@
+import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
 import { StatsPokemon } from '../stats.model';
+import { PokemonInfo } from './info.model';
 
 interface PokemonSprit {
   back_default: string;
@@ -106,7 +108,7 @@ export class PokemonFormModifyModel {
     types: string[],
     sprites: PokemonSprit | null = null,
     formId: number | null = null,
-    specialForm: 'NORMAL' | 'SHADOW' | 'PURIFIED' = 'NORMAL',
+    specialForm: 'NORMAL' | 'SHADOW' | 'PURIFIED' = FORM_NORMAL,
     isBattleOnly = true,
     isDefault = true,
     isMega = false
@@ -123,8 +125,8 @@ export class PokemonFormModifyModel {
       is_battle_only: isBattleOnly,
       is_default: isDefault,
       is_mega: isMega,
-      is_shadow: specialForm === 'SHADOW',
-      is_purified: specialForm === 'PURIFIED',
+      is_shadow: specialForm === FORM_SHADOW,
+      is_purified: specialForm === FORM_PURIFIED,
       name: fullFormName,
       version_group: { name: version },
       types,
@@ -172,5 +174,23 @@ export class FormModel {
     this.version_group = data.version_group;
     this.types = data.types.map((t) => t.type.name);
     this.sprites = data.sprites;
+  }
+}
+
+export interface FormSoundCry {
+  form: string;
+  cries: { [x: string]: string };
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class FormSoundCryModel {
+  form!: string;
+  cries!: { [x: string]: string };
+
+  constructor(pokemon: PokemonInfo) {
+    const fullName = pokemon.forms[0].name;
+    const speciesName = pokemon.species.name;
+    this.form = fullName === speciesName ? FORM_NORMAL : fullName.replace(`${speciesName}-`, '').replaceAll('-', '_').toUpperCase();
+    this.cries = pokemon.cries;
   }
 }

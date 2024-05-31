@@ -1,34 +1,20 @@
 import { useTheme } from '@mui/material';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
-import { SYNC_MSG, TRANSITION_TIME } from '../../util/Constants';
+import { useSelector } from 'react-redux';
+import { TRANSITION_TIME } from '../../util/Constants';
 
 import Attacker from './Attacker';
 import Defender from './Defender';
 
 import './TypeEffect.scss';
-import { hideSpinner, showSpinnerWithMsg } from '../../store/actions/spinner.action';
-import { SpinnerState, StoreState } from '../../store/models/state.model';
+import { StoreState } from '../../store/models/state.model';
+import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 const TypeEffect = () => {
-  const dispatch = useDispatch();
+  useChangeTitle('Type Effectiveness');
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const theme = useTheme();
-
-  useEffect(() => {
-    if (Object.keys(typeEffective ?? {}).length > 0 && spinner.loading) {
-      dispatch(hideSpinner());
-    }
-  }, [typeEffective]);
-
-  useEffect(() => {
-    if (Object.keys(typeEffective ?? {}).length === 0) {
-      dispatch(showSpinnerWithMsg(SYNC_MSG));
-    }
-    document.title = 'Type Effectiveness';
-  }, []);
 
   return (
     <div className="container element-top" style={{ paddingBottom: 15 }}>

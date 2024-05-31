@@ -98,11 +98,9 @@ const Evolution = (props: {
   setProgress: React.Dispatch<
     React.SetStateAction<{
       isLoadedForms: boolean;
-      isSetEvo: boolean;
     }>
   >;
   isLoadedForms: boolean;
-  isSetEvo: boolean;
 }) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
@@ -364,7 +362,7 @@ const Evolution = (props: {
   };
 
   useEffect(() => {
-    if (!props.isSetEvo) {
+    if (arrEvoList.length > 0 && !arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id))) {
       setArrEvoList([]);
     }
     if (props.id && props.forme) {
@@ -374,7 +372,7 @@ const Evolution = (props: {
         getGmaxChain(props.id, props.forme);
       }
     }
-  }, [props.isSetEvo, props.forme, props.id]);
+  }, [arrEvoList, props.forme, props.id]);
 
   const getQuestEvo = (prevId: number, form: string) => {
     const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToForm.includes(form) && value.evoToId === prevId));
@@ -643,7 +641,7 @@ const Evolution = (props: {
   };
 
   const reload = (element: JSX.Element, color = '#fafafa') => {
-    if (props.isLoadedForms || props.isSetEvo) {
+    if (props.isLoadedForms || (arrEvoList.length > 0 && arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id)))) {
       return element;
     }
     return (
@@ -742,7 +740,6 @@ const Evolution = (props: {
                         </div>
                       ) : (
                         <Link
-                          onClick={() => props.setProgress((p) => ({ ...p, isSetEvo: true }))}
                           className="select-evo"
                           to={'/pokemon/' + value.id}
                           title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}

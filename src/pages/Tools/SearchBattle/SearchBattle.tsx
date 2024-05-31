@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
 import { Badge, Box } from '@mui/material';
@@ -26,8 +26,10 @@ import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleBaseStats, QueryStatesEvoChain } from '../../../util/models/calculate.model';
 import FreeSoloInput from '../../../components/Input/FreeSoloInput';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const FindBattle = () => {
+  useChangeTitle('Search Battle Leagues Stats - Tool');
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
@@ -259,10 +261,6 @@ const FindBattle = () => {
     },
     [dispatch, searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA, form]
   );
-
-  useEffect(() => {
-    document.title = 'Search Battle Leagues Stats - Tool';
-  }, []);
 
   const getImageList = (id: number) => {
     const isForm = form?.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form?.form.form_name.replaceAll('-', '_').toUpperCase();

@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
@@ -9,7 +9,7 @@ import CardPokemon from '../../../components/Card/CardPokemon';
 import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { MAX_IV, MAX_LEVEL } from '../../../util/Constants';
+import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/Constants';
 import { Combat } from '../../../core/models/combat.model';
 import { BattlePokemonData } from '../../../core/models/pvp.model';
 import { PokemonBattle } from '../models/battle.model';
@@ -118,7 +118,7 @@ const SelectPoke = (props: {
           cMovePri: new Audio(APIService.getSoundMove(cMovePriCombat?.sound ?? '')),
           cMoveSec: new Audio(APIService.getSoundMove(cMoveSecCombat?.sound ?? '')),
         },
-        shadow: value.speciesId.includes('_shadow'),
+        shadow: value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`),
       });
     }
   };
@@ -189,7 +189,7 @@ const SelectPoke = (props: {
           <span className="pokemon-select-right">
             {pokemon?.speciesId.includes('_shadow') && (
               <span style={{ marginRight: 5 }} className="type-icon-small ic shadow-ic">
-                Shadow
+                {capitalize(FORM_SHADOW)}
               </span>
             )}
             {score && (
@@ -224,7 +224,11 @@ const SelectPoke = (props: {
             .filter((pokemon) => splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
             .map((value, index) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
-                <CardPokemon value={value.pokemon} score={value.score} isShadow={value.speciesId.includes('_shadow')} />
+                <CardPokemon
+                  value={value.pokemon}
+                  score={value.score}
+                  isShadow={value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`)}
+                />
               </div>
             ))}
         </div>

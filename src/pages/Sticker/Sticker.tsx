@@ -12,6 +12,7 @@ import PopoverConfig from '../../components/Popover/PopoverConfig';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { StickerModel } from '../../core/models/sticker.model';
+import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 interface PokemonStickerModel {
   id?: number | null | undefined;
@@ -19,6 +20,7 @@ interface PokemonStickerModel {
 }
 
 const Sticker = () => {
+  useChangeTitle('Stickers List');
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
   const [pokemonStickerFilter, setPokemonStickerFilter]: [StickerModel[], React.Dispatch<React.SetStateAction<StickerModel[]>>] = useState(
@@ -30,10 +32,6 @@ const Sticker = () => {
   const [selectPokemon, setSelectPokemon]: [PokemonStickerModel[], React.Dispatch<React.SetStateAction<PokemonStickerModel[]>>] = useState(
     [] as PokemonStickerModel[]
   );
-
-  useEffect(() => {
-    document.title = 'Stickers List';
-  }, []);
 
   useEffect(() => {
     if (pokeStickerList.length > 0) {

@@ -7,6 +7,8 @@ import {
   FORM_GMAX,
   FORM_MEGA,
   FORM_PRIMAL,
+  FORM_PURIFIED,
+  FORM_SHADOW,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -50,6 +52,7 @@ import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 interface PokemonSheetData {
   pokemon: PokemonDataModel;
@@ -183,12 +186,12 @@ const columns: any = [
           )}
           {row.mShadow && (
             <span className="type-icon-small ic shadow-ic">
-              <span>Shadow</span>
+              <span>{capitalize(FORM_SHADOW)}</span>
             </span>
           )}
           {row.purified && (
             <span className="type-icon-small ic purified-ic">
-              <span>Purified</span>
+              <span>{capitalize(FORM_PURIFIED)}</span>
             </span>
           )}
           {row.special && (
@@ -230,6 +233,7 @@ const columns: any = [
 ];
 
 const DpsTdo = () => {
+  useChangeTitle('DPS&TDO Sheets');
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -552,10 +556,6 @@ const DpsTdo = () => {
   };
 
   useEffect(() => {
-    document.title = 'DPS&TDO Sheets';
-  }, []);
-
-  useEffect(() => {
     if (data?.typeEff) {
       setTypes(Object.keys(data?.typeEff));
     }
@@ -719,19 +719,19 @@ const DpsTdo = () => {
               <span className="input-group-text">Filter show</span>
               <FormControlLabel
                 control={<Checkbox checked={showShadow} onChange={(_, check) => setFilters({ ...filters, showShadow: check })} />}
-                label="Shadow"
+                label={capitalize(FORM_SHADOW)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showMega} onChange={(_, check) => setFilters({ ...filters, showMega: check })} />}
-                label="Mega"
+                label={capitalize(FORM_MEGA)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showGmax} onChange={(_, check) => setFilters({ ...filters, showGmax: check })} />}
-                label="Gmax"
+                label={capitalize(FORM_GMAX)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showPrimal} onChange={(_, check) => setFilters({ ...filters, showPrimal: check })} />}
-                label="Primal"
+                label={capitalize(FORM_PRIMAL)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showLegendary} onChange={(_, check) => setFilters({ ...filters, showLegendary: check })} />}
@@ -760,7 +760,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableShadow: check })}
                   />
                 }
-                label="Shadow"
+                label={capitalize(FORM_SHADOW)}
               />
               <FormControlLabel
                 control={
@@ -770,7 +770,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableMega: check })}
                   />
                 }
-                label="Mega"
+                label={capitalize(FORM_MEGA)}
               />
               <FormControlLabel
                 control={
@@ -780,7 +780,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableGmax: check })}
                   />
                 }
-                label="Gmax"
+                label={capitalize(FORM_GMAX)}
               />
               <FormControlLabel
                 control={
@@ -790,7 +790,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enablePrimal: check })}
                   />
                 }
-                label="Primal"
+                label={capitalize(FORM_PRIMAL)}
               />
               <FormControlLabel
                 control={

@@ -208,6 +208,12 @@ export const convertNameRankingToForm = (text: string) => {
 
 export const convertNameRankingToOri = (text: string, form: string, local = false) => {
   const formOri = form;
+  if (text === 'lanturnw') {
+    text = 'lanturn';
+  }
+  if (text === 'unown') {
+    text = 'unown-a';
+  }
   if (text.includes('pyroar') || text.includes('frillish') || text.includes('jellicent') || text.includes('urshifu')) {
     return text.split('_').at(0);
   }
@@ -220,11 +226,13 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
   text = text
     .toLowerCase()
     .replaceAll('_', '-')
+    .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
     .replace('alolan', FORM_ALOLA.toLowerCase())
     .replace('-xs', '')
-    .replace('indeedee-male', 'indeedee')
-    .replace('female', 'f')
-    .replace('male', 'm')
+    .replace('-male', '')
+    .replace(/^meowstic$/, 'meowstic-male')
+    .replace(/^nidoran$/, 'nidoran-male')
+    .replace(/^deoxys$/, 'deoxys-normal')
     .replace('-sea', '')
     .replace('-reine', '')
     .replace('-red-striped', '')
@@ -232,9 +240,9 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
     .replace('-sword', '')
     .replace('-shield', '')
     .replace('-rider', '')
-    .replace('cherrim-sunny', 'cherrim-sunshine')
     .replace('-5th-anniversary', '')
-    .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
+    .replace('-10', '-ten-percent')
+    .replace('-shaymin', '')
     .replace(local ? 'mewtwo-a' : '-armored', local ? 'mewtwo-armor' : '-armor');
   if (local && text === 'mewtwo-armor') {
     return text;
@@ -257,17 +265,15 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
     '-large',
     '-average',
     '-super',
+    '-female',
+    '-male',
+    '-attack',
+    '-speed',
+    `-${FORM_GALARIAN.toLowerCase()}`,
+    `-${FORM_HISUIAN.toLowerCase()}`,
   ];
   if (local) {
-    invalidForm = invalidForm.concat([
-      '-attack',
-      '-speed',
-      `-${FORM_STANDARD.toLowerCase()}`,
-      '-zen',
-      '-confined',
-      '-unbound',
-      '-incarnate',
-    ]);
+    invalidForm = invalidForm.concat([`-${FORM_STANDARD.toLowerCase()}`, '-zen', '-confined', '-unbound', '-incarnate']);
   }
   return formOri.includes('(') && formOri.includes(')') && !invalidForm.includes(form) ? text.replaceAll(form.toLowerCase(), '') : text;
 };

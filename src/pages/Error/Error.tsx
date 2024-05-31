@@ -5,15 +5,13 @@ import './Error.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { SpinnerState } from '../../store/models/state.model';
 import { hideSpinner } from '../../store/actions/spinner.action';
+import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 const Error = () => {
   const dispatch = useDispatch();
   const thisLocation = useLocation();
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-
-  useEffect(() => {
-    document.title = 'Page Not Found';
-  }, []);
+  useChangeTitle('Page Not Found');
 
   useEffect(() => {
     if (spinner.loading) {

@@ -164,3 +164,29 @@ export const findAssetFormShiny = (pokemonAssets: Asset[], id: number, name: str
 export const findStabType = (types: string[], findType: string) => {
   return types.some((type) => type.toLowerCase() === findType.toLowerCase());
 };
+
+export const getPokemonBattleLeagueName = (cp: number) => {
+  switch (cp) {
+    case 500:
+      return 'Little Cup';
+    case 1500:
+      return 'Great league';
+    case 2500:
+      return 'Ultra league';
+    default:
+      return 'Master league';
+  }
+};
+
+export const getPokemonBattleLeagueIcon = (cp: number) => {
+  switch (cp) {
+    case 500:
+      return APIService.getPokeOtherLeague('GBL_littlecup');
+    case 1500:
+      return APIService.getPokeLeague('great_league');
+    case 2500:
+      return APIService.getPokeLeague('ultra_league');
+    default:
+      return APIService.getPokeLeague('master_league');
+  }
+};

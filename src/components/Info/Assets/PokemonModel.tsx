@@ -5,16 +5,16 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Asset } from '../../../core/models/asset.model';
 import { PokemonModelComponent } from './models/pokemon-model.model';
 import { PokemonGender } from '../../../core/models/pokemon.model';
-import { FORM_ARMOR } from '../../../util/Constants';
+import { FormSoundCry } from '../../../core/models/API/form.model';
 
-const PokemonModel = (props: { id: number; name: string; isLoadedForms: boolean }) => {
+const PokemonModel = (props: { id: number; name: string; originSoundCry: FormSoundCry[]; isLoadedForms: boolean }) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -48,7 +48,7 @@ const PokemonModel = (props: { id: number; name: string; isLoadedForms: boolean 
   return (
     <div className="element-top">
       <h4 className="title-evo">
-        <b>{'Assets of ' + splitAndCapitalize(props.name, '-', ' ') + ' in Pokémon Go'}</b>
+        <b>{'Assets of ' + splitAndCapitalize(props.name, '-', ' ') + ' in Pokémon GO'}</b>
         <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon ?? 'Standard')} />
       </h4>
       {!props.isLoadedForms ? (
@@ -101,9 +101,7 @@ const PokemonModel = (props: { id: number; name: string; isLoadedForms: boolean 
                   </div>
                 </div>
               ))}
-              <div className="desc text-black">
-                {splitAndCapitalize((props.id === 150 && assets.form === 'A' ? FORM_ARMOR : assets.form).toLowerCase(), '_', ' ')}
-              </div>
+              <div className="desc text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
             </div>
           ))}
           {pokeAssets.length === 0 && (
@@ -116,11 +114,41 @@ const PokemonModel = (props: { id: number; name: string; isLoadedForms: boolean 
       <h4 className="title-evo">
         <b>{'Sound of ' + splitAndCapitalize(props.name, '_', ' ')}</b>
       </h4>
-      {/* <h6>Pokémon Origin:</h6>
-      <audio className="w-100" controls={true} style={{ height: 30 }}>
-        <source src={APIService.getSoundCryPokemon(props.name)} type="audio/aif" />
-        Your browser does not support the audio element.
-      </audio> */}
+      <h6>Pokémon Origin:</h6>
+      {!props.isLoadedForms ? (
+        <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 65 }}>
+          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#fafafa' }} />
+        </div>
+      ) : (
+        <Fragment>
+          {props.originSoundCry.length === 0 ? (
+            <div className="text-danger">&emsp;Sound in Pokémon unavailable.</div>
+          ) : (
+            <ul style={{ margin: 0 }}>
+              {props.originSoundCry.map((value, index) => (
+                <li key={index} style={{ listStyleType: 'disc' }}>
+                  <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
+                  <ul style={{ margin: 0 }}>
+                    {Object.entries(value.cries).map(([k, v], i) => (
+                      <Fragment key={i}>
+                        {v && (
+                          <li style={{ listStyleType: 'circle' }}>
+                            <h6>Type: {capitalize(k)}</h6>
+                            <audio src={v} className="w-100" controls={true} style={{ height: 30 }}>
+                              <source type="audio/ogg" />
+                              Your browser does not support the audio element.
+                            </audio>
+                          </li>
+                        )}
+                      </Fragment>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Fragment>
+      )}
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 65 }}>
@@ -129,7 +157,7 @@ const PokemonModel = (props: { id: number; name: string; isLoadedForms: boolean 
       ) : (
         <Fragment>
           {!sound.current || sound.current.sound.cry.length === 0 ? (
-            <div className="text-danger">&emsp;Sound in Pokémon Go unavailable.</div>
+            <div className="text-danger">&emsp;Sound in Pokémon GO unavailable.</div>
           ) : (
             <ul style={{ margin: 0 }}>
               {sound.current?.sound.cry.map((value, index) => (

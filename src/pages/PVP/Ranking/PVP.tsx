@@ -8,7 +8,7 @@ import { calculateStatsByTag } from '../../../util/Calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../../services/API.service';
-import { computeBgType, findAssetForm } from '../../../util/Compute';
+import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/Compute';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
-import { FORM_NORMAL, scoreType } from '../../../util/Constants';
+import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
@@ -90,31 +90,17 @@ const RankingPVP = () => {
         const cp = parseInt(params.cp);
         const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))).data;
         if (params.serie === 'all') {
-          document.title = `PVP Ranking - ${
-            cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
-          }`;
+          document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
         } else {
-          document.title = `PVP Ranking - ${
-            params.serie === 'remix'
-              ? cp === 500
-                ? 'Little Cup '
-                : cp === 1500
-                ? 'Great League '
-                : cp === 2500
-                ? 'Ultra League '
-                : 'Master League '
-              : ''
-          }
-                    ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
+          document.title = `PVP Ranking - ${params.serie === 'remix' ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
+            params.serie,
+            '-',
+            ' '
+          )} (${capitalize(params.type)})`;
         }
         const filePVP = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          let pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
-
-          if (!pokemon) {
-            pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
-          }
-
+          const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
           const id = pokemon?.num;
           const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
@@ -170,7 +156,7 @@ const RankingPVP = () => {
             fmove,
             cmovePri,
             cmoveSec,
-            shadow: item.speciesName.includes('(Shadow)'),
+            shadow: item.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
             purified:
               pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') || (cMoveDataSec && pokemon?.purifiedMoves?.includes(cMoveDataSec)),
           };
@@ -332,30 +318,10 @@ const RankingPVP = () => {
               alt="img-league"
               width={64}
               height={64}
-              src={
-                !league.logo
-                  ? cp === 500
-                    ? APIService.getPokeOtherLeague('GBL_littlecup')
-                    : cp === 1500
-                    ? APIService.getPokeLeague('great_league')
-                    : cp === 2500
-                    ? APIService.getPokeLeague('ultra_league')
-                    : APIService.getPokeLeague('master_league')
-                  : APIService.getAssetPokeGo(league.logo)
-              }
+              src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>
-                {league?.name === 'All'
-                  ? cp === 500
-                    ? 'Little Cup'
-                    : cp === 1500
-                    ? 'Great league'
-                    : cp === 2500
-                    ? 'Ultra league'
-                    : 'Master league'
-                  : league?.name}
-              </b>
+              <b>{league?.name === 'All' ? getPokemonBattleLeagueName(cp) : league?.name}</b>
             </h2>
           </div>
         ) : (

@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from '../Input/models/select-move.model';
 import { Combat } from '../../core/models/combat.model';
+import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
 
 const CardMoveSmall = (props: {
   value: SelectMoveModel | Combat | undefined;
@@ -40,8 +41,8 @@ const CardMoveSmall = (props: {
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name?.replaceAll('_PLUS', '+'), '_', ' ')}</span>
               <span className="d-flex">
                 {props.value.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
-                {props.value.shadow && <span className="type-icon-small ic shadow-ic">Shadow</span>}
-                {props.value.purified && <span className="type-icon-small ic purified-ic">Purified</span>}
+                {props.value.shadow && <span className="type-icon-small ic shadow-ic">{capitalize(FORM_SHADOW)}</span>}
+                {props.value.purified && <span className="type-icon-small ic purified-ic">{capitalize(FORM_PURIFIED)}</span>}
                 {props.value.special && <span className="type-icon-small ic special-ic">Special</span>}
               </span>
               {props.show && !props.disable && (

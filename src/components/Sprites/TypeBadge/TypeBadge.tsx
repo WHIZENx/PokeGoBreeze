@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
 import { SelectMoveModel } from '../../Input/models/select-move.model';
+import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
 
 const TypeBadge = (props: {
   move: SelectMoveModel | Combat | null | undefined;
@@ -46,12 +47,12 @@ const TypeBadge = (props: {
               )}
               {props.shadow && (
                 <span className="type-icon-small ic shadow-ic">
-                  <span>Shadow</span>
+                  <span>{capitalize(FORM_SHADOW)}</span>
                 </span>
               )}
               {props.purified && (
                 <span className="type-icon-small ic purified-ic">
-                  <span>Purified</span>
+                  <span>{capitalize(FORM_PURIFIED)}</span>
                 </span>
               )}
               {props.special && (
