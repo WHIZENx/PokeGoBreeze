@@ -133,8 +133,8 @@ const Battle = () => {
     if (poke && pokeObj) {
       const atkPoke = calculateStatsBattle(poke.stats.atk, poke.currentStats.IV.atk, poke.currentStats.level, true);
       const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.currentStats.IV.def, pokeObj.currentStats.level, true);
-      poke.shadow = poke.shadow ?? false;
-      pokeObj.shadow = pokeObj.shadow ?? false;
+      poke.shadow ??= false;
+      pokeObj.shadow ??= false;
       return (
         (atkPoke *
           (move?.pvp_power ?? 0) *
@@ -228,8 +228,7 @@ const Battle = () => {
         if (
           (!player1.disableCMovePri || !player1.disableCMoveSec) &&
           !preChargeSec &&
-          (player1.energy >= Math.abs(player1.cmove?.pvp_energy ?? 1) ||
-            (player1.cmoveSec && player1.energy >= Math.abs(player1.cmoveSec?.pvp_energy ?? 0)))
+          (player1.energy >= Math.abs(player1.cmove?.pvp_energy ?? 0) || player1.energy >= Math.abs(player1.cmoveSec?.pvp_energy ?? 0))
         ) {
           if (player1.energy >= Math.abs(player1.cmove?.pvp_energy ?? 0)) {
             chargeType = 1;
@@ -242,13 +241,13 @@ const Battle = () => {
               move: player1.cmove,
             };
           }
-          if (player1.cmoveSec && player1.energy >= Math.abs(player1.cmoveSec.pvp_energy)) {
+          if (player1.energy >= Math.abs(player1.cmoveSec?.pvp_energy ?? 0)) {
             chargeType = 2;
-            player1.energy += player1.cmoveSec.pvp_energy;
+            player1.energy += player1.cmoveSec?.pvp_energy ?? 0;
             timelinePri[timer] = {
               ...timelinePri[timer],
               type: 'P',
-              color: player1.cmoveSec.type?.toLowerCase() ?? null,
+              color: player1.cmoveSec?.type?.toLowerCase() ?? null,
               size: 12,
               move: player2.cmoveSec,
             };
@@ -263,8 +262,7 @@ const Battle = () => {
         if (
           (!player2.disableCMovePri || !player2.disableCMoveSec) &&
           !preChargePri &&
-          (player2.energy >= Math.abs(player2.cmove?.pvp_energy ?? 0) ||
-            (player2.cmoveSec && player2.energy >= Math.abs(player2.cmoveSec.pvp_energy)))
+          (player2.energy >= Math.abs(player2.cmove?.pvp_energy ?? 0) || player2.energy >= Math.abs(player2.cmoveSec?.pvp_energy ?? 0))
         ) {
           if (player2.energy >= Math.abs(player2.cmove?.pvp_energy ?? 0)) {
             chargeType = 1;
@@ -277,13 +275,13 @@ const Battle = () => {
               move: player2.cmove,
             };
           }
-          if (player2.cmoveSec && player2.energy >= Math.abs(player2.cmoveSec.pvp_energy)) {
+          if (player2.energy >= Math.abs(player2.cmoveSec?.pvp_energy ?? 0)) {
             chargeType = 2;
-            player2.energy += player2.cmoveSec.pvp_energy;
+            player2.energy += player2.cmoveSec?.pvp_energy ?? 0;
             timelineSec[timer] = {
               ...timelineSec[timer],
               type: 'P',
-              color: player2.cmoveSec.type?.toLowerCase() ?? null,
+              color: player2.cmoveSec?.type?.toLowerCase() ?? null,
               size: 12,
               move: player2.cmoveSec,
             };
@@ -459,7 +457,7 @@ const Battle = () => {
             const arrBufAtk: Buff[] = [],
               arrBufTarget: Buff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
-            if (moveType?.buffs && moveType?.buffs.length > 0 && randInt > 0 && randInt <= (moveType?.buffs?.at(0)?.buffChance ?? 0)) {
+            if ((moveType?.buffs?.length ?? 0) > 0 && randInt > 0 && randInt <= (moveType?.buffs?.at(0)?.buffChance ?? 0)) {
               moveType?.buffs.forEach((value) => {
                 if (value.target === 'target') {
                   player2 = {
@@ -513,7 +511,7 @@ const Battle = () => {
             const arrBufAtk: Buff[] = [],
               arrBufTarget: Buff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
-            if (moveType?.buffs && moveType?.buffs.length > 0 && randInt > 0 && randInt <= (moveType?.buffs?.at(0)?.buffChance ?? 0)) {
+            if ((moveType?.buffs?.length ?? 0) > 0 && randInt > 0 && randInt <= (moveType?.buffs?.at(0)?.buffChance ?? 0)) {
               moveType?.buffs.forEach((value) => {
                 if (value.target === 'target') {
                   player1 = {
@@ -653,20 +651,16 @@ const Battle = () => {
           file
             .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
             .map((item) => {
-              const name = convertNameRankingToOri(item.speciesId.replace('_shadow', ''), item.speciesName);
-              let pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
-
+              const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+              const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
               if (!pokemon) {
-                pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === item.speciesId.replace('_shadow', ''));
-                if (!pokemon) {
-                  return null;
-                }
+                return;
               }
 
-              const id = pokemon.num;
-              const form = findAssetForm(dataStore?.assets ?? [], pokemon.num, pokemon?.forme ?? FORM_NORMAL);
+              const id = pokemon?.num;
+              const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
-              const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+              const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
               return {
                 ...item,
@@ -772,7 +766,7 @@ const Battle = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
     if (elem && x <= (timelineNormal.current?.clientWidth ?? 0) - 2) {
-      elem.style.transform = 'translate(' + x + 'px, -50%)';
+      elem.style.transform = `translate(${x} px, -50%)`;
     }
     if (arrBound.current.length === 0 && pokemonCurr.timeline) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
@@ -797,7 +791,7 @@ const Battle = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
     if (elem && x <= (timelineFit.current?.clientWidth ?? 0)) {
-      elem.style.transform = 'translate(' + x + 'px, -50%)';
+      elem.style.transform = `translate(${x} px, -50%)`;
     }
     if ((xFit.current !== e.currentTarget.clientWidth || arrStore.current.length === 0) && pokemonCurr.timeline) {
       xFit.current = e.currentTarget.clientWidth;
@@ -859,12 +853,12 @@ const Battle = () => {
         );
         if (width >= (timelineNormal.current?.clientWidth ?? 0) - 2) {
           if (elem) {
-            elem.style.transform = 'translate(' + ((timelineNormal.current?.clientWidth ?? 0) - 2) + 'px, -50%)';
+            elem.style.transform = `translate(${(timelineNormal.current?.clientWidth ?? 0) - 2} px, -50%)`;
           }
           return stopTimeLine();
         }
         if (elem) {
-          elem.style.transform = 'translate(' + width + 'px, -50%)';
+          elem.style.transform = `translate(${width} px, -50%)`;
           overlappingPos(arrBound.current, width + (xNormal.current ?? 0), true);
         }
         if (
@@ -882,14 +876,14 @@ const Battle = () => {
         const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
         const width = Math.min(timelineFit.current?.clientWidth ?? 0, xCurrent + durationFactor * (timelineFit.current?.clientWidth ?? 0));
         if (elem) {
-          elem.style.transform = 'translate(' + width + 'px, -50%)';
+          elem.style.transform = `translate(${width} px, -50%)`;
           overlappingPos(arrStore.current, elem.getBoundingClientRect().left, true);
         }
         if (width < (timelineFit.current?.clientWidth ?? 0)) {
           timelinePlay.current = requestAnimationFrame(animate);
         } else {
           if (elem) {
-            elem.style.transform = 'translate(' + timelineFit.current?.clientWidth + 'px, -50%)';
+            elem.style.transform = `translate(${timelineFit.current?.clientWidth} px, -50%)`;
           }
           return stopTimeLine();
         }
@@ -979,7 +973,7 @@ const Battle = () => {
         transform = (xCurrent / prevWidth) * (timelineNormal.current?.clientWidth ?? 0) - 2;
         elem = document.getElementById('play-line');
         if (elem) {
-          elem.style.transform = 'translate(' + Math.max(0, transform) + 'px, -50%)';
+          elem.style.transform = `translate(${Math.max(0, transform)} px, -50%)`;
         }
         timelineNormalContainer.current?.scrollTo({
           left: Math.min(transform, transform - timelineNormalContainer.current?.clientWidth / 2),
@@ -993,7 +987,7 @@ const Battle = () => {
         transform = (xCurrent / prevWidth) * (timelineFit.current?.clientWidth ?? 0);
         elem = document.getElementById('play-line');
         if (elem) {
-          elem.style.transform = 'translate(' + transform + 'px, -50%)';
+          elem.style.transform = `translate(${transform} px, -50%)`;
         }
       }
     }, 100);

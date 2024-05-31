@@ -55,11 +55,9 @@ const Form = (props: {
   setProgress: React.Dispatch<
     React.SetStateAction<{
       isLoadedForms: boolean;
-      isSetEvo: boolean;
     }>
   >;
   isLoadedForms: boolean;
-  isSetEvo: boolean;
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
 
@@ -280,7 +278,6 @@ const Form = (props: {
               shadow={props.form?.form.is_shadow}
               setProgress={props.setProgress}
               isLoadedForms={props.isLoadedForms}
-              isSetEvo={props.isSetEvo}
             />
           </div>
           {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
@@ -306,7 +303,6 @@ const Form = (props: {
           shadow={props.form?.form.is_shadow}
           setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
-          isSetEvo={props.isSetEvo}
         />
       )}
       {(props.pokemonDetail?.formChange?.length ?? 0) > 0 && (

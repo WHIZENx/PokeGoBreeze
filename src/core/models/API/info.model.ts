@@ -1,6 +1,7 @@
 export interface PokemonInfo {
   abilities: Ability[];
   base_experience: number;
+  cries: { [x: string]: string };
   forms: Path[];
   game_indices: Indices[];
   height: number;

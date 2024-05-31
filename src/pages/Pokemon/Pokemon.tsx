@@ -7,7 +7,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
 
-import { FormModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
+import { FormModel, FormSoundCry, FormSoundCryModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { Species } from '../../core/models/API/species.model';
 import { OptionsPokemon, PokemonGenderRatio, PokemonDataModel } from '../../core/models/pokemon.model';
@@ -83,6 +83,7 @@ const Pokemon = (props: {
   const [WH, setWH] = useState({ weight: -1, height: -1 });
   const [formName, setFormName]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
   const [originForm, setOriginForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
+  const [originSoundCry, setOriginSoundCry] = useState([] as FormSoundCry[]);
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
   const [currentForm, setCurrentForm]: [
@@ -99,9 +100,9 @@ const Pokemon = (props: {
     thirdMove: {},
   });
 
-  const [progress, setProgress] = useState({ isLoadedForms: false, isSetEvo: false });
+  const [progress, setProgress] = useState({ isLoadedForms: false });
 
-  const { isLoadedForms, isSetEvo } = progress;
+  const { isLoadedForms } = progress;
 
   const axiosSource = useRef(APIService.getCancelToken());
   const { enqueueSnackbar } = useSnackbar();
@@ -110,6 +111,7 @@ const Pokemon = (props: {
     async (data: Species) => {
       const dataPokeList: PokemonInfo[] = [];
       const dataFormList: PokemonForm[][] = [];
+      const soundCries: FormSoundCry[] = [];
       const cancelToken = axiosSource.current.token;
       await Promise.all(
         data?.varieties.map(async (value) => {
@@ -117,6 +119,7 @@ const Pokemon = (props: {
           const pokeForm = await Promise.all(
             pokeInfo.forms.map(async (item) => (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data)
           );
+          soundCries.push(new FormSoundCryModel(pokeInfo));
           dataPokeList.push({
             ...pokeInfo,
             is_include_shadow: checkPokemonIncludeShadowForm(pokemonData, pokeInfo.name),
@@ -165,6 +168,7 @@ const Pokemon = (props: {
         generatePokemonGoShadowForms(dataPokeList, formListResult, data.id, data.name, indexPokemonGO);
       }
 
+      setOriginSoundCry(soundCries);
       setPokeData(dataPokeList);
       setFormList(formListResult);
 
@@ -201,7 +205,7 @@ const Pokemon = (props: {
       setCurrentForm(currentForm);
       setData(data);
 
-      setProgress((p) => ({ ...p, isLoadedForms: true, isSetEvo: false }));
+      setProgress((p) => ({ ...p, isLoadedForms: true }));
     },
     [pokemonData, searchParams]
   );
@@ -570,11 +574,11 @@ const Pokemon = (props: {
               region={region}
               setProgress={setProgress}
               isLoadedForms={isLoadedForms}
-              isSetEvo={isSetEvo}
             />
             <PokemonModel
               id={dataStorePokemon?.current?.id ?? 0}
               name={dataStorePokemon?.current?.name ?? ''}
+              originSoundCry={originSoundCry}
               isLoadedForms={isLoadedForms}
             />
           </div>
