@@ -5,6 +5,7 @@ import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { StoreState } from '../../store/models/state.model';
 import { Combat } from '../../core/models/combat.model';
 import { SelectMoveModel } from '../Input/models/select-move.model';
+import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
 
 const CardMove = (props: { value: SelectMoveModel | Combat | undefined }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
@@ -34,8 +35,8 @@ const CardMove = (props: { value: SelectMoveModel | Combat | undefined }) => {
           </span>
           <span className="d-flex">
             {data?.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
-            {data?.shadow && <span className="type-icon-small ic shadow-ic">Shadow</span>}
-            {data?.purified && <span className="type-icon-small ic purified-ic">Purified</span>}
+            {data?.shadow && <span className="type-icon-small ic shadow-ic">{capitalize(FORM_SHADOW)}</span>}
+            {data?.purified && <span className="type-icon-small ic purified-ic">{capitalize(FORM_PURIFIED)}</span>}
             {data?.special && <span className="type-icon-small ic special-ic">Special</span>}
           </span>
         </div>

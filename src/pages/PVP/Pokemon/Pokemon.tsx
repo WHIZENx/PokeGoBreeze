@@ -16,7 +16,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { FORM_NORMAL, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
+import { FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
@@ -146,7 +146,7 @@ const PokemonPVP = () => {
         cmovePri,
         cmoveSec,
         bestStats,
-        shadow: data.speciesName.includes('(Shadow)') ?? false,
+        shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`) ?? false,
         purified:
           (pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') ||
             (cMoveDataSec !== null && cMoveDataSec !== undefined && pokemon?.purifiedMoves?.includes(cMoveDataSec))) ??

@@ -13,7 +13,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
-import { FORM_GMAX, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
 import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
@@ -171,12 +171,12 @@ const TableMove = (props: {
               )}
               {value.cmove.shadow && (
                 <span className="type-icon-small ic shadow-ic">
-                  <span>Shadow</span>
+                  <span>{capitalize(FORM_SHADOW)}</span>
                 </span>
               )}
               {value.cmove.purified && (
                 <span className="type-icon-small ic purified-ic">
-                  <span>Purified</span>
+                  <span>{capitalize(FORM_PURIFIED)}</span>
                 </span>
               )}
               {value.cmove.special && (
@@ -213,12 +213,12 @@ const TableMove = (props: {
                   )}
                   {value?.shadow && (
                     <span className="type-icon-small ic shadow-ic">
-                      <span>Shadow</span>
+                      <span>{capitalize(FORM_SHADOW)}</span>
                     </span>
                   )}
                   {value?.purified && (
                     <span className="type-icon-small ic purified-ic">
-                      <span>Purified</span>
+                      <span>{capitalize(FORM_PURIFIED)}</span>
                     </span>
                   )}
                   {value?.special && (

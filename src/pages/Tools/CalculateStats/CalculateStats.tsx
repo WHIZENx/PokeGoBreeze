@@ -1,6 +1,6 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 
-import { LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
+import { capitalize, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/Utils';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/Calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -21,8 +21,10 @@ import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import { BattleLeagueCalculate, BetweenLevelCalculate, StatsCalculate } from '../../../util/models/calculate.model';
 import FreeSoloInput from '../../../components/Input/FreeSoloInput';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const Calculate = () => {
+  useChangeTitle('Calculate CP&IV - Tool');
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? undefined);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
@@ -115,10 +117,6 @@ const Calculate = () => {
       calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, null, typePoke)
     );
   }, [enqueueSnackbar, globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
-
-  useEffect(() => {
-    document.title = 'Calculate CP&IV - Tool';
-  }, []);
 
   const onCalculateStatsPoke = useCallback(
     (e: { preventDefault: () => void }) => {
@@ -244,7 +242,7 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> Shadow
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(FORM_SHADOW)}
                   </span>
                 }
               />
@@ -253,7 +251,7 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> Purified
+                    <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> {capitalize(FORM_PURIFIED)}
                   </span>
                 }
               />

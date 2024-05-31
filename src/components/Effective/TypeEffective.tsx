@@ -29,7 +29,7 @@ const TypeEffective = (props: { typeEffective: TypeEffChart | undefined }) => {
           <b>Weakness</b>
         </span>
       </h6>
-      {props.typeEffective.very_weak?.length !== 0 || props.typeEffective.weak?.length !== 0 ? (
+      {(props.typeEffective.very_weak ?? []).length !== 0 || (props.typeEffective.weak ?? []).length !== 0 ? (
         <Fragment>
           <TypeInfo text={'2.56x damage from'} arr={props.typeEffective.very_weak ?? []} style={{ marginLeft: 15 }} />
           <TypeInfo text={'1.6x damage from'} arr={props.typeEffective.weak ?? []} style={{ marginLeft: 15 }} />
@@ -42,9 +42,9 @@ const TypeEffective = (props: { typeEffective: TypeEffChart | undefined }) => {
           <b>Resistance</b>
         </span>
       </h6>
-      {props.typeEffective.super_resist?.length !== 0 ||
-      props.typeEffective.very_resist?.length !== 0 ||
-      props.typeEffective.resist?.length !== 0 ? (
+      {(props.typeEffective.super_resist ?? []).length !== 0 ||
+      (props.typeEffective.very_resist ?? []).length !== 0 ||
+      (props.typeEffective.resist ?? []).length !== 0 ? (
         <Fragment>
           <TypeInfo text={'0.244x damage from'} arr={props.typeEffective.super_resist ?? []} style={{ marginLeft: 15 }} />
           <TypeInfo text={'0.391x damage from'} arr={props.typeEffective.very_resist ?? []} style={{ marginLeft: 15 }} />
@@ -58,7 +58,11 @@ const TypeEffective = (props: { typeEffective: TypeEffChart | undefined }) => {
           <b>Neutral</b>
         </span>
       </h6>
-      <TypeInfo text={'1x damage from'} arr={props.typeEffective.neutral ?? []} style={{ marginLeft: 15 }} />
+      {(props.typeEffective.neutral ?? []).length !== 0 || (props.typeEffective.neutral ?? []).length !== 0 ? (
+        <TypeInfo text={'1x damage from'} arr={props.typeEffective.neutral ?? []} style={{ marginLeft: 15 }} />
+      ) : (
+        noneSprit()
+      )}
     </div>
   );
 };

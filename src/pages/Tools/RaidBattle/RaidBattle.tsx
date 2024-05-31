@@ -4,13 +4,14 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { checkPokemonGO, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, checkPokemonGO, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PRIMAL,
+  FORM_SHADOW,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -55,6 +56,7 @@ import { PokemonDataModel, PokemonModel, PokemonMoveData, PokemonRaidModel } fro
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { TypeMove } from '../../../enums/move.enum';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 interface TrainerBattle {
   pokemons: PokemonRaidModel[];
@@ -89,6 +91,7 @@ interface RaidSetting {
 }
 
 const RaidBattle = () => {
+  useChangeTitle('Raid Battle - Tools');
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -721,10 +724,6 @@ const RaidBattle = () => {
   };
 
   useEffect(() => {
-    document.title = 'Raid Battle - Tools';
-  }, []);
-
-  useEffect(() => {
     if (form && !initialize.current) {
       findMove(id, form.form.name);
       initialize.current = true;
@@ -862,7 +861,7 @@ const RaidBattle = () => {
                 }
               />
             }
-            label="Shadow"
+            label={capitalize(FORM_SHADOW)}
           />
           <FormControlLabel
             control={
@@ -984,7 +983,9 @@ const RaidBattle = () => {
                   alt="pokemon-go-icon"
                   src={APIService.getPokeShadow()}
                 />
-                <span style={{ color: showSettingPokemon.pokemon?.stats?.isShadow ? 'black' : 'lightgray' }}>Shadow</span>
+                <span style={{ color: showSettingPokemon.pokemon?.stats?.isShadow ? 'black' : 'lightgray' }}>
+                  {capitalize(FORM_SHADOW)}
+                </span>
               </span>
             }
           />

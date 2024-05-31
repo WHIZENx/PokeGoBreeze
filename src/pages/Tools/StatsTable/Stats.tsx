@@ -13,6 +13,7 @@ import { StatsProdCalculate } from '../../../util/models/calculate.model';
 import FreeSoloInput from '../../../components/Input/FreeSoloInput';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 export const columnsStats: TableColumn<StatsProdCalculate>[] = [
   {
@@ -58,6 +59,7 @@ export const columnsStats: TableColumn<StatsProdCalculate>[] = [
 ];
 
 const StatsTable = () => {
+  useChangeTitle('Stats Battle League - Tool');
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
 
@@ -77,10 +79,6 @@ const StatsTable = () => {
   const [statsBattle, setStatsBattle]: [StatsProdCalculate[], React.Dispatch<React.SetStateAction<StatsProdCalculate[]>>] = useState(
     [] as StatsProdCalculate[]
   );
-
-  useEffect(() => {
-    document.title = 'Stats Battle League - Tool';
-  }, []);
 
   useEffect(() => {
     const battleTable = calStatsProd(statATK, statDEF, statSTA, 0, battleLeague);

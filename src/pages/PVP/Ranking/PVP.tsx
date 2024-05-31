@@ -92,8 +92,11 @@ const RankingPVP = () => {
         if (params.serie === 'all') {
           document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
         } else {
-          document.title = `PVP Ranking - ${params.serie === 'remix' ? getPokemonBattleLeagueName(cp) : ''}
-                    ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
+          document.title = `PVP Ranking - ${params.serie === 'remix' ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
+            params.serie,
+            '-',
+            ' '
+          )} (${capitalize(params.type)})`;
         }
         const filePVP = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);

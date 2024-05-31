@@ -12,8 +12,10 @@ import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
 import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
 import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const Search = () => {
+  useChangeTitle('Pokémon - Search');
   const theme = useTheme();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
@@ -43,10 +45,6 @@ const Search = () => {
       setPokemonList(result);
     }
   }, [pokemonName]);
-
-  useEffect(() => {
-    document.title = 'Pokémon - Search';
-  }, []);
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {

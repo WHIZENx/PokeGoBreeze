@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
@@ -189,7 +189,7 @@ const SelectPoke = (props: {
           <span className="pokemon-select-right">
             {pokemon?.speciesId.includes('_shadow') && (
               <span style={{ marginRight: 5 }} className="type-icon-small ic shadow-ic">
-                Shadow
+                {capitalize(FORM_SHADOW)}
               </span>
             )}
             {score && (

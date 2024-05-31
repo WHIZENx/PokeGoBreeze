@@ -280,12 +280,12 @@ const Form = (props: {
               isLoadedForms={props.isLoadedForms}
             />
           </div>
-          {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
+          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.form_name?.toUpperCase().includes(FORM_MEGA))) && (
             <div className="col-xl" style={{ padding: 0 }}>
               <Mega formList={props.formList ?? []} id={props.defaultId} />
             </div>
           )}
-          {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)) && (
+          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.form_name?.toUpperCase().includes(FORM_PRIMAL))) && (
             <div className="col-xl" style={{ padding: 0 }}>
               <Primal formList={props.formList ?? []} id={props.defaultId} />
             </div>

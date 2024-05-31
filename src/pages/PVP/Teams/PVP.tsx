@@ -123,8 +123,11 @@ const TeamPVP = () => {
         if (params.serie === 'all') {
           document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
         } else {
-          document.title = `PVP Teams - ${params.serie === 'remix' ? getPokemonBattleLeagueName(cp) : ''}
-                    ${splitAndCapitalize(params.serie, '-', ' ')}`;
+          document.title = `PVP Teams - ${params.serie === 'remix' ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
+            params.serie,
+            '-',
+            ' '
+          )}`;
         }
 
         const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);

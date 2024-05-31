@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { SpinnerState, StoreState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/Compute';
+import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 // tslint:disable-next-line:class-name
 interface OptionsHome {
@@ -18,6 +19,7 @@ interface OptionsHome {
 }
 
 const PVPHome = () => {
+  useChangeTitle('PVP - Simulator');
   const dispatch = useDispatch();
   const pvp = useSelector((state: StoreState) => state.store?.data?.pvp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
@@ -33,10 +35,6 @@ const PVPHome = () => {
   const [options, setOptions]: [OptionsHome, React.Dispatch<React.SetStateAction<OptionsHome>>] = useState({});
 
   const { rank, team } = options;
-
-  useEffect(() => {
-    document.title = 'PVP - Simulator';
-  }, []);
 
   useEffect(() => {
     if (!pvp) {

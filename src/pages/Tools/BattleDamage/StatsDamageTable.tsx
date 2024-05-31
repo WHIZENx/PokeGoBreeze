@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { LevelSlider, TypeRadioGroup } from '../../../util/Utils';
+import { LevelSlider, TypeRadioGroup, capitalize } from '../../../util/Utils';
 import { calculateStatsBattle } from '../../../util/Calculate';
 
 import APIService from '../../../services/API.service';
@@ -114,7 +114,7 @@ const StatsTable = (props: {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> Shadow
+                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(FORM_SHADOW)}
                 </span>
               }
             />

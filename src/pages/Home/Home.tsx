@@ -36,6 +36,7 @@ import {
 } from '@mui/material';
 import { StoreState, StatsState } from '../../store/models/state.model';
 import { PokemonHomeModel } from '../../core/models/pokemon-home.model';
+import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 const VersionProps = {
   PaperProps: {
@@ -46,6 +47,7 @@ const VersionProps = {
 };
 
 const Home = () => {
+  useChangeTitle('Home');
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -117,10 +119,6 @@ const Home = () => {
       );
     }
   }, [data?.assets, data?.pokemon]);
-
-  useEffect(() => {
-    document.title = 'Home';
-  }, []);
 
   useEffect(() => {
     setLoading(true);
