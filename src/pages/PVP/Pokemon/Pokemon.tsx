@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
-import { computeBgType, findAssetForm } from '../../../util/Compute';
+import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/Compute';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import Error from '../../Error/Error';
@@ -16,7 +16,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { FORM_NORMAL, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
+import { FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
@@ -70,9 +70,7 @@ const PokemonPVP = () => {
       const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
       const id = pokemon?.num;
       const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
-      document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${
-        cp === 500 ? 'Little Cup' : cp === 1500 ? 'Great League' : cp === 2500 ? 'Ultra League' : 'Master League'
-      } (${capitalize(params.type)})`;
+      document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(params.type)})`;
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -148,7 +146,7 @@ const PokemonPVP = () => {
         cmovePri,
         cmoveSec,
         bestStats,
-        shadow: data.speciesName.includes('(Shadow)') ?? false,
+        shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`) ?? false,
         purified:
           (pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') ||
             (cMoveDataSec !== null && cMoveDataSec !== undefined && pokemon?.purifiedMoves?.includes(cMoveDataSec))) ??
@@ -195,30 +193,10 @@ const PokemonPVP = () => {
               alt="img-league"
               width={64}
               height={64}
-              src={
-                !league.logo
-                  ? cp === 500
-                    ? APIService.getPokeOtherLeague('GBL_littlecup')
-                    : cp === 1500
-                    ? APIService.getPokeLeague('great_league')
-                    : cp === 2500
-                    ? APIService.getPokeLeague('ultra_league')
-                    : APIService.getPokeLeague('master_league')
-                  : APIService.getAssetPokeGo(league.logo)
-              }
+              src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>
-                {league.name === 'All'
-                  ? cp === 500
-                    ? 'Little Cup'
-                    : cp === 1500
-                    ? 'Great league'
-                    : cp === 2500
-                    ? 'Ultra league'
-                    : 'Master league'
-                  : league.name}
-              </b>
+              <b>{league.name === 'All' ? getPokemonBattleLeagueName(cp) : league.name}</b>
             </h2>
           </div>
         )}

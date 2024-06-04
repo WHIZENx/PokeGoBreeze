@@ -9,6 +9,8 @@ import { hideSpinner } from '../../store/actions/spinner.action';
 import { Link } from 'react-router-dom';
 import { SpinnerState, StoreState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/Compute';
+import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 // tslint:disable-next-line:class-name
 interface OptionsHome {
@@ -17,6 +19,7 @@ interface OptionsHome {
 }
 
 const PVPHome = () => {
+  useChangeTitle('PVP - Simulator');
   const dispatch = useDispatch();
   const pvp = useSelector((state: StoreState) => state.store?.data?.pvp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
@@ -32,10 +35,6 @@ const PVPHome = () => {
   const [options, setOptions]: [OptionsHome, React.Dispatch<React.SetStateAction<OptionsHome>>] = useState({});
 
   const { rank, team } = options;
-
-  useEffect(() => {
-    document.title = 'PVP - Simulator';
-  }, []);
 
   useEffect(() => {
     if (!pvp) {
@@ -63,30 +62,14 @@ const PVPHome = () => {
       logo.includes('ultra_league') ||
       logo.includes('master_league')
     ) {
-      if (cp === 500) {
-        return APIService.getPokeOtherLeague('GBL_littlecup');
-      } else if (cp === 1500) {
-        return APIService.getPokeLeague('great_league');
-      } else if (cp === 2500) {
-        return APIService.getPokeLeague('ultra_league');
-      } else {
-        return APIService.getPokeLeague('master_league');
-      }
+      return getPokemonBattleLeagueIcon(cp);
     }
     return APIService.getAssetPokeGo(logo);
   };
 
   const renderLeagueName = (name: string, cp: number) => {
     if (name === 'All') {
-      if (cp === 500) {
-        return 'Little Cup';
-      } else if (cp === 1500) {
-        return 'Great League';
-      } else if (cp === 2500) {
-        return 'Ultra League';
-      } else {
-        return 'Master League';
-      }
+      return getPokemonBattleLeagueName(cp);
     }
     return name;
   };
@@ -202,22 +185,7 @@ const PVPHome = () => {
         {leaguesTeamBattle.map((value, index) => (
           <Link key={index} to={`/pvp/battle/${value.cp}`}>
             <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-              <img
-                alt="img-league"
-                width={128}
-                height={128}
-                src={
-                  !value.logo
-                    ? value.cp === 500
-                      ? APIService.getPokeOtherLeague('GBL_littlecup')
-                      : value.cp === 1500
-                      ? APIService.getPokeLeague('great_league')
-                      : value.cp === 2500
-                      ? APIService.getPokeLeague('ultra_league')
-                      : APIService.getPokeLeague('master_league')
-                    : value.logo
-                }
-              />
+              <img alt="img-league" width={128} height={128} src={!value.logo ? getPokemonBattleLeagueIcon(value.cp) : value.logo} />
               <div>
                 <b>{value.name}</b>
               </div>

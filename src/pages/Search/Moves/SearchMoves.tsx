@@ -9,6 +9,7 @@ import { FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '
 import { TypeMove } from '../../../enums/move.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat } from '../../../core/models/combat.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const nameSort = (rowA: Combat, rowB: Combat) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
@@ -59,6 +60,7 @@ const columns: any = [
 ];
 
 const Search = () => {
+  useChangeTitle('Moves - Search');
   const theme = useTheme();
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
   const types = useSelector((state: StoreState) => state.store.data?.typeEff);
@@ -74,10 +76,6 @@ const Search = () => {
 
   const [resultFMove, setResultFMove]: [Combat[], React.Dispatch<React.SetStateAction<Combat[]>>] = useState([] as Combat[]);
   const [resultCMove, setResultCMove]: [Combat[], React.Dispatch<React.SetStateAction<Combat[]>>] = useState([] as Combat[]);
-
-  useEffect(() => {
-    document.title = 'Moves - Search';
-  }, []);
 
   useEffect(() => {
     if (combat.length > 0) {

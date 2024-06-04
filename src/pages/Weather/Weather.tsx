@@ -1,34 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import Affect from './Affect';
 import Effect from './Effect';
 
 import './Weather.scss';
-import { useSelector, useDispatch } from 'react-redux';
-import { hideSpinner, showSpinnerWithMsg } from '../../store/actions/spinner.action';
-import { StoreState, SpinnerState } from '../../store/models/state.model';
-import { SYNC_MSG } from '../../util/Constants';
-import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { TypeEff } from '../../core/models/type-eff.model';
+import { useSelector } from 'react-redux';
+import { StoreState } from '../../store/models/state.model';
+import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 const Weather = () => {
-  const dispatch = useDispatch();
+  useChangeTitle('Weather Boosts');
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
   const weatherBoosts = useSelector((state: StoreState) => state.store.data?.weatherBoost);
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
-
-  useEffect(() => {
-    if (Object.keys(typeEffective ?? {}).length > 0 && Object.keys(weatherBoosts ?? {}).length > 0 && spinner.loading) {
-      dispatch(hideSpinner());
-    }
-  }, [typeEffective, weatherBoosts]);
-
-  useEffect(() => {
-    if (Object.keys(typeEffective ?? {}).length === 0 && Object.keys(weatherBoosts ?? {}).length === 0) {
-      dispatch(showSpinnerWithMsg(SYNC_MSG));
-    }
-    document.title = 'Weather Boosts';
-  }, []);
 
   return (
     <div className="container element-top">
@@ -37,7 +20,7 @@ const Weather = () => {
       </div>
       <hr style={{ marginTop: 15, marginBottom: 15 }} />
       <div className="container w-75">
-        <Effect weathers={weatherBoosts as WeatherBoost} types={typeEffective as TypeEff} />
+        <Effect weathers={weatherBoosts} types={typeEffective} />
       </div>
     </div>
   );

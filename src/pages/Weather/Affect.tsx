@@ -13,11 +13,11 @@ const Affect = (prop: { weathers: WeatherBoost | any }) => {
   const [weatherEffective, setWeatherEffective] = useState([]);
 
   const getWeatherEffective = useCallback(() => {
-    setWeatherEffective(Object.values(prop.weathers[currentWeather] ?? {}));
+    setWeatherEffective(Object.values((prop.weathers ?? {})[currentWeather] ?? {}));
   }, [currentWeather, prop.weathers]);
 
   useEffect(() => {
-    const results = Object.keys(prop.weathers).filter((item) => item !== currentWeather);
+    const results = Object.keys(prop.weathers ?? {}).filter((item) => item !== currentWeather);
     setWeathers(results);
     getWeatherEffective();
   }, [currentWeather, getWeatherEffective, prop.weathers]);

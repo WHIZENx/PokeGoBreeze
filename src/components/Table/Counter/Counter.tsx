@@ -10,7 +10,7 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { FORM_MEGA, FORM_PRIMAL, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { CounterModel } from './models/counter.model';
 
 const customStyles: TableStyles = {
@@ -161,12 +161,12 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
             )}
             {row.cmove.shadow && (
               <span className="type-icon-small ic shadow-ic">
-                <span>Shadow</span>
+                <span>{capitalize(FORM_SHADOW)}</span>
               </span>
             )}
             {row.cmove.purified && (
               <span className="type-icon-small ic purified-ic">
-                <span>Purified</span>
+                <span>{capitalize(FORM_PURIFIED)}</span>
               </span>
             )}
             {row.cmove.special && (

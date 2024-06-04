@@ -25,6 +25,7 @@ import { TrainerFriendship } from '../../../core/models/options.model';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { Combat } from '../../../core/models/combat.model';
 import { PokemonDmgOption } from '../../../core/models/damage.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const labels: any = {
   0: {
@@ -46,6 +47,7 @@ const labels: any = {
 };
 
 const Damage = () => {
+  useChangeTitle('Damage Simulator - Battle Simulator');
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
   const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
@@ -92,10 +94,6 @@ const Damage = () => {
   });
 
   const { enqueueSnackbar } = useSnackbar();
-
-  useEffect(() => {
-    document.title = 'Damage Simulator - Battle Simulator';
-  }, []);
 
   useEffect(() => {
     if (statATK !== 0) {

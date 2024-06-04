@@ -55,11 +55,9 @@ const Form = (props: {
   setProgress: React.Dispatch<
     React.SetStateAction<{
       isLoadedForms: boolean;
-      isSetEvo: boolean;
     }>
   >;
   isLoadedForms: boolean;
-  isSetEvo: boolean;
 }) => {
   const stats = useSelector((state: StatsState) => state.stats);
 
@@ -280,15 +278,14 @@ const Form = (props: {
               shadow={props.form?.form.is_shadow}
               setProgress={props.setProgress}
               isLoadedForms={props.isLoadedForms}
-              isSetEvo={props.isSetEvo}
             />
           </div>
-          {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)) && (
+          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.form_name?.toUpperCase().includes(FORM_MEGA))) && (
             <div className="col-xl" style={{ padding: 0 }}>
               <Mega formList={props.formList ?? []} id={props.defaultId} />
             </div>
           )}
-          {props.formList?.some((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_PRIMAL)) && (
+          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.form_name?.toUpperCase().includes(FORM_PRIMAL))) && (
             <div className="col-xl" style={{ padding: 0 }}>
               <Primal formList={props.formList ?? []} id={props.defaultId} />
             </div>
@@ -306,7 +303,6 @@ const Form = (props: {
           shadow={props.form?.form.is_shadow}
           setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
-          isSetEvo={props.isSetEvo}
         />
       )}
       {(props.pokemonDetail?.formChange?.length ?? 0) > 0 && (

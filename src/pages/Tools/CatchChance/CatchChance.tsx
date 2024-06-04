@@ -10,6 +10,7 @@ import {
   BRONZE_INC_CHANCE,
   CURVE_INC_CHANCE,
   EXCELLENT_THROW_INC_CHANCE,
+  FORM_SHADOW,
   GOLD_INC_CHANCE,
   GOLD_RAZZ_BERRY_INC_CHANCE,
   GREAT_BALL_INC_CHANCE,
@@ -25,7 +26,7 @@ import {
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/Constants';
-import { convertPokemonAPIDataName, LevelSlider, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize } from '../../../util/Utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
@@ -519,7 +520,7 @@ const CatchChance = () => {
                 }
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> Shadow
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(FORM_SHADOW)}
                   </span>
                 }
               />

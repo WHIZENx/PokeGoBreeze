@@ -15,6 +15,7 @@ import { StatsState, StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const columnPokemon: any = [
   {
@@ -109,6 +110,7 @@ const customStyles = {
 };
 
 const StatsRanking = () => {
+  useChangeTitle('Stats Ranking');
   const conditionalRowStyles = [
     {
       when: (row: PokemonStatsRanking) => row.slug === select?.slug,
@@ -182,10 +184,6 @@ const StatsRanking = () => {
 
   const [progress, setProgress] = useState({ isLoadedForms: false });
   const { isLoadedForms } = progress;
-
-  useEffect(() => {
-    document.title = `Stats Ranking`;
-  }, []);
 
   useEffect(() => {
     if (pokemonData.length > 0 && pokemonList.length === 0) {

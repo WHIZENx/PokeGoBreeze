@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 
 import { HundoRate, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/Calculate';
@@ -14,6 +14,7 @@ import { MAX_IV, MIN_IV } from '../../../util/Constants';
 import { PredictStatsModel, PredictStatsCalculate, PredictCPModel, PredictCPCalculate } from '../../../util/models/calculate.model';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const columnsIV: TableColumn<PredictStatsModel>[] = [
   {
@@ -94,6 +95,7 @@ const conditionalRowStyles = [
 ];
 
 const FindTable = () => {
+  useChangeTitle('Find CP&IV - Tool');
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
 
@@ -144,10 +146,6 @@ const FindTable = () => {
     setSearchDEFIv(0);
     setSearchSTAIv(0);
   };
-
-  useEffect(() => {
-    document.title = 'Find CP&IV - Tool';
-  }, []);
 
   const findStatsCP = useCallback(() => {
     if (

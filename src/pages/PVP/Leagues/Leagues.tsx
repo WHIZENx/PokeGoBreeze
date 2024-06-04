@@ -18,6 +18,7 @@ import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
 import { League, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/Constants';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 interface LeagueData {
   data: PokemonRewardSetLeague[];
@@ -27,6 +28,7 @@ interface LeagueData {
 }
 
 const Leagues = () => {
+  useChangeTitle('Battle Leagues List');
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
   const [leagues, setLeagues]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
@@ -57,10 +59,6 @@ const Leagues = () => {
       </div>
     );
   };
-
-  useEffect(() => {
-    document.title = 'Battle Leagues List';
-  }, []);
 
   useEffect(() => {
     if (dataStore?.leagues) {

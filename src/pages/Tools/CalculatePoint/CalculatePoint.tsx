@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
 import { Tabs, Tab } from 'react-bootstrap';
@@ -20,6 +20,7 @@ import { TypeMove } from '../../../enums/move.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { Combat } from '../../../core/models/combat.model';
+import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 class ColorTone {
   number!: number;
@@ -49,6 +50,7 @@ interface BulkPointDef {
 }
 
 const CalculatePoint = () => {
+  useChangeTitle('Calculate Point Stats - Tools');
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
   const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff ?? {});
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
@@ -99,10 +101,6 @@ const CalculatePoint = () => {
   ] = useState();
 
   const { enqueueSnackbar } = useSnackbar();
-
-  useEffect(() => {
-    document.title = 'Calculate Point Stats - Tools';
-  }, []);
 
   const clearData = (reset = true) => {
     clearDataAtk(reset);
