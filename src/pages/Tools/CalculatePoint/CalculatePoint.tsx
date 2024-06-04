@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Find from '../../../components/Find/Find';
 
 import { Tabs, Tab } from 'react-bootstrap';
@@ -73,8 +73,6 @@ const CalculatePoint = () => {
   const [statDefATK, setStatDefATK] = useState(0);
   const [statDefDEF, setStatDefDEF] = useState(0);
 
-  const initialize = useRef(false);
-
   const [isRaid, setIsRaid] = useState(true);
   const [tier, setTier] = useState(1);
 
@@ -106,7 +104,6 @@ const CalculatePoint = () => {
     clearDataAtk(reset);
     clearDataDef(reset);
     clearDataBulk(reset);
-    initialize.current = false;
   };
 
   const clearDataAtk = (reset = true) => {

@@ -3,6 +3,7 @@ import Moment from 'moment';
 import {
   FORM_ALOLA,
   FORM_GALARIAN,
+  FORM_GMAX,
   FORM_HISUIAN,
   FORM_MEGA,
   FORM_NORMAL,
@@ -775,4 +776,14 @@ export const getFormFromForms = (stats: { id: number; form: string }[], id: numb
     }
   }
   return filterForm;
+};
+
+export const retrieveMoves = (combat: PokemonDataModel[], id: number, form: string) => {
+  if (combat.length > 0) {
+    const resultFirst = combat.filter((item) => item.num === id);
+    form =
+      form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase().replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
+    const result = resultFirst?.find((item) => item.fullName === form || item.forme === form);
+    return result ?? resultFirst[0] ?? undefined;
+  }
 };

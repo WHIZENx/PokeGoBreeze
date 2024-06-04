@@ -9,7 +9,7 @@ import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from './models/select-move.model';
 import { PokemonDataModel } from '../../core/models/pokemon.model';
 import { Combat } from '../../core/models/combat.model';
-import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
+import { retrieveMoves } from '../../util/Utils';
 
 const SelectMove = (props: {
   move: SelectMoveModel | Combat | undefined;
@@ -39,45 +39,9 @@ const SelectMove = (props: {
 
   const findMove = useCallback(
     (id: number, form: string, type: string, selected = false) => {
-      if (combat.length > 0) {
-        const resultFirst = combat.filter((item) => item.num === id);
-        form =
-          form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase().replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
-        const result = resultFirst.find((item) => item.forme === form);
-        const simpleMove: SelectMoveModel[] = [];
-        if (resultFirst.length === 1 || result == null) {
-          if (resultFirst.length === 0) {
-            return setResultMove([]);
-          }
-          if (type === TypeMove.FAST) {
-            resultFirst.at(0)?.quickMoves?.forEach((value) => {
-              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
-            });
-            resultFirst.at(0)?.eliteQuickMove?.forEach((value) => {
-              simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
-            });
-          } else {
-            resultFirst.at(0)?.cinematicMoves?.forEach((value) => {
-              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
-            });
-            resultFirst.at(0)?.eliteCinematicMove?.forEach((value) => {
-              simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
-            });
-            resultFirst.at(0)?.shadowMoves?.forEach((value) => {
-              simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
-            });
-            resultFirst.at(0)?.purifiedMoves?.forEach((value) => {
-              simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
-            });
-            resultFirst.at(0)?.specialMoves?.forEach((value) => {
-              simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
-            });
-          }
-          if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
-            props.setMovePokemon(simpleMove.at(0));
-          }
-          return setResultMove(simpleMove);
-        }
+      const result = retrieveMoves(combat, id, form);
+      const simpleMove: SelectMoveModel[] = [];
+      if (result) {
         if (type === TypeMove.FAST) {
           result.quickMoves?.forEach((value) => {
             simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
@@ -105,8 +69,8 @@ const SelectMove = (props: {
         if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
           props.setMovePokemon(simpleMove.at(0));
         }
-        return setResultMove(simpleMove);
       }
+      setResultMove(simpleMove);
     },
     [props.setMovePokemon, combat, props.move]
   );
