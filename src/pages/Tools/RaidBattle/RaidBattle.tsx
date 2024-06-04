@@ -1,10 +1,10 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import SelectMove from '../../../components/Input/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, checkPokemonGO, retrieveMoves, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
@@ -100,8 +100,6 @@ const RaidBattle = () => {
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
-
-  const initialize = useRef(false);
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -286,16 +284,17 @@ const RaidBattle = () => {
   const [tempPokemonBattle, setTempPokemonBattle]: [PokemonRaidModel[], React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>] =
     useState([] as PokemonRaidModel[]);
   const [countTrainer, setCountTrainer] = useState(1);
+  const [isLoadedForms, setIsLoadedForms] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const resetData = () => {
     clearData();
-    initialize.current = false;
   };
 
   const clearData = () => {
     setResult([]);
+    setIsLoadedForms(false);
   };
 
   const clearDataTarget = () => {
@@ -304,6 +303,7 @@ const RaidBattle = () => {
 
   const onSetForm = (form: PokemonFormModify | undefined) => {
     setForm(form);
+    setIsLoadedForms(true);
   };
 
   const onCopyPokemon = (index: number) => {
@@ -324,73 +324,41 @@ const RaidBattle = () => {
 
   const findMove = useCallback(
     (id: number, form: string) => {
-      const resultFirst = data?.pokemon?.filter((item) => item.num === id);
-      form = form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase() ?? FORM_NORMAL;
-      const result = resultFirst?.find((item) => item.fullName === form);
+      const result = retrieveMoves(data?.pokemon ?? [], id, form);
       let simpleMove: SelectMoveModel[] = [];
-      if (resultFirst && (resultFirst.length === 1 || result == null || form.includes(FORM_GMAX))) {
-        if (resultFirst.length === 0) {
-          setFMove(undefined);
-          setResultFMove(undefined);
-          setCMove(undefined);
-          setResultCMove(undefined);
-          return;
-        }
-        let simpleMove: SelectMoveModel[] = [];
-        resultFirst.at(0)?.quickMoves?.forEach((value) => {
+      if (result) {
+        result?.quickMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
-        resultFirst.at(0)?.eliteQuickMove?.forEach((value) => {
+        result?.eliteQuickMove?.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
         });
         setFMove(simpleMove.at(0));
         setResultFMove(simpleMove);
         simpleMove = [];
-        resultFirst.at(0)?.cinematicMoves?.forEach((value) => {
+        result?.cinematicMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
         });
-        resultFirst.at(0)?.eliteCinematicMove?.forEach((value) => {
+        result?.eliteCinematicMove?.forEach((value) => {
           simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
         });
-        resultFirst.at(0)?.shadowMoves?.forEach((value) => {
+        result?.shadowMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
         });
-        resultFirst.at(0)?.purifiedMoves?.forEach((value) => {
+        result?.purifiedMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
         });
-        resultFirst.at(0)?.specialMoves?.forEach((value) => {
+        result?.specialMoves?.forEach((value) => {
           simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
         });
         setCMove(simpleMove.at(0));
-        return setResultCMove(simpleMove);
+        setResultCMove(simpleMove);
+      } else {
+        setFMove(undefined);
+        setResultFMove(undefined);
+        setCMove(undefined);
+        setResultCMove(undefined);
       }
-      simpleMove = [];
-      result?.quickMoves?.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
-      });
-      result?.eliteQuickMove?.forEach((value) => {
-        simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
-      });
-      setFMove(simpleMove.at(0));
-      setResultFMove(simpleMove);
-      simpleMove = [];
-      result?.cinematicMoves?.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
-      });
-      result?.eliteCinematicMove?.forEach((value) => {
-        simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
-      });
-      result?.shadowMoves?.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
-      });
-      result?.purifiedMoves?.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
-      });
-      result?.specialMoves?.forEach((value) => {
-        simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
-      });
-      setCMove(simpleMove.at(0));
-      return setResultCMove(simpleMove);
     },
     [data?.pokemon]
   );
@@ -724,9 +692,8 @@ const RaidBattle = () => {
   };
 
   useEffect(() => {
-    if (form && !initialize.current) {
+    if (form) {
       findMove(id, form.form.name);
-      initialize.current = true;
     }
   }, [findMove, id, form]);
 
@@ -1162,6 +1129,7 @@ const RaidBattle = () => {
               setStatBossATK={setStatBossATK}
               setStatBossDEF={setStatBossDEF}
               setStatBossHP={setStatBossHP}
+              isLoadedForms={isLoadedForms}
             />
             <hr />
             <div className="row align-items-center element-top" style={{ margin: 0 }}>

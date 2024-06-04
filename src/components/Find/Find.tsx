@@ -111,48 +111,44 @@ const Find = (props: {
   };
 
   const decId = () => {
-    setTimeout(() => {
-      const currentId = getPokemonById(pokemonData, id);
-      if (currentId) {
-        const prev = getPokemonById(pokemonData, currentId.id - 1);
-        if (prev) {
-          setId(prev.id);
-          if (props.setId) {
-            props.setId(prev.id);
-          }
-          if (props.setName) {
-            props.setName(prev.name);
-          }
-          if (props.clearStats) {
-            props.clearStats();
-          }
+    const currentId = getPokemonById(pokemonData, id);
+    if (currentId) {
+      const prev = getPokemonById(pokemonData, currentId.id - 1);
+      if (prev) {
+        setId(prev.id);
+        if (props.setId) {
+          props.setId(prev.id);
+        }
+        if (props.setName) {
+          props.setName(prev.name);
+        }
+        if (props.clearStats) {
+          props.clearStats();
         }
       }
-    }, 300);
+    }
     if (props.clearStats) {
       props.clearStats();
     }
   };
 
   const incId = () => {
-    setTimeout(() => {
-      const currentId = getPokemonById(pokemonData, id);
-      if (currentId) {
-        const next = getPokemonById(pokemonData, currentId.id + 1);
-        if (next) {
-          setId(next.id);
-          if (props.setId) {
-            props.setId(next.id);
-          }
-          if (props.setName) {
-            props.setName(next.name);
-          }
-          if (props.clearStats) {
-            props.clearStats();
-          }
+    const currentId = getPokemonById(pokemonData, id);
+    if (currentId) {
+      const next = getPokemonById(pokemonData, currentId.id + 1);
+      if (next) {
+        setId(next.id);
+        if (props.setId) {
+          props.setId(next.id);
+        }
+        if (props.setName) {
+          props.setName(next.name);
+        }
+        if (props.clearStats) {
+          props.clearStats();
         }
       }
-    }, 300);
+    }
     if (props.clearStats) {
       props.clearStats();
     }
