@@ -81,7 +81,7 @@ const Search = () => {
     if (combat.length > 0) {
       const timeOutId = setTimeout(() => {
         setResultFMove(searchMove(TypeMove.FAST, fMoveType, fMoveName));
-      }, 100);
+      });
       return () => clearTimeout(timeOutId);
     }
   }, [combat, fMoveType, fMoveName]);
@@ -90,7 +90,7 @@ const Search = () => {
     if (combat.length > 0) {
       const timeOutId = setTimeout(() => {
         setResultCMove(searchMove(TypeMove.CHARGE, cMoveType, cMoveName));
-      }, 100);
+      });
       return () => clearTimeout(timeOutId);
     }
   }, [combat, cMoveType, cMoveName]);
