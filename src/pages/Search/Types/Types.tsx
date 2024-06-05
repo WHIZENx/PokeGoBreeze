@@ -236,7 +236,7 @@ const SearchTypes = () => {
               height={28}
               style={{ marginLeft: 5, marginRight: 5 }}
               alt="pokemon-go-icon"
-              src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+              src={APIService.getPokemonGoIcon(icon)}
             />
             <b>{`Filter from ${allData.pokemon} Pokémon`}</b>
           </span>

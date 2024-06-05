@@ -65,13 +65,7 @@ const CardPokemonInfo = (props: {
     >
       {!props.releasedGO && (
         <div className="no-released-pokemon">
-          <img
-            width={24}
-            height={24}
-            title={'Coming Soon'}
-            alt="pokemon-go-icon"
-            src={APIService.getPokemonGoIcon(props.icon ?? 'Standard')}
-          />
+          <img width={24} height={24} title={'Coming Soon'} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(props.icon)} />
         </div>
       )}
       {props.image.shiny && (

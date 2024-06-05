@@ -787,3 +787,18 @@ export const retrieveMoves = (combat: PokemonDataModel[], id: number, form: stri
     return result ?? resultFirst[0] ?? undefined;
   }
 };
+
+export const getPokemonDetails = (pokemonData: PokemonDataModel[], id: number, form: string | null, isDefault = false) => {
+  let pokemonForm: PokemonDataModel | undefined;
+
+  if (form) {
+    pokemonForm = pokemonData.find((item) => item.num === id && item.fullName === convertPokemonAPIDataName(form?.replaceAll(' ', '-')));
+
+    if (isDefault && !pokemonForm) {
+      pokemonForm = pokemonData.find(
+        (item) => item.num === id && (item.forme === FORM_NORMAL || (item.baseForme && item.baseForme === item.forme))
+      );
+    }
+  }
+  return pokemonForm;
+};
