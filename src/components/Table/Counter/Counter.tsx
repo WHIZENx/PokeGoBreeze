@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../../util/Utils';
@@ -83,12 +83,9 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
   const [counterList, setCounterList]: [CounterModel[], React.Dispatch<React.SetStateAction<CounterModel[]>>] = useState(
     [] as CounterModel[]
   );
-  const [frame, setFrame] = useState(false);
+  const [frame, setFrame] = useState(true);
   const [releasedGO, setReleaseGO] = useState(true);
   const [showMega, setShowMega] = useState(false);
-
-  const controller: React.MutableRefObject<AbortController> = useRef(new AbortController());
-  const timeOutId: React.MutableRefObject<NodeJS.Timeout | undefined> = useRef();
 
   const columns: any = [
     {
@@ -195,26 +192,12 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
             className="ph-col-12"
             style={{ padding: 10, margin: 0, gap: 10, backgroundColor: (theme.palette.background as any).tablePrimary }}
           >
-            <div className="ph-row d-flex" style={{ gap: '5%' }}>
-              <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-              <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-            </div>
-            <div className="ph-row d-flex" style={{ gap: '5%' }}>
-              <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-              <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-            </div>
-            <div className="ph-row d-flex" style={{ gap: '5%' }}>
-              <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-              <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-            </div>
-            <div className="ph-row d-flex" style={{ gap: '5%' }}>
-              <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-              <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-            </div>
-            <div className="ph-row d-flex" style={{ gap: '5%' }}>
-              <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-              <div className="ph-picture" style={{ width: '70%', height: 100 }} />
-            </div>
+            {[...Array(5).keys()].map((_, index) => (
+              <div key={index} className="ph-row d-flex" style={{ gap: '5%' }}>
+                <div className="ph-picture" style={{ width: '25%', height: 100 }} />
+                <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -222,51 +205,52 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
   );
 
   useEffect(() => {
-    const loadMetaData = async () => {
-      clearTimeout(timeOutId.current);
-      controller.current?.abort();
-      await calculateCounter()
+    const controller = new AbortController();
+    if (counterList.length > 0) {
+      setCounterList([]);
+      setFrame(true);
+    }
+    if (props.isShadow !== undefined && (props.types ?? []).length > 0) {
+      calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
           setFrame(false);
         })
-        .catch(() => clearTimeout(timeOutId.current))
-        .finally(() => clearTimeout(timeOutId.current));
-    };
-    setFrame(true);
-    if (counterList.length > 0) {
-      setCounterList([]);
+        .catch(() => setFrame(true));
     }
-    const processTimeOutId = setTimeout(() => {
-      if (props.def && props.types && props.types.length > 0) {
-        loadMetaData();
-      }
-    }, 3000);
-    return () => {
-      clearTimeout(processTimeOutId);
-      clearTimeout(timeOutId.current);
-      controller.current?.abort();
-    };
+    return () => controller.abort();
   }, [props.def, props.isShadow, props.types]);
 
-  const calculateCounter = async () => {
-    return await new Promise<CounterModel[]>(async (resolve, reject) => {
-      timeOutId.current = setTimeout(() => {
-        resolve(
-          counterPokemon(
-            data?.options,
-            data?.pokemon ?? [],
-            data?.typeEff,
-            data?.weatherBoost,
-            props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
-            props.types ?? [],
-            data?.combat ?? []
-          )
-        );
-      });
-      controller.current?.signal.addEventListener('abort', () => {
+  const calculateCounter = (signal: AbortSignal, delay = 3000) => {
+    return new Promise<CounterModel[]>((resolve, reject) => {
+      let result: CounterModel[] = [];
+      let timeout: NodeJS.Timeout | number;
+      const abortHandler = () => {
+        clearTimeout(timeout);
         reject();
-      });
+      };
+
+      const resolveHandler = () => {
+        if (signal instanceof AbortSignal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
+        result = counterPokemon(
+          data?.options,
+          data?.pokemon ?? [],
+          data?.typeEff,
+          data?.weatherBoost,
+          props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
+          props.types ?? [],
+          data?.combat ?? []
+        );
+        resolve(result);
+      };
+
+      timeout = setTimeout(resolveHandler, delay, result);
+
+      if (signal instanceof AbortSignal) {
+        signal.addEventListener('abort', abortHandler, { once: true });
+      }
     });
   };
 
@@ -285,7 +269,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
                 height={28}
                 style={{ marginLeft: 5 }}
                 alt="pokemon-go-icon"
-                src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                src={APIService.getPokemonGoIcon(icon)}
               />
             </span>
           }

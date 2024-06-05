@@ -49,7 +49,7 @@ const PokemonModel = (props: { id: number; name: string; originSoundCry: FormSou
     <div className="element-top">
       <h4 className="title-evo">
         <b>{'Assets of ' + splitAndCapitalize(props.name, '-', ' ') + ' in Pokémon GO'}</b>
-        <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon ?? 'Standard')} />
+        <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon)} />
       </h4>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 176 }}>
@@ -106,7 +106,7 @@ const PokemonModel = (props: { id: number; name: string; originSoundCry: FormSou
           ))}
           {pokeAssets.length === 0 && (
             <div className="text-danger" style={{ marginBottom: 15 }}>
-              &emsp;Assets in Pokémon Go unavailable
+              &emsp;Assets in Pokémon GO unavailable
             </div>
           )}
         </div>

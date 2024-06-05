@@ -859,7 +859,7 @@ const RaidBattle = () => {
                   height={28}
                   style={{ marginLeft: 5 }}
                   alt="pokemon-go-icon"
-                  src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                  src={APIService.getPokemonGoIcon(icon)}
                 />
               </span>
             }

@@ -75,8 +75,8 @@ class APIService {
     return `${APIUrl.POKE_TRAINER_SPRITES_API_URL}${id}.png`;
   }
 
-  getPokemonGoIcon(icon: string) {
-    return `${APIUrl.POGO_ASSET_API_URL}App Icons/${icon}.png`;
+  getPokemonGoIcon(icon: string | undefined) {
+    return `${APIUrl.POGO_ASSET_API_URL}App Icons/${icon ?? 'Standard'}.png`;
   }
 
   getBadgeSprite(name: string) {

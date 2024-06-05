@@ -69,19 +69,18 @@ const Tools = (props: {
   }, [props.currForm?.form.form_name, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
+    const formATK = filterFormList(props.stats.attack.ranking);
+    const formDEF = filterFormList(props.stats.defense.ranking);
+    const formSTA = filterFormList(props.stats.stamina.ranking);
+    const formProd = filterFormList(props.stats.statProd.ranking);
+
+    setStatsPokemon({
+      atk: props.isRaid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack, props.tier) } : formATK,
+      def: props.isRaid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense, props.tier) } : formDEF,
+      sta: props.isRaid && props.tier && !props.hide ? { stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA,
+      prod: props.isRaid && props.tier && !props.hide ? null : formProd,
+    });
     if (props.currForm && props.dataPoke) {
-      const formATK = filterFormList(props.stats.attack.ranking);
-      const formDEF = filterFormList(props.stats.defense.ranking);
-      const formSTA = filterFormList(props.stats.stamina.ranking);
-      const formProd = filterFormList(props.stats.statProd.ranking);
-
-      setStatsPokemon({
-        atk: props.isRaid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack, props.tier) } : formATK,
-        def: props.isRaid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense, props.tier) } : formDEF,
-        sta: props.isRaid && props.tier && !props.hide ? { stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA,
-        prod: props.isRaid && props.tier && !props.hide ? null : formProd,
-      });
-
       setCurrDataPoke(convertStatsEffort(props.dataPoke.find((item) => item.id === props.id)?.stats));
 
       if (props.onSetStats && formATK && formDEF && formSTA) {

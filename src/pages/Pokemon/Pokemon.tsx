@@ -21,6 +21,7 @@ import {
   generatePokemonGoForms,
   generatePokemonGoShadowForms,
   getPokemonById,
+  getPokemonDetails,
   splitAndCapitalize,
 } from '../../util/Utils';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
@@ -29,7 +30,7 @@ import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, FORM_NORMAL, FORM_GMAX, regionList } from '../../util/Constants';
+import { KEY_LEFT, KEY_RIGHT, FORM_GMAX, regionList } from '../../util/Constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
@@ -330,21 +331,6 @@ const Pokemon = (props: {
     }
   }, [params.id, props.id, spinner.loading, pokemonData]);
 
-  const getPokemonDetails = (id: number, form: string | null, isDefault = false) => {
-    let pokemonForm: PokemonDataModel | undefined;
-
-    if (form) {
-      pokemonForm = pokemonData.find((item) => item.num === id && item.fullName === convertPokemonAPIDataName(form?.replaceAll(' ', '-')));
-
-      if (isDefault && !pokemonForm) {
-        pokemonForm = pokemonData.find(
-          (item) => item.num === id && (item.forme === FORM_NORMAL || (item.baseForme && item.baseForme === item.forme))
-        );
-      }
-    }
-    return pokemonForm;
-  };
-
   const checkReleased = (id: number, form: string, defaultForm: PokemonFormModify) => {
     if (!form) {
       if (defaultForm) {
@@ -354,7 +340,7 @@ const Pokemon = (props: {
       }
     }
 
-    const details = getPokemonDetails(id, form, defaultForm.form.is_default);
+    const details = getPokemonDetails(pokemonData, id, form, defaultForm.form.is_default);
     setPokemonDetails(details);
     return details?.releasedGO ?? false;
   };

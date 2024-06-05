@@ -328,12 +328,13 @@ const Evolution = (props: {
       pokemon = pokemons.find((p) => p.baseForme && p.baseForme.replaceAll('-', '_').toUpperCase() === p.forme);
     }
     if (!pokemon) {
-      return getEvoChainJSON(id, forme);
+      getEvoChainJSON(id, forme);
+    } else {
+      getPrevEvoChainStore(pokemon, result);
+      getCurrEvoChainStore(pokemon, result);
+      getNextEvoChainStore(pokemon, result);
+      setArrEvoList(result);
     }
-    getPrevEvoChainStore(pokemon, result);
-    getCurrEvoChainStore(pokemon, result);
-    getNextEvoChainStore(pokemon, result);
-    return setArrEvoList(result);
   };
 
   const getGmaxChain = (id: number, form: FormModel) => {
@@ -362,9 +363,6 @@ const Evolution = (props: {
   };
 
   useEffect(() => {
-    if (arrEvoList.length > 0 && !arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id))) {
-      setArrEvoList([]);
-    }
     if (props.id && props.forme) {
       if (props.forme.form_name?.toUpperCase() !== FORM_GMAX) {
         getEvoChainStore(props.id, props.forme);
@@ -372,7 +370,7 @@ const Evolution = (props: {
         getGmaxChain(props.id, props.forme);
       }
     }
-  }, [arrEvoList, props.forme, props.id]);
+  }, [props.forme, props.id]);
 
   const getQuestEvo = (prevId: number, form: string) => {
     const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToForm.includes(form) && value.evoToId === prevId));

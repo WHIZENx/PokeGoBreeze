@@ -186,7 +186,7 @@ const Move = (props: { id?: number }) => {
             <thead className="text-center">
               <tr>
                 <th colSpan={3}>
-                  {'Stats ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+') + ' in Pokémon Go'}
+                  {'Stats ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+') + ' in Pokémon GO'}
                 </th>
               </tr>
             </thead>
@@ -463,7 +463,7 @@ const Move = (props: { id?: number }) => {
                             height={28}
                             style={{ marginLeft: 5 }}
                             alt="pokemon-go-icon"
-                            src={APIService.getPokemonGoIcon(icon ?? 'Standard')}
+                            src={APIService.getPokemonGoIcon(icon)}
                           />
                         </span>
                       }
