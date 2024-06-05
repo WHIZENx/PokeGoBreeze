@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, capitalize, convertToPokemonForm, convertPokemonImageName } from '../../../util/Utils';
+import { splitAndCapitalize, capitalize, convertToPokemonForm, convertPokemonImageName, getPokemonDetails } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
+
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 
 import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
@@ -38,6 +41,11 @@ const columnPokemon: any = [
   {
     name: 'ID',
     selector: (row: PokemonStatsRanking) => row.num,
+    width: '80px',
+  },
+  {
+    name: 'Released',
+    selector: (row: PokemonStatsRanking) => (row.releasedGO ? <DoneIcon color="success" /> : <CloseIcon color="error" />),
     width: '80px',
   },
   {
@@ -125,8 +133,10 @@ const StatsRanking = () => {
   const mappingData = (pokemon: PokemonDataModel[]) => {
     return pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
+      const details = getPokemonDetails(pokemon, data.num, data.fullName ?? '', true);
       return {
         ...data,
+        releasedGO: details?.releasedGO,
         atk: {
           attack: statsTag.atk,
           rank: stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank,
@@ -227,7 +237,14 @@ const StatsRanking = () => {
               className="pokemon-main-sprite"
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
-              src={APIService.getPokeFullSprite(select?.num, convertPokemonImageName(select?.forme))}
+              src={APIService.getPokeFullSprite(select?.num ?? 0, convertPokemonImageName(select?.forme))}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeFullAsset(select?.num ?? 0);
+                APIService.getFetchUrl(e.currentTarget?.currentSrc)
+                  .then(() => (e.currentTarget.src = APIService.getPokeFullSprite(select?.num ?? 0)))
+                  .catch(() => false);
+              }}
             />
           </div>
         </div>

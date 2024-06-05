@@ -109,6 +109,7 @@ export interface PokemonStatsRanking {
   statProd: StatsProd;
   types?: string[];
   url?: string | undefined;
+  releasedGO: boolean;
 }
 
 export class StatsPokemon {

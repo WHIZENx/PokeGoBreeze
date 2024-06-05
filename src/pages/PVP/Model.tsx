@@ -423,9 +423,7 @@ export const MoveSet = (
         <div className="type-rank-list">
           {moves?.fastMoves
             .map((move) => {
-              if (!move.uses) {
-                move.uses = 0;
-              }
+              move.uses ??= 0;
               return move;
             })
             .sort((a, b) => (b.uses ?? 0) - (a.uses ?? 0))
