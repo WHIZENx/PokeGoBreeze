@@ -237,13 +237,13 @@ const StatsRanking = () => {
               className="pokemon-main-sprite"
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
-              src={APIService.getPokeFullSprite(select?.num ?? 0, convertPokemonImageName(select?.forme))}
+              src={APIService.getPokeFullSprite(
+                select?.num ?? 0,
+                convertPokemonImageName(select && select.baseForme === select.forme ? '' : select?.forme)
+              )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = APIService.getPokeFullAsset(select?.num ?? 0);
-                APIService.getFetchUrl(e.currentTarget?.currentSrc)
-                  .then(() => (e.currentTarget.src = APIService.getPokeFullSprite(select?.num ?? 0)))
-                  .catch(() => false);
               }}
             />
           </div>
@@ -298,7 +298,7 @@ const StatsRanking = () => {
         columns={columnPokemon}
         data={pokemonFilter}
         pagination={true}
-        defaultSortFieldId={9}
+        defaultSortFieldId={10}
         defaultSortAsc={false}
         highlightOnHover={true}
         onRowClicked={(row) => {

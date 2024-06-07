@@ -665,7 +665,9 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace('BASCULEGION_MALE', 'BASCULEGION')
     .replace(/_PLUMAGE$/, '')
     .replace(/_ROAMING$/, '')
-    .replace(/_SEGMENT$/, '');
+    .replace(/_SEGMENT$/, '')
+    .replace(/_M$/, '_MALE')
+    .replace(/_F$/, '_FEMALE');
 };
 
 export const convertPokemonImageName = (text: string | undefined | null, defaultName = '') => {
@@ -675,7 +677,6 @@ export const convertPokemonImageName = (text: string | undefined | null, default
   return splitAndCapitalize(text.toLowerCase().replaceAll('_', '-'), '-', '-')
     .replace(/^Shadow$/, '')
     .replace(/^Purified$/, '')
-    .replace(/^Active$/, '')
     .replace(/^Normal$/, '')
     .replace(/-Shadow$/, '')
     .replace(/-Purified$/, '');

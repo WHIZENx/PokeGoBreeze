@@ -96,6 +96,7 @@ export interface PokemonStatsRanking {
   slug: string;
   forme: string;
   sprite: string;
+  baseForme: string;
   baseSpecies: string;
   rank?: number;
   gen: number;
