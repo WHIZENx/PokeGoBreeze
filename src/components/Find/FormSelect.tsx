@@ -130,7 +130,7 @@ const FormSelect = (props: {
     setPokeData(dataPokeList);
     setFormList(formListResult);
 
-    const defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default));
+    const defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default)).filter((item) => item);
     let currentForm = defaultFrom?.find((item) => item?.form.id === data.id);
     if (props.searching) {
       const defaultFormSearch = formListResult.find((value) =>
@@ -142,6 +142,9 @@ const FormSelect = (props: {
       if (defaultFormSearch) {
         currentForm = defaultFormSearch.at(0);
       }
+    }
+    if (!currentForm) {
+      currentForm = formListResult.map((value) => value.find((item) => item.form.id === data.id)).find((item) => item);
     }
     setCurrentForm(currentForm ?? defaultFrom.at(0));
     setData(data);
@@ -155,7 +158,9 @@ const FormSelect = (props: {
         cancelToken,
       })
         .then((res) => {
-          fetchMap(res.data);
+          if (res.data) {
+            fetchMap(res.data);
+          }
         })
         .catch((e: AxiosError) => {
           if (APIService.isCancel(e)) {
@@ -250,7 +255,15 @@ const FormSelect = (props: {
         {dataStorePokemon?.prev && (
           <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
             <div>
-              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(dataStorePokemon?.prev.id)} />
+              <img
+                height={60}
+                alt="img-full-pokemon"
+                src={APIService.getPokeFullSprite(dataStorePokemon?.prev.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.prev?.id ?? 0);
+                }}
+              />
             </div>
             <span>
               <b>
@@ -271,14 +284,22 @@ const FormSelect = (props: {
         }
         onError={(e) => {
           e.currentTarget.onerror = null;
-          e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon?.current?.id);
+          e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
         }}
       />
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
         {dataStorePokemon?.next && (
           <div style={{ cursor: 'pointer' }} onClick={() => props.onSetNext?.()}>
             <div>
-              <img height={60} alt="img-full-pokemon" src={APIService.getPokeFullSprite(dataStorePokemon?.next.id)} />
+              <img
+                height={60}
+                alt="img-full-pokemon"
+                src={APIService.getPokeFullSprite(dataStorePokemon?.next.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.next?.id ?? 0);
+                }}
+              />
             </div>
             <span>
               <b>
@@ -293,7 +314,8 @@ const FormSelect = (props: {
       </div>
       <h4>
         <b>
-          #{dataStorePokemon?.current?.id} {currentForm ? splitAndCapitalize(currentForm.form.name, '-', ' ') : props.name}
+          #{dataStorePokemon?.current?.id}{' '}
+          {currentForm ? splitAndCapitalize(currentForm.form.name?.replace('-f', '-female').replace('-m', '-male'), '-', ' ') : props.name}
         </b>
       </h4>
       <div className="scroll-card">

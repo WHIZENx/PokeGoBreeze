@@ -121,7 +121,7 @@ const Evolution = (props: {
   };
 
   const pokeSetName = (name: string) => {
-    return name.replace(`_${FORM_NORMAL}`, '').replace('_FEMALE', '_F').replace('_MALE', '_M').replaceAll('_', '-').replace('MR', 'MR.');
+    return name.replace(`_${FORM_NORMAL}`, '').replaceAll('_', '-').replace('MR', 'MR.');
   };
 
   const modelEvoChain = (pokemon: EvolutionModel) => {
@@ -193,11 +193,9 @@ const Evolution = (props: {
     if (!form) {
       form = FORM_NORMAL;
     }
-    let pokemon = pokemonData.find(
-      (pokemon) => pokemon.num === id && (pokemon.forme ? pokemon.forme.toLowerCase() : pokemon.forme) === form
-    );
+    let pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === form);
     if (!pokemon) {
-      pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === null);
+      pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === FORM_NORMAL);
     }
 
     const prevEvo: PokemonEvo[][] = [],
@@ -341,20 +339,20 @@ const Evolution = (props: {
     return setArrEvoList([
       [
         new PokemonEvo(
-          form.name.replace('-gmax', ''),
+          form.name.replace(`-${FORM_GMAX.toLowerCase()}`, ''),
           id,
           FORM_NORMAL.toLowerCase(),
-          convertModelSpritName(form.name.replace('-gmax', '')),
+          convertModelSpritName(form.name.replace(`-${FORM_GMAX.toLowerCase()}`, '')),
           undefined,
           true
         ),
       ],
       [
         new PokemonEvo(
-          form.name.replace('-gmax', ''),
+          form.name.replace(`-${FORM_GMAX.toLowerCase()}`, ''),
           id,
           FORM_GMAX.toLowerCase(),
-          convertModelSpritName(form.name.replace('-gmax', '-gigantamax').replace('-low-key', '')),
+          convertModelSpritName(form.name.replace(`-${FORM_GMAX.toLowerCase()}`, '-gigantamax').replace('-low-key', '')),
           undefined,
           true
         ),
@@ -390,19 +388,10 @@ const Evolution = (props: {
           className="pokemon-sprite"
           id="img-pokemon"
           alt="img-pokemon"
-          src={
-            value.id >= 894 || (value.id === 892 && value.form.includes(FORM_GMAX))
-              ? APIService.getPokeSprite(value.id)
-              : APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')
-          }
+          src={APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeFullSprite(value.id);
-            APIService.getFetchUrl(e.currentTarget.currentSrc)
-              .then(() => {
-                e.currentTarget.src = APIService.getPokeSprite(value.id);
-              })
-              .catch(() => false);
+            e.currentTarget.src = APIService.getPokeSprite(value.id);
           }}
         />
       </>
@@ -428,7 +417,7 @@ const Evolution = (props: {
     const data = getQuestEvo(parseInt(value.id.toString()), form?.toUpperCase());
     return (
       <Fragment>
-        <span id={'evo-' + evo + '-' + index}>
+        <span id={`evo-${evo}-${index}`}>
           {evo > 0 && (
             <Xarrow
               labels={{
@@ -739,7 +728,7 @@ const Evolution = (props: {
                       ) : (
                         <Link
                           className="select-evo"
-                          to={'/pokemon/' + value.id}
+                          to={`/pokemon/${value.id}`}
                           title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
                         >
                           {renderImageEvo(value, values, evo, index, arrEvoList.length)}

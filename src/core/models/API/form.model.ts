@@ -58,7 +58,6 @@ export interface FormModel {
 export interface PokemonFormModify {
   default_id: number;
   default_name: string;
-  id?: number;
   name: string;
   form: FormModel;
 }
@@ -68,7 +67,6 @@ export class PokemonFormModify {
   default_id!: number;
   // tslint:disable-next-line:variable-name
   default_name!: string;
-  id?: number;
   name!: string;
   form!: FormModel;
 
@@ -93,7 +91,6 @@ export class PokemonFormModifyModel {
   default_id!: number;
   // tslint:disable-next-line:variable-name
   default_name!: string;
-  id?: number;
   name!: string;
   form!: FormModel;
   sprites!: PokemonSprit;
@@ -113,7 +110,6 @@ export class PokemonFormModifyModel {
     isDefault = true,
     isMega = false
   ) {
-    this.id = formId ?? id;
     this.default_id = id;
     this.default_name = defaultName;
     this.name = name;

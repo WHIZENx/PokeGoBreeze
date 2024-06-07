@@ -75,10 +75,10 @@ const Tools = (props: {
     const formProd = filterFormList(props.stats.statProd.ranking);
 
     setStatsPokemon({
-      atk: props.isRaid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack, props.tier) } : formATK,
-      def: props.isRaid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense, props.tier) } : formDEF,
+      atk: props.isRaid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack ?? 0, props.tier) } : formATK,
+      def: props.isRaid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense ?? 0, props.tier) } : formDEF,
       sta: props.isRaid && props.tier && !props.hide ? { stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA,
-      prod: props.isRaid && props.tier && !props.hide ? null : formProd,
+      prod: props.isRaid && props.tier && !props.hide ? 0 : formProd,
     });
     if (props.currForm && props.dataPoke) {
       setCurrDataPoke(convertStatsEffort(props.dataPoke.find((item) => item.id === props.id)?.stats));
