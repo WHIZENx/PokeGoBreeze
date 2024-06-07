@@ -7,7 +7,6 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Link } from 'react-router-dom';
 
-// eslint-disable-next-line no-unused-vars
 const SearchBarMain = (props: { data: OptionsPokemon | undefined }) => {
   return (
     <>
@@ -32,9 +31,6 @@ const SearchBarMain = (props: { data: OptionsPokemon | undefined }) => {
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = APIService.getPokeFullAsset(props.data?.prev?.id ?? 0);
-                  APIService.getFetchUrl(e.currentTarget?.currentSrc)
-                    .then(() => (e.currentTarget.src = APIService.getPokeFullSprite(props.data?.prev?.id ?? 0)))
-                    .catch(() => false);
                 }}
               />
             </div>
@@ -69,9 +65,6 @@ const SearchBarMain = (props: { data: OptionsPokemon | undefined }) => {
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = APIService.getPokeFullAsset(props.data?.next?.id ?? 0);
-                  APIService.getFetchUrl(e.currentTarget?.currentSrc)
-                    .then(() => (e.currentTarget.src = APIService.getPokeFullSprite(props.data?.next?.id ?? 0)))
-                    .catch(() => false);
                 }}
               />
             </div>

@@ -115,7 +115,7 @@ const Pokemon = (props: {
       const soundCries: FormSoundCry[] = [];
       const cancelToken = axiosSource.current.token;
       await Promise.all(
-        data?.varieties.map(async (value) => {
+        data.varieties.map(async (value) => {
           const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken })).data;
           const pokeForm = await Promise.all(
             pokeInfo.forms.map(async (item) => (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data)
@@ -176,7 +176,7 @@ const Pokemon = (props: {
       // Set Default Form
       let currentForm: PokemonFormModify | undefined;
       const formParams = searchParams.get('form')?.toLowerCase().replaceAll('_', '-');
-      const defaultForm = formListResult.map((value) => value.find((item) => item.form.is_default));
+      const defaultForm = formListResult.map((value) => value.find((item) => item.form.is_default)).filter((item) => item);
       if (formParams) {
         const defaultFormSearch = formListResult.find((value) =>
           value.find(
@@ -188,14 +188,17 @@ const Pokemon = (props: {
         if (defaultFormSearch) {
           currentForm = defaultFormSearch.at(0);
         } else {
-          currentForm = defaultForm?.find((item) => item?.form.id === data?.id);
+          currentForm = defaultForm.find((item) => item?.form.id === data.id);
           searchParams.delete('form');
         }
         setSearchParams(searchParams);
       } else if (router.action === Action.Pop && props.searching) {
-        currentForm = defaultForm?.find((item) => item?.form.form_name === props.searching?.form);
+        currentForm = defaultForm.find((item) => item?.form.form_name === props.searching?.form);
       } else {
-        currentForm = defaultForm?.find((item) => item?.form.id === data?.id);
+        currentForm = defaultForm.find((item) => item?.form.id === data.id);
+      }
+      if (!currentForm) {
+        currentForm = formListResult.map((value) => value.find((item) => item.form.id === data.id)).find((item) => item);
       }
       let defaultData = dataPokeList.find((value) => value.name === currentForm?.form.name);
       if (!defaultData) {
@@ -218,7 +221,9 @@ const Pokemon = (props: {
 
       APIService.getPokeSpices(id, { cancelToken })
         .then((res) => {
-          fetchMap(res.data);
+          if (res.data) {
+            fetchMap(res.data);
+          }
         })
         .catch((e: AxiosError) => {
           if (APIService.isCancel(e)) {
@@ -372,7 +377,7 @@ const Pokemon = (props: {
           : formParams || (currentForm?.form.id ?? 0) < 0
           ? currentForm?.form.name
           : data?.name;
-      setFormName(nameInfo);
+      setFormName(nameInfo?.replace('-f', '-female').replace('-m', '-male'));
       const originForm = splitAndCapitalize(
         router.action === Action.Pop && props.searching ? props.searching.form : currentForm?.form.form_name,
         '-',
@@ -438,14 +443,15 @@ const Pokemon = (props: {
                   alt="img-full-pokemon"
                   src={APIService.getPokeFullSprite(
                     dataStorePokemon?.current?.id ?? 0,
-                    convertPokemonImageName(originForm || searchParams.get('form'))
+                    convertPokemonImageName(
+                      currentForm && originForm && currentForm.default_id === currentForm.form.id
+                        ? ''
+                        : originForm || searchParams.get('form')
+                    )
                   )}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
-                    APIService.getFetchUrl(e.currentTarget?.currentSrc)
-                      .then(() => (e.currentTarget.src = APIService.getPokeFullSprite(dataStorePokemon?.current?.id ?? 0)))
-                      .catch(() => false);
                   }}
                 />
               </div>
