@@ -36,6 +36,7 @@ import Error from '../Error/Error';
 import { Action } from 'history';
 import Form from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
+import { APIUrl } from '../../services/constants';
 
 interface TypeCost {
   purified: PokemonTypeCost;
@@ -454,7 +455,11 @@ const Pokemon = (props: {
                   )}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
+                    if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                      e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
+                    } else {
+                      e.currentTarget.src = APIService.getPokeFullSprite(0);
+                    }
                   }}
                 />
               </div>
