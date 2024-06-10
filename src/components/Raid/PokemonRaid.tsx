@@ -46,7 +46,7 @@ const PokemonRaid = (props: {
   }, [props.data, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon, props.id, props.setData]);
 
   return (
-    <div>
+    <div className="position-relative">
       <span className="input-group-text justify-content-center position-relative" style={{ height: 38 }}>
         {dataTargetPokemon && (
           <div className="d-flex text-group-small">
@@ -112,6 +112,7 @@ const PokemonRaid = (props: {
         setCurrentPokemon={setDataTargetPokemon}
         setFMovePokemon={setFmoveTargetPokemon}
         setCMovePokemon={setCmoveTargetPokemon}
+        maxHeight={148}
       />
       <span className="input-group-text justify-content-center">
         <b>Fast Move</b>

@@ -27,6 +27,7 @@ import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
 import { AxiosError } from 'axios';
+import { APIUrl } from '../../services/constants';
 
 interface OptionsPokemon {
   prev: PokemonNameModel | undefined;
@@ -261,7 +262,11 @@ const FormSelect = (props: {
                 src={APIService.getPokeFullSprite(dataStorePokemon?.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.prev?.id ?? 0);
+                  if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.prev?.id ?? 0);
+                  } else {
+                    e.currentTarget.src = APIService.getPokeFullSprite(0);
+                  }
                 }}
               />
             </div>
@@ -284,7 +289,11 @@ const FormSelect = (props: {
         }
         onError={(e) => {
           e.currentTarget.onerror = null;
-          e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
+          if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+            e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
+          } else {
+            e.currentTarget.src = APIService.getPokeFullSprite(0);
+          }
         }}
       />
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
@@ -297,7 +306,11 @@ const FormSelect = (props: {
                 src={APIService.getPokeFullSprite(dataStorePokemon?.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.next?.id ?? 0);
+                  if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.next?.id ?? 0);
+                  } else {
+                    e.currentTarget.src = APIService.getPokeFullSprite(0);
+                  }
                 }}
               />
             </div>

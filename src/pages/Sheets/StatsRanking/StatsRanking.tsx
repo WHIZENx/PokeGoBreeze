@@ -19,6 +19,7 @@ import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { APIUrl } from '../../../services/constants';
 
 const columnPokemon: any = [
   {
@@ -243,7 +244,11 @@ const StatsRanking = () => {
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeFullAsset(select?.num ?? 0);
+                if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                  e.currentTarget.src = APIService.getPokeFullAsset(select?.num ?? 0);
+                } else {
+                  e.currentTarget.src = APIService.getPokeFullSprite(0);
+                }
               }}
             />
           </div>
