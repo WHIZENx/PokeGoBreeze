@@ -21,6 +21,7 @@ const SelectPokemon = (props: {
   clearData?: () => void;
   disable?: boolean;
   defaultSetting?: PokemonDataStats;
+  maxHeight?: number;
 }) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
 
@@ -149,7 +150,11 @@ const SelectPokemon = (props: {
             }}
           />
         </div>
-        <div className="result-pokemon" onScroll={(e) => listenScrollEvent(e)} style={{ display: showPokemon ? 'block' : 'none' }}>
+        <div
+          className="result-pokemon"
+          onScroll={(e) => listenScrollEvent(e)}
+          style={{ display: showPokemon ? 'block' : 'none', maxHeight: props.maxHeight ?? 274 }}
+        >
           <div>
             {pokemonData
               .filter(

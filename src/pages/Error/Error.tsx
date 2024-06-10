@@ -9,9 +9,9 @@ import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 const Error = () => {
   const dispatch = useDispatch();
-  const thisLocation = useLocation();
+  const location = useLocation();
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  useChangeTitle('Page Not Found');
+  useChangeTitle(location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found');
 
   useEffect(() => {
     if (spinner.loading) {
@@ -31,7 +31,12 @@ const Error = () => {
           </h1>
           <h1>Page Not Found</h1>
           <span>
-            It looks like nothing was found at <p style={{ color: 'yellow' }}>{thisLocation.pathname}</p>
+            It looks like nothing was found at{' '}
+            <p style={{ color: 'yellow' }}>
+              {location.state?.url && location.state?.id
+                ? `${location.state.url}${location.state.id && `/${location.state.id}`}`
+                : location.pathname}
+            </p>
           </span>
           <span>Maybe try one of the links in the menu or press Back to Home to go to the home page.</span>
           <div style={{ marginTop: 15 }}>

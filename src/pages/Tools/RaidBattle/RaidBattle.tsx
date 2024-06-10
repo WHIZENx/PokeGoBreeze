@@ -1564,7 +1564,7 @@ const RaidBattle = () => {
             {trainerBattleId !== null && (
               <Fragment>
                 {pokemonBattle.map((pokemon, index) => (
-                  <div className={'' + (index === 0 ? '' : 'element-top')} key={index}>
+                  <div className={`${index === 0 ? '' : 'element-top'}`} key={index}>
                     <PokemonRaid
                       controls={true}
                       id={index}

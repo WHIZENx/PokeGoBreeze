@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import { SearchingModel } from '../../store/models/searching.model';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
 
@@ -36,6 +36,7 @@ import Error from '../Error/Error';
 import { Action } from 'history';
 import Form from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
+import { APIUrl } from '../../services/constants';
 
 interface TypeCost {
   purified: PokemonTypeCost;
@@ -60,6 +61,7 @@ const Pokemon = (props: {
 
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [pokeData, setPokeData]: [PokemonInfo[], React.Dispatch<React.SetStateAction<PokemonInfo[]>>] = useState([] as PokemonInfo[]);
@@ -232,8 +234,10 @@ const Pokemon = (props: {
           enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: 'error' });
           if (params.id) {
             document.title = `#${params.id} - Not Found`;
+            setIsFound(false);
+          } else {
+            navigate('/error', { replace: true, state: { url: location.pathname, id } });
           }
-          setIsFound(false);
         });
     },
     [enqueueSnackbar, fetchMap]
@@ -451,7 +455,11 @@ const Pokemon = (props: {
                   )}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
+                    if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                      e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
+                    } else {
+                      e.currentTarget.src = APIService.getPokeFullSprite(0);
+                    }
                   }}
                 />
               </div>
