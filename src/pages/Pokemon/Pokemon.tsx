@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import { SearchingModel } from '../../store/models/searching.model';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
 
@@ -60,6 +60,7 @@ const Pokemon = (props: {
 
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [pokeData, setPokeData]: [PokemonInfo[], React.Dispatch<React.SetStateAction<PokemonInfo[]>>] = useState([] as PokemonInfo[]);
@@ -232,8 +233,10 @@ const Pokemon = (props: {
           enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: 'error' });
           if (params.id) {
             document.title = `#${params.id} - Not Found`;
+            setIsFound(false);
+          } else {
+            navigate('/error', { replace: true, state: { url: location.pathname, id } });
           }
-          setIsFound(false);
         });
     },
     [enqueueSnackbar, fetchMap]
