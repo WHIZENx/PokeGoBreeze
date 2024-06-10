@@ -34,7 +34,7 @@ const SearchBarMain = (props: { data: OptionsPokemon | undefined }) => {
                 }}
               />
             </div>
-            <div className="w-100" style={{ cursor: 'pointer' }}>
+            <div className="w-100" style={{ cursor: 'pointer', textAlign: 'start', overflow: 'hidden' }}>
               <div style={{ textAlign: 'start' }}>
                 <b>#{props.data?.prev?.id}</b>
               </div>
@@ -50,7 +50,7 @@ const SearchBarMain = (props: { data: OptionsPokemon | undefined }) => {
             className="d-flex justify-content-end align-items-center"
             title={`#${props.data?.next?.id} ${splitAndCapitalize(props.data?.next?.name, '-', ' ')}`}
           >
-            <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end' }}>
+            <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end', overflow: 'hidden' }}>
               <div style={{ textAlign: 'end' }}>
                 <b>#{props.data?.next?.id}</b>
               </div>
