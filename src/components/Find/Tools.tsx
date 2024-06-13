@@ -10,7 +10,7 @@ import def_logo from '../../assets/defense.png';
 import hp_logo from '../../assets/hp.png';
 import sta_logo from '../../assets/stamina.png';
 
-import { convertStatsEffort, getFormFromForms } from '../../util/Utils';
+import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { PokemonFormModify } from '../../core/models/API/form.model';
@@ -198,6 +198,8 @@ const Tools = (props: {
           statProd={statsPokemon?.prod}
           pokemonStats={props.stats}
           stats={currDataPoke}
+          id={props.id}
+          form={convertPokemonAPIDataName(props.currForm?.form.form_name)}
         />
       )}
     </Fragment>

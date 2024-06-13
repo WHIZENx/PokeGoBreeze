@@ -13,13 +13,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { APIUrl } from '../../../services/constants';
+import { ColumnType } from './enums/column-type.enum';
+import { FORM_NORMAL } from '../../../util/Constants';
 
 const columnPokemon: any = [
   {
@@ -120,6 +122,8 @@ const customStyles = {
 
 const StatsRanking = () => {
   useChangeTitle('Stats Ranking');
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const conditionalRowStyles = [
     {
       when: (row: PokemonStatsRanking) => row.slug === select?.slug,
@@ -160,13 +164,13 @@ const StatsRanking = () => {
 
   const sortRanking = (pokemon: PokemonStatsRanking[], id: number): PokemonStatsRanking[] => {
     let sortBy: string[] = [];
-    if (id === 6) {
+    if (id === ColumnType.Atk) {
       sortBy = ['atk', 'attack'];
-    } else if (id === 7) {
+    } else if (id === ColumnType.Def) {
       sortBy = ['def', 'defense'];
-    } else if (id === 8) {
+    } else if (id === ColumnType.Sta) {
       sortBy = ['sta', 'stamina'];
-    } else {
+    } else if (id === ColumnType.Prod) {
       sortBy = ['statProd', 'prod'];
     }
     return pokemon
@@ -179,7 +183,23 @@ const StatsRanking = () => {
       });
   };
 
-  const [sortId, setSortId] = useState(9);
+  const getSortId = () => {
+    let idSort = ColumnType.Prod;
+    const statsBy = location.state?.stats;
+    if (statsBy) {
+      if (statsBy === 'atk') {
+        idSort = ColumnType.Atk;
+      } else if (statsBy === 'def') {
+        idSort = ColumnType.Def;
+      } else if (statsBy === 'sta') {
+        idSort = ColumnType.Sta;
+      }
+    }
+    return idSort;
+  };
+
+  const [page, setPage] = useState(1);
+  const [sortId, setSortId] = useState(getSortId());
   const [pokemonList, setPokemonList]: [PokemonStatsRanking[], React.Dispatch<React.SetStateAction<PokemonStatsRanking[]>>] = useState(
     [] as PokemonStatsRanking[]
   );
@@ -210,6 +230,27 @@ const StatsRanking = () => {
       setSelect(pokemonList.at(0));
     }
   }, [select, pokemonList]);
+
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (id && pokemonFilter.length > 0) {
+      const form = searchParams.get('form');
+      const index = pokemonFilter.findIndex(
+        (row) => row.num === parseInt(id) && row.forme === (form?.replaceAll('-', '_').toUpperCase() || FORM_NORMAL)
+      );
+      if (index > -1) {
+        const result = pokemonFilter[index];
+        setPage(Math.ceil((index + 1) / 25));
+        setSelect(result);
+      }
+    }
+  }, [searchParams, pokemonFilter]);
+
+  const setFilterParams = (select: PokemonStatsRanking) => {
+    searchParams.set('id', select.num.toString());
+    searchParams.set('form', select.forme?.replace(FORM_NORMAL, '').replaceAll('_', '-').toLowerCase());
+    setSearchParams(searchParams);
+  };
 
   useEffect(() => {
     if (pokemonList.length > 0) {
@@ -282,7 +323,15 @@ const StatsRanking = () => {
           )}
         </div>
       </div>
-      <Stats statATK={select?.atk} statDEF={select?.def} statSTA={select?.sta} statProd={select?.statProd} pokemonStats={stats} />
+      <Stats
+        statATK={select?.atk}
+        statDEF={select?.def}
+        statSTA={select?.sta}
+        statProd={select?.statProd}
+        pokemonStats={stats}
+        id={select?.num}
+        form={select?.forme}
+      />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
           <span className="input-group-text">Find Pokémon</span>
@@ -303,12 +352,12 @@ const StatsRanking = () => {
         columns={columnPokemon}
         data={pokemonFilter}
         pagination={true}
-        defaultSortFieldId={10}
+        defaultSortFieldId={getSortId()}
         defaultSortAsc={false}
         highlightOnHover={true}
         onRowClicked={(row) => {
           if (select?.name !== row.name) {
-            setSelect(row);
+            setFilterParams(row);
           }
         }}
         onSort={(rows) => {
@@ -319,6 +368,9 @@ const StatsRanking = () => {
         }}
         conditionalRowStyles={conditionalRowStyles}
         customStyles={customStyles}
+        paginationDefaultPage={page}
+        paginationPerPage={25}
+        paginationRowsPerPageOptions={[25, 50, 100]}
       />
     </div>
   );

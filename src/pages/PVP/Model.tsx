@@ -214,7 +214,15 @@ export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRankin
           <h5>
             <b>Overall Stats</b>
           </h5>
-          <Stats statATK={data?.atk} statDEF={data?.def} statSTA={data?.sta} statProd={data?.prod} pokemonStats={statsRanking} />
+          <Stats
+            statATK={data?.atk}
+            statDEF={data?.def}
+            statSTA={data?.sta}
+            statProd={data?.prod}
+            pokemonStats={statsRanking}
+            id={data?.pokemon?.num}
+            form={data?.pokemon?.forme ?? ''}
+          />
         </div>
         <div>
           <h5>
