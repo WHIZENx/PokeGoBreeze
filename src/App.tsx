@@ -43,10 +43,9 @@ import { loadTheme } from './store/actions/theme.action';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
-// import { TRANSITION_TIME } from './util/Constants';
+import { TRANSITION_TIME } from './util/Constants';
 import { setDevice } from './store/actions/device.action';
 import { PaletteMode } from '@mui/material';
-import { TRANSITION_TIME } from './util/Constants';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });

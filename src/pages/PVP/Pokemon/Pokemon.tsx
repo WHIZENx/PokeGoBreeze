@@ -180,6 +180,9 @@ const PokemonPVP = () => {
         }
       }
     }
+    return () => {
+      dispatch(hideSpinner());
+    };
   }, [fetchPokemonInfo, rankingPoke, pvp, router.action]);
 
   const renderLeague = () => {
