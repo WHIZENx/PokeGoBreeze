@@ -643,6 +643,9 @@ const Battle = () => {
       try {
         clearData();
         const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile('all', league, 'overall'))).data;
+        if (!file) {
+          return;
+        }
         document.title = `PVP Battle Simalator - ${
           league === 500 ? 'Little Cup' : league === 1500 ? 'Great League' : league === 2500 ? 'Ultra League' : 'Master League'
         }`;
@@ -693,6 +696,9 @@ const Battle = () => {
     if (dataStore?.options && dataStore?.pokemon && dataStore?.assets) {
       fetchPokemon(league);
     }
+    return () => {
+      dispatch(hideSpinner());
+    };
   }, [fetchPokemonBattle, league]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {

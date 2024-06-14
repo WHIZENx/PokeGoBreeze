@@ -228,6 +228,8 @@ const Form = (props: {
         statProd={statsPokemon?.prod}
         pokemonStats={stats}
         stats={convertStatsEffort(props.data?.stats)}
+        id={props.defaultId}
+        form={convertPokemonAPIDataName(props.form?.form.form_name)}
       />
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>

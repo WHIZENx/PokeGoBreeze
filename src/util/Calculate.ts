@@ -772,14 +772,7 @@ export const calculateAvgDPS = (
   let x = 0.5 * CE + 0.5 * FE;
   if (options?.specific) {
     const bar = getBarCharge(true, CE);
-    let λ = 0;
-    if (bar === 1) {
-      λ = 3;
-    } else if (bar === 2) {
-      λ = 1.5;
-    } else if (bar === 3) {
-      λ = 1;
-    }
+    const λ = 3 / bar;
     x += 0.5 * λ * options.specific.FDmgenemy + options.specific.CDmgenemy * λ + 1;
   }
 

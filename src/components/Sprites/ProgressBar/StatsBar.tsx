@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { StatsModel } from '../../../core/models/stats.model';
+import { useNavigate } from 'react-router-dom';
+import { FORM_NORMAL } from '../../../util/Constants';
 
 const ComponentBar = styled.div`
   position: relative !important;
@@ -29,9 +31,20 @@ const StatsBar = (props: {
   pokemonStats: StatsModel;
   currentStats: number;
   optionalStats?: string;
+  id?: number;
+  form?: string;
+  statType?: string;
 }) => {
+  const navigate = useNavigate();
   return (
-    <ComponentBar className="progress">
+    <ComponentBar
+      className="progress"
+      onClick={() =>
+        navigate(`/stats-ranking?id=${props.id}&form=${(props.form ?? '').replace(FORM_NORMAL, '').replaceAll('_', '-').toLowerCase()}`, {
+          state: { stats: (props.statType ?? '').toLowerCase() },
+        })
+      }
+    >
       <BoxText className={`box-text stats-text`} isRank={false}>
         <span>
           {props.tag} {props.pokemonStats && (props.optionalStats ?? props.currentStats)}

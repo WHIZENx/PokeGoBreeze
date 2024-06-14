@@ -720,7 +720,7 @@ const FindBattle = () => {
                         ))}
                       </div>
                     </div>
-                    <LeaveToggle eventKey={index} />
+                    <LeaveToggle eventKey={index.toString()} />
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>

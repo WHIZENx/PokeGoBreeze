@@ -165,6 +165,9 @@ const TeamPVP = () => {
     if (!rankingData && pvp && dataStore?.combat && dataStore?.pokemon?.length > 0 && dataStore?.assets && statsRanking) {
       fetchPokemon();
     }
+    return () => {
+      dispatch(hideSpinner());
+    };
   }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, statsRanking]);
 
   const renderLeague = () => {

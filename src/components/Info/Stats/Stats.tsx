@@ -18,6 +18,8 @@ const Stats = (props: {
   statDEF?: StatsDef;
   statSTA?: StatsSta;
   statProd?: StatsProd;
+  id?: number;
+  form?: string;
 }) => {
   const data = useSelector((state: StoreState) => state.store.data);
   const theme = useTheme();
@@ -103,6 +105,9 @@ const Stats = (props: {
         rank={isAvailable.attackRank ? isAvailable.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'}
         pokemonStats={props.pokemonStats}
         currentStats={currentStats.stats.atk}
+        id={props.id}
+        form={props.form}
+        statType="atk"
       />
       <StatsBar
         tag="DEF"
@@ -111,6 +116,9 @@ const Stats = (props: {
         rank={isAvailable.defenseRank ? isAvailable.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'}
         pokemonStats={props.pokemonStats}
         currentStats={currentStats.stats.def}
+        id={props.id}
+        form={props.form}
+        statType="def"
       />
       <StatsBar
         tag="STA"
@@ -119,6 +127,9 @@ const Stats = (props: {
         rank={isAvailable.staminaRank ? isAvailable.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'}
         pokemonStats={props.pokemonStats}
         currentStats={currentStats.stats.sta}
+        id={props.id}
+        form={props.form}
+        statType="sta"
       />
       <StatsBar
         tag="Stat Prod"
@@ -128,6 +139,9 @@ const Stats = (props: {
         pokemonStats={props.pokemonStats}
         currentStats={currentStats.stats.prod}
         optionalStats={`${(currentStats.stats.prod / Math.pow(10, 6)).toFixed(2)} MM`}
+        id={props.id}
+        form={props.form}
+        statType="prod"
       />
     </div>
   );

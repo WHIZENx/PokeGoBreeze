@@ -59,14 +59,20 @@ const RankingPVP = () => {
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
-  const LeaveToggle = ({ eventKey }: any) => {
+  const LeaveToggle = ({ children, eventKey }: any) => {
     const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
 
     return (
-      <div className="accordion-footer" onClick={decoratedOnClick}>
-        <span className="text-danger">
-          Close <CloseIcon sx={{ color: 'red' }} />
-        </span>
+      <div
+        className="accordion-footer"
+        onClick={() => {
+          if (storeStats && storeStats[parseInt(eventKey)]) {
+            setStoreStats(update(storeStats, { [parseInt(eventKey)]: { $set: false } }));
+          }
+          return decoratedOnClick;
+        }}
+      >
+        {children}
       </div>
     );
   };
@@ -89,6 +95,9 @@ const RankingPVP = () => {
       try {
         const cp = parseInt(params.cp);
         const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))).data;
+        if (!file) {
+          return;
+        }
         if (params.serie === 'all') {
           document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
         } else {
@@ -165,7 +174,6 @@ const RankingPVP = () => {
         setStoreStats(file.map(() => false));
         dispatch(hideSpinner());
       } catch (e: any) {
-        APIService.getAxios().CancelToken.source().cancel();
         dispatch(
           showSpinner({
             error: true,
@@ -183,6 +191,9 @@ const RankingPVP = () => {
         fetchPokemon();
       }
     }
+    return () => {
+      dispatch(hideSpinner());
+    };
   }, [
     dispatch,
     params.serie,
@@ -203,8 +214,8 @@ const RankingPVP = () => {
       <Accordion.Item eventKey={key.toString()}>
         <Accordion.Header
           onClick={() => {
-            if (storeStats && !storeStats[key]) {
-              setStoreStats(update(storeStats, { [key]: { $set: true } }));
+            if (storeStats) {
+              setStoreStats(update(storeStats, { [key]: { $set: !storeStats[key] } }));
             }
           }}
         >
@@ -299,7 +310,11 @@ const RankingPVP = () => {
                 </div>
                 <div className="container">{MoveSet(data?.data?.moves, data.pokemon, dataStore?.combat ?? [])}</div>
               </div>
-              <LeaveToggle eventKey={key} />
+              <LeaveToggle eventKey={key.toString()}>
+                <span className="text-danger">
+                  Close <CloseIcon sx={{ color: 'red' }} />
+                </span>
+              </LeaveToggle>
             </Fragment>
           )}
         </Accordion.Body>
