@@ -381,7 +381,7 @@ const Pokemon = (props: {
           : formParams || (currentForm?.form.id ?? 0) < 0
           ? currentForm?.form.name
           : data?.name;
-      setFormName(nameInfo?.replace('-f', '-female').replace('-m', '-male'));
+      setFormName(nameInfo?.replace(/-f$/, '-female').replace(/-m$/, '-male'));
       const originForm = splitAndCapitalize(
         router.action === Action.Pop && props.searching ? props.searching.form : currentForm?.form.form_name,
         '-',

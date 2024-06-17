@@ -617,7 +617,7 @@ const Evolution = (props: {
         </span>
         {value.baby && <span className="caption text-danger">(Baby)</span>}
         <p>
-          {value.id === props.id && (
+          {value.id === props.id && form === (convertPokemonAPIDataName(props.forme?.form_name) || FORM_NORMAL) && (
             <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
               Current
             </span>
