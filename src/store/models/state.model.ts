@@ -12,10 +12,10 @@ const store = configureStore();
 
 export type RouterState = ReturnType<typeof store.getState>;
 
-export type StatsState = AnyIfEmpty<{ stats: StatsModel }>;
+export type StatsState = AnyIfEmpty<{ stats: StatsModel | null }>;
 export type SpinnerState = AnyIfEmpty<{ spinner: SpinnerModel }>;
 export type SearchingState = AnyIfEmpty<{ searching: SearchingOptionsModel }>;
-export type OptionsSheetState = AnyIfEmpty<{ options: OptionsSheetModel }>;
+export type OptionsSheetState = AnyIfEmpty<{ options: OptionsSheetModel | null }>;
 
 export type StoreState = AnyIfEmpty<{ store: StoreModel }>;
 

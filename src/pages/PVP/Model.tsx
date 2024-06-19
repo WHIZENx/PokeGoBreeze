@@ -124,7 +124,7 @@ export const Keys = (
   );
 };
 
-export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRanking: StatsModel, cp: number | string) => {
+export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRanking: StatsModel | null, cp: number | string) => {
   const calculateStatsTopRank = (stats: StatsPokemon | undefined) => {
     const maxCP = parseInt(cp.toString());
 
