@@ -28,7 +28,7 @@ const StatsBar = (props: {
   class: string;
   statsPercent: number;
   rank: number | string;
-  pokemonStats: StatsModel;
+  pokemonStats: StatsModel | null;
   currentStats: number;
   optionalStats?: string;
   id?: number;

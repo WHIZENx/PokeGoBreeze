@@ -5,7 +5,6 @@ import {
   FORM_GALARIAN,
   FORM_GMAX,
   FORM_HISUIAN,
-  FORM_MEGA,
   FORM_NORMAL,
   FORM_PURIFIED,
   FORM_SHADOW,
@@ -13,14 +12,24 @@ import {
   MAX_IV,
 } from './Constants';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
-import { PokemonStatsRanking, StatsModel, StatsPokemon, StatsPokemonGO } from '../core/models/stats.model';
+import { StatsModel, StatsPokemon, StatsPokemonGO } from '../core/models/stats.model';
 import { PokemonInfo, Stats } from '../core/models/API/info.model';
-import { FormModel, PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../core/models/API/form.model';
+import { PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../core/models/API/form.model';
 import { PokemonSearchingModel } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 
+class Mask {
+  value: number;
+  label: string;
+
+  constructor(value: number, label: string) {
+    this.value = value;
+    this.label = label;
+  }
+}
+
 export const marks = [...Array(MAX_IV + 1).keys()].map((n) => {
-  return { value: n, label: n.toString() };
+  return new Mask(n, n.toString());
 });
 
 export const PokeGoSlider = styled(Slider)(() => ({
@@ -191,14 +200,6 @@ export const convertModelSpritName = (text: string) => {
     .replace(`-${FORM_NORMAL.toLowerCase()}`, '');
 };
 
-export const convertNameRanking = (text: string) => {
-  return text
-    .toLowerCase()
-    .replaceAll('-', '_')
-    .replaceAll('galar', FORM_GALARIAN.toLowerCase())
-    .replaceAll(FORM_ALOLA.toLowerCase(), 'alolan');
-};
-
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
   if (text.includes('_')) {
@@ -207,7 +208,7 @@ export const convertNameRankingToForm = (text: string) => {
   return text + form;
 };
 
-export const convertNameRankingToOri = (text: string, form: string, local = false) => {
+export const convertNameRankingToOri = (text: string, form: string) => {
   const formOri = form;
   if (text === 'lanturnw') {
     text = 'lanturn';
@@ -243,15 +244,11 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
     .replace('-rider', '')
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
-    .replace('-shaymin', '')
-    .replace(local ? 'mewtwo-a' : '-armored', local ? 'mewtwo-armor' : '-armor');
-  if (local && text === 'mewtwo-armor') {
-    return text;
-  }
+    .replace('-shaymin', '');
   if (text?.toUpperCase().includes(FORM_STANDARD)) {
     form = `-${FORM_STANDARD.toLowerCase()}`;
   }
-  let invalidForm: string[] = [
+  const invalidForm: string[] = [
     '-therian',
     '-o',
     '-origin',
@@ -273,9 +270,6 @@ export const convertNameRankingToOri = (text: string, form: string, local = fals
     `-${FORM_GALARIAN.toLowerCase()}`,
     `-${FORM_HISUIAN.toLowerCase()}`,
   ];
-  if (local) {
-    invalidForm = invalidForm.concat([`-${FORM_STANDARD.toLowerCase()}`, '-zen', '-confined', '-unbound', '-incarnate']);
-  }
   return formOri.includes('(') && formOri.includes(')') && !invalidForm.includes(form) ? text.replaceAll(form.toLowerCase(), '') : text;
 };
 
@@ -293,10 +287,10 @@ export const getStyleSheet = (selector: string) => {
       }
     }
   }
-  return null;
+  return;
 };
 
-export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet | null) => {
+export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet) => {
   const sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
     sheet = sheets[i];
@@ -310,7 +304,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
       }
     }
   }
-  return null;
+  return;
 };
 
 export const findMoveTeam = (move: string, moveSet: string[]) => {
@@ -394,7 +388,7 @@ export const convertFormGif = (name: string | undefined) => {
     .replace('-hero', '');
 };
 
-export const checkRankAllAvailable = (pokemonStats: StatsModel, stats: StatsPokemonGO) => {
+export const checkRankAllAvailable = (pokemonStats: StatsModel | null, stats: StatsPokemonGO) => {
   const data = {
     attackRank: 0,
     defenseRank: 0,
@@ -540,24 +534,6 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
   });
 
   return result as unknown as StatsPokemon;
-};
-
-export const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRanking): FormModel => {
-  return {
-    form_name: pokemon.forme ?? '',
-    form_names: [],
-    form_order: 0,
-    id: pokemon.num,
-    is_battle_only: false,
-    is_default: true,
-    is_mega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
-    name: pokemon.name,
-    sprites: null,
-    types: pokemon.types ?? [],
-    version_group: { name: pokemon.version ?? '' },
-    is_shadow: false,
-    is_purified: false,
-  };
 };
 
 export const replacePokemonGoForm = (form: string) => {
@@ -767,10 +743,14 @@ export const generatePokemonGoShadowForms = (
   return index;
 };
 
-export const getFormFromForms = (stats: { id: number; form: string }[], id: number | undefined, formName: string | undefined) => {
-  const forms = stats.filter((i) => i.id === id);
-  let filterForm = forms.find((item) => item.form === (convertPokemonAPIDataName(formName) || FORM_NORMAL));
-  if (!filterForm && forms.length > 0) {
+export const getFormFromForms = (
+  stats: { id: number; form: string }[] | undefined,
+  id: number | undefined,
+  formName: string | undefined
+) => {
+  const forms = stats?.filter((i) => i.id === id);
+  let filterForm = forms?.find((item) => item.form === (convertPokemonAPIDataName(formName) || FORM_NORMAL));
+  if (!filterForm && forms && forms.length > 0) {
     filterForm = forms.find((item) => item.form === FORM_NORMAL);
     if (!filterForm) {
       filterForm = forms.at(0);

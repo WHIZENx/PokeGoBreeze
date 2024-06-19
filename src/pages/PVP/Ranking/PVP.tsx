@@ -54,7 +54,7 @@ const RankingPVP = () => {
   const sortedBy = useRef('score');
   const [sorted, setSorted] = useState(1);
 
-  const styleSheet: React.MutableRefObject<CSSStyleSheet | null> = useRef(null);
+  const styleSheet: React.MutableRefObject<CSSStyleSheet | undefined> = useRef();
 
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
@@ -158,10 +158,10 @@ const RankingPVP = () => {
             form,
             pokemon,
             stats,
-            atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
-            def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
-            sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
-            prod: statsRanking.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
+            atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
+            def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
+            sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
+            prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
             fmove,
             cmovePri,
             cmoveSec,

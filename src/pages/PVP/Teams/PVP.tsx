@@ -46,7 +46,7 @@ const TeamPVP = () => {
   const [sortedTeamBy, setSortedTeamBy] = useState('teamScore');
   const [sortedTeam, setSortedTeam] = useState(1);
 
-  const styleSheet: React.MutableRefObject<CSSStyleSheet | null> = useRef(null);
+  const styleSheet: React.MutableRefObject<CSSStyleSheet | undefined> = useRef();
 
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
@@ -96,9 +96,9 @@ const TeamPVP = () => {
       pokemonData: pokemon,
       form,
       stats,
-      atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
-      def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
-      sta: statsRanking.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
+      atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
+      def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
+      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
       fmove,
       cmovePri,
       cmoveSec,

@@ -52,7 +52,7 @@ const FormSelect = (props: {
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   // eslint-disable-next-line no-unused-vars
   setForm?: (form: PokemonFormModify | undefined) => void;
-  stats: StatsModel;
+  stats: StatsModel | null;
   // eslint-disable-next-line no-unused-vars
   onHandleSetStats?: (type: string, value: number) => void;
   data: PokemonDataModel[];

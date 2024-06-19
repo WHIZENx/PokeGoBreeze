@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, capitalize, convertToPokemonForm, convertPokemonImageName, getPokemonDetails } from '../../../util/Utils';
+import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
@@ -21,7 +21,8 @@ import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
-import { FORM_NORMAL } from '../../../util/Constants';
+import { FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
+import { FormModel } from '../../../core/models/API/form.model';
 
 const columnPokemon: any = [
   {
@@ -269,6 +270,24 @@ const StatsRanking = () => {
       return () => clearTimeout(timeOutId);
     }
   }, [search, match, pokemonList]);
+
+  const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRanking): FormModel => {
+    return {
+      form_name: pokemon.forme ?? '',
+      form_names: [],
+      form_order: 0,
+      id: pokemon.num,
+      is_battle_only: false,
+      is_default: true,
+      is_mega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
+      name: pokemon.name,
+      sprites: null,
+      types: pokemon.types ?? [],
+      version_group: { name: pokemon.version ?? '' },
+      is_shadow: false,
+      is_purified: false,
+    };
+  };
 
   return (
     <div className="element-bottom position-relative poke-container container">
