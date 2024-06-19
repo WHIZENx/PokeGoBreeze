@@ -12,8 +12,8 @@ import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 
 const Stats = (props: {
   isShadow?: boolean;
-  pokemonStats: StatsModel;
-  stats?: StatsPokemon;
+  pokemonStats: StatsModel | null;
+  stats?: StatsPokemon | null;
   statATK?: StatsAtk;
   statDEF?: StatsDef;
   statSTA?: StatsSta;
@@ -75,10 +75,10 @@ const Stats = (props: {
         sta,
         prod,
       },
-      atk: (atk * 100) / props.pokemonStats?.attack.max_stats,
-      def: (def * 100) / props.pokemonStats?.defense.max_stats,
-      sta: (sta * 100) / props.pokemonStats?.stamina.max_stats,
-      prod: (prod * 100) / props.pokemonStats?.statProd.max_stats,
+      atk: (atk * 100) / (props.pokemonStats?.attack.max_stats ?? 1),
+      def: (def * 100) / (props.pokemonStats?.defense.max_stats ?? 1),
+      sta: (sta * 100) / (props.pokemonStats?.stamina.max_stats ?? 1),
+      prod: (prod * 100) / (props.pokemonStats?.statProd.max_stats ?? 1),
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.isShadow]);
 

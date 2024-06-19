@@ -22,7 +22,7 @@ const Tools = (props: {
   currForm: PokemonFormModify | undefined;
   formList: PokemonFormModify[][];
   dataPoke: PokemonInfo[];
-  stats: StatsModel;
+  stats: StatsModel | null;
   // eslint-disable-next-line no-unused-vars
   setForm: ((form: PokemonFormModify | undefined) => void) | undefined;
   // eslint-disable-next-line no-unused-vars
@@ -46,7 +46,7 @@ const Tools = (props: {
   ] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.id, props.currForm?.form.form_name),
+    (stats: { id: number; form: string }[] | undefined): any => getFormFromForms(stats, props.id, props.currForm?.form.form_name),
     [props.id, props.currForm?.form.form_name]
   );
 
@@ -69,10 +69,10 @@ const Tools = (props: {
   }, [props.currForm?.form.form_name, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
-    const formATK = filterFormList(props.stats.attack.ranking);
-    const formDEF = filterFormList(props.stats.defense.ranking);
-    const formSTA = filterFormList(props.stats.stamina.ranking);
-    const formProd = filterFormList(props.stats.statProd.ranking);
+    const formATK = filterFormList(props.stats?.attack.ranking);
+    const formDEF = filterFormList(props.stats?.defense.ranking);
+    const formSTA = filterFormList(props.stats?.stamina.ranking);
+    const formProd = filterFormList(props.stats?.statProd.ranking);
 
     setStatsPokemon({
       atk: props.isRaid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack ?? 0, props.tier) } : formATK,
@@ -101,9 +101,9 @@ const Tools = (props: {
     props.dataPoke,
     props.id,
     props.setForm,
-    props.stats.attack.ranking,
-    props.stats.defense.ranking,
-    props.stats.stamina.ranking,
+    props.stats?.attack.ranking,
+    props.stats?.defense.ranking,
+    props.stats?.stamina.ranking,
     props.isRaid,
     props.tier,
     props.hide,

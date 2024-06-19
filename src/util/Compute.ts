@@ -101,20 +101,21 @@ export const computeBgType = (
   shadow = false,
   purified = false,
   opacity = 1,
-  styleSheet?: CSSStyleSheet | null,
+  styleSheet?: CSSStyleSheet,
   defaultColor?: string | null
 ) => {
+  const defaultBg = `rgb(100, 100, 100)`;
   if (defaultColor) {
     return `linear-gradient(to bottom right, ${defaultColor}, ${defaultColor})`;
   }
   const colorsPalette: string[] = [];
   if (typeof types === 'string') {
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
-    return color?.split(')').at(0) + `, ${opacity ?? 1})`;
+    return (color || defaultBg).split(')').at(0) + `, ${opacity ?? 1})` || defaultBg;
   } else {
     types?.forEach((type: string) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
-      colorsPalette.push(color?.split(')').at(0) + `, ${opacity ?? 1})`);
+      colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${opacity ?? 1})`);
     });
   }
   if (shadow) {
