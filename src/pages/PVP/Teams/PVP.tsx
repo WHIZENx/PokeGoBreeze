@@ -35,7 +35,7 @@ const TeamPVP = () => {
     })
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
-  const params: any = useParams();
+  const params = useParams();
 
   const [rankingData, setRankingData]: [TeamsPVP | undefined, React.Dispatch<React.SetStateAction<TeamsPVP | undefined>>] = useState();
   const [search, setSearch] = useState('');
@@ -118,8 +118,8 @@ const TeamPVP = () => {
     const fetchPokemon = async () => {
       dispatch(showSpinner());
       try {
-        const cp = parseInt(params.cp);
-        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp))).data;
+        const cp = parseInt(params.cp ?? '');
+        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie ?? '', cp))).data;
         if (params.serie === 'all') {
           document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
         } else {
@@ -171,7 +171,7 @@ const TeamPVP = () => {
   }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, statsRanking]);
 
   const renderLeague = () => {
-    const cp = parseInt(params.cp);
+    const cp = parseInt(params.cp ?? '');
     const league = pvp?.trains?.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>

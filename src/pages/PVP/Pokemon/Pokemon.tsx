@@ -28,7 +28,7 @@ const PokemonPVP = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
   const router = useSelector((state: RouterState) => state.router);
-  const params: any = useParams();
+  const params = useParams();
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
     'timestamp',
     JSON.stringify({
@@ -54,10 +54,10 @@ const PokemonPVP = () => {
   const fetchPokemonInfo = useCallback(async () => {
     dispatch(showSpinner());
     try {
-      const cp = parseInt(params.cp);
-      const paramName = params.pokemon.replaceAll('-', '_').toLowerCase();
+      const cp = parseInt(params.cp ?? '');
+      const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
-        (await APIService.getFetchUrl(APIService.getRankingFile(paramName.includes('_mega') ? 'mega' : 'all', cp, params.type)))
+        (await APIService.getFetchUrl(APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, params.type ?? '')))
           .data as RankingsPVP[]
       ).find((pokemon) => pokemon.speciesId === paramName);
 
@@ -104,7 +104,7 @@ const PokemonPVP = () => {
         fmove = { ...fmove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
       }
 
-      const maxCP = parseInt(params.cp);
+      const maxCP = parseInt(params.cp ?? '');
 
       let bestStats: any = {};
       if (maxCP === 10000) {
@@ -186,7 +186,7 @@ const PokemonPVP = () => {
   }, [fetchPokemonInfo, rankingPoke, pvp, router.action]);
 
   const renderLeague = () => {
-    const cp = parseInt(params.cp);
+    const cp = parseInt(params.cp ?? '');
     const league = pvp?.rankings.find((item) => item.id === 'all' && item.cp.includes(cp));
     return (
       <Fragment>
@@ -233,7 +233,7 @@ const PokemonPVP = () => {
               {scoreType.map((type, index) => (
                 <Button
                   key={index}
-                  className={params.type.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+                  className={params.type?.toLowerCase() === type.toLowerCase() ? 'active' : ''}
                   onClick={() => navigate(`/pvp/${params.cp}/${type.toLowerCase()}/${params.pokemon}`)}
                 >
                   {type}
@@ -309,7 +309,7 @@ const PokemonPVP = () => {
             <div className="container">
               <hr />
             </div>
-            <div className="stats-container">{OverAllStats(rankingPoke, statsRanking, params.cp)}</div>
+            <div className="stats-container">{OverAllStats(rankingPoke, statsRanking, params.cp ?? '')}</div>
             <div className="container">
               <hr />
               {TypeEffective(rankingPoke?.pokemon?.types ?? [])}

@@ -44,7 +44,7 @@ const RankingPVP = () => {
     })
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
-  const params: any = useParams();
+  const params = useParams();
 
   const [rankingData, setRankingData]: [PokemonBattleRanking[], React.Dispatch<React.SetStateAction<PokemonBattleRanking[]>>] = useState(
     [] as PokemonBattleRanking[]
@@ -93,8 +93,9 @@ const RankingPVP = () => {
     const fetchPokemon = async () => {
       dispatch(showSpinner());
       try {
-        const cp = parseInt(params.cp);
-        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))).data;
+        const cp = parseInt(params.cp ?? '');
+        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie ?? '', cp, params.type ?? '')))
+          .data;
         if (!file) {
           return;
         }
@@ -303,7 +304,7 @@ const RankingPVP = () => {
                 <div className="container">
                   <hr />
                 </div>
-                <div className="stats-container">{OverAllStats(data, statsRanking, params.cp)}</div>
+                <div className="stats-container">{OverAllStats(data, statsRanking, params.cp ?? '')}</div>
                 <div className="container">
                   <hr />
                   {TypeEffective(data.pokemon?.types ?? [])}
@@ -323,7 +324,7 @@ const RankingPVP = () => {
   };
 
   const renderLeague = () => {
-    const cp = parseInt(params.cp);
+    const cp = parseInt(params.cp ?? '');
     const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
@@ -357,7 +358,7 @@ const RankingPVP = () => {
           {scoreType.map((type, index) => (
             <Button
               key={index}
-              className={params.type.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+              className={params.type?.toLowerCase() === type.toLowerCase() ? 'active' : ''}
               onClick={() => {
                 setOnLoadData(false);
                 navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`);

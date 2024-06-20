@@ -213,11 +213,9 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={
-                        '/pokemon/' +
-                        item.id +
-                        (item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`)
-                      }
+                      to={`/pokemon/${item.id}${
+                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`
+                      }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
@@ -244,11 +242,9 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={
-                        '/pokemon/' +
-                        item.id +
-                        (item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`)
-                      }
+                      to={`/pokemon/${item.id}${
+                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`
+                      }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
@@ -654,7 +650,9 @@ const Leagues = () => {
                 <Link
                   className="img-link text-center"
                   key={index}
-                  to={'/pokemon/' + item.id}
+                  to={`/pokemon/${item.id}${
+                    item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`
+                  }`}
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
                   <div className="d-flex justify-content-center">
@@ -679,7 +677,9 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={'/pokemon/' + item.id}
+                      to={`/pokemon/${item.id}${
+                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`
+                      }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">

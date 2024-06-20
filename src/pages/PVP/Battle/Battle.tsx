@@ -50,6 +50,7 @@ import { BattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
 import { Buff, Combat } from '../../../core/models/combat.model';
 import { PokemonBattle, PokemonBattleData, Timeline } from '../models/battle.model';
 import { StatsPokemon } from '../../../core/models/stats.model';
+import { StatsProdCalculate } from '../../../util/models/calculate.model';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -131,8 +132,18 @@ const Battle = () => {
 
   const calculateMoveDmgActual = (poke: PokemonBattleData | null, pokeObj: PokemonBattleData | null, move: Combat | undefined | null) => {
     if (poke && pokeObj) {
-      const atkPoke = calculateStatsBattle(poke.stats.atk, poke.currentStats.IV.atk, poke.currentStats.level, true);
-      const defPokeObj = calculateStatsBattle(pokeObj.stats.def, pokeObj.currentStats.IV.def, pokeObj.currentStats.level, true);
+      const atkPoke = calculateStatsBattle(
+        poke.stats?.atk ?? 0,
+        poke.currentStats?.IV.atk ?? 0,
+        poke.currentStats?.level ?? MIN_LEVEL,
+        true
+      );
+      const defPokeObj = calculateStatsBattle(
+        pokeObj.stats?.def ?? 0,
+        pokeObj.currentStats?.IV.def ?? 0,
+        pokeObj.currentStats?.level ?? MIN_LEVEL,
+        true
+      );
       poke.shadow ??= false;
       pokeObj.shadow ??= false;
       return (
@@ -149,7 +160,7 @@ const Battle = () => {
 
   const Pokemon = (poke: PokemonBattle): PokemonBattleData => {
     return {
-      hp: poke.pokemonData?.currentStats.stats.statsSTA,
+      hp: poke.pokemonData?.currentStats?.stats.statsSTA ?? 0,
       stats: poke.pokemonData?.stats,
       currentStats: poke.pokemonData?.currentStats,
       bestStats: poke.pokemonData?.bestStats,
@@ -464,8 +475,8 @@ const Battle = () => {
                     ...player2,
                     stats: {
                       ...player2.stats,
-                      atk: value.type === 'atk' ? player2.stats.atk + value.power : player2.stats.atk,
-                      def: value.type === 'def' ? player2.stats.def + value.power : player2.stats.def,
+                      atk: value.type === 'atk' ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
+                      def: value.type === 'def' ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
                     },
                   };
                   arrBufTarget.push(value);
@@ -474,8 +485,8 @@ const Battle = () => {
                     ...player1,
                     stats: {
                       ...player1.stats,
-                      atk: value.type === 'atk' ? player1.stats.atk + value.power : player1.stats.atk,
-                      def: value.type === 'def' ? player1.stats.def + value.power : player1.stats.def,
+                      atk: value.type === 'atk' ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
+                      def: value.type === 'def' ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
                     },
                   };
                   arrBufAtk.push(value);
@@ -518,8 +529,8 @@ const Battle = () => {
                     ...player1,
                     stats: {
                       ...player1.stats,
-                      atk: value.type === 'atk' ? player1.stats.atk + value.power : player1.stats.atk,
-                      def: value.type === 'def' ? player1.stats.def + value.power : player1.stats.def,
+                      atk: value.type === 'atk' ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
+                      def: value.type === 'def' ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
                     },
                   };
                   arrBufTarget.push(value);
@@ -528,8 +539,8 @@ const Battle = () => {
                     ...player2,
                     stats: {
                       ...player2.stats,
-                      atk: value.type === 'atk' ? player2.stats.atk + value.power : player2.stats.atk,
-                      def: value.type === 'def' ? player2.stats.def + value.power : player2.stats.def,
+                      atk: value.type === 'atk' ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
+                      def: value.type === 'def' ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
                     },
                   };
                   arrBufAtk.push(value);
@@ -772,7 +783,7 @@ const Battle = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
     if (elem && x <= (timelineNormal.current?.clientWidth ?? 0) - 2) {
-      elem.style.transform = `translate(${x} px, -50%)`;
+      elem.style.transform = `translate(${x}px, -50%)`;
     }
     if (arrBound.current.length === 0 && pokemonCurr.timeline) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
@@ -797,7 +808,7 @@ const Battle = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
     if (elem && x <= (timelineFit.current?.clientWidth ?? 0)) {
-      elem.style.transform = `translate(${x} px, -50%)`;
+      elem.style.transform = `translate(${x}px, -50%)`;
     }
     if ((xFit.current !== e.currentTarget.clientWidth || arrStore.current.length === 0) && pokemonCurr.timeline) {
       xFit.current = e.currentTarget.clientWidth;
@@ -859,12 +870,12 @@ const Battle = () => {
         );
         if (width >= (timelineNormal.current?.clientWidth ?? 0) - 2) {
           if (elem) {
-            elem.style.transform = `translate(${(timelineNormal.current?.clientWidth ?? 0) - 2} px, -50%)`;
+            elem.style.transform = `translate(${(timelineNormal.current?.clientWidth ?? 0) - 2}px, -50%)`;
           }
           return stopTimeLine();
         }
         if (elem) {
-          elem.style.transform = `translate(${width} px, -50%)`;
+          elem.style.transform = `translate(${width}px, -50%)`;
           overlappingPos(arrBound.current, width + (xNormal.current ?? 0), true);
         }
         if (
@@ -882,14 +893,14 @@ const Battle = () => {
         const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
         const width = Math.min(timelineFit.current?.clientWidth ?? 0, xCurrent + durationFactor * (timelineFit.current?.clientWidth ?? 0));
         if (elem) {
-          elem.style.transform = `translate(${width} px, -50%)`;
+          elem.style.transform = `translate(${width}px, -50%)`;
           overlappingPos(arrStore.current, elem.getBoundingClientRect().left, true);
         }
         if (width < (timelineFit.current?.clientWidth ?? 0)) {
           timelinePlay.current = requestAnimationFrame(animate);
         } else {
           if (elem) {
-            elem.style.transform = `translate(${timelineFit.current?.clientWidth} px, -50%)`;
+            elem.style.transform = `translate(${timelineFit.current?.clientWidth}px, -50%)`;
           }
           return stopTimeLine();
         }
@@ -918,10 +929,10 @@ const Battle = () => {
     }
     setPlayTimeline({
       pokemonCurr: {
-        hp: Math.floor(pokemonCurr.pokemonData?.currentStats.stats.statsSTA),
+        hp: Math.floor(pokemonCurr.pokemonData?.currentStats?.stats.statsSTA ?? 0),
         energy: pokemonCurr.energy,
       },
-      pokemonObj: { hp: Math.floor(pokemonObj.pokemonData?.currentStats.stats.statsSTA), energy: pokemonObj.energy },
+      pokemonObj: { hp: Math.floor(pokemonObj.pokemonData?.currentStats?.stats.statsSTA ?? 0), energy: pokemonObj.energy },
     });
   };
 
@@ -979,7 +990,7 @@ const Battle = () => {
         transform = (xCurrent / prevWidth) * (timelineNormal.current?.clientWidth ?? 0) - 2;
         elem = document.getElementById('play-line');
         if (elem) {
-          elem.style.transform = `translate(${Math.max(0, transform)} px, -50%)`;
+          elem.style.transform = `translate(${Math.max(0, transform)}px, -50%)`;
         }
         timelineNormalContainer.current?.scrollTo({
           left: Math.min(transform, transform - timelineNormalContainer.current?.clientWidth / 2),
@@ -993,7 +1004,7 @@ const Battle = () => {
         transform = (xCurrent / prevWidth) * (timelineFit.current?.clientWidth ?? 0);
         elem = document.getElementById('play-line');
         if (elem) {
-          elem.style.transform = `translate(${transform} px, -50%)`;
+          elem.style.transform = `translate(${transform}px, -50%)`;
         }
       }
     }, 100);
@@ -1058,7 +1069,7 @@ const Battle = () => {
       return;
     }
 
-    let stats = pokemon.pokemonData?.allStats.find(
+    let stats = pokemon.pokemonData?.allStats?.find(
       (data: { level: number; IV: StatsPokemon }) =>
         data.level === level && data.IV.atk === atk && data.IV.def === def && data.IV.sta === sta
     );
@@ -1100,17 +1111,21 @@ const Battle = () => {
     setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>,
     isRandom: boolean
   ) => {
-    let stats: { level: string; IV: StatsPokemon };
+    if (!pokemon.pokemonData?.allStats) {
+      return;
+    }
+
+    let stats: StatsProdCalculate | undefined;
     if (isRandom) {
       stats = pokemon.pokemonData?.allStats[Math.floor(Math.random() * pokemon.pokemonData?.allStats.length)];
     } else {
       stats = pokemon.pokemonData?.bestStats;
     }
 
-    (document.getElementById('level' + capitalize(type)) as HTMLInputElement).value = stats.level;
-    (document.getElementById('atkIV' + capitalize(type)) as HTMLInputElement).value = stats.IV.atk.toString();
-    (document.getElementById('defIV' + capitalize(type)) as HTMLInputElement).value = stats.IV.def.toString();
-    (document.getElementById('hpIV' + capitalize(type)) as HTMLInputElement).value = stats.IV.sta?.toString() ?? '';
+    (document.getElementById('level' + capitalize(type)) as HTMLInputElement).value = stats?.level.toString() ?? '';
+    (document.getElementById('atkIV' + capitalize(type)) as HTMLInputElement).value = stats?.IV.atk.toString() ?? '';
+    (document.getElementById('defIV' + capitalize(type)) as HTMLInputElement).value = stats?.IV.def.toString() ?? '';
+    (document.getElementById('hpIV' + capitalize(type)) as HTMLInputElement).value = stats?.IV.sta?.toString() ?? '';
 
     if (pokemon.pokemonData) {
       setPokemon({
@@ -1153,35 +1168,40 @@ const Battle = () => {
             <h6>
               <b>Stats</b>
             </h6>
-            CP: <b>{Math.floor(pokemon.pokemonData?.currentStats.CP)}</b> | Level: <b>{pokemon.pokemonData?.currentStats.level}</b>
+            CP: <b>{Math.floor(pokemon.pokemonData?.currentStats?.CP ?? 0)}</b> | Level:{' '}
+            <b>{pokemon.pokemonData?.currentStats?.level ?? MIN_LEVEL}</b>
             <br />
             IV:{' '}
             <b>
-              {pokemon.pokemonData?.currentStats.IV.atk}/{pokemon.pokemonData?.currentStats.IV.def}/
-              {pokemon.pokemonData?.currentStats.IV.sta}
+              {pokemon.pokemonData?.currentStats?.IV.atk ?? 0}/{pokemon.pokemonData?.currentStats?.IV.def ?? 0}/
+              {pokemon.pokemonData?.currentStats?.IV.sta ?? 0}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
             Attack:{' '}
             <b>
-              {Math.floor(pokemon.pokemonData?.currentStats.stats.statsATK * (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1))}
+              {Math.floor(
+                (pokemon.pokemonData?.currentStats?.stats.statsATK ?? 0) * (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1)
+              )}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
             Defense:{' '}
             <b>
-              {Math.floor(pokemon.pokemonData?.currentStats.stats.statsDEF * (pokemon.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))}
+              {Math.floor(
+                (pokemon.pokemonData?.currentStats?.stats.statsDEF ?? 0) * (pokemon.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1)
+              )}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
-            HP: <b>{Math.floor(pokemon.pokemonData?.currentStats.stats.statsSTA)}</b>
+            HP: <b>{Math.floor(pokemon.pokemonData?.currentStats?.stats.statsSTA ?? 0)}</b>
             <br />
             Stats Prod:{' '}
             <b>
               {Math.round(
-                pokemon.pokemonData?.currentStats.stats.statsATK *
-                  pokemon.pokemonData?.currentStats.stats.statsDEF *
-                  pokemon.pokemonData?.currentStats.stats.statsSTA *
+                (pokemon.pokemonData?.currentStats?.stats.statsATK ?? 0) *
+                  (pokemon.pokemonData?.currentStats?.stats.statsDEF ?? 0) *
+                  (pokemon.pokemonData?.currentStats?.stats.statsSTA ?? 0) *
                   (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) * SHADOW_DEF_BONUS(dataStore?.options) : 1)
               )}
             </b>
@@ -1195,7 +1215,7 @@ const Battle = () => {
                 <span className="input-group-text">Level</span>
                 <input
                   className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats.level}
+                  defaultValue={pokemon.pokemonData?.currentStats?.level}
                   id={'level' + capitalize(type)}
                   type="number"
                   step={0.5}
@@ -1207,7 +1227,7 @@ const Battle = () => {
                 <span className="input-group-text">Attack IV</span>
                 <input
                   className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats.IV.atk}
+                  defaultValue={pokemon.pokemonData?.currentStats?.IV.atk}
                   id={'atkIV' + capitalize(type)}
                   type="number"
                   step={1}
@@ -1219,7 +1239,7 @@ const Battle = () => {
                 <span className="input-group-text">Defense IV</span>
                 <input
                   className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats.IV.def}
+                  defaultValue={pokemon.pokemonData?.currentStats?.IV.def}
                   id={'defIV' + capitalize(type)}
                   type="number"
                   step={1}
@@ -1231,7 +1251,7 @@ const Battle = () => {
                 <span className="input-group-text">HP IV</span>
                 <input
                   className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats.IV.sta}
+                  defaultValue={pokemon.pokemonData?.currentStats?.IV.sta}
                   id={'hpIV' + capitalize(type)}
                   type="number"
                   step={1}
@@ -1371,7 +1391,7 @@ const Battle = () => {
                       text={'HP'}
                       height={15}
                       hp={Math.floor(playTimeline[type].hp)}
-                      maxHp={Math.floor(pokemon.pokemonData.currentStats.stats.statsSTA)}
+                      maxHp={Math.floor(pokemon.pokemonData.currentStats?.stats.statsSTA ?? 0)}
                     />
                   </Fragment>
                 )}
