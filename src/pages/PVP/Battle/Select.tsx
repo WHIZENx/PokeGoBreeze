@@ -219,7 +219,7 @@ const SelectPoke = (props: {
         />
       </div>
       {props.data && (
-        <div className="result-pokemon" style={{ display: show ? 'block' : 'none' }}>
+        <div className="result-pokemon" style={{ display: show ? 'block' : 'none', maxHeight: 274 }}>
           {props.data
             .filter((pokemon) => splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
             .map((value, index) => (
