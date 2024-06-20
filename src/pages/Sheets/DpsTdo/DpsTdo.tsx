@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/Utils';
 import {
@@ -50,9 +50,10 @@ import { OptionsSheetState, RouterState, StoreState } from '../../../store/model
 import { Combat } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { OptionOtherDPS } from '../../../store/models/options.model';
+import { OptionFiltersDPSModel, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
 
 interface PokemonSheetData {
   pokemon: PokemonDataModel;
@@ -273,40 +274,12 @@ const DpsTdo = () => {
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
       ? optionStore?.dpsSheet?.defaultSorted
       : {
-          selectedColumn: 8,
-          sortDirection: 'desc',
+          selectedColumn: ColumnSelectType.Total,
+          sortDirection: SortDirectionType.DESC.toString(),
         }
   );
 
-  const [filters, setFilters] = useState(
-    optionStore?.dpsSheet?.filters ?? {
-      match: false,
-      showEliteMove: true,
-      showShadow: true,
-      showMega: true,
-      showGmax: true,
-      showPrimal: true,
-      showLegendary: true,
-      showMythic: true,
-      showUltrabeast: true,
-      enableShadow: false,
-      enableElite: false,
-      enableMega: false,
-      enableGmax: false,
-      enablePrimal: false,
-      enableLegendary: false,
-      enableMythic: false,
-      enableUltrabeast: false,
-      enableBest: false,
-      enableDelay: false,
-      releasedGO: true,
-      bestOf: 3,
-      IV_ATK: MAX_IV,
-      IV_DEF: MAX_IV,
-      IV_HP: MAX_IV,
-      POKEMON_LEVEL: 40,
-    }
-  );
+  const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPSModel());
 
   const {
     match,
@@ -341,7 +314,7 @@ const DpsTdo = () => {
   });
   const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
 
-  const [showSpinner, setShowSpinner] = useState(true);
+  const [showSpinner, setShowSpinner] = useState(false);
   const [selectTypes, setSelectTypes] = useState(optionStore?.dpsSheet?.selectTypes ?? []);
 
   const addCPokeData = (
@@ -461,7 +434,7 @@ const DpsTdo = () => {
   };
 
   const filterBestOptions = (result: PokemonSheetData[], best: number) => {
-    const bestType = best === 1 ? 'dps' : best === 2 ? 'tdo' : 'multiDpsTdo';
+    const bestType = BestOptionType[best] as 'dps' | 'tdo' | 'multiDpsTdo';
     const group = result.reduce((result: { [x: string]: PokemonSheetData[] }, obj) => {
       (result[obj.pokemon.name] = result[obj.pokemon.name] || []).push(obj);
       return result;
@@ -676,7 +649,12 @@ const DpsTdo = () => {
   };
 
   return (
-    <Fragment>
+    <div className="position-relative">
+      {dpsTable.length === 0 && (
+        <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
+          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
+        </div>
+      )}
       <div className="head-filter text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100" style={{ margin: 0 }}>
@@ -851,9 +829,9 @@ const DpsTdo = () => {
                       disabled={!enableBest}
                       onChange={(e) => setFilters({ ...filters, bestOf: parseInt(e.target.value) })}
                     >
-                      <option value={1}>DPS</option>
-                      <option value={2}>TDO</option>
-                      <option value={3}>DPS^3*TDO</option>
+                      <option value={BestOptionType.dps}>DPS</option>
+                      <option value={BestOptionType.tdo}>TDO</option>
+                      <option value={BestOptionType.multiDpsTdo}>DPS^3*TDO</option>
                     </Form.Select>
                   </div>
                 </Box>
@@ -1175,7 +1153,7 @@ const DpsTdo = () => {
           noDataComponent={null}
           pagination={true}
           defaultSortFieldId={defaultSorted.selectedColumn}
-          defaultSortAsc={defaultSorted.sortDirection === 'asc'}
+          defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC.toString()}
           highlightOnHover={true}
           striped={true}
           paginationDefaultPage={defaultPage}
@@ -1195,7 +1173,7 @@ const DpsTdo = () => {
           }}
         />
       </div>
-    </Fragment>
+    </div>
   );
 };
 

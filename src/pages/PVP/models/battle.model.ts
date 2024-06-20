@@ -2,6 +2,7 @@ import { Buff, Combat } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { StatsPokemon } from '../../../core/models/stats.model';
+import { StatsProdCalculate } from '../../../util/models/calculate.model';
 
 export interface PokemonBattleData {
   speciesId?: string;
@@ -9,11 +10,17 @@ export interface PokemonBattleData {
   form?: string;
   id?: number;
   shadow: boolean;
-  allStats?: any;
+  allStats?: StatsProdCalculate[];
   hp: number;
-  stats: any;
-  bestStats: any;
-  currentStats: any;
+  stats:
+    | {
+        atk: number;
+        def: number;
+        sta?: number;
+      }
+    | undefined;
+  bestStats: StatsProdCalculate | undefined;
+  currentStats: StatsProdCalculate | undefined;
   pokemon: PokemonDataModel | null;
   fmove: Combat | null;
   cmove: Combat | null;
@@ -114,7 +121,7 @@ export interface PokemonBattleRanking {
   fmove: Combat | undefined;
   cmovePri: Combat | undefined;
   cmoveSec: Combat | undefined;
-  bestStats?: any;
+  bestStats?: StatsProdCalculate;
   shadow: boolean;
   purified: boolean;
 }

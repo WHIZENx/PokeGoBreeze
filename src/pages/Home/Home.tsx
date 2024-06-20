@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import loadingImg from '../../assets/loading.png';
 
@@ -242,7 +242,12 @@ const Home = () => {
   };
 
   return (
-    <Fragment>
+    <div className="position-relative">
+      {dataList.length === 0 && (
+        <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
+          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
+        </div>
+      )}
       <div className="head-filter border-types text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
         <div className="row w-100" style={{ margin: 0 }}>
@@ -415,7 +420,12 @@ const Home = () => {
                       <Checkbox
                         checked={primal}
                         onChange={(_, check) =>
-                          setFilters({ ...filters, primal: check, mega: check ? false : filters.mega, gmax: check ? false : filters.gmax })
+                          setFilters({
+                            ...filters,
+                            primal: check,
+                            mega: check ? false : filters.mega,
+                            gmax: check ? false : filters.gmax,
+                          })
                         }
                       />
                     }
@@ -505,7 +515,7 @@ const Home = () => {
           ))}
         </ul>
       </div>
-    </Fragment>
+    </div>
   );
 };
 
