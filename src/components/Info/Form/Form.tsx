@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { PokemonFormModify } from '../../../core/models/API/form.model';
 import { PokemonInfo } from '../../../core/models/API/info.model';
 import { PokemonGenderRatio, PokemonDataModel } from '../../../core/models/pokemon.model';
-import { StatsRankingPokemonGO } from '../../../core/models/stats.model';
+import { StatsAtk, StatsDef, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/Constants';
@@ -70,17 +70,17 @@ const Form = (props: {
   ] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.defaultId, props.form?.form.form_name),
+    (stats: (StatsAtk | StatsDef | StatsSta | StatsProd)[]) => getFormFromForms(stats, props.defaultId, props.form?.form.form_name),
     [props.defaultId, props.form?.form.form_name]
   );
 
   useEffect(() => {
     if (stats) {
       setStatsPokemon({
-        atk: filterFormList(stats.attack.ranking),
-        def: filterFormList(stats.defense.ranking),
-        sta: filterFormList(stats.stamina.ranking),
-        prod: filterFormList(stats.statProd.ranking),
+        atk: filterFormList(stats.attack.ranking) as StatsAtk,
+        def: filterFormList(stats.defense.ranking) as StatsDef,
+        sta: filterFormList(stats.stamina.ranking) as StatsSta,
+        prod: filterFormList(stats.statProd.ranking) as StatsProd,
       });
     }
   }, [filterFormList, stats]);

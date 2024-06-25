@@ -1,7 +1,7 @@
 import { PokemonTeamData } from '../../pages/PVP/models/battle.model';
 import { Combat } from './combat.model';
 import { PokemonDataModel } from './pokemon.model';
-import { StatsPokemon } from './stats.model';
+import { StatsAtk, StatsDef, StatsPokemon, StatsSta } from './stats.model';
 
 export interface PVPDataModel {
   rankings: PVPInfo[];
@@ -28,9 +28,9 @@ export interface Performers {
   pokemonData: PokemonDataModel | undefined;
   form: string | null;
   stats: StatsPokemon;
-  atk: { id: number; form: string; attack: number; rank: number } | undefined;
-  def: { id: number; form: string; defense: number; rank: number } | undefined;
-  sta: { id: number; form: string; stamina: number; rank: number } | undefined;
+  atk: StatsAtk | undefined;
+  def: StatsDef | undefined;
+  sta: StatsSta | undefined;
   fmove: Combat | undefined;
   cmovePri: Combat | undefined;
   cmoveSec: Combat | undefined;
