@@ -41,7 +41,7 @@ module.exports = {
           REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
           REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
           NODE_ENV: JSON.stringify('production'),
-          DEBUG: false
+          DEBUG: true
         }
       )
     }),
