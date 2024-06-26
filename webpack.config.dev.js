@@ -150,6 +150,9 @@ module.exports = {
       process: "process/browser"
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    fallback: {
+      'process/browser': require.resolve('process/browser')
+    },
   },
   module: {
     rules: [
