@@ -12,7 +12,7 @@ import {
   MAX_IV,
 } from './Constants';
 import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
-import { StatsModel, StatsPokemon, StatsPokemonGO } from '../core/models/stats.model';
+import { StatsAtk, StatsDef, StatsModel, StatsPokemon, StatsPokemonGO, StatsProd, StatsSta } from '../core/models/stats.model';
 import { PokemonInfo, Stats } from '../core/models/API/info.model';
 import { PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../core/models/API/form.model';
 import { PokemonSearchingModel } from '../core/models/pokemon-searching.model';
@@ -744,7 +744,7 @@ export const generatePokemonGoShadowForms = (
 };
 
 export const getFormFromForms = (
-  stats: { id: number; form: string }[] | undefined,
+  stats: (StatsAtk | StatsDef | StatsSta | StatsProd)[] | undefined,
   id: number | undefined,
   formName: string | undefined
 ) => {

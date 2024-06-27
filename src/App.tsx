@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import packageInfo from '../package.json';
 import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/actions/store.action';
 import { setBar, setPercent } from './store/actions/spinner.action';
 
@@ -65,7 +64,6 @@ function App() {
   );
   const [stateImage, setStateImage] = useLocalStorage('assets', '');
   const [stateSound, setStateSound] = useLocalStorage('sounds', '');
-  const [, setVersion] = useLocalStorage('version', '');
 
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
@@ -84,7 +82,6 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    setVersion(packageInfo.version);
     dispatch(setDevice());
   }, [dispatch]);
 

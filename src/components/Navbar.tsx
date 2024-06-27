@@ -1,8 +1,7 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useLocalStorage } from 'usehooks-ts';
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -14,15 +13,21 @@ import './Navbar.scss';
 import { Box, IconButton, LinearProgress, PaletteMode } from '@mui/material';
 import { SpinnerState, StoreState } from '../store/models/state.model';
 import { loadThemeData } from '../store/actions/theme.action';
+import { useLocalStorage } from 'usehooks-ts';
+import { getEdgeItem } from '../services/edge.service';
 
 const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void }) => {
   const dispatch = useDispatch();
 
-  const dataStore = useSelector((state: StoreState) => state.store);
+  const timestamp = useSelector((state: StoreState) => state.store.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
 
-  const [version] = useLocalStorage('version', '');
+  const [version, setVersion] = useState('');
+
+  useEffect(() => {
+    getEdgeItem('version').then((res) => setVersion(res?.toString() ?? ''));
+  }, []);
 
   const [isDelay, setIsDelay] = useState(false);
 
@@ -121,10 +126,10 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
               Stickers
             </Link>
           </Nav>
-          {dataStore.timestamp && (
+          {timestamp && (
             <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
               <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
-                Update: {getTime(dataStore.timestamp, true)}
+                Update: {getTime(timestamp, true)}
               </span>
               <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
                 <b>{version}</b>

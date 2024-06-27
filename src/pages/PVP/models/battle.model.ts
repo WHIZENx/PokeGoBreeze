@@ -1,7 +1,7 @@
 import { Buff, Combat } from '../../../core/models/combat.model';
 import { PokemonDataModel } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { StatsPokemon } from '../../../core/models/stats.model';
+import { StatsAtk, StatsDef, StatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import { StatsProdCalculate } from '../../../util/models/calculate.model';
 
 export interface PokemonBattleData {
@@ -68,9 +68,9 @@ export interface PokemonTeamData {
   pokemonData: PokemonDataModel | undefined;
   form: string | null;
   stats: StatsPokemon;
-  atk: { id: number; form: string; attack: number; rank: number } | undefined;
-  def: { id: number; form: string; defense: number; rank: number } | undefined;
-  sta: { id: number; form: string; stamina: number; rank: number } | undefined;
+  atk: StatsAtk | undefined;
+  def: StatsDef | undefined;
+  sta: StatsSta | undefined;
   fmove: Combat | undefined;
   cmovePri: Combat | undefined;
   cmoveSec: Combat | undefined;
@@ -86,38 +86,10 @@ export interface PokemonBattleRanking {
   pokemon: PokemonDataModel | undefined;
   form: string;
   stats: StatsPokemon;
-  atk:
-    | {
-        id: number;
-        form: string;
-        attack: number;
-        rank: number;
-      }
-    | undefined;
-  def:
-    | {
-        id: number;
-        form: string;
-        defense: number;
-        rank: number;
-      }
-    | undefined;
-  sta:
-    | {
-        id: number;
-        form: string;
-        stamina: number;
-        rank: number;
-      }
-    | undefined;
-  prod:
-    | {
-        id: number;
-        form: string;
-        prod: number;
-        rank: number;
-      }
-    | undefined;
+  atk: StatsAtk | undefined;
+  def: StatsDef | undefined;
+  sta: StatsSta | undefined;
+  prod: StatsProd | undefined;
   fmove: Combat | undefined;
   cmovePri: Combat | undefined;
   cmoveSec: Combat | undefined;

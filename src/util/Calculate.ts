@@ -65,12 +65,8 @@ const weatherMultiple = (globalOptions: Options | undefined, weatherBoost: any, 
 
 export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj: string[]) => {
   let valueEffective = 1;
-  typesObj.forEach((type: any) => {
-    try {
-      valueEffective *= typeEffective[typeMove?.toUpperCase()][type.type.name?.toUpperCase()];
-    } catch {
-      valueEffective *= typeEffective[typeMove?.toUpperCase()][type?.toUpperCase()];
-    }
+  typesObj.forEach((type) => {
+    valueEffective *= typeEffective[typeMove?.toUpperCase()][type.toUpperCase()];
   });
   return valueEffective;
 };

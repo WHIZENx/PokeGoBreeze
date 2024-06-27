@@ -51,6 +51,7 @@ import { Buff, Combat } from '../../../core/models/combat.model';
 import { PokemonBattle, PokemonBattleData, Timeline } from '../models/battle.model';
 import { StatsPokemon } from '../../../core/models/stats.model';
 import { StatsProdCalculate } from '../../../util/models/calculate.model';
+import { AttackType } from './enums/attack-type.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -211,11 +212,11 @@ const Battle = () => {
     const timelinePri: Timeline[] = [];
     const timelineSec: Timeline[] = [];
 
-    timelinePri.push(State(0, 'W', null, null, false, player1.block, player1.energy, player1.hp));
-    timelinePri.push(State(1, 'W', null, null, false, player1.block, player1.energy, player1.hp));
+    timelinePri.push(State(0, AttackType.Wait, null, null, false, player1.block, player1.energy, player1.hp));
+    timelinePri.push(State(1, AttackType.Wait, null, null, false, player1.block, player1.energy, player1.hp));
 
-    timelineSec.push(State(0, 'W', null, null, false, player2.block, player2.energy, player2.hp));
-    timelineSec.push(State(1, 'W', null, null, false, player2.block, player2.energy, player2.hp));
+    timelineSec.push(State(0, AttackType.Wait, null, null, false, player2.block, player2.energy, player2.hp));
+    timelineSec.push(State(1, AttackType.Wait, null, null, false, player2.block, player2.energy, player2.hp));
 
     let timer = 1;
     let tapPri: boolean,
@@ -246,7 +247,7 @@ const Battle = () => {
             player1.energy += player1.cmove?.pvp_energy ?? 0;
             timelinePri[timer] = {
               ...timelinePri[timer],
-              type: 'P',
+              type: AttackType.Prepare,
               color: player1.cmove?.type?.toLowerCase() ?? null,
               size: 12,
               move: player1.cmove,
@@ -257,7 +258,7 @@ const Battle = () => {
             player1.energy += player1.cmoveSec?.pvp_energy ?? 0;
             timelinePri[timer] = {
               ...timelinePri[timer],
-              type: 'P',
+              type: AttackType.Prepare,
               color: player1.cmoveSec?.type?.toLowerCase() ?? null,
               size: 12,
               move: player2.cmoveSec,
@@ -280,7 +281,7 @@ const Battle = () => {
             player2.energy += player2.cmove?.pvp_energy ?? 0;
             timelineSec[timer] = {
               ...timelineSec[timer],
-              type: 'P',
+              type: AttackType.Prepare,
               color: player2.cmove?.type?.toLowerCase() ?? null,
               size: 12,
               move: player2.cmove,
@@ -291,7 +292,7 @@ const Battle = () => {
             player2.energy += player2.cmoveSec?.pvp_energy ?? 0;
             timelineSec[timer] = {
               ...timelineSec[timer],
-              type: 'P',
+              type: AttackType.Prepare,
               color: player2.cmoveSec?.type?.toLowerCase() ?? null,
               size: 12,
               move: player2.cmoveSec,
@@ -327,7 +328,7 @@ const Battle = () => {
             player1.energy += player1.fmove?.pvp_energy ?? 0;
             timelinePri[timer] = {
               ...timelinePri[timer],
-              type: 'F',
+              type: AttackType.Fast,
               color: player1.fmove?.type?.toLowerCase() ?? null,
               move: player1.fmove,
               dmgImmune: preChargeSec,
@@ -336,7 +337,7 @@ const Battle = () => {
           } else {
             fastPriDelay -= 1;
             if (!preChargePri) {
-              timelinePri[timer].type = 'W';
+              timelinePri[timer].type = AttackType.Wait;
             }
           }
         }
@@ -366,7 +367,7 @@ const Battle = () => {
             player2.energy += player2.fmove?.pvp_energy ?? 0;
             timelineSec[timer] = {
               ...timelineSec[timer],
-              type: 'F',
+              type: AttackType.Fast,
               color: player2.fmove?.type?.toLowerCase() ?? null,
               move: player2.fmove,
               dmgImmune: preChargePri,
@@ -375,19 +376,19 @@ const Battle = () => {
           } else {
             fastSecDelay -= 1;
             if (!preChargeSec) {
-              timelineSec[timer].type = 'W';
+              timelineSec[timer].type = AttackType.Wait;
             }
           }
         }
       } else {
         if (chargedPri) {
           if (isDelay || chargedPriCount % 2 === 0) {
-            timelinePri[timer].type = 'N';
+            timelinePri[timer].type = AttackType.New;
           } else {
             if (chargeType === 1) {
               timelinePri[timer] = {
                 ...timelinePri[timer],
-                type: chargedPriCount === -1 ? 'C' : 'S',
+                type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
                 color: player1.cmove?.type?.toLowerCase() ?? null,
                 size: timelinePri[timer - 2].size + 2,
                 move: player1.cmove,
@@ -396,7 +397,7 @@ const Battle = () => {
             if (chargeType === 2) {
               timelinePri[timer] = {
                 ...timelinePri[timer],
-                type: chargedPriCount === -1 ? 'C' : 'S',
+                type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
                 color: player1.cmoveSec?.type?.toLowerCase() ?? null,
                 size: timelinePri[timer - 2].size + 2,
                 move: player1.cmoveSec,
@@ -408,17 +409,17 @@ const Battle = () => {
           }
         } else {
           if (!isDelay && player1.block > 0 && chargedSecCount === -1) {
-            timelinePri[timer].type = 'B';
+            timelinePri[timer].type = AttackType.Block;
           }
         }
         if (chargedSec) {
           if (isDelay || chargedSecCount % 2 === 0) {
-            timelineSec[timer].type = 'N';
+            timelineSec[timer].type = AttackType.New;
           } else {
             if (chargeType === 1) {
               timelineSec[timer] = {
                 ...timelineSec[timer],
-                type: chargedSecCount === -1 ? 'C' : 'S',
+                type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
                 color: player2.cmove?.type?.toLowerCase() ?? null,
                 size: timelineSec[timer - 2].size + 2,
                 move: player2.cmove,
@@ -427,7 +428,7 @@ const Battle = () => {
             if (chargeType === 2) {
               timelineSec[timer] = {
                 ...timelineSec[timer],
-                type: chargedSecCount === -1 ? 'C' : 'S',
+                type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
                 color: player2.cmoveSec?.type?.toLowerCase() ?? null,
                 size: timelineSec[timer - 2].size + 2,
                 move: player2.cmoveSec,
@@ -439,7 +440,7 @@ const Battle = () => {
           }
         } else {
           if (!isDelay && player2.block > 0 && chargedPriCount === -1) {
-            timelineSec[timer].type = 'B';
+            timelineSec[timer].type = AttackType.Block;
           }
         }
         timelinePri[timer].tap = false;
@@ -589,25 +590,25 @@ const Battle = () => {
         clearInterval(timelineInterval);
         clearInterval(turnInterval);
         if (player1.hp <= 0) {
-          timelinePri.push(State(timer, 'X', null, null, false, 0, player1.energy, player1.hp));
+          timelinePri.push(State(timer, AttackType.Dead, null, null, false, 0, player1.energy, player1.hp));
           if (player2.hp <= 0) {
-            timelineSec.push(State(timer, 'X', null, null, false, 0, player2.energy, player2.hp));
+            timelineSec.push(State(timer, AttackType.Dead, null, null, false, 0, player2.energy, player2.hp));
           } else {
             if (timelinePri.length === timelineSec.length) {
-              timelineSec[timelineSec.length - 1] = State(timer, 'Q', null, null, false, 0, player2.energy, player2.hp);
+              timelineSec[timelineSec.length - 1] = State(timer, AttackType.Win, null, null, false, 0, player2.energy, player2.hp);
             } else {
-              timelineSec.push(State(timer, 'Q', null, null, false, 0, player2.energy, player2.hp));
+              timelineSec.push(State(timer, AttackType.Win, null, null, false, 0, player2.energy, player2.hp));
             }
           }
         } else if (player2.hp <= 0) {
-          timelineSec.push(State(timer, 'X', null, null, false, 0, player2.energy, player2.hp));
+          timelineSec.push(State(timer, AttackType.Dead, null, null, false, 0, player2.energy, player2.hp));
           if (player1.hp <= 0) {
-            timelinePri.push(State(timer, 'X', null, null, false, 0, player1.energy, player1.hp));
+            timelinePri.push(State(timer, AttackType.Dead, null, null, false, 0, player1.energy, player1.hp));
           } else {
             if (timelinePri.length === timelineSec.length) {
-              timelinePri[timelinePri.length - 1] = State(timer, 'Q', null, null, false, 0, player1.energy, player1.hp);
+              timelinePri[timelinePri.length - 1] = State(timer, AttackType.Win, null, null, false, 0, player1.energy, player1.hp);
             } else {
-              timelinePri.push(State(timer, 'Q', null, null, false, 0, player1.energy, player1.hp));
+              timelinePri.push(State(timer, AttackType.Win, null, null, false, 0, player1.energy, player1.hp));
             }
           }
         }
@@ -791,7 +792,7 @@ const Battle = () => {
       }
     }
     if (!xNormal.current) {
-      const element: any = ReactDOM.findDOMNode(timelineNormalContainer.current);
+      const element = ReactDOM.findDOMNode(timelineNormalContainer.current) as Element;
       const rect = element?.getBoundingClientRect();
       xNormal.current = rect.left;
     }
@@ -835,7 +836,7 @@ const Battle = () => {
           left: Math.max(0, xCurrent - timelineNormalContainer.current?.clientWidth / 2),
         });
         if (!xNormal.current) {
-          const element: any = ReactDOM.findDOMNode(timelineNormalContainer.current);
+          const element = ReactDOM.findDOMNode(timelineNormalContainer.current) as Element;
           const rect = element?.getBoundingClientRect();
           xNormal.current = rect.left;
         }
@@ -948,16 +949,16 @@ const Battle = () => {
     const pokeCurrData = pokemonCurr.timeline?.at(parseInt(index.toString()));
     const pokeObjData = pokemonObj.timeline?.at(parseInt(index.toString()));
     // if (sound) {
-    //   if (pokemonCurr.audio.fMove.paused && pokeCurrData.type === 'F') {
+    //   if (pokemonCurr.audio.fMove.paused && pokeCurrData.type === AttackType.Fast) {
     //     pokemonCurr.audio.fMove.currentTime = 0;
     //     pokemonCurr.audio.fMove.play();
-    //   } else if (!pokemonCurr.audio.fMove.paused && pokeCurrData.type === 'F') {
+    //   } else if (!pokemonCurr.audio.fMove.paused && pokeCurrData.type === AttackType.Fast) {
     //     pokemonCurr.audio.fMove.pause();
     //   }
-    //   if (pokemonObj.audio.fMove.paused && pokeObjData.type === 'F') {
+    //   if (pokemonObj.audio.fMove.paused && pokeObjData.type === AttackType.Fast) {
     //     pokemonObj.audio.fMove.currentTime = 0;
     //     pokemonObj.audio.fMove.play();
-    //   } else if (!pokemonObj.audio.fMove.paused && pokeObjData.type === 'F') {
+    //   } else if (!pokemonObj.audio.fMove.paused && pokeObjData.type === AttackType.Fast) {
     //     pokemonObj.audio.fMove.pause();
     //   }
     // }
