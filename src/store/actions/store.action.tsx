@@ -21,7 +21,6 @@ import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { DbModel } from '../../core/models/API/db.model';
 import { setBar, setPercent, showSpinner } from './spinner.action';
-import { isMobile } from 'react-device-detect';
 import { SetValue } from '../models/state.model';
 import { PokemonData } from '../../core/models/options.model';
 import { APITreeRoot, APITree, APIPath } from '../../services/models/api.model';
@@ -145,9 +144,7 @@ export const loadGameMaster = (
       try {
         pokemonEncounter = await getDbPokemonEncounter();
       } catch (e) {
-        if (!isMobile) {
-          throw e;
-        }
+        throw e;
       }
 
       const pokemon = optionPokemonData(gm.data, pokemonEncounter?.rows);

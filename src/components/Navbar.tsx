@@ -10,6 +10,7 @@ import './Navbar.scss';
 import { Box, LinearProgress } from '@mui/material';
 import { SpinnerState, StoreState } from '../store/models/state.model';
 import { getEdgeItem } from '../services/edge.service';
+import { EdgeKey } from '../services/constants/edgeKey';
 
 const NavbarComponent = () => {
   const timestamp = useSelector((state: StoreState) => state.store.timestamp);
@@ -18,7 +19,7 @@ const NavbarComponent = () => {
   const [version, setVersion] = useState('');
 
   useEffect(() => {
-    getEdgeItem('version').then((res) => setVersion(res?.toString() ?? ''));
+    getEdgeItem(EdgeKey.VERSION).then((res) => setVersion(res?.toString() ?? ''));
   }, []);
 
   return (
