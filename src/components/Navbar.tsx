@@ -15,6 +15,7 @@ import { SpinnerState, StoreState } from '../store/models/state.model';
 import { loadThemeData } from '../store/actions/theme.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { getEdgeItem } from '../services/edge.service';
+import { EdgeKey } from '../services/constants/edgeKey';
 
 const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void }) => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
   const [version, setVersion] = useState('');
 
   useEffect(() => {
-    getEdgeItem('version').then((res) => setVersion(res?.toString() ?? ''));
+    getEdgeItem(EdgeKey.VERSION).then((res) => setVersion(res?.toString() ?? ''));
   }, []);
 
   const [isDelay, setIsDelay] = useState(false);

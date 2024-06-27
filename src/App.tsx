@@ -72,6 +72,7 @@ function App() {
     const fetchData = async () => {
       await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound);
     };
+    dispatch(setDevice());
     dispatch(setBar(true));
     dispatch(setPercent(0));
     loadTheme(dispatch, stateTheme, setStateTheme);
@@ -79,10 +80,6 @@ function App() {
     loadPokeGOLogo(dispatch);
     dispatch(setPercent(15));
     fetchData();
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(setDevice());
   }, [dispatch]);
 
   return (
