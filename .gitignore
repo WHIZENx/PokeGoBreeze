@@ -6,7 +6,6 @@
 .pnp.js
 /dist
 .vs
-.github
 
 # testing
 /coverage
