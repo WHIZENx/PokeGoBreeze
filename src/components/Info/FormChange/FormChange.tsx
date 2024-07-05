@@ -6,15 +6,15 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
-import { PokemonModelComponent } from '../Assets/models/pokemon-model.model';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
+import { IPokemonData } from '../../../core/models/pokemon.model';
 
-const FromChange = (props: { details: PokemonDataModel | undefined; defaultName: string | undefined }) => {
+const FromChange = (props: { details: IPokemonData | undefined; defaultName: string | undefined }) => {
   const theme = useTheme();
   const assets = useSelector((state: StoreState) => state.store.data?.assets ?? []);
 
-  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], React.Dispatch<React.SetStateAction<PokemonModelComponent[]>>] = useState(
-    [] as PokemonModelComponent[]
+  const [pokeAssets, setPokeAssets]: [IPokemonModelComponent[], React.Dispatch<React.SetStateAction<IPokemonModelComponent[]>>] = useState(
+    [] as IPokemonModelComponent[]
   );
 
   const getImageList = (id: number) => {

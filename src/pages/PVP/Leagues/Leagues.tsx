@@ -16,12 +16,12 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
-import { League, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
+import { ILeague, IPokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/Constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 interface LeagueData {
-  data: PokemonRewardSetLeague[];
+  data: IPokemonRewardSetLeague[];
   step: number;
   track: string;
   type: string | boolean | undefined;
@@ -31,9 +31,9 @@ const Leagues = () => {
   useChangeTitle('Battle Leagues List');
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
-  const [leagues, setLeagues]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
-  const [openedLeague, setOpenedLeague]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
-  const [leagueFilter, setLeagueFilter]: [League[], React.Dispatch<React.SetStateAction<League[]>>] = useState([] as League[]);
+  const [leagues, setLeagues]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
+  const [openedLeague, setOpenedLeague]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
+  const [leagueFilter, setLeagueFilter]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
   const [search, setSearch] = useState('');
   const [rank, setRank] = useState(1);
   const [setting, setSetting]: [SettingLeague | undefined, React.Dispatch<React.SetStateAction<SettingLeague | undefined>>] = useState();
@@ -103,7 +103,7 @@ const Leagues = () => {
       Object.values(dataStore?.leagues?.season.rewards.pokemon ?? {}).forEach((value: any) => {
         if (value.rank <= rank) {
           result.push(
-            ...value[track.toLowerCase()].map((item: PokemonRewardSetLeague) => {
+            ...value[track.toLowerCase()].map((item: IPokemonRewardSetLeague) => {
               if (item.guaranteedLimited) {
                 return {
                   ...item,
@@ -131,7 +131,7 @@ const Leagues = () => {
     setShowData(undefined);
   };
 
-  const showAccording = (league: League, index: number, isOpened = false) => {
+  const showAccording = (league: ILeague, index: number, isOpened = false) => {
     return (
       <Accordion.Item key={index} eventKey={index.toString()}>
         <Accordion.Header className={isOpened ? 'league-opened' : ''}>

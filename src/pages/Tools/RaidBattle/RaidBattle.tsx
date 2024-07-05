@@ -52,10 +52,10 @@ import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { PokemonDataModel, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
+import { IPokemonData, PokemonData, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { TypeMove } from '../../../enums/move.enum';
-import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 interface TrainerBattle {
@@ -87,7 +87,7 @@ interface RaidResult {
 interface RaidSetting {
   isShow?: boolean;
   id: number;
-  pokemon?: PokemonDataModel | undefined;
+  pokemon?: IPokemonData | undefined;
 }
 
 const RaidBattle = () => {
@@ -99,7 +99,8 @@ const RaidBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
+  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
+    useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -301,7 +302,7 @@ const RaidBattle = () => {
     setResultRaid(undefined);
   };
 
-  const onSetForm = (form: PokemonFormModify | undefined) => {
+  const onSetForm = (form: IPokemonFormModify | undefined) => {
     setForm(form);
     setIsLoadedForms(true);
   };
@@ -314,7 +315,7 @@ const RaidBattle = () => {
     setPokemonBattle(update(pokemonBattle, { $splice: [[index, 1]] }));
   };
 
-  const onOptionsPokemon = (index: number, pokemon: PokemonDataModel) => {
+  const onOptionsPokemon = (index: number, pokemon: IPokemonData) => {
     setShowSettingPokemon({
       isShow: true,
       id: index,
@@ -366,7 +367,7 @@ const RaidBattle = () => {
   const addCPokeData = (
     dataList: PokemonMoveData[],
     movePoke: string[],
-    value: PokemonDataModel | undefined,
+    value: IPokemonData | undefined,
     vf: string,
     shadow: boolean,
     purified: boolean,
@@ -444,7 +445,7 @@ const RaidBattle = () => {
 
   const addFPokeData = (
     dataList: PokemonMoveData[],
-    pokemon: PokemonDataModel,
+    pokemon: IPokemonData,
     movePoke: string[],
     felite: boolean,
     pokemonTarget: boolean,
@@ -1094,7 +1095,7 @@ const RaidBattle = () => {
                     <b>Fast Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={new PokemonDataModel(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
+                    pokemon={new PokemonData(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
                     clearData={clearData}
                     move={fMove}
                     setMovePokemon={setFMove}
@@ -1108,7 +1109,7 @@ const RaidBattle = () => {
                     <b>Charged Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={new PokemonDataModel(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
+                    pokemon={new PokemonData(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
                     clearData={clearData}
                     move={cMove}
                     setMovePokemon={setCMove}

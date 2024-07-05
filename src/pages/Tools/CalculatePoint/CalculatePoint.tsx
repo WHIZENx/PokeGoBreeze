@@ -18,8 +18,8 @@ import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../../enums/move.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { PokemonFormModify } from '../../../core/models/API/form.model';
-import { Combat } from '../../../core/models/combat.model';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 class ColorTone {
@@ -57,8 +57,9 @@ const CalculatePoint = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
-  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
+    useState();
+  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -78,12 +79,12 @@ const CalculatePoint = () => {
 
   const [idDef, setIdDef] = useState(searching?.obj ? searching.obj.id : 1);
   const [nameDef, setNameDef] = useState(splitAndCapitalize(searching?.obj?.fullName, '-', ' '));
-  const [formDef, setFormDef]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] =
+  const [formDef, setFormDef]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
     useState();
-  const [moveDef, setMoveDef]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [moveDef, setMoveDef]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
 
-  const [fMove, setFMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
-  const [cMove, setCMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [fMove, setFMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [cMove, setCMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
 
   const [resultBreakPointAtk, setResultBreakPointAtk]: [
     BreakPointAtk | undefined,
@@ -128,11 +129,11 @@ const CalculatePoint = () => {
     }
   };
 
-  const onSetForm = (form: PokemonFormModify | undefined) => {
+  const onSetForm = (form: IPokemonFormModify | undefined) => {
     setForm(form);
   };
 
-  const onSetFormDef = (form: PokemonFormModify | undefined) => {
+  const onSetFormDef = (form: IPokemonFormModify | undefined) => {
     setFormDef(form);
   };
 

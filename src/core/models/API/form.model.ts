@@ -1,8 +1,8 @@
 import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
-import { StatsPokemon } from '../stats.model';
+import { IStatsPokemon } from '../stats.model';
 import { PokemonInfo } from './info.model';
 
-interface PokemonSprit {
+interface IPokemonSprit {
   back_default: string;
   back_female: string;
   back_shiny: string;
@@ -25,7 +25,7 @@ export interface PokemonForm {
   names: string[];
   order: number;
   pokemon: Path;
-  sprites: PokemonSprit;
+  sprites: IPokemonSprit;
   types: SlotType[];
   version_group: Path;
 }
@@ -40,7 +40,7 @@ interface SlotType {
   type: Path;
 }
 
-export interface FormModel {
+export interface IForm {
   form_name: string;
   form_names: string[];
   form_order: number;
@@ -53,25 +53,27 @@ export interface FormModel {
   name: string;
   version_group: { name: string };
   types: string[];
+  sprites?: IPokemonSprit;
 }
 
-export interface PokemonFormModify {
+export interface IPokemonFormModify {
   default_id: number;
   default_name: string;
   name: string;
-  form: FormModel;
+  form: IForm;
+  sprites?: IPokemonSprit;
 }
 
-export class PokemonFormModify {
+export class PokemonFormModify implements IPokemonFormModify {
   // tslint:disable-next-line:variable-name
-  default_id!: number;
+  default_id: number;
   // tslint:disable-next-line:variable-name
-  default_name!: string;
-  name!: string;
-  form!: FormModel;
+  default_name: string;
+  name: string;
+  form: IForm;
 
   // tslint:disable-next-line:variable-name
-  constructor(defaultId: number, defaultName: string, name: string, form: FormModel) {
+  constructor(defaultId: number, defaultName: string, name: string, form: IForm) {
     this.default_id = defaultId;
     this.default_name = defaultName;
     this.name = name;
@@ -80,20 +82,20 @@ export class PokemonFormModify {
 }
 
 export interface PokemonDataForm {
-  stats: StatsPokemon;
+  stats: IStatsPokemon;
   num: number;
   types: string[];
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class PokemonFormModifyModel {
+export class PokemonFormModifyModel implements IPokemonFormModify {
   // tslint:disable-next-line:variable-name
-  default_id!: number;
+  default_id: number;
   // tslint:disable-next-line:variable-name
-  default_name!: string;
-  name!: string;
-  form!: FormModel;
-  sprites!: PokemonSprit;
+  default_name: string;
+  name: string;
+  form: IForm;
+  sprites!: IPokemonSprit;
 
   constructor(
     id: number,
@@ -103,7 +105,8 @@ export class PokemonFormModifyModel {
     fullFormName: string,
     version: string,
     types: string[],
-    sprites: PokemonSprit | null = null,
+    // tslint:disable-next-line:no-unnecessary-initializer
+    sprites: IPokemonSprit | undefined = undefined,
     formId: number | null = null,
     specialForm: 'NORMAL' | 'SHADOW' | 'PURIFIED' = FORM_NORMAL,
     isBattleOnly = true,
@@ -132,7 +135,7 @@ export class PokemonFormModifyModel {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class FormModel {
+export class Form implements IForm {
   // tslint:disable-next-line:variable-name
   form_name: string;
   // tslint:disable-next-line:variable-name
@@ -154,7 +157,7 @@ export class FormModel {
   // tslint:disable-next-line:variable-name
   version_group: { name: string };
   types: string[];
-  sprites: PokemonSprit | null;
+  sprites: IPokemonSprit;
 
   constructor(data: PokemonForm) {
     this.form_name = data.form_name;
@@ -173,15 +176,15 @@ export class FormModel {
   }
 }
 
-export interface FormSoundCry {
+export interface IFormSoundCry {
   form: string;
   cries: { [x: string]: string };
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class FormSoundCryModel {
-  form!: string;
-  cries!: { [x: string]: string };
+export class FormSoundCry implements IFormSoundCry {
+  form: string;
+  cries: { [x: string]: string };
 
   constructor(pokemon: PokemonInfo) {
     const fullName = pokemon.forms[0].name;

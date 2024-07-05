@@ -43,7 +43,7 @@ export interface StatsRankingPokemonGO {
   prod: StatsProd | undefined;
 }
 
-export interface StatsPokemon {
+export interface IStatsPokemon {
   hp?: number;
   atk: number;
   def: number;
@@ -113,7 +113,7 @@ export interface PokemonStatsRanking {
   releasedGO: boolean;
 }
 
-export class StatsPokemon {
+export class StatsPokemon implements IStatsPokemon {
   hp?: number;
   atk: number;
   def: number;

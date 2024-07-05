@@ -30,7 +30,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
 
 interface PokemonCatchChance {
   baseCaptureRate?: number;
@@ -56,7 +56,8 @@ const CatchChance = () => {
   const CIRCLE_DISTANCE = 200;
 
   const [id, setId] = useState(searching ? searching.id : 1);
-  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
+  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
+    useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -197,7 +198,7 @@ const CatchChance = () => {
     });
   };
 
-  const findCatchCapture = (id: number, form: PokemonFormModify) => {
+  const findCatchCapture = (id: number, form: IPokemonFormModify) => {
     const pokemon = pokemonData.find((data) => data.num === id && data.fullName === convertPokemonAPIDataName(form.form.name));
     if (!pokemon || !pokemon.encounter) {
       return setEncounter(false);
@@ -229,7 +230,7 @@ const CatchChance = () => {
     }
   };
 
-  const onSetForm = (form: PokemonFormModify | undefined) => {
+  const onSetForm = (form: IPokemonFormModify | undefined) => {
     setForm(form);
   };
 

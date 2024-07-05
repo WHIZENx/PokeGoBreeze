@@ -1,13 +1,13 @@
-export interface DbModel {
+interface IDatabase {
   command: string;
-  fields: Field[];
+  fields: IField[];
   rowAsArray?: boolean;
   rowCount: number;
   rows: any[];
   viaNeonFetch?: boolean;
 }
 
-interface Field {
+interface IField {
   columnID: number;
   dataTypeID: number;
   dataTypeModifier: number;
@@ -17,9 +17,9 @@ interface Field {
   tableID: number;
 }
 
-export class DbModel {
+export class Database implements IDatabase {
   command!: string;
-  fields: Field[];
+  fields: IField[];
   rowAsArray?: boolean;
   rowCount!: number;
   rows: any[];

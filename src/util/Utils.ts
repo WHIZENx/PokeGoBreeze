@@ -11,11 +11,11 @@ import {
   FORM_STANDARD,
   MAX_IV,
 } from './Constants';
-import { PokemonDataModel, PokemonModel, PokemonNameModel } from '../core/models/pokemon.model';
-import { StatsAtk, StatsDef, StatsModel, StatsPokemon, StatsPokemonGO, StatsProd, StatsSta } from '../core/models/stats.model';
+import { IPokemonData, PokemonModel } from '../core/models/pokemon.model';
+import { StatsAtk, StatsDef, StatsModel, IStatsPokemon, StatsPokemonGO, StatsProd, StatsSta } from '../core/models/stats.model';
 import { PokemonInfo, Stats } from '../core/models/API/info.model';
-import { PokemonForm, PokemonFormModify, PokemonFormModifyModel } from '../core/models/API/form.model';
-import { PokemonSearchingModel } from '../core/models/pokemon-searching.model';
+import { PokemonForm, IPokemonFormModify, PokemonFormModifyModel } from '../core/models/API/form.model';
+import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 
 class Mask {
@@ -352,7 +352,7 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
   return null;
 };
 
-export const checkPokemonGO = (id: number, name: string, details: PokemonDataModel[]) => {
+export const checkPokemonGO = (id: number, name: string, details: IPokemonData[]) => {
   return details.find((pokemon) => pokemon.num === id && pokemon.fullName === name);
 };
 
@@ -425,7 +425,7 @@ export const calRank = (
   return ((pokemonStats[type].max_rank - rank + 1) * 100) / pokemonStats[type].max_rank;
 };
 
-export const mappingPokemonName = (pokemonData: PokemonDataModel[]) => {
+export const mappingPokemonName = (pokemonData: IPokemonData[]) => {
   return pokemonData
     .filter(
       (pokemon) =>
@@ -434,11 +434,11 @@ export const mappingPokemonName = (pokemonData: PokemonDataModel[]) => {
           (pokemon.num === 744 && pokemon.forme === 'DUSK') ||
           (pokemon.baseForme && pokemon.baseForme === pokemon.forme))
     )
-    .map((pokemon) => new PokemonSearchingModel(pokemon))
+    .map((pokemon) => new PokemonSearching(pokemon))
     .sort((a, b) => a.id - b.id);
 };
 
-export const getPokemonById = (pokemonData: PokemonDataModel[], id: number) => {
+export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   const result = pokemonData
     .filter((pokemon) => pokemon.num === id)
     .find(
@@ -447,7 +447,7 @@ export const getPokemonById = (pokemonData: PokemonDataModel[], id: number) => {
   if (!result) {
     return;
   }
-  return new PokemonNameModel(result?.num ?? 0, result?.name ?? '');
+  return new PokemonModel(result?.num ?? 0, result?.name ?? '');
 };
 
 export const getCustomThemeDataTable = (theme: Theme) => {
@@ -490,14 +490,14 @@ export const getDataWithKey = (data: any, key: string | number) => {
   return result ? result[1] : {};
 };
 
-export const checkMoveSetAvailable = (pokemon: PokemonModel | PokemonDataModel | undefined) => {
+export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | undefined) => {
   if (!pokemon) {
     return false;
   }
 
-  const eliteQuickMoves = (pokemon as PokemonModel).eliteQuickMove ?? (pokemon as PokemonDataModel).eliteQuickMove ?? [];
-  const eliteCinematicMoves = (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as PokemonDataModel).eliteCinematicMove ?? [];
-  const specialMoves = (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as PokemonDataModel).specialMoves ?? [];
+  const eliteQuickMoves = (pokemon as PokemonModel).eliteQuickMove ?? (pokemon as IPokemonData).eliteQuickMove ?? [];
+  const eliteCinematicMoves = (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as IPokemonData).eliteCinematicMove ?? [];
+  const specialMoves = (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as IPokemonData).specialMoves ?? [];
   const allMoves = pokemon.quickMoves?.concat(pokemon.cinematicMoves ?? [], eliteQuickMoves, eliteCinematicMoves, specialMoves) ?? [];
   if (allMoves?.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
     return false;
@@ -505,7 +505,7 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | PokemonDataModel |
   return true;
 };
 
-export const checkPokemonIncludeShadowForm = (pokemon: PokemonDataModel[], form: string) => {
+export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) => {
   return pokemon.some((p) => convertPokemonAPIDataName(form) === (p.fullName ?? p.name) && p.isShadow);
 };
 
@@ -533,14 +533,14 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
     result[convertNameEffort(stat.stat.name)] = stat.base_stat;
   });
 
-  return result as unknown as StatsPokemon;
+  return result as unknown as IStatsPokemon;
 };
 
 export const replacePokemonGoForm = (form: string) => {
   return form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
 };
 
-export const formIconAssets = (value: PokemonFormModify, id: number) => {
+export const formIconAssets = (value: IPokemonFormModify, id: number) => {
   return value.form.name.includes('-totem') ||
     value.form.name.includes('-hisui') ||
     value.form.name.includes('power-construct') ||
@@ -659,9 +659,9 @@ export const convertPokemonImageName = (text: string | undefined | null, default
 };
 
 export const generatePokemonGoForms = (
-  pokemonData: PokemonDataModel[],
+  pokemonData: IPokemonData[],
   dataFormList: PokemonForm[][],
-  formListResult: PokemonFormModify[][],
+  formListResult: IPokemonFormModify[][],
   id: number,
   name: string,
   index = 0
@@ -682,7 +682,7 @@ export const generatePokemonGoForms = (
           pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
           'Pokémon-GO',
           pokemon.types,
-          null,
+          undefined,
           index,
           FORM_NORMAL,
           false,
@@ -697,7 +697,7 @@ export const generatePokemonGoForms = (
 
 export const generatePokemonGoShadowForms = (
   dataPokeList: PokemonInfo[],
-  formListResult: PokemonFormModify[][],
+  formListResult: IPokemonFormModify[][],
   id: number,
   name: string,
   index = 0
@@ -718,7 +718,7 @@ export const generatePokemonGoShadowForms = (
         `${p.name}-${FORM_SHADOW.toLowerCase()}`,
         'Pokémon-GO',
         p.types.map((item) => item.type.name) ?? [],
-        null,
+        undefined,
         index,
         FORM_SHADOW,
         true
@@ -732,7 +732,7 @@ export const generatePokemonGoShadowForms = (
         `${p.name}-${FORM_PURIFIED.toLowerCase()}`,
         'Pokémon-GO',
         p.types.map((item) => item.type.name) ?? [],
-        null,
+        undefined,
         index,
         FORM_PURIFIED,
         true
@@ -759,7 +759,7 @@ export const getFormFromForms = (
   return filterForm;
 };
 
-export const retrieveMoves = (combat: PokemonDataModel[], id: number, form: string) => {
+export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) => {
   if (combat.length > 0) {
     const resultFirst = combat.filter((item) => item.num === id);
     form =
@@ -769,8 +769,8 @@ export const retrieveMoves = (combat: PokemonDataModel[], id: number, form: stri
   }
 };
 
-export const getPokemonDetails = (pokemonData: PokemonDataModel[], id: number, form: string | null, isDefault = false) => {
-  let pokemonForm: PokemonDataModel | undefined;
+export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form: string | null, isDefault = false) => {
+  let pokemonForm: IPokemonData | undefined;
 
   if (form) {
     pokemonForm = pokemonData.find((item) => item.num === id && item.fullName === convertPokemonAPIDataName(form?.replaceAll(' ', '-')));

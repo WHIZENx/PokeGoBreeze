@@ -1,4 +1,4 @@
-import { Asset } from '../core/models/asset.model';
+import { IAsset } from '../core/models/asset.model';
 import { Candy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_NORMAL } from './Constants';
@@ -127,7 +127,7 @@ export const computeBgType = (
   return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, ${colorsPalette.at(1) ?? colorsPalette.at(0)})`;
 };
 
-export const queryAssetForm = (assets: Asset[], id: number | undefined, name: string | undefined | null) => {
+export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {
   const pokemonAssets = assets?.find((asset) => asset.id === id);
   if (!pokemonAssets) {
     return null;
@@ -146,7 +146,7 @@ export const queryAssetForm = (assets: Asset[], id: number | undefined, name: st
   }
 };
 
-export const findAssetForm = (pokemonAssets: Asset[], id: number | undefined, name: string | undefined) => {
+export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, name: string | undefined) => {
   const form = queryAssetForm(pokemonAssets, id, name);
   if (form) {
     return form.default;
@@ -154,7 +154,7 @@ export const findAssetForm = (pokemonAssets: Asset[], id: number | undefined, na
   return null;
 };
 
-export const findAssetFormShiny = (pokemonAssets: Asset[], id: number, name: string) => {
+export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: string) => {
   const form = queryAssetForm(pokemonAssets, id, name);
   if (form) {
     return form.shiny;

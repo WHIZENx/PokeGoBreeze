@@ -1,15 +1,17 @@
-import { Image } from '../../../../core/models/asset.model';
+import { IImage } from '../../../../core/models/asset.model';
 
-export interface PokemonModelComponent {
+export interface IPokemonModelComponent {
   name: string;
-  image: Image[];
+  form: string;
+  image: IImage[];
 }
 
-export class PokemonModelComponent {
+export class PokemonModelComponent implements IPokemonModelComponent {
+  name = '';
   form: string;
-  image: Image[];
+  image: IImage[];
 
-  constructor(value: string, images: Image[]) {
+  constructor(value: string, images: IImage[]) {
     this.form = value;
     this.image = images.filter((item) => value === item.form);
   }

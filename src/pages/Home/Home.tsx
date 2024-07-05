@@ -35,7 +35,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { StoreState, StatsState } from '../../store/models/state.model';
-import { PokemonHomeModel } from '../../core/models/pokemon-home.model';
+import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 const VersionProps = {
@@ -54,15 +54,15 @@ const Home = () => {
   const stats = useSelector((state: StatsState) => state.stats);
 
   const [types, setTypes] = useState(DEFAULT_TYPES);
-  const [dataList, setDataList]: [PokemonHomeModel[], React.Dispatch<React.SetStateAction<PokemonHomeModel[]>>] = useState(
-    [] as PokemonHomeModel[]
+  const [dataList, setDataList]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
+    [] as IPokemonHomeModel[]
   );
   const [selectTypes, setSelectTypes] = useState([] as string[]);
-  const [listOfPokemon, setListOfPokemon]: [PokemonHomeModel[], React.Dispatch<React.SetStateAction<PokemonHomeModel[]>>] = useState(
-    [] as PokemonHomeModel[]
+  const [listOfPokemon, setListOfPokemon]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
+    [] as IPokemonHomeModel[]
   );
-  const [result, setResult]: [PokemonHomeModel[], React.Dispatch<React.SetStateAction<PokemonHomeModel[]>>] = useState(
-    [] as PokemonHomeModel[]
+  const [result, setResult]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
+    [] as IPokemonHomeModel[]
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);

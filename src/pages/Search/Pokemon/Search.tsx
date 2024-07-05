@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
 import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
-import { PokemonSearchingModel } from '../../../core/models/pokemon-searching.model';
+import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const Search = () => {
@@ -31,13 +31,11 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
 
-  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>] = useState(
-    [] as PokemonSearchingModel[]
+  const [pokemonList, setPokemonList]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] = useState(
+    [] as IPokemonSearching[]
   );
-  const [pokemonListFilter, setPokemonListFilter]: [
-    PokemonSearchingModel[],
-    React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>
-  ] = useState([] as PokemonSearchingModel[]);
+  const [pokemonListFilter, setPokemonListFilter]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] =
+    useState([] as IPokemonSearching[]);
 
   useEffect(() => {
     if (pokemonName.length > 0) {
@@ -70,7 +68,7 @@ const Search = () => {
     }
   };
 
-  const getInfoPoke = (value: PokemonSearchingModel) => {
+  const getInfoPoke = (value: IPokemonSearching) => {
     setShowResult(false);
     setId(value.id);
   };

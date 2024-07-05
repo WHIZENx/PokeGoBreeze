@@ -22,10 +22,10 @@ import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN } from '../../../util/Constants';
 import { EvolutionModel } from '../../../core/models/evolution.model';
-import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleBaseStats, QueryStatesEvoChain } from '../../../util/models/calculate.model';
 import FreeSoloInput from '../../../components/Input/FreeSoloInput';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const FindBattle = () => {
@@ -36,7 +36,8 @@ const FindBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
+  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
+    useState();
   const [maxCP, setMaxCP] = useState(0);
 
   const [searchCP, setSearchCP] = useState('');
@@ -100,7 +101,7 @@ const FindBattle = () => {
   );
 
   const prevEvoChain = useCallback(
-    (obj: PokemonDataModel, defaultForm: string, arr: EvolutionModel[], result: EvolutionModel[][]) => {
+    (obj: IPokemonData, defaultForm: string, arr: EvolutionModel[], result: EvolutionModel[][]) => {
       if (!arr.map((i) => i.id).includes(obj.num)) {
         arr.push({
           ...obj,

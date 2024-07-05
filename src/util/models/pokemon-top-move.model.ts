@@ -1,4 +1,4 @@
-import { Combat } from '../../core/models/combat.model';
+import { ICombat } from '../../core/models/combat.model';
 
 export interface PokemonTopMove {
   num: number;
@@ -13,9 +13,9 @@ export interface PokemonTopMove {
   tdo: number;
 }
 
-export interface PokemonQueryMove {
-  fmove: Combat;
-  cmove: Combat;
+export interface IPokemonQueryMove {
+  fmove: ICombat;
+  cmove: ICombat;
   eDPS: {
     offensive: number;
     defensive: number;
@@ -23,17 +23,17 @@ export interface PokemonQueryMove {
 }
 
 export interface PokemonQueryRankMove {
-  data: PokemonQueryMove[];
+  data: IPokemonQueryMove[];
   maxOff?: number;
   maxDef?: number;
 }
 
-export interface PokemonQueryCounter {
+export interface IPokemonQueryCounter {
   pokemon_id: number;
   pokemon_name: string;
   pokemon_forme: string | null;
   releasedGO: boolean;
   dps: number;
-  fmove: Combat;
-  cmove: Combat;
+  fmove: ICombat;
+  cmove: ICombat;
 }

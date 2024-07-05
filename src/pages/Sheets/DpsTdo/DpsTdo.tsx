@@ -47,18 +47,18 @@ import { setDPSSheetPage } from '../../../store/actions/options.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/move.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { ICombat } from '../../../core/models/combat.model';
+import { IPokemonData } from '../../../core/models/pokemon.model';
 import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { OptionFiltersDPSModel, OptionOtherDPS } from '../../../store/models/options.model';
+import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
 
 interface PokemonSheetData {
-  pokemon: PokemonDataModel;
-  fmove: Combat | undefined;
-  cmove: Combat | undefined;
+  pokemon: IPokemonData;
+  fmove: ICombat | undefined;
+  cmove: ICombat | undefined;
   dps: number;
   tdo: number;
   multiDpsTdo: number;
@@ -252,8 +252,8 @@ const DpsTdo = () => {
   const [searchTerm, setSearchTerm] = useState(optionStore?.dpsSheet?.searchTerm ?? '');
 
   const [dataTargetPokemon, setDataTargetPokemon]: [
-    PokemonDataModel | undefined,
-    React.Dispatch<React.SetStateAction<PokemonDataModel | undefined>>
+    IPokemonData | undefined,
+    React.Dispatch<React.SetStateAction<IPokemonData | undefined>>
   ] = useState(optionStore?.dpsSheet?.dataTargetPokemon);
   const [fmoveTargetPokemon, setFmoveTargetPokemon]: [
     SelectMoveModel | undefined,
@@ -279,7 +279,7 @@ const DpsTdo = () => {
         }
   );
 
-  const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPSModel());
+  const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPS());
 
   const {
     match,
@@ -320,7 +320,7 @@ const DpsTdo = () => {
   const addCPokeData = (
     dataList: PokemonSheetData[],
     movePoke: string[],
-    pokemon: PokemonDataModel,
+    pokemon: IPokemonData,
     vf: string,
     shadow: boolean,
     purified: boolean,
@@ -405,7 +405,7 @@ const DpsTdo = () => {
     });
   };
 
-  const addFPokeData = (dataList: PokemonSheetData[], pokemon: PokemonDataModel, movePoke: string[], felite: boolean, isShadow = false) => {
+  const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[], felite: boolean, isShadow = false) => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, false, felite, false);
       if (!pokemon.forme || isShadow) {

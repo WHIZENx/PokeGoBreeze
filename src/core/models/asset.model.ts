@@ -1,4 +1,4 @@
-export interface Image {
+export interface IImage {
   gender?: number;
   pokemonId?: number;
   form?: string;
@@ -6,10 +6,10 @@ export interface Image {
   shiny: string | null;
 }
 
-export interface Asset {
+export interface IAsset {
   id?: number;
   name: string;
-  image: Image[];
+  image: IImage[];
   sound: {
     cry: {
       form: string;
@@ -18,11 +18,11 @@ export interface Asset {
   };
 }
 
-export class AssetDataModel {
+export class Asset implements IAsset {
   id?: number;
-  name!: string;
-  image!: Image[];
-  sound!: {
+  name: string;
+  image: IImage[];
+  sound: {
     cry: {
       form: string;
       path: string;

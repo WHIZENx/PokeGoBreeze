@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { StoreState } from '../../store/models/state.model';
-import { Combat } from '../../core/models/combat.model';
+import { ICombat } from '../../core/models/combat.model';
 import { SelectMoveModel } from '../Input/models/select-move.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
 
-const CardMove = (props: { value: SelectMoveModel | Combat | undefined }) => {
+const CardMove = (props: { value: SelectMoveModel | ICombat | undefined }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [data, setData]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [data, setData]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
 
   useEffect(() => {
     if (combat.length > 0 && props.value) {

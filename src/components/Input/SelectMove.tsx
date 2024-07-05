@@ -7,15 +7,15 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from './models/select-move.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
-import { Combat } from '../../core/models/combat.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
+import { ICombat } from '../../core/models/combat.model';
 import { retrieveMoves } from '../../util/Utils';
 
 const SelectMove = (props: {
-  move: SelectMoveModel | Combat | undefined;
+  move: SelectMoveModel | ICombat | undefined;
   setMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
   clearData?: () => void;
-  pokemon: PokemonDataModel | undefined;
+  pokemon: IPokemonData | undefined;
   moveType: string;
   inputType?: string;
   selected?: boolean;

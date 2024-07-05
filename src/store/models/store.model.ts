@@ -1,14 +1,14 @@
-import { Asset } from '../../core/models/asset.model';
-import { Combat } from '../../core/models/combat.model';
-import { CPM } from '../../core/models/cpm.model';
-import { LeagueData } from '../../core/models/league.model';
-import { Options } from '../../core/models/options.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { IAsset } from '../../core/models/asset.model';
+import { ICombat } from '../../core/models/combat.model';
+import { ICPM } from '../../core/models/cpm.model';
+import { ILeagueData } from '../../core/models/league.model';
+import { IOptions } from '../../core/models/options.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
 import { PVPDataModel } from '../../core/models/pvp.model';
 import { SearchingOptionsModel } from '../../core/models/searching.model';
-import { StickerModel } from '../../core/models/sticker.model';
-import { TypeEff } from '../../core/models/type-eff.model';
-import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { ISticker } from '../../core/models/sticker.model';
+import { ITypeEff } from '../../core/models/type-eff.model';
+import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 
 export interface StoreModel {
   icon?: string;
@@ -18,14 +18,14 @@ export interface StoreModel {
 }
 
 export interface DataModel {
-  cpm: CPM[];
-  typeEff: TypeEff;
-  weatherBoost: WeatherBoost;
-  options: Options;
-  pokemon: PokemonDataModel[];
-  stickers: StickerModel[];
-  assets: Asset[];
-  combat: Combat[];
-  leagues: LeagueData;
+  cpm: ICPM[];
+  typeEff: ITypeEff;
+  weatherBoost: IWeatherBoost;
+  options: IOptions;
+  pokemon: IPokemonData[];
+  stickers: ISticker[];
+  assets: IAsset[];
+  combat: ICombat[];
+  leagues: ILeagueData;
   pvp: PVPDataModel;
 }

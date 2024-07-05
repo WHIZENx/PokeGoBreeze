@@ -1,7 +1,7 @@
-import { Buff, Combat } from '../../../core/models/combat.model';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { IBuff, ICombat } from '../../../core/models/combat.model';
+import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { StatsAtk, StatsDef, StatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
+import { StatsAtk, StatsDef, IStatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import { StatsProdCalculate } from '../../../util/models/calculate.model';
 
 export interface PokemonBattleData {
@@ -21,14 +21,14 @@ export interface PokemonBattleData {
     | undefined;
   bestStats: StatsProdCalculate | undefined;
   currentStats: StatsProdCalculate | undefined;
-  pokemon: PokemonDataModel | null;
-  fmove: Combat | null;
-  cmove: Combat | null;
-  cmoveSec: Combat | null;
+  pokemon: IPokemonData | null;
+  fmove: ICombat | null;
+  cmove: ICombat | null;
+  cmoveSec: ICombat | null;
   energy: number;
   block: number;
   turn: number;
-  combatPoke?: PokemonDataModel;
+  combatPoke?: IPokemonData;
   disableCMoveSec?: boolean;
   disableCMovePri?: boolean;
 }
@@ -38,9 +38,9 @@ export interface PokemonBattle {
   disableCMovePri?: boolean;
   shadow?: boolean;
   pokemonData?: PokemonBattleData | null;
-  fMove?: Combat | null;
-  cMovePri?: Combat | null;
-  cMoveSec?: Combat | null;
+  fMove?: ICombat | null;
+  cMovePri?: ICombat | null;
+  cMoveSec?: ICombat | null;
   timeline: Timeline[];
   energy: number;
   block: number;
@@ -55,9 +55,9 @@ export interface Timeline {
   tap: boolean;
   block: number;
   energy: number;
-  move: Combat | null;
+  move: ICombat | null;
   hp: number;
-  buff: Buff[] | null;
+  buff: IBuff[] | null;
   dmgImmune: boolean;
 }
 
@@ -65,15 +65,15 @@ export interface PokemonTeamData {
   id: number | undefined;
   name: string | undefined;
   speciesId: string;
-  pokemonData: PokemonDataModel | undefined;
+  pokemonData: IPokemonData | undefined;
   form: string | null;
-  stats: StatsPokemon;
+  stats: IStatsPokemon;
   atk: StatsAtk | undefined;
   def: StatsDef | undefined;
   sta: StatsSta | undefined;
-  fmove: Combat | undefined;
-  cmovePri: Combat | undefined;
-  cmoveSec: Combat | undefined;
+  fmove: ICombat | undefined;
+  cmovePri: ICombat | undefined;
+  cmoveSec: ICombat | undefined;
   shadow: boolean;
   purified: boolean | undefined;
 }
@@ -83,16 +83,16 @@ export interface PokemonBattleRanking {
   id: number;
   name: string;
   speciesId?: string;
-  pokemon: PokemonDataModel | undefined;
+  pokemon: IPokemonData | undefined;
   form: string;
-  stats: StatsPokemon;
+  stats: IStatsPokemon;
   atk: StatsAtk | undefined;
   def: StatsDef | undefined;
   sta: StatsSta | undefined;
   prod: StatsProd | undefined;
-  fmove: Combat | undefined;
-  cmovePri: Combat | undefined;
-  cmoveSec: Combat | undefined;
+  fmove: ICombat | undefined;
+  cmovePri: ICombat | undefined;
+  cmoveSec: ICombat | undefined;
   bestStats?: StatsProdCalculate;
   shadow: boolean;
   purified: boolean;

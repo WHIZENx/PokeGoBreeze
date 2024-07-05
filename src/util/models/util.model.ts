@@ -1,10 +1,10 @@
-import { StatsPokemon } from '../../core/models/stats.model';
+import { IStatsPokemon } from '../../core/models/stats.model';
 
 export interface ArrayStats {
   id: number;
   name: string;
   form: string;
-  base_stats: StatsPokemon;
+  base_stats: IStatsPokemon;
   baseStatsPokeGo: {
     attack: number;
     defense: number;

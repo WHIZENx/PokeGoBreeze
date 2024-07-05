@@ -47,9 +47,9 @@ import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { StoreState } from '../../../store/models/state.model';
 import { BattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
-import { Buff, Combat } from '../../../core/models/combat.model';
+import { IBuff, ICombat } from '../../../core/models/combat.model';
 import { PokemonBattle, PokemonBattleData, Timeline } from '../models/battle.model';
-import { StatsPokemon } from '../../../core/models/stats.model';
+import { IStatsPokemon } from '../../../core/models/stats.model';
 import { StatsProdCalculate } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 
@@ -113,7 +113,7 @@ const Battle = () => {
     block: number,
     energy: number,
     hp: number,
-    move: Combat | null = null,
+    move: ICombat | null = null,
     immune = null
   ): Timeline => {
     return {
@@ -131,7 +131,7 @@ const Battle = () => {
     };
   };
 
-  const calculateMoveDmgActual = (poke: PokemonBattleData | null, pokeObj: PokemonBattleData | null, move: Combat | undefined | null) => {
+  const calculateMoveDmgActual = (poke: PokemonBattleData | null, pokeObj: PokemonBattleData | null, move: ICombat | undefined | null) => {
     if (poke && pokeObj) {
       const atkPoke = calculateStatsBattle(
         poke.stats?.atk ?? 0,
@@ -466,8 +466,8 @@ const Battle = () => {
               player2.block -= 1;
             }
             const moveType = chargeType === 1 ? player1.cmove : player1.cmoveSec;
-            const arrBufAtk: Buff[] = [],
-              arrBufTarget: Buff[] = [];
+            const arrBufAtk: IBuff[] = [],
+              arrBufTarget: IBuff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
             if ((moveType?.buffs?.length ?? 0) > 0 && randInt > 0 && randInt <= (moveType?.buffs?.at(0)?.buffChance ?? 0)) {
               moveType?.buffs.forEach((value) => {
@@ -520,8 +520,8 @@ const Battle = () => {
               player1.block -= 1;
             }
             const moveType = chargeType === 1 ? player2.cmove : player2.cmoveSec;
-            const arrBufAtk: Buff[] = [],
-              arrBufTarget: Buff[] = [];
+            const arrBufAtk: IBuff[] = [],
+              arrBufTarget: IBuff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
             if ((moveType?.buffs?.length ?? 0) > 0 && randInt > 0 && randInt <= (moveType?.buffs?.at(0)?.buffChance ?? 0)) {
               moveType?.buffs.forEach((value) => {
@@ -1011,7 +1011,7 @@ const Battle = () => {
     }, 100);
   };
 
-  const findBuff = (move: Combat | undefined | null) => {
+  const findBuff = (move: ICombat | undefined | null) => {
     if (move?.buffs.length === 0) {
       return;
     }
@@ -1071,7 +1071,7 @@ const Battle = () => {
     }
 
     let stats = pokemon.pokemonData?.allStats?.find(
-      (data: { level: number; IV: StatsPokemon }) =>
+      (data: { level: number; IV: IStatsPokemon }) =>
         data.level === level && data.IV.atk === atk && data.IV.def === def && data.IV.sta === sta
     );
 

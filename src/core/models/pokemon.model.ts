@@ -1,14 +1,14 @@
 import { capitalize } from '../../util/Utils';
-import { Combat } from './combat.model';
+import { ICombat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
-import { StatsPokemon } from './stats.model';
+import { IStatsPokemon } from './stats.model';
 import { SelectMoveModel } from '../../components/Input/models/select-move.model';
-import { EvoList, TempEvo } from './evolution.model';
+import { IEvoList, ITempEvo } from './evolution.model';
 
 export interface OptionsPokemon {
-  prev?: PokemonNameModel | undefined;
-  current: PokemonNameModel | undefined;
-  next?: PokemonNameModel | undefined;
+  prev?: IPokemonName | undefined;
+  current: IPokemonName | undefined;
+  next?: IPokemonName | undefined;
 }
 
 export interface PokemonGender {
@@ -17,13 +17,13 @@ export interface PokemonGender {
   genderlessPercent?: number;
 }
 
-export interface PokemonDataStats {
+export interface IPokemonDataStats {
   level: number;
   isShadow: boolean;
-  iv: StatsPokemon;
+  iv: IStatsPokemon;
 }
 
-export interface PokemonFormChange {
+interface IPokemonFormChange {
   availableForm: string[];
   candyCost: string;
   stardustCost: string;
@@ -59,7 +59,7 @@ interface EvolutionBranch {
   obEvolutionBranchRequiredMove?: string;
 }
 
-export interface Encounter {
+interface IEncounter {
   baseCaptureRate?: number;
   baseFleeRate?: number;
   collisionRadiusM?: number;
@@ -88,7 +88,7 @@ export interface PokemonModel {
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | undefined;
-  formChange?: PokemonFormChange[];
+  formChange?: IPokemonFormChange[];
   tempEvoOverrides: {
     tempEvoId: string;
     stats: {
@@ -107,7 +107,7 @@ export interface PokemonModel {
     cylinderHeightM: number;
     shoulderModeScale: number;
   };
-  encounter: Encounter;
+  encounter: IEncounter;
   stats: {
     baseStamina: number;
     baseAttack: number;
@@ -156,7 +156,7 @@ export interface PokemonGenderRatio {
   F: number;
 }
 
-export interface PokemonDataModel {
+export interface IPokemonData {
   pokemonId?: string;
   num: number;
   name: string;
@@ -165,7 +165,7 @@ export interface PokemonDataModel {
   sprite: string;
   types: string[];
   genderRatio: PokemonGenderRatio;
-  baseStats: StatsPokemon;
+  baseStats: IStatsPokemon;
   heightm: number;
   weightkg: number;
   color: string;
@@ -198,9 +198,9 @@ export interface PokemonDataModel {
   region: string | null;
   version: string | null;
   baseStatsGO?: boolean;
-  stats?: PokemonDataStats | null;
+  stats?: IPokemonDataStats | null;
   isShadow?: boolean;
-  formChange?: PokemonFormChange[];
+  formChange?: IPokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
@@ -208,8 +208,8 @@ export interface PokemonDataModel {
   eliteCinematicMove?: string[];
   shadowMoves?: string[];
   purifiedMoves?: string[];
-  evoList?: EvoList[];
-  tempEvo?: TempEvo[];
+  evoList?: IEvoList[];
+  tempEvo?: ITempEvo[];
   purified?: {
     stardust?: number;
     candy?: number;
@@ -218,17 +218,18 @@ export interface PokemonDataModel {
     stardust?: number;
     candy?: number;
   };
+  encounter?: IEncounter;
 }
 
-export interface PokemonNameModel {
+export interface IPokemonName {
   id: number;
   name: string;
 }
 
 export interface PokemonMoveData {
-  pokemon: PokemonDataModel | undefined;
-  fmove: Combat | undefined;
-  cmove: Combat | undefined;
+  pokemon: IPokemonData | undefined;
+  fmove: ICombat | undefined;
+  cmove: ICombat | undefined;
   dpsDef: number;
   dpsAtk: number;
   tdoAtk: number;
@@ -261,7 +262,7 @@ export interface PokemonEncounter {
 }
 
 export interface PokemonRaidModel {
-  dataTargetPokemon?: PokemonDataModel;
+  dataTargetPokemon?: IPokemonData;
   fmoveTargetPokemon?: SelectMoveModel;
   cmoveTargetPokemon?: SelectMoveModel;
   trainerId?: number;
@@ -290,8 +291,8 @@ export interface PokemonDataOptional {
   version?: string;
   shadowMoves?: string[];
   purifiedMoves?: string[];
-  evoList?: EvoList[];
-  tempEvo?: TempEvo[];
+  evoList?: IEvoList[];
+  tempEvo?: ITempEvo[];
   purified?: {
     stardust?: number;
     candy?: number;
@@ -302,7 +303,7 @@ export interface PokemonDataOptional {
   };
 }
 
-export class PokemonDataModel {
+export class PokemonData implements IPokemonData {
   pokemonId?: string;
   num: number;
   name: string;
@@ -314,7 +315,7 @@ export class PokemonDataModel {
     M: number;
     F: number;
   };
-  baseStats: StatsPokemon;
+  baseStats: IStatsPokemon;
   heightm: number;
   weightkg: number;
   color: string;
@@ -334,10 +335,10 @@ export class PokemonDataModel {
   region: string | null;
   version: string | null;
   baseStatsGO?: boolean;
-  stats?: PokemonDataStats | null;
-  encounter?: Encounter;
+  stats?: IPokemonDataStats | null;
+  encounter?: IEncounter;
   isShadow?: boolean;
-  formChange?: PokemonFormChange[];
+  formChange?: IPokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
@@ -345,8 +346,8 @@ export class PokemonDataModel {
   eliteCinematicMove?: string[];
   shadowMoves?: string[];
   purifiedMoves?: string[];
-  evoList?: EvoList[];
-  tempEvo?: TempEvo[];
+  evoList?: IEvoList[];
+  tempEvo?: ITempEvo[];
   purified?: {
     stardust?: number;
     candy?: number;
@@ -355,6 +356,19 @@ export class PokemonDataModel {
     stardust?: number;
     candy?: number;
   };
+  baseFormeAlias!: string;
+  baseFormeSlug!: string;
+  baseFormeSprite!: string;
+  cosmeticFormes!: string[];
+  cosmeticFormesAliases!: string[];
+  cosmeticFormesSprites!: string[];
+  otherFormes!: string[];
+  otherFormesAliases!: string[];
+  otherFormesSprites!: string[];
+  formeOrder!: string[];
+  canGigantamax!: string | boolean;
+  changesFrom!: string | null;
+  cannotDynamax!: boolean;
 
   constructor(pokemon: PokemonModel, types: string[], options?: PokemonDataOptional) {
     let gen = 0;
@@ -422,18 +436,7 @@ export class PokemonDataModel {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class PokemonModel {
-  id: number;
-  name: string;
-
-  constructor(id: number, name?: string) {
-    this.id = id;
-    this.name = name ?? '';
-  }
-}
-
-// tslint:disable-next-line:max-classes-per-file
-export class PokemonNameModel {
+export class PokemonModel implements IPokemonName {
   id: number;
   name: string;
 
