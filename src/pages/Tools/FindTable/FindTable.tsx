@@ -11,12 +11,12 @@ import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
 import { MAX_IV, MIN_IV } from '../../../util/Constants';
-import { PredictStatsModel, PredictStatsCalculate, PredictCPModel, PredictCPCalculate } from '../../../util/models/calculate.model';
+import { IPredictStatsModel, IPredictStatsCalculate, IPredictCPModel, IPredictCPCalculate } from '../../../util/models/calculate.model';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
-const columnsIV: TableColumn<PredictStatsModel>[] = [
+const columnsIV: TableColumn<IPredictStatsModel>[] = [
   {
     name: 'Level',
     selector: (row) => row.level,
@@ -49,7 +49,7 @@ const columnsIV: TableColumn<PredictStatsModel>[] = [
   },
 ];
 
-const columnsCP: TableColumn<PredictCPModel>[] = [
+const columnsCP: TableColumn<IPredictCPModel>[] = [
   {
     name: 'Level',
     selector: (row) => row.level,
@@ -69,25 +69,25 @@ const columnsCP: TableColumn<PredictCPModel>[] = [
 
 const conditionalRowStyles = [
   {
-    when: (row: PredictStatsModel) => row.percent === 100,
+    when: (row: IPredictStatsModel) => row.percent === 100,
     style: {
       backgroundColor: 'rgb(236, 200, 200)',
     },
   },
   {
-    when: (row: PredictStatsModel) => row.percent > 80 && row.percent < 100,
+    when: (row: IPredictStatsModel) => row.percent > 80 && row.percent < 100,
     style: {
       backgroundColor: 'rgb(236, 200, 236)',
     },
   },
   {
-    when: (row: PredictStatsModel) => row.percent > 64 && row.percent <= 80,
+    when: (row: IPredictStatsModel) => row.percent > 64 && row.percent <= 80,
     style: {
       backgroundColor: 'rgb(200, 236, 200)',
     },
   },
   {
-    when: (row: PredictStatsModel) => row.percent > 51 && row.percent <= 64,
+    when: (row: IPredictStatsModel) => row.percent > 51 && row.percent <= 64,
     style: {
       backgroundColor: 'rgb(236, 236, 200)',
     },
@@ -110,10 +110,10 @@ const FindTable = () => {
   const [statSTA, setStatSTA] = useState(0);
 
   const [preIvArr, setPreIvArr]: [
-    PredictStatsCalculate | undefined,
-    React.Dispatch<React.SetStateAction<PredictStatsCalculate | undefined>>
+    IPredictStatsCalculate | undefined,
+    React.Dispatch<React.SetStateAction<IPredictStatsCalculate | undefined>>
   ] = useState();
-  const [preCpArr, setPreCpArr]: [PredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<PredictCPCalculate | undefined>>] =
+  const [preCpArr, setPreCpArr]: [IPredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<IPredictCPCalculate | undefined>>] =
     useState();
 
   const { enqueueSnackbar } = useSnackbar();

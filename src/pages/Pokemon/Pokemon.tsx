@@ -7,10 +7,10 @@ import { useLocation, useNavigate, useParams, useSearchParams } from 'react-rout
 
 import './Pokemon.scss';
 
-import { FormModel, FormSoundCry, FormSoundCryModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
+import { Form, IFormSoundCry, FormSoundCry, PokemonForm, IPokemonFormModify, PokemonFormModify } from '../../core/models/API/form.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { Species } from '../../core/models/API/species.model';
-import { OptionsPokemon, PokemonGenderRatio, PokemonDataModel } from '../../core/models/pokemon.model';
+import { OptionsPokemon, PokemonGenderRatio, IPokemonData } from '../../core/models/pokemon.model';
 import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
@@ -34,7 +34,7 @@ import { KEY_LEFT, KEY_RIGHT, FORM_GMAX, regionList } from '../../util/Constants
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
-import Form from '../../components/Info/Form/Form';
+import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 
@@ -68,8 +68,8 @@ const Pokemon = (props: {
   const [currentData, setCurrentData]: [PokemonInfo | undefined, React.Dispatch<React.SetStateAction<PokemonInfo | undefined>>] =
     useState();
   const [formList, setFormList]: [
-    PokemonFormModify[][] | undefined,
-    React.Dispatch<React.SetStateAction<PokemonFormModify[][] | undefined>>
+    IPokemonFormModify[][] | undefined,
+    React.Dispatch<React.SetStateAction<IPokemonFormModify[][] | undefined>>
   ] = useState();
 
   const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
@@ -86,17 +86,15 @@ const Pokemon = (props: {
   const [WH, setWH] = useState({ weight: -1, height: -1 });
   const [formName, setFormName]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
   const [originForm, setOriginForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
-  const [originSoundCry, setOriginSoundCry] = useState([] as FormSoundCry[]);
+  const [originSoundCry, setOriginSoundCry] = useState([] as IFormSoundCry[]);
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
   const [currentForm, setCurrentForm]: [
-    PokemonFormModify | undefined,
-    React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>
+    IPokemonFormModify | undefined,
+    React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>
   ] = useState();
-  const [pokemonDetails, setPokemonDetails]: [
-    PokemonDataModel | undefined,
-    React.Dispatch<React.SetStateAction<PokemonDataModel | undefined>>
-  ] = useState();
+  const [pokemonDetails, setPokemonDetails]: [IPokemonData | undefined, React.Dispatch<React.SetStateAction<IPokemonData | undefined>>] =
+    useState();
 
   const [costModifier, setCostModifier]: [TypeCost, React.Dispatch<React.SetStateAction<TypeCost>>] = useState({
     purified: {},
@@ -114,7 +112,7 @@ const Pokemon = (props: {
     async (data: Species) => {
       const dataPokeList: PokemonInfo[] = [];
       const dataFormList: PokemonForm[][] = [];
-      const soundCries: FormSoundCry[] = [];
+      const soundCries: IFormSoundCry[] = [];
       const cancelToken = axiosSource.current.token;
       await Promise.all(
         data.varieties.map(async (value) => {
@@ -122,7 +120,7 @@ const Pokemon = (props: {
           const pokeForm = await Promise.all(
             pokeInfo.forms.map(async (item) => (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data)
           );
-          soundCries.push(new FormSoundCryModel(pokeInfo));
+          soundCries.push(new FormSoundCry(pokeInfo));
           dataPokeList.push({
             ...pokeInfo,
             is_include_shadow: checkPokemonIncludeShadowForm(pokemonData, pokeInfo.name),
@@ -155,7 +153,7 @@ const Pokemon = (props: {
                   data.id,
                   data.name,
                   data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                  new FormModel({
+                  new Form({
                     ...item,
                     form_name: item.form_name.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.form_name,
                   })
@@ -176,7 +174,7 @@ const Pokemon = (props: {
       setFormList(formListResult);
 
       // Set Default Form
-      let currentForm: PokemonFormModify | undefined;
+      let currentForm: IPokemonFormModify | undefined;
       const formParams = searchParams.get('form')?.toLowerCase().replaceAll('_', '-');
       const defaultForm = formListResult.map((value) => value.find((item) => item.form.is_default)).filter((item) => item);
       if (formParams) {
@@ -340,7 +338,7 @@ const Pokemon = (props: {
     }
   }, [params.id, props.id, spinner.loading, pokemonData]);
 
-  const checkReleased = (id: number, form: string, defaultForm: PokemonFormModify) => {
+  const checkReleased = (id: number, form: string, defaultForm: IPokemonFormModify) => {
     if (!form) {
       if (defaultForm) {
         form = defaultForm.form?.form_name || defaultForm.default_name;
@@ -557,7 +555,7 @@ const Pokemon = (props: {
                 </table>
               </div>
             </div>
-            <Form
+            <FormComponent
               pokemonRouter={router}
               form={currentForm}
               setForm={setCurrentForm}

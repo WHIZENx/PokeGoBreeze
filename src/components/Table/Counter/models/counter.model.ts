@@ -1,9 +1,9 @@
-import { Combat } from '../../../../core/models/combat.model';
+import { ICombat } from '../../../../core/models/combat.model';
 
 export interface CounterModel {
-  cmove: Combat;
+  cmove: ICombat;
   dps: number;
-  fmove: Combat;
+  fmove: ICombat;
   pokemon_forme: string;
   pokemon_id: number;
   pokemon_name: string;

@@ -1,7 +1,7 @@
 import { PokemonTeamData } from '../../pages/PVP/models/battle.model';
-import { Combat } from './combat.model';
-import { PokemonDataModel } from './pokemon.model';
-import { StatsPokemon } from './stats.model';
+import { ICombat } from './combat.model';
+import { IPokemonData } from './pokemon.model';
+import { StatsAtk, StatsDef, IStatsPokemon, StatsSta } from './stats.model';
 
 export interface PVPDataModel {
   rankings: PVPInfo[];
@@ -25,16 +25,16 @@ export interface Performers {
   id: number | undefined;
   name: string | undefined;
   speciesId: string;
-  pokemonData: PokemonDataModel | undefined;
+  pokemonData: IPokemonData | undefined;
   form: string | null;
-  stats: StatsPokemon;
-  atk: { id: number; form: string; attack: number; rank: number } | undefined;
-  def: { id: number; form: string; defense: number; rank: number } | undefined;
-  sta: { id: number; form: string; stamina: number; rank: number } | undefined;
-  fmove: Combat | undefined;
-  cmovePri: Combat | undefined;
-  cmoveSec: Combat | undefined;
-  combatPoke: PokemonDataModel | undefined;
+  stats: IStatsPokemon;
+  atk: StatsAtk | undefined;
+  def: StatsDef | undefined;
+  sta: StatsSta | undefined;
+  fmove: ICombat | undefined;
+  cmovePri: ICombat | undefined;
+  cmoveSec: ICombat | undefined;
+  combatPoke: IPokemonData | undefined;
   shadow: boolean;
   purified: boolean | undefined;
   games: number;
@@ -106,7 +106,7 @@ export interface BattlePokemonData {
   speciesName: string;
   stats: PokemonRankingStats;
   name: string | undefined;
-  pokemon: PokemonDataModel;
+  pokemon: IPokemonData;
   id: number;
   form: string | null;
   shadow?: boolean;

@@ -1,14 +1,14 @@
-import { PokemonFormModify } from './API/form.model';
-import { Combat } from './combat.model';
+import { IPokemonFormModify } from './API/form.model';
+import { ICombat } from './combat.model';
 
 export interface PokemonDmgOption {
-  objPoke?: PokemonFormModify;
+  objPoke?: IPokemonFormModify;
   type?: string;
-  currPoke?: PokemonFormModify;
+  currPoke?: IPokemonFormModify;
   currLevel: number;
   typeObj?: string;
   objLevel: number;
-  move?: Combat;
+  move?: ICombat;
   battleState?: {
     stab: boolean;
     wb: boolean;

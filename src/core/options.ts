@@ -1,26 +1,27 @@
-import { Asset, AssetDataModel } from './models/asset.model';
-import { CombatDataModel } from './models/combat.model';
+import { Asset, IAsset } from './models/asset.model';
+import { Combat } from './models/combat.model';
 import { EvoList } from './models/evolution.model';
 import {
-  LeagueDataModel,
-  LeagueOptionsDataModel,
-  LeagueRewardDataModel,
-  LeagueRewardPokemonDataModel,
-  PokemonRewardLeague,
-  RankRewardLeague,
+  League,
+  LeagueData,
+  RankRewardSetLeague,
+  PokemonRewardSetLeague,
+  IPokemonRewardLeague,
+  IRankRewardLeague,
 } from './models/league.model';
-import { StickerModel, StickerDataModel } from './models/sticker.model';
+import { ISticker, Sticker } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
 import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm } from '../util/Utils';
 import { TypeSet } from './models/type.model';
 import { TypeMove } from '../enums/move.enum';
-import { PokemonDataModel, PokemonDataOptional, PokemonEncounter, PokemonModel } from './models/pokemon.model';
-import { TypeEff } from './models/type-eff.model';
+import { IPokemonData, PokemonData, PokemonDataOptional, PokemonEncounter, PokemonModel } from './models/pokemon.model';
+import { ITypeEff } from './models/type-eff.model';
 import { FORM_ARMOR, FORM_GALARIAN, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_SHADOW } from '../util/Constants';
 import { APIUrl } from '../services/constants';
-import { PokemonData, PokemonPermission } from './models/options.model';
+import { BuddyFriendship, IOptions, PokemonDataGM, IPokemonPermission, TrainerFriendship } from './models/options.model';
 import { calculateStatsByTag } from '../util/Calculate';
+import { APITree } from '../services/models/api.model';
 
 export const getOption = (options: any, args: string[]) => {
   if (!options) {
@@ -33,11 +34,29 @@ export const getOption = (options: any, args: string[]) => {
   return options;
 };
 
-export const optionSettings = (data: PokemonData[]) => {
-  const settings: any = {
-    combat_options: {},
-    battle_options: {},
-    throw_charge: {},
+export const optionSettings = (data: PokemonDataGM[]) => {
+  const settings: IOptions = {
+    combat_options: {
+      stab: 0,
+      shadow_bonus: {
+        atk: 0,
+        def: 0,
+      },
+    },
+    battle_options: {
+      enemyAttackInterval: 0,
+      stab: 0,
+      shadow_bonus: {
+        atk: 0,
+        def: 0,
+      },
+    },
+    throw_charge: {
+      normal: 0,
+      nice: 0,
+      great: 0,
+      excellent: 0,
+    },
     buddy_friendship: {},
     trainer_friendship: {},
   };
@@ -45,7 +64,6 @@ export const optionSettings = (data: PokemonData[]) => {
   data.forEach((item) => {
     if (item.templateId === 'COMBAT_SETTINGS') {
       settings.combat_options.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
-      settings.combat_options.shadow_bonus = {};
       settings.combat_options.shadow_bonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
       settings.combat_options.shadow_bonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
 
@@ -56,19 +74,18 @@ export const optionSettings = (data: PokemonData[]) => {
     } else if (item.templateId === 'BATTLE_SETTINGS') {
       settings.battle_options.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
       settings.battle_options.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
-      settings.battle_options.shadow_bonus = {};
       settings.battle_options.shadow_bonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
       settings.battle_options.shadow_bonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
     } else if (item.templateId.includes('BUDDY_LEVEL_')) {
-      const level = parseInt(item.templateId.replace('BUDDY_LEVEL_', ''));
-      settings.buddy_friendship[level] = {};
-      settings.buddy_friendship[level].level = level;
+      const level = item.templateId.replace('BUDDY_LEVEL_', '');
+      settings.buddy_friendship[level] = new BuddyFriendship();
+      settings.buddy_friendship[level].level = parseInt(level);
       settings.buddy_friendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0;
       settings.buddy_friendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
     } else if (item.templateId.includes('FRIENDSHIP_LEVEL_')) {
-      const level = parseInt(item.templateId.replace('FRIENDSHIP_LEVEL_', ''));
-      settings.trainer_friendship[level] = {};
-      settings.trainer_friendship[level].level = level;
+      const level = item.templateId.replace('FRIENDSHIP_LEVEL_', '');
+      settings.trainer_friendship[level] = new TrainerFriendship();
+      settings.trainer_friendship[level].level = parseInt(level);
       settings.trainer_friendship[level].atk_bonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
       settings.trainer_friendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
     }
@@ -76,15 +93,15 @@ export const optionSettings = (data: PokemonData[]) => {
   return settings;
 };
 
-export const optionPokeImg = (data: { tree: { path: string }[] }) => {
+export const optionPokeImg = (data: APITree) => {
   return data.tree.map((item) => item.path.replace('.png', ''));
 };
 
-export const optionPokeSound = (data: { tree: { path: string }[] }) => {
+export const optionPokeSound = (data: APITree) => {
   return data.tree.map((item) => item.path.replace('.wav', ''));
 };
 
-export const optionPokemonTypes = (data: PokemonData[]) => {
+export const optionPokemonTypes = (data: PokemonDataGM[]) => {
   const types: any = {};
   const typeSet = [
     'NORMAL',
@@ -118,7 +135,7 @@ export const optionPokemonTypes = (data: PokemonData[]) => {
   return types;
 };
 
-const optionFormNoneSpecial = (data: PokemonData[]) => {
+const optionFormNoneSpecial = (data: PokemonDataGM[]) => {
   const result: string[] = [];
   data
     .filter((item) => item.templateId.match(/^FORMS_V\d{4}_POKEMON_*/g) && item.data?.formSettings?.forms)
@@ -135,7 +152,7 @@ const optionFormNoneSpecial = (data: PokemonData[]) => {
 
 const findPokemonData = (id: number, name: string) => {
   return Object.values(pokemonStoreData).find(
-    (pokemon: PokemonDataModel) => pokemon.num === id && name === convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug)
+    (pokemon: IPokemonData) => pokemon.num === id && name === convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug)
   );
 };
 
@@ -147,11 +164,11 @@ const convertAndReplaceNameGO = (name: string, defaultName = '') => {
     .replace(/GALARIAN_STANDARD/, FORM_GALARIAN);
 };
 
-export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncounter[]) => {
-  let result: PokemonDataModel[] = [];
+export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncounter[]) => {
+  let result: IPokemonData[] = [];
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
-    const regId = item.templateId.match(/\d{4}/g) as string[];
+    const regId = (item.templateId.match(/\d{4}/g) || []) as string[];
     let pokemon = new PokemonModel(regId.length > 0 ? parseInt(regId[0]) : 0, pokemonSettings.pokemonId);
     pokemon = {
       ...pokemonSettings,
@@ -274,7 +291,7 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
 
       if (pokemonGO) {
         const regEvoId = pokemonGO.templateId.match(/\d{4}/g) as string[];
-        dataEvo.evoToId = regEvoId.length > 0 ? parseInt(regEvoId[0]) : 0;
+        dataEvo.evoToId = regEvoId && regEvoId.length > 0 ? parseInt(regEvoId[0]) : 0;
       }
 
       if (evo.candyCost) {
@@ -399,7 +416,7 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
     }
 
     if (pokemon.form !== FORM_SHADOW) {
-      result.push(new PokemonDataModel(pokemon, types, optional));
+      result.push(new PokemonData(pokemon, types, optional));
     }
   });
 
@@ -409,13 +426,13 @@ export const optionPokemonData = (data: PokemonData[], encounter: PokemonEncount
   return result.sort((a, b) => a.num - b.num);
 };
 
-const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => {
+const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
   Object.values(pokemonStoreData)
     .filter(
-      (pokemon: PokemonDataModel) =>
+      (pokemon: IPokemonData) =>
         pokemon.num > 0 && !result.some((item) => item.fullName === convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug))
     )
-    .forEach((item: PokemonDataModel) => {
+    .forEach((item: IPokemonData) => {
       const pokemon = new PokemonModel(item.num, convertPokemonDataName(item.name));
 
       pokemon.pokemonId = convertPokemonDataName(item.baseSpecies ?? item.name);
@@ -495,11 +512,11 @@ const addPokemonFromData = (data: PokemonData[], result: PokemonDataModel[]) => 
       optional.baseForme = item.baseForme?.toUpperCase();
       optional.baseStatsGO = true;
 
-      result.push(new PokemonDataModel(pokemon, types, optional));
+      result.push(new PokemonData(pokemon, types, optional));
     });
 };
 
-const cleanPokemonDupForm = (result: PokemonDataModel[]) => {
+const cleanPokemonDupForm = (result: IPokemonData[]) => {
   const filterPokemon = result.filter((pokemon, _, r) => {
     const normalForm = r.filter(
       (p) => pokemon.forme === FORM_NORMAL && p.num === pokemon.num && p.baseForme && r.some((pr) => pr.baseForme === p.baseForme)
@@ -531,7 +548,7 @@ const cleanPokemonDupForm = (result: PokemonDataModel[]) => {
   return result;
 };
 
-export const optionPokemonWeather = (data: PokemonData[]) => {
+export const optionPokemonWeather = (data: PokemonDataGM[]) => {
   const weather: any = {};
   data
     .filter((item) => item.templateId.match(/^WEATHER_AFFINITY*/g) && item.data.weatherAffinities)
@@ -542,7 +559,7 @@ export const optionPokemonWeather = (data: PokemonData[]) => {
   return weather;
 };
 
-const pokemonDefaultForm = (data: PokemonData[]) => {
+const pokemonDefaultForm = (data: PokemonDataGM[]) => {
   const forms = optionFormNoneSpecial(data);
   return data.filter(
     (item) =>
@@ -555,12 +572,12 @@ const pokemonDefaultForm = (data: PokemonData[]) => {
   );
 };
 
-const optionPokemonFamily = (pokemon: PokemonDataModel[]) => {
+const optionPokemonFamily = (pokemon: IPokemonData[]) => {
   return [...new Set(pokemon.map((item) => item.pokemonId ?? ''))];
 };
 
-export const optionSticker = (data: PokemonData[], pokemon: PokemonDataModel[]) => {
-  const stickers: StickerModel[] = [];
+export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
+  const stickers: ISticker[] = [];
   data
     .filter((item) => item.templateId.match(/^STICKER_*/g))
     .forEach((item) => {
@@ -572,7 +589,7 @@ export const optionSticker = (data: PokemonData[], pokemon: PokemonDataModel[]) 
           sticker.pack.push(parseInt(id.replace(sticker.id + '.', '')));
         }
       } else if (item.data.stickerMetadata) {
-        const sticker = new StickerDataModel();
+        const sticker = new Sticker();
         sticker.id = item.data.stickerMetadata.stickerId.replace('STICKER_', '');
         sticker.maxCount = item.data.stickerMetadata.maxCount ?? 0;
         sticker.stickerUrl = item.data.stickerMetadata.stickerUrl ?? null;
@@ -586,10 +603,10 @@ export const optionSticker = (data: PokemonData[], pokemon: PokemonDataModel[]) 
   return stickers;
 };
 
-export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds: string[]) => {
+export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: string[]) => {
   const family = optionPokemonFamily(pokemon);
   return family.map((item) => {
-    const result = new AssetDataModel();
+    const result = new Asset();
     result.id = pokemon.find((poke) => poke.pokemonId === item)?.num;
     result.name = item;
 
@@ -730,7 +747,7 @@ export const optionAssets = (pokemon: PokemonDataModel[], imgs: string[], sounds
   });
 };
 
-export const optionCombat = (data: PokemonData[], types: TypeEff) => {
+export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
   const moves = data
     .filter((item) => item.templateId.match(/^V\d{4}_MOVE_*/g))
     .map((item) => {
@@ -754,7 +771,7 @@ export const optionCombat = (data: PokemonData[], types: TypeEff) => {
   const moveSet = data
     .filter((item) => item.templateId.startsWith('COMBAT_V'))
     .map((item) => {
-      const result = new CombatDataModel();
+      const result = new Combat();
       result.name = item.data.combatMove.uniqueId;
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
       if (item.templateId.includes(TypeMove.FAST)) {
@@ -839,8 +856,8 @@ export const optionCombat = (data: PokemonData[], types: TypeEff) => {
   return result;
 };
 
-export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) => {
-  const result = new LeagueOptionsDataModel();
+export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
+  const result = new LeagueData();
   result.allowLeagues =
     data
       .find((item) => item.templateId === 'VS_SEEKER_CLIENT_SETTINGS')
@@ -851,7 +868,7 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
   result.data = data
     .filter((item) => item.templateId.includes('COMBAT_LEAGUE_') && !item.templateId.includes('SETTINGS'))
     .map((item) => {
-      const result = new LeagueDataModel();
+      const result = new League();
       result.id = item.templateId.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '');
       result.title = item.data.combatLeague.title.replace('combat_', '').replace('_title', '').toUpperCase();
       result.enabled = item.data.combatLeague.enabled;
@@ -885,7 +902,7 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
               form: poke.forms ? poke.forms : FORM_NORMAL,
             };
           });
-          const whiteList: PokemonPermission[] = [];
+          const whiteList: IPokemonPermission[] = [];
           result.conditions.whiteList.forEach((value) => {
             if (typeof value.form !== 'string') {
               (value.form as string[]).forEach((form) => {
@@ -910,7 +927,7 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
               form: poke.forms ?? FORM_NORMAL,
             };
           });
-          const banList: PokemonPermission[] = [];
+          const banList: IPokemonPermission[] = [];
           result.conditions.banned.forEach((value) => {
             if (typeof value.form !== 'string') {
               (value.form as string[]).forEach((form) => {
@@ -950,8 +967,8 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
   const seasons = data.find((item) => item.templateId === 'COMBAT_COMPETITIVE_SEASON_SETTINGS')?.data.combatCompetitiveSeasonSettings
     .seasonEndTimeTimestamp;
   const rewards: {
-    rank: { [x: number]: RankRewardLeague };
-    pokemon: { [x: number]: PokemonRewardLeague };
+    rank: { [x: number]: IRankRewardLeague };
+    pokemon: { [x: number]: IPokemonRewardLeague };
   } = {
     rank: {},
     pokemon: {},
@@ -968,7 +985,7 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
         };
       }
       data.reward.slice(0, 5).forEach((reward, index) => {
-        const result = new LeagueRewardDataModel();
+        const result = new RankRewardSetLeague();
         result.step = index + 1;
         if (reward.pokemonReward) {
           result.type = 'pokemon';
@@ -1005,7 +1022,7 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
             premium: [],
           };
         }
-        const result = new LeagueRewardPokemonDataModel();
+        const result = new PokemonRewardSetLeague();
         let poke: { pokemonId: string; pokemonDisplay: { form: string } };
         if (value.guaranteedLimitedPokemonReward) {
           result.guaranteedLimited = true;
@@ -1036,15 +1053,16 @@ export const optionLeagues = (data: PokemonData[], pokemon: PokemonDataModel[]) 
         end: seasons[seasons.length - 2],
       },
       rewards,
-      settings: data.find((item) => item.templateId === `COMBAT_RANKING_SETTINGS_S${seasons.length - 1}`)?.data.combatRankingProtoSettings
-        .rankLevel,
+      settings:
+        data.find((item) => item.templateId === `COMBAT_RANKING_SETTINGS_S${seasons.length - 1}`)?.data.combatRankingProtoSettings
+          .rankLevel ?? [],
     };
   }
 
   return result;
 };
 
-export const mappingReleasedPokemonGO = (pokemonData: PokemonDataModel[], assets: Asset[]) => {
+export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IAsset[]) => {
   pokemonData.forEach((item) => {
     const form = assets?.find((asset) => asset.id === item.num)?.image.find((img) => img.form === item.forme);
 

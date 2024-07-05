@@ -5,10 +5,11 @@ import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { PokemonBattle } from '../models/battle.model';
-import { Combat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
+import { AttackType } from './enums/attack-type.enum';
 
 export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: PokemonBattle, hide = false) => {
-  const renderMoveBadgeBorder = (move: Combat | null, border: boolean, shadow = false) => {
+  const renderMoveBadgeBorder = (move: ICombat | null, border: boolean, shadow = false) => {
     if (!move) {
       return;
     }
@@ -37,9 +38,9 @@ export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: Pokemon
       <Fragment>
         {pokeCurr.timeline?.map((value, index) => (
           <Fragment key={index}>
-            {pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === 'C' && (
+            {pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === AttackType.Charge && (
               <Fragment>
-                {value.type === 'B' ? (
+                {value.type === AttackType.Block ? (
                   <div style={{ height: 80 }} className={'d-flex align-items-center turn-battle' + (end ? ' justify-content-end' : '')}>
                     <div className="block-attack-container">
                       <img className="block-spirit-timeline" alt="img-shield" src={APIService.getPokeOtherLeague('ShieldButton')} />
@@ -54,7 +55,7 @@ export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: Pokemon
                 )}
               </Fragment>
             )}
-            {value.type === 'F' && (
+            {value.type === AttackType.Fast && (
               <Badge
                 color="primary"
                 overlap="circular"
@@ -73,7 +74,7 @@ export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: Pokemon
                 </div>
               </Badge>
             )}
-            {value.type === 'W' && (
+            {value.type === AttackType.Wait && (
               <Badge
                 color="primary"
                 overlap="circular"
@@ -100,7 +101,7 @@ export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: Pokemon
                 )}
               </Badge>
             )}
-            {value.type === 'P' && (
+            {value.type === AttackType.Prepare && (
               <div style={{ height: 80 }} className={'d-flex align-items-center turn-battle' + (end ? ' justify-content-end' : '')}>
                 <div className={`swipe-attack-container ${value.color}-border text-center`}>
                   <span style={{ fontSize: 12 }}>
@@ -110,7 +111,7 @@ export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: Pokemon
                 </div>
               </div>
             )}
-            {value.type === 'C' && (
+            {value.type === AttackType.Charge && (
               <div className={`charged-attack-container text-shadow turn-battle ${end ? 'justify-content-end' : ''}`}>
                 <div className={`charged-attack-content text-center ${value.color}`}>
                   <span className="text-warning" style={{ fontSize: 16 }}>
@@ -119,14 +120,14 @@ export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: Pokemon
                 </div>
               </div>
             )}
-            {value.type === 'X' && pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === 'X' ? (
+            {value.type === AttackType.Dead && pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === AttackType.Dead ? (
               <div className={`winner-container bg-dark text-white turn-battle ${end ? 'justify-content-end' : ''}`}>TIE!</div>
             ) : (
               <Fragment>
-                {value.type === 'Q' && (
+                {value.type === AttackType.Win && (
                   <div className={`winner-container bg-success text-white turn-battle ${end ? 'justify-content-end' : ''}`}>WIN!</div>
                 )}
-                {value.type === 'X' && (
+                {value.type === AttackType.Dead && (
                   <div className={`loser-container bg-danger text-white turn-battle ${end ? 'justify-content-end' : ''}`}>LOSE!</div>
                 )}
               </Fragment>
@@ -192,7 +193,7 @@ export const TimeLine = (
                 )}
                 {!value.tap && (
                   <Fragment>
-                    {value.type === 'C' && value.buff && value.buff.length > 0 ? (
+                    {value.type === AttackType.Charge && value.buff && value.buff.length > 0 ? (
                       <div className="position-absolute icon-buff-timeline">
                         {value.buff.map((b, i) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -202,7 +203,10 @@ export const TimeLine = (
                       </div>
                     ) : (
                       <Fragment>
-                        {pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === 'C' && value.buff && value.buff.length > 0 ? (
+                        {pokeObj.timeline?.at(index) &&
+                        pokeObj.timeline?.at(index)?.type === AttackType.Charge &&
+                        value.buff &&
+                        value.buff.length > 0 ? (
                           <div className="position-absolute icon-buff-timeline">
                             {value.buff.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -231,27 +235,29 @@ export const TimeLine = (
         >
           {poke.timeline?.map((value, index) => (
             <Fragment key={index}>
-              {value.type === 'B' && <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />}
-              {value.type === 'F' && <div id={index.toString()} className={`fast-attack ${value.color} ${value.color}-border`} />}
-              {(value.type === 'S' || value.type === 'P') && (
+              {value.type === AttackType.Block && <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />}
+              {value.type === AttackType.Fast && (
+                <div id={index.toString()} className={`fast-attack ${value.color} ${value.color}-border`} />
+              )}
+              {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
                 <div
                   id={index.toString()}
                   className={`charge-attack ${value.color}-border`}
                   style={{ width: value.size, height: value.size }}
                 />
               )}
-              {value.type === 'C' && (
+              {value.type === AttackType.Charge && (
                 <div
                   id={index.toString()}
                   className={`charge-attack ${value.color} ${value.color}-border`}
                   style={{ width: value.size, height: value.size }}
                 />
               )}
-              {(value.type === 'W' || value.type === 'N') && <div id={index.toString()} className="wait-attack" />}
+              {(value.type === AttackType.Wait || value.type === AttackType.New) && <div id={index.toString()} className="wait-attack" />}
               {!value.type && (
                 <div id={index.toString()} className="wait-charge-attack" style={{ width: value.size, height: value.size }} />
               )}
-              {value.type === 'X' && (
+              {value.type === AttackType.Dead && (
                 <div id={index.toString()}>
                   <CloseIcon color="error" />
                 </div>
@@ -328,7 +334,7 @@ export const TimeLineFit = (
                 )}
                 {!value.tap && (
                   <Fragment>
-                    {value.type === 'C' && value.buff && value.buff.length > 0 ? (
+                    {value.type === AttackType.Charge && value.buff && value.buff.length > 0 ? (
                       <div
                         className="position-absolute icon-buff-timeline"
                         style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index), top: 10 }}
@@ -341,7 +347,10 @@ export const TimeLineFit = (
                       </div>
                     ) : (
                       <Fragment>
-                        {pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === 'C' && value.buff && value.buff.length > 0 ? (
+                        {pokeObj.timeline?.at(index) &&
+                        pokeObj.timeline?.at(index)?.type === AttackType.Charge &&
+                        value.buff &&
+                        value.buff.length > 0 ? (
                           <div
                             className="position-absolute icon-buff-timeline"
                             style={{
@@ -376,19 +385,19 @@ export const TimeLineFit = (
         <div className="position-relative timeline-fit-container" style={{ height: 30 }}>
           {poke.timeline?.map((value, index) => (
             <Fragment key={index}>
-              {value.type === 'B' && (
+              {value.type === AttackType.Block && (
                 <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index) }}>
                   <HexagonIcon sx={{ color: 'purple', fontSize: value.size }} />
                 </div>
               )}
-              {value.type === 'F' && (
+              {value.type === AttackType.Fast && (
                 <div
                   id={index.toString()}
                   className={`fast-attack ${value.color} black-border`}
                   style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index) }}
                 />
               )}
-              {(value.type === 'S' || value.type === 'P') && (
+              {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
                 <div
                   id={index.toString()}
                   className={`charge-attack ${value.color}-border`}
@@ -399,7 +408,7 @@ export const TimeLineFit = (
                   }}
                 />
               )}
-              {value.type === 'C' && (
+              {value.type === AttackType.Charge && (
                 <div
                   id={index.toString()}
                   className={`charge-attack ${value.color} ${value.color}-border`}
@@ -410,7 +419,7 @@ export const TimeLineFit = (
                   }}
                 />
               )}
-              {(value.type === 'W' || value.type === 'N') && (
+              {(value.type === AttackType.Wait || value.type === AttackType.New) && (
                 <div
                   id={index.toString()}
                   className="wait-attack"
@@ -428,7 +437,7 @@ export const TimeLineFit = (
                   }}
                 />
               )}
-              {value.type === 'X' && (
+              {value.type === AttackType.Dead && (
                 <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index) }}>
                   <CloseIcon color="error" />
                 </div>

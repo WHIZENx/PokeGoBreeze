@@ -12,13 +12,13 @@ import sta_logo from '../../assets/stamina.png';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
-import { PokemonFormModify } from '../../core/models/API/form.model';
+import { IPokemonFormModify } from '../../core/models/API/form.model';
 import { capitalize } from '../../util/Utils';
 
 const Raid = (props: {
   clearData?: () => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
-  currForm: PokemonFormModify | undefined;
+  currForm: IPokemonFormModify | undefined;
   id: number | undefined;
   statATK: number;
   statDEF: number;

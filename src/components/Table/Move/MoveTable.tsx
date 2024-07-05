@@ -12,21 +12,21 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
-import { FormModel, PokemonDataForm } from '../../../core/models/API/form.model';
-import { PokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
+import { IForm, PokemonDataForm } from '../../../core/models/API/form.model';
+import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { IPokemonData } from '../../../core/models/pokemon.model';
 
 interface PokemonMoves {
-  fastMoves: (Combat | undefined)[];
-  chargedMoves: (Combat | undefined)[];
-  eliteFastMoves: (Combat | undefined)[];
-  eliteChargedMoves: (Combat | undefined)[];
-  purifiedMoves: (Combat | undefined)[];
-  shadowMoves: (Combat | undefined)[];
-  specialMoves: (Combat | undefined)[];
+  fastMoves: (ICombat | undefined)[];
+  chargedMoves: (ICombat | undefined)[];
+  eliteFastMoves: (ICombat | undefined)[];
+  eliteChargedMoves: (ICombat | undefined)[];
+  purifiedMoves: (ICombat | undefined)[];
+  shadowMoves: (ICombat | undefined)[];
+  specialMoves: (ICombat | undefined)[];
 }
 
 const TableMove = (props: {
@@ -34,14 +34,14 @@ const TableMove = (props: {
   statATK: number;
   statDEF: number;
   statSTA: number;
-  form: FormModel | undefined;
+  form: IForm | undefined;
   id?: number;
   maxHeight?: number | string;
 }) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
   const [move, setMove]: [PokemonQueryRankMove, React.Dispatch<React.SetStateAction<PokemonQueryRankMove>>] = useState({
-    data: [] as PokemonQueryMove[],
+    data: [] as IPokemonQueryMove[],
   });
   const [moveOrigin, setMoveOrigin]: [PokemonMoves | undefined, React.Dispatch<React.SetStateAction<PokemonMoves | undefined>>] =
     useState();
@@ -61,7 +61,7 @@ const TableMove = (props: {
     },
   });
 
-  const filterMoveType = (combat: PokemonDataModel | undefined) => {
+  const filterMoveType = (combat: IPokemonData | undefined) => {
     if (!combat) {
       return setMoveOrigin(undefined);
     }
@@ -97,7 +97,7 @@ const TableMove = (props: {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
       } else if (combatPoke.length === 0 && props.id) {
-        const combatPoke: PokemonDataModel[] | undefined = data?.pokemon?.filter(
+        const combatPoke: IPokemonData[] | undefined = data?.pokemon?.filter(
           (item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name
         );
         filterMoveType(combatPoke?.at(0));
@@ -115,7 +115,7 @@ const TableMove = (props: {
     }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA]);
 
-  const setRankMove = (result: PokemonDataModel | undefined) => {
+  const setRankMove = (result: IPokemonData | undefined) => {
     return rankMove(
       data?.options,
       data?.typeEff,
@@ -139,7 +139,7 @@ const TableMove = (props: {
     }
   }, [findMove, props.form]);
 
-  const renderBestMovesetTable = (value: PokemonQueryMove, max: number, type: string) => {
+  const renderBestMovesetTable = (value: IPokemonQueryMove, max: number, type: string) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
@@ -194,7 +194,7 @@ const TableMove = (props: {
     );
   };
 
-  const renderMoveSetTable = (data: (Combat | undefined)[]) => {
+  const renderMoveSetTable = (data: (ICombat | undefined)[]) => {
     return (
       <Fragment>
         {data?.map((value, index) => (

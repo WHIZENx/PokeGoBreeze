@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/Constants';
-import { Combat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { BattlePokemonData } from '../../../core/models/pvp.model';
 import { PokemonBattle } from '../models/battle.model';
 
@@ -32,9 +32,9 @@ const SelectPoke = (props: {
 
   const [pokemon, setPokemon]: [BattlePokemonData | undefined, React.Dispatch<React.SetStateAction<BattlePokemonData | undefined>>] =
     useState();
-  const [fMove, setFMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
-  const [cMovePri, setCMovePri]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
-  const [cMoveSec, setCMoveSec]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [fMove, setFMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [cMovePri, setCMovePri]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [cMoveSec, setCMoveSec]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
 
   const [pokemonIcon, setPokemonIcon] = useState('');
   const [score, setScore] = useState(0);
@@ -123,7 +123,7 @@ const SelectPoke = (props: {
     }
   };
 
-  const selectFMove = (value: Combat | undefined) => {
+  const selectFMove = (value: ICombat | undefined) => {
     props.clearData(false);
     setFMove(value);
     props.setPokemonBattle({
@@ -134,7 +134,7 @@ const SelectPoke = (props: {
     setShowFMove(false);
   };
 
-  const selectCMovePri = (value: Combat | undefined) => {
+  const selectCMovePri = (value: ICombat | undefined) => {
     props.clearData(false);
     setCMovePri(value);
     props.setPokemonBattle({
@@ -145,7 +145,7 @@ const SelectPoke = (props: {
     setShowCMovePri(false);
   };
 
-  const selectCMoveSec = (value: Combat | undefined) => {
+  const selectCMoveSec = (value: ICombat | undefined) => {
     props.clearData(false);
     setCMoveSec(value);
     props.setPokemonBattle({

@@ -5,10 +5,10 @@ import FormSelect from './FormSelect';
 import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../util/Utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
-import { PokemonSearchingModel } from '../../core/models/pokemon-searching.model';
+import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import loading from '../../assets/loading.png';
-import { PokemonFormModify } from '../../core/models/API/form.model';
+import { IPokemonFormModify } from '../../core/models/API/form.model';
 
 const Find = (props: {
   setId?: React.Dispatch<React.SetStateAction<number>>;
@@ -24,7 +24,7 @@ const Find = (props: {
   tier?: number;
   setTier?: React.Dispatch<React.SetStateAction<number>>;
   // eslint-disable-next-line no-unused-vars
-  setForm?: (form: PokemonFormModify | undefined) => void;
+  setForm?: (form: IPokemonFormModify | undefined) => void;
   urlEvo?: { url: string | null };
   setUrlEvo?: React.Dispatch<
     React.SetStateAction<{
@@ -49,15 +49,13 @@ const Find = (props: {
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
   );
 
-  const [pokemonList, setPokemonList]: [PokemonSearchingModel[], React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>] = useState(
-    [] as PokemonSearchingModel[]
+  const [pokemonList, setPokemonList]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] = useState(
+    [] as IPokemonSearching[]
   );
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter]: [
-    PokemonSearchingModel[],
-    React.Dispatch<React.SetStateAction<PokemonSearchingModel[]>>
-  ] = useState([] as PokemonSearchingModel[]);
+  const [pokemonListFilter, setPokemonListFilter]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] =
+    useState([] as IPokemonSearching[]);
 
   useEffect(() => {
     if (pokemonData.length > 0) {
@@ -86,7 +84,7 @@ const Find = (props: {
     }
   };
 
-  const getInfoPoke = (value: PokemonSearchingModel) => {
+  const getInfoPoke = (value: IPokemonSearching) => {
     const currentId = getPokemonById(pokemonData, value.id);
     setId(value.id);
     if (props.setId) {

@@ -27,17 +27,17 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import CandyXL from '../../components/Sprites/Candy/CandyXL';
-import { StatsModel, StatsPokemon } from '../../core/models/stats.model';
-import { Asset } from '../../core/models/asset.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
-import { Combat } from '../../core/models/combat.model';
+import { StatsModel, IStatsPokemon } from '../../core/models/stats.model';
+import { IAsset } from '../../core/models/asset.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
+import { ICombat } from '../../core/models/combat.model';
 import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/Constants';
 import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
 import { PokemonBattleRanking } from './models/battle.model';
 
 export const Keys = (
-  assets: Asset[],
-  pokemonData: PokemonDataModel[],
+  assets: IAsset[],
+  pokemonData: IPokemonData[],
   data: RankingsPVP | undefined,
   cp: string | undefined,
   type: string | undefined
@@ -125,7 +125,7 @@ export const Keys = (
 };
 
 export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRanking: StatsModel | null, cp: number | string) => {
-  const calculateStatsTopRank = (stats: StatsPokemon | undefined) => {
+  const calculateStatsTopRank = (stats: IStatsPokemon | undefined) => {
     const maxCP = parseInt(cp.toString());
 
     if (maxCP === 10000) {
@@ -158,7 +158,7 @@ export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRankin
     }
   };
 
-  const renderTopStats = (stats: StatsPokemon | undefined, id: number) => {
+  const renderTopStats = (stats: IStatsPokemon | undefined, id: number) => {
     const maxCP = parseInt(cp.toString());
     const currStats = calculateStatsTopRank(stats);
     return (
@@ -279,8 +279,8 @@ export const MoveSet = (
         fastMoves: PokemonRankingMove[];
       }
     | undefined,
-  combatList: PokemonDataModel | undefined,
-  combatData: Combat[]
+  combatList: IPokemonData | undefined,
+  combatData: ICombat[]
 ) => {
   const findArchetype = (archetype: string | string[]) => {
     return [

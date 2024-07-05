@@ -9,21 +9,21 @@ import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { Asset } from '../../../core/models/asset.model';
-import { PokemonModelComponent } from './models/pokemon-model.model';
+import { IAsset } from '../../../core/models/asset.model';
+import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { PokemonGender } from '../../../core/models/pokemon.model';
-import { FormSoundCry } from '../../../core/models/API/form.model';
+import { IFormSoundCry } from '../../../core/models/API/form.model';
 
-const PokemonModel = (props: { id: number; name: string; originSoundCry: FormSoundCry[]; isLoadedForms: boolean }) => {
+const PokemonModel = (props: { id: number; name: string; originSoundCry: IFormSoundCry[]; isLoadedForms: boolean }) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
 
-  const [pokeAssets, setPokeAssets]: [PokemonModelComponent[], React.Dispatch<React.SetStateAction<PokemonModelComponent[]>>] = useState(
-    [] as PokemonModelComponent[]
+  const [pokeAssets, setPokeAssets]: [IPokemonModelComponent[], React.Dispatch<React.SetStateAction<IPokemonModelComponent[]>>] = useState(
+    [] as IPokemonModelComponent[]
   );
   const gender: React.MutableRefObject<PokemonGender | null | undefined> = useRef();
-  const sound: React.MutableRefObject<Asset | undefined> = useRef();
+  const sound: React.MutableRefObject<IAsset | undefined> = useRef();
 
   const getImageList = (id: number) => {
     sound.current = data?.assets?.find((item) => item.id === id);

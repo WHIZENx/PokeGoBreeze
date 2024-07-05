@@ -1,9 +1,9 @@
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { PokemonFormModify } from '../../../core/models/API/form.model';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { PokemonInfo } from '../../../core/models/API/info.model';
-import { PokemonGenderRatio, PokemonDataModel } from '../../../core/models/pokemon.model';
-import { StatsRankingPokemonGO } from '../../../core/models/stats.model';
+import { PokemonGenderRatio, IPokemonData } from '../../../core/models/pokemon.model';
+import { StatsAtk, StatsDef, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/Constants';
@@ -31,10 +31,10 @@ import Mega from '../Mega/Mega';
 import Primal from '../Primal/Primal';
 import { StatsState } from '../../../store/models/state.model';
 
-const Form = (props: {
+const FormComponent = (props: {
   pokemonRouter: ReduxRouterState;
-  form: PokemonFormModify | undefined;
-  setForm: React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>;
+  form: IPokemonFormModify | undefined;
+  setForm: React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>;
   setOriginForm: React.Dispatch<React.SetStateAction<string | undefined>>;
   data: PokemonInfo | undefined;
   setData: React.Dispatch<React.SetStateAction<PokemonInfo | undefined>>;
@@ -45,11 +45,11 @@ const Form = (props: {
     }>
   >;
   pokeData: PokemonInfo[];
-  formList: PokemonFormModify[][] | undefined;
+  formList: IPokemonFormModify[][] | undefined;
   ratio: PokemonGenderRatio | undefined;
   // eslint-disable-next-line no-unused-vars
   setId?: (id: number) => void;
-  pokemonDetail: PokemonDataModel | undefined;
+  pokemonDetail: IPokemonData | undefined;
   defaultId: number;
   region: string;
   setProgress: React.Dispatch<
@@ -70,17 +70,17 @@ const Form = (props: {
   ] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[]): any => getFormFromForms(stats, props.defaultId, props.form?.form.form_name),
+    (stats: (StatsAtk | StatsDef | StatsSta | StatsProd)[]) => getFormFromForms(stats, props.defaultId, props.form?.form.form_name),
     [props.defaultId, props.form?.form.form_name]
   );
 
   useEffect(() => {
     if (stats) {
       setStatsPokemon({
-        atk: filterFormList(stats.attack.ranking),
-        def: filterFormList(stats.defense.ranking),
-        sta: filterFormList(stats.stamina.ranking),
-        prod: filterFormList(stats.statProd.ranking),
+        atk: filterFormList(stats.attack.ranking) as StatsAtk,
+        def: filterFormList(stats.defense.ranking) as StatsDef,
+        sta: filterFormList(stats.stamina.ranking) as StatsSta,
+        prod: filterFormList(stats.statProd.ranking) as StatsProd,
       });
     }
   }, [filterFormList, stats]);
@@ -314,4 +314,4 @@ const Form = (props: {
   );
 };
 
-export default Form;
+export default FormComponent;

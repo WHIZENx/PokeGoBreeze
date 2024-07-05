@@ -1,4 +1,4 @@
-export interface StickerModel {
+export interface ISticker {
   id: string;
   maxCount: number;
   stickerUrl: string | null;
@@ -8,14 +8,14 @@ export interface StickerModel {
   pack: number[];
 }
 
-export class StickerDataModel {
+export class Sticker implements ISticker {
   id: string;
-  maxCount!: number;
+  maxCount: number;
   stickerUrl!: string | null;
   pokemonId?: number | null;
   pokemonName!: string | null;
   shop!: boolean;
-  pack!: number[];
+  pack: number[];
 
   constructor() {
     this.id = '';

@@ -1,18 +1,18 @@
-export interface Buff {
+export interface IBuff {
   type: string;
   target: string;
   power: number;
   buffChance?: number;
 }
 
-export interface Combat {
+export interface ICombat {
   name: string;
   type: string | null;
   type_move: string | null;
   pvp_power: number;
   pvp_energy: number;
   sound: string | null;
-  buffs: Buff[];
+  buffs: IBuff[];
   id: number;
   track: number;
   pve_power: number;
@@ -30,29 +30,29 @@ export interface Combat {
   special?: boolean;
 }
 
-export class CombatDataModel {
-  name!: string;
+export class Combat implements ICombat {
+  name: string;
   type!: string | null;
   // tslint:disable-next-line:variable-name
   type_move!: string | null;
   // tslint:disable-next-line:variable-name
-  pvp_power!: number;
+  pvp_power: number;
   // tslint:disable-next-line:variable-name
-  pvp_energy!: number;
+  pvp_energy: number;
   sound!: string | null;
-  buffs!: Buff[];
+  buffs: IBuff[];
   id: number;
-  track!: number;
+  track: number;
   // tslint:disable-next-line:variable-name
-  pve_power!: number;
+  pve_power: number;
   // tslint:disable-next-line:variable-name
-  pve_energy!: number;
-  durationMs!: number;
-  damageWindowStartMs!: number;
-  damageWindowEndMs!: number;
-  accuracyChance!: number;
-  criticalChance!: number;
-  staminaLossScalar!: number;
+  pve_energy: number;
+  durationMs: number;
+  damageWindowStartMs: number;
+  damageWindowEndMs: number;
+  accuracyChance: number;
+  criticalChance: number;
+  staminaLossScalar: number;
   archetype!: string | null;
   elite?: boolean;
   shadow?: boolean;

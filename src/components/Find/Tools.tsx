@@ -13,18 +13,18 @@ import sta_logo from '../../assets/stamina.png';
 import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { PokemonFormModify } from '../../core/models/API/form.model';
+import { IPokemonFormModify } from '../../core/models/API/form.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
-import { StatsModel, StatsPokemon, StatsRankingPokemonGO } from '../../core/models/stats.model';
+import { StatsAtk, StatsDef, StatsModel, IStatsPokemon, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../core/models/stats.model';
 
 const Tools = (props: {
   id: number | undefined;
-  currForm: PokemonFormModify | undefined;
-  formList: PokemonFormModify[][];
+  currForm: IPokemonFormModify | undefined;
+  formList: IPokemonFormModify[][];
   dataPoke: PokemonInfo[];
   stats: StatsModel | null;
   // eslint-disable-next-line no-unused-vars
-  setForm: ((form: PokemonFormModify | undefined) => void) | undefined;
+  setForm: ((form: IPokemonFormModify | undefined) => void) | undefined;
   // eslint-disable-next-line no-unused-vars
   onSetStats: ((type: string, value: number) => void) | undefined;
   // eslint-disable-next-line no-unused-vars
@@ -36,7 +36,7 @@ const Tools = (props: {
   hide: boolean | undefined;
 }) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [currDataPoke, setCurrDataPoke]: [StatsPokemon | undefined, React.Dispatch<React.SetStateAction<StatsPokemon | undefined>>] =
+  const [currDataPoke, setCurrDataPoke]: [IStatsPokemon | undefined, React.Dispatch<React.SetStateAction<IStatsPokemon | undefined>>] =
     useState();
   const [currTier, setCurrTier] = useState(props.tier);
 
@@ -46,7 +46,8 @@ const Tools = (props: {
   ] = useState();
 
   const filterFormList = useCallback(
-    (stats: { id: number; form: string }[] | undefined): any => getFormFromForms(stats, props.id, props.currForm?.form.form_name),
+    (stats: (StatsAtk | StatsDef | StatsSta | StatsProd)[] | undefined) =>
+      getFormFromForms(stats, props.id, props.currForm?.form.form_name),
     [props.id, props.currForm?.form.form_name]
   );
 
@@ -69,16 +70,18 @@ const Tools = (props: {
   }, [props.currForm?.form.form_name, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
-    const formATK = filterFormList(props.stats?.attack.ranking);
-    const formDEF = filterFormList(props.stats?.defense.ranking);
-    const formSTA = filterFormList(props.stats?.stamina.ranking);
-    const formProd = filterFormList(props.stats?.statProd.ranking);
+    const formATK = filterFormList(props.stats?.attack.ranking) as StatsAtk;
+    const formDEF = filterFormList(props.stats?.defense.ranking) as StatsDef;
+    const formSTA = filterFormList(props.stats?.stamina.ranking) as StatsSta;
+    const formProd = filterFormList(props.stats?.statProd.ranking) as StatsProd;
 
     setStatsPokemon({
-      atk: props.isRaid && props.tier && !props.hide ? { attack: calculateRaidStat(formATK?.attack ?? 0, props.tier) } : formATK,
-      def: props.isRaid && props.tier && !props.hide ? { defense: calculateRaidStat(formDEF?.defense ?? 0, props.tier) } : formDEF,
-      sta: props.isRaid && props.tier && !props.hide ? { stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA,
-      prod: props.isRaid && props.tier && !props.hide ? 0 : formProd,
+      atk:
+        props.isRaid && props.tier && !props.hide ? { ...formATK, attack: calculateRaidStat(formATK?.attack ?? 0, props.tier) } : formATK,
+      def:
+        props.isRaid && props.tier && !props.hide ? { ...formDEF, defense: calculateRaidStat(formDEF?.defense ?? 0, props.tier) } : formDEF,
+      sta: props.isRaid && props.tier && !props.hide ? { ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA,
+      prod: props.isRaid && props.tier && !props.hide ? undefined : formProd,
     });
     if (props.currForm && props.dataPoke) {
       setCurrDataPoke(convertStatsEffort(props.dataPoke.find((item) => item.id === props.id)?.stats));

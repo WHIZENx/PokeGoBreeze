@@ -5,15 +5,15 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from '../Input/models/select-move.model';
-import { Combat } from '../../core/models/combat.model';
+import { ICombat } from '../../core/models/combat.model';
 
 const Move = (props: {
   type?: string;
   id: number;
   form: string;
-  move: Combat | undefined;
+  move: ICombat | undefined;
   // eslint-disable-next-line no-unused-vars
-  setMove: (move: Combat | undefined) => void | React.Dispatch<React.SetStateAction<Combat | undefined>>;
+  setMove: (move: ICombat | undefined) => void | React.Dispatch<React.SetStateAction<ICombat | undefined>>;
   text: string;
   selectDefault: boolean;
   // eslint-disable-next-line no-unused-vars

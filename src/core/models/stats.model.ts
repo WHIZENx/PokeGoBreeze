@@ -1,27 +1,27 @@
 export interface StatsModel {
   attack: {
-    ranking: { id: number; form: string; attack: number; rank: number }[];
+    ranking: StatsAtk[];
     min_rank: number;
     max_rank: number;
     min_stats: number;
     max_stats: number;
   };
   defense: {
-    ranking: { id: number; form: string; defense: number; rank: number }[];
+    ranking: StatsDef[];
     min_rank: number;
     max_rank: number;
     min_stats: number;
     max_stats: number;
   };
   stamina: {
-    ranking: { id: number; form: string; stamina: number; rank: number }[];
+    ranking: StatsSta[];
     min_rank: number;
     max_rank: number;
     min_stats: number;
     max_stats: number;
   };
   statProd: {
-    ranking: { id: number; form: string; prod: number; rank: number }[];
+    ranking: StatsProd[];
     min_rank: number;
     max_rank: number;
     min_stats: number;
@@ -37,13 +37,13 @@ export interface StatsPokemonGO {
 }
 
 export interface StatsRankingPokemonGO {
-  atk: StatsAtk;
-  def: StatsDef;
-  sta: StatsSta;
-  prod: StatsProd;
+  atk: StatsAtk | undefined;
+  def: StatsDef | undefined;
+  sta: StatsSta | undefined;
+  prod: StatsProd | undefined;
 }
 
-export interface StatsPokemon {
+export interface IStatsPokemon {
   hp?: number;
   atk: number;
   def: number;
@@ -113,7 +113,7 @@ export interface PokemonStatsRanking {
   releasedGO: boolean;
 }
 
-export class StatsPokemon {
+export class StatsPokemon implements IStatsPokemon {
   hp?: number;
   atk: number;
   def: number;

@@ -19,13 +19,12 @@ import { Dispatch } from 'redux';
 import { loadStats } from './stats.action';
 import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
-import { DbModel } from '../../core/models/API/db.model';
+import { Database } from '../../core/models/API/db.model';
 import { setBar, setPercent, showSpinner } from './spinner.action';
-import { isMobile } from 'react-device-detect';
 import { SetValue } from '../models/state.model';
-import { PokemonData } from '../../core/models/options.model';
+import { PokemonDataGM } from '../../core/models/options.model';
 import { APITreeRoot, APITree, APIPath } from '../../services/models/api.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
 
 export const LOAD_STORE = 'LOAD_STORE';
 export const LOAD_TIMESTAMP = 'LOAD_TIMESTAMP';
@@ -139,15 +138,13 @@ export const loadGameMaster = (
   stateImage: string,
   stateSound: string
 ) => {
-  APIService.getFetchUrl<PokemonData[]>(APIUrl.GAMEMASTER)
+  APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER)
     .then(async (gm) => {
-      let pokemonEncounter = new DbModel();
+      let pokemonEncounter = new Database();
       try {
         pokemonEncounter = await getDbPokemonEncounter();
       } catch (e) {
-        if (!isMobile) {
-          throw e;
-        }
+        throw e;
       }
 
       const pokemon = optionPokemonData(gm.data, pokemonEncounter?.rows);
@@ -225,7 +222,7 @@ export const loadAssets = async (
   dispatch: Dispatch,
   imageRoot: APITreeRoot[],
   soundsRoot: APITreeRoot[],
-  pokemon: PokemonDataModel[],
+  pokemon: IPokemonData[],
   setStateImage: SetValue<string>,
   setStateSound: SetValue<string>
 ) => {

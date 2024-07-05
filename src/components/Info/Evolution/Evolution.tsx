@@ -27,7 +27,7 @@ import PopoverConfig from '../../Popover/PopoverConfig';
 import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { IPokemonData } from '../../../core/models/pokemon.model';
 import { EvoList, EvolutionModel } from '../../../core/models/evolution.model';
 import {
   FORM_GALARIAN,
@@ -39,10 +39,10 @@ import {
   FORM_SHADOW,
   FORM_STANDARD,
 } from '../../../util/Constants';
-import { FormModel } from '../../../core/models/API/form.model';
+import { IForm } from '../../../core/models/API/form.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 
-interface PokemonEvo {
+interface IPokemonEvo {
   prev?: string | undefined;
   name: string;
   id: number;
@@ -53,7 +53,7 @@ interface PokemonEvo {
   purified?: boolean;
 }
 
-class PokemonEvo {
+class PokemonEvo implements IPokemonEvo {
   prev?: string | undefined;
   name: string;
   id: number;
@@ -86,7 +86,7 @@ const customTheme = createTheme({
 } as any);
 
 const Evolution = (props: {
-  forme: FormModel | undefined;
+  forme: IForm | undefined;
   region: string;
   formDefault: boolean;
   id: number | undefined;
@@ -104,11 +104,11 @@ const Evolution = (props: {
 }) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [arrEvoList, setArrEvoList]: [PokemonEvo[][], React.Dispatch<React.SetStateAction<PokemonEvo[][]>>] = useState(
-    [] as PokemonEvo[][]
+  const [arrEvoList, setArrEvoList]: [IPokemonEvo[][], React.Dispatch<React.SetStateAction<IPokemonEvo[][]>>] = useState(
+    [] as IPokemonEvo[][]
   );
 
-  const formatEvoChain = (pokemon: PokemonDataModel | undefined) => {
+  const formatEvoChain = (pokemon: IPokemonData | undefined) => {
     return new PokemonEvo(
       pokemon?.baseSpecies ? pokemon?.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase() ?? '',
       pokemon?.num ?? 0,
@@ -139,7 +139,7 @@ const Evolution = (props: {
     return new PokemonEvo(name, pokemon.id, form, sprite, pokemon.prev, false, pokemon?.isBaby ?? false, pokemon.canPurified ?? false);
   };
 
-  const getPrevEvoChainJSON = (name: string, arr: PokemonEvo[][]) => {
+  const getPrevEvoChainJSON = (name: string, arr: IPokemonEvo[][]) => {
     if (name) {
       const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
       if (pokemon) {
@@ -149,8 +149,8 @@ const Evolution = (props: {
     }
   };
 
-  const getCurrEvoChainJSON = (prev: PokemonDataModel, arr: PokemonEvo[][]) => {
-    const evo: PokemonEvo[] = [];
+  const getCurrEvoChainJSON = (prev: IPokemonData, arr: IPokemonEvo[][]) => {
+    const evo: IPokemonEvo[] = [];
     prev.evos.forEach((name) => {
       const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
       if (pokemon) {
@@ -160,7 +160,7 @@ const Evolution = (props: {
     arr.push(evo);
   };
 
-  const getNextEvoChainJSON = (evos: string[], arr: PokemonEvo[][]) => {
+  const getNextEvoChainJSON = (evos: string[], arr: IPokemonEvo[][]) => {
     if (evos.length === 0) {
       return;
     }
@@ -180,7 +180,7 @@ const Evolution = (props: {
     });
   };
 
-  const getEvoChainJSON = (id: number, forme: FormModel) => {
+  const getEvoChainJSON = (id: number, forme: IForm) => {
     let form = forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) ? null : forme.form_name;
     if (forme.form_name === '10') {
       form += '%';
@@ -198,9 +198,9 @@ const Evolution = (props: {
       pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.forme === FORM_NORMAL);
     }
 
-    const prevEvo: PokemonEvo[][] = [],
-      curr: PokemonEvo[][] = [],
-      evo: PokemonEvo[][] = [];
+    const prevEvo: IPokemonEvo[][] = [],
+      curr: IPokemonEvo[][] = [],
+      evo: IPokemonEvo[][] = [];
     if (!pokemon) {
       return;
     }
@@ -216,8 +216,8 @@ const Evolution = (props: {
     return setArrEvoList(result);
   };
 
-  const getPrevEvoChainStore = (poke: PokemonDataModel, result: PokemonEvo[][]) => {
-    const evoList: PokemonEvo[] = [];
+  const getPrevEvoChainStore = (poke: IPokemonData, result: IPokemonEvo[][]) => {
+    const evoList: IPokemonEvo[] = [];
     const pokemon = pokemonData.filter((pokemon) =>
       pokemon.evoList?.find((evo) => evo.evoToId === poke.num && evo.evoToForm === poke.forme)
     );
@@ -243,8 +243,8 @@ const Evolution = (props: {
     return result.push(evoList);
   };
 
-  const getCurrEvoChainStore = (poke: PokemonDataModel, result: PokemonEvo[][]) => {
-    let evoList: PokemonEvo[] = [];
+  const getCurrEvoChainStore = (poke: IPokemonData, result: IPokemonEvo[][]) => {
+    let evoList: IPokemonEvo[] = [];
     const pokemon = pokemonData.find((pokemon) =>
       pokemon.evoList?.find((evo) => evo.evoToId === poke.num && evo.evoToForm === poke.forme?.replace(`_${FORM_STANDARD}`, ''))
     );
@@ -278,7 +278,7 @@ const Evolution = (props: {
     return result.push(evoList);
   };
 
-  const getNextEvoChainStore = (poke: PokemonDataModel | undefined, result: PokemonEvo[][]) => {
+  const getNextEvoChainStore = (poke: IPokemonData | undefined, result: IPokemonEvo[][]) => {
     if (!poke || (poke && poke.evoList && poke.evoList.length === 0)) {
       return;
     }
@@ -309,7 +309,7 @@ const Evolution = (props: {
     return result;
   };
 
-  const getEvoChainStore = (id: number, forme: FormModel) => {
+  const getEvoChainStore = (id: number, forme: IForm) => {
     const formName = forme.form_name?.toUpperCase() ?? '';
     const form =
       formName === '' || formName.includes(FORM_MEGA)
@@ -319,7 +319,7 @@ const Evolution = (props: {
           ? FORM_NORMAL
           : formName.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
         : convertPokemonAPIDataName(formName);
-    const result: PokemonEvo[][] = [];
+    const result: IPokemonEvo[][] = [];
     const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
     let pokemon = pokemons.find((p) => p.forme === form);
     if (!pokemon) {
@@ -335,7 +335,7 @@ const Evolution = (props: {
     }
   };
 
-  const getGmaxChain = (id: number, form: FormModel) => {
+  const getGmaxChain = (id: number, form: IForm) => {
     return setArrEvoList([
       [
         new PokemonEvo(
@@ -379,7 +379,7 @@ const Evolution = (props: {
     }
   };
 
-  const renderImgGif = (value: PokemonEvo) => {
+  const renderImgGif = (value: IPokemonEvo) => {
     return (
       <>
         {props.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
@@ -398,7 +398,7 @@ const Evolution = (props: {
     );
   };
 
-  const renderImageEvo = (value: PokemonEvo, chain: PokemonEvo[], evo: number, index: number, evoCount: number) => {
+  const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
     const form = value.form ?? props.forme?.form_name ?? '';
     let offsetY = 35;
     offsetY += value.baby ? 20 : 0;

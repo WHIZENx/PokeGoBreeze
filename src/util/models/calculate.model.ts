@@ -1,25 +1,25 @@
-import { Combat } from '../../core/models/combat.model';
-import { EvoList, PokemonTypeCost, TempEvo } from '../../core/models/evolution.model';
-import { Options } from '../../core/models/options.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
-import { StatsPokemon } from '../../core/models/stats.model';
-import { TypeEff } from '../../core/models/type-eff.model';
-import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { PokemonQueryCounter, PokemonQueryMove } from './pokemon-top-move.model';
+import { ICombat } from '../../core/models/combat.model';
+import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
+import { IOptions } from '../../core/models/options.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
+import { IStatsPokemon } from '../../core/models/stats.model';
+import { ITypeEff } from '../../core/models/type-eff.model';
+import { IWeatherBoost } from '../../core/models/weatherBoost.model';
+import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
 export interface BattleCalculate {
   atk?: number;
   def: number;
   hp?: number;
-  fmove?: Combat;
-  cmove?: Combat;
+  fmove?: ICombat;
+  cmove?: ICombat;
   types: string[];
   shadow?: boolean;
   WEATHER_BOOSTS?: string;
   POKEMON_FRIEND?: boolean;
   POKEMON_FRIEND_LEVEL?: number;
   isDoubleCharge?: boolean;
-  cmove2?: Combat;
+  cmove2?: ICombat;
 }
 
 export interface StatsLeagueCalculate {
@@ -27,13 +27,13 @@ export interface StatsLeagueCalculate {
   level: number;
 }
 
-export interface StatsCalculate {
+export interface IStatsCalculate {
   IV: { atk: number; def: number; sta: number };
   CP: number;
   level: number;
 }
 
-export interface BetweenLevelCalculate {
+export interface IBetweenLevelCalculate {
   cp: number;
   result_between_stadust: number;
   result_between_stadust_diff?: number;
@@ -49,18 +49,18 @@ export interface BetweenLevelCalculate {
   def_stat_diff?: number;
 }
 
-export interface BattleLeagueCalculate {
+export interface IBattleLeagueCalculate {
   elidge: boolean;
   maxCP: number | null;
   IV: { atk: number; def: number; sta: number };
   CP: number;
   level: number;
   limit: boolean;
-  rangeValue?: BetweenLevelCalculate;
-  stats?: StatsPokemon;
+  rangeValue?: IBetweenLevelCalculate;
+  stats?: IStatsPokemon;
 }
 
-export interface PredictStatsModel {
+export interface IPredictStatsModel {
   atk: number;
   def: number;
   sta: number;
@@ -69,22 +69,22 @@ export interface PredictStatsModel {
   hp: number;
 }
 
-export interface PredictStatsCalculate {
+export interface IPredictStatsCalculate {
   CP: number;
   minLevel: number;
   maxLevel: number;
-  result: PredictStatsModel[];
+  result: IPredictStatsModel[];
 }
 
-export interface PredictCPModel {
+export interface IPredictCPModel {
   level: number;
   CP: number;
   hp: number;
 }
 
-export interface PredictCPCalculate {
+export interface IPredictCPCalculate {
   IV: { atk: number; def: number; sta: number };
-  result: PredictCPModel[];
+  result: IPredictCPModel[];
 }
 
 export interface StatsProdCalculate {
@@ -111,8 +111,8 @@ export interface QueryStatesEvoChain {
   id: number;
   name: string;
   prev?: string | undefined;
-  evoList: EvoList[];
-  tempEvo: TempEvo[];
+  evoList: IEvoList[];
+  tempEvo: ITempEvo[];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   canPurified?: boolean;
@@ -142,24 +142,24 @@ export interface BattleBaseStats {
 }
 
 export class QueryMovesCounterPokemon {
-  globalOptions: Options | undefined;
-  typeEff: TypeEff | undefined;
-  weatherBoost: WeatherBoost | undefined;
-  combat: Combat[] = [];
-  pokemon!: PokemonDataModel;
-  def!: number;
+  globalOptions: IOptions | undefined;
+  typeEff: ITypeEff | undefined;
+  weatherBoost: IWeatherBoost | undefined;
+  combat: ICombat[] = [];
+  pokemon: IPokemonData;
+  def: number;
   types: string[] = [];
-  dataList!: PokemonQueryCounter[];
+  dataList: IPokemonQueryCounter[];
 
   constructor(
-    globalOptions: Options | undefined,
-    typeEff: TypeEff | undefined,
-    weatherBoost: WeatherBoost | undefined,
-    combat: Combat[],
-    pokemon: PokemonDataModel,
+    globalOptions: IOptions | undefined,
+    typeEff: ITypeEff | undefined,
+    weatherBoost: IWeatherBoost | undefined,
+    combat: ICombat[],
+    pokemon: IPokemonData,
     def: number,
     types: string[],
-    dataList: PokemonQueryCounter[] = []
+    dataList: IPokemonQueryCounter[] = []
   ) {
     this.globalOptions = globalOptions;
     this.typeEff = typeEff;
@@ -174,28 +174,28 @@ export class QueryMovesCounterPokemon {
 
 // tslint:disable-next-line:max-classes-per-file
 export class QueryMovesPokemon {
-  globalOptions: Options | undefined;
-  typeEff: TypeEff | undefined;
-  weatherBoost: WeatherBoost | undefined;
-  combat: Combat[] = [];
-  pokemon!: PokemonDataModel;
-  stats!: StatsPokemon;
-  atk!: number;
-  def!: number;
-  sta!: number;
+  globalOptions: IOptions | undefined;
+  typeEff: ITypeEff | undefined;
+  weatherBoost: IWeatherBoost | undefined;
+  combat: ICombat[] = [];
+  pokemon!: IPokemonData;
+  stats!: IStatsPokemon;
+  atk: number;
+  def: number;
+  sta: number;
   types: string[] = [];
-  dataList!: PokemonQueryMove[];
+  dataList: IPokemonQueryMove[];
 
   constructor(
-    globalOptions: Options | undefined,
-    typeEff: TypeEff | undefined,
-    weatherBoost: WeatherBoost | undefined,
-    combat: Combat[],
+    globalOptions: IOptions | undefined,
+    typeEff: ITypeEff | undefined,
+    weatherBoost: IWeatherBoost | undefined,
+    combat: ICombat[],
     atk: number,
     def: number,
     sta: number,
     types: string[],
-    dataList: PokemonQueryMove[] = []
+    dataList: IPokemonQueryMove[] = []
   ) {
     this.globalOptions = globalOptions;
     this.typeEff = typeEff;
@@ -210,10 +210,10 @@ export class QueryMovesPokemon {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class StatsCalculate {
-  IV!: { atk: number; def: number; sta: number };
-  CP!: number;
-  level!: number;
+export class StatsCalculate implements IStatsCalculate {
+  IV: { atk: number; def: number; sta: number };
+  CP: number;
+  level: number;
 
   constructor(atk: number, def: number, sta: number, CP: number, level: number) {
     this.IV = { atk, def, sta };
@@ -223,15 +223,15 @@ export class StatsCalculate {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class BattleLeagueCalculate {
-  elidge!: boolean;
-  maxCP!: number | null;
-  IV!: { atk: number; def: number; sta: number };
-  CP!: number;
-  level!: number;
-  limit!: boolean;
-  rangeValue?: BetweenLevelCalculate;
-  stats?: StatsPokemon;
+export class BattleLeagueCalculate implements IBattleLeagueCalculate {
+  elidge: boolean;
+  maxCP: number | null;
+  IV: { atk: number; def: number; sta: number };
+  CP: number;
+  level: number;
+  limit: boolean;
+  rangeValue?: IBetweenLevelCalculate;
+  stats?: IStatsPokemon;
 
   constructor(elidge: boolean, maxCP: number | null, atk: number, def: number, sta: number, CP: number, level: number, limit: boolean) {
     this.elidge = elidge;
@@ -244,13 +244,13 @@ export class BattleLeagueCalculate {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class PredictStatsCalculate {
+export class PredictStatsCalculate implements IPredictStatsCalculate {
   CP: number;
-  minLevel!: number;
-  maxLevel!: number;
-  result!: PredictStatsModel[];
+  minLevel: number;
+  maxLevel: number;
+  result: IPredictStatsModel[];
 
-  constructor(CP: number, minLevel: number, maxLevel: number, result: PredictStatsModel[]) {
+  constructor(CP: number, minLevel: number, maxLevel: number, result: IPredictStatsModel[]) {
     this.CP = CP;
     this.minLevel = minLevel;
     this.maxLevel = maxLevel;
@@ -259,11 +259,11 @@ export class PredictStatsCalculate {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class PredictCPCalculate {
-  IV!: { atk: number; def: number; sta: number };
-  result!: PredictCPModel[];
+export class PredictCPCalculate implements IPredictCPCalculate {
+  IV: { atk: number; def: number; sta: number };
+  result: IPredictCPModel[];
 
-  constructor(atk: number, def: number, sta: number, result: PredictCPModel[]) {
+  constructor(atk: number, def: number, sta: number, result: IPredictCPModel[]) {
     this.IV = { atk, def, sta };
     this.result = result;
   }

@@ -9,18 +9,18 @@ import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
-import { PokemonDataModel, PokemonDataStats } from '../../core/models/pokemon.model';
+import { IPokemonData, IPokemonDataStats } from '../../core/models/pokemon.model';
 import { SelectMoveModel } from './models/select-move.model';
 
 const SelectPokemon = (props: {
-  pokemon?: PokemonDataModel;
-  setCurrentPokemon: React.Dispatch<React.SetStateAction<PokemonDataModel | undefined>>;
+  pokemon?: IPokemonData;
+  setCurrentPokemon: React.Dispatch<React.SetStateAction<IPokemonData | undefined>>;
   selected: boolean;
   setFMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
   setCMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
   clearData?: () => void;
   disable?: boolean;
-  defaultSetting?: PokemonDataStats;
+  defaultSetting?: IPokemonDataStats;
   maxHeight?: number;
 }) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
@@ -41,7 +41,7 @@ const SelectPokemon = (props: {
     }
   };
 
-  const changePokemon = (value: PokemonDataModel) => {
+  const changePokemon = (value: IPokemonData) => {
     setShowPokemon(false);
     const name = splitAndCapitalize(value.name, '-', ' ');
     const iconName =

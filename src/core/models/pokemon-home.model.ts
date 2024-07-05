@@ -1,11 +1,11 @@
 import APIService from '../../services/API.service';
 import { FORM_NORMAL } from '../../util/Constants';
 import { convertPokemonImageName, splitAndCapitalize } from '../../util/Utils';
-import { Image } from './asset.model';
-import { PokemonDataModel } from './pokemon.model';
-import { StatsPokemon } from './stats.model';
+import { IImage } from './asset.model';
+import { IPokemonData } from './pokemon.model';
+import { IStatsPokemon } from './stats.model';
 
-export interface PokemonHomeModel {
+export interface IPokemonHomeModel {
   id: number;
   name: string;
   forme: string | null;
@@ -13,17 +13,17 @@ export interface PokemonHomeModel {
   color: string;
   sprite: string;
   baseSpecies: string | null;
-  baseStats: StatsPokemon;
+  baseStats: IStatsPokemon;
   gen: number;
   region: string | null;
   version: number;
-  goStats: StatsPokemon;
+  goStats: IStatsPokemon;
   class: string | null;
   releasedGO: boolean;
-  image: Image;
+  image: IImage;
 }
 
-export class PokemonHomeModel {
+export class PokemonHomeModel implements IPokemonHomeModel {
   id: number;
   name: string;
   forme: string | null;
@@ -31,16 +31,16 @@ export class PokemonHomeModel {
   color: string;
   sprite: string;
   baseSpecies: string | null;
-  baseStats: StatsPokemon;
+  baseStats: IStatsPokemon;
   gen: number;
   region: string | null;
   version: number;
-  goStats: StatsPokemon;
+  goStats: IStatsPokemon;
   class: string | null;
   releasedGO: boolean;
-  image: Image;
+  image: IImage;
 
-  constructor(item: PokemonDataModel, assetForm: Image | null | undefined, versionList: string[]) {
+  constructor(item: IPokemonData, assetForm: IImage | null | undefined, versionList: string[]) {
     this.id = item.num;
     this.name = item.name;
     this.forme = assetForm?.default

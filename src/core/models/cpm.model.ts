@@ -1,4 +1,4 @@
-export interface CPM {
+export interface ICPM {
   level: number;
   multiplier: number;
   step?: number;
@@ -15,10 +15,10 @@ export interface CPMData {
   sum_xl_candy: number;
 }
 
-export class CPMDataModel {
-  level!: number;
-  multiplier!: number;
-  step!: number;
+export class CPM implements ICPM {
+  level: number;
+  multiplier: number;
+  step: number;
 
   constructor() {
     this.level = 0;

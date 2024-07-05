@@ -1,4 +1,4 @@
-import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
 import { sortStatsPokemon } from '../../util/Calculate';
 import { FORM_NORMAL } from '../../util/Constants';
 import { ArrayStats } from '../../util/models/util.model';
@@ -6,7 +6,7 @@ import { ArrayStats } from '../../util/models/util.model';
 export const LOAD_STATS = 'LOAD_STATS';
 export const RESET_STATS = 'RESET_STATS';
 
-const convertArrStats = (data: PokemonDataModel[]) => {
+const convertArrStats = (data: IPokemonData[]) => {
   return data
     .filter((pokemon) => pokemon.num > 0)
     .map((value) => {
@@ -21,7 +21,7 @@ const convertArrStats = (data: PokemonDataModel[]) => {
     });
 };
 
-export const loadStats = (pokemonData: PokemonDataModel[]) => ({
+export const loadStats = (pokemonData: IPokemonData[]) => ({
   type: LOAD_STATS,
   payload: sortStatsPokemon(convertArrStats(pokemonData)),
 });

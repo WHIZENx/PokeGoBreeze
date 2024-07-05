@@ -1,4 +1,4 @@
-export interface WeatherBoost {
+export interface IWeatherBoost {
   CLEAR: string[];
   FOG: string[];
   OVERCAST: string[];
