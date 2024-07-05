@@ -1,10 +1,10 @@
-interface EvolutionQuestCondition {
+interface IEvolutionQuestCondition {
   desc?: string;
   pokemonType?: string[];
   throwType?: string;
 }
 
-interface EvolutionQuest {
+interface IEvolutionQuest {
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
   mustBeBuddy?: boolean;
@@ -13,13 +13,13 @@ interface EvolutionQuest {
   lureItemRequirement?: string;
   evolutionItemRequirement?: string;
   onlyUpsideDown?: boolean;
-  condition?: EvolutionQuestCondition | undefined;
+  condition?: IEvolutionQuestCondition | undefined;
   goal?: number;
   type?: string;
   randomEvolution?: boolean;
 }
 
-export interface EvoList {
+export interface IEvoList {
   evoToForm: string;
   evoToId: number;
   evoToName: string;
@@ -27,10 +27,10 @@ export interface EvoList {
   item?: string;
   itemCost?: number;
   purificationEvoCandyCost: number;
-  quest?: EvolutionQuest;
+  quest?: IEvolutionQuest;
 }
 
-export class EvoList {
+export class EvoList implements IEvoList {
   evoToForm: string;
   evoToId: number;
   evoToName: string;
@@ -38,7 +38,7 @@ export class EvoList {
   item?: string;
   itemCost?: number;
   purificationEvoCandyCost: number;
-  quest?: EvolutionQuest;
+  quest?: IEvolutionQuest;
 
   constructor() {
     this.evoToForm = '';
@@ -49,7 +49,7 @@ export class EvoList {
   }
 }
 
-export interface TempEvo {
+export interface ITempEvo {
   tempEvolutionName: string;
   firstTempEvolution: number;
   tempEvolution: number;
@@ -67,7 +67,7 @@ export interface EvolutionModel {
   id: number;
   name: string;
   evoList: EvoList[];
-  tempEvo: TempEvo[];
+  tempEvo: ITempEvo[];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form: string;

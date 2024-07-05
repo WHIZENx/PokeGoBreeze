@@ -7,11 +7,11 @@ import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { SelectMoveModel } from '../Input/models/select-move.model';
-import { Combat } from '../../core/models/combat.model';
+import { ICombat } from '../../core/models/combat.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
 
 const CardMoveSmall = (props: {
-  value: SelectMoveModel | Combat | undefined;
+  value: SelectMoveModel | ICombat | undefined;
   empty?: boolean;
   disable?: boolean;
   show?: boolean;

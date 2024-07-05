@@ -1,7 +1,7 @@
-import { LeagueReward, PokemonRewardLeague, SettingLeague } from './league.model';
+import { LeagueReward, IPokemonRewardLeague, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
 
-export interface PokemonData {
+export interface PokemonDataGM {
   templateId: string;
   data: {
     pokemonSettings: PokemonModel;
@@ -20,8 +20,8 @@ export interface PokemonData {
       shadowPokemonAttackBonusMultiplier: number;
       shadowPokemonDefenseBonusMultiplier: number;
     };
-    buddyLevelSettings: { minNonCumulativePointsRequired: number; unlockedTraits: number };
-    friendshipMilestoneSettings: { attackBonusPercentage: number; unlockedTrading: number };
+    buddyLevelSettings: { minNonCumulativePointsRequired: number; unlockedTraits: string[] };
+    friendshipMilestoneSettings: { attackBonusPercentage: number; unlockedTrading: string[] };
     typeEffective: { attackScalar: number[] };
     weatherAffinities: { weatherCondition: string; pokemonType: string[] };
     genderSettings: {
@@ -74,8 +74,8 @@ export interface PokemonData {
     combatRankingProtoSettings: { rankLevel: SettingLeague[] | undefined };
     vsSeekerLoot: {
       rankLevel: number;
-      rank: PokemonRewardLeague;
-      pokemon: PokemonRewardLeague;
+      rank: IPokemonRewardLeague;
+      pokemon: IPokemonRewardLeague;
       reward: LeagueReward[];
       rewardTrack: string;
     };
@@ -83,13 +83,13 @@ export interface PokemonData {
       title: string;
       enabled: boolean;
       pokemonCondition: {
-        pokemonBanList: { pokemon: PokemonPermission[] };
+        pokemonBanList: { pokemon: IPokemonPermission[] };
         type: string;
         pokemonCaughtTimestamp: { afterTimestamp: number; beforeTimestamp: number };
         withPokemonType: { pokemonType: string[] };
         pokemonLevelRange: { maxLevel: number };
         withPokemonCpLimit: { maxCp: number };
-        pokemonWhiteList: { pokemon: PokemonPermission[] };
+        pokemonWhiteList: { pokemon: IPokemonPermission[] };
       }[];
       iconUrl: string;
       badgeType: string;
@@ -118,14 +118,14 @@ interface EvolutionCondition {
   };
 }
 
-export interface PokemonPermission {
+export interface IPokemonPermission {
   id: number | undefined;
   form: string;
   forms?: string;
   name: string | undefined;
 }
 
-interface CombatOption {
+interface ICombatOption {
   stab: number;
   shadow_bonus: {
     atk: number;
@@ -133,7 +133,7 @@ interface CombatOption {
   };
 }
 
-interface BattleOption {
+interface IBattleOption {
   enemyAttackInterval: number;
   stab: number;
   shadow_bonus: {
@@ -142,41 +142,51 @@ interface BattleOption {
   };
 }
 
-interface ThrowOption {
+interface IThrowOption {
   normal: number;
   nice: number;
   great: number;
   excellent: number;
 }
 
-interface BuddyFriendship {
+export interface IBuddyFriendship {
   level: number;
   minNonCumulativePointsRequired: number;
   unlockedTrading?: string[];
 }
 
-export interface TrainerFriendship {
+export class BuddyFriendship implements IBuddyFriendship {
+  level: number;
+  minNonCumulativePointsRequired: number;
+
+  constructor() {
+    this.level = 0;
+    this.minNonCumulativePointsRequired = 0;
+  }
+}
+
+export interface ITrainerFriendship {
   level: number;
   atk_bonus: number;
   unlockedTrading?: string[];
 }
 
-export interface Options {
-  combat_options: CombatOption;
-  battle_options: BattleOption;
-  throw_charge: ThrowOption;
-  buddy_friendship: {
-    '0': BuddyFriendship;
-    '1': BuddyFriendship;
-    '2': BuddyFriendship;
-    '3': BuddyFriendship;
-    '4': BuddyFriendship;
-  };
-  trainer_friendship: {
-    '0': TrainerFriendship;
-    '1': TrainerFriendship;
-    '2': TrainerFriendship;
-    '3': TrainerFriendship;
-    '4': TrainerFriendship;
-  };
+// tslint:disable-next-line:max-classes-per-file
+export class TrainerFriendship implements ITrainerFriendship {
+  level: number;
+  // tslint:disable-next-line:variable-name
+  atk_bonus: number;
+
+  constructor() {
+    this.level = 0;
+    this.atk_bonus = 0;
+  }
+}
+
+export interface IOptions {
+  combat_options: ICombatOption;
+  battle_options: IBattleOption;
+  throw_charge: IThrowOption;
+  buddy_friendship: { [x: string]: IBuddyFriendship };
+  trainer_friendship: { [x: string]: ITrainerFriendship };
 }

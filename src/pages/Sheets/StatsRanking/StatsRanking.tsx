@@ -15,14 +15,14 @@ import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { PokemonDataModel } from '../../../core/models/pokemon.model';
+import { IPokemonData } from '../../../core/models/pokemon.model';
 import { PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
-import { FormModel } from '../../../core/models/API/form.model';
+import { IForm } from '../../../core/models/API/form.model';
 
 const columnPokemon: any = [
   {
@@ -136,7 +136,7 @@ const StatsRanking = () => {
   const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
   const [search, setSearch] = useState('');
 
-  const mappingData = (pokemon: PokemonDataModel[]) => {
+  const mappingData = (pokemon: IPokemonData[]) => {
     return pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
       const details = getPokemonDetails(pokemon, data.num, data.fullName ?? '', true);
@@ -271,7 +271,7 @@ const StatsRanking = () => {
     }
   }, [search, match, pokemonList]);
 
-  const convertToPokemonForm = (pokemon: PokemonDataModel | PokemonStatsRanking): FormModel => {
+  const convertToPokemonForm = (pokemon: IPokemonData | PokemonStatsRanking): IForm => {
     return {
       form_name: pokemon.forme ?? '',
       form_names: [],
@@ -281,7 +281,7 @@ const StatsRanking = () => {
       is_default: true,
       is_mega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
       name: pokemon.name,
-      sprites: null,
+      sprites: undefined,
       types: pokemon.types ?? [],
       version_group: { name: pokemon.version ?? '' },
       is_shadow: false,

@@ -8,16 +8,16 @@ import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/move.enum';
 import { StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
-const nameSort = (rowA: Combat, rowB: Combat) => {
+const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
   const b = rowB.name.toLowerCase().replaceAll(' plus', '+');
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const moveSort = (rowA: Combat, rowB: Combat) => {
+const moveSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.type?.toLowerCase() ?? '';
   const b = rowB.type?.toLowerCase() ?? '';
   return a === b ? 0 : a > b ? 1 : -1;
@@ -26,18 +26,18 @@ const moveSort = (rowA: Combat, rowB: Combat) => {
 const columns: any = [
   {
     name: 'id',
-    selector: (row: Combat) => row.track,
+    selector: (row: ICombat) => row.track,
     sortable: true,
   },
   {
     name: 'Type',
-    selector: (row: Combat) => <div className={'type-icon-small ' + row.type?.toLowerCase()}>{capitalize(row.type)}</div>,
+    selector: (row: ICombat) => <div className={'type-icon-small ' + row.type?.toLowerCase()}>{capitalize(row.type)}</div>,
     sortable: true,
     sortFunction: moveSort,
   },
   {
     name: 'Name',
-    selector: (row: Combat) => (
+    selector: (row: ICombat) => (
       <Link to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type?.toLowerCase() : '')}>
         {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
       </Link>
@@ -48,13 +48,13 @@ const columns: any = [
   },
   {
     name: 'Power (PVE/PVP)',
-    selector: (row: Combat) => `${row.pve_power}/${row.pvp_power}`,
+    selector: (row: ICombat) => `${row.pve_power}/${row.pvp_power}`,
     sortable: true,
     width: '150px',
   },
   {
     name: 'DPS',
-    selector: (row: Combat) => parseFloat((row.pve_power / (row.durationMs / 1000)).toFixed(2)),
+    selector: (row: ICombat) => parseFloat((row.pve_power / (row.durationMs / 1000)).toFixed(2)),
     sortable: true,
   },
 ];
@@ -74,8 +74,8 @@ const Search = () => {
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
-  const [resultFMove, setResultFMove]: [Combat[], React.Dispatch<React.SetStateAction<Combat[]>>] = useState([] as Combat[]);
-  const [resultCMove, setResultCMove]: [Combat[], React.Dispatch<React.SetStateAction<Combat[]>>] = useState([] as Combat[]);
+  const [resultFMove, setResultFMove]: [ICombat[], React.Dispatch<React.SetStateAction<ICombat[]>>] = useState([] as ICombat[]);
+  const [resultCMove, setResultCMove]: [ICombat[], React.Dispatch<React.SetStateAction<ICombat[]>>] = useState([] as ICombat[]);
 
   useEffect(() => {
     if (combat.length > 0) {

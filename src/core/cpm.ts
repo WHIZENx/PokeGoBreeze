@@ -1,9 +1,9 @@
-import { CPMDataModel } from './models/cpm.model';
+import { CPM, ICPM } from './models/cpm.model';
 
 export const calculateCPM = (baseCPM: { [x: number]: number }, min: number, max: number) => {
-  const cpmList: CPMDataModel[] = [];
+  const cpmList: ICPM[] = [];
   for (let i = min; i <= max; i += 1) {
-    const result = new CPMDataModel();
+    const result = new CPM();
     result.level = i;
     if (baseCPM[i]) {
       result.multiplier = baseCPM[i];
@@ -18,7 +18,7 @@ export const calculateCPM = (baseCPM: { [x: number]: number }, min: number, max:
   }
 
   for (let i = min + 0.5; i <= max; i += 1) {
-    const result = new CPMDataModel();
+    const result = new CPM();
     result.level = i;
     const cpmLow = cpmList.find((cp) => cp.level === Math.floor(i))?.multiplier;
     const cpmHigh = cpmList.find((cp) => cp.level === Math.ceil(i))?.multiplier;

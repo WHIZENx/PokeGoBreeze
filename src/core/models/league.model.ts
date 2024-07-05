@@ -1,22 +1,22 @@
-import { PokemonPermission } from './options.model';
+import { IPokemonPermission } from './options.model';
 
-export interface LeaguePVP {
+interface ILeaguePVP {
   id: string;
   name: string;
   cp: number | number[];
   logo: string | null;
 }
 
-export interface League {
+export interface ILeague {
   id: string | null;
   title: string;
   enabled: boolean;
-  conditions: LeagueCondition;
+  conditions: ILeagueCondition;
   iconUrl: string | null;
   league: string;
 }
 
-export interface LeagueCondition {
+interface ILeagueCondition {
   timestamp?: {
     start: number;
     end: number;
@@ -25,8 +25,8 @@ export interface LeagueCondition {
   unique_type: string[];
   max_level: number | null;
   max_cp: number;
-  whiteList: PokemonPermission[];
-  banned: PokemonPermission[];
+  whiteList: IPokemonPermission[];
+  banned: IPokemonPermission[];
 }
 
 export interface LeagueReward {
@@ -35,13 +35,13 @@ export interface LeagueReward {
   step: number;
 }
 
-interface RankRewardSetLeague {
+interface IRankRewardSetLeague {
   type: string | boolean;
   count: number;
   step: number;
 }
 
-export interface PokemonRewardSetLeague {
+export interface IPokemonRewardSetLeague {
   guaranteedLimited: boolean;
   id: number;
   name: string;
@@ -49,16 +49,16 @@ export interface PokemonRewardSetLeague {
   rank?: number;
 }
 
-export interface RankRewardLeague {
+export interface IRankRewardLeague {
   rank?: number;
-  free?: RankRewardSetLeague[];
-  premium?: RankRewardSetLeague[];
+  free?: IRankRewardSetLeague[];
+  premium?: IRankRewardSetLeague[];
 }
 
-export interface PokemonRewardLeague {
+export interface IPokemonRewardLeague {
   rank?: number;
-  free?: PokemonRewardSetLeague[];
-  premium?: PokemonRewardSetLeague[];
+  free?: IPokemonRewardSetLeague[];
+  premium?: IPokemonRewardSetLeague[];
 }
 
 export interface SettingLeague {
@@ -74,9 +74,9 @@ export interface LeagueReward {
   item: { stardust: number; item: string | boolean; count: number };
 }
 
-export interface LeagueData {
+export interface ILeagueData {
   allowLeagues: string[];
-  data: League[];
+  data: ILeague[];
   season: {
     season: number;
     timestamp: {
@@ -84,27 +84,27 @@ export interface LeagueData {
       end: number | string;
     };
     rewards: {
-      rank: RankRewardLeague[];
-      pokemon: PokemonRewardLeague[];
+      rank: { [x: number]: IRankRewardLeague };
+      pokemon: { [x: number]: IPokemonRewardLeague };
     };
     settings: SettingLeague[];
   };
 }
 
-export class LeagueOptionsDataModel {
-  allowLeagues!: string[];
-  data!: League[];
-  season!: {
+export class LeagueData implements ILeagueData {
+  allowLeagues: string[];
+  data: ILeague[];
+  season: {
     season: number;
     timestamp: {
       start: number | string;
       end: number | string;
     };
     rewards: {
-      rank: { [x: number]: RankRewardLeague };
-      pokemon: { [x: number]: PokemonRewardLeague };
+      rank: { [x: number]: IRankRewardLeague };
+      pokemon: { [x: number]: IPokemonRewardLeague };
     };
-    settings: SettingLeague[] | undefined;
+    settings: SettingLeague[];
   };
 
   constructor() {
@@ -126,13 +126,13 @@ export class LeagueOptionsDataModel {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class LeagueDataModel {
+export class League implements ILeague {
   id!: string | null;
-  title!: string;
+  title: string;
   enabled!: boolean;
-  conditions!: LeagueCondition;
+  conditions: ILeagueCondition;
   iconUrl!: string | null;
-  league!: string;
+  league: string;
 
   constructor() {
     this.title = '';
@@ -149,10 +149,10 @@ export class LeagueDataModel {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class LeagueRewardDataModel {
+export class RankRewardSetLeague implements IRankRewardSetLeague {
   type!: boolean | string;
-  count!: number;
-  step!: number;
+  count: number;
+  step: number;
 
   constructor() {
     this.count = 0;
@@ -161,7 +161,7 @@ export class LeagueRewardDataModel {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class LeagueRewardPokemonDataModel {
+export class PokemonRewardSetLeague implements IPokemonRewardSetLeague {
   guaranteedLimited!: boolean;
   id: number;
   name: string;
@@ -175,10 +175,10 @@ export class LeagueRewardPokemonDataModel {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class LeaguePVPPokemonDataModel {
-  id!: string;
+export class LeaguePVP implements ILeaguePVP {
+  id: string;
   name: string;
-  cp!: number | number[];
+  cp: number | number[];
   logo!: string | null;
 
   constructor() {

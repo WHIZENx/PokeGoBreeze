@@ -4,7 +4,7 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
 
 import './Stats.scss';
-import { StatsAtk, StatsDef, StatsModel, StatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
+import { StatsAtk, StatsDef, StatsModel, IStatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
@@ -13,7 +13,7 @@ import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 const Stats = (props: {
   isShadow?: boolean;
   pokemonStats: StatsModel | null;
-  stats?: StatsPokemon | null;
+  stats?: IStatsPokemon | null;
   statATK?: StatsAtk;
   statDEF?: StatsDef;
   statSTA?: StatsSta;

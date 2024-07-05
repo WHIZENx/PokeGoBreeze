@@ -5,11 +5,11 @@ import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { PokemonBattle } from '../models/battle.model';
-import { Combat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
 
 export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: PokemonBattle, hide = false) => {
-  const renderMoveBadgeBorder = (move: Combat | null, border: boolean, shadow = false) => {
+  const renderMoveBadgeBorder = (move: ICombat | null, border: boolean, shadow = false) => {
     if (!move) {
       return;
     }

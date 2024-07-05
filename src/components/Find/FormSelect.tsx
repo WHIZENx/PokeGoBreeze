@@ -20,9 +20,9 @@ import { setSearchToolPage } from '../../store/actions/searching.action';
 import { Action } from 'history';
 import { StatsModel } from '../../core/models/stats.model';
 import { ToolSearching } from '../../core/models/searching.model';
-import { PokemonDataModel, PokemonNameModel } from '../../core/models/pokemon.model';
+import { IPokemonData, IPokemonName } from '../../core/models/pokemon.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import { FormModel, PokemonForm, PokemonFormModify } from '../../core/models/API/form.model';
+import { Form, PokemonForm, IPokemonFormModify, PokemonFormModify } from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
@@ -30,9 +30,9 @@ import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 
 interface OptionsPokemon {
-  prev: PokemonNameModel | undefined;
-  current: PokemonNameModel | undefined;
-  next: PokemonNameModel | undefined;
+  prev: IPokemonName | undefined;
+  current: IPokemonName | undefined;
+  next: IPokemonName | undefined;
 }
 
 const FormSelect = (props: {
@@ -51,24 +51,24 @@ const FormSelect = (props: {
   hide?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   // eslint-disable-next-line no-unused-vars
-  setForm?: (form: PokemonFormModify | undefined) => void;
+  setForm?: (form: IPokemonFormModify | undefined) => void;
   stats: StatsModel | null;
   // eslint-disable-next-line no-unused-vars
   onHandleSetStats?: (type: string, value: number) => void;
-  data: PokemonDataModel[];
+  data: IPokemonData[];
   setUrlEvo?: React.Dispatch<
     React.SetStateAction<{
       url: string;
     }>
   >;
   objective?: boolean;
-  pokemonName: PokemonDataModel[];
+  pokemonName: IPokemonData[];
 }) => {
   const dispatch = useDispatch();
 
   const [pokeData, setPokeData]: [PokemonInfo[], React.Dispatch<React.SetStateAction<PokemonInfo[]>>] = useState([] as PokemonInfo[]);
-  const [formList, setFormList]: [PokemonFormModify[][], React.Dispatch<React.SetStateAction<PokemonFormModify[][]>>] = useState(
-    [] as PokemonFormModify[][]
+  const [formList, setFormList]: [IPokemonFormModify[][], React.Dispatch<React.SetStateAction<IPokemonFormModify[][]>>] = useState(
+    [] as IPokemonFormModify[][]
   );
 
   const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
@@ -81,8 +81,8 @@ const FormSelect = (props: {
   ] = useState();
 
   const [currentForm, setCurrentForm]: [
-    PokemonFormModify | undefined,
-    React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>
+    IPokemonFormModify | undefined,
+    React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>
   ] = useState();
 
   const axiosSource = useRef(APIService.getCancelToken());
@@ -116,7 +116,7 @@ const FormSelect = (props: {
                 data.id,
                 data.name,
                 data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                new FormModel({
+                new Form({
                   ...item,
                   form_name: item.form_name.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.form_name,
                 })

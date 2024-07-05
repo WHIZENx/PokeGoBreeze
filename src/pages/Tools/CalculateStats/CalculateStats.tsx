@@ -19,7 +19,7 @@ import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
-import { BattleLeagueCalculate, BetweenLevelCalculate, StatsCalculate } from '../../../util/models/calculate.model';
+import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import FreeSoloInput from '../../../components/Input/FreeSoloInput';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
@@ -43,29 +43,29 @@ const Calculate = () => {
 
   const [typePoke, setTypePoke] = useState('');
 
-  const [pokeStats, setPokeStats]: [StatsCalculate | undefined, React.Dispatch<React.SetStateAction<StatsCalculate | undefined>>] =
+  const [pokeStats, setPokeStats]: [IStatsCalculate | undefined, React.Dispatch<React.SetStateAction<IStatsCalculate | undefined>>] =
     useState();
   const [statLevel, setStatLevel] = useState(1);
   const [statData, setStatData]: [
-    BetweenLevelCalculate | undefined,
-    React.Dispatch<React.SetStateAction<BetweenLevelCalculate | undefined>>
+    IBetweenLevelCalculate | undefined,
+    React.Dispatch<React.SetStateAction<IBetweenLevelCalculate | undefined>>
   ] = useState();
 
   const [dataLittleLeague, setDataLittleLeague]: [
-    BattleLeagueCalculate | undefined,
-    React.Dispatch<React.SetStateAction<BattleLeagueCalculate | undefined>>
+    IBattleLeagueCalculate | undefined,
+    React.Dispatch<React.SetStateAction<IBattleLeagueCalculate | undefined>>
   ] = useState();
   const [dataGreatLeague, setDataGreatLeague]: [
-    BattleLeagueCalculate | undefined,
-    React.Dispatch<React.SetStateAction<BattleLeagueCalculate | undefined>>
+    IBattleLeagueCalculate | undefined,
+    React.Dispatch<React.SetStateAction<IBattleLeagueCalculate | undefined>>
   ] = useState();
   const [dataUltraLeague, setDataUltraLeague]: [
-    BattleLeagueCalculate | undefined,
-    React.Dispatch<React.SetStateAction<BattleLeagueCalculate | undefined>>
+    IBattleLeagueCalculate | undefined,
+    React.Dispatch<React.SetStateAction<IBattleLeagueCalculate | undefined>>
   ] = useState();
   const [dataMasterLeague, setDataMasterLeague]: [
-    BattleLeagueCalculate | undefined,
-    React.Dispatch<React.SetStateAction<BattleLeagueCalculate | undefined>>
+    IBattleLeagueCalculate | undefined,
+    React.Dispatch<React.SetStateAction<IBattleLeagueCalculate | undefined>>
   ] = useState();
 
   const [urlEvo, setUrlEvo] = useState({ url: '' });

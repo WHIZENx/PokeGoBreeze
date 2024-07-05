@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { predictCPList } from '../../util/Calculate';
 import { MIN_IV, MAX_IV } from '../../util/Constants';
-import { PredictCPCalculate } from '../../util/models/calculate.model';
+import { IPredictCPCalculate } from '../../util/models/calculate.model';
 
 const FreeSoloInput = (props: {
   statATK: number;
@@ -18,7 +18,7 @@ const FreeSoloInput = (props: {
   width?: number | string;
   minWidth?: number | string;
 }) => {
-  const [preCpArr, setPreCpArr]: [PredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<PredictCPCalculate | undefined>>] =
+  const [preCpArr, setPreCpArr]: [IPredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<IPredictCPCalculate | undefined>>] =
     useState();
 
   const findStatsCP = useCallback(() => {

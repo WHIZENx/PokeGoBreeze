@@ -23,7 +23,7 @@ import { StoreState } from '../../store/models/state.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
-import { Combat } from '../../core/models/combat.model';
+import { ICombat } from '../../core/models/combat.model';
 import { PokemonTopMove } from '../../util/models/pokemon-top-move.model';
 
 const nameSort = (rowA: PokemonTopMove, rowB: PokemonTopMove) => {
@@ -85,7 +85,7 @@ const Move = (props: { id?: number }) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
   const [releasedGO, setReleaseGO] = useState(true);
   const [topList, setTopList]: [PokemonTopMove[], React.Dispatch<React.SetStateAction<PokemonTopMove[]>>] = useState(
     [] as PokemonTopMove[]

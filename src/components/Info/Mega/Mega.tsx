@@ -6,14 +6,12 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_MEGA } from '../../../util/Constants';
-import { FormModel, PokemonFormModify } from '../../../core/models/API/form.model';
+import { IForm, IPokemonFormModify } from '../../../core/models/API/form.model';
 
-const Mega = (props: { formList: PokemonFormModify[][]; id: number }) => {
+const Mega = (props: { formList: IPokemonFormModify[][]; id: number }) => {
   const evoData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [arrEvoList, setArrEvoList]: [
-    (FormModel | undefined)[] | undefined,
-    React.Dispatch<React.SetStateAction<(FormModel | undefined)[]>>
-  ] = useState([] as (FormModel | undefined)[]);
+  const [arrEvoList, setArrEvoList]: [(IForm | undefined)[] | undefined, React.Dispatch<React.SetStateAction<(IForm | undefined)[]>>] =
+    useState([] as (IForm | undefined)[]);
 
   useEffect(() => {
     setArrEvoList(

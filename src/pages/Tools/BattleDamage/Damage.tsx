@@ -21,9 +21,9 @@ import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/Compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { TrainerFriendship } from '../../../core/models/options.model';
-import { PokemonFormModify } from '../../../core/models/API/form.model';
-import { Combat } from '../../../core/models/combat.model';
+import { ITrainerFriendship } from '../../../core/models/options.model';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
@@ -54,8 +54,9 @@ const Damage = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] = useState();
-  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
+    useState();
+  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -66,7 +67,7 @@ const Damage = () => {
   const [statLevel, setStatLevel] = useState(1);
   const [statType, setStatType] = useState('');
 
-  const [formObj, setFormObj]: [PokemonFormModify | undefined, React.Dispatch<React.SetStateAction<PokemonFormModify | undefined>>] =
+  const [formObj, setFormObj]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
     useState();
 
   const [statATKObj, setStatATKObj] = useState(0);
@@ -138,11 +139,11 @@ const Damage = () => {
     });
   };
 
-  const onSetForm = (form: PokemonFormModify | undefined) => {
+  const onSetForm = (form: IPokemonFormModify | undefined) => {
     setForm(form);
   };
 
-  const onSetFormObj = (form: PokemonFormModify | undefined) => {
+  const onSetFormObj = (form: IPokemonFormModify | undefined) => {
     setFormObj(form);
   };
 
@@ -337,7 +338,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{(getDataWithKey(globalOptions?.trainer_friendship, battleState.flevel) as TrainerFriendship).atk_bonus?.toFixed(2)}
+                      x{(getDataWithKey(globalOptions?.trainer_friendship, battleState.flevel) as ITrainerFriendship).atk_bonus?.toFixed(2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>

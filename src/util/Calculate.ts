@@ -1,12 +1,12 @@
 import { CounterModel } from '../components/Table/Counter/models/counter.model';
-import { Combat } from '../core/models/combat.model';
-import { CPM } from '../core/models/cpm.model';
+import { ICombat } from '../core/models/combat.model';
+import { ICPM } from '../core/models/cpm.model';
 import { EvolutionModel } from '../core/models/evolution.model';
-import { Options } from '../core/models/options.model';
-import { PokemonDataModel } from '../core/models/pokemon.model';
-import { StatsModel, StatsPokemon } from '../core/models/stats.model';
-import { TypeEff } from '../core/models/type-eff.model';
-import { WeatherBoost } from '../core/models/weatherBoost.model';
+import { IOptions } from '../core/models/options.model';
+import { IPokemonData } from '../core/models/pokemon.model';
+import { IStatsPokemon, StatsModel, StatsPokemon } from '../core/models/stats.model';
+import { ITypeEff } from '../core/models/type-eff.model';
+import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
 import { TypeMove } from '../enums/move.enum';
 import { OptionOtherDPS } from '../store/models/options.model';
@@ -42,11 +42,12 @@ import {
   BattleCalculate,
   BattleLeague,
   BattleLeagueCalculate,
-  BetweenLevelCalculate,
+  IBetweenLevelCalculate,
+  IBattleLeagueCalculate,
   PredictCPCalculate,
-  PredictCPModel,
+  IPredictCPModel,
   PredictStatsCalculate,
-  PredictStatsModel,
+  IPredictStatsModel,
   QueryMovesCounterPokemon,
   QueryMovesPokemon,
   QueryStatesEvoChain,
@@ -54,10 +55,10 @@ import {
   StatsLeagueCalculate,
   StatsProdCalculate,
 } from './models/calculate.model';
-import { PokemonQueryCounter, PokemonTopMove } from './models/pokemon-top-move.model';
+import { IPokemonQueryCounter, PokemonTopMove } from './models/pokemon-top-move.model';
 import { ArrayStats } from './models/util.model';
 
-const weatherMultiple = (globalOptions: Options | undefined, weatherBoost: any, weather: string, type: string) => {
+const weatherMultiple = (globalOptions: IOptions | undefined, weatherBoost: any, weather: string, type: string) => {
   return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')]?.find((item: string) => item === type?.toUpperCase().replaceAll(' ', '_'))
     ? STAB_MULTIPLY(globalOptions)
     : 1;
@@ -258,7 +259,7 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) => {
   return Math.floor(
-    Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * ((data as CPM[]).find((item) => item.level === level)?.multiplier ?? 0) ** 2) / 10)
+    Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * ((data as ICPM[]).find((item) => item.level === level)?.multiplier ?? 0) ** 2) / 10)
   );
 };
 
@@ -285,7 +286,7 @@ export const calculateDuelAbility = (dmgOutput: number, tanki: number) => {
 export const calculateCatchChance = (baseCaptureRate: number, level: number, multiplier: number) => {
   return (
     1 -
-    Math.pow(Math.max(0, 1 - baseCaptureRate / (2 * ((data as CPM[])?.find((data) => data.level === level)?.multiplier ?? 0))), multiplier)
+    Math.pow(Math.max(0, 1 - baseCaptureRate / (2 * ((data as ICPM[])?.find((data) => data.level === level)?.multiplier ?? 0))), multiplier)
   );
 };
 
@@ -306,7 +307,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
     }
   }
 
-  const predictArr: PredictStatsModel[] = [];
+  const predictArr: IPredictStatsModel[] = [];
   for (let l = minLevel; l <= maxLevel; l += 0.5) {
     for (let i = MIN_IV; i <= MAX_IV; i++) {
       for (let j = MIN_IV; j <= MAX_IV; j++) {
@@ -340,7 +341,7 @@ export const predictCPList = (
   IVdef = parseInt(IVdef.toString());
   IVsta = parseInt(IVsta.toString());
 
-  const predictArr: PredictCPModel[] = [];
+  const predictArr: IPredictCPModel[] = [];
   for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
     predictArr.push({
       level: i,
@@ -366,7 +367,7 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
 };
 
 export const calculateStatsBattle = (base: number, iv: number, level: number, floor = false, addition = false) => {
-  let result = (base + iv) * ((data as CPM[]).find((item) => item.level === level)?.multiplier ?? 0);
+  let result = (base + iv) * ((data as ICPM[]).find((item) => item.level === level)?.multiplier ?? 0);
   if (addition) {
     result *= +addition;
   }
@@ -377,7 +378,7 @@ export const calculateStatsBattle = (base: number, iv: number, level: number, fl
 };
 
 export const calculateBetweenLevel = (
-  globalOptions: Options | undefined,
+  globalOptions: IOptions | undefined,
   atk: number,
   def: number,
   sta: number,
@@ -400,7 +401,7 @@ export const calculateBetweenLevel = (
       result_between_candy: 0,
       result_between_xl_candy: 0,
       power_up_count: 0,
-    } as BetweenLevelCalculate;
+    } as IBetweenLevelCalculate;
   } else {
     let betweenStadust = 0;
     let betweenCandy = 0;
@@ -434,7 +435,7 @@ export const calculateBetweenLevel = (
       }
     });
 
-    const dataList: BetweenLevelCalculate = {
+    const dataList: IBetweenLevelCalculate = {
       cp: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
       result_between_stadust: betweenStadust,
       result_between_stadust_diff: betweenStadustDiff,
@@ -453,12 +454,12 @@ export const calculateBetweenLevel = (
       dataList.def_stat_diff = defStatDiff;
     }
 
-    return dataList as BetweenLevelCalculate;
+    return dataList as IBetweenLevelCalculate;
   }
 };
 
 export const calculateBattleLeague = (
-  globalOptions: Options | undefined,
+  globalOptions: IOptions | undefined,
   atk: number,
   def: number,
   sta: number,
@@ -475,7 +476,7 @@ export const calculateBattleLeague = (
     level -= 1;
   }
   if (maxCp && currCP > maxCp) {
-    return { elidge: false } as BattleLeagueCalculate;
+    return { elidge: false } as IBattleLeagueCalculate;
   } else {
     const dataBattle = new BattleLeagueCalculate(true, maxCp, IVatk, IVdef, IVsta, 0, 0, true);
 
@@ -587,8 +588,8 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
 };
 
 export const calculateStatsByTag = (
-  pokemon: PokemonDataModel | undefined | null,
-  baseStats: StatsPokemon | undefined,
+  pokemon: IPokemonData | undefined | null,
+  baseStats: IStatsPokemon | undefined,
   tag: string | null | undefined
 ) => {
   let atk = 0,
@@ -614,7 +615,7 @@ export const calculateStatsByTag = (
 };
 
 export const calculateDamagePVE = (
-  globalOptions: Options | undefined,
+  globalOptions: IOptions | undefined,
   atk: number,
   defObj: number,
   power: number,
@@ -669,11 +670,11 @@ export const getBarCharge = (isRaid: boolean, energy: number) => {
 };
 
 export const calculateAvgDPS = (
-  globalOptions: Options | undefined,
-  typeEff: TypeEff | undefined,
-  weatherBoost: WeatherBoost | undefined,
-  fmove: Combat | undefined,
-  cmove: Combat | undefined,
+  globalOptions: IOptions | undefined,
+  typeEff: ITypeEff | undefined,
+  weatherBoost: IWeatherBoost | undefined,
+  fmove: ICombat | undefined,
+  cmove: ICombat | undefined,
   Atk: number,
   Def: number,
   HP: number,
@@ -783,7 +784,7 @@ export const calculateAvgDPS = (
   return Math.max(FDPS, DPS);
 };
 
-export const calculateTDO = (globalOptions: Options | undefined, Def: number, HP: number, dps: number, shadow = false) => {
+export const calculateTDO = (globalOptions: IOptions | undefined, Def: number, HP: number, dps: number, shadow = false) => {
   const ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
   let y;
@@ -796,9 +797,9 @@ export const calculateTDO = (globalOptions: Options | undefined, Def: number, HP
 };
 
 export const calculateBattleDPSDefender = (
-  globalOptions: Options | undefined | undefined,
-  typeEff: TypeEff | undefined,
-  weatherBoost: WeatherBoost | undefined,
+  globalOptions: IOptions | undefined | undefined,
+  typeEff: ITypeEff | undefined,
+  weatherBoost: IWeatherBoost | undefined,
   Attacker: BattleCalculate,
   Defender: BattleCalculate
 ) => {
@@ -857,9 +858,9 @@ export const calculateBattleDPSDefender = (
 };
 
 export const calculateBattleDPS = (
-  globalOptions: Options | undefined,
-  typeEff: TypeEff | undefined,
-  weatherBoost: WeatherBoost | undefined,
+  globalOptions: IOptions | undefined,
+  typeEff: ITypeEff | undefined,
+  weatherBoost: IWeatherBoost | undefined,
   Attacker: BattleCalculate,
   Defender: BattleCalculate,
   DPSDef: number
@@ -988,11 +989,11 @@ export const TimeToKill = (HP: number, dpsDef: number) => {
 };
 
 export const queryTopMove = (
-  globalOptions: Options | undefined,
-  pokemonList: PokemonDataModel[] | undefined,
-  typeEff: TypeEff | undefined,
-  weatherBoost: WeatherBoost | undefined,
-  move: Combat | undefined
+  globalOptions: IOptions | undefined,
+  pokemonList: IPokemonData[] | undefined,
+  typeEff: ITypeEff | undefined,
+  weatherBoost: IWeatherBoost | undefined,
+  move: ICombat | undefined
 ) => {
   const dataPri: PokemonTopMove[] = [];
   pokemonList?.forEach((value) => {
@@ -1131,11 +1132,11 @@ const queryMove = (
 };
 
 export const rankMove = (
-  globalOptions: Options | undefined,
-  typeEff: TypeEff | undefined,
-  weatherBoost: WeatherBoost | undefined,
-  combat: Combat[],
-  move: PokemonDataModel | undefined,
+  globalOptions: IOptions | undefined,
+  typeEff: ITypeEff | undefined,
+  weatherBoost: IWeatherBoost | undefined,
+  combat: ICombat[],
+  move: IPokemonData | undefined,
   atk: number,
   def: number,
   sta: number,
@@ -1155,7 +1156,7 @@ export const rankMove = (
   };
 };
 
-const setQueryMove = (data: QueryMovesPokemon, vf: string, value: PokemonDataModel, isEliteQuick: boolean) => {
+const setQueryMove = (data: QueryMovesPokemon, vf: string, value: IPokemonData, isEliteQuick: boolean) => {
   queryMove(data, vf, value.cinematicMoves ?? [], isEliteQuick, false, false, false, false);
   queryMove(data, vf, value.eliteCinematicMove ?? [], isEliteQuick, true, false, false, false);
   queryMove(data, vf, value.shadowMoves ?? [], isEliteQuick, false, true, false, false);
@@ -1164,15 +1165,15 @@ const setQueryMove = (data: QueryMovesPokemon, vf: string, value: PokemonDataMod
 };
 
 export const queryStatesEvoChain = (
-  globalOptions: Options | undefined,
-  pokemonData: PokemonDataModel[],
+  globalOptions: IOptions | undefined,
+  pokemonData: IPokemonData[],
   item: EvolutionModel,
   level: number,
   atkIV: number,
   defIV: number,
   staIV: number
 ) => {
-  let pokemon: PokemonDataModel | undefined;
+  let pokemon: IPokemonData | undefined;
   if (item.form === '') {
     pokemon = pokemonData.find((value) => value.num === item.id && value.slug === item.name.toLowerCase());
   } else {
@@ -1346,15 +1347,15 @@ const queryMoveCounter = (
 };
 
 export const counterPokemon = (
-  globalOptions: Options | undefined,
-  pokemonList: PokemonDataModel[],
-  typeEff: TypeEff | undefined,
-  weatherBoost: WeatherBoost | undefined,
+  globalOptions: IOptions | undefined,
+  pokemonList: IPokemonData[],
+  typeEff: ITypeEff | undefined,
+  weatherBoost: IWeatherBoost | undefined,
   def: number,
   types: string[],
-  combat: Combat[]
+  combat: ICombat[]
 ) => {
-  const dataList: PokemonQueryCounter[] = [];
+  const dataList: IPokemonQueryCounter[] = [];
   pokemonList.forEach((pokemon) => {
     if (pokemon && checkMoveSetAvailable(pokemon) && !pokemon.fullName?.includes('_FEMALE')) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
@@ -1367,7 +1368,7 @@ export const counterPokemon = (
     .map((item) => ({ ...item, ratio: (item.dps * 100) / (dataList.at(0)?.dps ?? 0) })) as CounterModel[];
 };
 
-const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: PokemonDataModel, isEliteQuick: boolean) => {
+const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: IPokemonData, isEliteQuick: boolean) => {
   queryMoveCounter(data, vf, value.cinematicMoves ?? [], isEliteQuick, false, false, false, false);
   queryMoveCounter(data, vf, value.eliteCinematicMove ?? [], isEliteQuick, true, false, false, false);
   queryMoveCounter(data, vf, value.shadowMoves ?? [], isEliteQuick, false, true, false, false);

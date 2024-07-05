@@ -3,9 +3,9 @@ import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
-import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 
-const Defender = (prop: { types: TypeEff | undefined }) => {
+const Defender = (prop: { types: ITypeEff | undefined }) => {
   const theme = useTheme();
   const [types, setTypes] = useState([] as string[]);
 

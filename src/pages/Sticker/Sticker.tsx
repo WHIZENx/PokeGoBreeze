@@ -11,7 +11,7 @@ import { Form, OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { StickerModel } from '../../core/models/sticker.model';
+import { ISticker } from '../../core/models/sticker.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 interface PokemonStickerModel {
@@ -23,8 +23,8 @@ const Sticker = () => {
   useChangeTitle('Stickers List');
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
-  const [pokemonStickerFilter, setPokemonStickerFilter]: [StickerModel[], React.Dispatch<React.SetStateAction<StickerModel[]>>] = useState(
-    [] as StickerModel[]
+  const [pokemonStickerFilter, setPokemonStickerFilter]: [ISticker[], React.Dispatch<React.SetStateAction<ISticker[]>>] = useState(
+    [] as ISticker[]
   );
 
   const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);

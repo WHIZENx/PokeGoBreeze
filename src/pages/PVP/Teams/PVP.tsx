@@ -18,7 +18,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 import { FORM_NORMAL, FORM_SHADOW } from '../../../util/Constants';
@@ -61,7 +61,7 @@ const TeamPVP = () => {
       styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
     }
 
-    let fmove: Combat | undefined, cmovePri: Combat | undefined, cmoveSec: Combat | undefined;
+    let fmove: ICombat | undefined, cmovePri: ICombat | undefined, cmoveSec: ICombat | undefined;
     let fMoveText: string, cMove: string, cMovePriText: string, cMoveSecText: string;
     if (moveSet.includes('+')) {
       [fMoveText, cMove] = moveSet.split('+');

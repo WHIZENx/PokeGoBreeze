@@ -1,6 +1,6 @@
 import { TypeMultiply } from './type.model';
 
-export interface TypeEff {
+export interface ITypeEff {
   NORMAL: TypeMultiply;
   FIGHTING: TypeMultiply;
   FLYING: TypeMultiply;

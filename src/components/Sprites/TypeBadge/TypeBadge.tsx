@@ -6,12 +6,12 @@ import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
-import { Combat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { SelectMoveModel } from '../../Input/models/select-move.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
 
 const TypeBadge = (props: {
-  move: SelectMoveModel | Combat | null | undefined;
+  move: SelectMoveModel | ICombat | null | undefined;
   find?: boolean;
   grow?: boolean;
   style?: React.CSSProperties | undefined;
@@ -24,7 +24,7 @@ const TypeBadge = (props: {
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [move, setMove]: [Combat | undefined, React.Dispatch<React.SetStateAction<Combat | undefined>>] = useState();
+  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
   useEffect(() => {
     if (props.move?.name && combat.length > 0) {
       setMove(combat.find((item) => item.name === props.move?.name));

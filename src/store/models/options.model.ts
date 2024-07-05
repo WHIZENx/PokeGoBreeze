@@ -1,11 +1,11 @@
 import { SelectMoveModel } from '../../components/Input/models/select-move.model';
-import { PokemonDataModel } from '../../core/models/pokemon.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
 import { MAX_IV } from '../../util/Constants';
 
 export interface OptionDPSModel {
   filters: OptionFiltersDPS;
   options: OptionOtherDPS;
-  dataTargetPokemon?: PokemonDataModel;
+  dataTargetPokemon?: IPokemonData;
   fmoveTargetPokemon?: SelectMoveModel;
   cmoveTargetPokemon?: SelectMoveModel;
   selectTypes: string[];
@@ -18,7 +18,7 @@ export interface OptionDPSModel {
   };
 }
 
-interface OptionFiltersDPS {
+interface IOptionFiltersDPS {
   match: boolean;
   showEliteMove: boolean;
   showShadow: boolean;
@@ -46,7 +46,7 @@ interface OptionFiltersDPS {
   POKEMON_LEVEL: number;
 }
 
-export class OptionFiltersDPSModel {
+export class OptionFiltersDPS implements IOptionFiltersDPS {
   match: boolean;
   showEliteMove: boolean;
   showShadow: boolean;
