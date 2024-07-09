@@ -1,10 +1,10 @@
 import { CounterModel } from '../components/Table/Counter/models/counter.model';
 import { ICombat } from '../core/models/combat.model';
 import { ICPM } from '../core/models/cpm.model';
-import { EvolutionModel } from '../core/models/evolution.model';
+import { IEvolution } from '../core/models/evolution.model';
 import { IOptions } from '../core/models/options.model';
 import { IPokemonData } from '../core/models/pokemon.model';
-import { IStatsPokemon, StatsModel, StatsPokemon } from '../core/models/stats.model';
+import { IStatsPokemon, StatsBase, StatsRank, StatsPokemon } from '../core/models/stats.model';
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
@@ -40,10 +40,7 @@ import {
 import { capitalize, splitAndCapitalize, checkMoveSetAvailable } from './Utils';
 import {
   BattleCalculate,
-  BattleLeague,
   BattleLeagueCalculate,
-  IBetweenLevelCalculate,
-  IBattleLeagueCalculate,
   PredictCPCalculate,
   IPredictCPModel,
   PredictStatsCalculate,
@@ -53,10 +50,21 @@ import {
   QueryStatesEvoChain,
   StatsCalculate,
   StatsLeagueCalculate,
-  StatsProdCalculate,
+  IBattleBaseStats,
+  BattleBaseStats,
+  BetweenLevelCalculate,
+  PredictCPModel,
+  PredictStatsModel,
 } from './models/calculate.model';
-import { IPokemonQueryCounter, PokemonTopMove } from './models/pokemon-top-move.model';
-import { ArrayStats } from './models/util.model';
+import {
+  IPokemonQueryCounter,
+  PokemonQueryCounter,
+  PokemonQueryMove,
+  PokemonQueryRankMove,
+  IPokemonTopMove,
+  PokemonTopMove,
+} from './models/pokemon-top-move.model';
+import { IArrayStats } from './models/util.model';
 
 const weatherMultiple = (globalOptions: IOptions | undefined, weatherBoost: any, weather: string, type: string) => {
   return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')]?.find((item: string) => item === type?.toUpperCase().replaceAll(' ', '_'))
@@ -140,13 +148,13 @@ export const calBaseSTA = (stats: any, nerf: boolean) => {
   }
 };
 
-export const sortStatsPokemon = (stats: ArrayStats[]) => {
+export const sortStatsPokemon = (stats: IArrayStats[]) => {
   const attackRanking = [
     ...new Set(
       stats
-        .sort((a, b) => a.baseStatsPokeGo.attack - b.baseStatsPokeGo.attack)
+        .sort((a, b) => (a.baseStatsPokeGo?.attack ?? 0) - (b.baseStatsPokeGo?.attack ?? 0))
         .map((item) => {
-          return item.baseStatsPokeGo.attack;
+          return item.baseStatsPokeGo?.attack ?? 0;
         })
     ),
   ];
@@ -157,17 +165,17 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
     return {
       id: item.id,
       form: item.form,
-      attack: item.baseStatsPokeGo.attack,
-      rank: attackRanking.length - attackRanking.indexOf(item.baseStatsPokeGo.attack),
+      attack: item.baseStatsPokeGo?.attack ?? 0,
+      rank: attackRanking.length - attackRanking.indexOf(item.baseStatsPokeGo?.attack ?? 0),
     };
   });
 
   const defenseRanking = [
     ...new Set(
       stats
-        .sort((a, b) => a.baseStatsPokeGo.defense - b.baseStatsPokeGo.defense)
+        .sort((a, b) => (a.baseStatsPokeGo?.defense ?? 0) - (b.baseStatsPokeGo?.defense ?? 0))
         .map((item) => {
-          return item.baseStatsPokeGo.defense;
+          return item.baseStatsPokeGo?.defense ?? 0;
         })
     ),
   ];
@@ -178,17 +186,17 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
     return {
       id: item.id,
       form: item.form,
-      defense: item.baseStatsPokeGo.defense,
-      rank: defenseRanking.length - defenseRanking.indexOf(item.baseStatsPokeGo.defense),
+      defense: item.baseStatsPokeGo?.defense ?? 0,
+      rank: defenseRanking.length - defenseRanking.indexOf(item.baseStatsPokeGo?.defense ?? 0),
     };
   });
 
   const staminaRanking = [
     ...new Set(
       stats
-        .sort((a, b) => a.baseStatsPokeGo.stamina - b.baseStatsPokeGo.stamina)
+        .sort((a, b) => (a.baseStatsPokeGo?.stamina ?? 0) - (b.baseStatsPokeGo?.stamina ?? 0))
         .map((item) => {
-          return item.baseStatsPokeGo.stamina;
+          return item.baseStatsPokeGo?.stamina ?? 0;
         })
     ),
   ];
@@ -199,8 +207,8 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
     return {
       id: item.id,
       form: item.form,
-      stamina: item.baseStatsPokeGo.stamina,
-      rank: staminaRanking.length - staminaRanking.indexOf(item.baseStatsPokeGo.stamina),
+      stamina: item.baseStatsPokeGo?.stamina ?? 0,
+      rank: staminaRanking.length - staminaRanking.indexOf(item.baseStatsPokeGo?.stamina ?? 0),
     };
   });
 
@@ -225,7 +233,7 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
     };
   });
 
-  return {
+  return new StatsRank({
     attack: {
       ranking: attackStats,
       min_rank: 1,
@@ -254,7 +262,7 @@ export const sortStatsPokemon = (stats: ArrayStats[]) => {
       min_stats: minPROD,
       max_stats: maxPROD,
     },
-  } as StatsModel;
+  });
 };
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) => {
@@ -313,14 +321,16 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
       for (let j = MIN_IV; j <= MAX_IV; j++) {
         for (let k = MIN_IV; k <= MAX_IV; k++) {
           if (calculateCP(atk + i, def + j, sta + k, l) === cp) {
-            predictArr.push({
-              atk: i,
-              def: j,
-              sta: k,
-              level: l,
-              percent: parseFloat((((i + j + k) * 100) / 45).toFixed(2)),
-              hp: Math.max(1, calculateStatsBattle(sta, k, l, true)),
-            });
+            predictArr.push(
+              new PredictStatsModel({
+                atk: i,
+                def: j,
+                sta: k,
+                level: l,
+                percent: parseFloat((((i + j + k) * 100) / 45).toFixed(2)),
+                hp: Math.max(1, calculateStatsBattle(sta, k, l, true)),
+              })
+            );
           }
         }
       }
@@ -343,11 +353,13 @@ export const predictCPList = (
 
   const predictArr: IPredictCPModel[] = [];
   for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
-    predictArr.push({
-      level: i,
-      CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i),
-      hp: Math.max(1, calculateStatsBattle(sta, IVsta, i, true)),
-    });
+    predictArr.push(
+      new PredictCPModel({
+        level: i,
+        CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i),
+        hp: Math.max(1, calculateStatsBattle(sta, IVsta, i, true)),
+      })
+    );
   }
   return new PredictCPCalculate(IVatk, IVdef, IVsta, predictArr);
 };
@@ -395,13 +407,13 @@ export const calculateBetweenLevel = (
   const powerUpCount = (toLV - fromLV) * 2;
 
   if (fromLV > toLV) {
-    return {
+    return new BetweenLevelCalculate({
       cp: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
       result_between_stadust: 0,
       result_between_candy: 0,
       result_between_xl_candy: 0,
-      power_up_count: 0,
-    } as IBetweenLevelCalculate;
+      powerUpCount: 0,
+    });
   } else {
     let betweenStadust = 0;
     let betweenCandy = 0;
@@ -435,7 +447,7 @@ export const calculateBetweenLevel = (
       }
     });
 
-    const dataList: IBetweenLevelCalculate = {
+    const dataList = new BetweenLevelCalculate({
       cp: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
       result_between_stadust: betweenStadust,
       result_between_stadust_diff: betweenStadustDiff,
@@ -445,7 +457,7 @@ export const calculateBetweenLevel = (
       result_between_xl_candy_diff: betweenXlCandyDiff,
       powerUpCount,
       type,
-    };
+    });
 
     if (type.toUpperCase() === FORM_SHADOW) {
       dataList.atk_stat = atkStat;
@@ -454,7 +466,7 @@ export const calculateBetweenLevel = (
       dataList.def_stat_diff = defStatDiff;
     }
 
-    return dataList as IBetweenLevelCalculate;
+    return dataList;
   }
 };
 
@@ -476,7 +488,7 @@ export const calculateBattleLeague = (
     level -= 1;
   }
   if (maxCp && currCP > maxCp) {
-    return { elidge: false } as IBattleLeagueCalculate;
+    return new BattleLeagueCalculate(false);
   } else {
     const dataBattle = new BattleLeagueCalculate(true, maxCp, IVatk, IVdef, IVsta, 0, 0, true);
 
@@ -535,29 +547,30 @@ export const findCPforLeague = (
     CP = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i);
     l = i;
   }
-  return {
+  return new StatsLeagueCalculate({
     CP,
     level: l,
-  } as StatsLeagueCalculate;
+  });
 };
 
-export const sortStatsProd = (data: StatsProdCalculate[]) => {
-  data = data.sort((a, b) => a.statsProds - b.statsProds);
+export const sortStatsProd = (data: IBattleBaseStats[]) => {
+  data = data.sort((a, b) => (a.statsProds ?? 0) - (b.statsProds ?? 0));
   return data.map(
     (item, index) =>
-      ({
+      new BattleBaseStats({
         ...item,
-        ratio: (item.statsProds * 100) / data[data.length - 1].statsProds,
+        ratio: ((item.statsProds ?? 0) * 100) / (data[data.length - 1]?.statsProds ?? 1),
         rank: data.length - index,
-      } as StatsProdCalculate)
+      })
   );
 };
 
 export const calStatsProd = (atk: number, def: number, sta: number, minCP: number | null, maxCP: number | null, pure = false) => {
-  const dataList: StatsProdCalculate[] = [];
+  const dataList: IBattleBaseStats[] = [];
   if (atk === 0 || def === 0 || sta === 0) {
     return dataList;
   }
+  let seqId = 0;
   for (let l = MIN_LEVEL; l <= MAX_LEVEL; l += 0.5) {
     for (let i = MIN_IV; i <= MAX_IV; ++i) {
       for (let j = MIN_IV; j <= MAX_IV; ++j) {
@@ -567,13 +580,21 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
             const statsATK = calculateStatsBattle(atk, i, l);
             const statsDEF = calculateStatsBattle(def, j, l);
             const statsSTA = calculateStatsBattle(sta, k, l);
-            dataList.push({
-              IV: { atk: i, def: j, sta: k },
-              CP: cp,
-              level: l,
-              stats: { statsATK, statsDEF, statsSTA },
-              statsProds: statsATK * statsDEF * statsSTA,
-            });
+            dataList.push(
+              new BattleBaseStats({
+                IV: { atk: i, def: j, sta: k },
+                CP: cp,
+                level: l,
+                stats: { statsATK, statsDEF, statsSTA },
+                statsProds: statsATK * statsDEF * statsSTA,
+                form: '',
+                id: seqId,
+                league: '',
+                maxCP: 0,
+                name: '',
+              })
+            );
+            seqId++;
           }
         }
       }
@@ -601,17 +622,13 @@ export const calculateStatsByTag = (
       return pokemon.baseStats;
     }
     const from = tag?.toLowerCase();
-    const checkNerf = from?.toUpperCase().includes(FORM_MEGA) ? false : true;
+    const checkNerf = !from?.toUpperCase().includes(FORM_MEGA);
 
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
     sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
   }
-  return {
-    atk,
-    def,
-    sta,
-  };
+  return new StatsBase(atk, def, sta);
 };
 
 export const calculateDamagePVE = (
@@ -632,11 +649,11 @@ export const calculateDamagePVE = (
   notPure?: boolean,
   stab?: boolean
 ) => {
-  const StabMultiply = STAB_MULTIPLY(globalOptions);
+  const stabMultiply = STAB_MULTIPLY(globalOptions);
   let modifier;
   if (eff) {
-    const isStab = eff.stab ? StabMultiply : 1;
-    const isWb = eff.wb ? StabMultiply : 1;
+    const isStab = eff.stab ? stabMultiply : 1;
+    const isWb = eff.wb ? stabMultiply : 1;
     const isDodge = eff.dodge ? DEFAULT_DODGE_MULTIPLY : 1;
     const isMega = eff.mega ? (eff.stab ? STAB_MULTIPLY(globalOptions) : DEFAULT_MEGA_MULTIPLY) : 1;
     const isTrainer = eff.trainer ? DEFAULT_TRAINER_MULTIPLY : 1;
@@ -651,7 +668,7 @@ export const calculateDamagePVE = (
     }
     modifier = isStab * isWb * isFriend * isDodge * isCharge * isMega * isTrainer * eff.effective;
   } else {
-    modifier = stab ? StabMultiply : 1;
+    modifier = stab ? stabMultiply : 1;
   }
   if (notPure) {
     return 0.5 * power * (atk / defObj) * modifier + 1;
@@ -675,17 +692,17 @@ export const calculateAvgDPS = (
   weatherBoost: IWeatherBoost | undefined,
   fmove: ICombat | undefined,
   cmove: ICombat | undefined,
-  Atk: number,
-  Def: number,
-  HP: number,
+  atk: number,
+  def: number,
+  hp: number,
   typePoke: string | string[],
   options: OptionOtherDPS | null = null,
   shadow = false
 ) => {
-  const StabMultiply = STAB_MULTIPLY(globalOptions),
-    ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
-    MultiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions);
+  const stabMultiply = STAB_MULTIPLY(globalOptions),
+    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
+    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
+    multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions);
 
   const FPow = fmove?.pve_power ?? 0;
   const CPow = cmove?.pve_power ?? 0;
@@ -697,8 +714,8 @@ export const calculateAvgDPS = (
   const CTYPE = capitalize(cmove?.type);
   const CDWS = (cmove?.damageWindowStartMs ?? 0) / 1000;
 
-  const FMulti = (typePoke.includes(FTYPE) ? StabMultiply : 1) * (fmove?.accuracyChance ?? 0);
-  const CMulti = (typePoke.includes(CTYPE) ? StabMultiply : 1) * (cmove?.accuracyChance ?? 0);
+  const FMulti = (typePoke.includes(FTYPE) ? stabMultiply : 1) * (fmove?.accuracyChance ?? 0);
+  const CMulti = (typePoke.includes(CTYPE) ? stabMultiply : 1) * (cmove?.accuracyChance ?? 0);
 
   let y, FDmg, CDmg, FDmgBase, CDmgBase;
   if (options) {
@@ -706,57 +723,57 @@ export const calculateAvgDPS = (
       DEFAULT_DAMAGE_MULTIPLY *
       FPow *
       FMulti *
-      (shadow ? ShadowAtkBonus : 1) *
+      (shadow ? shadowAtkBonus : 1) *
       (typeof options.WEATHER_BOOSTS === 'string'
         ? weatherMultiple(globalOptions, weatherBoost, options.WEATHER_BOOSTS, FTYPE)
         : options.WEATHER_BOOSTS
-        ? StabMultiply
+        ? stabMultiply
         : 1) *
-      (options.TRAINER_FRIEND ? MultiplyLevelFriendship : 1);
+      (options.TRAINER_FRIEND ? multiplyLevelFriendship : 1);
     CDmgBase =
       DEFAULT_DAMAGE_MULTIPLY *
       CPow *
       CMulti *
-      (shadow ? ShadowAtkBonus : 1) *
+      (shadow ? shadowAtkBonus : 1) *
       (typeof options.WEATHER_BOOSTS === 'string'
         ? weatherMultiple(globalOptions, weatherBoost, options.WEATHER_BOOSTS, CTYPE)
         : options.WEATHER_BOOSTS
-        ? StabMultiply
+        ? stabMultiply
         : 1) *
-      (options.TRAINER_FRIEND ? MultiplyLevelFriendship : 1);
+      (options.TRAINER_FRIEND ? multiplyLevelFriendship : 1);
 
     FDmg =
-      Math.floor((FDmgBase * Atk * (options.objTypes ? getTypeEffective(typeEff, FTYPE, options.objTypes) : 1)) / options.POKEMON_DEF_OBJ) +
+      Math.floor((FDmgBase * atk * (options.objTypes ? getTypeEffective(typeEff, FTYPE, options.objTypes) : 1)) / options.POKEMON_DEF_OBJ) +
       DEFAULT_DAMAGE_CONST;
     CDmg =
-      Math.floor((CDmgBase * Atk * (options.objTypes ? getTypeEffective(typeEff, CTYPE, options.objTypes) : 1)) / options.POKEMON_DEF_OBJ) +
+      Math.floor((CDmgBase * atk * (options.objTypes ? getTypeEffective(typeEff, CTYPE, options.objTypes) : 1)) / options.POKEMON_DEF_OBJ) +
       DEFAULT_DAMAGE_CONST;
 
     y =
       900 /
-      ((Def /
+      ((def /
         (options.objTypes ? getTypeEffective(typeEff, FTYPE, options.objTypes) * getTypeEffective(typeEff, CTYPE, options.objTypes) : 1)) *
-        (shadow ? ShadowDefBonus : 1));
+        (shadow ? shadowDefBonus : 1));
   } else {
     FDmgBase =
       DEFAULT_DAMAGE_MULTIPLY *
       FPow *
       FMulti *
-      (DEFAULT_POKEMON_SHADOW ? ShadowAtkBonus : 1) *
-      (DEFAULT_WEATHER_BOOSTS ? StabMultiply : 1) *
-      (DEFAULT_TRAINER_FRIEND ? MultiplyLevelFriendship : 1);
+      (DEFAULT_POKEMON_SHADOW ? shadowAtkBonus : 1) *
+      (DEFAULT_WEATHER_BOOSTS ? stabMultiply : 1) *
+      (DEFAULT_TRAINER_FRIEND ? multiplyLevelFriendship : 1);
     CDmgBase =
       DEFAULT_DAMAGE_MULTIPLY *
       CPow *
       CMulti *
-      (DEFAULT_POKEMON_SHADOW ? ShadowAtkBonus : 1) *
-      (DEFAULT_WEATHER_BOOSTS ? StabMultiply : 1) *
-      (DEFAULT_TRAINER_FRIEND ? MultiplyLevelFriendship : 1);
+      (DEFAULT_POKEMON_SHADOW ? shadowAtkBonus : 1) *
+      (DEFAULT_WEATHER_BOOSTS ? stabMultiply : 1) *
+      (DEFAULT_TRAINER_FRIEND ? multiplyLevelFriendship : 1);
 
-    FDmg = Math.floor((FDmgBase * Atk) / DEFAULT_POKEMON_DEF_OBJ) + DEFAULT_DAMAGE_CONST;
-    CDmg = Math.floor((CDmgBase * Atk) / DEFAULT_POKEMON_DEF_OBJ) + DEFAULT_DAMAGE_CONST;
+    FDmg = Math.floor((FDmgBase * atk) / DEFAULT_POKEMON_DEF_OBJ) + DEFAULT_DAMAGE_CONST;
+    CDmg = Math.floor((CDmgBase * atk) / DEFAULT_POKEMON_DEF_OBJ) + DEFAULT_DAMAGE_CONST;
 
-    y = 900 / (Def * (DEFAULT_POKEMON_SHADOW ? ShadowDefBonus : 1));
+    y = 900 / (def * (DEFAULT_POKEMON_SHADOW ? shadowDefBonus : 1));
   }
 
   const FDPS = FDmg / (FDur + (options?.delay ? options.delay.ftime : 0));
@@ -779,44 +796,38 @@ export const calculateAvgDPS = (
   if (FDPS > CDPS) {
     DPS = DPS0;
   } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / HP) * y);
+    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / hp) * y);
   }
   return Math.max(FDPS, DPS);
 };
 
-export const calculateTDO = (globalOptions: IOptions | undefined, Def: number, HP: number, dps: number, shadow = false) => {
-  const ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
-
-  let y;
-  if (shadow) {
-    y = 900 / (Def * (shadow ? ShadowDefBonus : 1));
-  } else {
-    y = 900 / (Def * (DEFAULT_POKEMON_SHADOW ? ShadowDefBonus : 1));
-  }
-  return (HP / y) * dps;
+export const calculateTDO = (globalOptions: IOptions | undefined, def: number, hp: number, dps: number, shadow = false) => {
+  const shadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
+  const y = 900 / (def * (shadow ?? DEFAULT_POKEMON_SHADOW ? shadowDefBonus : 1));
+  return (hp / y) * dps;
 };
 
 export const calculateBattleDPSDefender = (
   globalOptions: IOptions | undefined | undefined,
   typeEff: ITypeEff | undefined,
   weatherBoost: IWeatherBoost | undefined,
-  Attacker: BattleCalculate,
-  Defender: BattleCalculate
+  attacker: BattleCalculate,
+  defender: BattleCalculate
 ) => {
-  const StabMultiply = STAB_MULTIPLY(globalOptions),
-    ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
+  const stabMultiply = STAB_MULTIPLY(globalOptions),
+    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
+    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
-  const FPowDef = Defender.fmove?.pve_power;
-  const CPowDef = Defender.cmove?.pve_power;
-  const CEDef = Math.abs(Defender.cmove?.pve_energy ?? 0);
-  const FDurDef = (Defender.fmove?.durationMs ?? 0) / 1000;
-  const CDurDef = (Defender.cmove?.durationMs ?? 0) / 1000;
-  const FTYPEDef = capitalize(Defender.fmove?.type);
-  const CTYPEDef = capitalize(Defender.cmove?.type);
+  const FPowDef = defender.fmove?.pve_power;
+  const CPowDef = defender.cmove?.pve_power;
+  const CEDef = Math.abs(defender.cmove?.pve_energy ?? 0);
+  const FDurDef = (defender.fmove?.durationMs ?? 0) / 1000;
+  const CDurDef = (defender.cmove?.durationMs ?? 0) / 1000;
+  const FTYPEDef = capitalize(defender.fmove?.type);
+  const CTYPEDef = capitalize(defender.cmove?.type);
 
-  const FMultiDef = (Defender.types.includes(FTYPEDef) ? StabMultiply : 1) * (Defender.fmove?.accuracyChance ?? 0);
-  const CMultiDef = (Defender.types.includes(CTYPEDef) ? StabMultiply : 1) * (Defender.cmove?.accuracyChance ?? 0);
+  const FMultiDef = (defender.types.includes(FTYPEDef) ? stabMultiply : 1) * (defender.fmove?.accuracyChance ?? 0);
+  const CMultiDef = (defender.types.includes(CTYPEDef) ? stabMultiply : 1) * (defender.cmove?.accuracyChance ?? 0);
 
   const lambdaMod = (CEDef / 100) * 3;
   const defDuration = lambdaMod * (FDurDef + DEFAULT_ENEMY_ATK_DELAY) + (CDurDef + DEFAULT_ENEMY_ATK_DELAY);
@@ -825,32 +836,32 @@ export const calculateBattleDPSDefender = (
     DEFAULT_DAMAGE_MULTIPLY *
     (FPowDef ?? 0) *
     FMultiDef *
-    (Defender.shadow ? ShadowAtkBonus : 1) *
-    (Defender.WEATHER_BOOSTS !== ''
-      ? weatherMultiple(globalOptions, weatherBoost, Defender.WEATHER_BOOSTS ?? '', FTYPEDef)
-      : Defender.WEATHER_BOOSTS
-      ? StabMultiply
+    (defender.shadow ? shadowAtkBonus : 1) *
+    (defender.WEATHER_BOOSTS !== ''
+      ? weatherMultiple(globalOptions, weatherBoost, defender.WEATHER_BOOSTS ?? '', FTYPEDef)
+      : defender.WEATHER_BOOSTS
+      ? stabMultiply
       : 1);
   const CDmgBaseDef =
     DEFAULT_DAMAGE_MULTIPLY *
     (CPowDef ?? 0) *
     CMultiDef *
-    (Defender.shadow ? ShadowAtkBonus : 1) *
-    (Defender.WEATHER_BOOSTS !== ''
-      ? weatherMultiple(globalOptions, weatherBoost, Defender.WEATHER_BOOSTS ?? '', CTYPEDef)
-      : Boolean(Defender.WEATHER_BOOSTS)
-      ? StabMultiply
+    (defender.shadow ? shadowAtkBonus : 1) *
+    (defender.WEATHER_BOOSTS !== ''
+      ? weatherMultiple(globalOptions, weatherBoost, defender.WEATHER_BOOSTS ?? '', CTYPEDef)
+      : Boolean(defender.WEATHER_BOOSTS)
+      ? stabMultiply
       : 1);
 
   const FDmgDef =
     Math.floor(
-      (FDmgBaseDef * (Defender.atk ?? 0) * getTypeEffective(typeEff, FTYPEDef, Attacker.types)) /
-        (Attacker.def * (Attacker.shadow ? ShadowDefBonus : 1))
+      (FDmgBaseDef * (defender.atk ?? 0) * getTypeEffective(typeEff, FTYPEDef, attacker.types)) /
+        (attacker.def * (attacker.shadow ? shadowDefBonus : 1))
     ) + DEFAULT_DAMAGE_CONST;
   const CDmgDef =
     Math.floor(
-      (CDmgBaseDef * (Defender.atk ?? 0) * getTypeEffective(typeEff, CTYPEDef, Attacker.types)) /
-        (Attacker.def * (Attacker.shadow ? ShadowDefBonus : 1))
+      (CDmgBaseDef * (defender.atk ?? 0) * getTypeEffective(typeEff, CTYPEDef, attacker.types)) /
+        (attacker.def * (attacker.shadow ? shadowDefBonus : 1))
     ) + DEFAULT_DAMAGE_CONST;
 
   const DefDmg = lambdaMod * FDmgDef + CDmgDef;
@@ -861,59 +872,59 @@ export const calculateBattleDPS = (
   globalOptions: IOptions | undefined,
   typeEff: ITypeEff | undefined,
   weatherBoost: IWeatherBoost | undefined,
-  Attacker: BattleCalculate,
-  Defender: BattleCalculate,
+  attacker: BattleCalculate,
+  defender: BattleCalculate,
   DPSDef: number
 ) => {
-  const StabMultiply = STAB_MULTIPLY(globalOptions),
-    ShadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    ShadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
+  const stabMultiply = STAB_MULTIPLY(globalOptions),
+    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
+    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
-  const FPow = Attacker.fmove?.pve_power;
-  const CPow = Attacker.cmove?.pve_power;
-  const FE = Math.abs(Attacker.fmove?.pve_energy ?? 0);
-  const CE = Math.abs(Attacker.cmove?.pve_energy ?? 0);
-  const FDur = (Attacker.fmove?.durationMs ?? 0) / 1000;
-  const CDur = (Attacker.cmove?.durationMs ?? 0) / 1000;
-  const FTYPE = capitalize(Attacker.fmove?.type?.toLowerCase());
-  const CTYPE = capitalize(Attacker.cmove?.type?.toLowerCase());
-  const CDWS = (Attacker.cmove?.damageWindowStartMs ?? 0) / 1000;
+  const FPow = attacker.fmove?.pve_power;
+  const CPow = attacker.cmove?.pve_power;
+  const FE = Math.abs(attacker.fmove?.pve_energy ?? 0);
+  const CE = Math.abs(attacker.cmove?.pve_energy ?? 0);
+  const FDur = (attacker.fmove?.durationMs ?? 0) / 1000;
+  const CDur = (attacker.cmove?.durationMs ?? 0) / 1000;
+  const FTYPE = capitalize(attacker.fmove?.type?.toLowerCase());
+  const CTYPE = capitalize(attacker.cmove?.type?.toLowerCase());
+  const CDWS = (attacker.cmove?.damageWindowStartMs ?? 0) / 1000;
 
-  const FMulti = (Attacker.types.includes(FTYPE) ? StabMultiply : 1) * (Attacker.fmove?.accuracyChance ?? 0);
-  const CMulti = (Attacker.types.includes(CTYPE) ? StabMultiply : 1) * (Attacker.cmove?.accuracyChance ?? 0);
+  const FMulti = (attacker.types.includes(FTYPE) ? stabMultiply : 1) * (attacker.fmove?.accuracyChance ?? 0);
+  const CMulti = (attacker.types.includes(CTYPE) ? stabMultiply : 1) * (attacker.cmove?.accuracyChance ?? 0);
 
   const FDmgBase =
     DEFAULT_DAMAGE_MULTIPLY *
     (FPow ?? 0) *
     FMulti *
-    (Attacker.shadow ? ShadowAtkBonus : 1) *
-    (typeof Attacker.WEATHER_BOOSTS === 'string'
-      ? weatherMultiple(globalOptions, weatherBoost, Attacker.WEATHER_BOOSTS, FTYPE)
-      : Attacker.WEATHER_BOOSTS
-      ? StabMultiply
+    (attacker.shadow ? shadowAtkBonus : 1) *
+    (typeof attacker.WEATHER_BOOSTS === 'string'
+      ? weatherMultiple(globalOptions, weatherBoost, attacker.WEATHER_BOOSTS, FTYPE)
+      : attacker.WEATHER_BOOSTS
+      ? stabMultiply
       : 1) *
-    (Attacker.POKEMON_FRIEND ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, Attacker.POKEMON_FRIEND_LEVEL) : 1);
+    (attacker.POKEMON_FRIEND ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.POKEMON_FRIEND_LEVEL) : 1);
   const CDmgBase =
     DEFAULT_DAMAGE_MULTIPLY *
     (CPow ?? 0) *
     CMulti *
-    (Attacker.shadow ? ShadowAtkBonus : 1) *
-    (typeof Attacker.WEATHER_BOOSTS === 'string'
-      ? weatherMultiple(globalOptions, weatherBoost, Attacker.WEATHER_BOOSTS, CTYPE)
-      : Attacker.WEATHER_BOOSTS
-      ? StabMultiply
+    (attacker.shadow ? shadowAtkBonus : 1) *
+    (typeof attacker.WEATHER_BOOSTS === 'string'
+      ? weatherMultiple(globalOptions, weatherBoost, attacker.WEATHER_BOOSTS, CTYPE)
+      : attacker.WEATHER_BOOSTS
+      ? stabMultiply
       : 1) *
-    (Attacker.POKEMON_FRIEND ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, Attacker.POKEMON_FRIEND_LEVEL) : 1);
+    (attacker.POKEMON_FRIEND ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.POKEMON_FRIEND_LEVEL) : 1);
 
   const FDmg =
     Math.floor(
-      (FDmgBase * (Attacker.atk ?? 0) * getTypeEffective(typeEff, FTYPE, Defender.types)) /
-        (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
+      (FDmgBase * (attacker.atk ?? 0) * getTypeEffective(typeEff, FTYPE, defender.types)) /
+        (defender.def * (defender.shadow ? shadowDefBonus : 1))
     ) + DEFAULT_DAMAGE_CONST;
   const CDmg =
     Math.floor(
-      (CDmgBase * (Attacker.atk ?? 0) * getTypeEffective(typeEff, CTYPE, Defender.types)) /
-        (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
+      (CDmgBase * (attacker.atk ?? 0) * getTypeEffective(typeEff, CTYPE, defender.types)) /
+        (defender.def * (defender.shadow ? shadowDefBonus : 1))
     ) + DEFAULT_DAMAGE_CONST;
 
   const FDPS = FDmg / FDur;
@@ -931,36 +942,36 @@ export const calculateBattleDPS = (
   if (FDPS > CDPS) {
     DPS = DPS0;
   } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / (Attacker.hp ?? 0)) * DPSDef);
+    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / (attacker.hp ?? 0)) * DPSDef);
   }
   DPS = Math.max(FDPS, DPS);
 
   let DPSSec = 0;
-  if (Attacker.isDoubleCharge) {
-    const moveSec = Attacker.cmove2;
+  if (attacker.isDoubleCharge) {
+    const moveSec = attacker.cmove2;
     const CPowSec = moveSec?.pve_power;
     const CESec = Math.abs(moveSec?.pve_energy ?? 0);
     const CTYPESec = capitalize(moveSec?.type);
     const CDurSec = (moveSec?.durationMs ?? 0) / 1000;
     const CDWSSec = (moveSec?.damageWindowStartMs ?? 0) / 1000;
 
-    const CMultiSec = (Attacker.types.includes(CTYPESec) ? StabMultiply : 1) * (moveSec?.accuracyChance ?? 0);
+    const CMultiSec = (attacker.types.includes(CTYPESec) ? stabMultiply : 1) * (moveSec?.accuracyChance ?? 0);
 
     const CDmgBaseSec =
       DEFAULT_DAMAGE_MULTIPLY *
       (CPowSec ?? 0) *
       CMultiSec *
-      (Attacker.shadow ? ShadowAtkBonus : 1) *
-      (typeof Attacker.WEATHER_BOOSTS === 'string'
-        ? weatherMultiple(globalOptions, weatherBoost, Attacker.WEATHER_BOOSTS, CTYPE)
-        : Attacker.WEATHER_BOOSTS
-        ? StabMultiply
+      (attacker.shadow ? shadowAtkBonus : 1) *
+      (typeof attacker.WEATHER_BOOSTS === 'string'
+        ? weatherMultiple(globalOptions, weatherBoost, attacker.WEATHER_BOOSTS, CTYPE)
+        : attacker.WEATHER_BOOSTS
+        ? stabMultiply
         : 1) *
-      (Attacker.POKEMON_FRIEND ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, Attacker.POKEMON_FRIEND_LEVEL) : 1);
+      (attacker.POKEMON_FRIEND ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.POKEMON_FRIEND_LEVEL) : 1);
     const CDmgSec =
       Math.floor(
-        (CDmgBaseSec * (Attacker.atk ?? 0) * getTypeEffective(typeEff, CTYPESec, Defender.types)) /
-          (Defender.def * (Defender.shadow ? ShadowDefBonus : 1))
+        (CDmgBaseSec * (attacker.atk ?? 0) * getTypeEffective(typeEff, CTYPESec, defender.types)) /
+          (defender.def * (defender.shadow ? shadowDefBonus : 1))
       ) + DEFAULT_DAMAGE_CONST;
     const CDPSSec = CDmgSec / CDurSec;
 
@@ -976,7 +987,7 @@ export const calculateBattleDPS = (
     } else {
       DPSSec = Math.max(
         0,
-        DPS0Sec + ((CDPSSec - FDPS) / (CEPSSec + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - xSec / (Attacker.hp ?? 0)) * DPSDef
+        DPS0Sec + ((CDPSSec - FDPS) / (CEPSSec + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - xSec / (attacker.hp ?? 0)) * DPSDef
       );
     }
     DPSSec = Math.max(FDPS, DPSSec);
@@ -984,8 +995,8 @@ export const calculateBattleDPS = (
   return Math.max(FDPS, DPS, DPSSec);
 };
 
-export const TimeToKill = (HP: number, dpsDef: number) => {
-  return HP / dpsDef;
+export const TimeToKill = (hp: number, dpsDef: number) => {
+  return hp / dpsDef;
 };
 
 export const queryTopMove = (
@@ -995,7 +1006,7 @@ export const queryTopMove = (
   weatherBoost: IWeatherBoost | undefined,
   move: ICombat | undefined
 ) => {
-  const dataPri: PokemonTopMove[] = [];
+  const dataPri: IPokemonTopMove[] = [];
   pokemonList?.forEach((value) => {
     if (move?.track === 281) {
       move.name = 'HIDDEN_POWER';
@@ -1046,18 +1057,20 @@ export const queryTopMove = (
           calculateStatsBattle(stats?.sta ?? 0, MAX_IV, DEFAULT_POKEMON_LEVEL),
           dps
         );
-        dataPri.push({
-          num: value.num,
-          forme: value.forme,
-          name: splitAndCapitalize(value.name, '-', ' '),
-          baseSpecies: value.baseSpecies,
-          sprite: value.sprite,
-          releasedGO: value.releasedGO,
-          isElite,
-          isSpecial,
-          dps,
-          tdo,
-        });
+        dataPri.push(
+          new PokemonTopMove({
+            num: value.num,
+            forme: value.forme,
+            name: splitAndCapitalize(value.name, '-', ' '),
+            baseSpecies: value.baseSpecies,
+            sprite: value.sprite,
+            releasedGO: value.releasedGO,
+            isElite,
+            isSpecial,
+            dps,
+            tdo,
+          })
+        );
       }
     }
   });
@@ -1127,7 +1140,7 @@ const queryMove = (
       shadow
     );
 
-    data.dataList.push({ fmove: mf, cmove: mc, eDPS: { offensive, defensive } });
+    data.dataList.push(new PokemonQueryMove({ fmove: mf, cmove: mc, eDPS: { offensive, defensive } }));
   });
 };
 
@@ -1143,17 +1156,17 @@ export const rankMove = (
   types: string[]
 ) => {
   if (!move) {
-    return { data: [] };
+    return new PokemonQueryRankMove({ data: [] });
   }
   const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, atk, def, sta, types);
   move.quickMoves?.forEach((vf) => setQueryMove(data, vf, move, false));
   move.eliteQuickMove?.forEach((vf) => setQueryMove(data, vf, move, true));
 
-  return {
+  return new PokemonQueryRankMove({
     data: data.dataList,
     maxOff: Math.max(...data.dataList.map((item) => item.eDPS.offensive)),
     maxDef: Math.max(...data.dataList.map((item) => item.eDPS.defensive)),
-  };
+  });
 };
 
 const setQueryMove = (data: QueryMovesPokemon, vf: string, value: IPokemonData, isEliteQuick: boolean) => {
@@ -1167,7 +1180,7 @@ const setQueryMove = (data: QueryMovesPokemon, vf: string, value: IPokemonData, 
 export const queryStatesEvoChain = (
   globalOptions: IOptions | undefined,
   pokemonData: IPokemonData[],
-  item: EvolutionModel,
+  item: IEvolution,
   level: number,
   atkIV: number,
   defIV: number,
@@ -1189,15 +1202,16 @@ export const queryStatesEvoChain = (
   const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, null);
 
   const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, null, null, true);
-  const ultraStatsProd = sortStatsProd(statsProd.filter((item) => item.CP <= 2500));
-  const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => item.CP <= 1500));
-  const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => item.CP <= 500));
+  const ultraStatsProd = sortStatsProd(statsProd.filter((item) => (item.CP ?? 0) <= 2500));
+  const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => (item.CP ?? 0) <= 1500));
+  const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => (item.CP ?? 0) <= 500));
 
-  const battleLeague: BattleLeague | { [x: string]: StatsProdCalculate | undefined } = {
+  const battleLeague: { [x: string]: IBattleBaseStats | undefined } = {
     little: littleStatsProd.find(
       (item) =>
         item.level === dataLittle.level &&
         item.CP === dataLittle.CP &&
+        item.IV &&
         item.IV.atk === atkIV &&
         item.IV.def === defIV &&
         item.IV.sta === staIV
@@ -1206,6 +1220,7 @@ export const queryStatesEvoChain = (
       (item) =>
         item.level === dataGreat.level &&
         item.CP === dataGreat.CP &&
+        item.IV &&
         item.IV.atk === atkIV &&
         item.IV.def === defIV &&
         item.IV.sta === staIV
@@ -1214,6 +1229,7 @@ export const queryStatesEvoChain = (
       (item) =>
         item.level === dataUltra.level &&
         item.CP === dataUltra.CP &&
+        item.IV &&
         item.IV.atk === atkIV &&
         item.IV.def === defIV &&
         item.IV.sta === staIV
@@ -1222,6 +1238,7 @@ export const queryStatesEvoChain = (
       (item) =>
         item.level === dataMaster.level &&
         item.CP === dataMaster.CP &&
+        item.IV &&
         item.IV.atk === atkIV &&
         item.IV.def === defIV &&
         item.IV.sta === staIV
@@ -1240,7 +1257,7 @@ export const queryStatesEvoChain = (
         defIV,
         staIV,
         level,
-        battleLeague.little.level
+        battleLeague.little.level ?? 0
       ),
     };
   }
@@ -1256,7 +1273,7 @@ export const queryStatesEvoChain = (
         defIV,
         staIV,
         level,
-        battleLeague.great.level
+        battleLeague.great.level ?? 0
       ),
     };
   }
@@ -1272,7 +1289,7 @@ export const queryStatesEvoChain = (
         defIV,
         staIV,
         level,
-        battleLeague.ultra.level
+        battleLeague.ultra.level ?? 0
       ),
     };
   }
@@ -1288,11 +1305,11 @@ export const queryStatesEvoChain = (
         defIV,
         staIV,
         level,
-        battleLeague.master.level
+        battleLeague.master.level ?? 0
       ),
     };
   }
-  return { ...item, battleLeague, maxCP: battleLeague.master?.CP, form: pokemon?.forme } as QueryStatesEvoChain;
+  return new QueryStatesEvoChain({ ...item, battleLeague, maxCP: battleLeague.master?.CP ?? 0, form: pokemon?.forme ?? '' });
 };
 
 const queryMoveCounter = (
@@ -1333,15 +1350,17 @@ const queryMoveCounter = (
         shadow
       );
 
-      data.dataList.push({
-        pokemon_id: data.pokemon.num,
-        pokemon_name: data.pokemon.name,
-        pokemon_forme: data.pokemon.forme,
-        releasedGO: data.pokemon.releasedGO,
-        dps: dpsOff,
-        fmove: { ...mf, elite: felite },
-        cmove: { ...mc, elite: celite, shadow, purified, special },
-      });
+      data.dataList.push(
+        new PokemonQueryCounter({
+          pokemon_id: data.pokemon.num,
+          pokemon_name: data.pokemon.name,
+          pokemon_forme: data.pokemon.forme,
+          releasedGO: data.pokemon.releasedGO,
+          dps: dpsOff,
+          fmove: { ...mf, elite: felite },
+          cmove: { ...mc, elite: celite, shadow, purified, special },
+        })
+      );
     }
   });
 };
@@ -1365,7 +1384,7 @@ export const counterPokemon = (
   });
   return dataList
     .sort((a, b) => b.dps - a.dps)
-    .map((item) => ({ ...item, ratio: (item.dps * 100) / (dataList.at(0)?.dps ?? 0) })) as CounterModel[];
+    .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / (dataList.at(0)?.dps ?? 0) }));
 };
 
 const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: IPokemonData, isEliteQuick: boolean) => {

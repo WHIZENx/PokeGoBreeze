@@ -20,7 +20,7 @@ import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
-import FreeSoloInput from '../../../components/Input/FreeSoloInput';
+import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const Calculate = () => {
@@ -154,7 +154,7 @@ const Calculate = () => {
           <div className="form-group d-flex justify-content-center text-center">
             <Box sx={{ width: '50%', minWidth: 350 }}>
               <div className="input-group mb-3">
-                <FreeSoloInput
+                <DynamicInputCP
                   statATK={statATK}
                   statDEF={statDEF}
                   statSTA={statSTA}
@@ -185,7 +185,10 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_, v) => setATKIv(v as number)}
+                onChange={(_, v) => {
+                  setSearchCP('');
+                  setATKIv(v as number);
+                }}
               />
               <div className="d-flex justify-content-between">
                 <b>DEF</b>
@@ -200,7 +203,10 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_, v) => setDEFIv(v as number)}
+                onChange={(_, v) => {
+                  setSearchCP('');
+                  setDEFIv(v as number);
+                }}
               />
               <div className="d-flex justify-content-between">
                 <b>STA</b>
@@ -215,7 +221,10 @@ const Calculate = () => {
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
-                onChange={(_, v) => setSTAIv(v as number)}
+                onChange={(_, v) => {
+                  setSearchCP('');
+                  setSTAIv(v as number);
+                }}
               />
             </Box>
           </div>

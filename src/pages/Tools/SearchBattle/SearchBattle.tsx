@@ -21,10 +21,10 @@ import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN } from '../../../util/Constants';
-import { EvolutionModel } from '../../../core/models/evolution.model';
+import { IEvolution } from '../../../core/models/evolution.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { BattleBaseStats, QueryStatesEvoChain } from '../../../util/models/calculate.model';
-import FreeSoloInput from '../../../components/Input/FreeSoloInput';
+import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain } from '../../../util/models/calculate.model';
+import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
@@ -50,11 +50,11 @@ const FindBattle = () => {
   const [DEFIv, setDEFIv] = useState(0);
   const [STAIv, setSTAIv] = useState(0);
 
-  const [evoChain, setEvoChain]: [QueryStatesEvoChain[][], React.Dispatch<React.SetStateAction<QueryStatesEvoChain[][]>>] = useState(
-    [] as QueryStatesEvoChain[][]
+  const [evoChain, setEvoChain]: [IQueryStatesEvoChain[][], React.Dispatch<React.SetStateAction<IQueryStatesEvoChain[][]>>] = useState(
+    [] as IQueryStatesEvoChain[][]
   );
-  const [bestInLeague, setBestInLeague]: [BattleBaseStats[], React.Dispatch<React.SetStateAction<BattleBaseStats[]>>] = useState(
-    [] as BattleBaseStats[]
+  const [bestInLeague, setBestInLeague]: [IBattleBaseStats[], React.Dispatch<React.SetStateAction<IBattleBaseStats[]>>] = useState(
+    [] as IBattleBaseStats[]
   );
 
   const { enqueueSnackbar } = useSnackbar();
@@ -69,7 +69,7 @@ const FindBattle = () => {
   };
 
   const currEvoChain = useCallback(
-    (currId: number[] | undefined, form: string, arr: EvolutionModel[]) => {
+    (currId: number[] | undefined, form: string, arr: IEvolution[]) => {
       form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
       if (currId?.length === 0) {
         return arr;
@@ -101,7 +101,7 @@ const FindBattle = () => {
   );
 
   const prevEvoChain = useCallback(
-    (obj: IPokemonData, defaultForm: string, arr: EvolutionModel[], result: EvolutionModel[][]) => {
+    (obj: IPokemonData, defaultForm: string, arr: IEvolution[], result: IEvolution[][]) => {
       if (!arr.map((i) => i.id).includes(obj.num)) {
         arr.push({
           ...obj,
@@ -139,7 +139,7 @@ const FindBattle = () => {
       if (curr?.length === 0) {
         curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme === FORM_NORMAL);
       }
-      const result: EvolutionModel[][] = [];
+      const result: IEvolution[][] = [];
       curr?.forEach((item) => prevEvoChain(item, isForm ?? FORM_NORMAL, [], result));
       return result;
     },
@@ -148,9 +148,9 @@ const FindBattle = () => {
 
   const searchStatsPoke = useCallback(
     (level: number) => {
-      const arr: QueryStatesEvoChain[][] = [];
+      const arr: IQueryStatesEvoChain[][] = [];
       getEvoChain(id)?.forEach((item) => {
-        const tempArr: QueryStatesEvoChain[] = [];
+        const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
           const data = queryStatesEvoChain(dataStore?.options, dataStore?.pokemon ?? [], value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
@@ -161,12 +161,31 @@ const FindBattle = () => {
         arr.push(tempArr.sort((a, b) => a.maxCP - b.maxCP));
       });
       setEvoChain(arr);
-      let currBastStats: BattleBaseStats | undefined;
-      const evoBaseStats: BattleBaseStats[] = [];
+      let currBastStats: IBattleBaseStats | undefined;
+      const evoBaseStats: IBattleBaseStats[] = [];
       arr.forEach((item) => {
         item.forEach((value) => {
           if (value.id !== id) {
-            evoBaseStats.push({
+            evoBaseStats.push(
+              new BattleBaseStats({
+                ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : (a.ratio ?? 0) > (b.ratio ?? 0) ? a : b)),
+                id: value.id,
+                name: value.name,
+                form: value.form,
+                maxCP: value.maxCP,
+                league: Object.keys(value.battleLeague).reduce((a, b) =>
+                  !value.battleLeague[a]
+                    ? b
+                    : !value.battleLeague[b]
+                    ? a
+                    : (value.battleLeague[a]?.ratio ?? 0) > (value.battleLeague[b]?.ratio ?? 0)
+                    ? a
+                    : b
+                ),
+              })
+            );
+          } else {
+            currBastStats = new BattleBaseStats({
               ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : (a.ratio ?? 0) > (b.ratio ?? 0) ? a : b)),
               id: value.id,
               name: value.name,
@@ -182,23 +201,6 @@ const FindBattle = () => {
                   : b
               ),
             });
-          } else {
-            currBastStats = {
-              ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : (a.ratio ?? 0) > (b.ratio ?? 0) ? a : b)),
-              id: value.id,
-              name: value.name,
-              form: value.form,
-              maxCP: value.maxCP,
-              league: Object.keys(value.battleLeague).reduce((a, b) =>
-                !value.battleLeague[a]
-                  ? b
-                  : !value.battleLeague[b]
-                  ? a
-                  : (value.battleLeague[a]?.ratio ?? 0) > (value.battleLeague[b]?.ratio ?? 0)
-                  ? a
-                  : b
-              ),
-            };
           }
         });
       });
@@ -272,7 +274,7 @@ const FindBattle = () => {
     return img?.default;
   };
 
-  const getCandyEvo = (item: EvolutionModel[], evoId: number, candy: number): number => {
+  const getCandyEvo = (item: IEvolution[], evoId: number, candy = 0): number => {
     if (evoId === id) {
       return candy;
     }
@@ -324,7 +326,7 @@ const FindBattle = () => {
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="justify-content-center input-group mb-3">
-              <FreeSoloInput
+              <DynamicInputCP
                 statATK={statATK}
                 statDEF={statDEF}
                 statSTA={statSTA}
@@ -355,7 +357,10 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v) => setATKIv(v as number)}
+              onChange={(_, v) => {
+                setSearchCP('');
+                setATKIv(v as number);
+              }}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -370,7 +375,10 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v) => setDEFIv(v as number)}
+              onChange={(_, v) => {
+                setSearchCP('');
+                setDEFIv(v as number);
+              }}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -385,7 +393,10 @@ const FindBattle = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v) => setSTAIv(v as number)}
+              onChange={(_, v) => {
+                setSearchCP('');
+                setSTAIv(v as number);
+              }}
             />
           </Box>
         </div>
@@ -524,8 +535,8 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center" style={{ marginRight: 5 }}>
-                                            {(item.battleLeague.little.result_between_candy ?? 0) + getCandyEvo(value, item.id, 0)}
-                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
+                                            {(item.battleLeague.little.result_between_candy ?? 0) + getCandyEvo(value, item.id)}
+                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
                                           {item.battleLeague.little.result_between_xl_candy}
@@ -578,8 +589,8 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {(item.battleLeague.great.result_between_candy ?? 0) + getCandyEvo(value, item.id, 0)}
-                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
+                                            {(item.battleLeague.great.result_between_candy ?? 0) + getCandyEvo(value, item.id)}
+                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
                                           {item.battleLeague.great.result_between_xl_candy}
@@ -632,8 +643,8 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {(item.battleLeague.ultra.result_between_candy ?? 0) + getCandyEvo(value, item.id, 0)}
-                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
+                                            {(item.battleLeague.ultra.result_between_candy ?? 0) + getCandyEvo(value, item.id)}
+                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
                                           {item.battleLeague.ultra.result_between_xl_candy}
@@ -686,8 +697,8 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {(item.battleLeague.master.result_between_candy ?? 0) + getCandyEvo(value, item.id, 0)}
-                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id, 0)})</span>
+                                            {(item.battleLeague.master.result_between_candy ?? 0) + getCandyEvo(value, item.id)}
+                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
                                           {item.battleLeague.master.result_between_xl_candy}

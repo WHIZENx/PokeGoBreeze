@@ -1,8 +1,8 @@
 import { IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { StatsAtk, StatsDef, IStatsPokemon, StatsProd, StatsSta } from '../../../core/models/stats.model';
-import { StatsProdCalculate } from '../../../util/models/calculate.model';
+import { StatsAtk, StatsDef, IStatsPokemon, StatsProd, StatsSta, IStatsBase, StatsPokemon } from '../../../core/models/stats.model';
+import { IBattleBaseStats, IStatsProdCalculate } from '../../../util/models/calculate.model';
 
 export interface PokemonBattleData {
   speciesId?: string;
@@ -10,17 +10,11 @@ export interface PokemonBattleData {
   form?: string;
   id?: number;
   shadow: boolean;
-  allStats?: StatsProdCalculate[];
+  allStats?: IBattleBaseStats[];
   hp: number;
-  stats:
-    | {
-        atk: number;
-        def: number;
-        sta?: number;
-      }
-    | undefined;
-  bestStats: StatsProdCalculate | undefined;
-  currentStats: StatsProdCalculate | undefined;
+  stats: IStatsBase | undefined;
+  bestStats: IBattleBaseStats | undefined;
+  currentStats: IBattleBaseStats | undefined;
   pokemon: IPokemonData | null;
   fmove: ICombat | null;
   cmove: ICombat | null;
@@ -78,13 +72,13 @@ export interface PokemonTeamData {
   purified: boolean | undefined;
 }
 
-export interface PokemonBattleRanking {
+export interface IPokemonBattleRanking {
   data: RankingsPVP | undefined;
-  id: number;
-  name: string;
+  id: number | undefined;
+  name: string | undefined;
   speciesId?: string;
   pokemon: IPokemonData | undefined;
-  form: string;
+  form: string | null;
   stats: IStatsPokemon;
   atk: StatsAtk | undefined;
   def: StatsDef | undefined;
@@ -93,7 +87,33 @@ export interface PokemonBattleRanking {
   fmove: ICombat | undefined;
   cmovePri: ICombat | undefined;
   cmoveSec: ICombat | undefined;
-  bestStats?: StatsProdCalculate;
+  bestStats?: IStatsProdCalculate;
   shadow: boolean;
-  purified: boolean;
+  purified: boolean | undefined;
+  score: number;
+}
+
+export class PokemonBattleRanking implements IPokemonBattleRanking {
+  data: RankingsPVP | undefined;
+  id: number | undefined;
+  name: string | undefined;
+  speciesId?: string;
+  pokemon: IPokemonData | undefined;
+  form: string | null = '';
+  stats: IStatsPokemon = new StatsPokemon();
+  atk: StatsAtk | undefined;
+  def: StatsDef | undefined;
+  sta: StatsSta | undefined;
+  prod: StatsProd | undefined;
+  fmove: ICombat | undefined;
+  cmovePri: ICombat | undefined;
+  cmoveSec: ICombat | undefined;
+  bestStats?: IStatsProdCalculate;
+  shadow: boolean = false;
+  purified: boolean | undefined = false;
+  score: number = 0;
+
+  constructor({ ...props }: IPokemonBattleRanking) {
+    Object.assign(this, props);
+  }
 }

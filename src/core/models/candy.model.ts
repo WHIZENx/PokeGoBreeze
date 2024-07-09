@@ -5,9 +5,14 @@ interface Color {
   a: number;
 }
 
+interface FamilyGroup {
+  id: number;
+  name: string;
+}
+
 export interface Candy {
   familyId: number;
-  familyGroup: { id: number; name: string }[];
+  familyGroup: FamilyGroup[];
   primaryColor: Color;
   secondaryColor: Color;
   familyName: string | null;

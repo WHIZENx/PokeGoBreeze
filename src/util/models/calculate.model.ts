@@ -2,7 +2,7 @@ import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IOptions } from '../../core/models/options.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { IStatsPokemon } from '../../core/models/stats.model';
+import { IStatsPokemon, StatsPokemon } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
@@ -22,13 +22,22 @@ export interface BattleCalculate {
   cmove2?: ICombat;
 }
 
-export interface StatsLeagueCalculate {
+interface IStatsLeagueCalculate {
   CP: number;
   level: number;
 }
 
+export class StatsLeagueCalculate implements IStatsLeagueCalculate {
+  CP: number = 0;
+  level: number = 0;
+
+  constructor({ ...props }: IStatsLeagueCalculate) {
+    Object.assign(this, props);
+  }
+}
+
 export interface IStatsCalculate {
-  IV: { atk: number; def: number; sta: number };
+  IV: IStatsPokemon;
   CP: number;
   level: number;
 }
@@ -49,10 +58,41 @@ export interface IBetweenLevelCalculate {
   def_stat_diff?: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
+export class BetweenLevelCalculate implements IBetweenLevelCalculate {
+  cp: number = 0;
+  // tslint:disable-next-line:variable-name
+  result_between_stadust: number = 0;
+  // tslint:disable-next-line:variable-name
+  result_between_stadust_diff?: number;
+  // tslint:disable-next-line:variable-name
+  result_between_candy: number = 0;
+  // tslint:disable-next-line:variable-name
+  result_between_candy_diff?: number;
+  // tslint:disable-next-line:variable-name
+  result_between_xl_candy: number = 0;
+  // tslint:disable-next-line:variable-name
+  result_between_xl_candy_diff?: number;
+  powerUpCount?: number;
+  type?: string;
+  // tslint:disable-next-line:variable-name
+  atk_stat?: number;
+  // tslint:disable-next-line:variable-name
+  def_stat?: number;
+  // tslint:disable-next-line:variable-name
+  atk_stat_diff?: number;
+  // tslint:disable-next-line:variable-name
+  def_stat_diff?: number;
+
+  constructor({ ...props }: IBetweenLevelCalculate) {
+    Object.assign(this, props);
+  }
+}
+
 export interface IBattleLeagueCalculate {
   elidge: boolean;
   maxCP: number | null;
-  IV: { atk: number; def: number; sta: number };
+  IV: IStatsPokemon;
   CP: number;
   level: number;
   limit: boolean;
@@ -69,6 +109,20 @@ export interface IPredictStatsModel {
   hp: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
+export class PredictStatsModel implements IPredictStatsModel {
+  atk: number = 0;
+  def: number = 0;
+  sta: number = 0;
+  level: number = 0;
+  percent: number = 0;
+  hp: number = 0;
+
+  constructor({ ...props }: IPredictStatsModel) {
+    Object.assign(this, props);
+  }
+}
+
 export interface IPredictStatsCalculate {
   CP: number;
   minLevel: number;
@@ -82,30 +136,72 @@ export interface IPredictCPModel {
   hp: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
+export class PredictCPModel implements IPredictCPModel {
+  level: number = 0;
+  CP: number = 0;
+  hp: number = 0;
+
+  constructor({ ...props }: IPredictCPModel) {
+    Object.assign(this, props);
+  }
+}
+
 export interface IPredictCPCalculate {
-  IV: { atk: number; def: number; sta: number };
+  IV: IStatsPokemon;
   result: IPredictCPModel[];
 }
 
-export interface StatsProdCalculate {
-  IV: { atk: number; def: number; sta: number };
+interface IStatsBaseCalculate {
+  statsATK: number;
+  statsDEF: number;
+  statsSTA: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+class StatsBaseCalculate implements IStatsBaseCalculate {
+  statsATK: number;
+  statsDEF: number;
+  statsSTA: number;
+
+  constructor() {
+    this.statsATK = 0;
+    this.statsDEF = 0;
+    this.statsSTA = 0;
+  }
+}
+
+export interface IStatsProdCalculate {
+  IV: IStatsPokemon;
   CP: number;
   level: number;
-  stats: { statsATK: number; statsDEF: number; statsSTA: number };
+  stats: IStatsBaseCalculate;
   statsProds: number;
   ratio?: number;
   rank?: number;
 }
 
-export interface BattleLeague {
-  little: BattleBaseStats | undefined;
-  great: BattleBaseStats | undefined;
-  ultra: BattleBaseStats | undefined;
-  master: BattleBaseStats | undefined;
+// tslint:disable-next-line:max-classes-per-file
+export class StatsProdCalculate implements IStatsProdCalculate {
+  IV: IStatsPokemon;
+  CP: number;
+  level: number;
+  stats: IStatsBaseCalculate;
+  statsProds: number;
+  ratio?: number;
+  rank?: number;
+
+  constructor() {
+    this.IV = new StatsPokemon();
+    this.CP = 0;
+    this.level = 0;
+    this.stats = new StatsBaseCalculate();
+    this.statsProds = 0;
+  }
 }
 
-export interface QueryStatesEvoChain {
-  battleLeague: { [x: string]: BattleBaseStats | undefined };
+export interface IQueryStatesEvoChain {
+  battleLeague: { [x: string]: IBattleBaseStats | undefined };
   maxCP: number;
   form: string;
   id: number;
@@ -118,9 +214,28 @@ export interface QueryStatesEvoChain {
   canPurified?: boolean;
 }
 
-export interface BattleBaseStats {
+// tslint:disable-next-line:max-classes-per-file
+export class QueryStatesEvoChain implements IQueryStatesEvoChain {
+  battleLeague!: { [x: string]: IBattleBaseStats | undefined };
+  maxCP: number = 0;
+  form: string = '';
+  id: number = 0;
+  name: string = '';
+  prev?: string | undefined;
+  evoList: IEvoList[] = [];
+  tempEvo: ITempEvo[] = [];
+  purified?: PokemonTypeCost;
+  thirdMove?: PokemonTypeCost;
+  canPurified?: boolean;
+
+  constructor({ ...props }: IQueryStatesEvoChain) {
+    Object.assign(this, props);
+  }
+}
+
+export interface IBattleBaseStats {
   CP?: number;
-  IV?: { atk: number; def: number; sta: number };
+  IV?: IStatsPokemon;
   form: string;
   id: number;
   league: string;
@@ -136,11 +251,46 @@ export interface BattleBaseStats {
   result_between_stadust_diff?: number;
   result_between_xl_candy?: number;
   result_between_xl_candy_diff?: number;
-  stats?: { statsATK: number; statsDEF: number; statsSTA: number };
+  stats?: IStatsBaseCalculate;
   statsProds?: number;
   type?: string;
 }
 
+// tslint:disable-next-line:max-classes-per-file
+export class BattleBaseStats implements IBattleBaseStats {
+  CP?: number;
+  IV?: IStatsPokemon;
+  form: string = '';
+  id: number = 0;
+  league: string = '';
+  level?: number;
+  maxCP: number = 0;
+  name: string = '';
+  powerUpCount?: number;
+  rank?: number;
+  ratio?: number;
+  // tslint:disable-next-line:variable-name
+  result_between_candy?: number;
+  // tslint:disable-next-line:variable-name
+  result_between_candy_diff?: number;
+  // tslint:disable-next-line:variable-name
+  result_between_stadust?: number;
+  // tslint:disable-next-line:variable-name
+  result_between_stadust_diff?: number;
+  // tslint:disable-next-line:variable-name
+  result_between_xl_candy?: number;
+  // tslint:disable-next-line:variable-name
+  result_between_xl_candy_diff?: number;
+  stats?: IStatsBaseCalculate;
+  statsProds?: number;
+  type?: string;
+
+  constructor({ ...props }: IBattleBaseStats) {
+    Object.assign(this, props);
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
 export class QueryMovesCounterPokemon {
   globalOptions: IOptions | undefined;
   typeEff: ITypeEff | undefined;
@@ -211,7 +361,7 @@ export class QueryMovesPokemon {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsCalculate implements IStatsCalculate {
-  IV: { atk: number; def: number; sta: number };
+  IV: IStatsPokemon;
   CP: number;
   level: number;
 
@@ -224,22 +374,31 @@ export class StatsCalculate implements IStatsCalculate {
 
 // tslint:disable-next-line:max-classes-per-file
 export class BattleLeagueCalculate implements IBattleLeagueCalculate {
-  elidge: boolean;
-  maxCP: number | null;
-  IV: { atk: number; def: number; sta: number };
-  CP: number;
-  level: number;
-  limit: boolean;
+  elidge: boolean = false;
+  maxCP: number | null = 0;
+  IV: IStatsPokemon = new StatsPokemon();
+  CP: number = 0;
+  level: number = 0;
+  limit: boolean = false;
   rangeValue?: IBetweenLevelCalculate;
   stats?: IStatsPokemon;
 
-  constructor(elidge: boolean, maxCP: number | null, atk: number, def: number, sta: number, CP: number, level: number, limit: boolean) {
+  constructor(
+    elidge: boolean,
+    maxCP?: number | null,
+    atk?: number,
+    def?: number,
+    sta?: number,
+    CP?: number,
+    level?: number,
+    limit?: boolean
+  ) {
     this.elidge = elidge;
-    this.maxCP = maxCP;
-    this.IV = { atk, def, sta };
-    this.CP = CP;
-    this.level = level;
-    this.limit = limit;
+    this.maxCP = maxCP ?? 0;
+    this.IV = { atk: atk ?? 0, def: def ?? 0, sta };
+    this.CP = CP ?? 0;
+    this.level = level ?? 0;
+    this.limit = limit ?? false;
   }
 }
 
@@ -260,7 +419,7 @@ export class PredictStatsCalculate implements IPredictStatsCalculate {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PredictCPCalculate implements IPredictCPCalculate {
-  IV: { atk: number; def: number; sta: number };
+  IV: IStatsPokemon;
   result: IPredictCPModel[];
 
   constructor(atk: number, def: number, sta: number, result: IPredictCPModel[]) {

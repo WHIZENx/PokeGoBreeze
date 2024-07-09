@@ -7,7 +7,7 @@ import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
-import { StatsModel, IStatsPokemon } from '../../core/models/stats.model';
+import { IStatsRank, IStatsPokemon } from '../../core/models/stats.model';
 import { IImage } from '../../core/models/asset.model';
 
 const CardPokemonInfo = (props: {
@@ -18,7 +18,7 @@ const CardPokemonInfo = (props: {
   defaultImg: boolean;
   types: string[];
   pokemonStat: IStatsPokemon;
-  stats: StatsModel | null;
+  stats: IStatsRank | null;
   icon: string;
   releasedGO: boolean;
 }) => {
