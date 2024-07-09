@@ -12,7 +12,17 @@ import {
   MAX_IV,
 } from './Constants';
 import { IPokemonData, PokemonModel } from '../core/models/pokemon.model';
-import { StatsAtk, StatsDef, StatsModel, IStatsPokemon, StatsPokemonGO, StatsProd, StatsSta } from '../core/models/stats.model';
+import {
+  StatsAtk,
+  StatsDef,
+  IStatsRank,
+  IStatsPokemon,
+  StatsPokemonGO,
+  StatsProd,
+  StatsSta,
+  StatsRankPokemonGO,
+  StatsPokemon,
+} from '../core/models/stats.model';
 import { PokemonInfo, Stats } from '../core/models/API/info.model';
 import { PokemonForm, IPokemonFormModify, PokemonFormModifyModel } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
@@ -388,13 +398,8 @@ export const convertFormGif = (name: string | undefined) => {
     .replace('-hero', '');
 };
 
-export const checkRankAllAvailable = (pokemonStats: StatsModel | null, stats: StatsPokemonGO) => {
-  const data = {
-    attackRank: 0,
-    defenseRank: 0,
-    staminaRank: 0,
-    statProdRank: 0,
-  };
+export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: StatsPokemonGO) => {
+  const data = new StatsRankPokemonGO();
   const checkRankAtk = pokemonStats?.attack.ranking.find((item) => item.attack === stats.atk);
   const checkRankDef = pokemonStats?.defense.ranking.find((item) => item.defense === stats.def);
   const checkRankSta = pokemonStats?.stamina.ranking.find((item) => item.stamina === (stats?.sta ?? 0));
@@ -485,10 +490,10 @@ export const getCustomThemeDataTable = (theme: Theme) => {
   };
 };
 
-export const getDataWithKey = (data: any, key: string | number) => {
+export function getDataWithKey<T>(data: any, key: string | number) {
   const result = Object.entries(data ?? {}).find((k) => k.at(0) === key.toString());
-  return result ? result[1] : {};
-};
+  return result ? (result[1] as T) : ({} as T);
+}
 
 export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | undefined) => {
   if (!pokemon) {
@@ -527,7 +532,7 @@ const convertNameEffort = (name: string) => {
 };
 
 export const convertStatsEffort = (stats: Stats[] | undefined) => {
-  const result: { [x: string]: number } = { atk: 0, def: 0, hp: 0, spa: 0, spd: 0, spe: 0 };
+  const result = new StatsPokemon() as unknown as { [x: string]: number };
 
   stats?.forEach((stat) => {
     result[convertNameEffort(stat.stat.name)] = stat.base_stat;

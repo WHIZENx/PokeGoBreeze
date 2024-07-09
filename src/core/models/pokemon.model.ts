@@ -275,7 +275,7 @@ export interface PokemonRaidModel {
   attackHpRemain?: number;
 }
 
-export interface PokemonDataOptional {
+export interface IPokemonDataOptional {
   slug?: string;
   sprite?: string;
   baseStatsGO?: boolean;
@@ -284,11 +284,11 @@ export interface PokemonDataOptional {
     F: number;
   };
   color?: string;
-  baseForme?: string;
+  baseForme?: string | null;
   releasedGO?: boolean;
   isBaby?: boolean;
-  region?: string;
-  version?: string;
+  region?: string | null;
+  version?: string | null;
   shadowMoves?: string[];
   purifiedMoves?: string[];
   evoList?: IEvoList[];
@@ -303,6 +303,39 @@ export interface PokemonDataOptional {
   };
 }
 
+export class PokemonDataOptional implements IPokemonDataOptional {
+  slug?: string;
+  sprite?: string;
+  baseStatsGO?: boolean;
+  genderRatio?: {
+    M: number;
+    F: number;
+  };
+  color?: string;
+  baseForme?: string | null;
+  releasedGO?: boolean;
+  isBaby?: boolean;
+  region?: string | null;
+  version?: string | null;
+  shadowMoves?: string[];
+  purifiedMoves?: string[];
+  evoList?: IEvoList[];
+  tempEvo?: ITempEvo[];
+  purified?: {
+    stardust?: number;
+    candy?: number;
+  };
+  thirdMove?: {
+    stardust?: number;
+    candy?: number;
+  };
+
+  constructor({ ...props }: IPokemonDataOptional) {
+    Object.assign(this, props);
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
 export class PokemonData implements IPokemonData {
   pokemonId?: string;
   num: number;
@@ -370,7 +403,7 @@ export class PokemonData implements IPokemonData {
   changesFrom!: string | null;
   cannotDynamax!: boolean;
 
-  constructor(pokemon: PokemonModel, types: string[], options?: PokemonDataOptional) {
+  constructor(pokemon: PokemonModel, types: string[], options?: IPokemonDataOptional) {
     let gen = 0;
     Object.entries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;

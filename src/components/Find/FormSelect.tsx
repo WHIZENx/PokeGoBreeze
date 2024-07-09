@@ -18,7 +18,7 @@ import { FormControlLabel, Radio } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { setSearchToolPage } from '../../store/actions/searching.action';
 import { Action } from 'history';
-import { StatsModel } from '../../core/models/stats.model';
+import { IStatsRank } from '../../core/models/stats.model';
 import { ToolSearching } from '../../core/models/searching.model';
 import { IPokemonData, IPokemonName } from '../../core/models/pokemon.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
@@ -52,7 +52,7 @@ const FormSelect = (props: {
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   // eslint-disable-next-line no-unused-vars
   setForm?: (form: IPokemonFormModify | undefined) => void;
-  stats: StatsModel | null;
+  stats: IStatsRank | null;
   // eslint-disable-next-line no-unused-vars
   onHandleSetStats?: (type: string, value: number) => void;
   data: IPokemonData[];

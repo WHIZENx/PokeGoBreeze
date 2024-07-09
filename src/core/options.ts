@@ -15,7 +15,14 @@ import pokemonStoreData from '../data/pokemon.json';
 import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm } from '../util/Utils';
 import { TypeSet } from './models/type.model';
 import { TypeMove } from '../enums/move.enum';
-import { IPokemonData, PokemonData, PokemonDataOptional, PokemonEncounter, PokemonModel } from './models/pokemon.model';
+import {
+  IPokemonData,
+  IPokemonDataOptional,
+  PokemonData,
+  PokemonDataOptional,
+  PokemonEncounter,
+  PokemonModel,
+} from './models/pokemon.model';
 import { ITypeEff } from './models/type-eff.model';
 import { FORM_ARMOR, FORM_GALARIAN, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_SHADOW } from '../util/Constants';
 import { APIUrl } from '../services/constants';
@@ -102,34 +109,14 @@ export const optionPokeSound = (data: APITree) => {
 };
 
 export const optionPokemonTypes = (data: PokemonDataGM[]) => {
-  const types: any = {};
-  const typeSet = [
-    'NORMAL',
-    'FIGHTING',
-    'FLYING',
-    'POISON',
-    'GROUND',
-    'ROCK',
-    'BUG',
-    'GHOST',
-    'STEEL',
-    'FIRE',
-    'WATER',
-    'GRASS',
-    'ELECTRIC',
-    'PSYCHIC',
-    'ICE',
-    'DRAGON',
-    'DARK',
-    'FAIRY',
-  ];
+  const types = new TypeSet();
+  const typeSet = Object.keys(types);
   data
-    .filter((item) => item.templateId.match(/^POKEMON_TYPE*/g) && item.data.typeEffective)
+    .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId) && item.data.typeEffective)
     .forEach((item) => {
       const rootType = item.templateId.replace('POKEMON_TYPE_', '');
-      types[rootType] = {} as TypeSet;
       typeSet.forEach((type, index) => {
-        types[rootType][type] = item.data.typeEffective.attackScalar[index];
+        (types as any)[rootType][type] = item.data.typeEffective.attackScalar[index];
       });
     });
   return types;
@@ -138,7 +125,7 @@ export const optionPokemonTypes = (data: PokemonDataGM[]) => {
 const optionFormNoneSpecial = (data: PokemonDataGM[]) => {
   const result: string[] = [];
   data
-    .filter((item) => item.templateId.match(/^FORMS_V\d{4}_POKEMON_*/g) && item.data?.formSettings?.forms)
+    .filter((item) => /^FORMS_V\d{4}_POKEMON_*/g.test(item.templateId) && item.data?.formSettings?.forms)
     .forEach((item) => {
       item.data.formSettings.forms.forEach((f) => {
         if (f.form && !f.isCostume && !f.assetBundleSuffix) {
@@ -208,7 +195,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       obShadowFormDodgeProbability: pokemon.encounter.obShadowFormDodgeProbability,
     };
 
-    const optional: PokemonDataOptional = {
+    const optional: IPokemonDataOptional = {
       baseStatsGO: true,
     };
 
@@ -280,7 +267,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       dataEvo.evoToName = name.replace(`_${FORM_NORMAL}`, '');
       const pokemonGO = data.find(
         (i) =>
-          i.templateId.match(/^V\d{4}_POKEMON_*/g) &&
+          /^V\d{4}_POKEMON_*/g.test(i.templateId) &&
           i.data.pokemonSettings &&
           i.data.pokemonSettings.pokemonId === dataEvo.evoToName &&
           convertAndReplaceNameGO(
@@ -442,9 +429,9 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       pokemon.pokemonClass = item.pokemonClass ?? undefined;
 
       const types = item.types.map((type) => type.toUpperCase());
-      const optional = {
+      const optional = new PokemonDataOptional({
         ...item,
-      } as PokemonDataOptional;
+      });
 
       const pokemonGO = data.find(
         (i) =>
@@ -551,7 +538,7 @@ const cleanPokemonDupForm = (result: IPokemonData[]) => {
 export const optionPokemonWeather = (data: PokemonDataGM[]) => {
   const weather: any = {};
   data
-    .filter((item) => item.templateId.match(/^WEATHER_AFFINITY*/g) && item.data.weatherAffinities)
+    .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
     .forEach((item) => {
       const rootType = item.data.weatherAffinities.weatherCondition;
       weather[rootType] = item.data.weatherAffinities.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''));
@@ -563,7 +550,7 @@ const pokemonDefaultForm = (data: PokemonDataGM[]) => {
   const forms = optionFormNoneSpecial(data);
   return data.filter(
     (item) =>
-      item.templateId.match(/^V\d{4}_POKEMON_*/g) &&
+      /^V\d{4}_POKEMON_*/g.test(item.templateId) &&
       item.data.pokemonSettings &&
       (!item.data.pokemonSettings.form ||
         item.data.pokemonSettings.form?.toString() === 'MEWTWO_A' ||
@@ -579,7 +566,7 @@ const optionPokemonFamily = (pokemon: IPokemonData[]) => {
 export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
   const stickers: ISticker[] = [];
   data
-    .filter((item) => item.templateId.match(/^STICKER_*/g))
+    .filter((item) => /^STICKER_*/g.test(item.templateId))
     .forEach((item) => {
       if (item.data.iapItemDisplay) {
         const id = item.data.iapItemDisplay.sku.replace('STICKER_', '');
@@ -749,7 +736,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
 
 export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
   const moves = data
-    .filter((item) => item.templateId.match(/^V\d{4}_MOVE_*/g))
+    .filter((item) => /^V\d{4}_MOVE_*/g.test(item.templateId))
     .map((item) => {
       const regId = item.templateId.match(/\d{4}/g) as string[];
       return {

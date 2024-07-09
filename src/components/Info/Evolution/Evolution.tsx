@@ -28,7 +28,7 @@ import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { EvoList, EvolutionModel } from '../../../core/models/evolution.model';
+import { EvoList, EvolutionModel, IEvolution } from '../../../core/models/evolution.model';
 import {
   FORM_GALARIAN,
   FORM_GMAX,
@@ -124,7 +124,7 @@ const Evolution = (props: {
     return name.replace(`_${FORM_NORMAL}`, '').replaceAll('_', '-').replace('MR', 'MR.');
   };
 
-  const modelEvoChain = (pokemon: EvolutionModel) => {
+  const modelEvoChain = (pokemon: IEvolution) => {
     const name = pokeSetName(pokemon.form !== FORM_NORMAL ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name);
     let form =
       pokemon.id === 718 && pokemon.form === '' ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
@@ -228,15 +228,17 @@ const Evolution = (props: {
       .filter((p) => !(p.num === 718 && p.forme === FORM_NORMAL))
       .forEach((evo) => {
         evoList.unshift(
-          modelEvoChain({
-            ...evo,
-            name: evo.name.replaceAll('-', '_').toUpperCase(),
-            id: evo.num,
-            form: evo.forme ?? FORM_NORMAL,
-            evoList: evo.evoList ?? [],
-            tempEvo: evo.tempEvo ?? [],
-            canPurified: evo.isShadow ?? false,
-          })
+          modelEvoChain(
+            new EvolutionModel({
+              ...evo,
+              name: evo.name.replaceAll('-', '_').toUpperCase(),
+              id: evo.num,
+              form: evo.forme ?? FORM_NORMAL,
+              evoList: evo.evoList ?? [],
+              tempEvo: evo.tempEvo ?? [],
+              canPurified: evo.isShadow ?? false,
+            })
+          )
         );
         getPrevEvoChainStore(evo, result);
       });
@@ -250,28 +252,32 @@ const Evolution = (props: {
     );
     if (!pokemon) {
       evoList.push(
-        modelEvoChain({
-          ...poke,
-          name: poke.fullName ?? '',
-          id: poke.num,
-          form: poke.forme ?? FORM_NORMAL,
-          evoList: poke.evoList ?? [],
-          tempEvo: poke.tempEvo ?? [],
-          canPurified: poke.isShadow ?? false,
-        })
+        modelEvoChain(
+          new EvolutionModel({
+            ...poke,
+            name: poke.fullName ?? '',
+            id: poke.num,
+            form: poke.forme ?? FORM_NORMAL,
+            evoList: poke.evoList ?? [],
+            tempEvo: poke.tempEvo ?? [],
+            canPurified: poke.isShadow ?? false,
+          })
+        )
       );
     } else {
       evoList =
         pokemon.evoList
           ?.map((evo) =>
-            modelEvoChain({
-              id: evo.evoToId,
-              name: evo.evoToName,
-              form: evo.evoToForm,
-              canPurified: evo.purificationEvoCandyCost ? true : false,
-              evoList: [],
-              tempEvo: [],
-            })
+            modelEvoChain(
+              new EvolutionModel({
+                id: evo.evoToId,
+                name: evo.evoToName,
+                form: evo.evoToForm,
+                canPurified: evo.purificationEvoCandyCost ? true : false,
+                evoList: [],
+                tempEvo: [],
+              })
+            )
           )
           .filter((pokemon) => pokemon.id === poke.num) ?? [];
     }
@@ -283,15 +289,17 @@ const Evolution = (props: {
       return;
     }
     const evoList = poke.evoList?.map((evo) =>
-      modelEvoChain({
-        id: evo.evoToId,
-        name: evo.evoToName,
-        form: evo.evoToForm,
-        prev: poke.name,
-        canPurified: evo.purificationEvoCandyCost ? true : false,
-        evoList: [],
-        tempEvo: [],
-      })
+      modelEvoChain(
+        new EvolutionModel({
+          id: evo.evoToId,
+          name: evo.evoToName,
+          form: evo.evoToForm,
+          prev: poke.name,
+          canPurified: evo.purificationEvoCandyCost ? true : false,
+          evoList: [],
+          tempEvo: [],
+        })
+      )
     );
     if (evoList) {
       if (result.length === 3) {

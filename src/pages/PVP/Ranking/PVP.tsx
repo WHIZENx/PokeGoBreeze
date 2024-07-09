@@ -28,7 +28,7 @@ import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { PokemonBattleRanking } from '../models/battle.model';
+import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -46,8 +46,8 @@ const RankingPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
   const params = useParams();
 
-  const [rankingData, setRankingData]: [PokemonBattleRanking[], React.Dispatch<React.SetStateAction<PokemonBattleRanking[]>>] = useState(
-    [] as PokemonBattleRanking[]
+  const [rankingData, setRankingData]: [IPokemonBattleRanking[], React.Dispatch<React.SetStateAction<IPokemonBattleRanking[]>>] = useState(
+    [] as IPokemonBattleRanking[]
   );
   const [storeStats, setStoreStats]: [boolean[] | undefined, React.Dispatch<React.SetStateAction<boolean[] | undefined>>] = useState();
   const [onLoadData, setOnLoadData] = useState(false);
@@ -150,7 +150,7 @@ const RankingPVP = () => {
             fmove = { ...fmove, type: item.moveset.at(0)?.split('_').at(2) ?? '' };
           }
 
-          return {
+          return new PokemonBattleRanking({
             data: item,
             score: item.score,
             id,
@@ -168,10 +168,11 @@ const RankingPVP = () => {
             cmoveSec,
             shadow: item.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
             purified:
-              pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') || (cMoveDataSec && pokemon?.purifiedMoves?.includes(cMoveDataSec)),
-          };
+              pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') ||
+              (cMoveDataSec && pokemon?.purifiedMoves?.includes(cMoveDataSec)) === true,
+          });
         });
-        setRankingData(filePVP as PokemonBattleRanking[]);
+        setRankingData(filePVP);
         setStoreStats(file.map(() => false));
         dispatch(hideSpinner());
       } catch (e: any) {
@@ -210,7 +211,7 @@ const RankingPVP = () => {
     dataStore?.assets,
   ]);
 
-  const renderItem = (data: PokemonBattleRanking, key: number) => {
+  const renderItem = (data: IPokemonBattleRanking, key: number) => {
     return (
       <Accordion.Item eventKey={key.toString()}>
         <Accordion.Header

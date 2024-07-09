@@ -20,7 +20,7 @@ import { FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../..
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { PokemonBattleRanking } from '../models/battle.model';
+import { IPokemonBattleRanking } from '../models/battle.model';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -39,8 +39,8 @@ const PokemonPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
   const [rankingPoke, setRankingPoke]: [
-    PokemonBattleRanking | undefined,
-    React.Dispatch<React.SetStateAction<PokemonBattleRanking | undefined>>
+    IPokemonBattleRanking | undefined,
+    React.Dispatch<React.SetStateAction<IPokemonBattleRanking | undefined>>
   ] = useState();
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
@@ -133,6 +133,7 @@ const PokemonPVP = () => {
 
       setRankingPoke({
         data,
+        score: data.score,
         id: id ?? 0,
         name: name ?? '',
         pokemon,

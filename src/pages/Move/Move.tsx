@@ -24,9 +24,9 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { ICombat } from '../../core/models/combat.model';
-import { PokemonTopMove } from '../../util/models/pokemon-top-move.model';
+import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
 
-const nameSort = (rowA: PokemonTopMove, rowB: PokemonTopMove) => {
+const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
   const b = rowB.name.toLowerCase();
   return a === b ? 0 : a > b ? 1 : -1;
@@ -35,13 +35,13 @@ const nameSort = (rowA: PokemonTopMove, rowB: PokemonTopMove) => {
 const columns: any = [
   {
     name: 'Id',
-    selector: (row: PokemonTopMove) => row.num,
+    selector: (row: IPokemonTopMove) => row.num,
     sortable: true,
     minWidth: '40px',
   },
   {
     name: 'Name',
-    selector: (row: PokemonTopMove) => (
+    selector: (row: IPokemonTopMove) => (
       <Link to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
         <img
           height={48}
@@ -62,18 +62,18 @@ const columns: any = [
   },
   {
     name: 'Elite',
-    selector: (row: PokemonTopMove) => (row.isElite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
+    selector: (row: IPokemonTopMove) => (row.isElite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
     width: '64px',
   },
   {
     name: 'DPS',
-    selector: (row: PokemonTopMove) => parseFloat(row.dps.toFixed(2)),
+    selector: (row: IPokemonTopMove) => parseFloat(row.dps.toFixed(2)),
     sortable: true,
     minWidth: '90px',
   },
   {
     name: 'TDO',
-    selector: (row: PokemonTopMove) => parseFloat(row.tdo.toFixed(2)),
+    selector: (row: IPokemonTopMove) => parseFloat(row.tdo.toFixed(2)),
     sortable: true,
     minWidth: '90px',
   },
@@ -87,8 +87,8 @@ const Move = (props: { id?: number }) => {
 
   const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
   const [releasedGO, setReleaseGO] = useState(true);
-  const [topList, setTopList]: [PokemonTopMove[], React.Dispatch<React.SetStateAction<PokemonTopMove[]>>] = useState(
-    [] as PokemonTopMove[]
+  const [topList, setTopList]: [IPokemonTopMove[], React.Dispatch<React.SetStateAction<IPokemonTopMove[]>>] = useState(
+    [] as IPokemonTopMove[]
   );
 
   const { enqueueSnackbar } = useSnackbar();

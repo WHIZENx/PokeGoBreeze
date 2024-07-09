@@ -10,14 +10,14 @@ const convertArrStats = (data: IPokemonData[]) => {
   return data
     .filter((pokemon) => pokemon.num > 0)
     .map((value) => {
-      return {
+      return new ArrayStats({
         id: value.num,
         name: value.slug,
         form: value.forme ?? FORM_NORMAL,
         base_stats: value.baseStats,
         baseStatsPokeGo: { attack: value.baseStats.atk, defense: value.baseStats.def, stamina: value.baseStats.sta ?? 0 },
         baseStatsProd: value.baseStats.atk * value.baseStats.def * (value.baseStats.sta ?? 0),
-      } as ArrayStats;
+      });
     });
 };
 

@@ -1,6 +1,6 @@
-import { ICombat } from '../../core/models/combat.model';
+import { Combat, ICombat } from '../../core/models/combat.model';
 
-export interface PokemonTopMove {
+export interface IPokemonTopMove {
   num: number;
   forme: string | null;
   name: string;
@@ -13,6 +13,23 @@ export interface PokemonTopMove {
   tdo: number;
 }
 
+export class PokemonTopMove implements IPokemonTopMove {
+  num: number = 0;
+  forme: string | null = '';
+  name: string = '';
+  baseSpecies: string | null = '';
+  sprite: string = '';
+  releasedGO: boolean = false;
+  isElite: boolean = false;
+  isSpecial: boolean = false;
+  dps: number = 0;
+  tdo: number = 0;
+
+  constructor({ ...props }: IPokemonTopMove) {
+    Object.assign(this, props);
+  }
+}
+
 export interface IPokemonQueryMove {
   fmove: ICombat;
   cmove: ICombat;
@@ -22,10 +39,35 @@ export interface IPokemonQueryMove {
   };
 }
 
-export interface PokemonQueryRankMove {
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonQueryMove implements IPokemonQueryMove {
+  fmove: ICombat = new Combat();
+  cmove: ICombat = new Combat();
+  eDPS!: {
+    offensive: number;
+    defensive: number;
+  };
+
+  constructor({ ...props }: IPokemonQueryMove) {
+    Object.assign(this, props);
+  }
+}
+
+export interface IPokemonQueryRankMove {
   data: IPokemonQueryMove[];
   maxOff?: number;
   maxDef?: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonQueryRankMove implements IPokemonQueryRankMove {
+  data: IPokemonQueryMove[] = [];
+  maxOff?: number;
+  maxDef?: number;
+
+  constructor({ ...props }: IPokemonQueryRankMove) {
+    Object.assign(this, props);
+  }
 }
 
 export interface IPokemonQueryCounter {
@@ -36,4 +78,22 @@ export interface IPokemonQueryCounter {
   dps: number;
   fmove: ICombat;
   cmove: ICombat;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonQueryCounter implements IPokemonQueryCounter {
+  // tslint:disable-next-line:variable-name
+  pokemon_id: number = 0;
+  // tslint:disable-next-line:variable-name
+  pokemon_name: string = '';
+  // tslint:disable-next-line:variable-name
+  pokemon_forme: string | null = '';
+  releasedGO: boolean = false;
+  dps: number = 0;
+  fmove: ICombat = new Combat();
+  cmove: ICombat = new Combat();
+
+  constructor({ ...props }: IPokemonQueryCounter) {
+    Object.assign(this, props);
+  }
 }
