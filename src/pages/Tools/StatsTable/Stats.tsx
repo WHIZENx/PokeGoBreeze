@@ -9,13 +9,13 @@ import APIService from '../../../services/API.service';
 
 import Find from '../../../components/Find/Find';
 import { MIN_IV, MAX_IV } from '../../../util/Constants';
-import { StatsProdCalculate } from '../../../util/models/calculate.model';
-import FreeSoloInput from '../../../components/Input/FreeSoloInput';
+import { IBattleBaseStats } from '../../../util/models/calculate.model';
+import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
-export const columnsStats: TableColumn<StatsProdCalculate>[] = [
+export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
     name: 'Rank',
     selector: (row) => row.rank ?? 0,
@@ -23,32 +23,32 @@ export const columnsStats: TableColumn<StatsProdCalculate>[] = [
   },
   {
     name: 'Level',
-    selector: (row) => row.level,
+    selector: (row) => row.level ?? 0,
     sortable: true,
   },
   {
     name: 'IV ATK',
-    selector: (row) => row.IV.atk,
+    selector: (row) => row.IV?.atk ?? 0,
     sortable: true,
   },
   {
     name: 'IV DEF',
-    selector: (row) => row.IV.def,
+    selector: (row) => row.IV?.def ?? 0,
     sortable: true,
   },
   {
     name: 'IV STA',
-    selector: (row) => row.IV.sta,
+    selector: (row) => row.IV?.sta ?? 0,
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row) => row.CP,
+    selector: (row) => row.CP ?? 0,
     sortable: true,
   },
   {
     name: 'Stat Prod (*1000)',
-    selector: (row) => parseFloat((row.statsProds / 1000).toFixed(2)),
+    selector: (row) => parseFloat(((row.statsProds ?? 0) / 1000).toFixed(2)),
     sortable: true,
   },
   {
@@ -73,11 +73,11 @@ const StatsTable = () => {
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const currStatBattle: React.MutableRefObject<StatsProdCalculate[]> = useRef([]);
+  const currStatBattle: React.MutableRefObject<IBattleBaseStats[]> = useRef([]);
   const [battleLeague, setBattleLeague] = useState(500);
 
-  const [statsBattle, setStatsBattle]: [StatsProdCalculate[], React.Dispatch<React.SetStateAction<StatsProdCalculate[]>>] = useState(
-    [] as StatsProdCalculate[]
+  const [statsBattle, setStatsBattle]: [IBattleBaseStats[], React.Dispatch<React.SetStateAction<IBattleBaseStats[]>>] = useState(
+    [] as IBattleBaseStats[]
   );
 
   useEffect(() => {
@@ -101,7 +101,7 @@ const StatsTable = () => {
   const searchStatsPoke = useCallback(() => {
     setStatsBattle(
       [...currStatBattle.current].filter(
-        (item) => item.CP === parseInt(searchCP) && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv
+        (item) => item.CP === parseInt(searchCP) && item.IV && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv
       )
     );
   }, [searchCP, ATKIv, DEFIv, STAIv]);
@@ -170,7 +170,7 @@ const StatsTable = () => {
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="input-group mb-3">
-              <FreeSoloInput
+              <DynamicInputCP
                 statATK={statATK}
                 statDEF={statDEF}
                 statSTA={statSTA}
@@ -201,7 +201,10 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v) => setATKIv(v as number)}
+              onChange={(_, v) => {
+                setSearchCP('');
+                setATKIv(v as number);
+              }}
             />
             <div className="d-flex justify-content-between">
               <b>DEF</b>
@@ -216,7 +219,10 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v) => setDEFIv(v as number)}
+              onChange={(_, v) => {
+                setSearchCP('');
+                setDEFIv(v as number);
+              }}
             />
             <div className="d-flex justify-content-between">
               <b>STA</b>
@@ -231,7 +237,10 @@ const StatsTable = () => {
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={(_, v) => setSTAIv(v as number)}
+              onChange={(_, v) => {
+                setSearchCP('');
+                setSTAIv(v as number);
+              }}
             />
           </Box>
         </div>

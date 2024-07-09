@@ -27,13 +27,13 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import CandyXL from '../../components/Sprites/Candy/CandyXL';
-import { StatsModel, IStatsPokemon } from '../../core/models/stats.model';
+import { IStatsRank, IStatsPokemon } from '../../core/models/stats.model';
 import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ICombat } from '../../core/models/combat.model';
 import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/Constants';
 import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
-import { PokemonBattleRanking } from './models/battle.model';
+import { IPokemonBattleRanking } from './models/battle.model';
 
 export const Keys = (
   assets: IAsset[],
@@ -124,7 +124,7 @@ export const Keys = (
   );
 };
 
-export const OverAllStats = (data: PokemonBattleRanking | undefined, statsRanking: StatsModel | null, cp: number | string) => {
+export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: number | string) => {
   const calculateStatsTopRank = (stats: IStatsPokemon | undefined) => {
     const maxCP = parseInt(cp.toString());
 

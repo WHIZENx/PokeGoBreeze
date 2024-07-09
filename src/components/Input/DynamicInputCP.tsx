@@ -5,7 +5,7 @@ import { predictCPList } from '../../util/Calculate';
 import { MIN_IV, MAX_IV } from '../../util/Constants';
 import { IPredictCPCalculate } from '../../util/models/calculate.model';
 
-const FreeSoloInput = (props: {
+const DynamicInputCP = (props: {
   statATK: number;
   statDEF: number;
   statSTA: number;
@@ -70,4 +70,4 @@ const FreeSoloInput = (props: {
   );
 };
 
-export default FreeSoloInput;
+export default DynamicInputCP;

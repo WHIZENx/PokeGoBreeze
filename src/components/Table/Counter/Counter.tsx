@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } from '../../../util/Constants';
-import { CounterModel } from './models/counter.model';
+import { ICounterModel } from './models/counter.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -80,8 +80,8 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const [counterList, setCounterList]: [CounterModel[], React.Dispatch<React.SetStateAction<CounterModel[]>>] = useState(
-    [] as CounterModel[]
+  const [counterList, setCounterList]: [ICounterModel[], React.Dispatch<React.SetStateAction<ICounterModel[]>>] = useState(
+    [] as ICounterModel[]
   );
   const [frame, setFrame] = useState(true);
   const [releasedGO, setReleaseGO] = useState(true);
@@ -90,7 +90,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
   const columns: any = [
     {
       name: 'Pokémon',
-      selector: (row: CounterModel) => (
+      selector: (row: ICounterModel) => (
         <Link to={`/pokemon/${row.pokemon_id}${row.pokemon_forme ? `?form=${row.pokemon_forme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
           <div className="d-flex justify-content-center">
             <div
@@ -105,8 +105,8 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme)
-                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme))
+                  findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme ?? '')
+                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme ?? ''))
                     : APIService.getPokeFullSprite(row.pokemon_id)
                 }
               />
@@ -121,7 +121,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
     },
     {
       name: 'Fast',
-      selector: (row: CounterModel) => (
+      selector: (row: ICounterModel) => (
         <Link to={'../move/' + row.fmove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fmove.type))} />
@@ -142,7 +142,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
     },
     {
       name: 'Charged',
-      selector: (row: CounterModel) => (
+      selector: (row: ICounterModel) => (
         <Link to={'../move/' + row.cmove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cmove.type))} />
@@ -178,7 +178,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
     },
     {
       name: '%',
-      selector: (row: CounterModel) => parseFloat(row.ratio.toFixed(2)),
+      selector: (row: ICounterModel) => parseFloat(row.ratio.toFixed(2)),
       sortable: true,
       width: '20%',
     },
@@ -222,8 +222,8 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
   }, [props.def, props.isShadow, props.types]);
 
   const calculateCounter = (signal: AbortSignal, delay = 3000) => {
-    return new Promise<CounterModel[]>((resolve, reject) => {
-      let result: CounterModel[] = [];
+    return new Promise<ICounterModel[]>((resolve, reject) => {
+      let result: ICounterModel[] = [];
       let timeout: NodeJS.Timeout | number;
       const abortHandler = () => {
         clearTimeout(timeout);
@@ -298,7 +298,7 @@ const Counter = (props: { def: number; types: string[] | undefined; isShadow: bo
             if (showMega) {
               return true;
             }
-            return !pokemon.pokemon_forme.includes(FORM_MEGA) && !pokemon.pokemon_forme.includes(FORM_PRIMAL);
+            return !pokemon.pokemon_forme?.includes(FORM_MEGA) && !pokemon.pokemon_forme?.includes(FORM_PRIMAL);
           })
           .filter((pokemon) => {
             if (!releasedGO) {

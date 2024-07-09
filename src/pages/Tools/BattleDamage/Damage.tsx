@@ -338,7 +338,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{(getDataWithKey(globalOptions?.trainer_friendship, battleState.flevel) as ITrainerFriendship).atk_bonus?.toFixed(2)}
+                      x{getDataWithKey<ITrainerFriendship>(globalOptions?.trainer_friendship, battleState.flevel).atk_bonus?.toFixed(2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>

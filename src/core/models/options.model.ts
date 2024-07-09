@@ -1,5 +1,6 @@
 import { LeagueReward, IPokemonRewardLeague, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
+import { IStatsBase } from './stats.model';
 
 export interface PokemonDataGM {
   templateId: string;
@@ -127,19 +128,13 @@ export interface IPokemonPermission {
 
 interface ICombatOption {
   stab: number;
-  shadow_bonus: {
-    atk: number;
-    def: number;
-  };
+  shadow_bonus: IStatsBase;
 }
 
 interface IBattleOption {
   enemyAttackInterval: number;
   stab: number;
-  shadow_bonus: {
-    atk: number;
-    def: number;
-  };
+  shadow_bonus: IStatsBase;
 }
 
 interface IThrowOption {

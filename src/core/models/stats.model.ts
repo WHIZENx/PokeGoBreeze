@@ -1,4 +1,4 @@
-export interface StatsModel {
+export interface IStatsRank {
   attack: {
     ranking: StatsAtk[];
     min_rank: number;
@@ -27,6 +27,60 @@ export interface StatsModel {
     min_stats: number;
     max_stats: number;
   };
+}
+
+export class StatsRank implements IStatsRank {
+  attack!: {
+    ranking: StatsAtk[];
+    min_rank: number;
+    max_rank: number;
+    min_stats: number;
+    max_stats: number;
+  };
+  defense!: {
+    ranking: StatsDef[];
+    min_rank: number;
+    max_rank: number;
+    min_stats: number;
+    max_stats: number;
+  };
+  stamina!: {
+    ranking: StatsSta[];
+    min_rank: number;
+    max_rank: number;
+    min_stats: number;
+    max_stats: number;
+  };
+  statProd!: {
+    ranking: StatsProd[];
+    min_rank: number;
+    max_rank: number;
+    min_stats: number;
+    max_stats: number;
+  };
+
+  constructor({ ...props }: IStatsRank) {
+    Object.assign(this, props);
+  }
+}
+
+export interface IStatsBase {
+  atk: number;
+  def: number;
+  sta?: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsBase implements IStatsBase {
+  atk: number;
+  def: number;
+  sta?: number;
+
+  constructor(atk: number, def: number, sta?: number) {
+    this.atk = atk;
+    this.def = def;
+    this.sta = sta ?? 0;
+  }
 }
 
 export interface StatsPokemonGO {
@@ -113,6 +167,7 @@ export interface PokemonStatsRanking {
   releasedGO: boolean;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class StatsPokemon implements IStatsPokemon {
   hp?: number;
   atk: number;
@@ -129,5 +184,27 @@ export class StatsPokemon implements IStatsPokemon {
     this.spa = 0;
     this.spd = 0;
     this.spe = 0;
+  }
+}
+
+export interface IStatsRankPokemonGO {
+  attackRank: number;
+  defenseRank: number;
+  staminaRank: number;
+  statProdRank: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsRankPokemonGO implements IStatsRankPokemonGO {
+  attackRank: number;
+  defenseRank: number;
+  staminaRank: number;
+  statProdRank: number;
+
+  constructor() {
+    this.attackRank = 0;
+    this.defenseRank = 0;
+    this.staminaRank = 0;
+    this.statProdRank = 0;
   }
 }

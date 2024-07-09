@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { StatsModel } from '../../../core/models/stats.model';
+import { IStatsRank } from '../../../core/models/stats.model';
 import { useNavigate } from 'react-router-dom';
 import { FORM_NORMAL } from '../../../util/Constants';
 
@@ -28,7 +28,7 @@ const StatsBar = (props: {
   class: string;
   statsPercent: number;
   rank: number | string;
-  pokemonStats: StatsModel | null;
+  pokemonStats: IStatsRank | null;
   currentStats: number;
   optionalStats?: string;
   id?: number;

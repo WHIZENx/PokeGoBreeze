@@ -61,7 +61,7 @@ export interface PokemonTypeCost {
   candy?: number | undefined;
 }
 
-export interface EvolutionModel {
+export interface IEvolution {
   pokemonId?: string;
   prev?: string | undefined;
   id: number;
@@ -73,4 +73,23 @@ export interface EvolutionModel {
   form: string;
   canPurified?: boolean;
   isBaby?: boolean;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class EvolutionModel implements IEvolution {
+  pokemonId?: string;
+  prev?: string | undefined;
+  id: number = 0;
+  name: string = '';
+  evoList: EvoList[] = [];
+  tempEvo: ITempEvo[] = [];
+  purified?: PokemonTypeCost;
+  thirdMove?: PokemonTypeCost;
+  form: string = '';
+  canPurified?: boolean;
+  isBaby?: boolean;
+
+  constructor({ ...props }: IEvolution) {
+    Object.assign(this, props);
+  }
 }
