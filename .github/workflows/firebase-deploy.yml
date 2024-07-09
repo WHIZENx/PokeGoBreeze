@@ -1,7 +1,7 @@
 name: Firebase hosting
 on:
   push:
-    branches: [main]
+    branches: [update-patch]
 env:
   REACT_APP_TOKEN_PRIVATE_REPO: ${{ secrets.REACT_APP_TOKEN_PRIVATE_REPO }}
   REACT_APP_POKEGO_BREEZE_DB_URL: ${{ secrets.REACT_APP_POKEGO_BREEZE_DB_URL }}
@@ -22,12 +22,12 @@ jobs:
       - name: Install firebase tools
         run: |
           npm install -g firebase-tools
-          firebase use pokego-breeze --token ${{secrets.FIREBASE_TOKEN}}
+          firebase use pokego-breeze-develop --token ${{secrets.FIREBASE_TOKEN}}
       - name: Build website
         run: |
-          npm run deploy
-      - name: Deploy to production site
-        run: firebase deploy --only hosting:prod --non-interactive --token ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
+          npm run develop
+      - name: Deploy to development site
+        run: firebase deploy --only hosting:dev --non-interactive --token ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
       - name: Archive build Artifact
         uses: actions/upload-artifact@main
         with:
