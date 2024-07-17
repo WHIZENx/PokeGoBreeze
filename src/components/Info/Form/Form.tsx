@@ -2,7 +2,7 @@ import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { PokemonInfo } from '../../../core/models/API/info.model';
-import { PokemonGenderRatio, IPokemonData } from '../../../core/models/pokemon.model';
+import { IPokemonGenderRatio, IPokemonData } from '../../../core/models/pokemon.model';
 import { StatsAtk, StatsDef, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -46,7 +46,7 @@ const FormComponent = (props: {
   >;
   pokeData: PokemonInfo[];
   formList: IPokemonFormModify[][] | undefined;
-  ratio: PokemonGenderRatio | undefined;
+  ratio: IPokemonGenderRatio | undefined;
   // eslint-disable-next-line no-unused-vars
   setId?: (id: number) => void;
   pokemonDetail: IPokemonData | undefined;

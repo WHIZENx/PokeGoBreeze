@@ -314,7 +314,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>CP</td>
-                        <td>{statData ? statData?.cp : '-'}</td>
+                        <td>{statData ? statData?.CP : '-'}</td>
                       </tr>
                       <tr>
                         <td>

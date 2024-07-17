@@ -12,13 +12,13 @@ import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/Constants';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattlePokemonData } from '../../../core/models/pvp.model';
-import { PokemonBattle } from '../models/battle.model';
+import { IPokemonBattle } from '../models/battle.model';
 
 const SelectPoke = (props: {
   data: BattlePokemonData[];
   league: number;
-  pokemonBattle: PokemonBattle;
-  setPokemonBattle: React.Dispatch<React.SetStateAction<PokemonBattle>>;
+  pokemonBattle: IPokemonBattle;
+  setPokemonBattle: React.Dispatch<React.SetStateAction<IPokemonBattle>>;
   // eslint-disable-next-line no-unused-vars
   clearData: (removeMove: boolean) => void;
 }) => {

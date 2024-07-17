@@ -1,4 +1,4 @@
-interface ITypeSet {
+export interface ITypeSet {
   NORMAL: ITypeModel;
   FIGHTING: ITypeModel;
   FLYING: ITypeModel;

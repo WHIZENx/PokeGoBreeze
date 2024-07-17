@@ -20,7 +20,8 @@ import { FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../..
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { IPokemonBattleRanking } from '../models/battle.model';
+import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
+import { BattleBaseStats } from '../../../util/models/calculate.model';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -106,13 +107,8 @@ const PokemonPVP = () => {
 
       const maxCP = parseInt(params.cp ?? '');
 
-      let bestStats: any = {};
-      if (maxCP === 10000) {
-        const cp = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
-        const buddyCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
-        bestStats[MAX_LEVEL - 1] = { cp };
-        bestStats[MAX_LEVEL] = { cp: buddyCP };
-      } else {
+      let bestStats = new BattleBaseStats();
+      if (maxCP < 10000) {
         let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
         const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
 
@@ -131,28 +127,30 @@ const PokemonPVP = () => {
         bestStats = allStats[allStats.length - 1];
       }
 
-      setRankingPoke({
-        data,
-        score: data.score,
-        id: id ?? 0,
-        name: name ?? '',
-        pokemon,
-        form: form ?? '',
-        stats,
-        atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
-        def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-        sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
-        prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
-        fmove,
-        cmovePri,
-        cmoveSec,
-        bestStats,
-        shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`) ?? false,
-        purified:
-          (pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') ||
-            (cMoveDataSec !== null && cMoveDataSec !== undefined && pokemon?.purifiedMoves?.includes(cMoveDataSec))) ??
-          false,
-      });
+      setRankingPoke(
+        new PokemonBattleRanking({
+          data,
+          score: data.score,
+          id,
+          name,
+          pokemon,
+          form,
+          stats,
+          atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
+          def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
+          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
+          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
+          fmove,
+          cmovePri,
+          cmoveSec,
+          bestStats,
+          shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`) ?? false,
+          purified:
+            (pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') ||
+              (cMoveDataSec !== null && cMoveDataSec !== undefined && pokemon?.purifiedMoves?.includes(cMoveDataSec))) ??
+            false,
+        })
+      );
       dispatch(hideSpinner());
     } catch (e: any) {
       setFound(false);

@@ -55,6 +55,7 @@ import {
   BetweenLevelCalculate,
   PredictCPModel,
   PredictStatsModel,
+  BattleLeague,
 } from './models/calculate.model';
 import {
   IPokemonQueryCounter,
@@ -66,16 +67,21 @@ import {
 } from './models/pokemon-top-move.model';
 import { IArrayStats } from './models/util.model';
 
-const weatherMultiple = (globalOptions: IOptions | undefined, weatherBoost: any, weather: string, type: string) => {
-  return weatherBoost[weather.toUpperCase().replaceAll(' ', '_')]?.find((item: string) => item === type?.toUpperCase().replaceAll(' ', '_'))
+const weatherMultiple = (globalOptions: IOptions | undefined, weatherBoost: IWeatherBoost | undefined, weather: string, type: string) => {
+  return ((weatherBoost as unknown as { [x: string]: string[] })[weather.toUpperCase().replaceAll(' ', '_')]?.find(
+    (item) => item === type?.toUpperCase().replaceAll(' ', '_')
+  )
     ? STAB_MULTIPLY(globalOptions)
-    : 1;
+    : 1) as unknown as number;
 };
 
-export const getTypeEffective = (typeEffective: any, typeMove: string, typesObj: string[]) => {
+export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: string, typesObj: string[]) => {
   let valueEffective = 1;
+  if (!typeEffective) {
+    return valueEffective;
+  }
   typesObj.forEach((type) => {
-    valueEffective *= typeEffective[typeMove?.toUpperCase()][type.toUpperCase()];
+    valueEffective *= (typeEffective as unknown as { [x: string]: { [y: string]: number } })[typeMove?.toUpperCase()][type.toUpperCase()];
   });
   return valueEffective;
 };
@@ -408,7 +414,7 @@ export const calculateBetweenLevel = (
 
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
-      cp: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
+      CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
       result_between_stadust: 0,
       result_between_candy: 0,
       result_between_xl_candy: 0,
@@ -448,7 +454,7 @@ export const calculateBetweenLevel = (
     });
 
     const dataList = new BetweenLevelCalculate({
-      cp: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
+      CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
       result_between_stadust: betweenStadust,
       result_between_stadust_diff: betweenStadustDiff,
       result_between_candy: betweenCandy,
@@ -555,13 +561,12 @@ export const findCPforLeague = (
 
 export const sortStatsProd = (data: IBattleBaseStats[]) => {
   data = data.sort((a, b) => (a.statsProds ?? 0) - (b.statsProds ?? 0));
-  return data.map(
-    (item, index) =>
-      new BattleBaseStats({
-        ...item,
-        ratio: ((item.statsProds ?? 0) * 100) / (data[data.length - 1]?.statsProds ?? 1),
-        rank: data.length - index,
-      })
+  return data.map((item, index) =>
+    BattleBaseStats.create({
+      ...item,
+      ratio: ((item.statsProds ?? 0) * 100) / (data[data.length - 1]?.statsProds ?? 1),
+      rank: data.length - index,
+    })
   );
 };
 
@@ -581,17 +586,13 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
             const statsDEF = calculateStatsBattle(def, j, l);
             const statsSTA = calculateStatsBattle(sta, k, l);
             dataList.push(
-              new BattleBaseStats({
+              BattleBaseStats.create({
                 IV: { atk: i, def: j, sta: k },
                 CP: cp,
                 level: l,
                 stats: { statsATK, statsDEF, statsSTA },
                 statsProds: statsATK * statsDEF * statsSTA,
-                form: '',
                 id: seqId,
-                league: '',
-                maxCP: 0,
-                name: '',
               })
             );
             seqId++;
@@ -1206,48 +1207,48 @@ export const queryStatesEvoChain = (
   const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => (item.CP ?? 0) <= 1500));
   const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => (item.CP ?? 0) <= 500));
 
-  const battleLeague: { [x: string]: IBattleBaseStats | undefined } = {
-    little: littleStatsProd.find(
-      (item) =>
-        item.level === dataLittle.level &&
-        item.CP === dataLittle.CP &&
-        item.IV &&
-        item.IV.atk === atkIV &&
-        item.IV.def === defIV &&
-        item.IV.sta === staIV
-    ),
-    great: greatStatsProd.find(
-      (item) =>
-        item.level === dataGreat.level &&
-        item.CP === dataGreat.CP &&
-        item.IV &&
-        item.IV.atk === atkIV &&
-        item.IV.def === defIV &&
-        item.IV.sta === staIV
-    ),
-    ultra: ultraStatsProd.find(
-      (item) =>
-        item.level === dataUltra.level &&
-        item.CP === dataUltra.CP &&
-        item.IV &&
-        item.IV.atk === atkIV &&
-        item.IV.def === defIV &&
-        item.IV.sta === staIV
-    ),
-    master: sortStatsProd(statsProd).find(
-      (item) =>
-        item.level === dataMaster.level &&
-        item.CP === dataMaster.CP &&
-        item.IV &&
-        item.IV.atk === atkIV &&
-        item.IV.def === defIV &&
-        item.IV.sta === staIV
-    ),
-  };
+  const little = littleStatsProd.find(
+    (item) =>
+      item.level === dataLittle.level &&
+      item.CP === dataLittle.CP &&
+      item.IV &&
+      item.IV.atk === atkIV &&
+      item.IV.def === defIV &&
+      item.IV.sta === staIV
+  );
+  const great = greatStatsProd.find(
+    (item) =>
+      item.level === dataGreat.level &&
+      item.CP === dataGreat.CP &&
+      item.IV &&
+      item.IV.atk === atkIV &&
+      item.IV.def === defIV &&
+      item.IV.sta === staIV
+  );
+  const ultra = ultraStatsProd.find(
+    (item) =>
+      item.level === dataUltra.level &&
+      item.CP === dataUltra.CP &&
+      item.IV &&
+      item.IV.atk === atkIV &&
+      item.IV.def === defIV &&
+      item.IV.sta === staIV
+  );
+  const master = sortStatsProd(statsProd).find(
+    (item) =>
+      item.level === dataMaster.level &&
+      item.CP === dataMaster.CP &&
+      item.IV &&
+      item.IV.atk === atkIV &&
+      item.IV.def === defIV &&
+      item.IV.sta === staIV
+  );
 
-  if (battleLeague.little) {
-    battleLeague.little = {
-      ...battleLeague.little,
+  const battleLeague = new BattleLeague();
+
+  if (little) {
+    battleLeague.little = BattleBaseStats.create({
+      ...little,
       ...calculateBetweenLevel(
         globalOptions,
         pokemonStats.atk,
@@ -1257,13 +1258,13 @@ export const queryStatesEvoChain = (
         defIV,
         staIV,
         level,
-        battleLeague.little.level ?? 0
+        little.level ?? 0
       ),
-    };
+    });
   }
-  if (battleLeague.great) {
-    battleLeague.great = {
-      ...battleLeague.great,
+  if (great) {
+    battleLeague.great = BattleBaseStats.create({
+      ...great,
       ...calculateBetweenLevel(
         globalOptions,
         pokemonStats.atk,
@@ -1273,13 +1274,13 @@ export const queryStatesEvoChain = (
         defIV,
         staIV,
         level,
-        battleLeague.great.level ?? 0
+        great.level ?? 0
       ),
-    };
+    });
   }
-  if (battleLeague.ultra) {
-    battleLeague.ultra = {
-      ...battleLeague.ultra,
+  if (ultra) {
+    battleLeague.ultra = BattleBaseStats.create({
+      ...ultra,
       ...calculateBetweenLevel(
         globalOptions,
         pokemonStats.atk,
@@ -1289,13 +1290,13 @@ export const queryStatesEvoChain = (
         defIV,
         staIV,
         level,
-        battleLeague.ultra.level ?? 0
+        ultra.level ?? 0
       ),
-    };
+    });
   }
-  if (battleLeague.master) {
-    battleLeague.master = {
-      ...battleLeague.master,
+  if (master) {
+    battleLeague.master = BattleBaseStats.create({
+      ...master,
       ...calculateBetweenLevel(
         globalOptions,
         pokemonStats.atk,
@@ -1305,9 +1306,9 @@ export const queryStatesEvoChain = (
         defIV,
         staIV,
         level,
-        battleLeague.master.level ?? 0
+        master.level ?? 0
       ),
-    };
+    });
   }
   return new QueryStatesEvoChain({ ...item, battleLeague, maxCP: battleLeague.master?.CP ?? 0, form: pokemon?.forme ?? '' });
 };

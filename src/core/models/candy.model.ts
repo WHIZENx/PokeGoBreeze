@@ -10,7 +10,7 @@ interface FamilyGroup {
   name: string;
 }
 
-export interface Candy {
+export interface ICandy {
   familyId: number;
   familyGroup: FamilyGroup[];
   primaryColor: Color;
@@ -18,7 +18,7 @@ export interface Candy {
   familyName: string | null;
 }
 
-export interface CandyModel {
+export interface ICandyModel {
   FamilyId: number;
   PrimaryColor: Color;
   SecondaryColor: Color;

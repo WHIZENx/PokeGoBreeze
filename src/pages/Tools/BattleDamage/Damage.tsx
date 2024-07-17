@@ -24,10 +24,10 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { ITrainerFriendship } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { PokemonDmgOption } from '../../../core/models/damage.model';
+import { IPokemonDmgOption, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
-const labels: any = {
+const labels: { [x: number]: { color: string; style: string } } = {
   0: {
     color: 'black',
     style: 'text-danger',
@@ -89,10 +89,9 @@ const Damage = () => {
     clevel: 3,
   });
   const { weather, dodge, trainer } = battleState;
-  const [result, setResult]: [PokemonDmgOption, React.Dispatch<React.SetStateAction<PokemonDmgOption>>] = useState({
-    currLevel: 1,
-    objLevel: 1,
-  });
+  const [result, setResult]: [IPokemonDmgOption, React.Dispatch<React.SetStateAction<IPokemonDmgOption>>] = useState(
+    new PokemonDmgOption()
+  );
 
   const { enqueueSnackbar } = useSnackbar();
 

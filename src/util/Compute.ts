@@ -1,5 +1,5 @@
 import { IAsset } from '../core/models/asset.model';
-import { Candy } from '../core/models/candy.model';
+import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_NORMAL } from './Constants';
 import { getStyleRuleValue } from './Utils';
@@ -76,7 +76,7 @@ export const raidEgg = (tier: number, mega: boolean, primal: boolean, ultra?: bo
   }
 };
 
-export const computeCandyBgColor = (candyData: Candy[], id: number) => {
+export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
   let data = candyData?.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) {
     data = candyData?.find((item) => item.familyId === 0);
@@ -86,7 +86,7 @@ export const computeCandyBgColor = (candyData: Candy[], id: number) => {
   }, ${data?.secondaryColor.a || 1})`;
 };
 
-export const computeCandyColor = (candyData: Candy[], id: number) => {
+export const computeCandyColor = (candyData: ICandy[], id: number) => {
   let data = candyData?.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) {
     data = candyData?.find((item) => item.familyId === 0);

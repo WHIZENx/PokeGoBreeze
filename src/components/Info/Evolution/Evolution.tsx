@@ -590,7 +590,7 @@ const Evolution = (props: {
                       <Badge
                         color="secondary"
                         overlap="circular"
-                        badgeContent={splitAndCapitalize(form.replace('_', '-'), '-', ' ')}
+                        badgeContent={splitAndCapitalize(form.replaceAll('_', '-'), '-', ' ')}
                         anchorOrigin={{
                           vertical: 'top',
                           horizontal: 'left',

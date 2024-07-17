@@ -2,7 +2,7 @@ import { capitalize } from '../../util/Utils';
 import { ICombat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
 import { IStatsPokemon } from './stats.model';
-import { SelectMoveModel } from '../../components/Input/models/select-move.model';
+import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, ITempEvo } from './evolution.model';
 
 export interface OptionsPokemon {
@@ -81,6 +81,32 @@ interface IEncounter {
   obShadowFormDodgeProbability?: number;
 }
 
+export class Encounter implements IEncounter {
+  baseCaptureRate?: number;
+  baseFleeRate?: number;
+  collisionRadiusM?: number;
+  collisionHeightM?: number;
+  collisionHeadRadiusM?: number;
+  movementType?: string;
+  movementTimerS?: number;
+  jumpTimeS?: number;
+  attackTimerS?: number;
+  attackProbability?: number;
+  dodgeProbability?: number;
+  dodgeDurationS?: number;
+  dodgeDistance?: number;
+  cameraDistance?: number;
+  minPokemonActionFrequencyS?: number;
+  maxPokemonActionFrequencyS?: number;
+  obShadowFormBaseCaptureRate?: number;
+  obShadowFormAttackProbability?: number;
+  obShadowFormDodgeProbability?: number;
+
+  constructor({ ...props }: IEncounter) {
+    Object.assign(this, props);
+  }
+}
+
 export interface PokemonModel {
   obSpecialAttackMoves?: string[];
   eliteQuickMove?: string[];
@@ -151,9 +177,20 @@ export interface PokemonModel {
   name: string;
 }
 
-export interface PokemonGenderRatio {
+export interface IPokemonGenderRatio {
   M: number;
   F: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonGenderRatio implements IPokemonGenderRatio {
+  M: number;
+  F: number;
+
+  constructor(male: number, female: number) {
+    this.M = male;
+    this.F = female;
+  }
 }
 
 export interface IPokemonData {
@@ -164,7 +201,7 @@ export interface IPokemonData {
   slug: string;
   sprite: string;
   types: string[];
-  genderRatio: PokemonGenderRatio;
+  genderRatio: IPokemonGenderRatio;
   baseStats: IStatsPokemon;
   heightm: number;
   weightkg: number;
@@ -263,8 +300,8 @@ export interface PokemonEncounter {
 
 export interface PokemonRaidModel {
   dataTargetPokemon?: IPokemonData;
-  fmoveTargetPokemon?: SelectMoveModel;
-  cmoveTargetPokemon?: SelectMoveModel;
+  fmoveTargetPokemon?: ISelectMoveModel;
+  cmoveTargetPokemon?: ISelectMoveModel;
   trainerId?: number;
   dpsAtk?: number;
   hp?: number;
@@ -279,10 +316,7 @@ export interface IPokemonDataOptional {
   slug?: string;
   sprite?: string;
   baseStatsGO?: boolean;
-  genderRatio?: {
-    M: number;
-    F: number;
-  };
+  genderRatio?: IPokemonGenderRatio;
   color?: string;
   baseForme?: string | null;
   releasedGO?: boolean;
@@ -303,14 +337,12 @@ export interface IPokemonDataOptional {
   };
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class PokemonDataOptional implements IPokemonDataOptional {
   slug?: string;
   sprite?: string;
   baseStatsGO?: boolean;
-  genderRatio?: {
-    M: number;
-    F: number;
-  };
+  genderRatio?: IPokemonGenderRatio;
   color?: string;
   baseForme?: string | null;
   releasedGO?: boolean;
@@ -344,10 +376,7 @@ export class PokemonData implements IPokemonData {
   slug: string;
   sprite: string;
   types: string[];
-  genderRatio: {
-    M: number;
-    F: number;
-  };
+  genderRatio: IPokemonGenderRatio;
   baseStats: IStatsPokemon;
   heightm: number;
   weightkg: number;
@@ -421,10 +450,7 @@ export class PokemonData implements IPokemonData {
       pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
     this.sprite = options?.sprite ?? 'unknown-pokemon';
     this.types = types;
-    this.genderRatio = {
-      M: options?.genderRatio?.M ?? 0.5,
-      F: options?.genderRatio?.F ?? 0.5,
-    };
+    this.genderRatio = new PokemonGenderRatio(options?.genderRatio?.M ?? 0.5, options?.genderRatio?.F ?? 0.5);
     this.baseStatsGO = options?.baseStatsGO === undefined ? true : options?.baseStatsGO;
     this.baseStats = {
       atk: pokemon.stats?.baseAttack,

@@ -7,11 +7,11 @@ import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { SelectMoveModel } from '../../Input/models/select-move.model';
+import { ISelectMoveModel } from '../../Input/models/select-move.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
 
 const TypeBadge = (props: {
-  move: SelectMoveModel | ICombat | null | undefined;
+  move: ISelectMoveModel | ICombat | null | undefined;
   find?: boolean;
   grow?: boolean;
   style?: React.CSSProperties | undefined;

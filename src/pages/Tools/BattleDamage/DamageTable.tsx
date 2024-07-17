@@ -10,10 +10,10 @@ import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
-import { PokemonDmgOption } from '../../../core/models/damage.model';
+import { IPokemonDmgOption } from '../../../core/models/damage.model';
 import { FORM_SHADOW } from '../../../util/Constants';
 
-const eff: any = {
+const eff: { [x: number]: { label: number; style: string } } = {
   0.244140625: {
     label: 0.244,
     style: 'super-resistance',
@@ -40,7 +40,7 @@ const eff: any = {
   },
 };
 
-const DamageTable = (props: { result: PokemonDmgOption }) => {
+const DamageTable = (props: { result: IPokemonDmgOption }) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data?.options);
 
   return (
@@ -172,8 +172,8 @@ const DamageTable = (props: { result: PokemonDmgOption }) => {
               <td>Damage Effective</td>
               <td>
                 {props.result.battleState ? (
-                  <span className={'eff-' + eff[props.result.battleState.effective].style}>
-                    {'x' + eff[props.result.battleState.effective].label}
+                  <span className={'eff-' + eff[parseInt(props.result.battleState.effective.toString())].style}>
+                    {'x' + eff[parseInt(props.result.battleState.effective.toString())].label}
                   </span>
                 ) : (
                   '-'

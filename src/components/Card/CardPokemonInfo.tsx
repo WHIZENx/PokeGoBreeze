@@ -24,8 +24,8 @@ const CardPokemonInfo = (props: {
 }) => {
   const [isShiny, setIsShiny] = useState(false);
 
-  const imageRef: React.LegacyRef<HTMLImageElement | undefined> = useRef();
-  const shinyRef: React.LegacyRef<HTMLImageElement | undefined> = useRef();
+  const imageRef: React.LegacyRef<HTMLImageElement> = useRef(null);
+  const shinyRef: React.LegacyRef<HTMLImageElement> = useRef(null);
 
   const onTouchEnd = () => {
     if (props.defaultImg) {
@@ -73,7 +73,7 @@ const CardPokemonInfo = (props: {
           onTouchEnd={onTouchEnd}
           onMouseOver={onHoverShiny}
           onMouseLeave={onLeaveShiny}
-          ref={shinyRef as React.LegacyRef<HTMLImageElement> | undefined}
+          ref={shinyRef}
           className={'shiny-pokemon' + (props.defaultImg ? ' active' : '')}
           height={32}
           src={APIService.getShinyIcon()}
@@ -86,7 +86,7 @@ const CardPokemonInfo = (props: {
         <div className="d-flex justify-content-center" style={{ padding: 8 }}>
           <span style={{ width: 96 }}>
             <img
-              ref={imageRef as React.LegacyRef<HTMLImageElement> | undefined}
+              ref={imageRef}
               className="pokemon-sprite-large"
               alt="pokemon-img"
               src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default ?? ''}

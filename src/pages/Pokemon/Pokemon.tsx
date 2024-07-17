@@ -10,7 +10,7 @@ import './Pokemon.scss';
 import { Form, IFormSoundCry, FormSoundCry, PokemonForm, IPokemonFormModify, PokemonFormModify } from '../../core/models/API/form.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { Species } from '../../core/models/API/species.model';
-import { OptionsPokemon, PokemonGenderRatio, IPokemonData } from '../../core/models/pokemon.model';
+import { OptionsPokemon, IPokemonGenderRatio, IPokemonData } from '../../core/models/pokemon.model';
 import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
@@ -77,8 +77,10 @@ const Pokemon = (props: {
     OptionsPokemon | undefined,
     React.Dispatch<React.SetStateAction<OptionsPokemon | undefined>>
   ] = useState();
-  const [pokeRatio, setPokeRatio]: [PokemonGenderRatio | undefined, React.Dispatch<React.SetStateAction<PokemonGenderRatio | undefined>>] =
-    useState();
+  const [pokeRatio, setPokeRatio]: [
+    IPokemonGenderRatio | undefined,
+    React.Dispatch<React.SetStateAction<IPokemonGenderRatio | undefined>>
+  ] = useState();
 
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
