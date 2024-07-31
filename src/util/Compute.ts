@@ -138,7 +138,7 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: s
   } else if (!asset && pokemonAssets.image.length > 0) {
     const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
-      return pokemonAssets.image.at(0);
+      return pokemonAssets.image.at(0) ?? null;
     }
     return formNormal;
   } else {

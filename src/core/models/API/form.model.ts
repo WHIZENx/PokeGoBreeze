@@ -13,6 +13,37 @@ interface IPokemonSprit {
   front_shiny_female: string;
 }
 
+export class PokemonSprit implements IPokemonSprit {
+  // tslint:disable-next-line:variable-name
+  back_default: string;
+  // tslint:disable-next-line:variable-name
+  back_female: string;
+  // tslint:disable-next-line:variable-name
+  back_shiny: string;
+  // tslint:disable-next-line:variable-name
+  back_shiny_female: string;
+  // tslint:disable-next-line:variable-name
+  front_default: string;
+  // tslint:disable-next-line:variable-name
+  front_female: string;
+  // tslint:disable-next-line:variable-name
+  front_shiny: string;
+  // tslint:disable-next-line:variable-name
+  front_shiny_female: string;
+
+  // tslint:disable-next-line:variable-name
+  constructor() {
+    this.back_default = '';
+    this.back_female = '';
+    this.back_shiny = '';
+    this.back_shiny_female = '';
+    this.front_default = '';
+    this.front_female = '';
+    this.front_shiny = '';
+    this.front_shiny_female = '';
+  }
+}
+
 export interface PokemonForm {
   form_name: string;
   form_names: string[];
@@ -64,6 +95,7 @@ export interface IPokemonFormModify {
   sprites?: IPokemonSprit;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class PokemonFormModify implements IPokemonFormModify {
   // tslint:disable-next-line:variable-name
   default_id: number;
@@ -95,7 +127,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   default_name: string;
   name: string;
   form: IForm;
-  sprites!: IPokemonSprit;
+  sprites: IPokemonSprit = new PokemonSprit();
 
   constructor(
     id: number,
@@ -105,8 +137,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
     fullFormName: string,
     version: string,
     types: string[],
-    // tslint:disable-next-line:no-unnecessary-initializer
-    sprites: IPokemonSprit | undefined = undefined,
+    sprites: IPokemonSprit | undefined,
     formId: number | null = null,
     specialForm: 'NORMAL' | 'SHADOW' | 'PURIFIED' = FORM_NORMAL,
     isBattleOnly = true,

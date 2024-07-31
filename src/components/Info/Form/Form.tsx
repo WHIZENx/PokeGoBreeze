@@ -152,11 +152,6 @@ const FormComponent = (props: {
                             onError={(e) => {
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
-                              APIService.getFetchUrl(e.currentTarget.currentSrc)
-                                .then(() => {
-                                  e.currentTarget.src = APIService.getPokeIconSprite(value.default_name);
-                                })
-                                .catch(() => false);
                             }}
                             alt="img-icon-form"
                             src={formIconAssets(value, props.defaultId)}

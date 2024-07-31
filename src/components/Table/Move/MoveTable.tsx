@@ -122,9 +122,7 @@ const TableMove = (props: {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
       } else if (combatPoke.length === 0 && props.id) {
-        const combatPoke: IPokemonData[] | undefined = data?.pokemon?.filter(
-          (item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name
-        );
+        const combatPoke = data?.pokemon?.filter((item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name);
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       }

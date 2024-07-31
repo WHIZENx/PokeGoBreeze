@@ -393,7 +393,7 @@ export class PokemonData implements IPokemonData {
   pokemonClass: string | null;
   disableTransferToPokemonHome: boolean | null;
   isBaby: boolean;
-  gen: number;
+  gen: number = 0;
   region: string | null;
   version: string | null;
   baseStatsGO?: boolean;
@@ -433,11 +433,10 @@ export class PokemonData implements IPokemonData {
   cannotDynamax!: boolean;
 
   constructor(pokemon: PokemonModel, types: string[], options?: IPokemonDataOptional) {
-    let gen = 0;
     Object.entries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
       if (pokemon.id >= minId && pokemon.id <= maxId) {
-        gen = parseInt(key);
+        this.gen = parseInt(key);
         return;
       }
     });
@@ -470,7 +469,6 @@ export class PokemonData implements IPokemonData {
     this.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '') ?? null;
     this.disableTransferToPokemonHome = pokemon.disableTransferToPokemonHome ?? false;
     this.isBaby = options?.isBaby ?? false;
-    this.gen = gen;
     this.region = options?.region ?? 'Unknown';
     this.version = options?.version ?? 'scarlet-violet';
     this.baseSpecies = capitalize(pokemon.pokemonId);
