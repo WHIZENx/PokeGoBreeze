@@ -206,7 +206,7 @@ export interface IQueryStatesEvoChain {
   form: string;
   id: number;
   name: string;
-  prev?: string | undefined;
+  prev?: string;
   evoList: IEvoList[];
   tempEvo: ITempEvo[];
   purified?: PokemonTypeCost;
@@ -221,7 +221,7 @@ export class QueryStatesEvoChain implements IQueryStatesEvoChain {
   form: string = '';
   id: number = 0;
   name: string = '';
-  prev?: string | undefined;
+  prev?: string;
   evoList: IEvoList[] = [];
   tempEvo: ITempEvo[] = [];
   purified?: PokemonTypeCost;

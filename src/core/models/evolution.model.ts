@@ -57,13 +57,13 @@ export interface ITempEvo {
 }
 
 export interface PokemonTypeCost {
-  stardust?: number | undefined;
-  candy?: number | undefined;
+  stardust?: number;
+  candy?: number;
 }
 
 export interface IEvolution {
   pokemonId?: string;
-  prev?: string | undefined;
+  prev?: string;
   id: number;
   name: string;
   evoList: EvoList[];
@@ -78,7 +78,7 @@ export interface IEvolution {
 // tslint:disable-next-line:max-classes-per-file
 export class EvolutionModel implements IEvolution {
   pokemonId?: string;
-  prev?: string | undefined;
+  prev?: string;
   id: number = 0;
   name: string = '';
   evoList: EvoList[] = [];
