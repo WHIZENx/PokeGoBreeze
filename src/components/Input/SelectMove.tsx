@@ -6,14 +6,14 @@ import CardMove from '../Card/CardMove';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
-import { SelectMoveModel } from './models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ICombat } from '../../core/models/combat.model';
 import { retrieveMoves } from '../../util/Utils';
 
 const SelectMove = (props: {
-  move: SelectMoveModel | ICombat | undefined;
-  setMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
+  move: ISelectMoveModel | ICombat | undefined;
+  setMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   clearData?: () => void;
   pokemon: IPokemonData | undefined;
   moveType: string;
@@ -22,12 +22,12 @@ const SelectMove = (props: {
   disable?: boolean;
 }) => {
   const combat = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [resultMove, setResultMove]: [SelectMoveModel[], React.Dispatch<React.SetStateAction<SelectMoveModel[]>>] = useState(
-    [] as SelectMoveModel[]
+  const [resultMove, setResultMove]: [ISelectMoveModel[], React.Dispatch<React.SetStateAction<ISelectMoveModel[]>>] = useState(
+    [] as ISelectMoveModel[]
   );
   const [showMove, setShowMove] = useState(false);
 
-  const changeMove = (value: SelectMoveModel) => {
+  const changeMove = (value: ISelectMoveModel) => {
     setShowMove(false);
     if (props.setMovePokemon) {
       props.setMovePokemon(value);
@@ -40,30 +40,30 @@ const SelectMove = (props: {
   const findMove = useCallback(
     (id: number, form: string, type: string, selected = false) => {
       const result = retrieveMoves(combat, id, form);
-      const simpleMove: SelectMoveModel[] = [];
+      const simpleMove: ISelectMoveModel[] = [];
       if (result) {
         if (type === TypeMove.FAST) {
           result.quickMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
           result.eliteQuickMove?.forEach((value) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
         } else {
           result.cinematicMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
           result.eliteCinematicMove?.forEach((value) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
           result.shadowMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, true, false, false));
           });
           result.purifiedMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, false, true, false));
           });
           result.specialMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+            simpleMove.push(new SelectMoveModel(value, false, false, false, true));
           });
         }
         if (props.setMovePokemon && (!selected || !props.move) && !props.move) {

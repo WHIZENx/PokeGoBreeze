@@ -43,7 +43,7 @@ import { IForm } from '../../../core/models/API/form.model';
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 
 interface IPokemonEvo {
-  prev?: string | undefined;
+  prev?: string;
   name: string;
   id: number;
   baby: boolean;
@@ -54,7 +54,7 @@ interface IPokemonEvo {
 }
 
 class PokemonEvo implements IPokemonEvo {
-  prev?: string | undefined;
+  prev?: string;
   name: string;
   id: number;
   baby: boolean;
@@ -590,7 +590,7 @@ const Evolution = (props: {
                       <Badge
                         color="secondary"
                         overlap="circular"
-                        badgeContent={splitAndCapitalize(form.replace('_', '-'), '-', ' ')}
+                        badgeContent={splitAndCapitalize(form.replaceAll('_', '-'), '-', ' ')}
                         anchorOrigin={{
                           vertical: 'top',
                           horizontal: 'left',

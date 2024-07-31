@@ -24,7 +24,7 @@ import {
   StatsPokemon,
 } from '../core/models/stats.model';
 import { PokemonInfo, Stats } from '../core/models/API/info.model';
-import { PokemonForm, IPokemonFormModify, PokemonFormModifyModel } from '../core/models/API/form.model';
+import { PokemonForm, IPokemonFormModify, PokemonFormModifyModel, PokemonSprit } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 
@@ -723,7 +723,7 @@ export const generatePokemonGoShadowForms = (
         `${p.name}-${FORM_SHADOW.toLowerCase()}`,
         'Pokémon-GO',
         p.types.map((item) => item.type.name) ?? [],
-        undefined,
+        new PokemonSprit(),
         index,
         FORM_SHADOW,
         true
@@ -737,7 +737,7 @@ export const generatePokemonGoShadowForms = (
         `${p.name}-${FORM_PURIFIED.toLowerCase()}`,
         'Pokémon-GO',
         p.types.map((item) => item.type.name) ?? [],
-        undefined,
+        new PokemonSprit(),
         index,
         FORM_PURIFIED,
         true

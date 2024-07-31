@@ -10,7 +10,7 @@ import './Pokemon.scss';
 import { Form, IFormSoundCry, FormSoundCry, PokemonForm, IPokemonFormModify, PokemonFormModify } from '../../core/models/API/form.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { Species } from '../../core/models/API/species.model';
-import { OptionsPokemon, PokemonGenderRatio, IPokemonData } from '../../core/models/pokemon.model';
+import { OptionsPokemon, IPokemonGenderRatio, IPokemonData } from '../../core/models/pokemon.model';
 import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
@@ -77,8 +77,10 @@ const Pokemon = (props: {
     OptionsPokemon | undefined,
     React.Dispatch<React.SetStateAction<OptionsPokemon | undefined>>
   ] = useState();
-  const [pokeRatio, setPokeRatio]: [PokemonGenderRatio | undefined, React.Dispatch<React.SetStateAction<PokemonGenderRatio | undefined>>] =
-    useState();
+  const [pokeRatio, setPokeRatio]: [
+    IPokemonGenderRatio | undefined,
+    React.Dispatch<React.SetStateAction<IPokemonGenderRatio | undefined>>
+  ] = useState();
 
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
@@ -96,10 +98,7 @@ const Pokemon = (props: {
   const [pokemonDetails, setPokemonDetails]: [IPokemonData | undefined, React.Dispatch<React.SetStateAction<IPokemonData | undefined>>] =
     useState();
 
-  const [costModifier, setCostModifier]: [TypeCost, React.Dispatch<React.SetStateAction<TypeCost>>] = useState({
-    purified: {},
-    thirdMove: {},
-  });
+  const [costModifier, setCostModifier]: [TypeCost | undefined, React.Dispatch<React.SetStateAction<TypeCost | undefined>>] = useState();
 
   const [progress, setProgress] = useState({ isLoadedForms: false });
 
@@ -190,8 +189,8 @@ const Pokemon = (props: {
         } else {
           currentForm = defaultForm.find((item) => item?.form.id === data.id);
           searchParams.delete('form');
+          setSearchParams(searchParams);
         }
-        setSearchParams(searchParams);
       } else if (router.action === Action.Pop && props.searching) {
         currentForm = defaultForm.find((item) => item?.form.form_name === props.searching?.form);
       } else {
@@ -256,16 +255,7 @@ const Pokemon = (props: {
       setPokeData([]);
       setCurrentForm(undefined);
       setCurrentData(undefined);
-      setCostModifier({
-        purified: {
-          candy: -1,
-          stardust: -1,
-        },
-        thirdMove: {
-          candy: -1,
-          stardust: -1,
-        },
-      });
+      setCostModifier(undefined);
     }
   };
 
@@ -296,16 +286,7 @@ const Pokemon = (props: {
           name: '',
         },
       });
-      setCostModifier({
-        purified: {
-          candy: -1,
-          stardust: -1,
-        },
-        thirdMove: {
-          candy: -1,
-          stardust: -1,
-        },
-      });
+      setCostModifier(undefined);
     }
   }, [data]);
 
@@ -490,7 +471,7 @@ const Pokemon = (props: {
                           <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
                           {reload(
                             <span>
-                              {costModifier.thirdMove.candy
+                              {costModifier?.thirdMove.candy
                                 ? costModifier.purified.candy === -1
                                   ? ''
                                   : `x${costModifier.thirdMove.candy}`
@@ -504,7 +485,7 @@ const Pokemon = (props: {
                           </div>
                           {reload(
                             <span>
-                              {costModifier.thirdMove.stardust
+                              {costModifier?.thirdMove.stardust
                                 ? costModifier.purified.stardust === -1
                                   ? ''
                                   : `x${costModifier.thirdMove.stardust}`
@@ -527,7 +508,7 @@ const Pokemon = (props: {
                           <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
                           {reload(
                             <span>
-                              {costModifier.purified.candy
+                              {costModifier?.purified.candy
                                 ? costModifier.purified.candy === -1
                                   ? ''
                                   : `x${costModifier.purified.candy}`
@@ -541,7 +522,7 @@ const Pokemon = (props: {
                           </div>
                           {reload(
                             <span>
-                              {costModifier.purified.stardust
+                              {costModifier?.purified.stardust
                                 ? costModifier.purified.stardust === -1
                                   ? ''
                                   : `x${costModifier.purified.stardust}`

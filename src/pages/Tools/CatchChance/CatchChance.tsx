@@ -703,7 +703,7 @@ const CatchChance = () => {
                   <tr>
                     <th>Throwing</th>
                     <th>
-                      <img height={48} src={APIService.getItemSprite(`${dataAdv.ballName.replace(' ', '').toLowerCase()}_sprite`)} />{' '}
+                      <img height={48} src={APIService.getItemSprite(`${dataAdv.ballName.replaceAll(' ', '').toLowerCase()}_sprite`)} />{' '}
                       {dataAdv.ballName}
                     </th>
                   </tr>

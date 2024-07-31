@@ -5,6 +5,17 @@ export interface IBuff {
   buffChance?: number;
 }
 
+export class Buff implements IBuff {
+  type: string = '';
+  target: string = '';
+  power: number = 0;
+  buffChance?: number;
+
+  constructor({ ...props }: IBuff) {
+    Object.assign(this, props);
+  }
+}
+
 export interface ICombat {
   name: string;
   type: string | null;
@@ -30,6 +41,7 @@ export interface ICombat {
   special?: boolean;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class Combat implements ICombat {
   name: string;
   type!: string | null;
@@ -74,5 +86,11 @@ export class Combat implements ICombat {
     this.accuracyChance = 0;
     this.criticalChance = 0;
     this.staminaLossScalar = 0;
+  }
+
+  static create(value: ICombat) {
+    const obj = new Combat();
+    Object.assign(obj, value);
+    return obj;
   }
 }

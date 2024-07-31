@@ -214,7 +214,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`
+                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -243,7 +243,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`
+                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -651,7 +651,7 @@ const Leagues = () => {
                   className="img-link text-center"
                   key={index}
                   to={`/pokemon/${item.id}${
-                    item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`
+                    item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                   }`}
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
@@ -678,7 +678,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replace('_', '-')}`
+                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >

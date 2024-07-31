@@ -120,9 +120,6 @@ const Find = (props: {
         if (props.setName) {
           props.setName(prev.name);
         }
-        if (props.clearStats) {
-          props.clearStats();
-        }
       }
     }
     if (props.clearStats) {
@@ -141,9 +138,6 @@ const Find = (props: {
         }
         if (props.setName) {
           props.setName(next.name);
-        }
-        if (props.clearStats) {
-          props.clearStats();
         }
       }
     }

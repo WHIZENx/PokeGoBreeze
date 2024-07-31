@@ -4,7 +4,7 @@ import { retrieveMoves, splitAndCapitalize } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
-import { SelectMoveModel } from '../Input/models/select-move.model';
+import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { ICombat } from '../../core/models/combat.model';
 
 const Move = (props: {
@@ -22,10 +22,10 @@ const Move = (props: {
   const data = useSelector((state: StoreState) => state.store.data);
 
   const [countFM, setCountFM] = useState(0);
-  const [resultMove, setResultMove]: [SelectMoveModel[], React.Dispatch<React.SetStateAction<SelectMoveModel[]>>] = useState(
-    [] as SelectMoveModel[]
+  const [resultMove, setResultMove]: [ISelectMoveModel[], React.Dispatch<React.SetStateAction<ISelectMoveModel[]>>] = useState(
+    [] as ISelectMoveModel[]
   );
-  const [currentMove, setCurrentMove]: [SelectMoveModel | undefined, React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>] =
+  const [currentMove, setCurrentMove]: [ISelectMoveModel | undefined, React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>] =
     useState();
   const [showMove, setShowMove] = useState(false);
 
@@ -39,7 +39,7 @@ const Move = (props: {
   const findMove = useCallback(
     (id: number, form: string) => {
       const result = retrieveMoves(data?.pokemon ?? [], id, form);
-      const simpleMove: SelectMoveModel[] = [];
+      const simpleMove: ISelectMoveModel[] = [];
       if (result) {
         if (props.type !== TypeMove.CHARGE) {
           result?.quickMoves?.forEach((value) => {
@@ -85,7 +85,7 @@ const Move = (props: {
     return findMoveData(move)?.type;
   };
 
-  const changeMove = (value: SelectMoveModel) => {
+  const changeMove = (value: ISelectMoveModel) => {
     setShowMove(false);
     setCurrentMove(value);
     props.setMove(findMoveData(value.name));

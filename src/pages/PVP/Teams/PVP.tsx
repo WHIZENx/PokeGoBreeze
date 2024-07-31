@@ -20,7 +20,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { TeamsPVP } from '../../../core/models/pvp.model';
-import { PokemonTeamData } from '../models/battle.model';
+import { IPokemonTeamData, PokemonTeamData } from '../models/battle.model';
 import { FORM_NORMAL, FORM_SHADOW } from '../../../util/Constants';
 
 const TeamPVP = () => {
@@ -89,7 +89,7 @@ const TeamPVP = () => {
       }
     }
 
-    return {
+    return new PokemonTeamData({
       id,
       name,
       speciesId,
@@ -105,7 +105,7 @@ const TeamPVP = () => {
       shadow: speciesId.toUpperCase().includes(FORM_SHADOW),
       purified:
         (cmovePri && pokemon?.purifiedMoves?.includes(cmovePri.name)) || (cmoveSec && pokemon?.purifiedMoves?.includes(cmoveSec.name)),
-    };
+    });
   };
 
   useEffect(() => {
@@ -143,7 +143,7 @@ const TeamPVP = () => {
 
         file.teams = file.teams.map((item) => {
           const teams = item.team.split('|');
-          const teamsData: PokemonTeamData[] = [];
+          const teamsData: IPokemonTeamData[] = [];
           teams.forEach((value) => teamsData.push(mappingPokemonData(value)));
           return {
             ...item,

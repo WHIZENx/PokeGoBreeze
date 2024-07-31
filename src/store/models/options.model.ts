@@ -1,4 +1,4 @@
-import { SelectMoveModel } from '../../components/Input/models/select-move.model';
+import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { MAX_IV } from '../../util/Constants';
 
@@ -6,8 +6,8 @@ export interface OptionDPSModel {
   filters: OptionFiltersDPS;
   options: OptionOtherDPS;
   dataTargetPokemon?: IPokemonData;
-  fmoveTargetPokemon?: SelectMoveModel;
-  cmoveTargetPokemon?: SelectMoveModel;
+  fmoveTargetPokemon?: ISelectMoveModel;
+  cmoveTargetPokemon?: ISelectMoveModel;
   selectTypes: string[];
   searchTerm: string;
   defaultPage: number;

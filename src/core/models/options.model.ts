@@ -126,6 +126,17 @@ export interface IPokemonPermission {
   name: string | undefined;
 }
 
+export class PokemonPermission implements IPokemonPermission {
+  id: number | undefined;
+  form: string = '';
+  forms?: string;
+  name: string | undefined;
+
+  constructor({ ...props }: IPokemonPermission) {
+    Object.assign(this, props);
+  }
+}
+
 interface ICombatOption {
   stab: number;
   shadow_bonus: IStatsBase;
@@ -150,6 +161,7 @@ export interface IBuddyFriendship {
   unlockedTrading?: string[];
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class BuddyFriendship implements IBuddyFriendship {
   level: number;
   minNonCumulativePointsRequired: number;
@@ -184,4 +196,44 @@ export interface IOptions {
   throw_charge: IThrowOption;
   buddy_friendship: { [x: string]: IBuddyFriendship };
   trainer_friendship: { [x: string]: ITrainerFriendship };
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class Options implements IOptions {
+  // tslint:disable-next-line:variable-name
+  combat_options: ICombatOption;
+  // tslint:disable-next-line:variable-name
+  battle_options: IBattleOption;
+  // tslint:disable-next-line:variable-name
+  throw_charge: IThrowOption;
+  // tslint:disable-next-line:variable-name
+  buddy_friendship: { [x: string]: IBuddyFriendship };
+  // tslint:disable-next-line:variable-name
+  trainer_friendship: { [x: string]: ITrainerFriendship };
+
+  constructor() {
+    this.combat_options = {
+      stab: 0,
+      shadow_bonus: {
+        atk: 0,
+        def: 0,
+      },
+    };
+    this.battle_options = {
+      enemyAttackInterval: 0,
+      stab: 0,
+      shadow_bonus: {
+        atk: 0,
+        def: 0,
+      },
+    };
+    this.throw_charge = {
+      normal: 0,
+      nice: 0,
+      great: 0,
+      excellent: 0,
+    };
+    this.buddy_friendship = {};
+    this.trainer_friendship = {};
+  }
 }

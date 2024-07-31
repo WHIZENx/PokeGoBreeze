@@ -49,7 +49,7 @@ import { TypeMove } from '../../../enums/move.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -256,12 +256,12 @@ const DpsTdo = () => {
     React.Dispatch<React.SetStateAction<IPokemonData | undefined>>
   ] = useState(optionStore?.dpsSheet?.dataTargetPokemon);
   const [fmoveTargetPokemon, setFmoveTargetPokemon]: [
-    SelectMoveModel | undefined,
-    React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>
+    ISelectMoveModel | undefined,
+    React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>
   ] = useState(optionStore?.dpsSheet?.fmoveTargetPokemon);
   const [cmoveTargetPokemon, setCmoveTargetPokemon]: [
-    SelectMoveModel | undefined,
-    React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>
+    ISelectMoveModel | undefined,
+    React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>
   ] = useState(optionStore?.dpsSheet?.cmoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(

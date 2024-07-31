@@ -29,6 +29,27 @@ interface PokemonMoves {
   specialMoves: (ICombat | undefined)[];
 }
 
+interface SortModel {
+  fast: boolean;
+  charged: boolean;
+  eff: boolean;
+  sortBy: string;
+}
+
+interface ITableSort {
+  offensive: SortModel;
+  defensive: SortModel;
+}
+
+class TableSort implements ITableSort {
+  offensive!: SortModel;
+  defensive!: SortModel;
+
+  constructor({ ...props }: ITableSort) {
+    Object.assign(this, props);
+  }
+}
+
 const TableMove = (props: {
   data: PokemonDataForm | PokemonStatsRanking | undefined;
   statATK: number;
@@ -46,20 +67,24 @@ const TableMove = (props: {
   const [moveOrigin, setMoveOrigin]: [PokemonMoves | undefined, React.Dispatch<React.SetStateAction<PokemonMoves | undefined>>] =
     useState();
 
-  const [stateSorted, setStateSorted]: any = useState({
-    offensive: {
-      fast: false,
-      charged: false,
-      eff: true,
-      sortBy: 'eff',
-    },
-    defensive: {
-      fast: false,
-      charged: false,
-      eff: true,
-      sortBy: 'eff',
-    },
-  });
+  const [stateSorted, setStateSorted]: [ITableSort, React.Dispatch<React.SetStateAction<ITableSort>>] = useState(
+    new TableSort({
+      offensive: {
+        fast: false,
+        charged: false,
+        eff: true,
+        sortBy: 'eff',
+      },
+      defensive: {
+        fast: false,
+        charged: false,
+        eff: true,
+        sortBy: 'eff',
+      },
+    })
+  );
+
+  const { offensive, defensive } = stateSorted;
 
   const filterMoveType = (combat: IPokemonData | undefined) => {
     if (!combat) {
@@ -97,9 +122,7 @@ const TableMove = (props: {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
       } else if (combatPoke.length === 0 && props.id) {
-        const combatPoke: IPokemonData[] | undefined = data?.pokemon?.filter(
-          (item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name
-        );
+        const combatPoke = data?.pokemon?.filter((item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name);
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       }
@@ -236,14 +259,23 @@ const TableMove = (props: {
   };
 
   const arrowSort = (table: string, type: string) => {
-    const sortedTable = stateSorted[table];
-    if (stateSorted[table].sortBy === type) {
-      stateSorted[table][type] = !stateSorted[table][type];
+    if (table === 'offensive') {
+      if (offensive.sortBy === type) {
+        const prev = (offensive as unknown as { [x: string]: boolean })[type];
+        (offensive as unknown as { [x: string]: boolean })[type] = !prev;
+      }
+      offensive.sortBy = type;
+    } else if (table === 'defensive') {
+      if (defensive.sortBy === type) {
+        const prev = (defensive as unknown as { [x: string]: boolean })[type];
+        (defensive as unknown as { [x: string]: boolean })[type] = !prev;
+      }
+      defensive.sortBy = type;
     }
-    stateSorted[table].sortBy = type;
     return setStateSorted({
       ...stateSorted,
-      sortedTable,
+      offensive,
+      defensive,
     });
   };
 
@@ -326,9 +358,9 @@ const TableMove = (props: {
                       return stateSorted.offensive.eff ? b.eDPS.offensive - a.eDPS.offensive : a.eDPS.offensive - b.eDPS.offensive;
                     } else {
                       if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name < b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
-                        return stateSorted.offensive[sortedBy] ? -1 : 1;
+                        return (stateSorted.offensive as unknown as { [x: string]: boolean })[sortedBy] ? -1 : 1;
                       } else if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
-                        return stateSorted.offensive[sortedBy] ? 1 : -1;
+                        return (stateSorted.offensive as unknown as { [x: string]: boolean })[sortedBy] ? 1 : -1;
                       }
                       return 0;
                     }
@@ -378,9 +410,9 @@ const TableMove = (props: {
                       return stateSorted.defensive.eff ? b.eDPS.defensive - a.eDPS.defensive : a.eDPS.defensive - b.eDPS.defensive;
                     } else {
                       if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name < b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
-                        return stateSorted.defensive[sortedBy] ? -1 : 1;
+                        return (stateSorted.defensive as unknown as { [x: string]: boolean })[sortedBy] ? -1 : 1;
                       } else if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
-                        return stateSorted.defensive[sortedBy] ? 1 : -1;
+                        return (stateSorted.defensive as unknown as { [x: string]: boolean })[sortedBy] ? 1 : -1;
                       }
                       return 0;
                     }
