@@ -48,7 +48,7 @@ import { Link } from 'react-router-dom';
 import { StoreState } from '../../../store/models/state.model';
 import { BattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
 import { IBuff, ICombat } from '../../../core/models/combat.model';
-import { PokemonBattle, PokemonBattleData, Timeline } from '../models/battle.model';
+import { IPokemonBattleData, PokemonBattle, PokemonBattleData, ITimeline, TimelineModel, IPokemonBattle } from '../models/battle.model';
 import { BattleBaseStats, IBattleBaseStats } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 
@@ -86,21 +86,15 @@ const Battle = () => {
   let timelineInterval: NodeJS.Timeout;
   let turnInterval: NodeJS.Timeout;
 
-  const [pokemonCurr, setPokemonCurr]: [PokemonBattle, React.Dispatch<React.SetStateAction<PokemonBattle>>] = useState({
-    timeline: [] as Timeline[],
-    energy: 0,
-    block: 2,
-  });
+  const [pokemonCurr, setPokemonCurr]: [IPokemonBattle, React.Dispatch<React.SetStateAction<IPokemonBattle>>] = useState(
+    new PokemonBattle()
+  );
 
-  const [pokemonObj, setPokemonObj]: [PokemonBattle, React.Dispatch<React.SetStateAction<PokemonBattle>>] = useState({
-    timeline: [] as Timeline[],
-    energy: 0,
-    block: 2,
-  });
+  const [pokemonObj, setPokemonObj]: [IPokemonBattle, React.Dispatch<React.SetStateAction<IPokemonBattle>>] = useState(new PokemonBattle());
 
   const [playTimeline, setPlayTimeline]: any = useState({
-    pokemonCurr: { hp: 0, energy: 0 },
-    pokemonObj: { hp: 0, energy: 0 },
+    pokemonCurr: new PokemonBattle(),
+    pokemonObj: new PokemonBattle(),
   });
 
   const State = (
@@ -114,8 +108,8 @@ const Battle = () => {
     hp: number,
     move: ICombat | null = null,
     immune = null
-  ): Timeline => {
-    return {
+  ) => {
+    return new TimelineModel({
       timer: timer ?? 0,
       type,
       move,
@@ -127,10 +121,14 @@ const Battle = () => {
       hp: hp ? Math.max(0, hp) : 0,
       dmgImmune: immune ?? false,
       buff: null,
-    };
+    });
   };
 
-  const calculateMoveDmgActual = (poke: PokemonBattleData | null, pokeObj: PokemonBattleData | null, move: ICombat | undefined | null) => {
+  const calculateMoveDmgActual = (
+    poke: IPokemonBattleData | null,
+    pokeObj: IPokemonBattleData | null,
+    move: ICombat | undefined | null
+  ) => {
     if (poke && pokeObj) {
       const atkPoke = calculateStatsBattle(
         poke.stats?.atk ?? 0,
@@ -158,8 +156,8 @@ const Battle = () => {
     return 1;
   };
 
-  const Pokemon = (poke: PokemonBattle): PokemonBattleData => {
-    return {
+  const Pokemon = (poke: IPokemonBattle) => {
+    return new PokemonBattleData({
       hp: poke.pokemonData?.currentStats?.stats?.statsSTA ?? 0,
       stats: poke.pokemonData?.stats,
       currentStats: poke.pokemonData?.currentStats,
@@ -174,7 +172,7 @@ const Battle = () => {
       shadow: poke.shadow ?? false,
       disableCMovePri: poke.disableCMovePri,
       disableCMoveSec: poke.disableCMoveSec,
-    };
+    });
   };
 
   const battleAnimation = () => {
@@ -208,8 +206,8 @@ const Battle = () => {
       player2.cmoveSec = player2.cmove;
     }
 
-    const timelinePri: Timeline[] = [];
-    const timelineSec: Timeline[] = [];
+    const timelinePri: ITimeline[] = [];
+    const timelineSec: ITimeline[] = [];
 
     timelinePri.push(State(0, AttackType.Wait, null, null, false, player1.block, player1.energy, player1.hp));
     timelinePri.push(State(1, AttackType.Wait, null, null, false, player1.block, player1.energy, player1.hp));
@@ -715,8 +713,8 @@ const Battle = () => {
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj({ ...pokemonObj, timeline: [] });
     setPlayTimeline({
-      pokemonCurr: { hp: 0, energy: 0 },
-      pokemonObj: { hp: 0, energy: 0 },
+      pokemonCurr: new PokemonBattle(),
+      pokemonObj: new PokemonBattle(),
     });
     if (removeCMoveSec) {
       setPokemonCurr({ ...pokemonCurr, cMoveSec: null, timeline: [] });
@@ -739,8 +737,8 @@ const Battle = () => {
   const clearDataPokemonObj = (removeCMoveSec: boolean) => {
     setPokemonCurr({ ...pokemonCurr, timeline: [] });
     setPlayTimeline({
-      pokemonCurr: { hp: 0, energy: 0 },
-      pokemonObj: { hp: 0, energy: 0 },
+      pokemonCurr: new PokemonBattle(),
+      pokemonObj: new PokemonBattle(),
     });
     if (removeCMoveSec) {
       setPokemonObj({ ...pokemonObj, cMoveSec: null, timeline: [] });
@@ -1051,8 +1049,8 @@ const Battle = () => {
   const calculateStatPokemon = (
     e: React.FormEvent<HTMLFormElement>,
     type: string,
-    pokemon: PokemonBattle,
-    setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>
+    pokemon: IPokemonBattle,
+    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
   ) => {
     e.preventDefault();
     const level = parseInt((document.getElementById('level' + capitalize(type)) as HTMLInputElement).value);
@@ -1083,7 +1081,7 @@ const Battle = () => {
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
       const statsSTA = calculateStatsBattle(statsBattle?.sta ?? 0, sta, level);
-      stats = new BattleBaseStats({
+      stats = BattleBaseStats.create({
         IV: { atk, def, sta },
         CP: cp ?? 0,
         level: level ?? 0,
@@ -1111,8 +1109,8 @@ const Battle = () => {
 
   const onSetStats = (
     type: string,
-    pokemon: PokemonBattle,
-    setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>,
+    pokemon: IPokemonBattle,
+    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
     isRandom: boolean
   ) => {
     if (!pokemon.pokemonData?.allStats) {
@@ -1143,7 +1141,7 @@ const Battle = () => {
     }
   };
 
-  const renderInfoPokemon = (type: string, pokemon: PokemonBattle, setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>) => {
+  const renderInfoPokemon = (type: string, pokemon: IPokemonBattle, setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>) => {
     return (
       <Accordion defaultActiveKey={[]} alwaysOpen={true}>
         <Accordion.Item eventKey="0">
@@ -1316,8 +1314,8 @@ const Battle = () => {
 
   const renderPokemonInfo = (
     type: string,
-    pokemon: PokemonBattle,
-    setPokemon: React.Dispatch<React.SetStateAction<PokemonBattle>>,
+    pokemon: IPokemonBattle,
+    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
     // eslint-disable-next-line no-unused-vars
     clearDataPokemon: (removeMove: boolean) => void
   ) => {

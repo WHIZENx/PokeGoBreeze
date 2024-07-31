@@ -10,14 +10,14 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonData, IPokemonDataStats } from '../../core/models/pokemon.model';
-import { SelectMoveModel } from './models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 
 const SelectPokemon = (props: {
   pokemon?: IPokemonData;
   setCurrentPokemon: React.Dispatch<React.SetStateAction<IPokemonData | undefined>>;
   selected: boolean;
-  setFMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
-  setCMovePokemon: React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>;
+  setFMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
+  setCMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   clearData?: () => void;
   disable?: boolean;
   defaultSetting?: IPokemonDataStats;
@@ -87,30 +87,30 @@ const SelectPokemon = (props: {
   const findMove = useCallback(
     (id: number, form: string, type: string) => {
       const result = retrieveMoves(pokemonData, id, form);
-      const simpleMove: SelectMoveModel[] = [];
+      const simpleMove: ISelectMoveModel[] = [];
       if (result) {
         if (type === TypeMove.FAST) {
           result.quickMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
           result.eliteQuickMove?.forEach((value) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
         } else {
           result.cinematicMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
           result.eliteCinematicMove?.forEach((value) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
           result.shadowMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, true, false, false));
           });
           result.purifiedMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, false, true, false));
           });
           result.specialMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+            simpleMove.push(new SelectMoveModel(value, false, false, false, true));
           });
         }
       }

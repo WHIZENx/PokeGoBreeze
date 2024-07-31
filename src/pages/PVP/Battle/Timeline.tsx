@@ -4,11 +4,11 @@ import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
-import { PokemonBattle } from '../models/battle.model';
+import { IPokemonBattle } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
 
-export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: PokemonBattle, hide = false) => {
+export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, hide = false) => {
   const renderMoveBadgeBorder = (move: ICombat | null, border: boolean, shadow = false) => {
     if (!move) {
       return;
@@ -33,7 +33,7 @@ export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: Pokemon
     );
   };
 
-  const renderTimeline = (pokeCurr: PokemonBattle, pokeObj: PokemonBattle, end = false) => {
+  const renderTimeline = (pokeCurr: IPokemonBattle, pokeObj: IPokemonBattle, end = false) => {
     return (
       <Fragment>
         {pokeCurr.timeline?.map((value, index) => (
@@ -159,8 +159,8 @@ export const TimeLineVertical = (pokemonCurr: PokemonBattle, pokemonObj: Pokemon
 };
 
 export const TimeLine = (
-  pokemonCurr: PokemonBattle,
-  pokemonObj: PokemonBattle,
+  pokemonCurr: IPokemonBattle,
+  pokemonObj: IPokemonBattle,
   elem: React.LegacyRef<HTMLDivElement> | undefined,
   // eslint-disable-next-line no-unused-vars
   scroll: { (e: { currentTarget: { scrollLeft: number } }): void; bind?: any },
@@ -174,7 +174,7 @@ export const TimeLine = (
   showTap: boolean,
   hide = false
 ) => {
-  const renderTimeline = (poke: PokemonBattle, pokeObj: PokemonBattle, border = false) => {
+  const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => {
     return (
       <Fragment>
         <div className="element-top" style={{ height: 12 }}>
@@ -293,8 +293,8 @@ export const TimeLine = (
 };
 
 export const TimeLineFit = (
-  pokemonCurr: PokemonBattle,
-  pokemonObj: PokemonBattle,
+  pokemonCurr: IPokemonBattle,
+  pokemonObj: IPokemonBattle,
   timeline: React.LegacyRef<HTMLDivElement> | undefined,
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: {
@@ -313,7 +313,7 @@ export const TimeLineFit = (
     return `${(index * 100) / (length - 2)}%`;
   };
 
-  const renderTimelineFit = (poke: PokemonBattle, pokeObj: PokemonBattle) => {
+  const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => {
     return (
       <Fragment>
         <div className="element-top" style={{ height: 12 }}>

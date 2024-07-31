@@ -53,7 +53,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonData, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
-import { SelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { TypeMove } from '../../../enums/move.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -111,16 +111,16 @@ const RaidBattle = () => {
 
   const [tier, setTier] = useState(1);
 
-  const [fMove, setFMove]: [SelectMoveModel | undefined, React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>] = useState();
-  const [cMove, setCMove]: [SelectMoveModel | undefined, React.Dispatch<React.SetStateAction<SelectMoveModel | undefined>>] = useState();
+  const [fMove, setFMove]: [ISelectMoveModel | undefined, React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>] = useState();
+  const [cMove, setCMove]: [ISelectMoveModel | undefined, React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>] = useState();
 
   const [resultFMove, setResultFMove]: [
-    SelectMoveModel[] | undefined,
-    React.Dispatch<React.SetStateAction<SelectMoveModel[] | undefined>>
+    ISelectMoveModel[] | undefined,
+    React.Dispatch<React.SetStateAction<ISelectMoveModel[] | undefined>>
   ] = useState();
   const [resultCMove, setResultCMove]: [
-    SelectMoveModel[] | undefined,
-    React.Dispatch<React.SetStateAction<SelectMoveModel[] | undefined>>
+    ISelectMoveModel[] | undefined,
+    React.Dispatch<React.SetStateAction<ISelectMoveModel[] | undefined>>
   ] = useState();
 
   const [options, setOptions] = useState({
@@ -326,31 +326,31 @@ const RaidBattle = () => {
   const findMove = useCallback(
     (id: number, form: string) => {
       const result = retrieveMoves(data?.pokemon ?? [], id, form);
-      let simpleMove: SelectMoveModel[] = [];
+      let simpleMove: ISelectMoveModel[] = [];
       if (result) {
         result?.quickMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
         });
         result?.eliteQuickMove?.forEach((value) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
         });
         setFMove(simpleMove.at(0));
         setResultFMove(simpleMove);
         simpleMove = [];
         result?.cinematicMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
         });
         result?.eliteCinematicMove?.forEach((value) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
         });
         result?.shadowMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
+          simpleMove.push(new SelectMoveModel(value, false, true, false, false));
         });
         result?.purifiedMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+          simpleMove.push(new SelectMoveModel(value, false, false, true, false));
         });
         result?.specialMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+          simpleMove.push(new SelectMoveModel(value, false, false, false, true));
         });
         setCMove(simpleMove.at(0));
         setResultCMove(simpleMove);

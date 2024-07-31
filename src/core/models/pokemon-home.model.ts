@@ -40,8 +40,8 @@ export class PokemonHomeModel implements IPokemonHomeModel {
   releasedGO: boolean;
   image: IImage;
 
-  constructor(item: IPokemonData, assetForm: IImage | null | undefined, versionList: string[]) {
-    this.id = item.num;
+  constructor(item: IPokemonData, assetForm: IImage | null, versionList: string[]) {
+    this.id = item.num ?? 0;
     this.name = item.name;
     this.forme = assetForm?.default
       ? item.forme !== FORM_NORMAL

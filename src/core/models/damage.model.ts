@@ -1,7 +1,7 @@
 import { IPokemonFormModify } from './API/form.model';
 import { ICombat } from './combat.model';
 
-export interface PokemonDmgOption {
+export interface IPokemonDmgOption {
   objPoke?: IPokemonFormModify;
   type?: string;
   currPoke?: IPokemonFormModify;
@@ -20,4 +20,30 @@ export interface PokemonDmgOption {
   };
   damage?: number;
   hp?: number;
+}
+
+export class PokemonDmgOption implements IPokemonDmgOption {
+  objPoke?: IPokemonFormModify;
+  type?: string;
+  currPoke?: IPokemonFormModify;
+  currLevel: number = 0;
+  typeObj?: string;
+  objLevel: number = 0;
+  move?: ICombat;
+  battleState?: {
+    stab: boolean;
+    wb: boolean;
+    dodge: boolean;
+    trainer: boolean;
+    flevel: number;
+    clevel: string | number;
+    effective: string | number;
+  };
+  damage?: number;
+  hp?: number;
+
+  constructor() {
+    this.currLevel = 0;
+    this.objLevel = 1;
+  }
 }

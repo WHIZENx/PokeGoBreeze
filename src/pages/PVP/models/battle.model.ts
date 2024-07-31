@@ -1,10 +1,10 @@
-import { IBuff, ICombat } from '../../../core/models/combat.model';
+import { Combat, IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { StatsAtk, StatsDef, IStatsPokemon, StatsProd, StatsSta, IStatsBase, StatsPokemon } from '../../../core/models/stats.model';
-import { IBattleBaseStats, IStatsProdCalculate } from '../../../util/models/calculate.model';
+import { IBattleBaseStats } from '../../../util/models/calculate.model';
 
-export interface PokemonBattleData {
+export interface IPokemonBattleData {
   speciesId?: string;
   name?: string;
   form?: string;
@@ -27,7 +27,34 @@ export interface PokemonBattleData {
   disableCMovePri?: boolean;
 }
 
-export interface PokemonBattle {
+export class PokemonBattleData implements IPokemonBattleData {
+  speciesId?: string;
+  name?: string;
+  form?: string;
+  id?: number;
+  shadow: boolean = false;
+  allStats?: IBattleBaseStats[];
+  hp: number = 0;
+  stats: IStatsBase | undefined;
+  bestStats: IBattleBaseStats | undefined;
+  currentStats: IBattleBaseStats | undefined;
+  pokemon: IPokemonData | null = null;
+  fmove: ICombat | null = new Combat();
+  cmove: ICombat | null = new Combat();
+  cmoveSec: ICombat | null = new Combat();
+  energy: number = 0;
+  block: number = 0;
+  turn: number = 0;
+  combatPoke?: IPokemonData;
+  disableCMoveSec?: boolean;
+  disableCMovePri?: boolean;
+
+  constructor({ ...props }: IPokemonBattleData) {
+    Object.assign(this, props);
+  }
+}
+
+export interface IPokemonBattle {
   disableCMoveSec?: boolean;
   disableCMovePri?: boolean;
   shadow?: boolean;
@@ -35,13 +62,34 @@ export interface PokemonBattle {
   fMove?: ICombat | null;
   cMovePri?: ICombat | null;
   cMoveSec?: ICombat | null;
-  timeline: Timeline[];
+  timeline: ITimeline[];
   energy: number;
   block: number;
   audio?: any;
 }
 
-export interface Timeline {
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonBattle implements IPokemonBattle {
+  disableCMoveSec?: boolean;
+  disableCMovePri?: boolean;
+  shadow?: boolean;
+  pokemonData?: PokemonBattleData | null;
+  fMove?: ICombat | null;
+  cMovePri?: ICombat | null;
+  cMoveSec?: ICombat | null;
+  timeline: ITimeline[];
+  energy: number;
+  block: number;
+  audio?: any;
+
+  constructor() {
+    this.timeline = [];
+    this.energy = 0;
+    this.block = 2;
+  }
+}
+
+export interface ITimeline {
   timer: number;
   type: string | null;
   color: string | null;
@@ -55,7 +103,26 @@ export interface Timeline {
   dmgImmune: boolean;
 }
 
-export interface PokemonTeamData {
+// tslint:disable-next-line:max-classes-per-file
+export class TimelineModel implements ITimeline {
+  timer: number = 0;
+  type: string | null = null;
+  color: string | null = null;
+  size: number = 0;
+  tap: boolean = false;
+  block: number = 0;
+  energy: number = 0;
+  move: ICombat | null = null;
+  hp: number = 0;
+  buff: IBuff[] | null = null;
+  dmgImmune: boolean = false;
+
+  constructor({ ...props }: ITimeline) {
+    Object.assign(this, props);
+  }
+}
+
+export interface IPokemonTeamData {
   id: number | undefined;
   name: string | undefined;
   speciesId: string;
@@ -70,6 +137,28 @@ export interface PokemonTeamData {
   cmoveSec: ICombat | undefined;
   shadow: boolean;
   purified: boolean | undefined;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonTeamData implements IPokemonTeamData {
+  id: number | undefined;
+  name: string | undefined;
+  speciesId: string = '';
+  pokemonData: IPokemonData | undefined;
+  form: string | null = '';
+  stats: IStatsPokemon = new StatsPokemon();
+  atk: StatsAtk | undefined;
+  def: StatsDef | undefined;
+  sta: StatsSta | undefined;
+  fmove: ICombat | undefined;
+  cmovePri: ICombat | undefined;
+  cmoveSec: ICombat | undefined;
+  shadow: boolean = false;
+  purified: boolean | undefined;
+
+  constructor({ ...props }: IPokemonTeamData) {
+    Object.assign(this, props);
+  }
 }
 
 export interface IPokemonBattleRanking {
@@ -87,12 +176,13 @@ export interface IPokemonBattleRanking {
   fmove: ICombat | undefined;
   cmovePri: ICombat | undefined;
   cmoveSec: ICombat | undefined;
-  bestStats?: IStatsProdCalculate;
+  bestStats?: IBattleBaseStats;
   shadow: boolean;
   purified: boolean | undefined;
   score: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class PokemonBattleRanking implements IPokemonBattleRanking {
   data: RankingsPVP | undefined;
   id: number | undefined;
@@ -108,7 +198,7 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   fmove: ICombat | undefined;
   cmovePri: ICombat | undefined;
   cmoveSec: ICombat | undefined;
-  bestStats?: IStatsProdCalculate;
+  bestStats?: IBattleBaseStats;
   shadow: boolean = false;
   purified: boolean | undefined = false;
   score: number = 0;

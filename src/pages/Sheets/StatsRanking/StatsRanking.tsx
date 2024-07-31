@@ -22,7 +22,7 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
-import { IForm } from '../../../core/models/API/form.model';
+import { Form } from '../../../core/models/API/form.model';
 
 const columnPokemon: any = [
   {
@@ -163,7 +163,7 @@ const StatsRanking = () => {
     }) as PokemonStatsRanking[];
   };
 
-  const sortRanking = (pokemon: PokemonStatsRanking[], id: number): PokemonStatsRanking[] => {
+  const sortRanking = (pokemon: PokemonStatsRanking[], id: number) => {
     let sortBy: string[] = [];
     if (id === ColumnType.Atk) {
       sortBy = ['atk', 'attack'];
@@ -271,8 +271,8 @@ const StatsRanking = () => {
     }
   }, [search, match, pokemonList]);
 
-  const convertToPokemonForm = (pokemon: IPokemonData | PokemonStatsRanking): IForm => {
-    return {
+  const convertToPokemonForm = (pokemon: IPokemonData | PokemonStatsRanking) => {
+    return Form.create({
       form_name: pokemon.forme ?? '',
       form_names: [],
       form_order: 0,
@@ -286,7 +286,7 @@ const StatsRanking = () => {
       version_group: { name: pokemon.version ?? '' },
       is_shadow: false,
       is_purified: false,
-    };
+    });
   };
 
   return (

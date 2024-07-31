@@ -13,6 +13,37 @@ interface IPokemonSprit {
   front_shiny_female: string;
 }
 
+export class PokemonSprit implements IPokemonSprit {
+  // tslint:disable-next-line:variable-name
+  back_default: string;
+  // tslint:disable-next-line:variable-name
+  back_female: string;
+  // tslint:disable-next-line:variable-name
+  back_shiny: string;
+  // tslint:disable-next-line:variable-name
+  back_shiny_female: string;
+  // tslint:disable-next-line:variable-name
+  front_default: string;
+  // tslint:disable-next-line:variable-name
+  front_female: string;
+  // tslint:disable-next-line:variable-name
+  front_shiny: string;
+  // tslint:disable-next-line:variable-name
+  front_shiny_female: string;
+
+  // tslint:disable-next-line:variable-name
+  constructor() {
+    this.back_default = '';
+    this.back_female = '';
+    this.back_shiny = '';
+    this.back_shiny_female = '';
+    this.front_default = '';
+    this.front_female = '';
+    this.front_shiny = '';
+    this.front_shiny_female = '';
+  }
+}
+
 export interface PokemonForm {
   form_name: string;
   form_names: string[];
@@ -25,7 +56,7 @@ export interface PokemonForm {
   names: string[];
   order: number;
   pokemon: Path;
-  sprites: IPokemonSprit;
+  sprites: IPokemonSprit | undefined;
   types: SlotType[];
   version_group: Path;
 }
@@ -64,6 +95,7 @@ export interface IPokemonFormModify {
   sprites?: IPokemonSprit;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class PokemonFormModify implements IPokemonFormModify {
   // tslint:disable-next-line:variable-name
   default_id: number;
@@ -95,7 +127,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   default_name: string;
   name: string;
   form: IForm;
-  sprites!: IPokemonSprit;
+  sprites: IPokemonSprit = new PokemonSprit();
 
   constructor(
     id: number,
@@ -105,8 +137,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
     fullFormName: string,
     version: string,
     types: string[],
-    // tslint:disable-next-line:no-unnecessary-initializer
-    sprites: IPokemonSprit | undefined = undefined,
+    sprites: IPokemonSprit | undefined,
     formId: number | null = null,
     specialForm: 'NORMAL' | 'SHADOW' | 'PURIFIED' = FORM_NORMAL,
     isBattleOnly = true,
@@ -137,42 +168,50 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
 // tslint:disable-next-line:max-classes-per-file
 export class Form implements IForm {
   // tslint:disable-next-line:variable-name
-  form_name: string;
+  form_name: string = '';
   // tslint:disable-next-line:variable-name
-  form_names: string[];
+  form_names: string[] = [];
   // tslint:disable-next-line:variable-name
-  form_order: number;
-  id: number | null;
+  form_order: number = 0;
+  id: number | null = 0;
   // tslint:disable-next-line:variable-name
-  is_battle_only: boolean;
+  is_battle_only: boolean = false;
   // tslint:disable-next-line:variable-name
-  is_default: boolean;
+  is_default: boolean = false;
   // tslint:disable-next-line:variable-name
-  is_mega: boolean;
+  is_mega: boolean = false;
   // tslint:disable-next-line:variable-name
-  is_shadow: boolean;
+  is_shadow: boolean = false;
   // tslint:disable-next-line:variable-name
-  is_purified: boolean;
-  name: string;
+  is_purified: boolean = false;
+  name: string = '';
   // tslint:disable-next-line:variable-name
-  version_group: { name: string };
-  types: string[];
-  sprites: IPokemonSprit;
+  version_group: { name: string } = { name: '' };
+  types: string[] = [];
+  sprites: IPokemonSprit | undefined;
 
-  constructor(data: PokemonForm) {
-    this.form_name = data.form_name;
-    this.form_names = data.form_names;
-    this.form_order = data.form_order;
-    this.id = data.id;
-    this.is_battle_only = data.is_battle_only;
-    this.is_default = data.is_default;
-    this.is_mega = data.is_mega;
-    this.is_shadow = false;
-    this.is_purified = false;
-    this.name = data.name;
-    this.version_group = data.version_group;
-    this.types = data.types.map((t) => t.type.name);
-    this.sprites = data.sprites;
+  constructor(data?: PokemonForm) {
+    if (data) {
+      this.form_name = data.form_name;
+      this.form_names = data.form_names;
+      this.form_order = data.form_order;
+      this.id = data.id;
+      this.is_battle_only = data.is_battle_only;
+      this.is_default = data.is_default;
+      this.is_mega = data.is_mega;
+      this.is_shadow = false;
+      this.is_purified = false;
+      this.name = data.name;
+      this.version_group = data.version_group;
+      this.types = data.types.map((t) => t.type.name);
+      this.sprites = data.sprites;
+    }
+  }
+
+  static create<T>(value: T) {
+    const obj = new Form();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 

@@ -167,36 +167,38 @@ const FindBattle = () => {
         item.forEach((value) => {
           if (value.id !== id) {
             evoBaseStats.push(
-              new BattleBaseStats({
+              BattleBaseStats.create({
                 ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : (a.ratio ?? 0) > (b.ratio ?? 0) ? a : b)),
                 id: value.id,
                 name: value.name,
                 form: value.form,
                 maxCP: value.maxCP,
                 league: Object.keys(value.battleLeague).reduce((a, b) =>
-                  !value.battleLeague[a]
+                  !(value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[a]
                     ? b
-                    : !value.battleLeague[b]
+                    : !(value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[b]
                     ? a
-                    : (value.battleLeague[a]?.ratio ?? 0) > (value.battleLeague[b]?.ratio ?? 0)
+                    : ((value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[a]?.ratio ?? 0) >
+                      ((value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[b]?.ratio ?? 0)
                     ? a
                     : b
                 ),
               })
             );
           } else {
-            currBastStats = new BattleBaseStats({
+            currBastStats = BattleBaseStats.create({
               ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : (a.ratio ?? 0) > (b.ratio ?? 0) ? a : b)),
               id: value.id,
               name: value.name,
               form: value.form,
               maxCP: value.maxCP,
               league: Object.keys(value.battleLeague).reduce((a, b) =>
-                !value.battleLeague[a]
+                !(value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[a]
                   ? b
-                  : !value.battleLeague[b]
+                  : !(value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[b]
                   ? a
-                  : (value.battleLeague[a]?.ratio ?? 0) > (value.battleLeague[b]?.ratio ?? 0)
+                  : ((value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[a]?.ratio ?? 0) >
+                    ((value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[b]?.ratio ?? 0)
                   ? a
                   : b
               ),
@@ -222,7 +224,7 @@ const FindBattle = () => {
         if ((currBastStats.ratio ?? 0) >= 90) {
           bestLeague.push(currBastStats);
         }
-        setBestInLeague(bestLeague.sort((a, b) => a.maxCP - b.maxCP));
+        setBestInLeague(bestLeague.sort((a, b) => (a.maxCP ?? 0) - (b.maxCP ?? 0)));
         dispatch(hideSpinner());
       }
     },
@@ -243,23 +245,23 @@ const FindBattle = () => {
         );
       }
       dispatch(showSpinner());
-      enqueueSnackbar(
-        'Search success at CP: ' +
-          result.CP +
-          ' and IV ' +
-          result.IV.atk +
-          '/' +
-          result.IV.def +
-          '/' +
-          result.IV.sta +
-          ' found in ' +
-          name +
-          ' ' +
-          splitAndCapitalize(form?.form.form_name, '-', ' '),
-        { variant: 'success' }
-      );
       setTimeout(() => {
         searchStatsPoke(result.level);
+        enqueueSnackbar(
+          'Search success at CP: ' +
+            result.CP +
+            ' and IV ' +
+            result.IV.atk +
+            '/' +
+            result.IV.def +
+            '/' +
+            result.IV.sta +
+            ' found in ' +
+            name +
+            ' ' +
+            splitAndCapitalize(form?.form.form_name, '-', ' '),
+          { variant: 'success' }
+        );
       }, 500);
     },
     [dispatch, searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA, form]
@@ -511,7 +513,7 @@ const FindBattle = () => {
                               <Fragment>
                                 <hr />
                                 <div className="element-top d-flex justify-content-center" style={{ textAlign: 'start' }}>
-                                  {item.battleLeague.little ? (
+                                  {item.battleLeague.little.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
                                         <img alt="pokemon-model" height={32} src={APIService.getPokeOtherLeague('GBL_littlecup')} />{' '}
@@ -565,7 +567,7 @@ const FindBattle = () => {
                                   )}
                                 </div>
                                 <div className="element-top d-flex justify-content-center" style={{ textAlign: 'start' }}>
-                                  {item.battleLeague.great ? (
+                                  {item.battleLeague.great.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
                                         <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('great_league')} />{' '}
@@ -619,7 +621,7 @@ const FindBattle = () => {
                                   )}
                                 </div>
                                 <div className="element-top d-flex justify-content-center" style={{ textAlign: 'start' }}>
-                                  {item.battleLeague.ultra ? (
+                                  {item.battleLeague.ultra.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
                                         <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('ultra_league')} />{' '}
@@ -673,7 +675,7 @@ const FindBattle = () => {
                                   )}
                                 </div>
                                 <div className="element-top d-flex justify-content-center" style={{ textAlign: 'start' }}>
-                                  {item.battleLeague.master ? (
+                                  {item.battleLeague.master.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
                                         <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('master_league')} />{' '}

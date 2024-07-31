@@ -163,7 +163,7 @@ export interface PokemonStatsRanking {
   sta: StatsSta;
   statProd: StatsProd;
   types?: string[];
-  url?: string | undefined;
+  url?: string;
   releasedGO: boolean;
 }
 

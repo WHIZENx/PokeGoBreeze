@@ -61,6 +61,16 @@ export interface IPokemonRewardLeague {
   premium?: IPokemonRewardSetLeague[];
 }
 
+export class PokemonRewardLeague implements IPokemonRewardLeague {
+  rank?: number;
+  free?: IPokemonRewardSetLeague[];
+  premium?: IPokemonRewardSetLeague[];
+
+  constructor({ ...props }: IPokemonRewardLeague) {
+    Object.assign(this, props);
+  }
+}
+
 export interface SettingLeague {
   rankLevel: number;
   additionalTotalBattlesRequired?: number;
@@ -91,6 +101,7 @@ export interface ILeagueData {
   };
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class LeagueData implements ILeagueData {
   allowLeagues: string[];
   data: ILeague[];

@@ -1,4 +1,4 @@
-import { PokemonTeamData } from '../../pages/PVP/models/battle.model';
+import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
 import { ICombat } from './combat.model';
 import { IPokemonData } from './pokemon.model';
 import { StatsAtk, StatsDef, IStatsPokemon, StatsSta } from './stats.model';
@@ -54,7 +54,7 @@ interface Teams {
   games: number;
   team: string;
   teamScore: number;
-  teamsData: PokemonTeamData[];
+  teamsData: IPokemonTeamData[];
   teamsTotalGames: number;
 }
 

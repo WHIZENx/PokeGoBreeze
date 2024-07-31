@@ -1,18 +1,18 @@
 import { useTheme } from '@mui/material';
 import React from 'react';
 import APIService from '../../services/API.service';
-import { PokemonGenderRatio } from '../../core/models/pokemon.model';
+import { IPokemonGenderRatio } from '../../core/models/pokemon.model';
 
 const Gender = (props: {
   sex: string;
-  ratio?: PokemonGenderRatio | undefined;
+  ratio?: IPokemonGenderRatio | undefined;
   default_m?: string;
   default_f?: string;
   shiny_m?: string;
   shiny_f?: string;
 }) => {
   const theme = useTheme();
-  const calculateRatio = (sex: string, ratio: PokemonGenderRatio) => {
+  const calculateRatio = (sex: string, ratio: IPokemonGenderRatio) => {
     const maleRatio = ratio.M;
     const femaleRatio = ratio.F;
     return sex.toLowerCase() === 'male' ? maleRatio * 100 : femaleRatio * 100;
