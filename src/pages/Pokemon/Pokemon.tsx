@@ -1,6 +1,4 @@
-import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { SearchingModel } from '../../store/models/searching.model';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -37,22 +35,14 @@ import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
+import { IPokemonPage } from '../models/page.model';
 
 interface TypeCost {
   purified: PokemonTypeCost;
   thirdMove: PokemonTypeCost;
 }
 
-const Pokemon = (props: {
-  prevRouter?: ReduxRouterState;
-  searching?: SearchingModel | null;
-  id?: string;
-  onDecId?: () => void;
-  onIncId?: () => void;
-  isSearch?: boolean;
-  // eslint-disable-next-line no-unused-vars
-  setId?: (id: number) => void;
-}) => {
+const Pokemon = (props: IPokemonPage) => {
   const theme = useTheme();
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);

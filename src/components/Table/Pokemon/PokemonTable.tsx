@@ -1,18 +1,9 @@
 import React from 'react';
 import { splitAndCapitalize } from '../../../util/Utils';
 import { genRoman } from '../../../util/Constants';
+import { IPokemonTableComponent } from '../../models/component.model';
 
-const PokemonTable = (props: {
-  id: number | undefined;
-  formName: string | undefined;
-  gen: number | undefined;
-  region: string | undefined;
-  version: string | undefined;
-  weight: number;
-  height: number;
-  className?: string;
-  isLoadedForms?: boolean;
-}) => {
+const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, color = '#f5f5f5') => {
     if (props.isLoadedForms) {
       return element;

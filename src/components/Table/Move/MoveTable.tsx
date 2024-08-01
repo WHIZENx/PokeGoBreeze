@@ -14,10 +14,9 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
-import { IForm, PokemonDataForm } from '../../../core/models/API/form.model';
 import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
-import { PokemonStatsRanking } from '../../../core/models/stats.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
+import { ITableMoveComponent } from '../../models/component.model';
 
 interface PokemonMoves {
   fastMoves: (ICombat | undefined)[];
@@ -50,15 +49,7 @@ class TableSort implements ITableSort {
   }
 }
 
-const TableMove = (props: {
-  data: PokemonDataForm | PokemonStatsRanking | undefined;
-  statATK: number;
-  statDEF: number;
-  statSTA: number;
-  form: IForm | undefined;
-  id?: number;
-  maxHeight?: number | string;
-}) => {
+const TableMove = (props: ITableMoveComponent) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
   const [move, setMove]: [PokemonQueryRankMove, React.Dispatch<React.SetStateAction<PokemonQueryRankMove>>] = useState({

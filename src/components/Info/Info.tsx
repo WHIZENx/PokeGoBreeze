@@ -6,9 +6,9 @@ import TypeInfo from '../Sprites/Type/Type';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
-import { IPokemonFormModify } from '../../core/models/API/form.model';
+import { IInfoComponent } from '../models/component.model';
 
-const Info = (props: { currForm: IPokemonFormModify | undefined }) => {
+const Info = (props: IInfoComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
   const weatherEffective = useSelector((state: StoreState) => state.store.data?.weatherBoost);
 

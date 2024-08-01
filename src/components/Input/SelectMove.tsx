@@ -7,20 +7,10 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
-import { IPokemonData } from '../../core/models/pokemon.model';
-import { ICombat } from '../../core/models/combat.model';
 import { retrieveMoves } from '../../util/Utils';
+import { ISelectMoveComponent } from '../models/component.model';
 
-const SelectMove = (props: {
-  move: ISelectMoveModel | ICombat | undefined;
-  setMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
-  clearData?: () => void;
-  pokemon: IPokemonData | undefined;
-  moveType: string;
-  inputType?: string;
-  selected?: boolean;
-  disable?: boolean;
-}) => {
+const SelectMove = (props: ISelectMoveComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [resultMove, setResultMove]: [ISelectMoveModel[], React.Dispatch<React.SetStateAction<ISelectMoveModel[]>>] = useState(
     [] as ISelectMoveModel[]

@@ -12,17 +12,9 @@ import hp_logo from '../../../assets/hp.png';
 import { useSelector } from 'react-redux';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { StoreState } from '../../../store/models/state.model';
+import { IStatsTableComponent } from '../../models/page.model';
 
-const StatsTable = (props: {
-  setStatType?: React.Dispatch<React.SetStateAction<string>>;
-  setStatLevel?: React.Dispatch<React.SetStateAction<number>>;
-  statATK: number;
-  statDEF: number;
-  statSTA: number;
-  setStatLvATK?: React.Dispatch<React.SetStateAction<number>>;
-  setStatLvDEF?: React.Dispatch<React.SetStateAction<number>>;
-  setStatLvSTA?: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './IVBar.scss';
+import { IIVBarComponent } from '../../models/component.model';
 
-const IVbar = (props: { iv: number; style: React.CSSProperties; title: string }) => {
+const IVBar = (props: IIVBarComponent) => {
   const [ivWidthFirst, setIvWidthFirst] = useState(0);
   const [ivWidthSec, setIvWidthSec] = useState(0);
   const [ivWidthThird, setIvWidthThird] = useState(0);
@@ -39,4 +40,4 @@ const IVbar = (props: { iv: number; style: React.CSSProperties; title: string })
   );
 };
 
-export default IVbar;
+export default IVBar;

@@ -1,13 +1,13 @@
 import React from 'react';
-import { OptionsPokemon } from '../../../core/models/pokemon.model';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Link } from 'react-router-dom';
+import { ISearchBarMainComponent } from '../../models/page.model';
 
-const SearchBarMain = (props: { data: OptionsPokemon | undefined }) => {
+const SearchBarMain = (props: ISearchBarMainComponent) => {
   return (
     <>
       {props.data?.prev && (

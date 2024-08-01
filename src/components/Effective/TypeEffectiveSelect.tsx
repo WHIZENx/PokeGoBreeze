@@ -6,8 +6,9 @@ import { capitalize } from '../../util/Utils';
 import './TypeEffectiveSelect.scss';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEffectiveSelectComponent } from '../models/component.model';
 
-const TypeEffectiveSelect = (props: { block?: boolean; effect: number; types: string[] }) => {
+const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
 
   const renderEffective = (text: string, data: string[]) => {

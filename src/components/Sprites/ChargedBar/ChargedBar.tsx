@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { IChargedBarComponent } from '../../models/component.model';
 
 const Bar = styled.div`
   width: ${(props: { barCount: number; width: number; gap: number }) =>
@@ -10,7 +11,7 @@ const Bar = styled.div`
   display: inline-block !important;
 `;
 
-const ChargedBar = (props: { barCount: number; color: string | undefined; width?: number; gap?: number }) => {
+const ChargedBar = (props: IChargedBarComponent) => {
   const widthInit = props.width ?? 120;
   const gapInit = props.gap ?? 5;
   return (

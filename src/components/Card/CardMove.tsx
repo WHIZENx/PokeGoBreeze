@@ -4,10 +4,10 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
-import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
+import { ICardMoveComponent } from '../models/component.model';
 
-const CardMove = (props: { value: ISelectMoveModel | ICombat | undefined }) => {
+const CardMove = (props: ICardMoveComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
   const [data, setData]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();

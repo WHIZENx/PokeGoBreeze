@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import { IHpBarComponent } from '../../models/component.model';
 
 const Bar = styled.div`
   width: 100%;
@@ -31,7 +32,7 @@ const FillDmg = styled.div`
   animation-fill-mode: forwards;
 `;
 
-const HpBar = (props: { text: string; height: number; hp: number; maxHp: number; dmg?: number }) => {
+const HpBar = (props: IHpBarComponent) => {
   return (
     <div className="d-flex align-items-center w-100" style={{ columnGap: 5 }}>
       {props.text && (

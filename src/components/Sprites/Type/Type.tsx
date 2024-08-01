@@ -4,18 +4,9 @@ import APIService from '../../../services/API.service';
 import { capitalize } from '../../../util/Utils';
 
 import './Type.scss';
+import { ITypeComponent } from '../../models/component.model';
 
-const TypeInfo = (props: {
-  arr: string[] | undefined;
-  block?: boolean;
-  shadow?: boolean;
-  style?: React.CSSProperties | undefined;
-  text?: string;
-  hideText?: boolean;
-  height?: string | number | undefined;
-  color?: string;
-  isShow?: boolean;
-}) => {
+const TypeInfo = (props: ITypeComponent) => {
   const theme = useTheme();
 
   return (

@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import TypeInfo from '../Sprites/Type/Type';
-import { TypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEffectiveComponent } from '../models/component.model';
 
-const TypeEffective = (props: { typeEffective: TypeEffChart | undefined }) => {
+const TypeEffective = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => {
     return (
       <div className="element-top d-flex" style={{ marginLeft: 15 }}>

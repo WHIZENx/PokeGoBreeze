@@ -7,21 +7,10 @@ import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { ISelectMoveModel } from '../../Input/models/select-move.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
+import { ITypeBadgeComponent } from '../../models/component.model';
 
-const TypeBadge = (props: {
-  move: ISelectMoveModel | ICombat | null | undefined;
-  find?: boolean;
-  grow?: boolean;
-  style?: React.CSSProperties | undefined;
-  color?: string;
-  title?: string;
-  elite?: boolean;
-  shadow?: boolean;
-  purified?: boolean;
-  special?: boolean;
-}) => {
+const TypeBadge = (props: ITypeBadgeComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
   const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
