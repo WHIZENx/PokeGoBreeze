@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import CardWeather from '../../components/Card/CardWeather';
 import WeatherEffective from '../../components/Effective/WeatherEffective';
 import { splitAndCapitalize } from '../../util/Utils';
-import { IWeatherBoost } from '../../core/models/weatherBoost.model';
+import { IWeatherAffComponent } from '../models/page.model';
 
-const Affect = (prop: { weathers: IWeatherBoost | any }) => {
+const Affect = (prop: IWeatherAffComponent) => {
   const [weathers, setWeathers] = useState([] as string[]);
 
   const [currentWeather, setCurrentWeather] = useState('CLEAR');
@@ -13,7 +13,7 @@ const Affect = (prop: { weathers: IWeatherBoost | any }) => {
   const [weatherEffective, setWeatherEffective] = useState([]);
 
   const getWeatherEffective = useCallback(() => {
-    setWeatherEffective(Object.values((prop.weathers ?? {})[currentWeather] ?? {}));
+    setWeatherEffective(Object.values((prop.weathers ?? ({} as unknown as any))[currentWeather] ?? {}));
   }, [currentWeather, prop.weathers]);
 
   useEffect(() => {

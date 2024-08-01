@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import { capitalize } from '../../util/Utils';
-import { IWeatherBoost } from '../../core/models/weatherBoost.model';
-import { ITypeEff } from '../../core/models/type-eff.model';
+import { IWeatherEffComponent } from '../models/page.model';
 
-const Effect = (prop: { weathers: IWeatherBoost | undefined; types: ITypeEff | undefined }) => {
+const Effect = (prop: IWeatherEffComponent) => {
   const [types, setTypes] = useState([] as string[]);
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');

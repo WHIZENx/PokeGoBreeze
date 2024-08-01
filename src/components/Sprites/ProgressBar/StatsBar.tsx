@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { IStatsRank } from '../../../core/models/stats.model';
 import { useNavigate } from 'react-router-dom';
 import { FORM_NORMAL } from '../../../util/Constants';
+import { IStatsBarComponent } from '../../models/component.model';
 
 const ComponentBar = styled.div`
   position: relative !important;
@@ -23,18 +23,7 @@ const Bar = styled.div.attrs({
   width: ${(props: { statsPercent: number }) => props.statsPercent}%;
 `;
 
-const StatsBar = (props: {
-  tag: string;
-  class: string;
-  statsPercent: number;
-  rank: number | string;
-  pokemonStats: IStatsRank | null;
-  currentStats: number;
-  optionalStats?: string;
-  id?: number;
-  form?: string;
-  statType?: string;
-}) => {
+const StatsBar = (props: IStatsBarComponent) => {
   const navigate = useNavigate();
   return (
     <ComponentBar

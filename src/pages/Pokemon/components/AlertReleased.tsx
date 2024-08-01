@@ -2,8 +2,9 @@ import React from 'react';
 import { Alert } from 'react-bootstrap';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize, convertPokemonAPIDataName } from '../../../util/Utils';
+import { IAlertReleasedComponent } from '../../models/page.model';
 
-const AlertReleased = (props: { released: boolean; formName: string | undefined; icon: string | undefined }) => {
+const AlertReleased = (props: IAlertReleasedComponent) => {
   return (
     <>
       {!props.released && (

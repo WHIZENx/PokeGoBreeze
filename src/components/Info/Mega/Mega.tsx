@@ -6,9 +6,10 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_MEGA } from '../../../util/Constants';
-import { IForm, IPokemonFormModify } from '../../../core/models/API/form.model';
+import { IForm } from '../../../core/models/API/form.model';
+import { IFormSpecialComponent } from '../../models/component.model';
 
-const Mega = (props: { formList: IPokemonFormModify[][]; id: number }) => {
+const Mega = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [arrEvoList, setArrEvoList]: [(IForm | undefined)[] | undefined, React.Dispatch<React.SetStateAction<(IForm | undefined)[]>>] =
     useState([] as (IForm | undefined)[]);

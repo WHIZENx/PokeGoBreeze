@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
 import TypeInfo from '../Sprites/Type/Type';
+import { IWeatherEffectiveComponent } from '../models/component.model';
 
-const WeatherEffective = (props: { weatherEffective: string[] }) => {
+const WeatherEffective = (props: IWeatherEffectiveComponent) => {
   return (
     <Fragment>
       {props.weatherEffective && (

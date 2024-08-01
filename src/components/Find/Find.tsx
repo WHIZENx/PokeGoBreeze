@@ -8,33 +8,9 @@ import { RouterState, SearchingState, StatsState, StoreState } from '../../store
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import loading from '../../assets/loading.png';
-import { IPokemonFormModify } from '../../core/models/API/form.model';
+import { IFindComponent } from '../models/component.model';
 
-const Find = (props: {
-  setId?: React.Dispatch<React.SetStateAction<number>>;
-  setName?: React.Dispatch<React.SetStateAction<string>>;
-  // eslint-disable-next-line no-unused-vars
-  clearStats?: (reset?: boolean) => void;
-  setStatATK?: React.Dispatch<React.SetStateAction<number>>;
-  setStatDEF?: React.Dispatch<React.SetStateAction<number>>;
-  setStatSTA?: React.Dispatch<React.SetStateAction<number>>;
-  hide?: boolean;
-  raid?: boolean;
-  setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
-  tier?: number;
-  setTier?: React.Dispatch<React.SetStateAction<number>>;
-  // eslint-disable-next-line no-unused-vars
-  setForm?: (form: IPokemonFormModify | undefined) => void;
-  urlEvo?: { url: string | null };
-  setUrlEvo?: React.Dispatch<
-    React.SetStateAction<{
-      url: string;
-    }>
-  >;
-  title?: string;
-  swap?: boolean;
-  objective?: boolean;
-}) => {
+const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
   const eachCounter = 10;

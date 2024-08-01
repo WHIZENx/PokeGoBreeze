@@ -7,9 +7,9 @@ import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
-import { IPokemonData } from '../../../core/models/pokemon.model';
+import { IFromChangeComponent } from '../../models/component.model';
 
-const FromChange = (props: { details: IPokemonData | undefined; defaultName: string | undefined }) => {
+const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme();
   const assets = useSelector((state: StoreState) => state.store.data?.assets ?? []);
 

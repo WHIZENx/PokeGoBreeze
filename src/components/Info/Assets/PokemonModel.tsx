@@ -12,9 +12,9 @@ import { StoreState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { PokemonGender } from '../../../core/models/pokemon.model';
-import { IFormSoundCry } from '../../../core/models/API/form.model';
+import { IAssetPokemonModelComponent } from '../../models/component.model';
 
-const PokemonModel = (props: { id: number; name: string; originSoundCry: IFormSoundCry[]; isLoadedForms: boolean }) => {
+const PokemonModel = (props: IAssetPokemonModelComponent) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);

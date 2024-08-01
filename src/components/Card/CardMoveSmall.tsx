@@ -6,18 +6,10 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { ISelectMoveModel } from '../Input/models/select-move.model';
-import { ICombat } from '../../core/models/combat.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
+import { ICardSmallComponent } from '../models/component.model';
 
-const CardMoveSmall = (props: {
-  value: ISelectMoveModel | ICombat | undefined;
-  empty?: boolean;
-  disable?: boolean;
-  show?: boolean;
-  select?: boolean;
-  clearData?: () => void;
-}) => {
+const CardMoveSmall = (props: ICardSmallComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
   return (

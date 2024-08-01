@@ -13,28 +13,10 @@ import sta_logo from '../../assets/stamina.png';
 import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { IPokemonFormModify } from '../../core/models/API/form.model';
-import { PokemonInfo } from '../../core/models/API/info.model';
-import { StatsAtk, StatsDef, IStatsRank, IStatsPokemon, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../core/models/stats.model';
+import { StatsAtk, StatsDef, IStatsPokemon, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../core/models/stats.model';
+import { IToolsComponent } from '../models/component.model';
 
-const Tools = (props: {
-  id: number | undefined;
-  currForm: IPokemonFormModify | undefined;
-  formList: IPokemonFormModify[][];
-  dataPoke: PokemonInfo[];
-  stats: IStatsRank | null;
-  // eslint-disable-next-line no-unused-vars
-  setForm: ((form: IPokemonFormModify | undefined) => void) | undefined;
-  // eslint-disable-next-line no-unused-vars
-  onSetStats: ((type: string, value: number) => void) | undefined;
-  // eslint-disable-next-line no-unused-vars
-  onClearStats: ((reset?: boolean) => void) | undefined;
-  isRaid: boolean;
-  tier: number;
-  // eslint-disable-next-line no-unused-vars
-  setTier: (tier: number) => void;
-  hide: boolean | undefined;
-}) => {
+const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [currDataPoke, setCurrDataPoke]: [IStatsPokemon | undefined, React.Dispatch<React.SetStateAction<IStatsPokemon | undefined>>] =
     useState();

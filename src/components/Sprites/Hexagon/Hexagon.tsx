@@ -2,8 +2,9 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 
 import './Hexagon.scss';
 import { HexagonStats } from '../../../core/models/stats.model';
+import { IHexagonComponent } from '../../models/component.model';
 
-const Hexagon = (props: { defaultStats?: HexagonStats; stats: HexagonStats; size: number; animation: number; borderSize: number }) => {
+const Hexagon = (props: IHexagonComponent) => {
   const canvasHex: React.MutableRefObject<HTMLCanvasElement | undefined> = useRef();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);

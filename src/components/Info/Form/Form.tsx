@@ -1,8 +1,4 @@
-import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { PokemonInfo } from '../../../core/models/API/info.model';
-import { IPokemonGenderRatio, IPokemonData } from '../../../core/models/pokemon.model';
 import { StatsAtk, StatsDef, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -30,35 +26,9 @@ import FromChange from '../FormChange/FormChange';
 import Mega from '../Mega/Mega';
 import Primal from '../Primal/Primal';
 import { StatsState } from '../../../store/models/state.model';
+import { IFormInfoComponent } from '../../models/component.model';
 
-const FormComponent = (props: {
-  pokemonRouter: ReduxRouterState;
-  form: IPokemonFormModify | undefined;
-  setForm: React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>;
-  setOriginForm: React.Dispatch<React.SetStateAction<string | undefined>>;
-  data: PokemonInfo | undefined;
-  setData: React.Dispatch<React.SetStateAction<PokemonInfo | undefined>>;
-  setWH: React.Dispatch<
-    React.SetStateAction<{
-      weight: number;
-      height: number;
-    }>
-  >;
-  pokeData: PokemonInfo[];
-  formList: IPokemonFormModify[][] | undefined;
-  ratio: IPokemonGenderRatio | undefined;
-  // eslint-disable-next-line no-unused-vars
-  setId?: (id: number) => void;
-  pokemonDetail: IPokemonData | undefined;
-  defaultId: number;
-  region: string;
-  setProgress: React.Dispatch<
-    React.SetStateAction<{
-      isLoadedForms: boolean;
-    }>
-  >;
-  isLoadedForms: boolean;
-}) => {
+const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
 
   const params = useParams();

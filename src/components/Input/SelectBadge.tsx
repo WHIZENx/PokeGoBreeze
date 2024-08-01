@@ -2,10 +2,10 @@ import React from 'react';
 import APIService from '../../services/API.service';
 import { priorityBadge } from '../../util/Compute';
 import { capitalize } from '../../util/Utils';
+import { ISelectBadgeComponent } from '../models/component.model';
 
-// eslint-disable-next-line no-unused-vars
-const SelectBadge = (props: { type: string; priority: number; setPriority: (priority: number) => void }) => {
-  const Badge = (text: string, priorityNumber: number) => {
+const SelectBadge = (props: ISelectBadgeComponent) => {
+  const Badge = (props: ISelectBadgeComponent, text: string, priorityNumber: number) => {
     const spiritBadge = priorityBadge(priorityNumber);
 
     return (
@@ -36,11 +36,11 @@ const SelectBadge = (props: { type: string; priority: number; setPriority: (prio
         </div>
       </div>
       <div className="d-flex flex-wrap justify-content-center align-items-center element-top" style={{ gap: 10 }}>
-        {Badge('None', 0)}
-        {Badge('Bronze', 1)}
-        {Badge('Silver', 2)}
-        {Badge('Gold', 3)}
-        {Badge('Platinum', 4)}
+        {Badge(props, 'None', 0)}
+        {Badge(props, 'Bronze', 1)}
+        {Badge(props, 'Silver', 2)}
+        {Badge(props, 'Gold', 3)}
+        {Badge(props, 'Platinum', 4)}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import TypeEffectiveSelect from '../../components/Effective/TypeEffectiveSelect';
 import Stats from '../../components/Info/Stats/Stats';
 import Hexagon from '../../components/Sprites/Hexagon/Hexagon';
-import IVbar from '../../components/Sprites/IVBar/IVBar';
+import IVBar from '../../components/Sprites/IVBar/IVBar';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 import { calculateCP, calStatsProd } from '../../util/Calculate';
@@ -177,9 +177,9 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           )}
         </li>
         <li className="element-top">
-          <IVbar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.atk ?? 0} style={{ maxWidth: 500 }} />
-          <IVbar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.def ?? 0} style={{ maxWidth: 500 }} />
-          <IVbar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.sta ?? 0} style={{ maxWidth: 500 }} />
+          <IVBar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.atk ?? 0} style={{ maxWidth: 500 }} />
+          <IVBar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.def ?? 0} style={{ maxWidth: 500 }} />
+          <IVBar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.sta ?? 0} style={{ maxWidth: 500 }} />
         </li>
       </ul>
     );

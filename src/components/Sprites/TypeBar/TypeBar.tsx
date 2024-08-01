@@ -2,8 +2,9 @@ import React from 'react';
 import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import './TypeBar.scss';
+import { ITypeBarComponent } from '../../models/component.model';
 
-const TypeBar = (props: { type: string | null }) => {
+const TypeBar = (props: ITypeBarComponent) => {
   return (
     <div className={'d-flex align-items-center border-type ' + props.type?.toLowerCase()}>
       <span style={{ width: 35 }}>
