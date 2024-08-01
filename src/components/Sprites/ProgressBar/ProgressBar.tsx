@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { IProgressBarComponent } from '../../models/component.model';
 
 const Bar = styled.div`
   width: 100%;
@@ -16,14 +17,7 @@ const Fill = styled.div`
   border-radius: 3px;
 `;
 
-const ProgressBar = (props: {
-  height: number;
-  value: number | undefined;
-  maxValue: number;
-  bgColor: string;
-  color: string;
-  style?: React.CSSProperties;
-}) => {
+const ProgressBar = (props: IProgressBarComponent) => {
   return (
     <Bar style={props.style} height={props.height} bgColor={props.bgColor}>
       <Fill style={{ width: `${(Math.max(1, props.value ?? 0) * 100) / props.maxValue}%` }} height={props.height} color={props.color} />

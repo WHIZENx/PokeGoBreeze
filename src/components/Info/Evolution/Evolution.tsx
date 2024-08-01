@@ -40,7 +40,7 @@ import {
   FORM_STANDARD,
 } from '../../../util/Constants';
 import { IForm } from '../../../core/models/API/form.model';
-import { ReduxRouterState } from '@lagunovsky/redux-react-router';
+import { IEvolutionComponent } from '../../models/component.model';
 
 interface IPokemonEvo {
   prev?: string;
@@ -85,23 +85,7 @@ const customTheme = createTheme({
   },
 } as any);
 
-const Evolution = (props: {
-  forme: IForm | undefined;
-  region: string;
-  formDefault: boolean;
-  id: number | undefined;
-  // eslint-disable-next-line no-unused-vars
-  setId?: (id: number) => void;
-  pokemonRouter: ReduxRouterState;
-  purified: boolean | undefined;
-  shadow: boolean | undefined;
-  setProgress: React.Dispatch<
-    React.SetStateAction<{
-      isLoadedForms: boolean;
-    }>
-  >;
-  isLoadedForms: boolean;
-}) => {
+const Evolution = (props: IEvolutionComponent) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [arrEvoList, setArrEvoList]: [IPokemonEvo[][], React.Dispatch<React.SetStateAction<IPokemonEvo[][]>>] = useState(

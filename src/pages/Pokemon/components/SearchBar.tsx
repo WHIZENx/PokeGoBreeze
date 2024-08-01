@@ -1,13 +1,12 @@
 import React from 'react';
-import { OptionsPokemon } from '../../../core/models/pokemon.model';
 import APIService from '../../../services/API.service';
 import { splitAndCapitalize } from '../../../util/Utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { ReduxRouterState } from '@lagunovsky/redux-react-router';
+import { ISearchBarComponent } from '../../models/page.model';
 
-const SearchBar = (props: { data: OptionsPokemon | undefined; router: ReduxRouterState; onDecId?: () => void; onIncId?: () => void }) => {
+const SearchBar = (props: ISearchBarComponent) => {
   return (
     <>
       {props.data?.prev && (

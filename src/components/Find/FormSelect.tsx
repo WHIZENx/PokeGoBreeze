@@ -18,16 +18,15 @@ import { FormControlLabel, Radio } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { setSearchToolPage } from '../../store/actions/searching.action';
 import { Action } from 'history';
-import { IStatsRank } from '../../core/models/stats.model';
 import { ToolSearching } from '../../core/models/searching.model';
-import { IPokemonData, IPokemonName } from '../../core/models/pokemon.model';
-import { ReduxRouterState } from '@lagunovsky/redux-react-router';
+import { IPokemonName } from '../../core/models/pokemon.model';
 import { Form, PokemonForm, IPokemonFormModify, PokemonFormModify } from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
+import { IFormSelectComponent } from '../models/component.model';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -35,35 +34,7 @@ interface OptionsPokemon {
   next: IPokemonName | undefined;
 }
 
-const FormSelect = (props: {
-  router: ReduxRouterState;
-  searching: ToolSearching | null;
-  raid?: boolean | undefined;
-  tier?: number;
-  id?: number;
-  // eslint-disable-next-line no-unused-vars
-  onClearStats?: ((reset?: boolean) => void) | undefined;
-  setTier?: React.Dispatch<React.SetStateAction<number>>;
-  onSetPrev?: () => void;
-  onSetNext?: () => void;
-  name: string;
-  setName?: React.Dispatch<React.SetStateAction<string>>;
-  hide?: boolean;
-  setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
-  // eslint-disable-next-line no-unused-vars
-  setForm?: (form: IPokemonFormModify | undefined) => void;
-  stats: IStatsRank | null;
-  // eslint-disable-next-line no-unused-vars
-  onHandleSetStats?: (type: string, value: number) => void;
-  data: IPokemonData[];
-  setUrlEvo?: React.Dispatch<
-    React.SetStateAction<{
-      url: string;
-    }>
-  >;
-  objective?: boolean;
-  pokemonName: IPokemonData[];
-}) => {
+const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
 
   const [pokeData, setPokeData]: [PokemonInfo[], React.Dispatch<React.SetStateAction<PokemonInfo[]>>] = useState([] as PokemonInfo[]);

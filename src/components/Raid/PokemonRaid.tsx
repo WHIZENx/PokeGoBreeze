@@ -10,23 +10,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import update from 'immutability-helper';
 import { TypeMove } from '../../enums/move.enum';
 import APIService from '../../services/API.service';
-import { IPokemonData, IPokemonDataStats, PokemonRaidModel } from '../../core/models/pokemon.model';
+import { IPokemonRaidComponent } from '../models/component.model';
 
-const PokemonRaid = (props: {
-  id: number;
-  pokemon: PokemonRaidModel;
-  data: PokemonRaidModel[];
-  setData: React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>;
-  defaultSetting: IPokemonDataStats;
-  controls: boolean;
-  // eslint-disable-next-line no-unused-vars
-  onCopyPokemon: (index: number) => void;
-  // eslint-disable-next-line no-unused-vars
-  onRemovePokemon: (index: number) => void;
-  // eslint-disable-next-line no-unused-vars
-  onOptionsPokemon: (index: number, pokemon: IPokemonData) => void;
-  clearData?: () => void;
-}) => {
+const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
   const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(props.pokemon.fmoveTargetPokemon);
   const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(props.pokemon.cmoveTargetPokemon);

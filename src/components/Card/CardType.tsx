@@ -2,8 +2,9 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
 import { capitalize } from '../../util/Utils';
+import { ICardTypeComponent } from '../models/component.model';
 
-const CardType = (props: { value?: string; name?: string; elite?: boolean; shadow?: boolean; purified?: boolean; special?: boolean }) => {
+const CardType = (props: ICardTypeComponent) => {
   return (
     <Fragment>
       {props.value ? (

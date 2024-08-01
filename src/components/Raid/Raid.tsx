@@ -12,22 +12,10 @@ import sta_logo from '../../assets/stamina.png';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
-import { IPokemonFormModify } from '../../core/models/API/form.model';
 import { capitalize } from '../../util/Utils';
+import { IRaidComponent } from '../models/component.model';
 
-const Raid = (props: {
-  clearData?: () => void;
-  setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
-  currForm: IPokemonFormModify | undefined;
-  id: number | undefined;
-  statATK: number;
-  statDEF: number;
-  setStatBossATK?: React.Dispatch<React.SetStateAction<number>>;
-  setStatBossDEF?: React.Dispatch<React.SetStateAction<number>>;
-  setStatBossHP?: React.Dispatch<React.SetStateAction<number>>;
-  setTimeAllow?: React.Dispatch<React.SetStateAction<number>>;
-  isLoadedForms?: boolean;
-}) => {
+const Raid = (props: IRaidComponent) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [tier, setTier]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(1);

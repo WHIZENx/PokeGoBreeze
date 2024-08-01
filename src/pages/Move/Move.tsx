@@ -25,6 +25,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
+import { IMovePage } from '../models/page.model';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -79,7 +80,7 @@ const columns: any = [
   },
 ];
 
-const Move = (props: { id?: number }) => {
+const Move = (props: IMovePage) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const params = useParams();

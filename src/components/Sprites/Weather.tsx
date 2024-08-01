@@ -2,8 +2,9 @@ import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { splitAndCapitalize } from '../../util/Utils';
+import { IWeatherComponent } from '../models/component.model';
 
-const Weather = (props: { arr: string[]; style: React.CSSProperties | undefined; text?: string }) => {
+const Weather = (props: IWeatherComponent) => {
   const theme = useTheme();
 
   return (

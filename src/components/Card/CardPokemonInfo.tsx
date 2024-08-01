@@ -7,21 +7,9 @@ import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
-import { IStatsRank, IStatsPokemon } from '../../core/models/stats.model';
-import { IImage } from '../../core/models/asset.model';
+import { ICardPokemonInfoComponent } from '../models/component.model';
 
-const CardPokemonInfo = (props: {
-  image: IImage;
-  id: number;
-  name: string;
-  forme: string;
-  defaultImg: boolean;
-  types: string[];
-  pokemonStat: IStatsPokemon;
-  stats: IStatsRank | null;
-  icon: string;
-  releasedGO: boolean;
-}) => {
+const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
 
   const imageRef: React.LegacyRef<HTMLImageElement> = useRef(null);

@@ -4,20 +4,9 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { predictCPList } from '../../util/Calculate';
 import { MIN_IV, MAX_IV } from '../../util/Constants';
 import { IPredictCPCalculate } from '../../util/models/calculate.model';
+import { IDynamicInputCPComponent } from '../models/component.model';
 
-const DynamicInputCP = (props: {
-  statATK: number;
-  statDEF: number;
-  statSTA: number;
-  IV_ATK: number;
-  IV_DEF: number;
-  IV_STA: number;
-  searchCP: string;
-  setSearchCP: React.Dispatch<React.SetStateAction<string>>;
-  label?: string;
-  width?: number | string;
-  minWidth?: number | string;
-}) => {
+const DynamicInputCP = (props: IDynamicInputCPComponent) => {
   const [preCpArr, setPreCpArr]: [IPredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<IPredictCPCalculate | undefined>>] =
     useState();
 

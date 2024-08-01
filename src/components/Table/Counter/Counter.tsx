@@ -12,6 +12,7 @@ import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { ICounterModel } from './models/counter.model';
+import { ICounterComponent } from '../../models/component.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -76,7 +77,7 @@ const customStyles: TableStyles = {
   },
 };
 
-const Counter = (props: { def: number; types: string[] | undefined; isShadow: boolean | undefined }) => {
+const Counter = (props: ICounterComponent) => {
   const theme = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);

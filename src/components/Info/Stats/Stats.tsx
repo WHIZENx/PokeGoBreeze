@@ -4,23 +4,14 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
 import { checkRankAllAvailable } from '../../../util/Utils';
 
 import './Stats.scss';
-import { StatsAtk, StatsDef, IStatsRank, IStatsPokemon, StatsProd, StatsSta, StatsRankPokemonGO } from '../../../core/models/stats.model';
+import { StatsRankPokemonGO } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
+import { IStatsComponent } from '../../models/component.model';
 
-const Stats = (props: {
-  isShadow?: boolean;
-  pokemonStats: IStatsRank | null;
-  stats?: IStatsPokemon | null;
-  statATK?: StatsAtk;
-  statDEF?: StatsDef;
-  statSTA?: StatsSta;
-  statProd?: StatsProd;
-  id?: number;
-  form?: string;
-}) => {
+const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
   const theme = useTheme();
   const [isAvailable, setIsAvailable] = useState(new StatsRankPokemonGO());

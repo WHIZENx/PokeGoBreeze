@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import APIService from '../../../services/API.service';
+import { ICircleBarComponent } from '../../models/component.model';
 
 const Circle = styled.div`
   width: ${(props: { size: number }) => props.size + 5}px;
@@ -58,15 +59,7 @@ const IconFill: any = styled.div`
   transition: 0.1s;
 `;
 
-const CircleBar = (props: {
-  text: string;
-  type: string | null | undefined;
-  size: number;
-  moveEnergy: number;
-  energy: number;
-  maxEnergy: number;
-  disable: boolean | undefined;
-}) => {
+const CircleBar = (props: ICircleBarComponent) => {
   const energy = Math.min(props.energy, props.maxEnergy);
   const fillCount = Math.min(Math.ceil(props.maxEnergy / props.moveEnergy), 3);
 

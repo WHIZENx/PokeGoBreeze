@@ -6,6 +6,7 @@ import bgCandy from '../../../assets/bg_Candy.png';
 
 import candy from '../../../data/pokemon_candy_color_data.json';
 import { ICandy } from '../../../core/models/candy.model';
+import { ICandyComponent } from '../../models/component.model';
 
 const Background: any = styled.div`
   display: inline-block;
@@ -22,7 +23,7 @@ const Fill: any = styled.div`
   mask: url(${bgCandy}) center/contain;
 `;
 
-const Candy = (props: { id: number | undefined; style?: React.CSSProperties; size?: number }) => {
+const Candy = (props: ICandyComponent) => {
   return (
     <Background style={props.style} id={props.id} candy={candy as ICandy[]}>
       <Fill id={props.id} candy={candy as ICandy[]} size={props.size} />

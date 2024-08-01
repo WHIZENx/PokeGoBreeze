@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
+import { ICardWeatherComponent } from '../models/component.model';
 
-const CardWeather = (props: { value: string }) => {
+const CardWeather = (props: ICardWeatherComponent) => {
   return (
     <Fragment>
       <img height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getWeatherSprite(props.value)} />

@@ -9,20 +9,11 @@ import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
-import { IPokemonData, IPokemonDataStats } from '../../core/models/pokemon.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
+import { ISelectPokemonComponent } from '../models/component.model';
 
-const SelectPokemon = (props: {
-  pokemon?: IPokemonData;
-  setCurrentPokemon: React.Dispatch<React.SetStateAction<IPokemonData | undefined>>;
-  selected: boolean;
-  setFMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
-  setCMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
-  clearData?: () => void;
-  disable?: boolean;
-  defaultSetting?: IPokemonDataStats;
-  maxHeight?: number;
-}) => {
+const SelectPokemon = (props: ISelectPokemonComponent) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
 
   const [startIndex, setStartIndex] = useState(0);

@@ -2,15 +2,9 @@ import { useTheme } from '@mui/material';
 import React from 'react';
 import APIService from '../../services/API.service';
 import { IPokemonGenderRatio } from '../../core/models/pokemon.model';
+import { IGenderComponent } from '../models/component.model';
 
-const Gender = (props: {
-  sex: string;
-  ratio?: IPokemonGenderRatio | undefined;
-  default_m?: string;
-  default_f?: string;
-  shiny_m?: string;
-  shiny_f?: string;
-}) => {
+const Gender = (props: IGenderComponent) => {
   const theme = useTheme();
   const calculateRatio = (sex: string, ratio: IPokemonGenderRatio) => {
     const maleRatio = ratio.M;
@@ -34,8 +28,8 @@ const Gender = (props: {
             alt="img-pokemon"
             src={
               props.sex.toLowerCase() === 'male'
-                ? props.default_m ?? props.default_f ?? APIService.getPokeSprite(0)
-                : props.default_f ?? props.default_m ?? APIService.getPokeSprite(0)
+                ? (props.default_m ?? props.default_f) || APIService.getPokeSprite(0)
+                : (props.default_f ?? props.default_m) || APIService.getPokeSprite(0)
             }
           />
           <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
@@ -49,8 +43,8 @@ const Gender = (props: {
             alt="img-pokemon"
             src={
               props.sex.toLowerCase() === 'male'
-                ? props.shiny_m ?? props.shiny_f ?? APIService.getPokeSprite(0)
-                : props.shiny_f ?? props.shiny_m ?? APIService.getPokeSprite(0)
+                ? (props.shiny_m ?? props.shiny_f) || APIService.getPokeSprite(0)
+                : (props.shiny_f ?? props.shiny_m) || APIService.getPokeSprite(0)
             }
           />
           <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>

@@ -10,8 +10,8 @@ import APIService from '../../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
-import { IPokemonDmgOption } from '../../../core/models/damage.model';
 import { FORM_SHADOW } from '../../../util/Constants';
+import { IDamageTableComponent } from '../../models/page.model';
 
 const eff: { [x: number]: { label: number; style: string } } = {
   0.244140625: {
@@ -40,7 +40,7 @@ const eff: { [x: number]: { label: number; style: string } } = {
   },
 };
 
-const DamageTable = (props: { result: IPokemonDmgOption }) => {
+const DamageTable = (props: IDamageTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data?.options);
 
   return (
