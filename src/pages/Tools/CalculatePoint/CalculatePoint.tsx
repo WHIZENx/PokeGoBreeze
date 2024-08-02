@@ -23,8 +23,8 @@ import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 class ColorTone {
-  number!: number;
-  color!: string;
+  number: number;
+  color: string;
 
   constructor(num: number, color: string) {
     this.number = num;

@@ -15,6 +15,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { DEFAULT_TYPES } from '../../../util/Constants';
 import { ICombat } from '../../../core/models/combat.model';
+import { TypeEff } from '../../../core/models/type-eff.model';
 
 const nameSort = (rowA: IPokemonData | ICombat | undefined, rowB: IPokemonData | ICombat | undefined) => {
   const a = rowA?.name.toLowerCase();
@@ -212,7 +213,7 @@ const SearchTypes = () => {
             {showType && (
               <div className="result-type">
                 <ul>
-                  {Object.keys(data?.typeEff ?? {})
+                  {Object.keys(data?.typeEff ?? new TypeEff())
                     .filter((value) => value !== currentType)
                     .map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>

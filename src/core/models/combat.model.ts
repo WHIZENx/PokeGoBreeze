@@ -44,14 +44,14 @@ export interface ICombat {
 // tslint:disable-next-line:max-classes-per-file
 export class Combat implements ICombat {
   name: string;
-  type!: string | null;
+  type: string | null = null;
   // tslint:disable-next-line:variable-name
-  type_move!: string | null;
+  type_move: string | null = null;
   // tslint:disable-next-line:variable-name
   pvp_power: number;
   // tslint:disable-next-line:variable-name
   pvp_energy: number;
-  sound!: string | null;
+  sound: string | null = null;
   buffs: IBuff[];
   id: number;
   track: number;
@@ -65,7 +65,7 @@ export class Combat implements ICombat {
   accuracyChance: number;
   criticalChance: number;
   staminaLossScalar: number;
-  archetype!: string | null;
+  archetype: string | null = null;
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;

@@ -24,7 +24,7 @@ interface LeagueData {
   data: IPokemonRewardSetLeague[];
   step: number;
   track: string;
-  type: string | boolean | undefined;
+  type: string | undefined;
 }
 
 const Leagues = () => {
@@ -96,11 +96,11 @@ const Leagues = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleShow = (type: string | boolean | undefined, track: string, step: number) => {
+  const handleShow = (type: string | undefined, track: string, step: number) => {
     if (type === 'pokemon') {
       const result: any[] = [];
       setShow(true);
-      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? {}).forEach((value: any) => {
+      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? new Object()).forEach((value) => {
         if (value.rank <= rank) {
           result.push(
             ...value[track.toLowerCase()].map((item: IPokemonRewardSetLeague) => {

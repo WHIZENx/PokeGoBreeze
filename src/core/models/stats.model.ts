@@ -1,63 +1,114 @@
-export interface IStatsRank {
-  attack: {
-    ranking: StatsAtk[];
-    min_rank: number;
-    max_rank: number;
-    min_stats: number;
-    max_stats: number;
-  };
-  defense: {
-    ranking: StatsDef[];
-    min_rank: number;
-    max_rank: number;
-    min_stats: number;
-    max_stats: number;
-  };
-  stamina: {
-    ranking: StatsSta[];
-    min_rank: number;
-    max_rank: number;
-    min_stats: number;
-    max_stats: number;
-  };
-  statProd: {
-    ranking: StatsProd[];
-    min_rank: number;
-    max_rank: number;
-    min_stats: number;
-    max_stats: number;
-  };
+interface OptionsRank {
+  min_rank: number;
+  max_rank: number;
+  min_stats: number;
+  max_stats: number;
 }
 
+interface IStatsRankAtk extends OptionsRank {
+  ranking: IStatsAtk[];
+}
+
+export class StatsRankAtk implements IStatsRankAtk {
+  ranking: IStatsAtk[] = [];
+  // tslint:disable-next-line:variable-name
+  min_rank: number = 0;
+  // tslint:disable-next-line:variable-name
+  max_rank: number = 0;
+  // tslint:disable-next-line:variable-name
+  min_stats: number = 0;
+  // tslint:disable-next-line:variable-name
+  max_stats: number = 0;
+
+  static create(value: IStatsRankAtk) {
+    const obj = new StatsRankAtk();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IStatsRankDef extends OptionsRank {
+  ranking: IStatsDef[];
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsRankDef implements IStatsRankDef {
+  ranking: IStatsDef[] = [];
+  // tslint:disable-next-line:variable-name
+  min_rank: number = 0;
+  // tslint:disable-next-line:variable-name
+  max_rank: number = 0;
+  // tslint:disable-next-line:variable-name
+  min_stats: number = 0;
+  // tslint:disable-next-line:variable-name
+  max_stats: number = 0;
+
+  static create(value: IStatsRankDef) {
+    const obj = new StatsRankDef();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IStatsRankSta extends OptionsRank {
+  ranking: IStatsSta[];
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsRankSta implements IStatsRankSta {
+  ranking: IStatsSta[] = [];
+  // tslint:disable-next-line:variable-name
+  min_rank: number = 0;
+  // tslint:disable-next-line:variable-name
+  max_rank: number = 0;
+  // tslint:disable-next-line:variable-name
+  min_stats: number = 0;
+  // tslint:disable-next-line:variable-name
+  max_stats: number = 0;
+
+  static create(value: IStatsRankSta) {
+    const obj = new StatsRankSta();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IStatsRankProd extends OptionsRank {
+  ranking: IStatsProd[];
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsRankProd implements IStatsRankProd {
+  ranking: IStatsProd[] = [];
+  // tslint:disable-next-line:variable-name
+  min_rank: number = 0;
+  // tslint:disable-next-line:variable-name
+  max_rank: number = 0;
+  // tslint:disable-next-line:variable-name
+  min_stats: number = 0;
+  // tslint:disable-next-line:variable-name
+  max_stats: number = 0;
+
+  static create(value: IStatsRankProd) {
+    const obj = new StatsRankProd();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+export interface IStatsRank {
+  attack: IStatsRankAtk;
+  defense: IStatsRankDef;
+  stamina: IStatsRankSta;
+  statProd: IStatsRankProd;
+}
+
+// tslint:disable-next-line:max-classes-per-file
 export class StatsRank implements IStatsRank {
-  attack!: {
-    ranking: StatsAtk[];
-    min_rank: number;
-    max_rank: number;
-    min_stats: number;
-    max_stats: number;
-  };
-  defense!: {
-    ranking: StatsDef[];
-    min_rank: number;
-    max_rank: number;
-    min_stats: number;
-    max_stats: number;
-  };
-  stamina!: {
-    ranking: StatsSta[];
-    min_rank: number;
-    max_rank: number;
-    min_stats: number;
-    max_stats: number;
-  };
-  statProd!: {
-    ranking: StatsProd[];
-    min_rank: number;
-    max_rank: number;
-    min_stats: number;
-    max_stats: number;
-  };
+  attack: IStatsRankAtk = new StatsRankAtk();
+  defense: IStatsRankDef = new StatsRankDef();
+  stamina: IStatsRankSta = new StatsRankSta();
+  statProd: IStatsRankProd = new StatsRankProd();
 
   constructor({ ...props }: IStatsRank) {
     Object.assign(this, props);
@@ -91,10 +142,10 @@ export interface StatsPokemonGO {
 }
 
 export interface StatsRankingPokemonGO {
-  atk: StatsAtk | undefined;
-  def: StatsDef | undefined;
-  sta: StatsSta | undefined;
-  prod: StatsProd | undefined;
+  atk: IStatsAtk | undefined;
+  def: IStatsDef | undefined;
+  sta: IStatsSta | undefined;
+  prod: IStatsProd | undefined;
 }
 
 export interface IStatsPokemon {
@@ -116,32 +167,82 @@ export interface HexagonStats {
   switching: number;
 }
 
-export interface StatsAtk {
+interface OptionsStats {
+  rank: number;
+  id?: number;
+  form?: string;
+}
+
+export interface IStatsAtk extends OptionsStats {
   attack: number;
-  rank: number;
-  id?: number;
-  form?: string;
 }
 
-export interface StatsDef {
+// tslint:disable-next-line:max-classes-per-file
+export class StatsAtk implements IStatsAtk {
+  attack: number = 0;
+  rank: number = 0;
+  id?: number | undefined;
+  form?: string | undefined;
+
+  static create(value: IStatsAtk) {
+    const obj = new StatsAtk();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+export interface IStatsDef extends OptionsStats {
   defense: number;
-  rank: number;
-  id?: number;
-  form?: string;
 }
 
-export interface StatsSta {
+// tslint:disable-next-line:max-classes-per-file
+export class StatsDef implements IStatsDef {
+  defense: number = 0;
+  rank: number = 0;
+  id?: number | undefined;
+  form?: string | undefined;
+
+  static create(value: IStatsDef) {
+    const obj = new StatsDef();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+export interface IStatsSta extends OptionsStats {
   stamina: number;
-  rank: number;
-  id?: number;
-  form?: string;
 }
 
-export interface StatsProd {
+// tslint:disable-next-line:max-classes-per-file
+export class StatsSta implements IStatsSta {
+  stamina: number = 0;
+  rank: number = 0;
+  id?: number | undefined;
+  form?: string | undefined;
+
+  static create(value: IStatsSta) {
+    const obj = new StatsSta();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+export interface IStatsProd extends OptionsStats {
   prod: number;
-  rank: number;
-  id?: number;
-  form?: string;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsProd implements IStatsProd {
+  prod: number = 0;
+  rank: number = 0;
+  id?: number | undefined;
+  form?: string | undefined;
+
+  static create(value: IStatsProd) {
+    const obj = new StatsProd();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 export interface PokemonStatsRanking {
@@ -158,10 +259,10 @@ export interface PokemonStatsRanking {
   version: string;
   weightkg: number;
   heightm: number;
-  atk: StatsAtk;
-  def: StatsDef;
-  sta: StatsSta;
-  statProd: StatsProd;
+  atk: IStatsAtk;
+  def: IStatsDef;
+  sta: IStatsSta;
+  statProd: IStatsProd;
   types?: string[];
   url?: string;
   releasedGO: boolean;
@@ -184,6 +285,12 @@ export class StatsPokemon implements IStatsPokemon {
     this.spa = 0;
     this.spd = 0;
     this.spe = 0;
+  }
+
+  static create(value: IStatsPokemon) {
+    const obj = new StatsPokemon();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 

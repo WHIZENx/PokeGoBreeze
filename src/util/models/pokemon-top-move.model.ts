@@ -30,23 +30,33 @@ export class PokemonTopMove implements IPokemonTopMove {
   }
 }
 
+interface IeDPS {
+  offensive: number;
+  defensive: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+class EDPS implements IeDPS {
+  offensive: number;
+  defensive: number;
+
+  constructor() {
+    this.offensive = 0;
+    this.defensive = 0;
+  }
+}
+
 export interface IPokemonQueryMove {
   fmove: ICombat;
   cmove: ICombat;
-  eDPS: {
-    offensive: number;
-    defensive: number;
-  };
+  eDPS: IeDPS;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonQueryMove implements IPokemonQueryMove {
   fmove: ICombat = new Combat();
   cmove: ICombat = new Combat();
-  eDPS!: {
-    offensive: number;
-    defensive: number;
-  };
+  eDPS: IeDPS = new EDPS();
 
   constructor({ ...props }: IPokemonQueryMove) {
     Object.assign(this, props);

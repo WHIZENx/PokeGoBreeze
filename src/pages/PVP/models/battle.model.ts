@@ -1,7 +1,7 @@
 import { Combat, IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { StatsAtk, StatsDef, IStatsPokemon, StatsProd, StatsSta, IStatsBase, StatsPokemon } from '../../../core/models/stats.model';
+import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsProd, IStatsSta, IStatsBase, StatsPokemon } from '../../../core/models/stats.model';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 
 export interface IPokemonBattleData {
@@ -129,9 +129,9 @@ export interface IPokemonTeamData {
   pokemonData: IPokemonData | undefined;
   form: string | null;
   stats: IStatsPokemon;
-  atk: StatsAtk | undefined;
-  def: StatsDef | undefined;
-  sta: StatsSta | undefined;
+  atk: IStatsAtk | undefined;
+  def: IStatsDef | undefined;
+  sta: IStatsSta | undefined;
   fmove: ICombat | undefined;
   cmovePri: ICombat | undefined;
   cmoveSec: ICombat | undefined;
@@ -147,9 +147,9 @@ export class PokemonTeamData implements IPokemonTeamData {
   pokemonData: IPokemonData | undefined;
   form: string | null = '';
   stats: IStatsPokemon = new StatsPokemon();
-  atk: StatsAtk | undefined;
-  def: StatsDef | undefined;
-  sta: StatsSta | undefined;
+  atk: IStatsAtk | undefined;
+  def: IStatsDef | undefined;
+  sta: IStatsSta | undefined;
   fmove: ICombat | undefined;
   cmovePri: ICombat | undefined;
   cmoveSec: ICombat | undefined;
@@ -169,10 +169,10 @@ export interface IPokemonBattleRanking {
   pokemon: IPokemonData | undefined;
   form: string | null;
   stats: IStatsPokemon;
-  atk: StatsAtk | undefined;
-  def: StatsDef | undefined;
-  sta: StatsSta | undefined;
-  prod: StatsProd | undefined;
+  atk: IStatsAtk | undefined;
+  def: IStatsDef | undefined;
+  sta: IStatsSta | undefined;
+  prod: IStatsProd | undefined;
   fmove: ICombat | undefined;
   cmovePri: ICombat | undefined;
   cmoveSec: ICombat | undefined;
@@ -191,10 +191,10 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   pokemon: IPokemonData | undefined;
   form: string | null = '';
   stats: IStatsPokemon = new StatsPokemon();
-  atk: StatsAtk | undefined;
-  def: StatsDef | undefined;
-  sta: StatsSta | undefined;
-  prod: StatsProd | undefined;
+  atk: IStatsAtk | undefined;
+  def: IStatsDef | undefined;
+  sta: IStatsSta | undefined;
+  prod: IStatsProd | undefined;
   fmove: ICombat | undefined;
   cmovePri: ICombat | undefined;
   cmoveSec: ICombat | undefined;

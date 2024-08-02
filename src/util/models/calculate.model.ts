@@ -1,7 +1,7 @@
 import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IOptions } from '../../core/models/options.model';
-import { IPokemonData } from '../../core/models/pokemon.model';
+import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
 import { IStatsPokemon, StatsPokemon } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
@@ -118,8 +118,13 @@ export class PredictStatsModel implements IPredictStatsModel {
   percent: number = 0;
   hp: number = 0;
 
-  constructor({ ...props }: IPredictStatsModel) {
-    Object.assign(this, props);
+  // tslint:disable-next-line:no-empty
+  constructor() {}
+
+  static create(value: IPredictStatsModel) {
+    const obj = new PredictStatsModel();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 
@@ -142,8 +147,13 @@ export class PredictCPModel implements IPredictCPModel {
   CP: number = 0;
   hp: number = 0;
 
-  constructor({ ...props }: IPredictCPModel) {
-    Object.assign(this, props);
+  // tslint:disable-next-line:no-empty
+  constructor() {}
+
+  static create(value: IPredictCPModel) {
+    const obj = new PredictCPModel();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 
@@ -216,7 +226,7 @@ export interface IQueryStatesEvoChain {
 
 // tslint:disable-next-line:max-classes-per-file
 export class QueryStatesEvoChain implements IQueryStatesEvoChain {
-  battleLeague!: IBattleLeague;
+  battleLeague: IBattleLeague = new BattleLeague();
   maxCP: number = 0;
   form: string = '';
   id: number = 0;
@@ -355,8 +365,8 @@ export class QueryMovesPokemon {
   typeEff: ITypeEff | undefined;
   weatherBoost: IWeatherBoost | undefined;
   combat: ICombat[] = [];
-  pokemon!: IPokemonData;
-  stats!: IStatsPokemon;
+  pokemon: IPokemonData = new PokemonData();
+  stats: IStatsPokemon = new StatsPokemon();
   atk: number;
   def: number;
   sta: number;

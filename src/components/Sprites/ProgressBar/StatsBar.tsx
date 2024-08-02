@@ -4,13 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import { FORM_NORMAL } from '../../../util/Constants';
 import { IStatsBarComponent } from '../../models/component.model';
 
-const ComponentBar = styled.div`
+interface Element {
+  isRank?: boolean;
+  statsPercent?: number;
+}
+
+const ComponentBar = styled.div<Element>`
   position: relative !important;
 `;
 
-const BoxText = styled.div`
+const BoxText = styled.div<Element>`
   position: absolute !important;
-  justify-content: ${(props: { isRank: boolean }) => (props.isRank ? 'flex-end' : 'flex-start')} !important;
+  justify-content: ${(props) => (props.isRank ? 'flex-end' : 'flex-start')} !important;
   display: flex !important;
   width: 100% !important;
 `;
@@ -19,8 +24,8 @@ const Bar = styled.div.attrs({
   role: 'progressbar',
   'aria-valuemin': 0,
   'aria-valuemax': 100,
-})`
-  width: ${(props: { statsPercent: number }) => props.statsPercent}%;
+})<Element>`
+  width: ${(props) => props.statsPercent}%;
 `;
 
 const StatsBar = (props: IStatsBarComponent) => {
