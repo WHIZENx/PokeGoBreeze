@@ -5,8 +5,9 @@ import TypeInfo from '../Sprites/Type/Type';
 
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { TypeEffChart } from '../../core/models/type-eff.model';
+import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 const Info = (props: IInfoComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
@@ -14,7 +15,7 @@ const Info = (props: IInfoComponent) => {
 
   const getWeatherEffective = (types: string[]) => {
     const data: string[] = [];
-    Object.entries(weatherEffective ?? {}).forEach(([key, value]) => {
+    Object.entries(weatherEffective ?? new WeatherBoost()).forEach(([key, value]) => {
       types?.forEach((type) => {
         if (value.includes(type?.toUpperCase()) && !data.includes(key)) {
           data.push(key);
@@ -25,15 +26,15 @@ const Info = (props: IInfoComponent) => {
   };
 
   const getTypeEffective = (types: string[]) => {
-    const data: TypeEffChart = {
+    const data = TypeEffChart.create({
       very_weak: [],
       weak: [],
       super_resist: [],
       very_resist: [],
       resist: [],
       neutral: [],
-    };
-    Object.entries(typeEffective ?? {}).forEach(([key, value]) => {
+    });
+    Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
       let valueEffective = 1;
       types?.forEach((type) => {
         valueEffective *= value[type?.toUpperCase()];

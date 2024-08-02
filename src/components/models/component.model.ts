@@ -10,12 +10,12 @@ import {
   IStatsPokemon,
   IStatsRank,
   PokemonStatsRanking,
-  StatsAtk,
-  StatsDef,
-  StatsProd,
-  StatsSta,
+  IStatsAtk,
+  IStatsDef,
+  IStatsProd,
+  IStatsSta,
 } from '../../core/models/stats.model';
-import { TypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { PokemonInfo } from '../../core/models/API/info.model';
 
@@ -65,7 +65,7 @@ export interface ICardWeatherComponent {
 }
 
 export interface ITypeEffectiveComponent {
-  typeEffective: TypeEffChart | undefined;
+  typeEffective: ITypeEffChart | undefined;
 }
 
 export interface ITypeEffectiveSelectComponent {
@@ -210,10 +210,10 @@ export interface IStatsComponent {
   isShadow?: boolean;
   pokemonStats: IStatsRank | null;
   stats?: IStatsPokemon | null;
-  statATK?: StatsAtk;
-  statDEF?: StatsDef;
-  statSTA?: StatsSta;
-  statProd?: StatsProd;
+  statATK?: IStatsAtk;
+  statDEF?: IStatsDef;
+  statSTA?: IStatsSta;
+  statProd?: IStatsProd;
   id?: number;
   form?: string;
 }

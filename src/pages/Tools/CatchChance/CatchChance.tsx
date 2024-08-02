@@ -635,7 +635,7 @@ const CatchChance = () => {
                 <tbody>
                   <tr className="text-center">
                     <td>Normal Throw</td>
-                    {Object.entries(data?.result ?? {})
+                    {Object.entries(data?.result ?? new Object())
                       .reduce((p, c) => [...p, c[1].normal], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -645,7 +645,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Nice Throw</td>
-                    {Object.entries(data?.result ?? {})
+                    {Object.entries(data?.result ?? new Object())
                       .reduce((p, c) => [...p, c[1].nice], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -655,7 +655,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Great Throw</td>
-                    {Object.entries(data?.result ?? {})
+                    {Object.entries(data?.result ?? new Object())
                       .reduce((p, c) => [...p, c[1].great], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -665,7 +665,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Excellent Throw</td>
-                    {Object.entries(data?.result ?? {})
+                    {Object.entries(data?.result ?? new Object())
                       .reduce((p, c) => [...p, c[1].excellent], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>

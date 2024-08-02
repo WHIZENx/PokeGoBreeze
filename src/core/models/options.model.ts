@@ -155,6 +155,21 @@ interface IThrowOption {
   excellent: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
+export class ThrowOption implements IThrowOption {
+  normal: number;
+  nice: number;
+  great: number;
+  excellent: number;
+
+  constructor() {
+    this.normal = 0;
+    this.nice = 0;
+    this.great = 0;
+    this.excellent = 0;
+  }
+}
+
 export interface IBuddyFriendship {
   level: number;
   minNonCumulativePointsRequired: number;
@@ -227,12 +242,7 @@ export class Options implements IOptions {
         def: 0,
       },
     };
-    this.throw_charge = {
-      normal: 0,
-      nice: 0,
-      great: 0,
-      excellent: 0,
-    };
+    this.throw_charge = new ThrowOption();
     this.buddy_friendship = {};
     this.trainer_friendship = {};
   }

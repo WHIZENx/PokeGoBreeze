@@ -21,7 +21,7 @@ import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/Compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { ITrainerFriendship } from '../../../core/models/options.model';
+import { ITrainerFriendship, ThrowOption } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonDmgOption, PokemonDmgOption } from '../../../core/models/damage.model';
@@ -354,7 +354,7 @@ const Damage = () => {
                           });
                         }}
                       >
-                        {Object.entries(globalOptions?.throw_charge ?? {}).map(([type, value], index) => (
+                        {Object.entries(globalOptions?.throw_charge ?? new ThrowOption()).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={`caption-small dropdown-caption ${labels[index].style}`}>x{value}</span>

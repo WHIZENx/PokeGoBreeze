@@ -116,7 +116,7 @@ const optionFormNoneSpecial = (data: PokemonDataGM[]) => {
   return result;
 };
 
-const findPokemonData = (id: number, name: string) => {
+const findPokemonData = (id: number, name: string): IPokemonData | undefined => {
   return Object.values(pokemonStoreData).find(
     (pokemon: IPokemonData) => pokemon.num === id && name === convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug)
   );
@@ -135,11 +135,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
     const regId = (item.templateId.match(/\d{4}/g) || []) as string[];
-    let pokemon = new PokemonModel(regId.length > 0 ? parseInt(regId[0]) : 0, pokemonSettings.pokemonId);
-    pokemon = {
-      ...pokemonSettings,
-    };
-    pokemon.id = regId.length > 0 ? parseInt(regId[0]) : 0;
+    const pokemon = new PokemonModel(regId.length > 0 ? parseInt(regId[0]) : 0, undefined, pokemonSettings);
+
     if (!pokemonSettings.form) {
       pokemon.form = FORM_NORMAL;
     } else {
@@ -204,7 +201,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
         item.templateId === `SPAWN_V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(pokemonSettings.pokemonId)}`
     );
 
-    optional.genderRatio = new PokemonGenderRatio(
+    optional.genderRatio = PokemonGenderRatio.create(
       gender?.data.genderSettings.gender?.malePercent ?? 0,
       gender?.data.genderSettings.gender?.femalePercent ?? 0
     );
@@ -382,7 +379,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     }
 
     if (pokemon.form !== FORM_SHADOW) {
-      result.push(new PokemonData(pokemon, types, optional));
+      result.push(PokemonData.create(pokemon, types, optional));
     }
   });
 
@@ -468,14 +465,14 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
         };
       }
 
-      optional.genderRatio = new PokemonGenderRatio(item.genderRatio.M, item.genderRatio.F);
+      optional.genderRatio = PokemonGenderRatio.create(item.genderRatio.M, item.genderRatio.F);
       optional.slug = convertPokemonDataName(item.baseFormeSlug ?? item.slug)
         ?.replaceAll('_', '-')
         .toLowerCase();
       optional.baseForme = item.baseForme?.toUpperCase();
       optional.baseStatsGO = true;
 
-      result.push(new PokemonData(pokemon, types, optional));
+      result.push(PokemonData.create(pokemon, types, optional));
     });
 };
 
@@ -601,7 +598,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
         new ImageModel({
           gender,
           pokemonId: result.id,
-          form: convertAndReplaceNameGO(form, result.name),
+          form: result.id !== 201 ? convertAndReplaceNameGO(form, result.name) : form,
           default: formSet[count],
           shiny: shiny ? formSet[count + 1] : null,
         })
@@ -642,7 +639,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
           new ImageModel({
             gender: 3,
             pokemonId: result.id,
-            form: convertAndReplaceNameGO(form, result.name),
+            form: result.id !== 201 ? convertAndReplaceNameGO(form, result.name) : form,
             default: formSet[index],
             shiny: formSet[index + 1],
           })
@@ -662,7 +659,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
             new ImageModel({
               gender: 3,
               pokemonId: result.id,
-              form: convertAndReplaceNameGO(form, result.name),
+              form: result.id !== 201 ? convertAndReplaceNameGO(form, result.name) : form,
               default: formSet[index],
               shiny: formSet[index + 1],
             })
@@ -1050,10 +1047,11 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
 
 export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IAsset[]) => {
   pokemonData.forEach((item) => {
-    const form = assets?.find((asset) => asset.id === item.num)?.image.find((img) => img.form === item.forme);
+    const form = assets?.find((asset) => asset.id === item.num);
+    const image = form?.image.find((img) => img.form === (item.num === 201 ? `${item.pokemonId}_${item.baseForme}` : item.forme));
 
-    if (form && (item.isShadow || (checkMoveSetAvailable(item) && form.default))) {
-      item.releasedGO = form.default.includes('Addressable Assets/');
+    if (form && (item.isShadow || (checkMoveSetAvailable(item) && image?.default))) {
+      item.releasedGO = image?.default.includes('Addressable Assets/') ?? false;
     }
   });
 };

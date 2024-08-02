@@ -2,8 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { ICircleComponent } from '../../models/component.model';
 
-const Fill = styled.div`
-  border: ${(props: { line: number; size: number; color: string }) => props.line}px solid ${(props: { color: string }) => props.color};
+interface Element {
+  line: number;
+  size: number;
+  color: string;
+}
+
+const Fill = styled.div<Element>`
+  border: ${(props) => props.line}px solid ${(props) => props.color};
   border-radius: 50%;
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;

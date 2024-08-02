@@ -19,6 +19,21 @@ interface IEvolutionQuest {
   randomEvolution?: boolean;
 }
 
+export class EvolutionQuest implements IEvolutionQuest {
+  genderRequirement?: string;
+  kmBuddyDistanceRequirement?: number;
+  mustBeBuddy?: boolean;
+  onlyDaytime?: boolean;
+  onlyNighttime?: boolean;
+  lureItemRequirement?: string;
+  evolutionItemRequirement?: string;
+  onlyUpsideDown?: boolean;
+  condition?: IEvolutionQuestCondition | undefined;
+  goal?: number;
+  type?: string;
+  randomEvolution?: boolean;
+}
+
 export interface IEvoList {
   evoToForm: string;
   evoToId: number;
@@ -30,6 +45,7 @@ export interface IEvoList {
   quest?: IEvolutionQuest;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class EvoList implements IEvoList {
   evoToForm: string;
   evoToId: number;

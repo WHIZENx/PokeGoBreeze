@@ -1,10 +1,24 @@
 import { CounterModel } from '../components/Table/Counter/models/counter.model';
+import { Stats } from '../core/models/API/info.model';
 import { ICombat } from '../core/models/combat.model';
 import { ICPM } from '../core/models/cpm.model';
 import { IEvolution } from '../core/models/evolution.model';
 import { IOptions } from '../core/models/options.model';
 import { IPokemonData } from '../core/models/pokemon.model';
-import { IStatsPokemon, StatsBase, StatsRank, StatsPokemon } from '../core/models/stats.model';
+import {
+  IStatsPokemon,
+  StatsBase,
+  StatsRank,
+  StatsPokemon,
+  StatsRankAtk,
+  StatsRankDef,
+  StatsRankSta,
+  StatsRankProd,
+  StatsProd,
+  StatsAtk,
+  StatsDef,
+  StatsSta,
+} from '../core/models/stats.model';
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
@@ -86,18 +100,39 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
   return valueEffective;
 };
 
+const convertStatsArray = (stats: Stats[] | undefined, name: string) => {
+  return stats?.find((item) => item.stat.name === name)?.base_stat ?? 0;
+};
+
+export const convertAllStats = (stats: Stats[] | undefined) => {
+  const atk = convertStatsArray(stats, 'attack');
+  const spa = convertStatsArray(stats, 'special-attack');
+  const spe = convertStatsArray(stats, 'speed');
+  const def = convertStatsArray(stats, 'defense');
+  const spd = convertStatsArray(stats, 'special-defense');
+  const hp = convertStatsArray(stats, 'hp');
+  return StatsPokemon.create({
+    atk,
+    spa,
+    spe,
+    def,
+    spd,
+    hp,
+  });
+};
+
 /* Algorithm calculate from pokemongohub.net */
-export const calBaseATK = (stats: any, nerf: boolean) => {
+export const calBaseATK = (stats: IStatsPokemon | null | undefined, nerf: boolean) => {
   if (!stats) {
     stats = new StatsPokemon();
   }
-  const atk = stats.atk ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'attack').base_stat;
-  const spa = stats.spa ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'special-attack').base_stat;
+  const atk = stats.atk ?? 0;
+  const spa = stats.spa ?? 0;
 
   const lower = Math.min(atk, spa);
   const higher = Math.max(atk, spa);
 
-  const speed = stats.spe ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'speed').base_stat;
+  const speed = stats.spe ?? 0;
 
   const scaleATK = Math.round(2 * ((7 / 8) * higher + (1 / 8) * lower));
   const speedMod = 1 + (speed - 75) / 500;
@@ -112,17 +147,17 @@ export const calBaseATK = (stats: any, nerf: boolean) => {
   }
 };
 
-export const calBaseDEF = (stats: any, nerf: boolean) => {
+export const calBaseDEF = (stats: IStatsPokemon | null | undefined, nerf: boolean) => {
   if (!stats) {
     stats = new StatsPokemon();
   }
-  const def = stats.def ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'defense').base_stat;
-  const spd = stats.spd ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'special-defense').base_stat;
+  const def = stats.def ?? 0;
+  const spd = stats.spd ?? 0;
 
   const lower = Math.min(def, spd);
   const higher = Math.max(def, spd);
 
-  const speed = stats.spe ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'speed').base_stat;
+  const speed = stats.spe ?? 0;
 
   const scaleDEF = Math.round(2 * ((5 / 8) * higher + (3 / 8) * lower));
   const speedMod = 1 + (speed - 75) / 500;
@@ -137,11 +172,11 @@ export const calBaseDEF = (stats: any, nerf: boolean) => {
   }
 };
 
-export const calBaseSTA = (stats: any, nerf: boolean) => {
+export const calBaseSTA = (stats: IStatsPokemon | null | undefined, nerf: boolean) => {
   if (!stats) {
     stats = new StatsPokemon();
   }
-  const hp = stats.hp ?? stats.find((item: { stat: { name: string } }) => item.stat.name === 'hp').base_stat;
+  const hp = stats.hp ?? 0;
 
   const baseSTA = hp > 0 ? Math.floor(hp * 1.75 + 50) : hp;
   if (!nerf) {
@@ -168,12 +203,12 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
   const minATK = Math.min(...attackRanking);
   const maxATK = Math.max(...attackRanking);
   const attackStats = stats.map((item) => {
-    return {
+    return StatsAtk.create({
       id: item.id,
       form: item.form,
       attack: item.baseStatsPokeGo?.attack ?? 0,
       rank: attackRanking.length - attackRanking.indexOf(item.baseStatsPokeGo?.attack ?? 0),
-    };
+    });
   });
 
   const defenseRanking = [
@@ -189,12 +224,12 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
   const minDEF = Math.min(...defenseRanking);
   const maxDEF = Math.max(...defenseRanking);
   const defenseStats = stats.map((item) => {
-    return {
+    return StatsDef.create({
       id: item.id,
       form: item.form,
       defense: item.baseStatsPokeGo?.defense ?? 0,
       rank: defenseRanking.length - defenseRanking.indexOf(item.baseStatsPokeGo?.defense ?? 0),
-    };
+    });
   });
 
   const staminaRanking = [
@@ -210,12 +245,12 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
   const minSTA = Math.min(...staminaRanking);
   const maxSTA = Math.max(...staminaRanking);
   const staminaStats = stats.map((item) => {
-    return {
+    return StatsSta.create({
       id: item.id,
       form: item.form,
       stamina: item.baseStatsPokeGo?.stamina ?? 0,
       rank: staminaRanking.length - staminaRanking.indexOf(item.baseStatsPokeGo?.stamina ?? 0),
-    };
+    });
   });
 
   const prodRanking = [
@@ -231,43 +266,43 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
   const minPROD = Math.min(...prodRanking);
   const maxPROD = Math.max(...prodRanking);
   const prodStats = stats.map((item) => {
-    return {
+    return StatsProd.create({
       id: item.id,
       form: item.form,
       prod: item.baseStatsProd,
       rank: prodRanking.length - prodRanking.indexOf(item.baseStatsProd),
-    };
+    });
   });
 
   return new StatsRank({
-    attack: {
+    attack: StatsRankAtk.create({
       ranking: attackStats,
       min_rank: 1,
       max_rank: attackRanking.length,
       min_stats: minATK,
       max_stats: maxATK,
-    },
-    defense: {
+    }),
+    defense: StatsRankDef.create({
       ranking: defenseStats,
       min_rank: 1,
       max_rank: defenseRanking.length,
       min_stats: minDEF,
       max_stats: maxDEF,
-    },
-    stamina: {
+    }),
+    stamina: StatsRankSta.create({
       ranking: staminaStats,
       min_rank: 1,
       max_rank: staminaRanking.length,
       min_stats: minSTA,
       max_stats: maxSTA,
-    },
-    statProd: {
+    }),
+    statProd: StatsRankProd.create({
       ranking: prodStats,
       min_rank: 1,
       max_rank: prodRanking.length,
       min_stats: minPROD,
       max_stats: maxPROD,
-    },
+    }),
   });
 };
 
@@ -328,7 +363,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
         for (let k = MIN_IV; k <= MAX_IV; k++) {
           if (calculateCP(atk + i, def + j, sta + k, l) === cp) {
             predictArr.push(
-              new PredictStatsModel({
+              PredictStatsModel.create({
                 atk: i,
                 def: j,
                 sta: k,
@@ -360,7 +395,7 @@ export const predictCPList = (
   const predictArr: IPredictCPModel[] = [];
   for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
     predictArr.push(
-      new PredictCPModel({
+      PredictCPModel.create({
         level: i,
         CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i),
         hp: Math.max(1, calculateStatsBattle(sta, IVsta, i, true)),

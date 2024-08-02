@@ -28,7 +28,7 @@ import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { EvoList, EvolutionModel, IEvolution } from '../../../core/models/evolution.model';
+import { EvoList, EvolutionModel, EvolutionQuest, IEvolution } from '../../../core/models/evolution.model';
 import {
   FORM_GALARIAN,
   FORM_GMAX,
@@ -433,7 +433,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                       </div>
                     )}
-                    {Object.keys(data?.quest ?? {}).length > 0 && (
+                    {Object.keys(data?.quest ?? new EvolutionQuest()).length > 0 && (
                       <Fragment>
                         {data?.quest?.randomEvolution && (
                           <span className="caption">

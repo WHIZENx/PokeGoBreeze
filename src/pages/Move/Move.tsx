@@ -26,6 +26,8 @@ import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
 import { IMovePage } from '../models/page.model';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { TypeEff } from '../../core/models/type-eff.model';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -95,7 +97,7 @@ const Move = (props: IMovePage) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getWeatherEffective = (type: string) => {
-    const result = Object.entries(data?.weatherBoost ?? {})?.find(([, value]) => {
+    const result = Object.entries(data?.weatherBoost ?? new WeatherBoost())?.find(([, value]) => {
       return value.includes(type?.toUpperCase());
     });
     return result && result.at(0);
@@ -163,7 +165,7 @@ const Move = (props: IMovePage) => {
               }}
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
-              {Object.keys(data?.typeEff ?? {})
+              {Object.keys(data?.typeEff ?? new TypeEff())
                 .filter((type) => type !== 'FAIRY')
                 .map((value, index) => (
                   <option key={index} value={value}>

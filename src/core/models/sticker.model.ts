@@ -11,10 +11,10 @@ export interface ISticker {
 export class Sticker implements ISticker {
   id: string;
   maxCount: number;
-  stickerUrl!: string | null;
+  stickerUrl: string | null = null;
   pokemonId?: number | null;
-  pokemonName!: string | null;
-  shop!: boolean;
+  pokemonName: string | null = null;
+  shop: boolean = false;
   pack: number[];
 
   constructor() {

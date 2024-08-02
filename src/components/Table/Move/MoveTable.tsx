@@ -28,21 +28,36 @@ interface PokemonMoves {
   specialMoves: (ICombat | undefined)[];
 }
 
-interface SortModel {
+interface ISortModel {
   fast: boolean;
   charged: boolean;
   eff: boolean;
   sortBy: string;
 }
 
-interface ITableSort {
-  offensive: SortModel;
-  defensive: SortModel;
+class SortModel implements ISortModel {
+  fast: boolean;
+  charged: boolean;
+  eff: boolean;
+  sortBy: string;
+
+  constructor() {
+    this.fast = false;
+    this.charged = false;
+    this.eff = false;
+    this.sortBy = '';
+  }
 }
 
+interface ITableSort {
+  offensive: ISortModel;
+  defensive: ISortModel;
+}
+
+// tslint:disable-next-line:max-classes-per-file
 class TableSort implements ITableSort {
-  offensive!: SortModel;
-  defensive!: SortModel;
+  offensive: ISortModel = new SortModel();
+  defensive: ISortModel = new SortModel();
 
   constructor({ ...props }: ITableSort) {
     Object.assign(this, props);
