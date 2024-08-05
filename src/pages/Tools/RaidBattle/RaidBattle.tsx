@@ -375,7 +375,7 @@ const RaidBattle = () => {
     purified: boolean,
     felite: boolean,
     celite: boolean,
-    specialMove: string | string[] | null,
+    specialMove: string[] | null,
     pokemonTarget: boolean
   ) => {
     movePoke.forEach((vc) => {

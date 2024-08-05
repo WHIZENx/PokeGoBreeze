@@ -446,4 +446,5 @@ export interface IMoveComponent {
   text: string;
   selectDefault: boolean;
   clearData?: (option?: boolean) => void;
+  highlight?: boolean;
 }

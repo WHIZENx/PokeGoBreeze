@@ -19,7 +19,6 @@ import { TypeMove } from '../enums/move.enum';
 import {
   Encounter,
   IPokemonData,
-  IPokemonDataOptional,
   PokemonData,
   PokemonDataOptional,
   PokemonEncounter,
@@ -156,24 +155,14 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     const pokemonEncounter = encounter?.find((e) => defaultName === e.name);
 
     pokemon.encounter = new Encounter({
+      ...pokemon.encounter,
       baseCaptureRate: pokemonEncounter?.basecapturerate,
       baseFleeRate: pokemonEncounter?.basecapturerate,
-      movementType: pokemon.encounter.movementType,
-      movementTimerS: pokemon.encounter.movementTimerS,
-      jumpTimeS: pokemon.encounter.jumpTimeS,
-      attackTimerS: pokemon.encounter.jumpTimeS,
-      attackProbability: pokemon.encounter.attackProbability,
-      dodgeProbability: pokemon.encounter.dodgeProbability,
-      dodgeDurationS: pokemon.encounter.dodgeDurationS,
-      dodgeDistance: pokemon.encounter.dodgeDistance,
-      obShadowFormBaseCaptureRate: pokemon.encounter.obShadowFormBaseCaptureRate,
-      obShadowFormAttackProbability: pokemon.encounter.obShadowFormAttackProbability,
-      obShadowFormDodgeProbability: pokemon.encounter.obShadowFormDodgeProbability,
     });
 
-    const optional: IPokemonDataOptional = {
+    const optional = new PokemonDataOptional({
       baseStatsGO: true,
-    };
+    });
 
     if (pokemon.id === 235) {
       const moves = data.find((item) => item.templateId === 'SMEARGLE_MOVES_SETTINGS')?.data.smeargleMovesSettings;
@@ -575,13 +564,14 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     let count = 0,
       mega = false;
     while (formSet.length > count) {
-      let form: string | string[] = formSet[count].split('.'),
-        shiny = false,
-        gender = 3;
-      if (form[1] === 'icon' || form[1] === 'g2') {
+      let form;
+      let shiny = false;
+      let gender = 3;
+      const formList = formSet[count].split('.');
+      if (formList[1] === 'icon' || formList[1] === 'g2') {
         form = FORM_NORMAL;
       } else {
-        form = form[1].replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
+        form = formList[1].replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
       }
       if (formSet.includes(formSet[count].replace('.icon', '') + '.s.icon')) {
         shiny = true;
