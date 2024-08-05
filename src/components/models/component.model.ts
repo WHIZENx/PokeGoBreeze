@@ -9,7 +9,7 @@ import {
   HexagonStats,
   IStatsPokemon,
   IStatsRank,
-  PokemonStatsRanking,
+  IPokemonStatsRanking,
   IStatsAtk,
   IStatsDef,
   IStatsProd,
@@ -416,7 +416,7 @@ export interface ICounterComponent {
 }
 
 export interface ITableMoveComponent {
-  data: PokemonDataForm | PokemonStatsRanking | undefined;
+  data: PokemonDataForm | IPokemonStatsRanking | undefined;
   statATK: number;
   statDEF: number;
   statSTA: number;
@@ -446,4 +446,5 @@ export interface IMoveComponent {
   text: string;
   selectDefault: boolean;
   clearData?: (option?: boolean) => void;
+  highlight?: boolean;
 }

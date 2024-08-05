@@ -126,13 +126,13 @@ const FindTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
-    if (!searchCP || parseInt(searchCP) < 10) {
+    if (!searchCP || parseInt(searchCP) < 10 || isNaN(parseInt(searchCP))) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = predictStat(statATK, statDEF, statSTA, searchCP);
     if (result.result.length === 0) {
       setPreIvArr(undefined);
-      return enqueueSnackbar('At CP: ' + result.CP + ' impossible found in ' + name, { variant: 'error' });
+      return enqueueSnackbar(`At CP: ${result.CP} impossible found in ${name}`, { variant: 'error' });
     }
     setPreIvArr(result);
   }, [enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);

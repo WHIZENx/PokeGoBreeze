@@ -2,7 +2,7 @@
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { OptionsPokemon } from '../../core/models/pokemon.model';
 import { SearchingModel } from '../../store/models/searching.model';
-import { BattlePokemonData } from '../../core/models/pvp.model';
+import { IBattlePokemonData } from '../../core/models/pvp.model';
 import { IPokemonBattle } from '../PVP/models/battle.model';
 import { IPokemonDmgOption } from '../../core/models/damage.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
@@ -40,7 +40,7 @@ export interface IPokemonPage {
 }
 
 export interface ISelectPokeComponent {
-  data: BattlePokemonData[];
+  data: (IBattlePokemonData | undefined)[];
   league: number;
   pokemonBattle: IPokemonBattle;
   setPokemonBattle: React.Dispatch<React.SetStateAction<IPokemonBattle>>;

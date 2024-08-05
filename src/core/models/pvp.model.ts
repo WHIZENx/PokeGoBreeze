@@ -1,6 +1,6 @@
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
 import { ICombat } from './combat.model';
-import { IPokemonData } from './pokemon.model';
+import { IPokemonData, PokemonData } from './pokemon.model';
 import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsSta } from './stats.model';
 
 export interface PVPDataModel {
@@ -50,7 +50,7 @@ interface Properties {
   totalTeams: number;
 }
 
-interface Teams {
+export interface Teams {
   games: number;
   team: string;
   teamScore: number;
@@ -84,31 +84,80 @@ export interface PokemonRankingMove {
   uses: number | null;
 }
 
-interface PokemonRankingStats {
+interface IPokemonRankingStats {
   product?: number;
   atk: number;
   def: number;
   hp?: number;
 }
 
-export interface BattlePokemonData {
+export class PokemonRankingStats implements IPokemonRankingStats {
+  product?: number;
+  atk: number = 0;
+  def: number = 0;
+  hp?: number;
+
+  constructor() {
+    this.atk = 0;
+    this.def = 0;
+  }
+}
+
+interface IMovePokemonRanking {
+  chargedMoves: PokemonRankingMove[];
+  fastMoves: PokemonRankingMove[];
+}
+
+// tslint:disable-next-line:max-classes-per-file
+class MovePokemonRanking implements IMovePokemonRanking {
+  chargedMoves: PokemonRankingMove[] = [];
+  fastMoves: PokemonRankingMove[] = [];
+}
+
+export interface IBattlePokemonData {
   counters: PokemonVersus[];
   matchups: PokemonVersus[];
-  moves: {
-    chargedMoves: PokemonRankingMove[];
-    fastMoves: PokemonRankingMove[];
-  };
+  moves: IMovePokemonRanking;
   moveset: string[];
   rating: number;
   score: number;
   scores: number[];
   speciesId: string;
   speciesName: string;
-  stats: PokemonRankingStats;
+  stats: IPokemonRankingStats;
   name: string | undefined;
   pokemon: IPokemonData;
   id: number;
   form: string | null;
   shadow?: boolean;
   purified?: boolean;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class BattlePokemonData implements IBattlePokemonData {
+  counters: PokemonVersus[] = [];
+  matchups: PokemonVersus[] = [];
+  moves: IMovePokemonRanking = new MovePokemonRanking();
+  moveset: string[] = [];
+  rating: number = 0;
+  score: number = 0;
+  scores: number[] = [];
+  speciesId: string = '';
+  speciesName: string = '';
+  stats: IPokemonRankingStats = new PokemonRankingStats();
+  name: string | undefined;
+  pokemon: IPokemonData = new PokemonData();
+  id: number = 0;
+  form: string | null = null;
+  shadow?: boolean;
+  purified?: boolean;
+
+  // tslint:disable-next-line:no-empty
+  constructor() {}
+
+  static create(value: IBattlePokemonData) {
+    const obj = new BattlePokemonData();
+    Object.assign(obj, value);
+    return obj;
+  }
 }

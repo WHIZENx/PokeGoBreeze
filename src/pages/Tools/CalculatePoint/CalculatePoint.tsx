@@ -393,6 +393,7 @@ const CalculatePoint = () => {
                     setMove={setMove}
                     move={move}
                     clearData={clearDataAtk}
+                    highlight={true}
                   />
                   <FormControlLabel
                     control={
@@ -519,6 +520,7 @@ const CalculatePoint = () => {
                     setMove={setMoveDef}
                     move={moveDef}
                     clearData={clearDataDef}
+                    highlight={true}
                   />
                   <FormControlLabel
                     control={
@@ -699,6 +701,7 @@ const CalculatePoint = () => {
                       move={fMove}
                       type={TypeMove.FAST}
                       clearData={clearDataBulk}
+                      highlight={true}
                     />
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -731,6 +734,7 @@ const CalculatePoint = () => {
                       move={cMove}
                       type={TypeMove.CHARGE}
                       clearData={clearDataBulk}
+                      highlight={true}
                     />
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>

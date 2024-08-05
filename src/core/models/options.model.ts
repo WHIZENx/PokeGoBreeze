@@ -1,6 +1,6 @@
 import { LeagueReward, IPokemonRewardLeague, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
-import { IStatsBase } from './stats.model';
+import { IStatsBase, StatsBase } from './stats.model';
 
 export interface PokemonDataGM {
   templateId: string;
@@ -142,10 +142,36 @@ interface ICombatOption {
   shadow_bonus: IStatsBase;
 }
 
+// tslint:disable-next-line:max-classes-per-file
+class CombatOption implements ICombatOption {
+  stab: number;
+  // tslint:disable-next-line:variable-name
+  shadow_bonus: IStatsBase;
+
+  constructor() {
+    this.stab = 0;
+    this.shadow_bonus = new StatsBase(0, 0, 0);
+  }
+}
+
 interface IBattleOption {
   enemyAttackInterval: number;
   stab: number;
   shadow_bonus: IStatsBase;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+class BattleOption implements IBattleOption {
+  enemyAttackInterval: number;
+  stab: number;
+  // tslint:disable-next-line:variable-name
+  shadow_bonus: IStatsBase;
+
+  constructor() {
+    this.enemyAttackInterval = 0;
+    this.stab = 0;
+    this.shadow_bonus = new StatsBase(0, 0, 0);
+  }
 }
 
 interface IThrowOption {
@@ -227,21 +253,8 @@ export class Options implements IOptions {
   trainer_friendship: { [x: string]: ITrainerFriendship };
 
   constructor() {
-    this.combat_options = {
-      stab: 0,
-      shadow_bonus: {
-        atk: 0,
-        def: 0,
-      },
-    };
-    this.battle_options = {
-      enemyAttackInterval: 0,
-      stab: 0,
-      shadow_bonus: {
-        atk: 0,
-        def: 0,
-      },
-    };
+    this.combat_options = new CombatOption();
+    this.battle_options = new BattleOption();
     this.throw_charge = new ThrowOption();
     this.buddy_friendship = {};
     this.trainer_friendship = {};

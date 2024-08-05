@@ -731,7 +731,7 @@ export const calculateAvgDPS = (
   atk: number,
   def: number,
   hp: number,
-  typePoke: string | string[],
+  typePoke: string[],
   options: OptionOtherDPS | null = null,
   shadow = false
 ) => {

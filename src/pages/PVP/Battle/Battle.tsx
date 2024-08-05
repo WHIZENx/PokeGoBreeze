@@ -46,17 +46,34 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { StoreState } from '../../../store/models/state.model';
-import { BattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
+import { BattlePokemonData, IBattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
 import { IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonBattleData, PokemonBattle, PokemonBattleData, ITimeline, TimelineModel, IPokemonBattle } from '../models/battle.model';
-import { BattleBaseStats, IBattleBaseStats } from '../../../util/models/calculate.model';
+import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
+import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
+import { StatsPokemon } from '../../../core/models/stats.model';
 
 interface OptionsBattle {
   showTap: boolean;
   timelineType: number;
   duration: number;
   league: number;
+}
+
+interface BattleState {
+  pokemonCurr: IPokemonBattleData;
+  pokemonObj: IPokemonBattleData;
+}
+
+// eslint-disable-next-line no-unused-vars
+enum ChargeType {
+  // eslint-disable-next-line no-unused-vars
+  None = 0,
+  // eslint-disable-next-line no-unused-vars
+  Primary,
+  // eslint-disable-next-line no-unused-vars
+  Secondary,
 }
 
 const Battle = () => {
@@ -67,9 +84,8 @@ const Battle = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
-  const [data, setData]: [BattlePokemonData[], React.Dispatch<React.SetStateAction<BattlePokemonData[]>>] = useState(
-    [] as BattlePokemonData[]
-  );
+  const [data, setData]: [(IBattlePokemonData | undefined)[], React.Dispatch<React.SetStateAction<(IBattlePokemonData | undefined)[]>>] =
+    useState([] as (IBattlePokemonData | undefined)[]);
   const [options, setOptions] = useState({
     showTap: false,
     timelineType: 1,
@@ -92,9 +108,9 @@ const Battle = () => {
 
   const [pokemonObj, setPokemonObj]: [IPokemonBattle, React.Dispatch<React.SetStateAction<IPokemonBattle>>] = useState(new PokemonBattle());
 
-  const [playTimeline, setPlayTimeline]: any = useState({
-    pokemonCurr: new PokemonBattle(),
-    pokemonObj: new PokemonBattle(),
+  const [playTimeline, setPlayTimeline]: [BattleState, React.Dispatch<React.SetStateAction<BattleState>>] = useState({
+    pokemonCurr: new PokemonBattleData(),
+    pokemonObj: new PokemonBattleData(),
   });
 
   const State = (
@@ -107,19 +123,19 @@ const Battle = () => {
     energy: number,
     hp: number,
     move: ICombat | null = null,
-    immune = null
+    dmgImmune = false
   ) => {
     return new TimelineModel({
       timer: timer ?? 0,
       type,
       move,
       color,
-      size: size ?? 12,
+      size: size ?? DEFAULT_SIZE,
       tap: tap ?? false,
-      block: block ?? 0,
+      block: block ?? DEFAULT_BLOCK,
       energy: energy ?? 0,
-      hp: hp ? Math.max(0, hp) : 0,
-      dmgImmune: immune ?? false,
+      hp: Math.max(0, hp ?? 0),
+      dmgImmune,
       buff: null,
     });
   };
@@ -157,7 +173,7 @@ const Battle = () => {
   };
 
   const Pokemon = (poke: IPokemonBattle) => {
-    return new PokemonBattleData({
+    return PokemonBattleData.create({
       hp: poke.pokemonData?.currentStats?.stats?.statsSTA ?? 0,
       stats: poke.pokemonData?.stats,
       currentStats: poke.pokemonData?.currentStats,
@@ -167,7 +183,7 @@ const Battle = () => {
       cmove: poke.cMovePri ?? null,
       cmoveSec: poke.cMoveSec ?? null,
       energy: poke.energy ?? 0,
-      block: poke.block ?? 2,
+      block: poke.block ?? DEFAULT_BLOCK,
       turn: Math.ceil((poke.fMove?.durationMs ?? 0) / 500),
       shadow: poke.shadow ?? false,
       disableCMovePri: poke.disableCMovePri,
@@ -228,7 +244,7 @@ const Battle = () => {
       immuneSec: boolean,
       chargedSec: boolean,
       chargedSecCount = 0;
-    let chargeType: number;
+    let chargeType = ChargeType.None;
     timelineInterval = setInterval(() => {
       timer += 1;
       timelinePri.push(State(timer, null, null, null, false, player1.block, player1.energy, player1.hp));
@@ -240,32 +256,32 @@ const Battle = () => {
           (player1.energy >= Math.abs(player1.cmove?.pvp_energy ?? 0) || player1.energy >= Math.abs(player1.cmoveSec?.pvp_energy ?? 0))
         ) {
           if (player1.energy >= Math.abs(player1.cmove?.pvp_energy ?? 0)) {
-            chargeType = 1;
+            chargeType = ChargeType.Primary;
             player1.energy += player1.cmove?.pvp_energy ?? 0;
-            timelinePri[timer] = {
+            timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
               color: player1.cmove?.type?.toLowerCase() ?? null,
-              size: 12,
+              size: DEFAULT_SIZE,
               move: player1.cmove,
-            };
+            });
           }
           if (player1.energy >= Math.abs(player1.cmoveSec?.pvp_energy ?? 0)) {
-            chargeType = 2;
+            chargeType = ChargeType.Secondary;
             player1.energy += player1.cmoveSec?.pvp_energy ?? 0;
-            timelinePri[timer] = {
+            timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
               color: player1.cmoveSec?.type?.toLowerCase() ?? null,
-              size: 12,
+              size: DEFAULT_SIZE,
               move: player2.cmoveSec,
-            };
+            });
           }
           if (tapSec) {
             immuneSec = true;
           }
           preChargePri = true;
-          chargedPriCount = 16;
+          chargedPriCount = DEFAULT_AMOUNT;
         }
 
         if (
@@ -274,39 +290,39 @@ const Battle = () => {
           (player2.energy >= Math.abs(player2.cmove?.pvp_energy ?? 0) || player2.energy >= Math.abs(player2.cmoveSec?.pvp_energy ?? 0))
         ) {
           if (player2.energy >= Math.abs(player2.cmove?.pvp_energy ?? 0)) {
-            chargeType = 1;
+            chargeType = ChargeType.Primary;
             player2.energy += player2.cmove?.pvp_energy ?? 0;
-            timelineSec[timer] = {
+            timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
               color: player2.cmove?.type?.toLowerCase() ?? null,
-              size: 12,
+              size: DEFAULT_SIZE,
               move: player2.cmove,
-            };
+            });
           }
           if (player2.energy >= Math.abs(player2.cmoveSec?.pvp_energy ?? 0)) {
-            chargeType = 2;
+            chargeType = ChargeType.Secondary;
             player2.energy += player2.cmoveSec?.pvp_energy ?? 0;
-            timelineSec[timer] = {
+            timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
               color: player2.cmoveSec?.type?.toLowerCase() ?? null,
-              size: 12,
+              size: DEFAULT_SIZE,
               move: player2.cmoveSec,
-            };
+            });
           }
           if (tapPri) {
             immunePri = true;
           }
           preChargeSec = true;
-          chargedSecCount = 16;
+          chargedSecCount = DEFAULT_AMOUNT;
         }
 
         if (!preChargePri) {
           if (!tapPri) {
             tapPri = true;
             if (!preChargeSec) {
-              timelinePri[timer] = { ...timelinePri[timer], tap: true, move: player1.fmove };
+              timelinePri[timer] = new TimelineModel({ ...timelinePri[timer], tap: true, move: player1.fmove });
             } else {
               timelinePri[timer].tap = false;
             }
@@ -323,14 +339,14 @@ const Battle = () => {
               player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
             }
             player1.energy += player1.fmove?.pvp_energy ?? 0;
-            timelinePri[timer] = {
+            timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Fast,
               color: player1.fmove?.type?.toLowerCase() ?? null,
               move: player1.fmove,
               dmgImmune: preChargeSec,
               tap: preChargeSec && player1.turn === 1 ? true : timelinePri[timer].tap,
-            };
+            });
           } else {
             fastPriDelay -= 1;
             if (!preChargePri) {
@@ -343,7 +359,7 @@ const Battle = () => {
           if (!tapSec) {
             tapSec = true;
             if (!preChargePri) {
-              timelineSec[timer] = { ...timelineSec[timer], tap: true, move: player2.fmove };
+              timelineSec[timer] = new TimelineModel({ ...timelineSec[timer], tap: true, move: player2.fmove });
             } else {
               timelineSec[timer].tap = false;
             }
@@ -362,14 +378,14 @@ const Battle = () => {
               immuneSec = true;
             }
             player2.energy += player2.fmove?.pvp_energy ?? 0;
-            timelineSec[timer] = {
+            timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Fast,
               color: player2.fmove?.type?.toLowerCase() ?? null,
               move: player2.fmove,
               dmgImmune: preChargePri,
               tap: preChargePri && player2.turn === 1 ? true : timelineSec[timer].tap,
-            };
+            });
           } else {
             fastSecDelay -= 1;
             if (!preChargeSec) {
@@ -382,23 +398,23 @@ const Battle = () => {
           if (isDelay || chargedPriCount % 2 === 0) {
             timelinePri[timer].type = AttackType.New;
           } else {
-            if (chargeType === 1) {
-              timelinePri[timer] = {
+            if (chargeType === ChargeType.Primary) {
+              timelinePri[timer] = new TimelineModel({
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
                 color: player1.cmove?.type?.toLowerCase() ?? null,
-                size: timelinePri[timer - 2].size + 2,
+                size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player1.cmove,
-              };
+              });
             }
-            if (chargeType === 2) {
-              timelinePri[timer] = {
+            if (chargeType === ChargeType.Secondary) {
+              timelinePri[timer] = new TimelineModel({
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
                 color: player1.cmoveSec?.type?.toLowerCase() ?? null,
-                size: timelinePri[timer - 2].size + 2,
+                size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player1.cmoveSec,
-              };
+              });
             }
           }
           if (timelinePri[timer - 2]) {
@@ -413,23 +429,23 @@ const Battle = () => {
           if (isDelay || chargedSecCount % 2 === 0) {
             timelineSec[timer].type = AttackType.New;
           } else {
-            if (chargeType === 1) {
-              timelineSec[timer] = {
+            if (chargeType === ChargeType.Primary) {
+              timelineSec[timer] = new TimelineModel({
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
                 color: player2.cmove?.type?.toLowerCase() ?? null,
-                size: timelineSec[timer - 2].size + 2,
+                size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player2.cmove,
-              };
+              });
             }
-            if (chargeType === 2) {
-              timelineSec[timer] = {
+            if (chargeType === ChargeType.Secondary) {
+              timelineSec[timer] = new TimelineModel({
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
                 color: player2.cmoveSec?.type?.toLowerCase() ?? null,
-                size: timelineSec[timer - 2].size + 2,
+                size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player2.cmoveSec,
-              };
+              });
             }
           }
           if (timelineSec[timer - 2]) {
@@ -453,40 +469,40 @@ const Battle = () => {
             chargedPriCount--;
           } else {
             if (player2.block === 0) {
-              if (chargeType === 1) {
+              if (chargeType === ChargeType.Primary) {
                 player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmove);
               }
-              if (chargeType === 2) {
+              if (chargeType === ChargeType.Secondary) {
                 player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmoveSec);
               }
             } else {
               player2.block -= 1;
             }
-            const moveType = chargeType === 1 ? player1.cmove : player1.cmoveSec;
+            const moveType = chargeType === ChargeType.Primary ? player1.cmove : player1.cmoveSec;
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
             if ((moveType?.buffs?.length ?? 0) > 0 && randInt > 0 && randInt <= (moveType?.buffs?.at(0)?.buffChance ?? 0)) {
               moveType?.buffs.forEach((value) => {
                 if (value.target === 'target') {
-                  player2 = {
+                  player2 = PokemonBattleData.create({
                     ...player2,
                     stats: {
                       ...player2.stats,
                       atk: value.type === 'atk' ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
                       def: value.type === 'def' ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
                     },
-                  };
+                  });
                   arrBufTarget.push(value);
                 } else {
-                  player1 = {
+                  player1 = PokemonBattleData.create({
                     ...player1,
                     stats: {
                       ...player1.stats,
                       atk: value.type === 'atk' ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
                       def: value.type === 'def' ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
                     },
-                  };
+                  });
                   arrBufAtk.push(value);
                 }
                 timelinePri[timer].buff = arrBufAtk;
@@ -497,7 +513,7 @@ const Battle = () => {
             delay = 1;
           }
         } else if (preChargePri) {
-          if (chargedPriCount === 16) {
+          if (chargedPriCount === DEFAULT_AMOUNT) {
             chargedPri = true;
           } else {
             chargedPriCount--;
@@ -507,40 +523,40 @@ const Battle = () => {
             chargedSecCount--;
           } else {
             if (player1.block === 0) {
-              if (chargeType === 1) {
+              if (chargeType === ChargeType.Primary) {
                 player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmove);
               }
-              if (chargeType === 2) {
+              if (chargeType === ChargeType.Secondary) {
                 player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmoveSec);
               }
             } else {
               player1.block -= 1;
             }
-            const moveType = chargeType === 1 ? player2.cmove : player2.cmoveSec;
+            const moveType = chargeType === ChargeType.Primary ? player2.cmove : player2.cmoveSec;
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
             if ((moveType?.buffs?.length ?? 0) > 0 && randInt > 0 && randInt <= (moveType?.buffs?.at(0)?.buffChance ?? 0)) {
               moveType?.buffs.forEach((value) => {
                 if (value.target === 'target') {
-                  player1 = {
+                  player1 = PokemonBattleData.create({
                     ...player1,
                     stats: {
                       ...player1.stats,
                       atk: value.type === 'atk' ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
                       def: value.type === 'def' ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
                     },
-                  };
+                  });
                   arrBufTarget.push(value);
                 } else {
-                  player2 = {
+                  player2 = PokemonBattleData.create({
                     ...player2,
                     stats: {
                       ...player2.stats,
                       atk: value.type === 'atk' ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
                       def: value.type === 'def' ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
                     },
-                  };
+                  });
                   arrBufAtk.push(value);
                 }
                 timelinePri[timer].buff = arrBufTarget;
@@ -551,7 +567,7 @@ const Battle = () => {
             delay = 1;
           }
         } else if (preChargeSec) {
-          if (chargedSecCount === 16) {
+          if (chargedSecCount === DEFAULT_AMOUNT) {
             chargedSec = true;
           } else {
             chargedSecCount--;
@@ -620,30 +636,8 @@ const Battle = () => {
   };
 
   const clearData = useCallback(() => {
-    setPokemonObj({
-      pokemonData: null,
-      fMove: null,
-      cMovePri: null,
-      cMoveSec: null,
-      timeline: [],
-      energy: 0,
-      block: 2,
-      shadow: false,
-      disableCMovePri: false,
-      disableCMoveSec: false,
-    });
-    setPokemonCurr({
-      pokemonData: null,
-      fMove: null,
-      cMovePri: null,
-      cMoveSec: null,
-      timeline: [],
-      energy: 0,
-      block: 2,
-      shadow: false,
-      disableCMovePri: false,
-      disableCMoveSec: false,
-    });
+    setPokemonObj(new PokemonBattle());
+    setPokemonCurr(new PokemonBattle());
   }, []);
 
   const fetchPokemonBattle = useCallback(
@@ -674,16 +668,16 @@ const Battle = () => {
 
               const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
-              return {
+              return BattlePokemonData.create({
                 ...item,
                 name,
                 pokemon,
                 id,
                 form,
                 stats,
-              };
+              });
             })
-            .filter((pokemon) => pokemon) as BattlePokemonData[]
+            .filter((pokemon) => pokemon)
         );
         dispatch(hideSpinner());
       } catch (e: any) {
@@ -711,50 +705,28 @@ const Battle = () => {
   }, [fetchPokemonBattle, league]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
-    setPokemonObj({ ...pokemonObj, timeline: [] });
+    setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
     setPlayTimeline({
-      pokemonCurr: new PokemonBattle(),
-      pokemonObj: new PokemonBattle(),
+      pokemonCurr: new PokemonBattleData(),
+      pokemonObj: new PokemonBattleData(),
     });
     if (removeCMoveSec) {
-      setPokemonCurr({ ...pokemonCurr, cMoveSec: null, timeline: [] });
+      setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, cMoveSec: null, timeline: [] }));
     } else {
-      setPokemonCurr({
-        ...pokemonCurr,
-        pokemonData: null,
-        fMove: null,
-        cMovePri: null,
-        cMoveSec: null,
-        timeline: [],
-        block: 2,
-        shadow: false,
-        disableCMovePri: false,
-        disableCMoveSec: false,
-      });
+      setPokemonCurr(new PokemonBattle());
     }
   };
 
   const clearDataPokemonObj = (removeCMoveSec: boolean) => {
-    setPokemonCurr({ ...pokemonCurr, timeline: [] });
+    setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: [] }));
     setPlayTimeline({
-      pokemonCurr: new PokemonBattle(),
-      pokemonObj: new PokemonBattle(),
+      pokemonCurr: new PokemonBattleData(),
+      pokemonObj: new PokemonBattleData(),
     });
     if (removeCMoveSec) {
-      setPokemonObj({ ...pokemonObj, cMoveSec: null, timeline: [] });
+      setPokemonObj(PokemonBattle.create({ ...pokemonObj, cMoveSec: null, timeline: [] }));
     } else {
-      setPokemonObj({
-        ...pokemonObj,
-        pokemonData: null,
-        fMove: null,
-        cMovePri: null,
-        cMoveSec: null,
-        timeline: [],
-        block: 2,
-        shadow: false,
-        disableCMovePri: false,
-        disableCMoveSec: false,
-      });
+      setPokemonObj(new PokemonBattle());
     }
   };
 
@@ -926,11 +898,8 @@ const Battle = () => {
       elem.style.transform = 'translate(0px, -50%)';
     }
     setPlayTimeline({
-      pokemonCurr: {
-        hp: Math.floor(pokemonCurr.pokemonData?.currentStats?.stats?.statsSTA ?? 0),
-        energy: pokemonCurr.energy,
-      },
-      pokemonObj: { hp: Math.floor(pokemonObj.pokemonData?.currentStats?.stats?.statsSTA ?? 0), energy: pokemonObj.energy },
+      pokemonCurr: PokemonBattleData.setValue(pokemonCurr.energy, Math.floor(pokemonCurr.pokemonData?.currentStats?.stats?.statsSTA ?? 0)),
+      pokemonObj: PokemonBattleData.setValue(pokemonObj.energy, Math.floor(pokemonObj.pokemonData?.currentStats?.stats?.statsSTA ?? 0)),
     });
   };
 
@@ -960,8 +929,8 @@ const Battle = () => {
     //   }
     // }
     setPlayTimeline({
-      pokemonCurr: { hp: pokeCurrData?.hp ?? 0, energy: pokeCurrData?.energy ?? 0 },
-      pokemonObj: { hp: pokeObjData?.hp ?? 0, energy: pokeObjData?.energy ?? 0 },
+      pokemonCurr: PokemonBattleData.setValue(pokeCurrData?.energy ?? 0, pokeCurrData?.hp ?? 0),
+      pokemonObj: PokemonBattleData.setValue(pokeObjData?.energy ?? 0, pokeObjData?.hp ?? 0),
     });
   };
 
@@ -1082,10 +1051,10 @@ const Battle = () => {
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
       const statsSTA = calculateStatsBattle(statsBattle?.sta ?? 0, sta, level);
       stats = BattleBaseStats.create({
-        IV: { atk, def, sta },
+        IV: StatsPokemon.create({ atk, def, sta }),
         CP: cp ?? 0,
         level: level ?? 0,
-        stats: { statsATK, statsDEF, statsSTA },
+        stats: StatsBaseCalculate.create({ statsATK, statsDEF, statsSTA }),
         statsProds: statsATK * statsDEF * statsSTA,
         form: pokemon.pokemonData?.pokemon?.forme ?? '',
         id: pokemon.pokemonData?.pokemon?.num ?? 0,
@@ -1096,14 +1065,16 @@ const Battle = () => {
     }
 
     if (pokemon.pokemonData) {
-      setPokemon({
-        ...pokemon,
-        timeline: [],
-        pokemonData: {
-          ...pokemon.pokemonData,
-          currentStats: stats,
-        },
-      });
+      setPokemon(
+        PokemonBattle.create({
+          ...pokemon,
+          timeline: [],
+          pokemonData: PokemonBattleData.create({
+            ...pokemon.pokemonData,
+            currentStats: stats,
+          }),
+        })
+      );
     }
   };
 
@@ -1130,14 +1101,16 @@ const Battle = () => {
     (document.getElementById('hpIV' + capitalize(type)) as HTMLInputElement).value = stats?.IV?.sta?.toString() ?? '';
 
     if (pokemon.pokemonData) {
-      setPokemon({
-        ...pokemon,
-        timeline: [],
-        pokemonData: {
-          ...pokemon.pokemonData,
-          currentStats: stats,
-        },
-      });
+      setPokemon(
+        PokemonBattle.create({
+          ...pokemon,
+          timeline: [],
+          pokemonData: PokemonBattleData.create({
+            ...pokemon.pokemonData,
+            currentStats: stats,
+          }),
+        })
+      );
     }
   };
 
@@ -1372,7 +1345,7 @@ const Battle = () => {
                     size={80}
                     maxEnergy={100}
                     moveEnergy={Math.abs(pokemon.cMovePri?.pvp_energy ?? 0)}
-                    energy={playTimeline[type]?.energy ?? pokemon.energy ?? 0}
+                    energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
                     disable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
@@ -1382,7 +1355,7 @@ const Battle = () => {
                       size={80}
                       maxEnergy={100}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvp_energy)}
-                      energy={playTimeline[type]?.energy ?? pokemon.energy ?? 0}
+                      energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
                       disable={pokemon.disableCMoveSec}
                     />
                   )}
@@ -1392,7 +1365,7 @@ const Battle = () => {
                     <HpBar
                       text={'HP'}
                       height={15}
-                      hp={Math.floor(playTimeline[type].hp)}
+                      hp={Math.floor((playTimeline as unknown as { [x: string]: IPokemonBattleData })[type].hp)}
                       maxHp={Math.floor(pokemon.pokemonData.currentStats?.stats?.statsSTA ?? 0)}
                     />
                   </Fragment>
