@@ -1095,7 +1095,7 @@ const RaidBattle = () => {
                     <b>Fast Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={new PokemonData(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
+                    pokemon={PokemonData.create(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
                     clearData={clearData}
                     move={fMove}
                     setMovePokemon={setFMove}
@@ -1109,7 +1109,7 @@ const RaidBattle = () => {
                     <b>Charged Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={new PokemonData(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
+                    pokemon={PokemonData.create(new PokemonModel(id, form?.form.form_name), form?.form.types ?? [])}
                     clearData={clearData}
                     move={cMove}
                     setMovePokemon={setCMove}

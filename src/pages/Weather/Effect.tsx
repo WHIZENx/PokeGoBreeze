@@ -3,6 +3,8 @@ import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import { capitalize } from '../../util/Utils';
 import { IWeatherEffComponent } from '../models/page.model';
+import { TypeEff } from '../../core/models/type-eff.model';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 const Effect = (prop: IWeatherEffComponent) => {
   const [types, setTypes] = useState([] as string[]);
@@ -17,7 +19,7 @@ const Effect = (prop: IWeatherEffComponent) => {
 
   const getWeatherEffective = useCallback(() => {
     const data: string[] = [];
-    Object.entries(prop.weathers ?? {}).forEach(([key, value]) => {
+    Object.entries(prop.weathers ?? new WeatherBoost()).forEach(([key, value]) => {
       if (value.includes(currentTypePri) && !data.includes(key)) {
         data.push(key);
       }
@@ -29,7 +31,7 @@ const Effect = (prop: IWeatherEffComponent) => {
   }, [currentTypePri, currentTypeSec, prop.weathers]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? {}).filter((item) => item !== currentTypePri && item !== currentTypeSec);
+    const results = Object.keys(prop.types ?? new TypeEff()).filter((item) => item !== currentTypePri && item !== currentTypeSec);
     setTypes(results);
     getWeatherEffective();
   }, [currentTypePri, currentTypeSec, getWeatherEffective, prop.types]);

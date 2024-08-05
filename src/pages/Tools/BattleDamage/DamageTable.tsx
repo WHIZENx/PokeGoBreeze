@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW } from '../../../util/Constants';
 import { IDamageTableComponent } from '../../models/page.model';
+import { ThrowOption } from '../../../core/models/options.model';
 
 const eff: { [x: number]: { label: number; style: string } } = {
   0.244140625: {
@@ -164,7 +165,9 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize((Object.keys(globalOptions?.throw_charge ?? {}) as any).at(props.result.battleState.clevel))
+                  ? capitalize(
+                      Object.keys(globalOptions?.throw_charge ?? new ThrowOption()).at(parseInt(props.result.battleState.clevel.toString()))
+                    )
                   : '-'}
               </td>
             </tr>

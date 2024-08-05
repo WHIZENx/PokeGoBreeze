@@ -2,17 +2,25 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { IHpBarComponent } from '../../models/component.model';
 
-const Bar = styled.div`
+interface Element {
+  hp?: number;
+  maxHp?: number;
+  height: number;
+  color?: string;
+  dmg?: number;
+}
+
+const Bar = styled.div<Element>`
   width: 100%;
-  height: ${(props: { height: number }) => props.height}px;
+  height: ${(props) => props.height}px;
   background: #00000024;
   border: 2px ridge lightgray;
   position: relative;
 `;
 
-const Fill = styled.div`
+const Fill = styled.div<Element>`
   position: absolute;
-  width: ${(props: { hp: number; maxHp: number; height: number; color: string }) => (props.hp * 100) / props.maxHp}%;
+  width: ${(props) => ((props.hp ?? 0) * 100) / (props.maxHp ?? 0)}%;
   height: ${(props) => props.height - 4}px;
   background: ${(props) => props.color};
   transition: 0.1s;
@@ -22,12 +30,12 @@ const anim = keyframes`
     to { visibility: hidden; }
 `;
 
-const FillDmg = styled.div`
+const FillDmg = styled.div<Element>`
   position: absolute;
-  width: ${(props: { hp: number; maxHp: number; height: number; color: string; dmg: number }) => (props.dmg * 100) / props.maxHp}%;
+  width: ${(props) => ((props.dmg ?? 0) * 100) / (props.maxHp ?? 0)}%;
   height: ${(props) => props.height - 4}px;
   background: ${(props) => props.color};
-  left: ${(props) => (props.hp * 100) / props.maxHp}%;
+  left: ${(props) => ((props.hp ?? 0) * 100) / (props.maxHp ?? 0)}%;
   animation: 1s ${anim};
   animation-fill-mode: forwards;
 `;

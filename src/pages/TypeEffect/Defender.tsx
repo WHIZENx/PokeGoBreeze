@@ -3,14 +3,14 @@ import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
-import { TypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme();
   const [types, setTypes] = useState([] as string[]);
 
-  const [typeEffective, setTypeEffective]: [TypeEffChart | undefined, React.Dispatch<React.SetStateAction<TypeEffChart | undefined>>] =
+  const [typeEffective, setTypeEffective]: [ITypeEffChart | undefined, React.Dispatch<React.SetStateAction<ITypeEffChart | undefined>>] =
     useState();
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');
@@ -20,15 +20,15 @@ const Defender = (prop: ITypeEffComponent) => {
   const [showTypeSec, setShowTypeSec] = useState(false);
 
   const getTypeEffective = useCallback(() => {
-    const data: TypeEffChart = {
+    const data = TypeEffChart.create({
       very_weak: [],
       weak: [],
       super_resist: [],
       very_resist: [],
       resist: [],
       neutral: [],
-    };
-    Object.entries(prop.types ?? {}).forEach(([key, value]) => {
+    });
+    Object.entries(prop.types ?? new TypeEff()).forEach(([key, value]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= currentTypeSec === '' ? 1 : value[currentTypeSec];
@@ -42,7 +42,7 @@ const Defender = (prop: ITypeEffComponent) => {
         data.resist?.push(key);
       } else if (valueEffective >= 0.39) {
         data.very_resist?.push(key);
-      } else {
+      } else if (value > 0) {
         data.super_resist?.push(key);
       }
     });
@@ -50,7 +50,7 @@ const Defender = (prop: ITypeEffComponent) => {
   }, [currentTypePri, currentTypeSec, prop.types]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? {}).filter((item) => item !== currentTypePri && item !== currentTypeSec);
+    const results = Object.keys(prop.types ?? new TypeEff()).filter((item) => item !== currentTypePri && item !== currentTypeSec);
     setTypes(results);
     getTypeEffective();
   }, [currentTypePri, currentTypeSec, getTypeEffective, prop.types]);

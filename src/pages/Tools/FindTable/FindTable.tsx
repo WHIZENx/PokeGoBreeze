@@ -11,7 +11,14 @@ import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
 import { MAX_IV, MIN_IV } from '../../../util/Constants';
-import { IPredictStatsModel, IPredictStatsCalculate, IPredictCPModel, IPredictCPCalculate } from '../../../util/models/calculate.model';
+import {
+  IPredictStatsModel,
+  IPredictStatsCalculate,
+  IPredictCPModel,
+  IPredictCPCalculate,
+  PredictStatsModel,
+  PredictCPModel,
+} from '../../../util/models/calculate.model';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -171,8 +178,9 @@ const FindTable = () => {
   );
 
   const showResultTableIV = () => {
-    const avgPercent = Object.values(preIvArr?.result ?? {}).reduce((a, b) => a + b.percent, 0) / (preIvArr?.result.length ?? 1);
-    const avgHP = Object.values(preIvArr?.result ?? {}).reduce((a, b) => a + b.hp, 0) / (preIvArr?.result.length ?? 1);
+    const avgPercent =
+      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.percent, 0) / (preIvArr?.result.length ?? 1);
+    const avgHP = Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) / (preIvArr?.result.length ?? 1);
     const fourStar = preIvArr?.result.filter((item) => item.percent === 100).length;
     const threeStar = preIvArr?.result.filter((item) => item.percent > 80 && item.percent < 100).length;
     const twoStar = preIvArr?.result.filter((item) => item.percent > 64 && item.percent <= 80).length;
@@ -258,8 +266,8 @@ const FindTable = () => {
   };
 
   const showResultTableCP = () => {
-    const avgCp = Object.values(preCpArr?.result ?? {}).reduce((a, b) => a + b.CP, 0) / (preCpArr?.result.length ?? 1);
-    const avgHP = Object.values(preCpArr?.result ?? {}).reduce((a, b) => a + b.hp, 0) / (preCpArr?.result.length ?? 1);
+    const avgCp = Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.CP, 0) / (preCpArr?.result.length ?? 1);
+    const avgHP = Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) / (preCpArr?.result.length ?? 1);
     return (
       <Fragment>
         {(preCpArr?.result.length ?? 0) > 0 && (

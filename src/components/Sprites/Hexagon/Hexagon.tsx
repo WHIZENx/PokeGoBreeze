@@ -201,10 +201,10 @@ const Hexagon = (props: IHexagonComponent) => {
             <br />
             <b>Attacker</b>
           </div>
-          <div className="position-absolute text-center consistance-text">
+          <div className="position-absolute text-center consistence-text">
             {(props.stats.cons || 0).toFixed(1)}
             <br />
-            <b>Consistance</b>
+            <b>Consistence</b>
           </div>
           <div className="position-absolute text-center closer-text">
             {(props.stats.closer || 0).toFixed(1)}

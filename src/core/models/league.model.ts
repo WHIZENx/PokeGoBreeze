@@ -29,14 +29,8 @@ interface ILeagueCondition {
   banned: IPokemonPermission[];
 }
 
-export interface LeagueReward {
-  type: boolean | string;
-  count: number;
-  step: number;
-}
-
 interface IRankRewardSetLeague {
-  type: string | boolean;
+  type: string;
   count: number;
   step: number;
 }
@@ -81,7 +75,7 @@ export interface SettingLeague {
 export interface LeagueReward {
   pokemonReward: boolean;
   itemLootTable: boolean;
-  item: { stardust: number; item: string | boolean; count: number };
+  item: { stardust: number; item: string; count: number };
 }
 
 export interface ILeagueData {
@@ -138,11 +132,11 @@ export class LeagueData implements ILeagueData {
 
 // tslint:disable-next-line:max-classes-per-file
 export class League implements ILeague {
-  id!: string | null;
+  id: string | null = null;
   title: string;
-  enabled!: boolean;
+  enabled: boolean = false;
   conditions: ILeagueCondition;
-  iconUrl!: string | null;
+  iconUrl: string | null = null;
   league: string;
 
   constructor() {
@@ -161,7 +155,7 @@ export class League implements ILeague {
 
 // tslint:disable-next-line:max-classes-per-file
 export class RankRewardSetLeague implements IRankRewardSetLeague {
-  type!: boolean | string;
+  type: string = '';
   count: number;
   step: number;
 
@@ -173,7 +167,7 @@ export class RankRewardSetLeague implements IRankRewardSetLeague {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonRewardSetLeague implements IPokemonRewardSetLeague {
-  guaranteedLimited!: boolean;
+  guaranteedLimited: boolean = false;
   id: number;
   name: string;
   form: string;
@@ -190,7 +184,7 @@ export class LeaguePVP implements ILeaguePVP {
   id: string;
   name: string;
   cp: number | number[];
-  logo!: string | null;
+  logo: string | null = null;
 
   constructor() {
     this.id = '';

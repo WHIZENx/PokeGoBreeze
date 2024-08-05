@@ -13,13 +13,13 @@ import {
 } from './Constants';
 import { IPokemonData, PokemonModel } from '../core/models/pokemon.model';
 import {
-  StatsAtk,
-  StatsDef,
+  IStatsAtk,
+  IStatsDef,
   IStatsRank,
   IStatsPokemon,
   StatsPokemonGO,
-  StatsProd,
-  StatsSta,
+  IStatsProd,
+  IStatsSta,
   StatsRankPokemonGO,
   StatsPokemon,
 } from '../core/models/stats.model';
@@ -277,6 +277,8 @@ export const convertNameRankingToOri = (text: string, form: string) => {
     '-male',
     '-attack',
     '-speed',
+    '-dusk',
+    '-dawn',
     `-${FORM_GALARIAN.toLowerCase()}`,
     `-${FORM_HISUIAN.toLowerCase()}`,
   ];
@@ -491,8 +493,8 @@ export const getCustomThemeDataTable = (theme: Theme) => {
 };
 
 export function getDataWithKey<T>(data: any, key: string | number) {
-  const result = Object.entries(data ?? {}).find((k) => k.at(0) === key.toString());
-  return result ? (result[1] as T) : ({} as T);
+  const result = Object.entries(data ?? new Object()).find((k) => k.at(0) === key.toString());
+  return result ? (result[1] as T) : (new Object() as T);
 }
 
 export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | undefined) => {
@@ -605,7 +607,8 @@ export const convertPokemonDataName = (text: string | undefined | null, defaultN
     .replace(/^WEST$/, 'WEST_SEA')
     .replace(/^EAST$/, 'EAST_SEA')
     .replace(/_ACTIVE$/, '')
-    .replace(/_NEUTRAL$/, '');
+    .replace(/_NEUTRAL$/, '')
+    .replace(/_A$/, '');
 };
 
 // Convert Pokemon from API data to GO name
@@ -749,7 +752,7 @@ export const generatePokemonGoShadowForms = (
 };
 
 export const getFormFromForms = (
-  stats: (StatsAtk | StatsDef | StatsSta | StatsProd)[] | undefined,
+  stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined,
   id: number | undefined,
   formName: string | undefined
 ) => {

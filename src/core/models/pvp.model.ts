@@ -1,7 +1,7 @@
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
 import { ICombat } from './combat.model';
 import { IPokemonData } from './pokemon.model';
-import { StatsAtk, StatsDef, IStatsPokemon, StatsSta } from './stats.model';
+import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsSta } from './stats.model';
 
 export interface PVPDataModel {
   rankings: PVPInfo[];
@@ -28,9 +28,9 @@ export interface Performers {
   pokemonData: IPokemonData | undefined;
   form: string | null;
   stats: IStatsPokemon;
-  atk: StatsAtk | undefined;
-  def: StatsDef | undefined;
-  sta: StatsSta | undefined;
+  atk: IStatsAtk | undefined;
+  def: IStatsDef | undefined;
+  sta: IStatsSta | undefined;
   fmove: ICombat | undefined;
   cmovePri: ICombat | undefined;
   cmoveSec: ICombat | undefined;

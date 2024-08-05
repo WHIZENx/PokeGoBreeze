@@ -3,6 +3,7 @@ import CardWeather from '../../components/Card/CardWeather';
 import WeatherEffective from '../../components/Effective/WeatherEffective';
 import { splitAndCapitalize } from '../../util/Utils';
 import { IWeatherAffComponent } from '../models/page.model';
+import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 const Affect = (prop: IWeatherAffComponent) => {
   const [weathers, setWeathers] = useState([] as string[]);
@@ -10,14 +11,16 @@ const Affect = (prop: IWeatherAffComponent) => {
   const [currentWeather, setCurrentWeather] = useState('CLEAR');
   const [showWeather, setShowWeather] = useState(false);
 
-  const [weatherEffective, setWeatherEffective] = useState([]);
+  const [weatherEffective, setWeatherEffective] = useState([] as string[]);
 
   const getWeatherEffective = useCallback(() => {
-    setWeatherEffective(Object.values((prop.weathers ?? ({} as unknown as any))[currentWeather] ?? {}));
+    setWeatherEffective(
+      Object.values(((prop.weathers ?? new WeatherBoost()) as unknown as { [x: string]: string[] })[currentWeather] ?? new WeatherBoost())
+    );
   }, [currentWeather, prop.weathers]);
 
   useEffect(() => {
-    const results = Object.keys(prop.weathers ?? {}).filter((item) => item !== currentWeather);
+    const results = Object.keys(prop.weathers ?? new WeatherBoost()).filter((item) => item !== currentWeather);
     setWeathers(results);
     getWeatherEffective();
   }, [currentWeather, getWeatherEffective, prop.weathers]);

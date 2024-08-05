@@ -10,6 +10,7 @@ import { TypeMove } from '../../../enums/move.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { TypeEff } from '../../../core/models/type-eff.model';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
@@ -132,7 +133,7 @@ const Search = () => {
                           <MenuItem value="all" defaultChecked={true}>
                             All
                           </MenuItem>
-                          {Object.keys(types ?? {}).map((value, index) => (
+                          {Object.keys(types ?? new TypeEff()).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
                               {capitalize(value)}
                             </MenuItem>
@@ -188,7 +189,7 @@ const Search = () => {
                           onChange={(e) => setFilters({ ...filters, cMoveType: e.target.value })}
                         >
                           <MenuItem value="all">All</MenuItem>
-                          {Object.keys(types ?? {}).map((value, index) => (
+                          {Object.keys(types ?? new TypeEff()).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
                               {capitalize(value)}
                             </MenuItem>

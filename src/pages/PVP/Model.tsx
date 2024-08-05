@@ -34,6 +34,7 @@ import { ICombat } from '../../core/models/combat.model';
 import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/Constants';
 import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
 import { IPokemonBattleRanking } from './models/battle.model';
+import { BattleBaseStats } from '../../util/models/calculate.model';
 
 export const Keys = (
   assets: IAsset[],
@@ -125,29 +126,27 @@ export const Keys = (
 };
 
 export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: number | string) => {
-  const calculateStatsTopRank = (stats: IStatsPokemon | undefined) => {
+  const calculateStatsTopRank = (stats: IStatsPokemon | undefined, level = MAX_LEVEL) => {
     const maxCP = parseInt(cp.toString());
 
+    let calcCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, level);
     if (maxCP === 10000) {
-      const cp = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL - 1);
-      const buddyCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
-      const result: any = {};
-      result[MAX_LEVEL - 1] = { cp: isNaN(cp) ? 0 : cp };
-      result[MAX_LEVEL] = { cp: isNaN(buddyCP) ? 0 : buddyCP };
-      return result;
+      return BattleBaseStats.create({
+        CP: isNaN(calcCP) ? 0 : calcCP,
+        id: data?.id ?? 0,
+      });
     } else {
       let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-      let maxPokeCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
-      if (isNaN(maxPokeCP)) {
-        maxPokeCP = 0;
+      if (isNaN(calcCP)) {
+        calcCP = 0;
       }
 
-      if (maxPokeCP < minCP) {
-        if (maxPokeCP <= 500) {
+      if (calcCP < minCP) {
+        if (calcCP <= 500) {
           minCP = 0;
-        } else if (maxPokeCP <= 1500) {
+        } else if (calcCP <= 1500) {
           minCP = 500;
-        } else if (maxPokeCP <= 2500) {
+        } else if (calcCP <= 2500) {
           minCP = 1500;
         } else {
           minCP = 2500;
@@ -164,11 +163,11 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
     return (
       <ul className="element-top">
         <li className="element-top">
-          CP: <b>{maxCP === 10000 ? `${currStats[MAX_LEVEL - 1]?.cp}-${currStats[MAX_LEVEL]?.cp}` : `${currStats?.CP ?? 0}`}</b>
+          CP: <b>{maxCP === 10000 ? `${calculateStatsTopRank(stats, MAX_LEVEL - 1)?.CP}-${currStats?.CP}` : `${currStats?.CP ?? 0}`}</b>
         </li>
-        <li className={currStats?.level <= 40 ? 'element-top' : ''}>
+        <li className={(currStats?.level ?? 0) <= 40 ? 'element-top' : ''}>
           Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${currStats?.level ?? 0}`} </b>
-          {(currStats?.level > 40 || maxCP === 10000) && (
+          {((currStats?.level ?? 0) > 40 || maxCP === 10000) && (
             <b>
               (
               <CandyXL id={id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
@@ -177,9 +176,9 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           )}
         </li>
         <li className="element-top">
-          <IVBar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.atk ?? 0} style={{ maxWidth: 500 }} />
-          <IVBar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.def ?? 0} style={{ maxWidth: 500 }} />
-          <IVBar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats?.IV.sta ?? 0} style={{ maxWidth: 500 }} />
+          <IVBar title="Attack" iv={maxCP === 10000 ? MAX_IV : currStats?.IV?.atk ?? 0} style={{ maxWidth: 500 }} />
+          <IVBar title="Defense" iv={maxCP === 10000 ? MAX_IV : currStats?.IV?.def ?? 0} style={{ maxWidth: 500 }} />
+          <IVBar title="HP" iv={maxCP === 10000 ? MAX_IV : currStats?.IV?.sta ?? 0} style={{ maxWidth: 500 }} />
         </li>
       </ul>
     );

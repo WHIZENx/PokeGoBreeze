@@ -74,11 +74,3 @@ export interface IWeatherEffComponent {
   weathers: IWeatherBoost | undefined;
   types: ITypeEff | undefined;
 }
-
-export interface ICardWeatherComponent {
-  value: string;
-}
-
-export interface ICardWeatherComponent {
-  value: string;
-}

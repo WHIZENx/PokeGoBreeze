@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { StatsAtk, StatsDef, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../../core/models/stats.model';
+import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/Constants';
@@ -16,7 +16,7 @@ import APIService from '../../../services/API.service';
 import './Form.scss';
 import Gender from '../Gender';
 import Stats from '../Stats/Stats';
-import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
+import { calBaseATK, calBaseDEF, calBaseSTA, convertAllStats } from '../../../util/Calculate';
 import Raid from '../../Raid/Raid';
 import Counter from '../../Table/Counter/Counter';
 import TableMove from '../../Table/Move/MoveTable';
@@ -40,17 +40,17 @@ const FormComponent = (props: IFormInfoComponent) => {
   ] = useState();
 
   const filterFormList = useCallback(
-    (stats: (StatsAtk | StatsDef | StatsSta | StatsProd)[]) => getFormFromForms(stats, props.defaultId, props.form?.form.form_name),
+    (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) => getFormFromForms(stats, props.defaultId, props.form?.form.form_name),
     [props.defaultId, props.form?.form.form_name]
   );
 
   useEffect(() => {
     if (stats) {
       setStatsPokemon({
-        atk: filterFormList(stats.attack.ranking) as StatsAtk,
-        def: filterFormList(stats.defense.ranking) as StatsDef,
-        sta: filterFormList(stats.stamina.ranking) as StatsSta,
-        prod: filterFormList(stats.statProd.ranking) as StatsProd,
+        atk: filterFormList(stats.attack.ranking) as IStatsAtk,
+        def: filterFormList(stats.defense.ranking) as IStatsDef,
+        sta: filterFormList(stats.stamina.ranking) as IStatsSta,
+        prod: filterFormList(stats.statProd.ranking) as IStatsProd,
       });
     }
   }, [filterFormList, stats]);
@@ -208,8 +208,8 @@ const FormComponent = (props: IFormInfoComponent) => {
               <Raid
                 currForm={props.form}
                 id={props.defaultId}
-                statATK={statsPokemon?.atk?.attack ?? calBaseATK(props.data?.stats, true)}
-                statDEF={statsPokemon?.def?.defense ?? calBaseDEF(props.data?.stats, true)}
+                statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
+                statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
                 isLoadedForms={props.isLoadedForms}
               />
             </Fragment>
@@ -223,9 +223,9 @@ const FormComponent = (props: IFormInfoComponent) => {
               types: props.form?.form.types ?? [],
             }}
             form={props.form?.form}
-            statATK={statsPokemon?.atk?.attack ?? calBaseATK(props.data?.stats, true)}
-            statDEF={statsPokemon?.def?.defense ?? calBaseDEF(props.data?.stats, true)}
-            statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(props.data?.stats, true)}
+            statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
+            statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
+            statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(convertAllStats(props.data?.stats), true)}
           />
           <Counter def={statsPokemon?.def?.defense ?? 0} types={props.form?.form.types ?? []} isShadow={props.form?.form.is_shadow} />
         </div>

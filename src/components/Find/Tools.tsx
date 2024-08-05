@@ -13,7 +13,7 @@ import sta_logo from '../../assets/stamina.png';
 import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { StatsAtk, StatsDef, IStatsPokemon, StatsProd, StatsRankingPokemonGO, StatsSta } from '../../core/models/stats.model';
+import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 
 const Tools = (props: IToolsComponent) => {
@@ -28,7 +28,7 @@ const Tools = (props: IToolsComponent) => {
   ] = useState();
 
   const filterFormList = useCallback(
-    (stats: (StatsAtk | StatsDef | StatsSta | StatsProd)[] | undefined) =>
+    (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined) =>
       getFormFromForms(stats, props.id, props.currForm?.form.form_name),
     [props.id, props.currForm?.form.form_name]
   );
@@ -52,10 +52,10 @@ const Tools = (props: IToolsComponent) => {
   }, [props.currForm?.form.form_name, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
-    const formATK = filterFormList(props.stats?.attack.ranking) as StatsAtk;
-    const formDEF = filterFormList(props.stats?.defense.ranking) as StatsDef;
-    const formSTA = filterFormList(props.stats?.stamina.ranking) as StatsSta;
-    const formProd = filterFormList(props.stats?.statProd.ranking) as StatsProd;
+    const formATK = filterFormList(props.stats?.attack.ranking) as IStatsAtk;
+    const formDEF = filterFormList(props.stats?.defense.ranking) as IStatsDef;
+    const formSTA = filterFormList(props.stats?.stamina.ranking) as IStatsSta;
+    const formProd = filterFormList(props.stats?.statProd.ranking) as IStatsProd;
 
     setStatsPokemon({
       atk:

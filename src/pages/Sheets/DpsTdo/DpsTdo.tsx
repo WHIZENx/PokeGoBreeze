@@ -54,6 +54,7 @@ import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
+import { WeatherBoost } from '../../../core/models/weatherBoost.model';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -1081,7 +1082,7 @@ const DpsTdo = () => {
                     }
                   >
                     <option value="">Extream</option>
-                    {Object.keys(data?.weatherBoost ?? {}).map((value, index) => (
+                    {Object.keys(data?.weatherBoost ?? new WeatherBoost()).map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
                       </option>

@@ -5,7 +5,7 @@ import { capitalize } from '../../util/Utils';
 
 import './TypeEffectiveSelect.scss';
 import { StoreState } from '../../store/models/state.model';
-import { TypeEffChart } from '../../core/models/type-eff.model';
+import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
@@ -40,13 +40,16 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   };
 
   const getTypeEffect = (effect: number, types: string[]) => {
-    let data: TypeEffChart;
+    const data = TypeEffChart.create({
+      very_weak: [],
+      weak: [],
+      super_resist: [],
+      very_resist: [],
+      resist: [],
+      neutral: [],
+    });
     if (effect === 0) {
-      data = {
-        weak: [],
-        very_weak: [],
-      };
-      Object.entries(typeEffective ?? {}).forEach(([key, value]) => {
+      Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];
@@ -65,15 +68,12 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === 1) {
-      data = {
-        neutral: [],
-      };
-      Object.entries(typeEffective ?? {}).forEach(([key, value]) => {
+      Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
         let valueEffective = 1;
-        types?.forEach((type) => {
+        types.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];
         });
-        if (valueEffective === 1) {
+        if (types.length > 0 && valueEffective === 1) {
           data.neutral?.push(key);
         }
       });
@@ -83,12 +83,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === 2) {
-      data = {
-        resist: [],
-        very_resist: [],
-        super_resist: [],
-      };
-      Object.entries(typeEffective ?? {}).forEach(([key, value]) => {
+      Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];

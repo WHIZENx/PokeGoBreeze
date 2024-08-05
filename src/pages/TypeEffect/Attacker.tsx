@@ -3,8 +3,9 @@ import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
-import { TypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
+import { TypeModel, TypeMultiply } from '../../core/models/type.model';
 
 const Attacker = (prop: ITypeEffComponent) => {
   const theme = useTheme();
@@ -13,33 +14,36 @@ const Attacker = (prop: ITypeEffComponent) => {
   const [currentType, setCurrentType] = useState('BUG');
   const [showType, setShowType] = useState(false);
 
-  const [typeEffective, setTypeEffective]: [TypeEffChart | undefined, React.Dispatch<React.SetStateAction<TypeEffChart | undefined>>] =
+  const [typeEffective, setTypeEffective]: [ITypeEffChart | undefined, React.Dispatch<React.SetStateAction<ITypeEffChart | undefined>>] =
     useState();
 
   const getTypeEffective = useCallback(() => {
-    const data: TypeEffChart = {
+    const data = TypeEffChart.create({
+      very_weak: [],
       weak: [],
       super_resist: [],
       very_resist: [],
       resist: [],
       neutral: [],
-    };
-    Object.entries((prop.types ?? ({} as unknown as any))[currentType] ?? []).forEach(([key, value]) => {
-      if (value === 1.6) {
-        data.weak?.push(key);
-      } else if (value === 1) {
-        data.neutral?.push(key);
-      } else if (value === 0.625) {
-        data.resist?.push(key);
-      } else {
-        data.very_resist?.push(key);
-      }
     });
+    Object.entries(((prop.types ?? new TypeEff()) as unknown as { [x: string]: TypeMultiply })[currentType] ?? new TypeModel()).forEach(
+      ([key, value]) => {
+        if (value === 1.6) {
+          data.weak?.push(key);
+        } else if (value === 1) {
+          data.neutral?.push(key);
+        } else if (value === 0.625) {
+          data.resist?.push(key);
+        } else if (value > 0) {
+          data.very_resist?.push(key);
+        }
+      }
+    );
     setTypeEffective(data);
   }, [currentType, prop.types]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? {}).filter((item) => item !== currentType);
+    const results = Object.keys(prop.types ?? new TypeEff()).filter((item) => item !== currentType);
     setTypes(results);
     getTypeEffective();
   }, [currentType, getTypeEffective, prop.types]);

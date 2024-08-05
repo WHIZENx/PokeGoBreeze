@@ -3,8 +3,16 @@ import styled from 'styled-components';
 import APIService from '../../../services/API.service';
 import { ICircleBarComponent } from '../../models/component.model';
 
-const Circle = styled.div`
-  width: ${(props: { size: number }) => props.size + 5}px;
+interface Element {
+  energy?: number;
+  moveEnergy?: number;
+  size: number;
+  brightness?: number;
+  url?: string;
+}
+
+const Circle = styled.div<Element>`
+  width: ${(props) => props.size + 5}px;
   height: ${(props) => props.size + 5}px;
   background: #0000003b;
   border-radius: 50%;
@@ -12,13 +20,13 @@ const Circle = styled.div`
   position: relative;
 `;
 
-const Fill = styled.div`
+const Fill = styled.div<Element>`
   position: absolute;
   border-radius: 50%;
-  width: ${(props: { energy: number; moveEnergy: number; size: number; brightness: number }) => props.size}px;
+  width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
   clip: rect(
-    ${(props) => props.size - (props.energy * props.size) / props.moveEnergy}px,
+    ${(props) => props.size - ((props.energy ?? 0) * props.size) / (props.moveEnergy ?? 0)}px,
     ${(props) => props.size}px,
     ${(props) => props.size}px,
     0px
@@ -27,29 +35,29 @@ const Fill = styled.div`
   transition: 0.1s;
 `;
 
-const Icon = styled.div`
+const Icon = styled.div<Element>`
   width: ${(props) => props.size / 2}px;
   height: ${(props) => props.size / 2}px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  mask: url(${(props: { size: number; url: string }) => props.url}) center/contain;
+  mask: url(${(props) => props.url}) center/contain;
   background: #ffffff75;
 `;
 
-const IconFill: any = styled.div`
+const IconFill = styled.div<Element>`
   position: absolute;
   top: 50%;
   left: 50%;
-  width: ${(props: { energy: number; moveEnergy: number; size: number; url: string }) => props.size / 2}px;
+  width: ${(props) => props.size / 2}px;
   height: ${(props) => props.size / 2}px;
   transform: translate(-50%, -50%);
   clip: rect(
     ${(props) =>
       props.size / 2 +
       (props.size - props.size / 2) / 2 -
-      (props.energy * (props.size / 2 + (props.size - props.size / 2))) / props.moveEnergy}px,
+      ((props.energy ?? 0) * (props.size / 2 + (props.size - props.size / 2))) / (props.moveEnergy ?? 0)}px,
     ${(props) => props.size / 2}px,
     ${(props) => props.size / 2}px,
     0px
