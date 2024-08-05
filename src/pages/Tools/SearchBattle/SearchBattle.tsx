@@ -234,13 +234,13 @@ const FindBattle = () => {
   const onSearchStatsPoke = useCallback(
     (e: { preventDefault: () => void }) => {
       e.preventDefault();
-      if (!searchCP || parseInt(searchCP) < 10) {
+      if (!searchCP || parseInt(searchCP) < 10 || isNaN(parseInt(searchCP))) {
         return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
       }
       const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
       if (!result.level) {
         return enqueueSnackbar(
-          'At CP: ' + result.CP + ' and IV ' + result.IV.atk + '/' + result.IV.def + '/' + result.IV.sta + ' impossible found in ' + name,
+          `At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`,
           { variant: 'error' }
         );
       }
@@ -248,18 +248,9 @@ const FindBattle = () => {
       setTimeout(() => {
         searchStatsPoke(result.level);
         enqueueSnackbar(
-          'Search success at CP: ' +
-            result.CP +
-            ' and IV ' +
-            result.IV.atk +
-            '/' +
-            result.IV.def +
-            '/' +
-            result.IV.sta +
-            ' found in ' +
-            name +
-            ' ' +
-            splitAndCapitalize(form?.form.form_name, '-', ' '),
+          `Search success at CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${
+            result.IV.sta
+          } found in ${name} ${splitAndCapitalize(form?.form.form_name, '-', ' ')}`,
           { variant: 'success' }
         );
       }, 500);

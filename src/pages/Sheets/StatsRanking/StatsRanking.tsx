@@ -16,7 +16,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { PokemonStatsRanking } from '../../../core/models/stats.model';
+import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { APIUrl } from '../../../services/constants';
@@ -27,7 +27,7 @@ import { Form } from '../../../core/models/API/form.model';
 const columnPokemon: any = [
   {
     name: '',
-    selector: (row: PokemonStatsRanking) => (
+    selector: (row: IPokemonStatsRanking) => (
       <Link
         to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
@@ -39,22 +39,22 @@ const columnPokemon: any = [
   },
   {
     name: 'Ranking',
-    selector: (row: PokemonStatsRanking) => row.rank,
+    selector: (row: IPokemonStatsRanking) => row.rank,
     width: '80px',
   },
   {
     name: 'ID',
-    selector: (row: PokemonStatsRanking) => row.num,
+    selector: (row: IPokemonStatsRanking) => row.num,
     width: '80px',
   },
   {
     name: 'Released',
-    selector: (row: PokemonStatsRanking) => (row.releasedGO ? <DoneIcon color="success" /> : <CloseIcon color="error" />),
+    selector: (row: IPokemonStatsRanking) => (row.releasedGO ? <DoneIcon color="success" /> : <CloseIcon color="error" />),
     width: '80px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: PokemonStatsRanking) => (
+    selector: (row: IPokemonStatsRanking) => (
       <>
         <img
           height={48}
@@ -73,7 +73,7 @@ const columnPokemon: any = [
   },
   {
     name: 'Type(s)',
-    selector: (row: PokemonStatsRanking) =>
+    selector: (row: IPokemonStatsRanking) =>
       row.types?.map((value, index) => (
         <img
           key={index}
@@ -89,25 +89,25 @@ const columnPokemon: any = [
   },
   {
     name: 'ATK',
-    selector: (row: PokemonStatsRanking) => row.atk.attack,
+    selector: (row: IPokemonStatsRanking) => row.atk.attack,
     sortable: true,
     width: '100px',
   },
   {
     name: 'DEF',
-    selector: (row: PokemonStatsRanking) => row.def.defense,
+    selector: (row: IPokemonStatsRanking) => row.def.defense,
     sortable: true,
     width: '100px',
   },
   {
     name: 'STA',
-    selector: (row: PokemonStatsRanking) => row.sta.stamina,
+    selector: (row: IPokemonStatsRanking) => row.sta.stamina,
     sortable: true,
     width: '100px',
   },
   {
     name: 'Stat Prod',
-    selector: (row: PokemonStatsRanking) => row.statProd.prod,
+    selector: (row: IPokemonStatsRanking) => row.statProd.prod,
     sortable: true,
     width: '150px',
   },
@@ -127,7 +127,7 @@ const StatsRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const conditionalRowStyles = [
     {
-      when: (row: PokemonStatsRanking) => row.slug === select?.slug,
+      when: (row: IPokemonStatsRanking) => row.slug === select?.slug,
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -160,10 +160,16 @@ const StatsRanking = () => {
           rank: stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * (statsTag?.sta ?? 0))?.rank,
         },
       };
-    }) as PokemonStatsRanking[];
+    }) as IPokemonStatsRanking[];
   };
 
-  const sortRanking = (pokemon: PokemonStatsRanking[], id: number) => {
+  const setSortedPokemonRanking = (primary: IPokemonStatsRanking, secondary: IPokemonStatsRanking, sortBy: string[]) => {
+    const a = primary as unknown as { [x: string]: { [y: string]: number } };
+    const b = secondary as unknown as { [x: string]: { [y: string]: number } };
+    return b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]];
+  };
+
+  const sortRanking = (pokemon: IPokemonStatsRanking[], id: number) => {
     let sortBy: string[] = [];
     if (id === ColumnType.Atk) {
       sortBy = ['atk', 'attack'];
@@ -175,12 +181,13 @@ const StatsRanking = () => {
       sortBy = ['statProd', 'prod'];
     }
     return pokemon
-      .sort((a: any, b: any) => b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]])
-      .map((data: any) => {
-        return {
+      .sort((a, b) => setSortedPokemonRanking(a, b, sortBy))
+      .map((data) => {
+        const result = data as unknown as { [x: string]: IPokemonStatsRanking };
+        return new PokemonStatsRanking({
           ...data,
-          rank: data[sortBy[0]]?.rank,
-        };
+          rank: result[sortBy[0]]?.rank,
+        });
       });
   };
 
@@ -201,14 +208,13 @@ const StatsRanking = () => {
 
   const [page, setPage] = useState(1);
   const [sortId, setSortId] = useState(getSortId());
-  const [pokemonList, setPokemonList]: [PokemonStatsRanking[], React.Dispatch<React.SetStateAction<PokemonStatsRanking[]>>] = useState(
-    [] as PokemonStatsRanking[]
+  const [pokemonList, setPokemonList]: [IPokemonStatsRanking[], React.Dispatch<React.SetStateAction<IPokemonStatsRanking[]>>] = useState(
+    [] as IPokemonStatsRanking[]
   );
-  const [pokemonFilter, setPokemonFilter]: [PokemonStatsRanking[], React.Dispatch<React.SetStateAction<PokemonStatsRanking[]>>] = useState(
-    [] as PokemonStatsRanking[]
-  );
+  const [pokemonFilter, setPokemonFilter]: [IPokemonStatsRanking[], React.Dispatch<React.SetStateAction<IPokemonStatsRanking[]>>] =
+    useState([] as IPokemonStatsRanking[]);
 
-  const [select, setSelect]: [PokemonStatsRanking | undefined, React.Dispatch<React.SetStateAction<PokemonStatsRanking | undefined>>] =
+  const [select, setSelect]: [IPokemonStatsRanking | undefined, React.Dispatch<React.SetStateAction<IPokemonStatsRanking | undefined>>] =
     useState();
 
   const [filters, setFilters] = useState({ match: false });
@@ -247,7 +253,7 @@ const StatsRanking = () => {
     }
   }, [searchParams, pokemonFilter]);
 
-  const setFilterParams = (select: PokemonStatsRanking) => {
+  const setFilterParams = (select: IPokemonStatsRanking) => {
     searchParams.set('id', select.num.toString());
     searchParams.set('form', select.forme?.replace(FORM_NORMAL, '').replaceAll('_', '-').toLowerCase());
     setSearchParams(searchParams);
@@ -271,7 +277,7 @@ const StatsRanking = () => {
     }
   }, [search, match, pokemonList]);
 
-  const convertToPokemonForm = (pokemon: IPokemonData | PokemonStatsRanking) => {
+  const convertToPokemonForm = (pokemon: IPokemonData | IPokemonStatsRanking) => {
     return Form.create({
       form_name: pokemon.forme ?? '',
       form_names: [],

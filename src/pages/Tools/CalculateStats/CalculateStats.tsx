@@ -87,20 +87,18 @@ const Calculate = () => {
   };
 
   const calculateStatsPoke = useCallback(() => {
-    if (!searchCP || parseInt(searchCP) < 10) {
+    if (!searchCP || parseInt(searchCP) < 10 || isNaN(parseInt(searchCP))) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
     if (!result.level) {
-      return enqueueSnackbar(
-        'At CP: ' + result.CP + ' and IV ' + result.IV.atk + '/' + result.IV.def + '/' + result.IV.sta + ' impossible found in ' + name,
-        { variant: 'error' }
-      );
+      return enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`, {
+        variant: 'error',
+      });
     }
-    enqueueSnackbar(
-      'At CP: ' + result.CP + ' and IV ' + result.IV.atk + '/' + result.IV.def + '/' + result.IV.sta + ' found in ' + typePoke + ' ' + name,
-      { variant: 'success' }
-    );
+    enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} found in ${typePoke} ${name}`, {
+      variant: 'success',
+    });
     setPokeStats(result);
     setStatLevel(result.level);
     setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));

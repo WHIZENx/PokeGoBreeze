@@ -169,7 +169,7 @@ interface IStatsBaseCalculate {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class StatsBaseCalculate implements IStatsBaseCalculate {
+export class StatsBaseCalculate implements IStatsBaseCalculate {
   statsATK: number;
   statsDEF: number;
   statsSTA: number;
@@ -178,6 +178,12 @@ class StatsBaseCalculate implements IStatsBaseCalculate {
     this.statsATK = 0;
     this.statsDEF = 0;
     this.statsSTA = 0;
+  }
+
+  static create(value: IStatsBaseCalculate) {
+    const obj = new StatsBaseCalculate();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 

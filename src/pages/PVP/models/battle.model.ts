@@ -3,6 +3,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsProd, IStatsSta, IStatsBase, StatsPokemon } from '../../../core/models/stats.model';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
+import { DEFAULT_BLOCK } from '../Battle/Constants';
 
 export interface IPokemonBattleData {
   speciesId?: string;
@@ -49,8 +50,20 @@ export class PokemonBattleData implements IPokemonBattleData {
   disableCMoveSec?: boolean;
   disableCMovePri?: boolean;
 
-  constructor({ ...props }: IPokemonBattleData) {
-    Object.assign(this, props);
+  // tslint:disable-next-line:no-empty
+  constructor() {}
+
+  static create(value: IPokemonBattleData) {
+    const obj = new PokemonBattleData();
+    Object.assign(obj, value);
+    return obj;
+  }
+
+  static setValue(energy: number, hp: number) {
+    const obj = new PokemonBattleData();
+    obj.energy = energy;
+    obj.hp = hp;
+    return obj;
   }
 }
 
@@ -58,7 +71,7 @@ export interface IPokemonBattle {
   disableCMoveSec?: boolean;
   disableCMovePri?: boolean;
   shadow?: boolean;
-  pokemonData?: PokemonBattleData | null;
+  pokemonData?: IPokemonBattleData | null;
   fMove?: ICombat | null;
   cMovePri?: ICombat | null;
   cMoveSec?: ICombat | null;
@@ -73,7 +86,7 @@ export class PokemonBattle implements IPokemonBattle {
   disableCMoveSec?: boolean;
   disableCMovePri?: boolean;
   shadow?: boolean;
-  pokemonData?: PokemonBattleData | null;
+  pokemonData?: IPokemonBattleData | null;
   fMove?: ICombat | null;
   cMovePri?: ICombat | null;
   cMoveSec?: ICombat | null;
@@ -85,7 +98,13 @@ export class PokemonBattle implements IPokemonBattle {
   constructor() {
     this.timeline = [];
     this.energy = 0;
-    this.block = 2;
+    this.block = DEFAULT_BLOCK;
+  }
+
+  static create(value: IPokemonBattle) {
+    const obj = new PokemonBattle();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 

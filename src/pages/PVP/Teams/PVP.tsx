@@ -19,7 +19,7 @@ import { loadPVP } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { TeamsPVP } from '../../../core/models/pvp.model';
+import { Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { IPokemonTeamData, PokemonTeamData } from '../models/battle.model';
 import { FORM_NORMAL, FORM_SHADOW } from '../../../util/Constants';
 
@@ -192,6 +192,18 @@ const TeamPVP = () => {
     );
   };
 
+  const setSortedPokemonPerformers = (primary: Performers, secondary: Performers) => {
+    const a = primary as unknown as { [x: string]: number };
+    const b = secondary as unknown as { [x: string]: number };
+    return sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy];
+  };
+
+  const setSortedPokemonTeam = (primary: Teams, secondary: Teams) => {
+    const a = primary as unknown as { [x: string]: number };
+    const b = secondary as unknown as { [x: string]: number };
+    return sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy];
+  };
+
   return (
     <div className="container pvp-container element-bottom">
       {renderLeague()}
@@ -263,7 +275,7 @@ const TeamPVP = () => {
               splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
               pokemon.id?.toString().includes(search)
           )
-          .sort((a: any, b: any) => (sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy]))
+          .sort((a, b) => setSortedPokemonPerformers(a, b))
           .map((value, index) => (
             <div
               className="d-flex align-items-center card-ranking"
@@ -386,7 +398,7 @@ const TeamPVP = () => {
         </div>
         <Accordion alwaysOpen={true}>
           {rankingData?.teams
-            .sort((a: any, b: any) => (sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy]))
+            .sort((a, b) => setSortedPokemonTeam(a, b))
             .map((value, index) => (
               <Accordion.Item key={index} eventKey={index.toString()}>
                 <Accordion.Header>

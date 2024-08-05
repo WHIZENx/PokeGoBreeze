@@ -207,6 +207,14 @@ const RaidBattle = () => {
     return !value || value < MIN_IV || value > MAX_IV;
   };
 
+  const setSortedResult = (primary: PokemonMoveData, secondary: PokemonMoveData, sordIndex: string[]) => {
+    const a = primary as unknown as { [x: string]: number };
+    const b = secondary as unknown as { [x: string]: number };
+    return filters.selected.sorted
+      ? a[sordIndex[filters.selected.sortBy]] - b[sordIndex[filters.selected.sortBy]]
+      : b[sordIndex[filters.selected.sortBy]] - a[sordIndex[filters.selected.sortBy]];
+  };
+
   const handleSaveOption = () => {
     if (validIV(selected.iv.atk) || validIV(selected.iv.def) || validIV(selected.iv.sta)) {
       return;
@@ -226,13 +234,7 @@ const RaidBattle = () => {
       handleCalculate();
     }
     const sordIndex = ['dpsAtk', 'tdoAtk', 'ttkAtk', 'ttkDef'];
-    setResult(
-      result.sort((a: any, b: any) =>
-        filters.selected.sorted
-          ? a[sordIndex[filters.selected.sortBy]] - b[sordIndex[filters.selected.sortBy]]
-          : b[sordIndex[filters.selected.sortBy]] - a[sordIndex[filters.selected.sortBy]]
-      )
-    );
+    setResult(result.sort((a, b) => setSortedResult(a, b, sordIndex)));
   };
 
   const handleCloseOption = () => {
