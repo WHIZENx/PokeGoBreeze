@@ -11,8 +11,10 @@ import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/Constants';
 import { ICombat } from '../../../core/models/combat.model';
-import { BattlePokemonData } from '../../../core/models/pvp.model';
+import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
+import { PokemonBattleData } from '../models/battle.model';
+import { PokemonData } from '../../../core/models/pokemon.model';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
@@ -23,7 +25,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   const [search, setSearch] = useState('');
 
-  const [pokemon, setPokemon]: [BattlePokemonData | undefined, React.Dispatch<React.SetStateAction<BattlePokemonData | undefined>>] =
+  const [pokemon, setPokemon]: [IBattlePokemonData | undefined, React.Dispatch<React.SetStateAction<IBattlePokemonData | undefined>>] =
     useState();
   const [fMove, setFMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
   const [cMovePri, setCMovePri]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
@@ -32,7 +34,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const [pokemonIcon, setPokemonIcon] = useState('');
   const [score, setScore] = useState(0);
 
-  const selectPokemon = (value: BattlePokemonData) => {
+  const selectPokemon = (value: IBattlePokemonData) => {
     props.clearData(false);
     let [fMove, cMovePri, cMoveSec] = value.moveset ?? [];
     setSearch(splitAndCapitalize(value.pokemon?.name, '-', ' '));
@@ -88,7 +90,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       setScore(value.score);
       props.setPokemonBattle({
         ...props.pokemonBattle,
-        pokemonData: {
+        pokemonData: PokemonBattleData.create({
           ...value,
           form: value.form ?? '',
           shadow: value.shadow ?? false,
@@ -102,7 +104,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           allStats,
           currentStats: allStats[allStats.length - 1],
           bestStats: allStats[allStats.length - 1],
-        },
+        }),
         fMove: fMoveCombat,
         cMovePri: cMovePriCombat,
         cMoveSec: cMoveSecCombat,
@@ -214,13 +216,13 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       {props.data && (
         <div className="result-pokemon" style={{ display: show ? 'block' : 'none', maxHeight: 274 }}>
           {props.data
-            .filter((pokemon) => splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
+            .filter((pokemon) => pokemon && splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
             .map((value, index) => (
-              <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
+              <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value ?? new BattlePokemonData())}>
                 <CardPokemon
-                  value={value.pokemon}
-                  score={value.score}
-                  isShadow={value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`)}
+                  value={value?.pokemon ?? new PokemonData()}
+                  score={value?.score}
+                  isShadow={value?.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`)}
                 />
               </div>
             ))}
@@ -237,7 +239,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             <div className="result-move-select">
               <div>
                 {props.data
-                  .find((value) => value.speciesId === pokemon.speciesId)
+                  .find((value) => value?.speciesId === pokemon.speciesId)
                   ?.moves.fastMoves.map((value) => {
                     let move = value.moveId;
                     if (move.includes('HIDDEN_POWER')) {
@@ -299,7 +301,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div className="result-move-select">
                 <div>
                   {props.data
-                    .find((value) => value.speciesId === pokemon.speciesId)
+                    .find((value) => value?.speciesId === pokemon.speciesId)
                     ?.moves.chargedMoves.map((value) => {
                       let move = value.moveId;
                       if (move === 'FUTURE_SIGHT') {
@@ -371,7 +373,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div className="result-move-select">
                 <div>
                   {props.data
-                    .find((value) => value.speciesId === pokemon.speciesId)
+                    .find((value) => value?.speciesId === pokemon.speciesId)
                     ?.moves.chargedMoves.map((value) => {
                       let move = value.moveId;
                       if (move === 'FUTURE_SIGHT') {

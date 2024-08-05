@@ -324,6 +324,12 @@ const RankingPVP = () => {
     );
   };
 
+  const setSortedPokemonBattle = (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
+    const a = primary as unknown as { [x: string]: number };
+    const b = secondary as unknown as { [x: string]: number };
+    return sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current];
+  };
+
   const renderLeague = () => {
     const cp = parseInt(params.cp ?? '');
     const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
@@ -403,7 +409,7 @@ const RankingPVP = () => {
                   splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
                   pokemon.id?.toString().includes(search)
               )
-              .sort((a: any, b: any) => (sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current]))
+              .sort((a, b) => setSortedPokemonBattle(a, b))
               .map((value, index) => (
                 <Fragment key={index}>{renderItem(value, index)}</Fragment>
               ))}

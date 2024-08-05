@@ -4,7 +4,7 @@ import { retrieveMoves, splitAndCapitalize } from '../../util/Utils';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/move.enum';
 import { StoreState } from '../../store/models/state.model';
-import { ISelectMoveModel } from '../Input/models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
 
 const Move = (props: IMoveComponent) => {
@@ -32,10 +32,10 @@ const Move = (props: IMoveComponent) => {
       if (result) {
         if (props.type !== TypeMove.CHARGE) {
           result?.quickMoves?.forEach((value) => {
-            simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
           result?.eliteQuickMove?.forEach((value) => {
-            simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
           setCountFM(simpleMove.length);
         }
@@ -43,19 +43,19 @@ const Move = (props: IMoveComponent) => {
           return setResultMove(simpleMove);
         }
         result?.cinematicMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: false });
+          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
         });
         result?.eliteCinematicMove?.forEach((value) => {
-          simpleMove.push({ name: value, elite: true, shadow: false, purified: false, special: false });
+          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
         });
         result?.shadowMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: true, purified: false, special: false });
+          simpleMove.push(new SelectMoveModel(value, false, true, false, false));
         });
         result?.purifiedMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: true, special: false });
+          simpleMove.push(new SelectMoveModel(value, false, false, true, false));
         });
         result?.specialMoves?.forEach((value) => {
-          simpleMove.push({ name: value, elite: false, shadow: false, purified: false, special: true });
+          simpleMove.push(new SelectMoveModel(value, false, false, false, true));
         });
       }
       setResultMove(simpleMove);
@@ -124,7 +124,12 @@ const Move = (props: IMoveComponent) => {
                               <b>Charged Moves</b>
                             </li>
                           )}
-                          <li className="container card-pokemon" onMouseDown={() => changeMove(value)}>
+                          <li
+                            className={`container card-pokemon ${
+                              props.highlight && currentMove?.name === value.name ? 'bg-card-highlight' : ''
+                            }`}
+                            onMouseDown={() => changeMove(value)}
+                          >
                             <CardType
                               value={findType(value.name) ?? ''}
                               name={splitAndCapitalize(value.name.replaceAll('_PLUS', '+'), '_', ' ')}

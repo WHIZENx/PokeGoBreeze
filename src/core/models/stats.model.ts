@@ -245,7 +245,7 @@ export class StatsProd implements IStatsProd {
   }
 }
 
-export interface PokemonStatsRanking {
+export interface IPokemonStatsRanking {
   num: number;
   name: string;
   slug: string;
@@ -266,6 +266,34 @@ export interface PokemonStatsRanking {
   types?: string[];
   url?: string;
   releasedGO: boolean;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonStatsRanking implements IPokemonStatsRanking {
+  num: number = 0;
+  name: string = '';
+  slug: string = '';
+  forme: string = '';
+  sprite: string = '';
+  baseForme: string = '';
+  baseSpecies: string = '';
+  rank?: number;
+  gen: number = 0;
+  region: string = '';
+  version: string = '';
+  weightkg: number = 0;
+  heightm: number = 0;
+  atk: IStatsAtk = new StatsAtk();
+  def: IStatsDef = new StatsDef();
+  sta: IStatsSta = new StatsSta();
+  statProd: IStatsProd = new StatsProd();
+  types?: string[];
+  url?: string;
+  releasedGO: boolean = false;
+
+  constructor({ ...props }: IPokemonStatsRanking) {
+    Object.assign(this, props);
+  }
 }
 
 // tslint:disable-next-line:max-classes-per-file

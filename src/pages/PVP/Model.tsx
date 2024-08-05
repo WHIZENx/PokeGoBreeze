@@ -281,7 +281,7 @@ export const MoveSet = (
   combatList: IPokemonData | undefined,
   combatData: ICombat[]
 ) => {
-  const findArchetype = (archetype: string | string[]) => {
+  const findArchetype = (archetype: string) => {
     return [
       'General',
       'Nuke',

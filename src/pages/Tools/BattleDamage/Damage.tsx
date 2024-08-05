@@ -275,6 +275,7 @@ const Damage = () => {
                 form={form ? form.form.name : name.toLowerCase()}
                 setMove={setMove}
                 move={move}
+                highlight={true}
               />
               <div className="element-top">
                 {move && (
