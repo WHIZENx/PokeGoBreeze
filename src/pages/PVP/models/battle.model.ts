@@ -17,9 +17,9 @@ export interface IPokemonBattleData {
   bestStats: IBattleBaseStats | undefined;
   currentStats: IBattleBaseStats | undefined;
   pokemon: IPokemonData | null;
-  fmove: ICombat | null;
-  cmove: ICombat | null;
-  cmoveSec: ICombat | null;
+  fMove: ICombat | null;
+  cMove: ICombat | null;
+  cMoveSec: ICombat | null;
   energy: number;
   block: number;
   turn: number;
@@ -40,9 +40,9 @@ export class PokemonBattleData implements IPokemonBattleData {
   bestStats: IBattleBaseStats | undefined;
   currentStats: IBattleBaseStats | undefined;
   pokemon: IPokemonData | null = null;
-  fmove: ICombat | null = new Combat();
-  cmove: ICombat | null = new Combat();
-  cmoveSec: ICombat | null = new Combat();
+  fMove: ICombat | null = new Combat();
+  cMove: ICombat | null = new Combat();
+  cMoveSec: ICombat | null = new Combat();
   energy: number = 0;
   block: number = 0;
   turn: number = 0;
@@ -151,9 +151,9 @@ export interface IPokemonTeamData {
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
-  fmove: ICombat | undefined;
-  cmovePri: ICombat | undefined;
-  cmoveSec: ICombat | undefined;
+  fMove: ICombat | undefined;
+  cMovePri: ICombat | undefined;
+  cMoveSec: ICombat | undefined;
   shadow: boolean;
   purified: boolean | undefined;
 }
@@ -169,9 +169,9 @@ export class PokemonTeamData implements IPokemonTeamData {
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
-  fmove: ICombat | undefined;
-  cmovePri: ICombat | undefined;
-  cmoveSec: ICombat | undefined;
+  fMove: ICombat | undefined;
+  cMovePri: ICombat | undefined;
+  cMoveSec: ICombat | undefined;
   shadow: boolean = false;
   purified: boolean | undefined;
 
@@ -192,9 +192,9 @@ export interface IPokemonBattleRanking {
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
   prod: IStatsProd | undefined;
-  fmove: ICombat | undefined;
-  cmovePri: ICombat | undefined;
-  cmoveSec: ICombat | undefined;
+  fMove: ICombat | undefined;
+  cMovePri: ICombat | undefined;
+  cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
   shadow: boolean;
   purified: boolean | undefined;
@@ -214,9 +214,9 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
   prod: IStatsProd | undefined;
-  fmove: ICombat | undefined;
-  cmovePri: ICombat | undefined;
-  cmoveSec: ICombat | undefined;
+  fMove: ICombat | undefined;
+  cMovePri: ICombat | undefined;
+  cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
   shadow: boolean = false;
   purified: boolean | undefined = false;

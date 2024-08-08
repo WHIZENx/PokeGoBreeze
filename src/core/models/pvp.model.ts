@@ -31,9 +31,9 @@ export interface Performers {
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
-  fmove: ICombat | undefined;
-  cmovePri: ICombat | undefined;
-  cmoveSec: ICombat | undefined;
+  fMove: ICombat | undefined;
+  cMovePri: ICombat | undefined;
+  cMoveSec: ICombat | undefined;
   combatPoke: IPokemonData | undefined;
   shadow: boolean;
   purified: boolean | undefined;

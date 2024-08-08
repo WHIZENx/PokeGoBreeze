@@ -27,6 +27,7 @@ import Mega from '../Mega/Mega';
 import Primal from '../Primal/Primal';
 import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
+import { Action } from 'history';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -76,6 +77,19 @@ const FormComponent = (props: IFormInfoComponent) => {
       }));
     }
   };
+
+  useEffect(() => {
+    if (props.pokemonRouter.action === Action.Pop) {
+      const form = searchParams.get('form')?.toUpperCase() || FORM_NORMAL;
+      const currentData = props.pokeData.find(
+        (i) => i.name.includes(form.toLowerCase().replaceAll('_', '-')) || (form === FORM_NORMAL && i.is_default)
+      );
+
+      if (currentData) {
+        findFormData(currentData.name);
+      }
+    }
+  }, [props.pokemonRouter]);
 
   const changeForm = (name: string, form: string) => {
     if (params.id) {

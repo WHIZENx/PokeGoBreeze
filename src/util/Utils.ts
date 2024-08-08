@@ -492,10 +492,10 @@ export const getCustomThemeDataTable = (theme: Theme) => {
   };
 };
 
-export function getDataWithKey<T>(data: any, key: string | number) {
+export const getDataWithKey = <T>(data: any, key: string | number) => {
   const result = Object.entries(data ?? new Object()).find((k) => k.at(0) === key.toString());
-  return result ? (result[1] as T) : (new Object() as T);
-}
+  return (result ? result[1] : new Object()) as T;
+};
 
 export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | undefined) => {
   if (!pokemon) {

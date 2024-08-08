@@ -1,13 +1,13 @@
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { MAX_IV } from '../../util/Constants';
+import { DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_LEVEL, MAX_IV } from '../../util/Constants';
 
 export interface OptionDPSModel {
   filters: OptionFiltersDPS;
   options: OptionOtherDPS;
   dataTargetPokemon?: IPokemonData;
-  fmoveTargetPokemon?: ISelectMoveModel;
-  cmoveTargetPokemon?: ISelectMoveModel;
+  fMoveTargetPokemon?: ISelectMoveModel;
+  cMoveTargetPokemon?: ISelectMoveModel;
   selectTypes: string[];
   searchTerm: string;
   defaultPage: number;
@@ -27,7 +27,7 @@ interface IOptionFiltersDPS {
   showPrimal: boolean;
   showLegendary: boolean;
   showMythic: boolean;
-  showUltrabeast: boolean;
+  showUltraBeast: boolean;
   enableShadow: boolean;
   enableElite: boolean;
   enableMega: boolean;
@@ -35,7 +35,7 @@ interface IOptionFiltersDPS {
   enablePrimal: boolean;
   enableLegendary: boolean;
   enableMythic: boolean;
-  enableUltrabeast: boolean;
+  enableUltraBeast: boolean;
   enableBest: boolean;
   enableDelay: boolean;
   releasedGO: boolean;
@@ -55,7 +55,7 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
   showPrimal: boolean;
   showLegendary: boolean;
   showMythic: boolean;
-  showUltrabeast: boolean;
+  showUltraBeast: boolean;
   enableShadow: boolean;
   enableElite: boolean;
   enableMega: boolean;
@@ -63,7 +63,7 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
   enablePrimal: boolean;
   enableLegendary: boolean;
   enableMythic: boolean;
-  enableUltrabeast: boolean;
+  enableUltraBeast: boolean;
   enableBest: boolean;
   enableDelay: boolean;
   releasedGO: boolean;
@@ -82,7 +82,7 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
     this.showPrimal = true;
     this.showLegendary = true;
     this.showMythic = true;
-    this.showUltrabeast = true;
+    this.showUltraBeast = true;
     this.enableShadow = false;
     this.enableElite = false;
     this.enableMega = false;
@@ -90,7 +90,7 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
     this.enablePrimal = false;
     this.enableLegendary = false;
     this.enableMythic = false;
-    this.enableUltrabeast = false;
+    this.enableUltraBeast = false;
     this.enableBest = false;
     this.enableDelay = false;
     this.releasedGO = true;
@@ -102,16 +102,40 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
   }
 }
 
-export interface OptionOtherDPS {
-  delay?: { ftime: number; ctime: number };
-  specific?: { FDmgenemy: number; CDmgenemy: number };
+export interface IOptionOtherDPS {
+  delay?: { fTime: number; cTime: number };
+  specific?: { FDmgEnemy: number; CDmgEnemy: number };
   WEATHER_BOOSTS?: string;
   TRAINER_FRIEND?: boolean;
   POKEMON_FRIEND_LEVEL?: number;
   POKEMON_DEF_OBJ: number;
-  IV_ATK?: number;
-  IV_DEF?: number;
-  IV_HP?: number;
-  POKEMON_LEVEL?: number;
+  IV_ATK: number;
+  IV_DEF: number;
+  IV_HP: number;
+  POKEMON_LEVEL: number;
   objTypes?: string[];
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class OptionOtherDPS implements IOptionOtherDPS {
+  delay?: { fTime: number; cTime: number };
+  specific?: { FDmgEnemy: number; CDmgEnemy: number };
+  WEATHER_BOOSTS?: string;
+  TRAINER_FRIEND?: boolean;
+  POKEMON_FRIEND_LEVEL?: number;
+  POKEMON_DEF_OBJ: number = DEFAULT_POKEMON_DEF_OBJ;
+  IV_ATK: number = MAX_IV;
+  IV_DEF: number = MAX_IV;
+  IV_HP: number = MAX_IV;
+  POKEMON_LEVEL: number = DEFAULT_POKEMON_LEVEL;
+  objTypes?: string[];
+
+  // tslint:disable-next-line:no-empty
+  constructor() {}
+
+  static create(value: IOptionOtherDPS) {
+    const obj = new OptionOtherDPS();
+    Object.assign(obj, value);
+    return obj;
+  }
 }

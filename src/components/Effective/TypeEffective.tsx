@@ -56,7 +56,7 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               <b>Neutral</b>
             </span>
           </h6>
-          {(props.typeEffective.neutral ?? []).length !== 0 || (props.typeEffective.neutral ?? []).length !== 0 ? (
+          {(props.typeEffective.neutral ?? []).length !== 0 ? (
             <TypeInfo text={'1x damage from'} arr={props.typeEffective.neutral ?? []} style={{ marginLeft: 15 }} />
           ) : (
             noneSprit()

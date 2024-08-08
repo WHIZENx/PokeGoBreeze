@@ -79,10 +79,10 @@ const Home = () => {
     primal: false,
     legendary: false,
     mythic: false,
-    ultrabeast: false,
+    ultraBeast: false,
   });
 
-  const { match, releasedGO, allShiny, gen, version, mega, gmax, primal, legendary, mythic, ultrabeast } = filters;
+  const { match, releasedGO, allShiny, gen, version, mega, gmax, primal, legendary, mythic, ultraBeast } = filters;
 
   const [btnSelected, setBtnSelected] = useState({
     gen: true,
@@ -141,7 +141,7 @@ const Home = () => {
             const boolPrimal = primal ? item.forme?.toUpperCase().includes(FORM_PRIMAL) : true;
             const boolLegend = legendary ? item.class === TYPE_LEGENDARY : true;
             const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
-            const boolUltra = ultrabeast ? item.class === TYPE_ULTRA_BEAST : true;
+            const boolUltra = ultraBeast ? item.class === TYPE_ULTRA_BEAST : true;
 
             const findGen = item.gen === 0 ? true : gen.includes((item.gen ?? 0) - 1);
             const findVersion = item.version === -1 ? true : version.includes(item?.version);
@@ -168,7 +168,7 @@ const Home = () => {
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [dataList, searchTerm, selectTypes, match, releasedGO, mega, gmax, primal, legendary, mythic, ultrabeast, gen, version]);
+  }, [dataList, searchTerm, selectTypes, match, releasedGO, mega, gmax, primal, legendary, mythic, ultraBeast, gen, version]);
 
   useEffect(() => {
     const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
@@ -210,7 +210,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        gen: versionList.map((_, index: number) => index),
+        gen: versionList.map((_, index) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -232,7 +232,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        version: versionList.map((_, index: number) => index),
+        version: versionList.map((_, index) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -360,7 +360,7 @@ const Home = () => {
                       value={version}
                       onChange={handleChangeVersion}
                       input={<OutlinedInput label="Version(s)" />}
-                      renderValue={(selected) => selected.map((item: number) => versionList[item]).join(', ')}
+                      renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
                       MenuProps={VersionProps}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
@@ -372,7 +372,7 @@ const Home = () => {
                           }
                         />
                       </MenuItem>
-                      {versionList.map((value: string, index: number) => (
+                      {versionList.map((value, index) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={version.includes(index)} />
                           <ListItemText primary={value} />
@@ -440,7 +440,7 @@ const Home = () => {
                             ...filters,
                             legendary: check,
                             mythic: check ? false : filters.mythic,
-                            ultrabeast: check ? false : filters.ultrabeast,
+                            ultraBeast: check ? false : filters.ultraBeast,
                           })
                         }
                       />
@@ -456,7 +456,7 @@ const Home = () => {
                             ...filters,
                             mythic: check,
                             legendary: check ? false : filters.legendary,
-                            ultrabeast: check ? false : filters.ultrabeast,
+                            ultraBeast: check ? false : filters.ultraBeast,
                           })
                         }
                       />
@@ -466,11 +466,11 @@ const Home = () => {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={ultrabeast}
+                        checked={ultraBeast}
                         onChange={(_, check) =>
                           setFilters({
                             ...filters,
-                            ultrabeast: check,
+                            ultraBeast: check,
                             legendary: check ? false : filters.legendary,
                             mythic: check ? false : filters.mythic,
                           })

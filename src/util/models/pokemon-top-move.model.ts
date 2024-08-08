@@ -36,7 +36,7 @@ interface IeDPS {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class EDPS implements IeDPS {
+export class EDPS implements IeDPS {
   offensive: number;
   defensive: number;
 
@@ -44,18 +44,24 @@ class EDPS implements IeDPS {
     this.offensive = 0;
     this.defensive = 0;
   }
+
+  static create(value: IeDPS) {
+    const obj = new EDPS();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 export interface IPokemonQueryMove {
-  fmove: ICombat;
-  cmove: ICombat;
+  fMove: ICombat;
+  cMove: ICombat;
   eDPS: IeDPS;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonQueryMove implements IPokemonQueryMove {
-  fmove: ICombat = new Combat();
-  cmove: ICombat = new Combat();
+  fMove: ICombat = new Combat();
+  cMove: ICombat = new Combat();
   eDPS: IeDPS = new EDPS();
 
   constructor({ ...props }: IPokemonQueryMove) {
@@ -86,8 +92,8 @@ export interface IPokemonQueryCounter {
   pokemon_forme: string | null;
   releasedGO: boolean;
   dps: number;
-  fmove: ICombat;
-  cmove: ICombat;
+  fMove: ICombat;
+  cMove: ICombat;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -100,8 +106,8 @@ export class PokemonQueryCounter implements IPokemonQueryCounter {
   pokemon_forme: string | null = '';
   releasedGO: boolean = false;
   dps: number = 0;
-  fmove: ICombat = new Combat();
-  cmove: ICombat = new Combat();
+  fMove: ICombat = new Combat();
+  cMove: ICombat = new Combat();
 
   constructor({ ...props }: IPokemonQueryCounter) {
     Object.assign(this, props);

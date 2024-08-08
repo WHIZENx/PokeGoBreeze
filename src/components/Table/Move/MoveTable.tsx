@@ -172,13 +172,13 @@ const TableMove = (props: ITableMoveComponent) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-          <Link to={'../move/' + value.fmove.id} className="d-block">
+          <Link to={'../move/' + value.fMove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fmove.type))} />
+              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fMove.type))} />
             </div>
-            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-              {value.fmove.elite && (
+              {value.fMove.elite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>Elite</span>
                 </span>
@@ -187,28 +187,28 @@ const TableMove = (props: ITableMoveComponent) => {
           </Link>
         </td>
         <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-          <Link to={'../move/' + value.cmove.id} className="d-block">
+          <Link to={'../move/' + value.cMove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cmove.type))} />
+              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cMove.type))} />
             </div>
-            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-              {value.cmove.elite && (
+              {value.cMove.elite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>Elite</span>
                 </span>
               )}
-              {value.cmove.shadow && (
+              {value.cMove.shadow && (
                 <span className="type-icon-small ic shadow-ic">
                   <span>{capitalize(FORM_SHADOW)}</span>
                 </span>
               )}
-              {value.cmove.purified && (
+              {value.cMove.purified && (
                 <span className="type-icon-small ic purified-ic">
                   <span>{capitalize(FORM_PURIFIED)}</span>
                 </span>
               )}
-              {value.cmove.special && (
+              {value.cMove.special && (
                 <span className="type-icon-small ic special-ic">
                   <span>Special</span>
                 </span>
@@ -363,9 +363,9 @@ const TableMove = (props: ITableMoveComponent) => {
                     if (sortedBy === 'eff') {
                       return stateSorted.offensive.eff ? b.eDPS.offensive - a.eDPS.offensive : a.eDPS.offensive - b.eDPS.offensive;
                     } else {
-                      if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name < b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
+                      if (a[sortedBy === 'fast' ? 'fMove' : 'cMove'].name < b[sortedBy === 'fast' ? 'fMove' : 'cMove'].name) {
                         return (stateSorted.offensive as unknown as { [x: string]: boolean })[sortedBy] ? -1 : 1;
-                      } else if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
+                      } else if (a[sortedBy === 'fast' ? 'fMove' : 'cMove'].name > b[sortedBy === 'fast' ? 'fMove' : 'cMove'].name) {
                         return (stateSorted.offensive as unknown as { [x: string]: boolean })[sortedBy] ? 1 : -1;
                       }
                       return 0;
@@ -415,9 +415,9 @@ const TableMove = (props: ITableMoveComponent) => {
                     if (sortedBy === 'eff') {
                       return stateSorted.defensive.eff ? b.eDPS.defensive - a.eDPS.defensive : a.eDPS.defensive - b.eDPS.defensive;
                     } else {
-                      if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name < b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
+                      if (a[sortedBy === 'fast' ? 'fMove' : 'cMove'].name < b[sortedBy === 'fast' ? 'fMove' : 'cMove'].name) {
                         return (stateSorted.defensive as unknown as { [x: string]: boolean })[sortedBy] ? -1 : 1;
-                      } else if (a[sortedBy === 'fast' ? 'fmove' : 'cmove'].name > b[sortedBy === 'fast' ? 'fmove' : 'cmove'].name) {
+                      } else if (a[sortedBy === 'fast' ? 'fMove' : 'cMove'].name > b[sortedBy === 'fast' ? 'fMove' : 'cMove'].name) {
                         return (stateSorted.defensive as unknown as { [x: string]: boolean })[sortedBy] ? 1 : -1;
                       }
                       return 0;

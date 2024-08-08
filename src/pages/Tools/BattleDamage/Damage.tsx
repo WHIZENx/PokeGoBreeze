@@ -85,8 +85,8 @@ const Damage = () => {
     weather: false,
     dodge: false,
     trainer: false,
-    flevel: 0,
-    clevel: 3,
+    fLevel: 0,
+    cLevel: 3,
   });
   const { weather, dodge, trainer } = battleState;
   const [result, setResult]: [IPokemonDmgOption, React.Dispatch<React.SetStateAction<IPokemonDmgOption>>] = useState(
@@ -156,8 +156,8 @@ const Damage = () => {
           dodge: battleState.dodge,
           mega: form?.form.form_name?.toUpperCase().includes(FORM_MEGA) ?? false,
           trainer: battleState.trainer,
-          flevel: enableFriend ? battleState.flevel : 0,
-          clevel: battleState.clevel,
+          fLevel: enableFriend ? battleState.fLevel : 0,
+          cLevel: battleState.cLevel,
           effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types ?? []),
         };
         setResult((r) => ({
@@ -315,7 +315,7 @@ const Damage = () => {
                             setEnableFriend(check);
                             setBattleState({
                               ...battleState,
-                              flevel: 0,
+                              fLevel: 0,
                             });
                           }}
                         />
@@ -327,26 +327,26 @@ const Damage = () => {
                       onChange={(_, value) => {
                         setBattleState({
                           ...battleState,
-                          flevel: value ?? 0,
+                          fLevel: value ?? 0,
                         });
                       }}
                       defaultValue={0}
                       max={4}
                       size="large"
-                      value={battleState.flevel}
+                      value={battleState.fLevel}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{getDataWithKey<ITrainerFriendship>(globalOptions?.trainer_friendship, battleState.flevel).atk_bonus?.toFixed(2)}
+                      x{getDataWithKey<ITrainerFriendship>(globalOptions?.trainer_friendship, battleState.fLevel).atk_bonus?.toFixed(2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
                     <FormControl sx={{ width: 200 }}>
                       <InputLabel id="demo-simple-select-label">Charge ability</InputLabel>
                       <Select
-                        name="clevel"
-                        value={battleState.clevel}
+                        name="cLevel"
+                        value={battleState.cLevel}
                         label="Charge ability"
                         onChange={(event) => {
                           setBattleState({

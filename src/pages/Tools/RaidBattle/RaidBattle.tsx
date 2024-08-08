@@ -57,6 +57,7 @@ import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/mod
 import { TypeMove } from '../../../enums/move.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { BattleCalculate } from '../../../util/models/calculate.model';
 
 interface TrainerBattle {
   pokemons: PokemonRaidModel[];
@@ -163,7 +164,7 @@ const RaidBattle = () => {
 
   const { used, selected } = filters;
 
-  const { weatherBoss, weatherCounter, released, enableTimeAllow } = options;
+  const { weatherBoss, released, enableTimeAllow } = options;
 
   const [timeAllow, setTimeAllow] = useState(0);
 
@@ -207,12 +208,12 @@ const RaidBattle = () => {
     return !value || value < MIN_IV || value > MAX_IV;
   };
 
-  const setSortedResult = (primary: PokemonMoveData, secondary: PokemonMoveData, sordIndex: string[]) => {
+  const setSortedResult = (primary: PokemonMoveData, secondary: PokemonMoveData, sortIndex: string[]) => {
     const a = primary as unknown as { [x: string]: number };
     const b = secondary as unknown as { [x: string]: number };
     return filters.selected.sorted
-      ? a[sordIndex[filters.selected.sortBy]] - b[sordIndex[filters.selected.sortBy]]
-      : b[sordIndex[filters.selected.sortBy]] - a[sordIndex[filters.selected.sortBy]];
+      ? a[sortIndex[filters.selected.sortBy]] - b[sortIndex[filters.selected.sortBy]]
+      : b[sortIndex[filters.selected.sortBy]] - a[sortIndex[filters.selected.sortBy]];
   };
 
   const handleSaveOption = () => {
@@ -233,8 +234,8 @@ const RaidBattle = () => {
     if (changeResult) {
       handleCalculate();
     }
-    const sordIndex = ['dpsAtk', 'tdoAtk', 'ttkAtk', 'ttkDef'];
-    setResult(result.sort((a, b) => setSortedResult(a, b, sordIndex)));
+    const sortIndex = ['dpsAtk', 'tdoAtk', 'ttkAtk', 'ttkDef'];
+    setResult(result.sort((a, b) => setSortedResult(a, b, sortIndex)));
   };
 
   const handleCloseOption = () => {
@@ -268,11 +269,11 @@ const RaidBattle = () => {
 
   const initDataPoke: PokemonRaidModel = {
     dataTargetPokemon: undefined,
-    fmoveTargetPokemon: undefined,
-    cmoveTargetPokemon: undefined,
+    fMoveTargetPokemon: undefined,
+    cMoveTargetPokemon: undefined,
   };
   const initTrainer: TrainerBattle = {
-    pokemons: [initDataPoke] as PokemonRaidModel[],
+    pokemons: [initDataPoke],
     trainerId: 1,
   };
 
@@ -328,8 +329,8 @@ const RaidBattle = () => {
   const findMove = useCallback(
     (id: number, form: string) => {
       const result = retrieveMoves(data?.pokemon ?? [], id, form);
-      let simpleMove: ISelectMoveModel[] = [];
       if (result) {
+        let simpleMove: ISelectMoveModel[] = [];
         result?.quickMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, false, false, false, false));
         });
@@ -373,37 +374,38 @@ const RaidBattle = () => {
     vf: string,
     shadow: boolean,
     purified: boolean,
-    felite: boolean,
-    celite: boolean,
+    fElite: boolean,
+    cElite: boolean,
     specialMove: string[] | null,
     pokemonTarget: boolean
   ) => {
     movePoke.forEach((vc) => {
-      const fmove = data?.combat?.find((item) => item.name === vf);
-      const cmove = data?.combat?.find((item) => item.name === vc);
-      if (fmove && cmove) {
+      const fMove = data?.combat?.find((item) => item.name === vf);
+      const cMove = data?.combat?.find((item) => item.name === vc);
+      if (fMove && cMove) {
         const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
-        const statsAttackerTemp = {
+        const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
           hp: calculateStatsBattle(stats?.sta ?? 0, used.iv.sta, used.level),
-          fmove,
-          cmove,
+          fMove,
+          cMove,
           types: value?.types ?? [],
           shadow,
-          WEATHER_BOOSTS: String(weatherCounter),
-        };
-        let statsDefender = {
+        });
+        let statsDefender = new BattleCalculate({
           atk: statBossATK,
           def: statBossDEF,
           hp: statBossHP,
-          fmove: data?.combat?.find((item) => item.name === fMove?.name),
-          cmove: data?.combat?.find((item) => item.name === cMove?.name),
+          fMove: data?.combat?.find((item) => item.name === fMove?.name),
+          cMove: data?.combat?.find((item) => item.name === cMove?.name),
           types: form?.form.types ?? [],
-          WEATHER_BOOSTS: String(weatherBoss),
-        };
+          isStab: weatherBoss,
+        });
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
-        statsDefender = pokemonTarget ? statsAttackerTemp : statsDefender;
+        if (pokemonTarget) {
+          statsDefender = statsAttackerTemp;
+        }
 
         if (!statsAttacker || !statsDefender) {
           enqueueSnackbar('Something went wrong!', { variant: 'error' });
@@ -413,16 +415,16 @@ const RaidBattle = () => {
         const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
         const dpsAtk = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
-        const ttkAtk = TimeToKill(Math.floor(statsDefender.hp), dpsAtk); // Time to Attacker kill Defender
-        const ttkDef = TimeToKill(Math.floor(statsAttacker.hp), dpsDef); // Time to Defender kill Attacker
+        const ttkAtk = TimeToKill(Math.floor(statsDefender.hp ?? 0), dpsAtk); // Time to Attacker kill Defender
+        const ttkDef = TimeToKill(Math.floor(statsAttacker.hp ?? 0), dpsDef); // Time to Defender kill Attacker
 
         const tdoAtk = dpsAtk * ttkDef;
         const tdoDef = dpsDef * ttkAtk;
 
         dataList.push({
           pokemon: value,
-          fmove: statsAttacker.fmove,
-          cmove: statsAttacker.cmove,
+          fMove: statsAttacker.fMove,
+          cMove: statsAttacker.cMove,
           dpsDef,
           dpsAtk,
           tdoAtk,
@@ -430,15 +432,15 @@ const RaidBattle = () => {
           multiDpsTdo: Math.pow(dpsAtk, 3) * tdoAtk,
           ttkAtk,
           ttkDef,
-          attackHpRemain: Math.floor(statsAttacker.hp) - Math.min(timeAllow, ttkDef) * dpsDef,
-          defendHpRemain: Math.floor(statsDefender.hp) - Math.min(timeAllow, ttkAtk) * dpsAtk,
-          death: Math.floor(statsDefender.hp / tdoAtk),
+          attackHpRemain: Math.floor(statsAttacker.hp ?? 0) - Math.min(timeAllow, ttkDef) * dpsDef,
+          defendHpRemain: Math.floor(statsDefender.hp ?? 0) - Math.min(timeAllow, ttkAtk) * dpsAtk,
+          death: Math.floor((statsDefender.hp ?? 0) / tdoAtk),
           shadow,
-          purified: purified && specialMove != null && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
-          mShadow: shadow && specialMove != null && specialMove.includes(statsAttacker?.cmove?.name ?? ''),
+          purified: purified && specialMove != null && specialMove.includes(statsAttacker?.cMove?.name ?? ''),
+          mShadow: shadow && specialMove != null && specialMove.includes(statsAttacker?.cMove?.name ?? ''),
           elite: {
-            fmove: felite,
-            cmove: celite,
+            fMove: fElite,
+            cMove: cElite,
           },
         });
       }
@@ -449,15 +451,15 @@ const RaidBattle = () => {
     dataList: PokemonMoveData[],
     pokemon: IPokemonData,
     movePoke: string[],
-    felite: boolean,
+    fElite: boolean,
     pokemonTarget: boolean,
     isShadow = false
   ) => {
     movePoke.forEach((vf) => {
-      addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, felite, false, null, pokemonTarget);
+      addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, fElite, false, null, pokemonTarget);
       if (!pokemon.forme || isShadow) {
         if (pokemon.shadowMoves && pokemon.shadowMoves.length > 0) {
-          addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, true, false, felite, false, pokemon.shadowMoves, pokemonTarget);
+          addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, true, false, fElite, false, pokemon.shadowMoves, pokemonTarget);
         }
         addCPokeData(
           dataList,
@@ -466,7 +468,7 @@ const RaidBattle = () => {
           vf,
           true,
           false,
-          felite,
+          fElite,
           false,
           pokemon.shadowMoves ?? [],
           pokemonTarget
@@ -478,7 +480,7 @@ const RaidBattle = () => {
           vf,
           false,
           true,
-          felite,
+          fElite,
           false,
           pokemon.purifiedMoves ?? [],
           pokemonTarget
@@ -496,13 +498,13 @@ const RaidBattle = () => {
           vf,
           true,
           false,
-          felite,
+          fElite,
           true,
           pokemon.shadowMoves,
           pokemonTarget
         );
       } else {
-        addCPokeData(dataList, pokemon.eliteCinematicMove ?? [], pokemon, vf, false, false, felite, true, null, pokemonTarget);
+        addCPokeData(dataList, pokemon.eliteCinematicMove ?? [], pokemon, vf, false, false, fElite, true, null, pokemonTarget);
       }
     });
   };
@@ -546,32 +548,31 @@ const RaidBattle = () => {
     calculateTopBattle(false);
   };
 
-  const calculateDPSBattle = (pokemon: PokemonRaidModel, HpRemain: number, timer: number) => {
-    const fmove = data?.combat?.find((item) => item.name === pokemon.fmoveTargetPokemon?.name);
-    const cmove = data?.combat?.find((item) => item.name === pokemon.cmoveTargetPokemon?.name);
+  const calculateDPSBattle = (pokemon: PokemonRaidModel, hpRemain: number, timer: number) => {
+    const fMove = data?.combat?.find((item) => item.name === pokemon.fMoveTargetPokemon?.name);
+    const cMove = data?.combat?.find((item) => item.name === pokemon.cMoveTargetPokemon?.name);
 
-    if (fmove && cmove) {
+    if (fMove && cMove) {
       const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
       const statsGO = pokemon.dataTargetPokemon?.stats ?? used;
-      const statsAttacker = {
+      const statsAttacker = new BattleCalculate({
         atk: calculateStatsBattle(stats.atk, statsGO.iv.atk * (statsGO.isShadow ? SHADOW_ATK_BONUS(data?.options) : 1), statsGO.level),
         def: calculateStatsBattle(stats.def, statsGO.iv.def * (statsGO.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1), statsGO.level),
         hp: calculateStatsBattle(stats?.sta ?? 0, statsGO.iv.sta ?? 0, statsGO.level),
-        fmove,
-        cmove,
+        fMove,
+        cMove,
         types: pokemon.dataTargetPokemon?.types ?? [],
         shadow: false,
-        WEATHER_BOOSTS: String(weatherCounter),
-      };
-      const statsDefender = {
+      });
+      const statsDefender = new BattleCalculate({
         atk: statBossATK,
         def: statBossDEF,
-        hp: Math.floor(HpRemain),
-        fmove: data?.combat?.find((item) => item.name === fMove?.name),
-        cmove: data?.combat?.find((item) => item.name === cMove?.name),
+        hp: Math.floor(hpRemain),
+        fMove: data?.combat?.find((item) => item.name === fMove?.name),
+        cMove: data?.combat?.find((item) => item.name === cMove?.name),
         types: form?.form.types ?? [],
-        WEATHER_BOOSTS: String(weatherBoss),
-      };
+        isStab: weatherBoss,
+      });
 
       if (!statsDefender) {
         enqueueSnackbar('Something went wrong!', { variant: 'error' });
@@ -582,11 +583,11 @@ const RaidBattle = () => {
       const dpsAtk = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
       const ttkAtk = enableTimeAllow
-        ? Math.min(timeAllow - timer, TimeToKill(Math.floor(statsDefender.hp), dpsAtk))
-        : TimeToKill(Math.floor(statsDefender.hp), dpsAtk);
+        ? Math.min(timeAllow - timer, TimeToKill(Math.floor(statsDefender.hp ?? 0), dpsAtk))
+        : TimeToKill(Math.floor(statsDefender.hp ?? 0), dpsAtk);
       const ttkDef = enableTimeAllow
-        ? Math.min(timeAllow - timer, TimeToKill(Math.floor(statsAttacker.hp), dpsDef))
-        : TimeToKill(Math.floor(statsAttacker.hp), dpsDef);
+        ? Math.min(timeAllow - timer, TimeToKill(Math.floor(statsAttacker.hp ?? 0), dpsDef))
+        : TimeToKill(Math.floor(statsAttacker.hp ?? 0), dpsDef);
 
       const timeKill = Math.min(ttkAtk, ttkDef);
 
@@ -595,8 +596,8 @@ const RaidBattle = () => {
 
       return {
         pokemon: pokemon.dataTargetPokemon,
-        fmove: statsAttacker.fmove,
-        cmove: statsAttacker.cmove,
+        fMove: statsAttacker.fMove,
+        cMove: statsAttacker.cMove,
         atk: statsAttacker.atk,
         def: statsAttacker.def,
         hp: statsAttacker.hp,
@@ -607,7 +608,7 @@ const RaidBattle = () => {
         ttkAtk,
         ttkDef,
         timer: timeKill,
-        defHpRemain: Math.floor(statsDefender.hp) - tdoAtk,
+        defHpRemain: Math.floor(statsDefender.hp ?? 0) - tdoAtk,
       };
     }
   };
@@ -1274,11 +1275,11 @@ const RaidBattle = () => {
                   </span>
                   <hr />
                   <div className="container" style={{ marginBottom: 15 }}>
-                    <TypeBadge title="Fast Move" move={value.fmove} elite={value.elite?.fmove} />
+                    <TypeBadge title="Fast Move" move={value.fMove} elite={value.elite?.fMove} />
                     <TypeBadge
                       title="Charged Move"
-                      move={value.cmove}
-                      elite={value.elite?.cmove}
+                      move={value.cMove}
+                      elite={value.elite?.cMove}
                       shadow={value.mShadow}
                       purified={value.purified}
                       special={value.special}

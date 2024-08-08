@@ -870,7 +870,7 @@ const CalculatePoint = () => {
                             <td>{level}</td>
                             {resultBulkPointDef ? (
                               <Fragment>
-                                {resultBulkPointDef.data[i].map((value: number, index: number) => (
+                                {resultBulkPointDef.data[i].map((value, index) => (
                                   <td className={'text-iv-bulk' + (value === 0 ? getBorderSplit(i, index) : '')} key={index}>
                                     {value}
                                   </td>

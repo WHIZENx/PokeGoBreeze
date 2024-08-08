@@ -95,9 +95,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           form: value.form ?? '',
           shadow: value.shadow ?? false,
           hp: value.stats.hp ?? 0,
-          fmove: fMoveCombat ?? null,
-          cmove: cMovePriCombat ?? null,
-          cmoveSec: cMoveSecCombat ?? null,
+          fMove: fMoveCombat ?? null,
+          cMove: cMovePriCombat ?? null,
+          cMoveSec: cMoveSecCombat ?? null,
           energy: 0,
           block: 0,
           turn: 0,
@@ -245,11 +245,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     if (move.includes('HIDDEN_POWER')) {
                       move = 'HIDDEN_POWER';
                     }
-                    let fmove = combat.find((item) => item.name === move);
-                    if (fmove && value.moveId.includes('HIDDEN_POWER')) {
-                      fmove = { ...fmove, type: value.moveId.split('_').at(2) ?? '' };
+                    let fMove = combat.find((item) => item.name === move);
+                    if (fMove && value.moveId.includes('HIDDEN_POWER')) {
+                      fMove = { ...fMove, type: value.moveId.split('_').at(2) ?? '' };
                     }
-                    return fmove;
+                    return fMove;
                   })
                   .filter((value) => value?.name !== fMove?.name)
                   .map((value, index) => (

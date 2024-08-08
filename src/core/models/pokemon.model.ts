@@ -272,8 +272,8 @@ export interface IPokemonName {
 
 export interface PokemonMoveData {
   pokemon: IPokemonData | undefined;
-  fmove: ICombat | undefined;
-  cmove: ICombat | undefined;
+  fMove: ICombat | undefined;
+  cMove: ICombat | undefined;
   dpsDef: number;
   dpsAtk: number;
   tdoAtk: number;
@@ -287,7 +287,7 @@ export interface PokemonMoveData {
   shadow?: boolean;
   purified?: boolean;
   mShadow?: boolean;
-  elite?: { fmove: boolean; cmove: boolean };
+  elite?: { fMove: boolean; cMove: boolean };
   trainerId?: number;
   atk?: number;
   def?: number;
@@ -307,8 +307,8 @@ export interface PokemonEncounter {
 
 export interface PokemonRaidModel {
   dataTargetPokemon?: IPokemonData;
-  fmoveTargetPokemon?: ISelectMoveModel;
-  cmoveTargetPokemon?: ISelectMoveModel;
+  fMoveTargetPokemon?: ISelectMoveModel;
+  cMoveTargetPokemon?: ISelectMoveModel;
   trainerId?: number;
   dpsAtk?: number;
   hp?: number;

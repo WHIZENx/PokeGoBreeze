@@ -32,12 +32,12 @@ import { BuddyFriendship, PokemonDataGM, IPokemonPermission, TrainerFriendship, 
 import { calculateStatsByTag } from '../util/Calculate';
 import { APITree } from '../services/models/api.model';
 
-export const getOption = (options: any, args: string[]) => {
+export const getOption = <T>(options: any, args: string[]): T => {
   if (!options) {
     return options;
   }
 
-  args.forEach((arg: string) => {
+  args.forEach((arg) => {
     options = options[arg];
   });
   return options;

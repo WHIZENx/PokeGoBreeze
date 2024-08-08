@@ -28,8 +28,8 @@ const Move = (props: IMoveComponent) => {
   const findMove = useCallback(
     (id: number, form: string) => {
       const result = retrieveMoves(data?.pokemon ?? [], id, form);
-      const simpleMove: ISelectMoveModel[] = [];
       if (result) {
+        const simpleMove: ISelectMoveModel[] = [];
         if (props.type !== TypeMove.CHARGE) {
           result?.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
@@ -57,8 +57,8 @@ const Move = (props: IMoveComponent) => {
         result?.specialMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, false, false, false, true));
         });
+        setResultMove(simpleMove);
       }
-      setResultMove(simpleMove);
     },
     [props.type, data?.pokemon]
   );

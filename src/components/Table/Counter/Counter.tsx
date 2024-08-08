@@ -100,8 +100,8 @@ const Counter = (props: ICounterComponent) => {
                 ' position-relative group-pokemon-sprite'
               }
             >
-              {row.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-              {row.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+              {row.cMove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+              {row.cMove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
               <img
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
@@ -123,15 +123,15 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Fast',
       selector: (row: ICounterModel) => (
-        <Link to={'../move/' + row.fmove.id} className="d-grid">
+        <Link to={'../move/' + row.fMove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fmove.type))} />
+            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fMove.type))} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
-            {splitAndCapitalize(row.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+            {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
           </span>
           <span className="w-100">
-            {row.fmove.elite && (
+            {row.fMove.elite && (
               <span className="type-icon-small ic elite-ic">
                 <span>Elite</span>
               </span>
@@ -144,30 +144,30 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Charged',
       selector: (row: ICounterModel) => (
-        <Link to={'../move/' + row.cmove.id} className="d-grid">
+        <Link to={'../move/' + row.cMove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cmove.type))} />
+            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cMove.type))} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
-            {splitAndCapitalize(row.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+            {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
           </span>
           <span className="w-100">
-            {row.cmove.elite && (
+            {row.cMove.elite && (
               <span className="type-icon-small ic elite-ic">
                 <span>Elite</span>
               </span>
             )}
-            {row.cmove.shadow && (
+            {row.cMove.shadow && (
               <span className="type-icon-small ic shadow-ic">
                 <span>{capitalize(FORM_SHADOW)}</span>
               </span>
             )}
-            {row.cmove.purified && (
+            {row.cMove.purified && (
               <span className="type-icon-small ic purified-ic">
                 <span>{capitalize(FORM_PURIFIED)}</span>
               </span>
             )}
-            {row.cmove.special && (
+            {row.cMove.special && (
               <span className="type-icon-small ic special-ic">
                 <span>Special</span>
               </span>

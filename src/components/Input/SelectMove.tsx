@@ -30,8 +30,8 @@ const SelectMove = (props: ISelectMoveComponent) => {
   const findMove = useCallback(
     (id: number, form: string, type: string, selected = false) => {
       const result = retrieveMoves(combat, id, form);
-      const simpleMove: ISelectMoveModel[] = [];
       if (result) {
+        const simpleMove: ISelectMoveModel[] = [];
         if (type === TypeMove.FAST) {
           result.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
@@ -59,8 +59,8 @@ const SelectMove = (props: ISelectMoveComponent) => {
         if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
           props.setMovePokemon(simpleMove.at(0));
         }
+        setResultMove(simpleMove);
       }
-      setResultMove(simpleMove);
     },
     [props.setMovePokemon, combat, props.move]
   );
@@ -71,7 +71,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
     } else if (resultMove.length > 0) {
       setResultMove([]);
     }
-  }, [props.pokemon?.num, props.pokemon?.forme, props.selected, resultMove.length]);
+  }, [props.pokemon?.num, props.pokemon?.forme, props.selected, resultMove.length, findMove]);
 
   const smallInput = () => {
     return (
@@ -82,10 +82,10 @@ const SelectMove = (props: ISelectMoveComponent) => {
         }
         style={{ padding: 0, borderRadius: 0 }}
       >
-        {props.pokemon && resultMove?.length === 0 && (
+        {props.pokemon && resultMove.length === 0 && (
           <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>
         )}
-        {resultMove?.length > 0 && (
+        {resultMove.length > 0 && (
           <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
             <CardMoveSmall value={props.move} show={props.pokemon ? true : false} disable={props.disable} select={resultMove?.length > 1} />
             {showMove && resultMove && (

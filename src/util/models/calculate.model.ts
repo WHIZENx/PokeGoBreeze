@@ -7,19 +7,40 @@ import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
-export interface BattleCalculate {
+export interface IBattleCalculate {
   atk?: number;
   def: number;
   hp?: number;
-  fmove?: ICombat;
-  cmove?: ICombat;
+  fMove?: ICombat;
+  cMove?: ICombat;
   types: string[];
   shadow?: boolean;
+  isStab?: boolean;
   WEATHER_BOOSTS?: string;
   POKEMON_FRIEND?: boolean;
   POKEMON_FRIEND_LEVEL?: number;
   isDoubleCharge?: boolean;
-  cmove2?: ICombat;
+  cMoveSec?: ICombat;
+}
+
+export class BattleCalculate implements IBattleCalculate {
+  atk?: number = 0;
+  def: number = 0;
+  hp?: number;
+  fMove?: ICombat;
+  cMove?: ICombat;
+  types: string[] = [];
+  shadow?: boolean;
+  isStab?: boolean;
+  WEATHER_BOOSTS?: string;
+  POKEMON_FRIEND?: boolean;
+  POKEMON_FRIEND_LEVEL?: number;
+  isDoubleCharge?: boolean;
+  cMoveSec?: ICombat;
+
+  constructor({ ...props }: IBattleCalculate) {
+    Object.assign(this, props);
+  }
 }
 
 interface IStatsLeagueCalculate {
@@ -27,6 +48,7 @@ interface IStatsLeagueCalculate {
   level: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class StatsLeagueCalculate implements IStatsLeagueCalculate {
   CP: number = 0;
   level: number = 0;
